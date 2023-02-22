@@ -1,0 +1,20 @@
+version: '3.5'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15.2
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rphub}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-rphub}
+      PGDATA: /data/postgres
+    volumes:
+       - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    network_mode: host
+    restart: unless-stopped
+
+volumes:
+  postgres:
