@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/galexrt/rphub/pkg/config"
+	"github.com/galexrt/arpanet/pkg/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -14,7 +14,7 @@ import (
 var logger *zap.Logger
 
 var rootCmd = &cobra.Command{
-	Use: "rphub",
+	Use: "arpanet",
 }
 
 func init() {

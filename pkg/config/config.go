@@ -12,9 +12,8 @@ type Config struct {
 	LogLevel string `default:"DEBUG" yaml:"logLevel"`
 	Mode     string `default:"debug" yaml:"mode"`
 
-	HTTP     HTTP             `yaml:"http"`
-	Database PostgresDatabase `yaml:"database"`
-	FiveM    FiveM            `yaml:"fiveM"`
+	HTTP     HTTP     `yaml:"http"`
+	Database Database `yaml:"database"`
 }
 
 type HTTP struct {
@@ -26,20 +25,9 @@ type Sessions struct {
 	CookieSecret string `yaml:"cookieSecret"`
 }
 
-type PostgresDatabase struct {
+type Database struct {
+	// refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
 	DSN string `yaml:"dsn"`
-}
-
-type FiveM struct {
-	Database MySQLDatabase `yaml:"database"`
-}
-
-type MySQLDatabase struct {
-	Host     string `default:"localhost" yaml:"host"`
-	Port     int    `default:"3306" yaml:"3306"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	DBName   string `yaml:"dbName"`
 }
 
 func init() {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/galexrt/rphub/pkg/auth"
+	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/gin-gonic/gin"
 )
 

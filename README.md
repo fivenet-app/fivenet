@@ -1,4 +1,4 @@
-# rphub
+# arpanet
 
 ## Features
 
@@ -23,7 +23,7 @@
 go install github.com/swaggo/swag/cmd/swag@latest
 ```
 
-### What data is currently missing from ...?
+### What data is currently missing from FiveM tables?
 
 * `users`
     * ID (Auto increment ID + Index)
@@ -33,3 +33,7 @@ go install github.com/swaggo/swag/cmd/swag@latest
     * ID (Auto increment ID + Index)
 * `job_grades`
     * ID (Auto increment ID + Index)
+
+### Flow
+
+1. Load `jobs` and `job_grades` from the FiveM database.

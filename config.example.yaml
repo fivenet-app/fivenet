@@ -1,0 +1,9 @@
+logLevel: "DEBUG"
+mode: "test"
+http:
+  listen: ":12345"
+  sessions:
+    cookieSecret: "your_generated_cookie_secret"
+database:
+  # refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
+  dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?charset=utf8mb4&parseTime=True&loc=Local"

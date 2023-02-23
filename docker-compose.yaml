@@ -1,20 +1,19 @@
 version: '3.5'
 
 services:
-  postgres:
-    container_name: postgres
-    image: postgres:15.2
+  mysql:
+    container_name: mysql
+    image: mariadb:10.11.2-jammy
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-rphub}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
-      POSTGRES_DB: ${POSTGRES_DB:-rphub}
-      PGDATA: /data/postgres
+      MYSQL_USER: ${MYSQL_USER:-arpanet}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-arpanet}
     volumes:
-       - postgres:/data/postgres
+       - mysql:/var/lib/mysql
     ports:
-      - "5432:5432"
+      - "3306:3306"
     network_mode: host
     restart: unless-stopped
 
 volumes:
-  postgres:
+  mysql:

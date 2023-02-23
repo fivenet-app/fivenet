@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/galexrt/rphub/cmd"
+	"github.com/galexrt/arpanet/cmd"
 )
 
-//	@title			RPHub
+//	@title			arpanet
 //	@version		0.0.1
-//	@description	This is a sample server celler server.
-//	@termsOfService	http://swagger.io/terms/
+//	@description	This is a example server celler server.
+//	@termsOfService	https://swagger.io/terms/
 
 //	@contact.name	API Support
 //	@contact.url	http://www.swagger.io/support

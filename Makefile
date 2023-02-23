@@ -8,8 +8,11 @@ run-server:
 .PHONY: build
 build:
 	swag init
-	go build -o rphub .
+	go build -o arpanet .
 
 .PHONY: watch-server
 watch-server:
 	while true; do { git ls-files; git ls-files . --exclude-standard --others; } | entr -d $(MAKE) run-server; sleep .75; done
+
+gen-gorm:
+	go run ./gen

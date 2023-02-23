@@ -9,10 +9,10 @@ import (
 	"syscall"
 	"time"
 
-	apiv1 "github.com/galexrt/rphub/api/v1"
-	"github.com/galexrt/rphub/model"
-	"github.com/galexrt/rphub/pkg/auth"
-	"github.com/galexrt/rphub/pkg/config"
+	apiv1 "github.com/galexrt/arpanet/api/v1"
+	"github.com/galexrt/arpanet/pkg/auth"
+	"github.com/galexrt/arpanet/pkg/config"
+	"github.com/galexrt/arpanet/query"
 	"github.com/gin-contrib/sessions"
 	gormsessions "github.com/gin-contrib/sessions/gorm"
 	ginzap "github.com/gin-contrib/zap"
@@ -25,15 +25,12 @@ import (
 var serverCmd = &cobra.Command{
 	Use: "server",
 	Run: func(cmd *cobra.Command, args []string) {
-		// Do Stuff Here
-		model.Register()
-
 		// Gin HTTP Server
 		gin.SetMode(config.C.Mode)
 		r := gin.New()
 		r.Use(ginzap.Ginzap(logger, time.RFC3339, true))
 		r.Use(ginzap.RecoveryWithZap(logger, true))
-		store := gormsessions.NewStore(model.DB, true, []byte("secret"))
+		store := gormsessions.NewStore(query.DB, true, []byte("secret"))
 		store.Options(sessions.Options{
 			Domain:   "172.16.1.111",
 			Path:     "/",
@@ -86,7 +83,7 @@ var serverCmd = &cobra.Command{
 		logger.Info("server exiting")
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return model.SetupDB(logger)
+		return query.SetupDB(logger)
 	},
 }
 

@@ -1,0 +1,14 @@
+html,
+body {
+  height: 100%;
+}
+#map {
+  min-height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  overflow: hidden;
+  background-color: #f00;
+}

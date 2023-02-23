@@ -3,7 +3,7 @@ package sync
 import (
 	"database/sql"
 
-	"github.com/galexrt/rphub/model"
+	"github.com/galexrt/arpanet/model"
 	"go.uber.org/zap"
 )
 
@@ -66,7 +66,7 @@ func (s *Sync) SyncJobGrades(db *sql.DB) {
 			s.logger.Error("failed to find job in our database", zap.Error(result.Error))
 			continue
 		}
-		jobGrade.JobID = job.ID
+		//jobGrade.JobID = job.ID
 
 		result = model.DB.Create(jobGrade)
 		if result.Error != nil {

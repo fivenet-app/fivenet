@@ -3,7 +3,7 @@ package v1
 import (
 	"net/http"
 
-	"github.com/galexrt/rphub/model"
+	"github.com/galexrt/arpanet/query"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,8 +22,11 @@ func JobRoutes(g *gin.RouterGroup) {
 //	@Success		200	{string}	Pong
 //	@Router			/jobs/ [get]
 func Jobs(g *gin.Context) {
-	var jobs []model.Job
-	model.DB.Find(&jobs)
+	jobs, err := query.Job.Find()
+	if err != nil {
+		g.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 
 	g.JSON(http.StatusOK, jobs)
 }

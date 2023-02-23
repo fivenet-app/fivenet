@@ -3,7 +3,7 @@ package v1
 import (
 	"net/http"
 
-	"github.com/galexrt/rphub/docs"
+	"github.com/galexrt/arpanet/docs"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -11,8 +11,8 @@ import (
 
 func Register(r *gin.Engine) {
 	// programmatically set swagger info
-	docs.SwaggerInfo.Title = "RPHub API v1"
-	docs.SwaggerInfo.Description = "RPHub Server"
+	docs.SwaggerInfo.Title = "arpanet API v1"
+	docs.SwaggerInfo.Description = "arpanet Server"
 	docs.SwaggerInfo.Version = "0.0.1"
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
