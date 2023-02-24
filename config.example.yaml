@@ -1,5 +1,5 @@
 logLevel: "DEBUG"
-mode: "test"
+mode: "debug"
 http:
   listen: ":8080"
   sessions:

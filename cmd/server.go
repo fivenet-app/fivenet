@@ -49,7 +49,11 @@ var serverCmd = &cobra.Command{
 		apiv1.Register(r)
 
 		// Register embed FS for assets and other static files
-		r.StaticFS("/assets", http.FS(assets))
+		if gin.Mode() == gin.DebugMode {
+			r.StaticFS("/public", gin.Dir(".", false))
+		} else {
+			r.StaticFS("/public", http.FS(assets))
+		}
 		r.GET("favicon.ico", func(c *gin.Context) {
 			file, _ := assets.ReadFile("assets/favicon.ico")
 			c.Data(

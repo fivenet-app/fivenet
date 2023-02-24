@@ -31,6 +31,8 @@ func newDocumentUserAccess(db *gorm.DB, opts ...gen.DOOption) documentUserAccess
 	_documentUserAccess.CreatedAt = field.NewTime(tableName, "created_at")
 	_documentUserAccess.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_documentUserAccess.DocumentID = field.NewUint(tableName, "document_id")
+	_documentUserAccess.Identifier = field.NewString(tableName, "identifier")
+	_documentUserAccess.Access = field.NewString(tableName, "access")
 
 	_documentUserAccess.fillFieldMap()
 
@@ -45,6 +47,8 @@ type documentUserAccess struct {
 	CreatedAt  field.Time
 	UpdatedAt  field.Time
 	DocumentID field.Uint
+	Identifier field.String
+	Access     field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -65,6 +69,8 @@ func (d *documentUserAccess) updateTableName(table string) *documentUserAccess {
 	d.CreatedAt = field.NewTime(table, "created_at")
 	d.UpdatedAt = field.NewTime(table, "updated_at")
 	d.DocumentID = field.NewUint(table, "document_id")
+	d.Identifier = field.NewString(table, "identifier")
+	d.Access = field.NewString(table, "access")
 
 	d.fillFieldMap()
 
@@ -81,11 +87,13 @@ func (d *documentUserAccess) GetFieldByName(fieldName string) (field.OrderExpr, 
 }
 
 func (d *documentUserAccess) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 4)
+	d.fieldMap = make(map[string]field.Expr, 6)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["created_at"] = d.CreatedAt
 	d.fieldMap["updated_at"] = d.UpdatedAt
 	d.fieldMap["document_id"] = d.DocumentID
+	d.fieldMap["identifier"] = d.Identifier
+	d.fieldMap["access"] = d.Access
 }
 
 func (d documentUserAccess) clone(db *gorm.DB) documentUserAccess {

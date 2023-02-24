@@ -33,6 +33,7 @@ func newDocumentJobAccess(db *gorm.DB, opts ...gen.DOOption) documentJobAccess {
 	_documentJobAccess.DocumentID = field.NewUint(tableName, "document_id")
 	_documentJobAccess.Name = field.NewString(tableName, "name")
 	_documentJobAccess.MinimumGrade = field.NewInt(tableName, "minimum_grade")
+	_documentJobAccess.Access = field.NewString(tableName, "access")
 
 	_documentJobAccess.fillFieldMap()
 
@@ -49,6 +50,7 @@ type documentJobAccess struct {
 	DocumentID   field.Uint
 	Name         field.String
 	MinimumGrade field.Int
+	Access       field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -71,6 +73,7 @@ func (d *documentJobAccess) updateTableName(table string) *documentJobAccess {
 	d.DocumentID = field.NewUint(table, "document_id")
 	d.Name = field.NewString(table, "name")
 	d.MinimumGrade = field.NewInt(table, "minimum_grade")
+	d.Access = field.NewString(table, "access")
 
 	d.fillFieldMap()
 
@@ -87,13 +90,14 @@ func (d *documentJobAccess) GetFieldByName(fieldName string) (field.OrderExpr, b
 }
 
 func (d *documentJobAccess) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 6)
+	d.fieldMap = make(map[string]field.Expr, 7)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["created_at"] = d.CreatedAt
 	d.fieldMap["updated_at"] = d.UpdatedAt
 	d.fieldMap["document_id"] = d.DocumentID
 	d.fieldMap["name"] = d.Name
 	d.fieldMap["minimum_grade"] = d.MinimumGrade
+	d.fieldMap["access"] = d.Access
 }
 
 func (d documentJobAccess) clone(db *gorm.DB) documentJobAccess {

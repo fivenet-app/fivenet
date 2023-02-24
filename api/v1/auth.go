@@ -41,10 +41,10 @@ func GetAuth(c *gin.Context) {
 //	@Router			/auth/ [post]
 func PostAuth(c *gin.Context) {
 	err := auth.SaveSessionInfo(c, &auth.SessionInfo{
-		ID:         1,
+		ID:         26061,
 		Identifier: "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
 		CharIndex:  1,
-		Job:        "ambulance",
+		Job:        "police",
 		JobGrade:   20,
 	})
 	if err != nil {
