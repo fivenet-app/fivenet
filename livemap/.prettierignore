@@ -1,0 +1,10 @@
+dist
+.pnp.js
+.yarn/*
+.github/
+
+out/
+build/
+.next/
+maps/
+gdal2tiles-leaflet/
