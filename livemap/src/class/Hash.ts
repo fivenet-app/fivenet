@@ -19,9 +19,9 @@ export class Hash {
 	private isListening: boolean = false;
 	private hashChangeInterval: number | undefined = undefined;
 
-	constructor(map: Livemap, element: string | HTMLElement) {
+	constructor(map: Livemap, element: HTMLElement) {
 		this.onHashChange = Util.bind(this.onHashChange, this);
-		this.app = typeof element === 'string' ? document.getElementById(element) : element;
+		this.app = element;
 		this.map = map;
 
 		this.onHashChange();
