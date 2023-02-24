@@ -1,4 +1,4 @@
-import { LatLng, Map, MapOptions } from 'leaflet';
+import { Map, MapOptions } from 'leaflet';
 
 import { Hash } from './Hash';
 export class Livemap extends Map {
@@ -24,7 +24,6 @@ export class Livemap extends Map {
 	}
 
 	public updateBackground(layer: string): void {
-		console.log(layer);
 		switch (layer) {
 			case 'Atlas':
 				this.element.style.backgroundColor = '#0fa8d2';
