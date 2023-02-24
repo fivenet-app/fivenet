@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"embed"
 	"fmt"
 	"os"
 
@@ -11,7 +12,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var logger *zap.Logger
+var (
+	logger *zap.Logger
+	assets embed.FS
+)
 
 var rootCmd = &cobra.Command{
 	Use: "arpanet",
@@ -53,4 +57,8 @@ func initConfig() {
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
 	viper.Unmarshal(config.C)
+}
+
+func SetAssets(fs embed.FS) {
+	assets = fs
 }

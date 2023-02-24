@@ -5,6 +5,7 @@ services:
     container_name: mysql
     image: mariadb:10.11.2-jammy
     environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-secret-pw-for-root-user}
       MYSQL_USER: ${MYSQL_USER:-arpanet}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-arpanet}

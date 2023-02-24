@@ -16,49 +16,64 @@ import (
 )
 
 var (
-	Q        = new(Query)
-	Citizen  *citizen
-	Document *document
-	Job      *job
-	JobGrade *jobGrade
+	Q                  = new(Query)
+	Document           *document
+	DocumentJobAccess  *documentJobAccess
+	DocumentUserAccess *documentUserAccess
+	Job                *job
+	JobGrade           *jobGrade
+	User               *user
+	VpcL               *vpcL
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
-	Citizen = &Q.Citizen
 	Document = &Q.Document
+	DocumentJobAccess = &Q.DocumentJobAccess
+	DocumentUserAccess = &Q.DocumentUserAccess
 	Job = &Q.Job
 	JobGrade = &Q.JobGrade
+	User = &Q.User
+	VpcL = &Q.VpcL
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:       db,
-		Citizen:  newCitizen(db, opts...),
-		Document: newDocument(db, opts...),
-		Job:      newJob(db, opts...),
-		JobGrade: newJobGrade(db, opts...),
+		db:                 db,
+		Document:           newDocument(db, opts...),
+		DocumentJobAccess:  newDocumentJobAccess(db, opts...),
+		DocumentUserAccess: newDocumentUserAccess(db, opts...),
+		Job:                newJob(db, opts...),
+		JobGrade:           newJobGrade(db, opts...),
+		User:               newUser(db, opts...),
+		VpcL:               newVpcL(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	Citizen  citizen
-	Document document
-	Job      job
-	JobGrade jobGrade
+	Document           document
+	DocumentJobAccess  documentJobAccess
+	DocumentUserAccess documentUserAccess
+	Job                job
+	JobGrade           jobGrade
+	User               user
+	VpcL               vpcL
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:       db,
-		Citizen:  q.Citizen.clone(db),
-		Document: q.Document.clone(db),
-		Job:      q.Job.clone(db),
-		JobGrade: q.JobGrade.clone(db),
+		db:                 db,
+		Document:           q.Document.clone(db),
+		DocumentJobAccess:  q.DocumentJobAccess.clone(db),
+		DocumentUserAccess: q.DocumentUserAccess.clone(db),
+		Job:                q.Job.clone(db),
+		JobGrade:           q.JobGrade.clone(db),
+		User:               q.User.clone(db),
+		VpcL:               q.VpcL.clone(db),
 	}
 }
 
@@ -72,27 +87,36 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:       db,
-		Citizen:  q.Citizen.replaceDB(db),
-		Document: q.Document.replaceDB(db),
-		Job:      q.Job.replaceDB(db),
-		JobGrade: q.JobGrade.replaceDB(db),
+		db:                 db,
+		Document:           q.Document.replaceDB(db),
+		DocumentJobAccess:  q.DocumentJobAccess.replaceDB(db),
+		DocumentUserAccess: q.DocumentUserAccess.replaceDB(db),
+		Job:                q.Job.replaceDB(db),
+		JobGrade:           q.JobGrade.replaceDB(db),
+		User:               q.User.replaceDB(db),
+		VpcL:               q.VpcL.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	Citizen  ICitizenDo
-	Document IDocumentDo
-	Job      IJobDo
-	JobGrade IJobGradeDo
+	Document           IDocumentDo
+	DocumentJobAccess  IDocumentJobAccessDo
+	DocumentUserAccess IDocumentUserAccessDo
+	Job                IJobDo
+	JobGrade           IJobGradeDo
+	User               IUserDo
+	VpcL               IVpcLDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Citizen:  q.Citizen.WithContext(ctx),
-		Document: q.Document.WithContext(ctx),
-		Job:      q.Job.WithContext(ctx),
-		JobGrade: q.JobGrade.WithContext(ctx),
+		Document:           q.Document.WithContext(ctx),
+		DocumentJobAccess:  q.DocumentJobAccess.WithContext(ctx),
+		DocumentUserAccess: q.DocumentUserAccess.WithContext(ctx),
+		Job:                q.Job.WithContext(ctx),
+		JobGrade:           q.JobGrade.WithContext(ctx),
+		User:               q.User.WithContext(ctx),
+		VpcL:               q.VpcL.WithContext(ctx),
 	}
 }
 

@@ -26,3 +26,4 @@ dist-ssr
 # Map tiles
 public/tiles/*/
 gdal2tiles-leaflet/
+dist/

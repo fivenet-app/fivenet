@@ -10,11 +10,10 @@ const (
 type SessionInfo struct {
 	ID         int    `json:"ID"`
 	Identifier string `json:"identifier"`
+	CharIndex  int    `json:"charIndex"`
 
 	Job      string `json:"job"`
 	JobGrade int    `json:"jobGrade"`
-
-	Admin bool `json:"admin"`
 }
 
 func init() {

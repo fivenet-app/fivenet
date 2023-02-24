@@ -4,36 +4,42 @@
 
 - [ ] Authentication
     - [ ] Use Discord Login and an in-game "register" command of some sorts
-- [ ] Citizen Database
-    - [ ] Search
-    - [ ] Auto-generate blood type for LSMD
+- [ ] User Database
+    - [ ] Search by name
+    - [ ] Auto-generate blood type for LSMD (later)
 - [ ] Documents
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
     - [ ] Sharing with the same job automatically
     - [ ] Sharing with the citizen affected (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ)
     - [ ] People can request access by link
 - [ ] Job Management
+    - [ ] Warn Employees ("Führungsregister")
+    - [ ] Promote and Demote Employees
     - [ ] Fire employees
-    - [ ] Warn Employees
-    - [ ] Promote and Demote Employees 
 
 ## Development
 
-```console
-go install github.com/swaggo/swag/cmd/swag@latest
-```
+### Required Tools
+
+* Golang 1.19
+* `swag` - Generate Swagger docs.
+    ```console
+    go install github.com/swaggo/swag/cmd/swag@latest
+    ```
+* `yarn`
 
 ### What data is currently missing from FiveM tables?
 
 * `users`
-    * ID (Auto increment ID + Index)
-    * Blood type
+    * (Optional) ID (Auto increment ID + Index)
+    * Weitere Indexes
+        * `firstname` und `lastname` Spalten:
+            * `CREATE FULLTEXT INDEX IF NOT EXISTS users_firstname_IDX ON s4_fivem.users (firstname, lastname);`
+        * `job` und `job_grade` Spalten:
+            * `CREATE INDEX IF NOT EXISTS users_job_grade_IDX USING BTREE ON s4_fivem.users (job_grade, job);`
+    * (Optional) Blood type
     * Rename `last_seen` to `updated_at`
 * `jobs`
-    * ID (Auto increment ID + Index)
+    * (Optional) ID (Auto increment ID + Index)
 * `job_grades`
-    * ID (Auto increment ID + Index)
-
-### Flow
-
-1. Load `jobs` and `job_grades` from the FiveM database.
+    * (Optional) ID (Auto increment ID + Index)

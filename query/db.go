@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
 	"moul.io/zapgorm2"
 )
 
@@ -13,6 +14,7 @@ var DB *gorm.DB
 
 func SetupDB(logger *zap.Logger) error {
 	dbLogger := zapgorm2.New(logger.Named("db"))
+	dbLogger.LogLevel = gormlogger.Info
 	dbLogger.SetAsDefault()
 	db, err := gorm.Open(mysql.Open(config.C.Database.DSN), &gorm.Config{Logger: dbLogger})
 	if err != nil {
@@ -20,8 +22,10 @@ func SetupDB(logger *zap.Logger) error {
 	}
 
 	// Need to use gorm's AutoMigrate for our "non-existing" (at least on a basic ESX FiveM server) models
-	db.AutoMigrate(&model.Document{},
-		&model.DocumentAccess{})
+	db.AutoMigrate(&model.DocumentJobAccess{},
+		&model.DocumentUserAccess{},
+		&model.Document{},
+	)
 
 	// Set the DB var and default for the query package
 	DB = db

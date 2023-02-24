@@ -17,45 +17,45 @@ import (
 
 func init() {
 	InitializeDB()
-	err := db.AutoMigrate(&model.Citizen{})
+	err := db.AutoMigrate(&model.User{})
 	if err != nil {
-		fmt.Printf("Error: AutoMigrate(&model.Citizen{}) fail: %s", err)
+		fmt.Printf("Error: AutoMigrate(&model.User{}) fail: %s", err)
 	}
 }
 
-func Test_citizenQuery(t *testing.T) {
-	citizen := newCitizen(db)
-	citizen = *citizen.As(citizen.TableName())
-	_do := citizen.WithContext(context.Background()).Debug()
+func Test_userQuery(t *testing.T) {
+	user := newUser(db)
+	user = *user.As(user.TableName())
+	_do := user.WithContext(context.Background()).Debug()
 
-	primaryKey := field.NewString(citizen.TableName(), clause.PrimaryKey)
+	primaryKey := field.NewString(user.TableName(), clause.PrimaryKey)
 	_, err := _do.Unscoped().Where(primaryKey.IsNotNull()).Delete()
 	if err != nil {
 		t.Error("clean table <users> fail:", err)
 		return
 	}
 
-	_, ok := citizen.GetFieldByName("")
+	_, ok := user.GetFieldByName("")
 	if ok {
-		t.Error("GetFieldByName(\"\") from citizen success")
+		t.Error("GetFieldByName(\"\") from user success")
 	}
 
-	err = _do.Create(&model.Citizen{})
+	err = _do.Create(&model.User{})
 	if err != nil {
 		t.Error("create item in table <users> fail:", err)
 	}
 
-	err = _do.Save(&model.Citizen{})
+	err = _do.Save(&model.User{})
 	if err != nil {
 		t.Error("create item in table <users> fail:", err)
 	}
 
-	err = _do.CreateInBatches([]*model.Citizen{{}, {}}, 10)
+	err = _do.CreateInBatches([]*model.User{{}, {}}, 10)
 	if err != nil {
 		t.Error("create item in table <users> fail:", err)
 	}
 
-	_, err = _do.Select(citizen.ALL).Take()
+	_, err = _do.Select(user.ALL).Take()
 	if err != nil {
 		t.Error("Take() on table <users> fail:", err)
 	}
@@ -75,12 +75,12 @@ func Test_citizenQuery(t *testing.T) {
 		t.Error("FindInBatch() on table <users> fail:", err)
 	}
 
-	err = _do.Where(primaryKey.IsNotNull()).FindInBatches(&[]*model.Citizen{}, 10, func(tx gen.Dao, batch int) error { return nil })
+	err = _do.Where(primaryKey.IsNotNull()).FindInBatches(&[]*model.User{}, 10, func(tx gen.Dao, batch int) error { return nil })
 	if err != nil {
 		t.Error("FindInBatches() on table <users> fail:", err)
 	}
 
-	_, err = _do.Select(citizen.ALL).Where(primaryKey.IsNotNull()).Order(primaryKey.Desc()).Find()
+	_, err = _do.Select(user.ALL).Where(primaryKey.IsNotNull()).Order(primaryKey.Desc()).Find()
 	if err != nil {
 		t.Error("Find() on table <users> fail:", err)
 	}
@@ -90,7 +90,7 @@ func Test_citizenQuery(t *testing.T) {
 		t.Error("select Distinct() on table <users> fail:", err)
 	}
 
-	_, err = _do.Select(citizen.ALL).Omit(primaryKey).Take()
+	_, err = _do.Select(user.ALL).Omit(primaryKey).Take()
 	if err != nil {
 		t.Error("Omit() on table <users> fail:", err)
 	}
@@ -110,7 +110,7 @@ func Test_citizenQuery(t *testing.T) {
 		t.Error("FindByPage() on table <users> fail:", err)
 	}
 
-	_, err = _do.ScanByPage(&model.Citizen{}, 0, 1)
+	_, err = _do.ScanByPage(&model.User{}, 0, 1)
 	if err != nil {
 		t.Error("ScanByPage() on table <users> fail:", err)
 	}

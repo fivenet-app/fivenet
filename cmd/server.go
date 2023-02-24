@@ -12,9 +12,9 @@ import (
 	apiv1 "github.com/galexrt/arpanet/api/v1"
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/config"
+	gormsessions "github.com/galexrt/arpanet/pkg/gormsessions"
 	"github.com/galexrt/arpanet/query"
 	"github.com/gin-contrib/sessions"
-	gormsessions "github.com/gin-contrib/sessions/gorm"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -28,8 +28,10 @@ var serverCmd = &cobra.Command{
 		// Gin HTTP Server
 		gin.SetMode(config.C.Mode)
 		r := gin.New()
+		// Add Zap Logger to Gin
 		r.Use(ginzap.Ginzap(logger, time.RFC3339, true))
 		r.Use(ginzap.RecoveryWithZap(logger, true))
+		// Sessions
 		store := gormsessions.NewStore(query.DB, true, []byte("secret"))
 		store.Options(sessions.Options{
 			Domain:   "172.16.1.111",
@@ -45,6 +47,18 @@ var serverCmd = &cobra.Command{
 		r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 		// Register API routes
 		apiv1.Register(r)
+
+		// Register embed FS for assets and other static files
+		r.StaticFS("/assets", http.FS(assets))
+		r.GET("favicon.ico", func(c *gin.Context) {
+			file, _ := assets.ReadFile("assets/favicon.ico")
+			c.Data(
+				http.StatusOK,
+				"image/x-icon",
+				file,
+			)
+		})
+		r.Static("/livemap", "./livemap/dist/")
 
 		// Create HTTP Server for graceful shutdown handling
 		srv := &http.Server{

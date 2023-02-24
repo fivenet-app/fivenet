@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
+	"gorm.io/gen/field"
 	"gorm.io/gorm"
 )
 
@@ -43,22 +44,52 @@ func main() {
 	// Generate Models of Tables
 	jobsModel := g.GenerateModel("jobs")
 	jobGradesModel := g.GenerateModel("job_grades",
-		gen.FieldType("grade", "int"),
-		gen.FieldIgnore("name", "salary", "skin_male", "skim_female"))
+		// Ignore certain fields
+		gen.FieldIgnore("name", "salary", "skin_male", "skim_female"),
 
-	usersModel := g.GenerateModelAs("users", "Citizen",
-		gen.FieldIgnore("license", "group", "skin", "loadout", "position", "last_property", "inventory", "tattoos", "levelData", "onDuty", "health", "armor"),
+		// "Normalize" some data types
+		gen.FieldType("grade", "int"),
+	)
+
+	vpcLSModel := g.GenerateModel("vpcLS")
+
+	userLicenses := g.GenerateModel("user_licenses",
+		gen.FieldJSONTag("owner", "-"))
+
+	usersModel := g.GenerateModel("users",
+		// Ignore certain fields
+		gen.FieldIgnore("license", "group", "skin", "loadout", "position", "is_dead", "last_property", "inventory", "tattoos", "disabled", "levelData", "onDuty", "health", "armor"),
+
+		// Fixup some field types and column names
 		gen.FieldType("sex", "Sex"),
 		gen.FieldType("job_grade", "int"),
-		gen.FieldType("accounts", "Accounts"), gen.FieldGORMTag("accounts", "serializer:json"))
+
+		gen.FieldRename("last_seen", "updated_at"),
+		gen.FieldJSONTag("last_seen", "updated_at"),
+
+		gen.FieldType("accounts", "Accounts"),
+		gen.FieldGORMTag("accounts", "serializer:json"),
+
+		// Add relations for lazy loading
+		gen.FieldRelateModel(field.HasMany, "Documents", model.Document{},
+			&field.RelateConfig{
+				GORMTag: "foreignkey:Creator",
+			}),
+		gen.FieldRelate(field.HasMany, "UserLicenses", userLicenses,
+			&field.RelateConfig{
+				GORMTag: "foreignkey:Owner",
+			}),
+	)
 
 	// Generate default DAO interface for those generated structs from database
 	g.ApplyBasic(
 		usersModel,
 		jobsModel,
 		jobGradesModel,
+		vpcLSModel,
 		model.Document{},
-		model.DocumentAccess{},
+		model.DocumentJobAccess{},
+		model.DocumentUserAccess{},
 	)
 
 	// Generate the code

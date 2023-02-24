@@ -1,8 +1,13 @@
 package main
 
 import (
+	"embed"
+
 	"github.com/galexrt/arpanet/cmd"
 )
+
+//go:embed assets/*
+var assets embed.FS
 
 //	@title			arpanet
 //	@version		0.0.1
@@ -23,5 +28,6 @@ import (
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
+	cmd.SetAssets(assets)
 	cmd.Execute()
 }

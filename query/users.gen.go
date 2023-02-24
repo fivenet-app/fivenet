@@ -19,41 +19,62 @@ import (
 	"github.com/galexrt/arpanet/model"
 )
 
-func newCitizen(db *gorm.DB, opts ...gen.DOOption) citizen {
-	_citizen := citizen{}
+func newUser(db *gorm.DB, opts ...gen.DOOption) user {
+	_user := user{}
 
-	_citizen.citizenDo.UseDB(db, opts...)
-	_citizen.citizenDo.UseModel(&model.Citizen{})
+	_user.userDo.UseDB(db, opts...)
+	_user.userDo.UseModel(&model.User{})
 
-	tableName := _citizen.citizenDo.TableName()
-	_citizen.ALL = field.NewAsterisk(tableName)
-	_citizen.Identifier = field.NewString(tableName, "identifier")
-	_citizen.Job = field.NewString(tableName, "job")
-	_citizen.JobGrade = field.NewInt(tableName, "job_grade")
-	_citizen.Firstname = field.NewString(tableName, "firstname")
-	_citizen.Lastname = field.NewString(tableName, "lastname")
-	_citizen.Dateofbirth = field.NewString(tableName, "dateofbirth")
-	_citizen.Sex = field.NewField(tableName, "sex")
-	_citizen.Height = field.NewString(tableName, "height")
-	_citizen.IsDead = field.NewBool(tableName, "is_dead")
-	_citizen.Jail = field.NewInt32(tableName, "jail")
-	_citizen.PhoneNumber = field.NewString(tableName, "phone_number")
-	_citizen.Accounts = field.NewField(tableName, "accounts")
-	_citizen.Disabled = field.NewBool(tableName, "disabled")
-	_citizen.Visum = field.NewInt32(tableName, "visum")
-	_citizen.Playtime = field.NewInt32(tableName, "playtime")
-	_citizen.CreatedAt = field.NewTime(tableName, "created_at")
-	_citizen.LastSeen = field.NewTime(tableName, "last_seen")
+	tableName := _user.userDo.TableName()
+	_user.ALL = field.NewAsterisk(tableName)
+	_user.ID = field.NewInt32(tableName, "id")
+	_user.Identifier = field.NewString(tableName, "identifier")
+	_user.Job = field.NewString(tableName, "job")
+	_user.JobGrade = field.NewInt(tableName, "job_grade")
+	_user.Firstname = field.NewString(tableName, "firstname")
+	_user.Lastname = field.NewString(tableName, "lastname")
+	_user.Dateofbirth = field.NewString(tableName, "dateofbirth")
+	_user.Sex = field.NewField(tableName, "sex")
+	_user.Height = field.NewString(tableName, "height")
+	_user.Jail = field.NewInt32(tableName, "jail")
+	_user.PhoneNumber = field.NewString(tableName, "phone_number")
+	_user.Accounts = field.NewField(tableName, "accounts")
+	_user.Visum = field.NewInt32(tableName, "visum")
+	_user.Playtime = field.NewInt32(tableName, "playtime")
+	_user.CreatedAt = field.NewTime(tableName, "created_at")
+	_user.UpdatedAt = field.NewTime(tableName, "last_seen")
+	_user.Documents = userHasManyDocuments{
+		db: db.Session(&gorm.Session{}),
 
-	_citizen.fillFieldMap()
+		RelationField: field.NewRelation("Documents", "model.Document"),
+		Jobs: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Documents.Jobs", "model.DocumentJobAccess"),
+		},
+		Users: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Documents.Users", "model.DocumentUserAccess"),
+		},
+	}
 
-	return _citizen
+	_user.UserLicenses = userHasManyUserLicenses{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("UserLicenses", "model.UserLicense"),
+	}
+
+	_user.fillFieldMap()
+
+	return _user
 }
 
-type citizen struct {
-	citizenDo
+type user struct {
+	userDo
 
 	ALL         field.Asterisk
+	ID          field.Int32
 	Identifier  field.String
 	Job         field.String
 	JobGrade    field.Int
@@ -62,56 +83,56 @@ type citizen struct {
 	Dateofbirth field.String
 	Sex         field.Field
 	Height      field.String
-	IsDead      field.Bool
 	Jail        field.Int32
 	PhoneNumber field.String
 	Accounts    field.Field
-	Disabled    field.Bool
 	Visum       field.Int32
 	Playtime    field.Int32
 	CreatedAt   field.Time
-	LastSeen    field.Time
+	UpdatedAt   field.Time
+	Documents   userHasManyDocuments
+
+	UserLicenses userHasManyUserLicenses
 
 	fieldMap map[string]field.Expr
 }
 
-func (c citizen) Table(newTableName string) *citizen {
-	c.citizenDo.UseTable(newTableName)
-	return c.updateTableName(newTableName)
+func (u user) Table(newTableName string) *user {
+	u.userDo.UseTable(newTableName)
+	return u.updateTableName(newTableName)
 }
 
-func (c citizen) As(alias string) *citizen {
-	c.citizenDo.DO = *(c.citizenDo.As(alias).(*gen.DO))
-	return c.updateTableName(alias)
+func (u user) As(alias string) *user {
+	u.userDo.DO = *(u.userDo.As(alias).(*gen.DO))
+	return u.updateTableName(alias)
 }
 
-func (c *citizen) updateTableName(table string) *citizen {
-	c.ALL = field.NewAsterisk(table)
-	c.Identifier = field.NewString(table, "identifier")
-	c.Job = field.NewString(table, "job")
-	c.JobGrade = field.NewInt(table, "job_grade")
-	c.Firstname = field.NewString(table, "firstname")
-	c.Lastname = field.NewString(table, "lastname")
-	c.Dateofbirth = field.NewString(table, "dateofbirth")
-	c.Sex = field.NewField(table, "sex")
-	c.Height = field.NewString(table, "height")
-	c.IsDead = field.NewBool(table, "is_dead")
-	c.Jail = field.NewInt32(table, "jail")
-	c.PhoneNumber = field.NewString(table, "phone_number")
-	c.Accounts = field.NewField(table, "accounts")
-	c.Disabled = field.NewBool(table, "disabled")
-	c.Visum = field.NewInt32(table, "visum")
-	c.Playtime = field.NewInt32(table, "playtime")
-	c.CreatedAt = field.NewTime(table, "created_at")
-	c.LastSeen = field.NewTime(table, "last_seen")
+func (u *user) updateTableName(table string) *user {
+	u.ALL = field.NewAsterisk(table)
+	u.ID = field.NewInt32(table, "id")
+	u.Identifier = field.NewString(table, "identifier")
+	u.Job = field.NewString(table, "job")
+	u.JobGrade = field.NewInt(table, "job_grade")
+	u.Firstname = field.NewString(table, "firstname")
+	u.Lastname = field.NewString(table, "lastname")
+	u.Dateofbirth = field.NewString(table, "dateofbirth")
+	u.Sex = field.NewField(table, "sex")
+	u.Height = field.NewString(table, "height")
+	u.Jail = field.NewInt32(table, "jail")
+	u.PhoneNumber = field.NewString(table, "phone_number")
+	u.Accounts = field.NewField(table, "accounts")
+	u.Visum = field.NewInt32(table, "visum")
+	u.Playtime = field.NewInt32(table, "playtime")
+	u.CreatedAt = field.NewTime(table, "created_at")
+	u.UpdatedAt = field.NewTime(table, "last_seen")
 
-	c.fillFieldMap()
+	u.fillFieldMap()
 
-	return c
+	return u
 }
 
-func (c *citizen) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
-	_f, ok := c.fieldMap[fieldName]
+func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
+	_f, ok := u.fieldMap[fieldName]
 	if !ok || _f == nil {
 		return nil, false
 	}
@@ -119,79 +140,218 @@ func (c *citizen) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	return _oe, ok
 }
 
-func (c *citizen) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 17)
-	c.fieldMap["identifier"] = c.Identifier
-	c.fieldMap["job"] = c.Job
-	c.fieldMap["job_grade"] = c.JobGrade
-	c.fieldMap["firstname"] = c.Firstname
-	c.fieldMap["lastname"] = c.Lastname
-	c.fieldMap["dateofbirth"] = c.Dateofbirth
-	c.fieldMap["sex"] = c.Sex
-	c.fieldMap["height"] = c.Height
-	c.fieldMap["is_dead"] = c.IsDead
-	c.fieldMap["jail"] = c.Jail
-	c.fieldMap["phone_number"] = c.PhoneNumber
-	c.fieldMap["accounts"] = c.Accounts
-	c.fieldMap["disabled"] = c.Disabled
-	c.fieldMap["visum"] = c.Visum
-	c.fieldMap["playtime"] = c.Playtime
-	c.fieldMap["created_at"] = c.CreatedAt
-	c.fieldMap["last_seen"] = c.LastSeen
+func (u *user) fillFieldMap() {
+	u.fieldMap = make(map[string]field.Expr, 18)
+	u.fieldMap["id"] = u.ID
+	u.fieldMap["identifier"] = u.Identifier
+	u.fieldMap["job"] = u.Job
+	u.fieldMap["job_grade"] = u.JobGrade
+	u.fieldMap["firstname"] = u.Firstname
+	u.fieldMap["lastname"] = u.Lastname
+	u.fieldMap["dateofbirth"] = u.Dateofbirth
+	u.fieldMap["sex"] = u.Sex
+	u.fieldMap["height"] = u.Height
+	u.fieldMap["jail"] = u.Jail
+	u.fieldMap["phone_number"] = u.PhoneNumber
+	u.fieldMap["accounts"] = u.Accounts
+	u.fieldMap["visum"] = u.Visum
+	u.fieldMap["playtime"] = u.Playtime
+	u.fieldMap["created_at"] = u.CreatedAt
+	u.fieldMap["last_seen"] = u.UpdatedAt
+
 }
 
-func (c citizen) clone(db *gorm.DB) citizen {
-	c.citizenDo.ReplaceConnPool(db.Statement.ConnPool)
-	return c
+func (u user) clone(db *gorm.DB) user {
+	u.userDo.ReplaceConnPool(db.Statement.ConnPool)
+	return u
 }
 
-func (c citizen) replaceDB(db *gorm.DB) citizen {
-	c.citizenDo.ReplaceDB(db)
-	return c
+func (u user) replaceDB(db *gorm.DB) user {
+	u.userDo.ReplaceDB(db)
+	return u
 }
 
-type citizenDo struct{ gen.DO }
+type userHasManyDocuments struct {
+	db *gorm.DB
 
-type ICitizenDo interface {
+	field.RelationField
+
+	Jobs struct {
+		field.RelationField
+	}
+	Users struct {
+		field.RelationField
+	}
+}
+
+func (a userHasManyDocuments) Where(conds ...field.Expr) *userHasManyDocuments {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userHasManyDocuments) WithContext(ctx context.Context) *userHasManyDocuments {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userHasManyDocuments) Model(m *model.User) *userHasManyDocumentsTx {
+	return &userHasManyDocumentsTx{a.db.Model(m).Association(a.Name())}
+}
+
+type userHasManyDocumentsTx struct{ tx *gorm.Association }
+
+func (a userHasManyDocumentsTx) Find() (result []*model.Document, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userHasManyDocumentsTx) Append(values ...*model.Document) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userHasManyDocumentsTx) Replace(values ...*model.Document) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userHasManyDocumentsTx) Delete(values ...*model.Document) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userHasManyDocumentsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userHasManyDocumentsTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type userHasManyUserLicenses struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a userHasManyUserLicenses) Where(conds ...field.Expr) *userHasManyUserLicenses {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userHasManyUserLicenses) WithContext(ctx context.Context) *userHasManyUserLicenses {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userHasManyUserLicenses) Model(m *model.User) *userHasManyUserLicensesTx {
+	return &userHasManyUserLicensesTx{a.db.Model(m).Association(a.Name())}
+}
+
+type userHasManyUserLicensesTx struct{ tx *gorm.Association }
+
+func (a userHasManyUserLicensesTx) Find() (result []*model.UserLicense, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userHasManyUserLicensesTx) Append(values ...*model.UserLicense) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userHasManyUserLicensesTx) Replace(values ...*model.UserLicense) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userHasManyUserLicensesTx) Delete(values ...*model.UserLicense) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userHasManyUserLicensesTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userHasManyUserLicensesTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type userDo struct{ gen.DO }
+
+type IUserDo interface {
 	gen.SubQuery
-	Debug() ICitizenDo
-	WithContext(ctx context.Context) ICitizenDo
+	Debug() IUserDo
+	WithContext(ctx context.Context) IUserDo
 	WithResult(fc func(tx gen.Dao)) gen.ResultInfo
 	ReplaceDB(db *gorm.DB)
-	ReadDB() ICitizenDo
-	WriteDB() ICitizenDo
+	ReadDB() IUserDo
+	WriteDB() IUserDo
 	As(alias string) gen.Dao
-	Session(config *gorm.Session) ICitizenDo
+	Session(config *gorm.Session) IUserDo
 	Columns(cols ...field.Expr) gen.Columns
-	Clauses(conds ...clause.Expression) ICitizenDo
-	Not(conds ...gen.Condition) ICitizenDo
-	Or(conds ...gen.Condition) ICitizenDo
-	Select(conds ...field.Expr) ICitizenDo
-	Where(conds ...gen.Condition) ICitizenDo
-	Order(conds ...field.Expr) ICitizenDo
-	Distinct(cols ...field.Expr) ICitizenDo
-	Omit(cols ...field.Expr) ICitizenDo
-	Join(table schema.Tabler, on ...field.Expr) ICitizenDo
-	LeftJoin(table schema.Tabler, on ...field.Expr) ICitizenDo
-	RightJoin(table schema.Tabler, on ...field.Expr) ICitizenDo
-	Group(cols ...field.Expr) ICitizenDo
-	Having(conds ...gen.Condition) ICitizenDo
-	Limit(limit int) ICitizenDo
-	Offset(offset int) ICitizenDo
+	Clauses(conds ...clause.Expression) IUserDo
+	Not(conds ...gen.Condition) IUserDo
+	Or(conds ...gen.Condition) IUserDo
+	Select(conds ...field.Expr) IUserDo
+	Where(conds ...gen.Condition) IUserDo
+	Order(conds ...field.Expr) IUserDo
+	Distinct(cols ...field.Expr) IUserDo
+	Omit(cols ...field.Expr) IUserDo
+	Join(table schema.Tabler, on ...field.Expr) IUserDo
+	LeftJoin(table schema.Tabler, on ...field.Expr) IUserDo
+	RightJoin(table schema.Tabler, on ...field.Expr) IUserDo
+	Group(cols ...field.Expr) IUserDo
+	Having(conds ...gen.Condition) IUserDo
+	Limit(limit int) IUserDo
+	Offset(offset int) IUserDo
 	Count() (count int64, err error)
-	Scopes(funcs ...func(gen.Dao) gen.Dao) ICitizenDo
-	Unscoped() ICitizenDo
-	Create(values ...*model.Citizen) error
-	CreateInBatches(values []*model.Citizen, batchSize int) error
-	Save(values ...*model.Citizen) error
-	First() (*model.Citizen, error)
-	Take() (*model.Citizen, error)
-	Last() (*model.Citizen, error)
-	Find() ([]*model.Citizen, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Citizen, err error)
-	FindInBatches(result *[]*model.Citizen, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Scopes(funcs ...func(gen.Dao) gen.Dao) IUserDo
+	Unscoped() IUserDo
+	Create(values ...*model.User) error
+	CreateInBatches(values []*model.User, batchSize int) error
+	Save(values ...*model.User) error
+	First() (*model.User, error)
+	Take() (*model.User, error)
+	Last() (*model.User, error)
+	Find() ([]*model.User, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.User, err error)
+	FindInBatches(result *[]*model.User, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*model.Citizen) (info gen.ResultInfo, err error)
+	Delete(...*model.User) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -199,218 +359,218 @@ type ICitizenDo interface {
 	UpdateColumnSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	UpdateColumns(value interface{}) (info gen.ResultInfo, err error)
 	UpdateFrom(q gen.SubQuery) gen.Dao
-	Attrs(attrs ...field.AssignExpr) ICitizenDo
-	Assign(attrs ...field.AssignExpr) ICitizenDo
-	Joins(fields ...field.RelationField) ICitizenDo
-	Preload(fields ...field.RelationField) ICitizenDo
-	FirstOrInit() (*model.Citizen, error)
-	FirstOrCreate() (*model.Citizen, error)
-	FindByPage(offset int, limit int) (result []*model.Citizen, count int64, err error)
+	Attrs(attrs ...field.AssignExpr) IUserDo
+	Assign(attrs ...field.AssignExpr) IUserDo
+	Joins(fields ...field.RelationField) IUserDo
+	Preload(fields ...field.RelationField) IUserDo
+	FirstOrInit() (*model.User, error)
+	FirstOrCreate() (*model.User, error)
+	FindByPage(offset int, limit int) (result []*model.User, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
 	Scan(result interface{}) (err error)
-	Returning(value interface{}, columns ...string) ICitizenDo
+	Returning(value interface{}, columns ...string) IUserDo
 	UnderlyingDB() *gorm.DB
 	schema.Tabler
 }
 
-func (c citizenDo) Debug() ICitizenDo {
-	return c.withDO(c.DO.Debug())
+func (u userDo) Debug() IUserDo {
+	return u.withDO(u.DO.Debug())
 }
 
-func (c citizenDo) WithContext(ctx context.Context) ICitizenDo {
-	return c.withDO(c.DO.WithContext(ctx))
+func (u userDo) WithContext(ctx context.Context) IUserDo {
+	return u.withDO(u.DO.WithContext(ctx))
 }
 
-func (c citizenDo) ReadDB() ICitizenDo {
-	return c.Clauses(dbresolver.Read)
+func (u userDo) ReadDB() IUserDo {
+	return u.Clauses(dbresolver.Read)
 }
 
-func (c citizenDo) WriteDB() ICitizenDo {
-	return c.Clauses(dbresolver.Write)
+func (u userDo) WriteDB() IUserDo {
+	return u.Clauses(dbresolver.Write)
 }
 
-func (c citizenDo) Session(config *gorm.Session) ICitizenDo {
-	return c.withDO(c.DO.Session(config))
+func (u userDo) Session(config *gorm.Session) IUserDo {
+	return u.withDO(u.DO.Session(config))
 }
 
-func (c citizenDo) Clauses(conds ...clause.Expression) ICitizenDo {
-	return c.withDO(c.DO.Clauses(conds...))
+func (u userDo) Clauses(conds ...clause.Expression) IUserDo {
+	return u.withDO(u.DO.Clauses(conds...))
 }
 
-func (c citizenDo) Returning(value interface{}, columns ...string) ICitizenDo {
-	return c.withDO(c.DO.Returning(value, columns...))
+func (u userDo) Returning(value interface{}, columns ...string) IUserDo {
+	return u.withDO(u.DO.Returning(value, columns...))
 }
 
-func (c citizenDo) Not(conds ...gen.Condition) ICitizenDo {
-	return c.withDO(c.DO.Not(conds...))
+func (u userDo) Not(conds ...gen.Condition) IUserDo {
+	return u.withDO(u.DO.Not(conds...))
 }
 
-func (c citizenDo) Or(conds ...gen.Condition) ICitizenDo {
-	return c.withDO(c.DO.Or(conds...))
+func (u userDo) Or(conds ...gen.Condition) IUserDo {
+	return u.withDO(u.DO.Or(conds...))
 }
 
-func (c citizenDo) Select(conds ...field.Expr) ICitizenDo {
-	return c.withDO(c.DO.Select(conds...))
+func (u userDo) Select(conds ...field.Expr) IUserDo {
+	return u.withDO(u.DO.Select(conds...))
 }
 
-func (c citizenDo) Where(conds ...gen.Condition) ICitizenDo {
-	return c.withDO(c.DO.Where(conds...))
+func (u userDo) Where(conds ...gen.Condition) IUserDo {
+	return u.withDO(u.DO.Where(conds...))
 }
 
-func (c citizenDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) ICitizenDo {
-	return c.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
+func (u userDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IUserDo {
+	return u.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
-func (c citizenDo) Order(conds ...field.Expr) ICitizenDo {
-	return c.withDO(c.DO.Order(conds...))
+func (u userDo) Order(conds ...field.Expr) IUserDo {
+	return u.withDO(u.DO.Order(conds...))
 }
 
-func (c citizenDo) Distinct(cols ...field.Expr) ICitizenDo {
-	return c.withDO(c.DO.Distinct(cols...))
+func (u userDo) Distinct(cols ...field.Expr) IUserDo {
+	return u.withDO(u.DO.Distinct(cols...))
 }
 
-func (c citizenDo) Omit(cols ...field.Expr) ICitizenDo {
-	return c.withDO(c.DO.Omit(cols...))
+func (u userDo) Omit(cols ...field.Expr) IUserDo {
+	return u.withDO(u.DO.Omit(cols...))
 }
 
-func (c citizenDo) Join(table schema.Tabler, on ...field.Expr) ICitizenDo {
-	return c.withDO(c.DO.Join(table, on...))
+func (u userDo) Join(table schema.Tabler, on ...field.Expr) IUserDo {
+	return u.withDO(u.DO.Join(table, on...))
 }
 
-func (c citizenDo) LeftJoin(table schema.Tabler, on ...field.Expr) ICitizenDo {
-	return c.withDO(c.DO.LeftJoin(table, on...))
+func (u userDo) LeftJoin(table schema.Tabler, on ...field.Expr) IUserDo {
+	return u.withDO(u.DO.LeftJoin(table, on...))
 }
 
-func (c citizenDo) RightJoin(table schema.Tabler, on ...field.Expr) ICitizenDo {
-	return c.withDO(c.DO.RightJoin(table, on...))
+func (u userDo) RightJoin(table schema.Tabler, on ...field.Expr) IUserDo {
+	return u.withDO(u.DO.RightJoin(table, on...))
 }
 
-func (c citizenDo) Group(cols ...field.Expr) ICitizenDo {
-	return c.withDO(c.DO.Group(cols...))
+func (u userDo) Group(cols ...field.Expr) IUserDo {
+	return u.withDO(u.DO.Group(cols...))
 }
 
-func (c citizenDo) Having(conds ...gen.Condition) ICitizenDo {
-	return c.withDO(c.DO.Having(conds...))
+func (u userDo) Having(conds ...gen.Condition) IUserDo {
+	return u.withDO(u.DO.Having(conds...))
 }
 
-func (c citizenDo) Limit(limit int) ICitizenDo {
-	return c.withDO(c.DO.Limit(limit))
+func (u userDo) Limit(limit int) IUserDo {
+	return u.withDO(u.DO.Limit(limit))
 }
 
-func (c citizenDo) Offset(offset int) ICitizenDo {
-	return c.withDO(c.DO.Offset(offset))
+func (u userDo) Offset(offset int) IUserDo {
+	return u.withDO(u.DO.Offset(offset))
 }
 
-func (c citizenDo) Scopes(funcs ...func(gen.Dao) gen.Dao) ICitizenDo {
-	return c.withDO(c.DO.Scopes(funcs...))
+func (u userDo) Scopes(funcs ...func(gen.Dao) gen.Dao) IUserDo {
+	return u.withDO(u.DO.Scopes(funcs...))
 }
 
-func (c citizenDo) Unscoped() ICitizenDo {
-	return c.withDO(c.DO.Unscoped())
+func (u userDo) Unscoped() IUserDo {
+	return u.withDO(u.DO.Unscoped())
 }
 
-func (c citizenDo) Create(values ...*model.Citizen) error {
+func (u userDo) Create(values ...*model.User) error {
 	if len(values) == 0 {
 		return nil
 	}
-	return c.DO.Create(values)
+	return u.DO.Create(values)
 }
 
-func (c citizenDo) CreateInBatches(values []*model.Citizen, batchSize int) error {
-	return c.DO.CreateInBatches(values, batchSize)
+func (u userDo) CreateInBatches(values []*model.User, batchSize int) error {
+	return u.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (c citizenDo) Save(values ...*model.Citizen) error {
+func (u userDo) Save(values ...*model.User) error {
 	if len(values) == 0 {
 		return nil
 	}
-	return c.DO.Save(values)
+	return u.DO.Save(values)
 }
 
-func (c citizenDo) First() (*model.Citizen, error) {
-	if result, err := c.DO.First(); err != nil {
+func (u userDo) First() (*model.User, error) {
+	if result, err := u.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Citizen), nil
+		return result.(*model.User), nil
 	}
 }
 
-func (c citizenDo) Take() (*model.Citizen, error) {
-	if result, err := c.DO.Take(); err != nil {
+func (u userDo) Take() (*model.User, error) {
+	if result, err := u.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Citizen), nil
+		return result.(*model.User), nil
 	}
 }
 
-func (c citizenDo) Last() (*model.Citizen, error) {
-	if result, err := c.DO.Last(); err != nil {
+func (u userDo) Last() (*model.User, error) {
+	if result, err := u.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Citizen), nil
+		return result.(*model.User), nil
 	}
 }
 
-func (c citizenDo) Find() ([]*model.Citizen, error) {
-	result, err := c.DO.Find()
-	return result.([]*model.Citizen), err
+func (u userDo) Find() ([]*model.User, error) {
+	result, err := u.DO.Find()
+	return result.([]*model.User), err
 }
 
-func (c citizenDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Citizen, err error) {
-	buf := make([]*model.Citizen, 0, batchSize)
-	err = c.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
+func (u userDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.User, err error) {
+	buf := make([]*model.User, 0, batchSize)
+	err = u.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
 	})
 	return results, err
 }
 
-func (c citizenDo) FindInBatches(result *[]*model.Citizen, batchSize int, fc func(tx gen.Dao, batch int) error) error {
-	return c.DO.FindInBatches(result, batchSize, fc)
+func (u userDo) FindInBatches(result *[]*model.User, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+	return u.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (c citizenDo) Attrs(attrs ...field.AssignExpr) ICitizenDo {
-	return c.withDO(c.DO.Attrs(attrs...))
+func (u userDo) Attrs(attrs ...field.AssignExpr) IUserDo {
+	return u.withDO(u.DO.Attrs(attrs...))
 }
 
-func (c citizenDo) Assign(attrs ...field.AssignExpr) ICitizenDo {
-	return c.withDO(c.DO.Assign(attrs...))
+func (u userDo) Assign(attrs ...field.AssignExpr) IUserDo {
+	return u.withDO(u.DO.Assign(attrs...))
 }
 
-func (c citizenDo) Joins(fields ...field.RelationField) ICitizenDo {
+func (u userDo) Joins(fields ...field.RelationField) IUserDo {
 	for _, _f := range fields {
-		c = *c.withDO(c.DO.Joins(_f))
+		u = *u.withDO(u.DO.Joins(_f))
 	}
-	return &c
+	return &u
 }
 
-func (c citizenDo) Preload(fields ...field.RelationField) ICitizenDo {
+func (u userDo) Preload(fields ...field.RelationField) IUserDo {
 	for _, _f := range fields {
-		c = *c.withDO(c.DO.Preload(_f))
+		u = *u.withDO(u.DO.Preload(_f))
 	}
-	return &c
+	return &u
 }
 
-func (c citizenDo) FirstOrInit() (*model.Citizen, error) {
-	if result, err := c.DO.FirstOrInit(); err != nil {
+func (u userDo) FirstOrInit() (*model.User, error) {
+	if result, err := u.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Citizen), nil
+		return result.(*model.User), nil
 	}
 }
 
-func (c citizenDo) FirstOrCreate() (*model.Citizen, error) {
-	if result, err := c.DO.FirstOrCreate(); err != nil {
+func (u userDo) FirstOrCreate() (*model.User, error) {
+	if result, err := u.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Citizen), nil
+		return result.(*model.User), nil
 	}
 }
 
-func (c citizenDo) FindByPage(offset int, limit int) (result []*model.Citizen, count int64, err error) {
-	result, err = c.Offset(offset).Limit(limit).Find()
+func (u userDo) FindByPage(offset int, limit int) (result []*model.User, count int64, err error) {
+	result, err = u.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
 	}
@@ -420,29 +580,29 @@ func (c citizenDo) FindByPage(offset int, limit int) (result []*model.Citizen, c
 		return
 	}
 
-	count, err = c.Offset(-1).Limit(-1).Count()
+	count, err = u.Offset(-1).Limit(-1).Count()
 	return
 }
 
-func (c citizenDo) ScanByPage(result interface{}, offset int, limit int) (count int64, err error) {
-	count, err = c.Count()
+func (u userDo) ScanByPage(result interface{}, offset int, limit int) (count int64, err error) {
+	count, err = u.Count()
 	if err != nil {
 		return
 	}
 
-	err = c.Offset(offset).Limit(limit).Scan(result)
+	err = u.Offset(offset).Limit(limit).Scan(result)
 	return
 }
 
-func (c citizenDo) Scan(result interface{}) (err error) {
-	return c.DO.Scan(result)
+func (u userDo) Scan(result interface{}) (err error) {
+	return u.DO.Scan(result)
 }
 
-func (c citizenDo) Delete(models ...*model.Citizen) (result gen.ResultInfo, err error) {
-	return c.DO.Delete(models)
+func (u userDo) Delete(models ...*model.User) (result gen.ResultInfo, err error) {
+	return u.DO.Delete(models)
 }
 
-func (c *citizenDo) withDO(do gen.Dao) *citizenDo {
-	c.DO = *do.(*gen.DO)
-	return c
+func (u *userDo) withDO(do gen.Dao) *userDo {
+	u.DO = *do.(*gen.DO)
+	return u
 }

@@ -34,8 +34,19 @@ func newDocument(db *gorm.DB, opts ...gen.DOOption) document {
 	_document.Title = field.NewString(tableName, "title")
 	_document.Content = field.NewString(tableName, "content")
 	_document.ContentType = field.NewString(tableName, "content_type")
-	_document.Creator = field.NewUint(tableName, "creator")
-	_document.Path = field.NewString(tableName, "path")
+	_document.Creator = field.NewString(tableName, "creator")
+	_document.Public = field.NewBool(tableName, "public")
+	_document.Jobs = documentHasManyJobs{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Jobs", "model.DocumentJobAccess"),
+	}
+
+	_document.Users = documentHasManyUsers{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Users", "model.DocumentUserAccess"),
+	}
 
 	_document.fillFieldMap()
 
@@ -53,8 +64,11 @@ type document struct {
 	Title       field.String
 	Content     field.String
 	ContentType field.String
-	Creator     field.Uint
-	Path        field.String
+	Creator     field.String
+	Public      field.Bool
+	Jobs        documentHasManyJobs
+
+	Users documentHasManyUsers
 
 	fieldMap map[string]field.Expr
 }
@@ -78,8 +92,8 @@ func (d *document) updateTableName(table string) *document {
 	d.Title = field.NewString(table, "title")
 	d.Content = field.NewString(table, "content")
 	d.ContentType = field.NewString(table, "content_type")
-	d.Creator = field.NewUint(table, "creator")
-	d.Path = field.NewString(table, "path")
+	d.Creator = field.NewString(table, "creator")
+	d.Public = field.NewBool(table, "public")
 
 	d.fillFieldMap()
 
@@ -96,7 +110,7 @@ func (d *document) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (d *document) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 9)
+	d.fieldMap = make(map[string]field.Expr, 11)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["created_at"] = d.CreatedAt
 	d.fieldMap["updated_at"] = d.UpdatedAt
@@ -105,7 +119,8 @@ func (d *document) fillFieldMap() {
 	d.fieldMap["content"] = d.Content
 	d.fieldMap["content_type"] = d.ContentType
 	d.fieldMap["creator"] = d.Creator
-	d.fieldMap["path"] = d.Path
+	d.fieldMap["public"] = d.Public
+
 }
 
 func (d document) clone(db *gorm.DB) document {
@@ -116,6 +131,138 @@ func (d document) clone(db *gorm.DB) document {
 func (d document) replaceDB(db *gorm.DB) document {
 	d.documentDo.ReplaceDB(db)
 	return d
+}
+
+type documentHasManyJobs struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a documentHasManyJobs) Where(conds ...field.Expr) *documentHasManyJobs {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a documentHasManyJobs) WithContext(ctx context.Context) *documentHasManyJobs {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a documentHasManyJobs) Model(m *model.Document) *documentHasManyJobsTx {
+	return &documentHasManyJobsTx{a.db.Model(m).Association(a.Name())}
+}
+
+type documentHasManyJobsTx struct{ tx *gorm.Association }
+
+func (a documentHasManyJobsTx) Find() (result []*model.DocumentJobAccess, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a documentHasManyJobsTx) Append(values ...*model.DocumentJobAccess) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a documentHasManyJobsTx) Replace(values ...*model.DocumentJobAccess) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a documentHasManyJobsTx) Delete(values ...*model.DocumentJobAccess) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a documentHasManyJobsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a documentHasManyJobsTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type documentHasManyUsers struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a documentHasManyUsers) Where(conds ...field.Expr) *documentHasManyUsers {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a documentHasManyUsers) WithContext(ctx context.Context) *documentHasManyUsers {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a documentHasManyUsers) Model(m *model.Document) *documentHasManyUsersTx {
+	return &documentHasManyUsersTx{a.db.Model(m).Association(a.Name())}
+}
+
+type documentHasManyUsersTx struct{ tx *gorm.Association }
+
+func (a documentHasManyUsersTx) Find() (result []*model.DocumentUserAccess, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a documentHasManyUsersTx) Append(values ...*model.DocumentUserAccess) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a documentHasManyUsersTx) Replace(values ...*model.DocumentUserAccess) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a documentHasManyUsersTx) Delete(values ...*model.DocumentUserAccess) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a documentHasManyUsersTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a documentHasManyUsersTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type documentDo struct{ gen.DO }

@@ -12,3 +12,10 @@ type Accounts struct {
 	Bank       int `json:"bank"`
 	Cash       int `json:"money"`
 }
+
+type ContentType string
+
+const (
+	PlaintextContentType ContentType = "plaintext"
+	MarkdownContentType  ContentType = "markdown"
+)
