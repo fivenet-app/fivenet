@@ -4,16 +4,18 @@
 
 - [ ] Authentication
     - [ ] Use Discord Login and an in-game "register" command of some sorts
-- [ ] User Database
-    - [ ] Search by `firstname` and `lastname`
+- [ ] User Database - 1. Prio
+    - [ ] Search by `firstname`, `lastname` and `job`
+    - [ ] Display a single user's info
 - [ ] Documents
+    - [ ] Sharing
+        - [ ] Sharing with the same job automatically
+        - [ ] Sharing with the citizen affected (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ)
+        - [ ] People can request access by link
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
-    - [ ] Sharing with the same job automatically
-    - [ ] Sharing with the citizen affected (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ)
-    - [ ] People can request access by link
 - [ ] Dispatch System
     - [ ] Livemap
-- [ ] Job Management
+- [ ] Employee Management
     - [ ] Warn Employees ("Führungsregister")
     - [ ] Promote and Demote Employees
     - [ ] Fire employees
@@ -23,11 +25,14 @@
 ### Required Tools
 
 * Golang 1.19
-* `swag` - Generate Swagger docs.
-    ```console
-    go install github.com/swaggo/swag/cmd/swag@latest
-    ```
 * `yarn`
+* [`protoc`](https://grpc.io/docs/protoc-installation/)
+* `protoc-gen-go`:
+    * `go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28`
+    * `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2`
+* `protoc-gen-js`: Run `yarn` (without any args)
+* `protoc-gen-grpc-web`: Download and install the latest release from https://github.com/grpc/grpc-web/releases
+* `protoc-gen-validate`: Download and install the latest release from https://github.com/bufbuild/protoc-gen-validate/releases
 
 ### What data is currently missing from FiveM tables?
 

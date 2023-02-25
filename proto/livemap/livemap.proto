@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package gen.livemap;
+option go_package = "github.com/galexrt/arpanet/gen/livemap";
+
+service LivemapService {
+    rpc Stream(StreamRequest) returns (stream LivemapMarker) {}
+}
+
+message StreamRequest {
+}
+
+message LivemapMarker {
+    Marker dispatches = 1;
+}
+
+message Marker {
+    float x = 1;
+    float y = 2;
+
+    string icon = 3;
+    string popup = 4;
+}

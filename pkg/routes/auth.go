@@ -1,4 +1,4 @@
-package v1
+package routes
 
 import (
 	"fmt"
@@ -13,32 +13,12 @@ func AuthRoutes(g *gin.RouterGroup) {
 	g.POST("/", PostAuth)
 }
 
-// Auth godoc
-//
-//	@Summary	Show authentication status
-//	@Schemes
-//	@Description	Shows your authentication status
-//	@Tags			auth
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{string}	Pong
-//	@Router			/auth/ [get]
 func GetAuth(c *gin.Context) {
 	info, _ := auth.GetSessionInfo(c)
 
 	c.JSON(http.StatusOK, info)
 }
 
-// Auth godoc
-//
-//	@Summary	Authenticate yourself
-//	@Schemes
-//	@Description	Authenticate yourself against the API
-//	@Tags			auth
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{string}	Pong
-//	@Router			/auth/ [post]
 func PostAuth(c *gin.Context) {
 	err := auth.SaveSessionInfo(c, &auth.SessionInfo{
 		ID:         26061,

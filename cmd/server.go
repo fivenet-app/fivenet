@@ -3,17 +3,18 @@ package cmd
 import (
 	"context"
 	"errors"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	api "github.com/galexrt/arpanet/api"
-	apiv1 "github.com/galexrt/arpanet/api/v1"
+	"github.com/galexrt/arpanet/gen/echo"
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/config"
 	gormsessions "github.com/galexrt/arpanet/pkg/gormsessions"
+	"github.com/galexrt/arpanet/pkg/routes"
 	"github.com/galexrt/arpanet/query"
 	"github.com/gin-contrib/sessions"
 	ginzap "github.com/gin-contrib/zap"
@@ -21,6 +22,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 var serverCmd = &cobra.Command{
@@ -49,8 +51,7 @@ var serverCmd = &cobra.Command{
 		// Prometheus Metrics endpoint
 		r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 		// Register app routes
-		RegisterRoutes(r)
-		apiv1.Register(r)
+		routes.RegisterRoutes(r)
 
 		// Register embed FS for assets and other static files
 		if gin.Mode() == gin.DebugMode {
@@ -66,7 +67,25 @@ var serverCmd = &cobra.Command{
 				file,
 			)
 		})
-		r.Static("/livemap", "./livemap/dist/")
+
+		// Create GRPC Server
+		lis, err := net.Listen("tcp", config.C.GRPC.Listen)
+		if err != nil {
+			logger.Fatal("failed to listen", zap.Error(err))
+		}
+
+		grpcServer := grpc.NewServer()
+		// Attach the echo service to the GRPC server
+		echo.RegisterEchoServiceServer(grpcServer, &echo.Server{})
+
+		go func() {
+			if err := grpcServer.Serve(lis); err != nil {
+				logger.Error("failed to serve grpc server", zap.Error(err))
+			} else {
+				logger.Info("grpc server started successfully")
+			}
+		}()
+		logger.Info("grpc server listening", zap.String("address", config.C.GRPC.Listen))
 
 		// Create HTTP Server for graceful shutdown handling
 		srv := &http.Server{
@@ -77,10 +96,10 @@ var serverCmd = &cobra.Command{
 		// it won't block the graceful shutdown handling below
 		go func() {
 			if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-				logger.Error("listen error", zap.Error(err))
+				logger.Error("http listen error", zap.Error(err))
 			}
 		}()
-		logger.Info("server listening", zap.String("address", config.C.HTTP.Listen))
+		logger.Info("http server listening", zap.String("address", config.C.HTTP.Listen))
 
 		// Wait for interrupt signal to gracefully shutdown the server with
 		// a timeout of 5 seconds.
@@ -91,7 +110,7 @@ var serverCmd = &cobra.Command{
 		//lint:ignore SA1017 can be unbuffered because of signal channel usage
 		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 		<-quit
-		logger.Info("shutting down server...")
+		logger.Info("shutting down servers...")
 
 		// The context is used to inform the server it has 5 seconds to finish
 		// the request it is currently handling
@@ -99,10 +118,12 @@ var serverCmd = &cobra.Command{
 		defer cancel()
 
 		if err := srv.Shutdown(ctx); err != nil {
-			logger.Error("server forced to shutdown", zap.Error(err))
+			logger.Error("http server forced to shutdown", zap.Error(err))
 		}
 
-		logger.Info("server exiting")
+		grpcServer.GracefulStop()
+
+		logger.Info("http server exiting")
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -112,10 +133,4 @@ var serverCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serverCmd)
-}
-
-func RegisterRoutes(r *gin.Engine) {
-	r.Group("/users", func(c *gin.Context) {
-		api.Users.SearchUsersByNamePages(c.Query("firstname"), c.Query("lastname"), 0)
-	})
 }

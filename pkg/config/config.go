@@ -13,12 +13,17 @@ type Config struct {
 	Mode     string `default:"debug" yaml:"mode"`
 
 	HTTP     HTTP     `yaml:"http"`
+	GRPC     GRPC     `yaml:"grpc"`
 	Database Database `yaml:"database"`
 }
 
 type HTTP struct {
-	Listen   string   `default:":8080" yaml:"listen"`
+	Listen   string   `default:":8181" yaml:"listen"`
 	Sessions Sessions `yaml:"sessions"`
+}
+
+type GRPC struct {
+	Listen string `default:":9090" yaml:"listen"`
 }
 
 type Sessions struct {

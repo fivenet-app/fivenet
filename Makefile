@@ -1,18 +1,31 @@
 .DEFAULT: run-server
 
-.PHONY: run-server
-run-server:
-	swag init
-	go run . server
-
 .PHONY: build
 build:
-	swag init
 	go build -o arpanet .
 
-.PHONY: watch-server
-watch-server:
-	while true; do { git ls-files; git ls-files . --exclude-standard --others; } | entr -d $(MAKE) run-server; sleep .75; done
+.PHONY: run-server
+run-server:
+	go run . server
 
+.PHONY: gen-gorm
 gen-gorm:
-	go run ./gen
+	go run ./gorm/main.go
+
+.PHONY: gen-proto
+gen-proto:
+	protoc \
+		--proto_path=./proto \
+		--go_out=./gen \
+		--go_opt=paths=source_relative \
+		--go-grpc_out=./gen \
+		--go-grpc_opt=paths=source_relative \
+		--validate_opt=paths=source_relative \
+		--validate_out="lang=go:./gen" \
+		$(shell find proto/ -iname "*.proto")
+
+	PATH="$$PATH:node_modules/protoc-gen-js/bin/" protoc \
+		--proto_path=./proto \
+		--js_out=import_style=commonjs,binary:./gen \
+		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen \
+		$(shell find proto/ -iname "*.proto")
