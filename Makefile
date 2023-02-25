@@ -1,5 +1,9 @@
 .DEFAULT: run-server
 
+.PHONY: clean
+clean:
+	rm -rf ./dist/
+
 .PHONY: build
 build:
 	go build -o arpanet .
