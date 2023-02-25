@@ -135,71 +135,110 @@ var _ interface {
 	ErrorName() string
 } = StreamRequestValidationError{}
 
-// Validate checks the field values on LivemapMarker with the rules defined in
+// Validate checks the field values on StreamResponse with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *LivemapMarker) Validate() error {
+func (m *StreamResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on LivemapMarker with the rules defined
+// ValidateAll checks the field values on StreamResponse with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in LivemapMarkerMultiError, or
-// nil if none found.
-func (m *LivemapMarker) ValidateAll() error {
+// result is a list of violation errors wrapped in StreamResponseMultiError,
+// or nil if none found.
+func (m *StreamResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *LivemapMarker) validate(all bool) error {
+func (m *StreamResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetDispatches()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, LivemapMarkerValidationError{
-					field:  "Dispatches",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	for idx, item := range m.GetDispatches() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  fmt.Sprintf("Dispatches[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  fmt.Sprintf("Dispatches[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, LivemapMarkerValidationError{
-					field:  "Dispatches",
+				return StreamResponseValidationError{
+					field:  fmt.Sprintf("Dispatches[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetDispatches()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return LivemapMarkerValidationError{
-				field:  "Dispatches",
-				reason: "embedded message failed validation",
-				cause:  err,
+
+	}
+
+	for idx, item := range m.GetUsers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  fmt.Sprintf("Users[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
 			}
 		}
+
 	}
 
 	if len(errors) > 0 {
-		return LivemapMarkerMultiError(errors)
+		return StreamResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// LivemapMarkerMultiError is an error wrapping multiple validation errors
-// returned by LivemapMarker.ValidateAll() if the designated constraints
+// StreamResponseMultiError is an error wrapping multiple validation errors
+// returned by StreamResponse.ValidateAll() if the designated constraints
 // aren't met.
-type LivemapMarkerMultiError []error
+type StreamResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m LivemapMarkerMultiError) Error() string {
+func (m StreamResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -208,11 +247,11 @@ func (m LivemapMarkerMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m LivemapMarkerMultiError) AllErrors() []error { return m }
+func (m StreamResponseMultiError) AllErrors() []error { return m }
 
-// LivemapMarkerValidationError is the validation error returned by
-// LivemapMarker.Validate if the designated constraints aren't met.
-type LivemapMarkerValidationError struct {
+// StreamResponseValidationError is the validation error returned by
+// StreamResponse.Validate if the designated constraints aren't met.
+type StreamResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -220,22 +259,22 @@ type LivemapMarkerValidationError struct {
 }
 
 // Field function returns field value.
-func (e LivemapMarkerValidationError) Field() string { return e.field }
+func (e StreamResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e LivemapMarkerValidationError) Reason() string { return e.reason }
+func (e StreamResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e LivemapMarkerValidationError) Cause() error { return e.cause }
+func (e StreamResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e LivemapMarkerValidationError) Key() bool { return e.key }
+func (e StreamResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e LivemapMarkerValidationError) ErrorName() string { return "LivemapMarkerValidationError" }
+func (e StreamResponseValidationError) ErrorName() string { return "StreamResponseValidationError" }
 
 // Error satisfies the builtin error interface
-func (e LivemapMarkerValidationError) Error() string {
+func (e StreamResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -247,14 +286,14 @@ func (e LivemapMarkerValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sLivemapMarker.%s: %s%s",
+		"invalid %sStreamResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = LivemapMarkerValidationError{}
+var _ error = StreamResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -262,7 +301,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = LivemapMarkerValidationError{}
+} = StreamResponseValidationError{}
 
 // Validate checks the field values on Marker with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -288,6 +327,10 @@ func (m *Marker) validate(all bool) error {
 	// no validation rules for X
 
 	// no validation rules for Y
+
+	// no validation rules for Id
+
+	// no validation rules for Name
 
 	// no validation rules for Icon
 

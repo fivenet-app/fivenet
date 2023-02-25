@@ -23,7 +23,6 @@ type HTTP struct {
 }
 
 type GRPC struct {
-	Listen string `default:":9090" yaml:"listen"`
 }
 
 type Sessions struct {

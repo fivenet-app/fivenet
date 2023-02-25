@@ -4,20 +4,24 @@ package gen.livemap;
 option go_package = "github.com/galexrt/arpanet/gen/livemap";
 
 service LivemapService {
-    rpc Stream(StreamRequest) returns (stream LivemapMarker) {}
+    rpc Stream(StreamRequest) returns (stream StreamResponse) {}
 }
 
 message StreamRequest {
 }
 
-message LivemapMarker {
-    Marker dispatches = 1;
+message StreamResponse {
+    repeated Marker dispatches = 1;
+    repeated Marker users = 2;
 }
 
 message Marker {
     float x = 1;
     float y = 2;
 
-    string icon = 3;
-    string popup = 4;
+    string id = 3;
+    string name = 4;
+
+    string icon = 5;
+    string popup = 6;
 }

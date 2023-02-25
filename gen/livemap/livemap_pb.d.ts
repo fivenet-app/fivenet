@@ -16,23 +16,29 @@ export namespace StreamRequest {
   }
 }
 
-export class LivemapMarker extends jspb.Message {
-  getDispatches(): Marker | undefined;
-  setDispatches(value?: Marker): LivemapMarker;
-  hasDispatches(): boolean;
-  clearDispatches(): LivemapMarker;
+export class StreamResponse extends jspb.Message {
+  getDispatchesList(): Array<Marker>;
+  setDispatchesList(value: Array<Marker>): StreamResponse;
+  clearDispatchesList(): StreamResponse;
+  addDispatches(value?: Marker, index?: number): Marker;
+
+  getUsersList(): Array<Marker>;
+  setUsersList(value: Array<Marker>): StreamResponse;
+  clearUsersList(): StreamResponse;
+  addUsers(value?: Marker, index?: number): Marker;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): LivemapMarker.AsObject;
-  static toObject(includeInstance: boolean, msg: LivemapMarker): LivemapMarker.AsObject;
-  static serializeBinaryToWriter(message: LivemapMarker, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): LivemapMarker;
-  static deserializeBinaryFromReader(message: LivemapMarker, reader: jspb.BinaryReader): LivemapMarker;
+  toObject(includeInstance?: boolean): StreamResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: StreamResponse): StreamResponse.AsObject;
+  static serializeBinaryToWriter(message: StreamResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StreamResponse;
+  static deserializeBinaryFromReader(message: StreamResponse, reader: jspb.BinaryReader): StreamResponse;
 }
 
-export namespace LivemapMarker {
+export namespace StreamResponse {
   export type AsObject = {
-    dispatches?: Marker.AsObject,
+    dispatchesList: Array<Marker.AsObject>,
+    usersList: Array<Marker.AsObject>,
   }
 }
 
@@ -42,6 +48,12 @@ export class Marker extends jspb.Message {
 
   getY(): number;
   setY(value: number): Marker;
+
+  getId(): string;
+  setId(value: string): Marker;
+
+  getName(): string;
+  setName(value: string): Marker;
 
   getIcon(): string;
   setIcon(value: string): Marker;
@@ -61,6 +73,8 @@ export namespace Marker {
   export type AsObject = {
     x: number,
     y: number,
+    id: string,
+    name: string,
     icon: string,
     popup: string,
   }

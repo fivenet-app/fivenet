@@ -3,14 +3,15 @@ package cmd
 import (
 	"context"
 	"errors"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/galexrt/arpanet/gen/echo"
+	"github.com/galexrt/arpanet/gen/livemap"
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/config"
 	gormsessions "github.com/galexrt/arpanet/pkg/gormsessions"
@@ -22,6 +23,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 )
 
@@ -68,29 +71,21 @@ var serverCmd = &cobra.Command{
 			)
 		})
 
-		// Create GRPC Server
-		lis, err := net.Listen("tcp", config.C.GRPC.Listen)
-		if err != nil {
-			logger.Fatal("failed to listen", zap.Error(err))
-		}
-
+		// Create GRPC Server and attach our services
 		grpcServer := grpc.NewServer()
-		// Attach the echo service to the GRPC server
 		echo.RegisterEchoServiceServer(grpcServer, &echo.Server{})
+		livemap.RegisterLivemapServiceServer(grpcServer, livemap.NewServer(logger.Named("grpc_livemap")))
 
-		go func() {
-			if err := grpcServer.Serve(lis); err != nil {
-				logger.Error("failed to serve grpc server", zap.Error(err))
-			} else {
-				logger.Info("grpc server started successfully")
-			}
-		}()
-		logger.Info("grpc server listening", zap.String("address", config.C.GRPC.Listen))
-
-		// Create HTTP Server for graceful shutdown handling
+		// Create HTTP + GRPC Server for graceful shutdown handling
 		srv := &http.Server{
-			Addr:    config.C.HTTP.Listen,
-			Handler: r,
+			Addr: config.C.HTTP.Listen,
+			Handler: h2c.NewHandler(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+				if req.ProtoMajor == 2 && strings.HasPrefix(req.Header.Get("content-type"), "application/grpc") {
+					grpcServer.ServeHTTP(w, req)
+					return
+				}
+				r.ServeHTTP(w, req)
+			}), &http2.Server{}),
 		}
 		// Initializing the server in a goroutine so that
 		// it won't block the graceful shutdown handling below
@@ -111,17 +106,15 @@ var serverCmd = &cobra.Command{
 		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 		<-quit
 		logger.Info("shutting down servers...")
+		grpcServer.GracefulStop()
 
 		// The context is used to inform the server it has 5 seconds to finish
 		// the request it is currently handling
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-
 		if err := srv.Shutdown(ctx); err != nil {
 			logger.Error("http server forced to shutdown", zap.Error(err))
 		}
-
-		grpcServer.GracefulStop()
 
 		logger.Info("http server exiting")
 		return nil
