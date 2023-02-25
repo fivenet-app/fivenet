@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	api "github.com/galexrt/arpanet/api"
 	apiv1 "github.com/galexrt/arpanet/api/v1"
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/config"
@@ -24,13 +25,15 @@ import (
 
 var serverCmd = &cobra.Command{
 	Use: "server",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		// Gin HTTP Server
 		gin.SetMode(config.C.Mode)
 		r := gin.New()
+
 		// Add Zap Logger to Gin
 		r.Use(ginzap.Ginzap(logger, time.RFC3339, true))
 		r.Use(ginzap.RecoveryWithZap(logger, true))
+
 		// Sessions
 		store := gormsessions.NewStore(query.DB, true, []byte("secret"))
 		store.Options(sessions.Options{
@@ -45,7 +48,8 @@ var serverCmd = &cobra.Command{
 
 		// Prometheus Metrics endpoint
 		r.GET("/metrics", gin.WrapH(promhttp.Handler()))
-		// Register API routes
+		// Register app routes
+		RegisterRoutes(r)
 		apiv1.Register(r)
 
 		// Register embed FS for assets and other static files
@@ -99,6 +103,7 @@ var serverCmd = &cobra.Command{
 		}
 
 		logger.Info("server exiting")
+		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return query.SetupDB(logger)
@@ -107,4 +112,10 @@ var serverCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serverCmd)
+}
+
+func RegisterRoutes(r *gin.Engine) {
+	r.Group("/users", func(c *gin.Context) {
+		api.Users.SearchUsersByNamePages(c.Query("firstname"), c.Query("lastname"), 0)
+	})
 }

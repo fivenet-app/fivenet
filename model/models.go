@@ -8,9 +8,9 @@ const (
 )
 
 type Accounts struct {
-	BlackMoney int `json:"black_money"`
+	BlackMoney int `json:"-"`
 	Bank       int `json:"bank"`
-	Cash       int `json:"money"`
+	Cash       int `json:"-"`
 }
 
 type ContentType string

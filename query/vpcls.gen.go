@@ -30,7 +30,7 @@ func newVpcL(db *gorm.DB, opts ...gen.DOOption) vpcL {
 	_vpcL.PlayerID = field.NewString(tableName, "playerId")
 	_vpcL.Coordsx = field.NewString(tableName, "coordsx")
 	_vpcL.Coordsy = field.NewString(tableName, "coordsy")
-	_vpcL.NET = field.NewString(tableName, "NET")
+	_vpcL.Net = field.NewString(tableName, "NET")
 
 	_vpcL.fillFieldMap()
 
@@ -44,7 +44,7 @@ type vpcL struct {
 	PlayerID field.String
 	Coordsx  field.String
 	Coordsy  field.String
-	NET      field.String
+	Net      field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -64,7 +64,7 @@ func (v *vpcL) updateTableName(table string) *vpcL {
 	v.PlayerID = field.NewString(table, "playerId")
 	v.Coordsx = field.NewString(table, "coordsx")
 	v.Coordsy = field.NewString(table, "coordsy")
-	v.NET = field.NewString(table, "NET")
+	v.Net = field.NewString(table, "NET")
 
 	v.fillFieldMap()
 
@@ -85,7 +85,7 @@ func (v *vpcL) fillFieldMap() {
 	v.fieldMap["playerId"] = v.PlayerID
 	v.fieldMap["coordsx"] = v.Coordsx
 	v.fieldMap["coordsy"] = v.Coordsy
-	v.fieldMap["NET"] = v.NET
+	v.fieldMap["NET"] = v.Net
 }
 
 func (v vpcL) clone(db *gorm.DB) vpcL {

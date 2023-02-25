@@ -31,11 +31,34 @@ func newDocument(db *gorm.DB, opts ...gen.DOOption) document {
 	_document.CreatedAt = field.NewTime(tableName, "created_at")
 	_document.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_document.DeletedAt = field.NewField(tableName, "deleted_at")
+	_document.Type = field.NewString(tableName, "content_type")
 	_document.Title = field.NewString(tableName, "title")
 	_document.Content = field.NewString(tableName, "content")
-	_document.ContentType = field.NewString(tableName, "content_type")
 	_document.Creator = field.NewString(tableName, "creator")
+	_document.CreatorJob = field.NewString(tableName, "creator_job")
 	_document.Public = field.NewBool(tableName, "public")
+	_document.ResponseID = field.NewUint(tableName, "response_id")
+	_document.Responses = documentHasManyResponses{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Responses", "model.Document"),
+		Responses: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Responses.Responses", "model.Document"),
+		},
+		Jobs: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Responses.Jobs", "model.DocumentJobAccess"),
+		},
+		Users: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Responses.Users", "model.DocumentUserAccess"),
+		},
+	}
+
 	_document.Jobs = documentHasManyJobs{
 		db: db.Session(&gorm.Session{}),
 
@@ -56,17 +79,21 @@ func newDocument(db *gorm.DB, opts ...gen.DOOption) document {
 type document struct {
 	documentDo
 
-	ALL         field.Asterisk
-	ID          field.Uint
-	CreatedAt   field.Time
-	UpdatedAt   field.Time
-	DeletedAt   field.Field
-	Title       field.String
-	Content     field.String
-	ContentType field.String
-	Creator     field.String
-	Public      field.Bool
-	Jobs        documentHasManyJobs
+	ALL        field.Asterisk
+	ID         field.Uint
+	CreatedAt  field.Time
+	UpdatedAt  field.Time
+	DeletedAt  field.Field
+	Type       field.String
+	Title      field.String
+	Content    field.String
+	Creator    field.String
+	CreatorJob field.String
+	Public     field.Bool
+	ResponseID field.Uint
+	Responses  documentHasManyResponses
+
+	Jobs documentHasManyJobs
 
 	Users documentHasManyUsers
 
@@ -89,11 +116,13 @@ func (d *document) updateTableName(table string) *document {
 	d.CreatedAt = field.NewTime(table, "created_at")
 	d.UpdatedAt = field.NewTime(table, "updated_at")
 	d.DeletedAt = field.NewField(table, "deleted_at")
+	d.Type = field.NewString(table, "content_type")
 	d.Title = field.NewString(table, "title")
 	d.Content = field.NewString(table, "content")
-	d.ContentType = field.NewString(table, "content_type")
 	d.Creator = field.NewString(table, "creator")
+	d.CreatorJob = field.NewString(table, "creator_job")
 	d.Public = field.NewBool(table, "public")
+	d.ResponseID = field.NewUint(table, "response_id")
 
 	d.fillFieldMap()
 
@@ -110,16 +139,18 @@ func (d *document) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (d *document) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 11)
+	d.fieldMap = make(map[string]field.Expr, 14)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["created_at"] = d.CreatedAt
 	d.fieldMap["updated_at"] = d.UpdatedAt
 	d.fieldMap["deleted_at"] = d.DeletedAt
+	d.fieldMap["content_type"] = d.Type
 	d.fieldMap["title"] = d.Title
 	d.fieldMap["content"] = d.Content
-	d.fieldMap["content_type"] = d.ContentType
 	d.fieldMap["creator"] = d.Creator
+	d.fieldMap["creator_job"] = d.CreatorJob
 	d.fieldMap["public"] = d.Public
+	d.fieldMap["response_id"] = d.ResponseID
 
 }
 
@@ -131,6 +162,82 @@ func (d document) clone(db *gorm.DB) document {
 func (d document) replaceDB(db *gorm.DB) document {
 	d.documentDo.ReplaceDB(db)
 	return d
+}
+
+type documentHasManyResponses struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	Responses struct {
+		field.RelationField
+	}
+	Jobs struct {
+		field.RelationField
+	}
+	Users struct {
+		field.RelationField
+	}
+}
+
+func (a documentHasManyResponses) Where(conds ...field.Expr) *documentHasManyResponses {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a documentHasManyResponses) WithContext(ctx context.Context) *documentHasManyResponses {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a documentHasManyResponses) Model(m *model.Document) *documentHasManyResponsesTx {
+	return &documentHasManyResponsesTx{a.db.Model(m).Association(a.Name())}
+}
+
+type documentHasManyResponsesTx struct{ tx *gorm.Association }
+
+func (a documentHasManyResponsesTx) Find() (result []*model.Document, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a documentHasManyResponsesTx) Append(values ...*model.Document) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a documentHasManyResponsesTx) Replace(values ...*model.Document) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a documentHasManyResponsesTx) Delete(values ...*model.Document) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a documentHasManyResponsesTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a documentHasManyResponsesTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type documentHasManyJobs struct {

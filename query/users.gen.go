@@ -47,6 +47,35 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("Documents", "model.Document"),
+		Responses: struct {
+			field.RelationField
+			Responses struct {
+				field.RelationField
+			}
+			Jobs struct {
+				field.RelationField
+			}
+			Users struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("Documents.Responses", "model.Document"),
+			Responses: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Documents.Responses.Responses", "model.Document"),
+			},
+			Jobs: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Documents.Responses.Jobs", "model.DocumentJobAccess"),
+			},
+			Users: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Documents.Responses.Users", "model.DocumentUserAccess"),
+			},
+		},
 		Jobs: struct {
 			field.RelationField
 		}{
@@ -176,6 +205,18 @@ type userHasManyDocuments struct {
 
 	field.RelationField
 
+	Responses struct {
+		field.RelationField
+		Responses struct {
+			field.RelationField
+		}
+		Jobs struct {
+			field.RelationField
+		}
+		Users struct {
+			field.RelationField
+		}
+	}
 	Jobs struct {
 		field.RelationField
 	}

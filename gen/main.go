@@ -51,7 +51,11 @@ func main() {
 		gen.FieldType("grade", "int"),
 	)
 
-	vpcLSModel := g.GenerateModel("vpcLS")
+	vpcLSModel := g.GenerateModel("vpcLS",
+		gen.FieldRename("NET", "net"),
+		gen.FieldJSONTag("coordsx", "coords_x"),
+		gen.FieldJSONTag("coordsy", "coords_y"),
+	)
 
 	userLicenses := g.GenerateModel("user_licenses",
 		gen.FieldJSONTag("owner", "-"))
@@ -69,6 +73,7 @@ func main() {
 
 		gen.FieldType("accounts", "Accounts"),
 		gen.FieldGORMTag("accounts", "serializer:json"),
+		gen.FieldJSONTag("accounts", "-"),
 
 		// Add relations for lazy loading
 		gen.FieldRelateModel(field.HasMany, "Documents", model.Document{},

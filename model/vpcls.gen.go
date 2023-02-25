@@ -9,9 +9,9 @@ const TableNameVpcL = "vpcLS"
 // VpcL mapped from table <vpcLS>
 type VpcL struct {
 	PlayerID string  `gorm:"column:playerId;type:varchar(255);primaryKey" json:"playerId"`
-	Coordsx  *string `gorm:"column:coordsx;type:varchar(255)" json:"coordsx"`
-	Coordsy  *string `gorm:"column:coordsy;type:varchar(255)" json:"coordsy"`
-	NET      *string `gorm:"column:NET;type:varchar(255)" json:"NET"`
+	Coordsx  *string `gorm:"column:coordsx;type:varchar(255)" json:"coords_x"`
+	Coordsy  *string `gorm:"column:coordsy;type:varchar(255)" json:"coords_y"`
+	Net      *string `gorm:"column:NET;type:varchar(255)" json:"NET"`
 }
 
 // TableName VpcL's table name

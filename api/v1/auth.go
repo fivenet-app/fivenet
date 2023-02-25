@@ -44,7 +44,7 @@ func PostAuth(c *gin.Context) {
 		ID:         26061,
 		Identifier: "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
 		CharIndex:  1,
-		Job:        "police",
+		Job:        "ambulance",
 		JobGrade:   20,
 	})
 	if err != nil {

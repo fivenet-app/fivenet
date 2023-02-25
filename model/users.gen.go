@@ -23,7 +23,7 @@ type User struct {
 	Height       *string       `gorm:"column:height;type:varchar(5)" json:"height"`
 	Jail         int32         `gorm:"column:jail;type:int(11);not null" json:"jail"`
 	PhoneNumber  *string       `gorm:"column:phone_number;type:varchar(20)" json:"phone_number"`
-	Accounts     Accounts      `gorm:"serializer:json" json:"accounts"`
+	Accounts     Accounts      `gorm:"serializer:json" json:"-"`
 	Visum        *int32        `gorm:"column:visum;type:int(11)" json:"visum"`
 	Playtime     *int32        `gorm:"column:playtime;type:int(11)" json:"playtime"`
 	CreatedAt    *time.Time    `gorm:"column:created_at;type:timestamp;default:current_timestamp()" json:"created_at"`

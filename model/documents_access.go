@@ -17,15 +17,15 @@ const (
 const TableNameDocumentJobAccess = "arpanet_documents_job_access"
 
 type DocumentJobAccess struct {
-	ID        uint      `gorm:"primarykey"`
-	CreatedAt time.Time `gorm:"autoCreateTime"`
-	UpdatedAt time.Time `gorm:"autoUpdateTime"`
+	ID        uint      `gorm:"primarykey" json:"id"`
+	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
-	DocumentID uint `gorm:"index"`
+	DocumentID uint `gorm:"index" json:"document_id"`
 
 	Name         string     `json:"name"`
-	MinimumGrade int        `json:"grade"`
-	Access       AccessRole `gorm:"type:varchar(12)"`
+	MinimumGrade int        `json:"minimum_grade"`
+	Access       AccessRole `gorm:"type:varchar(12)" json:"access"`
 }
 
 // TableName DocumentJobAccess's table name
@@ -36,13 +36,13 @@ func (*DocumentJobAccess) TableName() string {
 const TableNameDocumentUserAccess = "arpanet_documents_user_access"
 
 type DocumentUserAccess struct {
-	ID        uint      `gorm:"primarykey"`
-	CreatedAt time.Time `gorm:"autoCreateTime"`
-	UpdatedAt time.Time `gorm:"autoUpdateTime"`
+	ID        uint      `gorm:"primarykey" json:"id"`
+	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
-	DocumentID uint       `gorm:"index"`
-	Identifier string     `gorm:"index;type:varchar(64)"`
-	Access     AccessRole `gorm:"type:varchar(12)"`
+	DocumentID uint       `gorm:"index" json:"document_id"`
+	Identifier string     `gorm:"index;type:varchar(64)" json:"identifier"`
+	Access     AccessRole `gorm:"type:varchar(12)" json:"access"`
 }
 
 // TableName DocumentUserAccess's table name
