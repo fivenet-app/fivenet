@@ -78,6 +78,7 @@ export default defineComponent({
             this.start();
         },
         updateBackground(layer: string): void {
+            console.log("LAYER NAME: " + layer);
             switch (layer) {
                 case 'Atlas':
                     this.map.leafletObject.getContainer().style.backgroundColor = '#0fa8d2';
@@ -116,7 +117,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <div style="height:1000px; width:1920px">
+    <div class="w-full h-screen">
         <l-map ref="map" v-model:zoom="zoom" :center="[0, 0]" :crs="customCRS" :registerControl="position"
             @ready="onLeafletReady">
             <l-tile-layer url="tiles/atlas/{z}/{x}/{y}.png" layer-type="base" :tms=true :no-wrap=false name="Atlas"

@@ -8,11 +8,14 @@
     - [ ] Search by `firstname`, `lastname` and `job`
     - [ ] Display a single user's info
 - [ ] Documents
+    - [ ] Templates (e.g., Haftbefehl)
     - [ ] Sharing
         - [ ] Sharing with the same job automatically
         - [ ] Sharing with the citizen affected (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ)
         - [ ] People can request access by link
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
+    - [ ] Category System (no directories/ paths)
+        - [ ] Sub-categories
 - [ ] Dispatch System
     - [ ] Livemap
 - [ ] Employee Management
@@ -37,10 +40,8 @@
 ### What data is currently missing from FiveM tables?
 
 * `users`
-    * Weitere Indexes
-        * `firstname` und `lastname` Spalten:
+    * More Indexes
+        * `firstname` and `lastname` Columns:
             * `CREATE FULLTEXT INDEX IF NOT EXISTS users_firstname_IDX ON s4_fivem.users (firstname, lastname);`
-        * `job` und `job_grade` Spalten:
+        * `job` and `job_grade` Spalten:
             * `CREATE INDEX IF NOT EXISTS users_job_grade_IDX USING BTREE ON s4_fivem.users (job_grade, job);`
-    * (Optional) Blood type
-    * Rename `last_seen` to `updated_at`

@@ -2,7 +2,6 @@
 import Navbar from './components/Navbar.vue';
 import LoginHero from './components/LoginHero.vue';
 import Footer from './components/Footer.vue';
-import Livemap from './components/Livemap.vue';
 </script>
 
 <template>
