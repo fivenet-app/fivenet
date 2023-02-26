@@ -25,6 +25,8 @@ func SetupDB(logger *zap.Logger) error {
 	db.AutoMigrate(&model.DocumentJobAccess{},
 		&model.DocumentUserAccess{},
 		&model.Document{},
+		&model.OAuth2Token{},
+		&model.Accounts{},
 	)
 
 	// Set the DB var and default for the query package

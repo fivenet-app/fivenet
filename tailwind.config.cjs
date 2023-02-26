@@ -3,7 +3,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
-  content: ["node_modules/daisyui/**/*", "./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
+  content: ["node_modules/daisyui/**/*", "./public/**/*.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {
       fontFamily: {
@@ -11,6 +11,15 @@ module.exports = {
       },
     },
   },
-  themes: ["dark", "cyberpunk"],
   plugins: [require("daisyui")],
+  daisyui: {
+    styled: true,
+    themes: ["dark", "cyberpunk", "light"],
+    base: true,
+    utils: true,
+    logs: true,
+    rtl: false,
+    prefix: "",
+    darkTheme: "dark",
+  },
 };

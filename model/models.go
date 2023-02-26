@@ -7,7 +7,7 @@ const (
 	FemaleSex Sex = "f"
 )
 
-type Accounts struct {
+type MoneyAccounts struct {
 	BlackMoney int `json:"-"`
 	Bank       int `json:"bank"`
 	Cash       int `json:"-"`

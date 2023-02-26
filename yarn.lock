@@ -1892,6 +1892,11 @@ tar-stream@^1.5.2:
     to-buffer "^1.1.1"
     xtend "^4.0.0"
 
+theme-change@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/theme-change/-/theme-change-2.3.0.tgz#9fec33d44c514253a0b0e9a65df4bcfa8bf9f741"
+  integrity sha512-MOv3g4dQfte9Q7WZKyLRshcw9JqcJCwB+CO1OS7lN1WMJcQyPzmpgwm5Ve55vQ4qt62g++A9+8s1x+vRPpm42w==
+
 through@^2.3.8:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"

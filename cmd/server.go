@@ -74,7 +74,11 @@ var serverCmd = &cobra.Command{
 		if err != nil {
 			logger.Fatal("failed to listen", zap.Error(err))
 		}
-		grpcServer := grpc.NewServer()
+		grpcAuth := auth.NewGRPC(logger.Named("grpc_auth"))
+		grpcServer := grpc.NewServer(
+			grpc.UnaryInterceptor(grpcAuth.EnsureValidToken),
+			grpc.StreamInterceptor(grpcAuth.EnsureValidTokenOnStream),
+		)
 		reflection.Register(grpcServer)
 
 		// Attach our GRPC services

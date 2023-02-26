@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package gen.documents;
+option go_package = "github.com/galexrt/arpanet/gen/documents";
+
+message GetDocumentsResponse {
+}
+
+message GetDocumentsRequest {
+}
+
+message Document {
+}
+
+service DocumentsService {
+    rpc GetDocuments(GetDocumentsRequest) returns (GetDocumentsResponse);
+}

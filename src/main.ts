@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 
-import "./app.css";
+import "./index.css";
 import "@fontsource/inter";
 
 import App from "./App.vue";

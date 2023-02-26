@@ -2,14 +2,14 @@
 import { defineComponent } from 'vue';
 import * as grpcWeb from 'grpc-web';
 import { LivemapServiceClient } from '@arpanet/gen/livemap/LivemapServiceClientPb';
-import { Marker, StreamRequest, StreamResponse } from '@arpanet/gen/livemap/livemap_pb';
+import { Marker, StreamRequest, ServerStreamResponse } from '@arpanet/gen/livemap/livemap_pb';
 import { LMap, LTileLayer, LMarker, LControlLayers, LLayerGroup, LPopup } from "@vue-leaflet/vue-leaflet";
 import { customCRS } from '../livemap/CRS';
 import { Hash } from '../livemap/Hash';
 import L from 'leaflet';
 
 const service = new LivemapServiceClient('https://localhost:8181', null, null);
-let stream: grpcWeb.ClientReadableStream<StreamResponse>;
+let stream: grpcWeb.ClientReadableStream<ServerStreamResponse>;
 
 // Latitude and Longitiude popup on mouse over
 let _latlng: HTMLDivElement;

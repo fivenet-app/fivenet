@@ -71,7 +71,7 @@ func main() {
 		gen.FieldRename("last_seen", "updated_at"),
 		gen.FieldJSONTag("last_seen", "updated_at"),
 
-		gen.FieldType("accounts", "Accounts"),
+		gen.FieldType("accounts", "MoneyAccounts"),
 		gen.FieldGORMTag("accounts", "serializer:json"),
 		gen.FieldJSONTag("accounts", "-"),
 
