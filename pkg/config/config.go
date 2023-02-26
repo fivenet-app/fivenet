@@ -18,11 +18,12 @@ type Config struct {
 }
 
 type HTTP struct {
-	Listen   string   `default:":8181" yaml:"listen"`
+	Listen   string   `default:":8080" yaml:"listen"`
 	Sessions Sessions `yaml:"sessions"`
 }
 
 type GRPC struct {
+	Listen string `default:":9090" yaml:"listen"`
 }
 
 type Sessions struct {

@@ -16,29 +16,29 @@ export namespace StreamRequest {
   }
 }
 
-export class StreamResponse extends jspb.Message {
-  getDispatchesList(): Array<Marker>;
-  setDispatchesList(value: Array<Marker>): StreamResponse;
-  clearDispatchesList(): StreamResponse;
-  addDispatches(value?: Marker, index?: number): Marker;
-
+export class ServerStreamResponse extends jspb.Message {
   getUsersList(): Array<Marker>;
-  setUsersList(value: Array<Marker>): StreamResponse;
-  clearUsersList(): StreamResponse;
+  setUsersList(value: Array<Marker>): ServerStreamResponse;
+  clearUsersList(): ServerStreamResponse;
   addUsers(value?: Marker, index?: number): Marker;
 
+  getDispatchesList(): Array<Marker>;
+  setDispatchesList(value: Array<Marker>): ServerStreamResponse;
+  clearDispatchesList(): ServerStreamResponse;
+  addDispatches(value?: Marker, index?: number): Marker;
+
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): StreamResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: StreamResponse): StreamResponse.AsObject;
-  static serializeBinaryToWriter(message: StreamResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): StreamResponse;
-  static deserializeBinaryFromReader(message: StreamResponse, reader: jspb.BinaryReader): StreamResponse;
+  toObject(includeInstance?: boolean): ServerStreamResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ServerStreamResponse): ServerStreamResponse.AsObject;
+  static serializeBinaryToWriter(message: ServerStreamResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ServerStreamResponse;
+  static deserializeBinaryFromReader(message: ServerStreamResponse, reader: jspb.BinaryReader): ServerStreamResponse;
 }
 
-export namespace StreamResponse {
+export namespace ServerStreamResponse {
   export type AsObject = {
-    dispatchesList: Array<Marker.AsObject>,
     usersList: Array<Marker.AsObject>,
+    dispatchesList: Array<Marker.AsObject>,
   }
 }
 

@@ -3,11 +3,13 @@ version: '3.5'
 services:
   envoy:
     container_name: envoy
-    image: envoyproxy/envoy-dev:f2e49c86b2edca1c65c7a375a7629f46d3c78e4e
+    image: envoyproxy/envoy:v1.25.1
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - /home/atrost/.vite-plugin-mkcert:/certs
+    user: 0:0
     ports:
-      - "8080:8080"
+      - "8181:8181"
     network_mode: host
     restart: unless-stopped
 

@@ -31,7 +31,7 @@ export class LivemapServiceClient {
                options?: null | { [index: string]: any; }) {
     if (!options) options = {};
     if (!credentials) credentials = {};
-    options['format'] = 'binary';
+    options['format'] = 'text';
 
     this.client_ = new grpcWeb.GrpcWebClientBase(options);
     this.hostname_ = hostname.replace(/\/+$/, '');
@@ -43,16 +43,16 @@ export class LivemapServiceClient {
     '/gen.livemap.LivemapService/Stream',
     grpcWeb.MethodType.SERVER_STREAMING,
     livemap_livemap_pb.StreamRequest,
-    livemap_livemap_pb.StreamResponse,
+    livemap_livemap_pb.ServerStreamResponse,
     (request: livemap_livemap_pb.StreamRequest) => {
       return request.serializeBinary();
     },
-    livemap_livemap_pb.StreamResponse.deserializeBinary
+    livemap_livemap_pb.ServerStreamResponse.deserializeBinary
   );
 
   stream(
     request: livemap_livemap_pb.StreamRequest,
-    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<livemap_livemap_pb.StreamResponse> {
+    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<livemap_livemap_pb.ServerStreamResponse> {
     return this.client_.serverStreaming(
       this.hostname_ +
         '/gen.livemap.LivemapService/Stream',

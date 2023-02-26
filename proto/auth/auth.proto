@@ -3,12 +3,6 @@ syntax = "proto3";
 package gen.auth;
 option go_package = "github.com/galexrt/arpanet/gen/auth";
 
-service AccountService {
-    rpc Create(User) returns (User) {}
-    rpc AuthenticateByEmailAndPassword(User) returns (Account) {}
-    rpc ChangePassword(User) returns (Nothing) {}
-}
-
 message User {
     string email = 1;
     string password = 2;
@@ -19,3 +13,9 @@ message Account {
 }
 
 message Nothing {}
+
+service AccountService {
+    rpc Create(User) returns (User);
+    rpc AuthenticateByEmailAndPassword(User) returns (Account);
+    rpc ChangePassword(User) returns (Nothing);
+}

@@ -49,7 +49,7 @@ func (c *livemapServiceClient) Stream(ctx context.Context, in *StreamRequest, op
 }
 
 type LivemapService_StreamClient interface {
-	Recv() (*StreamResponse, error)
+	Recv() (*ServerStreamResponse, error)
 	grpc.ClientStream
 }
 
@@ -57,8 +57,8 @@ type livemapServiceStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *livemapServiceStreamClient) Recv() (*StreamResponse, error) {
-	m := new(StreamResponse)
+func (x *livemapServiceStreamClient) Recv() (*ServerStreamResponse, error) {
+	m := new(ServerStreamResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func _LivemapService_Stream_Handler(srv interface{}, stream grpc.ServerStream) e
 }
 
 type LivemapService_StreamServer interface {
-	Send(*StreamResponse) error
+	Send(*ServerStreamResponse) error
 	grpc.ServerStream
 }
 
@@ -110,7 +110,7 @@ type livemapServiceStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *livemapServiceStreamServer) Send(m *StreamResponse) error {
+func (x *livemapServiceStreamServer) Send(m *ServerStreamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
