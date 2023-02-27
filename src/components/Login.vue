@@ -12,7 +12,7 @@ export default {
         ...mapState([
             'loggingIn',
             'loginError',
-            'loginSuccessful'
+            'accessToken'
         ])
     },
     methods: {
@@ -41,7 +41,7 @@ export default {
                 <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
                     <div class="card-body">
                         <p v-if="loginError">{{ loginError }}</p>
-                        <p v-if="loginSuccessful">Login Successful</p>
+                        <p v-if="accessToken">Login Successful</p>
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-text">Username</span>

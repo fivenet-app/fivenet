@@ -3,16 +3,18 @@ import axios from "axios";
 
 export const store = createStore({
   state: {
+    accessToken: "",
     loggingIn: false,
     loginError: null,
-    loginSuccessful: false,
   },
   mutations: {
     loginStart: (state) => (state.loggingIn = true),
     loginStop: (state, errorMessage) => {
       state.loggingIn = false;
       state.loginError = errorMessage;
-      state.loginSuccessful = !errorMessage;
+    },
+    updateAccessToken: (state, accessToken) => {
+      state.accessToken = accessToken;
     },
   },
   actions: {
@@ -22,15 +24,18 @@ export const store = createStore({
         .post("http://localhost:8080/auth/login", {
           ...loginData,
         })
-        .then(() => {
+        .then((response) => {
+          localStorage.accessToken = response.data.token;
           commit("loginStop", null);
+          commit("updateAccessToken", response.data.token);
         })
         .catch((error) => {
           commit("loginStop", error.response.data.error);
+          commit('updateAccessToken', null);
         });
     },
-    doLogout({ commit }) {
-      // TODO
+    fetchAccessToken({ commit }) {
+      commit('updateAccessToken', localStorage.getItem('accessToken'));
     },
   },
 });
