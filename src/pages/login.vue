@@ -14,6 +14,15 @@ export default defineComponent({
 });
 </script>
 
+<route lang="json">
+{
+  "name": "login",
+  "meta": {
+    "requiresAuth": true
+  }
+}
+</route>
+
 <template>
   <Navbar />
   <Login />

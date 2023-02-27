@@ -1,21 +1,20 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Navbar from '../components/Navbar.vue';
-import Footer from '../components/Footer.vue';
-import Overview from '../components/Overview.vue';
+
+import Navbar from '../../components/Navbar.vue';
+import Footer from '../../components/Footer.vue';
 
 export default defineComponent({
   components: {
     Navbar,
     Footer,
-    Overview,
   },
 });
 </script>
 
 <route lang="json">
 {
-  "name": "overview",
+  "name": "users",
   "meta": {
     "requiresAuth": true
   }
@@ -24,6 +23,6 @@ export default defineComponent({
 
 <template>
   <Navbar />
-  <Overview />
+  <h1>USERS</h1>
   <Footer />
 </template>

@@ -14,6 +14,15 @@ export default defineComponent({
 });
 </script>
 
+<route lang="json">
+{
+  "name": "index",
+  "meta": {
+    "requiresAuth": false
+  }
+}
+</route>
+
 <template>
   <Navbar />
   <Home />

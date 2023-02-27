@@ -1,3 +1,16 @@
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { mapState } from 'vuex';
+
+export default defineComponent({
+    computed: {
+        ...mapState({
+            accessToken: 'accessToken',
+        }),
+    },
+});
+</script>
+
 <template>
     <div class="hero min-h-screen bg-base-200">
         <div class="hero-content text-center">
