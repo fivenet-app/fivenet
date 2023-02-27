@@ -1,16 +1,16 @@
 <script lang="ts">
 import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
-import Login from './components/Login.vue';
+import Welcome from './components/Home.vue';
 
 import { mapActions } from 'vuex';
+import { defineComponent } from 'vue';
 
-export default {
-  name: 'app',
+export default defineComponent({
   components: {
     Navbar,
     Footer,
-    Login,
+    Welcome,
   },
   methods: {
     ...mapActions([
@@ -19,12 +19,16 @@ export default {
   },
   created() {
     this.fetchAccessToken();
-  }
-};
+  },
+});
 </script>
 
 <template>
-  <Navbar />
-  <Login />
-  <Footer />
+  <RouterView v-slot="{ Component, route }">
+    <transition name="fade" mode="out-in">
+      <div :key="route.path">
+        <component :is="Component" />
+      </div>
+    </transition>
+  </RouterView>
 </template>
