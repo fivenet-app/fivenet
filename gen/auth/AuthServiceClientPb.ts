@@ -39,133 +39,133 @@ export class AccountServiceClient {
     this.options_ = options;
   }
 
-  methodDescriptorCreate = new grpcWeb.MethodDescriptor(
-    '/gen.auth.AccountService/Create',
+  methodDescriptorLogin = new grpcWeb.MethodDescriptor(
+    '/gen.auth.AccountService/Login',
     grpcWeb.MethodType.UNARY,
-    auth_auth_pb.User,
-    auth_auth_pb.User,
-    (request: auth_auth_pb.User) => {
+    auth_auth_pb.LoginRequest,
+    auth_auth_pb.LoginResponse,
+    (request: auth_auth_pb.LoginRequest) => {
       return request.serializeBinary();
     },
-    auth_auth_pb.User.deserializeBinary
+    auth_auth_pb.LoginResponse.deserializeBinary
   );
 
-  create(
-    request: auth_auth_pb.User,
-    metadata: grpcWeb.Metadata | null): Promise<auth_auth_pb.User>;
+  login(
+    request: auth_auth_pb.LoginRequest,
+    metadata: grpcWeb.Metadata | null): Promise<auth_auth_pb.LoginResponse>;
 
-  create(
-    request: auth_auth_pb.User,
+  login(
+    request: auth_auth_pb.LoginRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: auth_auth_pb.User) => void): grpcWeb.ClientReadableStream<auth_auth_pb.User>;
+               response: auth_auth_pb.LoginResponse) => void): grpcWeb.ClientReadableStream<auth_auth_pb.LoginResponse>;
 
-  create(
-    request: auth_auth_pb.User,
+  login(
+    request: auth_auth_pb.LoginRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: auth_auth_pb.User) => void) {
+               response: auth_auth_pb.LoginResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/gen.auth.AccountService/Create',
+          '/gen.auth.AccountService/Login',
         request,
         metadata || {},
-        this.methodDescriptorCreate,
+        this.methodDescriptorLogin,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/gen.auth.AccountService/Create',
+      '/gen.auth.AccountService/Login',
     request,
     metadata || {},
-    this.methodDescriptorCreate);
+    this.methodDescriptorLogin);
   }
 
-  methodDescriptorAuthenticateByEmailAndPassword = new grpcWeb.MethodDescriptor(
-    '/gen.auth.AccountService/AuthenticateByEmailAndPassword',
+  methodDescriptorChooseCharacter = new grpcWeb.MethodDescriptor(
+    '/gen.auth.AccountService/ChooseCharacter',
     grpcWeb.MethodType.UNARY,
-    auth_auth_pb.User,
-    auth_auth_pb.Account,
-    (request: auth_auth_pb.User) => {
+    auth_auth_pb.ChooseCharacterRequest,
+    auth_auth_pb.ChooseCharacterResponse,
+    (request: auth_auth_pb.ChooseCharacterRequest) => {
       return request.serializeBinary();
     },
-    auth_auth_pb.Account.deserializeBinary
+    auth_auth_pb.ChooseCharacterResponse.deserializeBinary
   );
 
-  authenticateByEmailAndPassword(
-    request: auth_auth_pb.User,
-    metadata: grpcWeb.Metadata | null): Promise<auth_auth_pb.Account>;
+  chooseCharacter(
+    request: auth_auth_pb.ChooseCharacterRequest,
+    metadata: grpcWeb.Metadata | null): Promise<auth_auth_pb.ChooseCharacterResponse>;
 
-  authenticateByEmailAndPassword(
-    request: auth_auth_pb.User,
+  chooseCharacter(
+    request: auth_auth_pb.ChooseCharacterRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: auth_auth_pb.Account) => void): grpcWeb.ClientReadableStream<auth_auth_pb.Account>;
+               response: auth_auth_pb.ChooseCharacterResponse) => void): grpcWeb.ClientReadableStream<auth_auth_pb.ChooseCharacterResponse>;
 
-  authenticateByEmailAndPassword(
-    request: auth_auth_pb.User,
+  chooseCharacter(
+    request: auth_auth_pb.ChooseCharacterRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: auth_auth_pb.Account) => void) {
+               response: auth_auth_pb.ChooseCharacterResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/gen.auth.AccountService/AuthenticateByEmailAndPassword',
+          '/gen.auth.AccountService/ChooseCharacter',
         request,
         metadata || {},
-        this.methodDescriptorAuthenticateByEmailAndPassword,
+        this.methodDescriptorChooseCharacter,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/gen.auth.AccountService/AuthenticateByEmailAndPassword',
+      '/gen.auth.AccountService/ChooseCharacter',
     request,
     metadata || {},
-    this.methodDescriptorAuthenticateByEmailAndPassword);
+    this.methodDescriptorChooseCharacter);
   }
 
-  methodDescriptorChangePassword = new grpcWeb.MethodDescriptor(
-    '/gen.auth.AccountService/ChangePassword',
+  methodDescriptorLogout = new grpcWeb.MethodDescriptor(
+    '/gen.auth.AccountService/Logout',
     grpcWeb.MethodType.UNARY,
-    auth_auth_pb.User,
-    auth_auth_pb.Nothing,
-    (request: auth_auth_pb.User) => {
+    auth_auth_pb.LogoutRequest,
+    auth_auth_pb.LogoutResponse,
+    (request: auth_auth_pb.LogoutRequest) => {
       return request.serializeBinary();
     },
-    auth_auth_pb.Nothing.deserializeBinary
+    auth_auth_pb.LogoutResponse.deserializeBinary
   );
 
-  changePassword(
-    request: auth_auth_pb.User,
-    metadata: grpcWeb.Metadata | null): Promise<auth_auth_pb.Nothing>;
+  logout(
+    request: auth_auth_pb.LogoutRequest,
+    metadata: grpcWeb.Metadata | null): Promise<auth_auth_pb.LogoutResponse>;
 
-  changePassword(
-    request: auth_auth_pb.User,
+  logout(
+    request: auth_auth_pb.LogoutRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: auth_auth_pb.Nothing) => void): grpcWeb.ClientReadableStream<auth_auth_pb.Nothing>;
+               response: auth_auth_pb.LogoutResponse) => void): grpcWeb.ClientReadableStream<auth_auth_pb.LogoutResponse>;
 
-  changePassword(
-    request: auth_auth_pb.User,
+  logout(
+    request: auth_auth_pb.LogoutRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: auth_auth_pb.Nothing) => void) {
+               response: auth_auth_pb.LogoutResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/gen.auth.AccountService/ChangePassword',
+          '/gen.auth.AccountService/Logout',
         request,
         metadata || {},
-        this.methodDescriptorChangePassword,
+        this.methodDescriptorLogout,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/gen.auth.AccountService/ChangePassword',
+      '/gen.auth.AccountService/Logout',
     request,
     metadata || {},
-    this.methodDescriptorChangePassword);
+    this.methodDescriptorLogout);
   }
 
 }

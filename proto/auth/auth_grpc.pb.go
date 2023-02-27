@@ -22,9 +22,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccountServiceClient interface {
-	Create(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
-	AuthenticateByEmailAndPassword(ctx context.Context, in *User, opts ...grpc.CallOption) (*Account, error)
-	ChangePassword(ctx context.Context, in *User, opts ...grpc.CallOption) (*Nothing, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error)
+	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 }
 
 type accountServiceClient struct {
@@ -35,27 +35,27 @@ func NewAccountServiceClient(cc grpc.ClientConnInterface) AccountServiceClient {
 	return &accountServiceClient{cc}
 }
 
-func (c *accountServiceClient) Create(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
-	err := c.cc.Invoke(ctx, "/gen.auth.AccountService/Create", in, out, opts...)
+func (c *accountServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
+	out := new(LoginResponse)
+	err := c.cc.Invoke(ctx, "/gen.auth.AccountService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *accountServiceClient) AuthenticateByEmailAndPassword(ctx context.Context, in *User, opts ...grpc.CallOption) (*Account, error) {
-	out := new(Account)
-	err := c.cc.Invoke(ctx, "/gen.auth.AccountService/AuthenticateByEmailAndPassword", in, out, opts...)
+func (c *accountServiceClient) ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error) {
+	out := new(ChooseCharacterResponse)
+	err := c.cc.Invoke(ctx, "/gen.auth.AccountService/ChooseCharacter", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *accountServiceClient) ChangePassword(ctx context.Context, in *User, opts ...grpc.CallOption) (*Nothing, error) {
-	out := new(Nothing)
-	err := c.cc.Invoke(ctx, "/gen.auth.AccountService/ChangePassword", in, out, opts...)
+func (c *accountServiceClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error) {
+	out := new(LogoutResponse)
+	err := c.cc.Invoke(ctx, "/gen.auth.AccountService/Logout", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,9 +66,9 @@ func (c *accountServiceClient) ChangePassword(ctx context.Context, in *User, opt
 // All implementations must embed UnimplementedAccountServiceServer
 // for forward compatibility
 type AccountServiceServer interface {
-	Create(context.Context, *User) (*User, error)
-	AuthenticateByEmailAndPassword(context.Context, *User) (*Account, error)
-	ChangePassword(context.Context, *User) (*Nothing, error)
+	Login(context.Context, *LoginRequest) (*LoginResponse, error)
+	ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error)
+	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	mustEmbedUnimplementedAccountServiceServer()
 }
 
@@ -76,14 +76,14 @@ type AccountServiceServer interface {
 type UnimplementedAccountServiceServer struct {
 }
 
-func (UnimplementedAccountServiceServer) Create(context.Context, *User) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+func (UnimplementedAccountServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAccountServiceServer) AuthenticateByEmailAndPassword(context.Context, *User) (*Account, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AuthenticateByEmailAndPassword not implemented")
+func (UnimplementedAccountServiceServer) ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChooseCharacter not implemented")
 }
-func (UnimplementedAccountServiceServer) ChangePassword(context.Context, *User) (*Nothing, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+func (UnimplementedAccountServiceServer) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedAccountServiceServer) mustEmbedUnimplementedAccountServiceServer() {}
 
@@ -98,56 +98,56 @@ func RegisterAccountServiceServer(s grpc.ServiceRegistrar, srv AccountServiceSer
 	s.RegisterService(&AccountService_ServiceDesc, srv)
 }
 
-func _AccountService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
+func _AccountService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountServiceServer).Create(ctx, in)
+		return srv.(AccountServiceServer).Login(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gen.auth.AccountService/Create",
+		FullMethod: "/gen.auth.AccountService/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).Create(ctx, req.(*User))
+		return srv.(AccountServiceServer).Login(ctx, req.(*LoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountService_AuthenticateByEmailAndPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
+func _AccountService_ChooseCharacter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChooseCharacterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountServiceServer).AuthenticateByEmailAndPassword(ctx, in)
+		return srv.(AccountServiceServer).ChooseCharacter(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gen.auth.AccountService/AuthenticateByEmailAndPassword",
+		FullMethod: "/gen.auth.AccountService/ChooseCharacter",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).AuthenticateByEmailAndPassword(ctx, req.(*User))
+		return srv.(AccountServiceServer).ChooseCharacter(ctx, req.(*ChooseCharacterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountService_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
+func _AccountService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountServiceServer).ChangePassword(ctx, in)
+		return srv.(AccountServiceServer).Logout(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gen.auth.AccountService/ChangePassword",
+		FullMethod: "/gen.auth.AccountService/Logout",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).ChangePassword(ctx, req.(*User))
+		return srv.(AccountServiceServer).Logout(ctx, req.(*LogoutRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -160,16 +160,16 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AccountServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _AccountService_Create_Handler,
+			MethodName: "Login",
+			Handler:    _AccountService_Login_Handler,
 		},
 		{
-			MethodName: "AuthenticateByEmailAndPassword",
-			Handler:    _AccountService_AuthenticateByEmailAndPassword_Handler,
+			MethodName: "ChooseCharacter",
+			Handler:    _AccountService_ChooseCharacter_Handler,
 		},
 		{
-			MethodName: "ChangePassword",
-			Handler:    _AccountService_ChangePassword_Handler,
+			MethodName: "Logout",
+			Handler:    _AccountService_Logout_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
