@@ -15,7 +15,8 @@ import (
 	gormsessions "github.com/galexrt/arpanet/pkg/gormsessions"
 	"github.com/galexrt/arpanet/pkg/routes"
 	"github.com/galexrt/arpanet/pkg/session"
-	"github.com/galexrt/arpanet/proto/livemap"
+	pbauth "github.com/galexrt/arpanet/proto/auth"
+	pblivemap "github.com/galexrt/arpanet/proto/livemap"
 	"github.com/galexrt/arpanet/query"
 	"github.com/gin-contrib/sessions"
 	ginzap "github.com/gin-contrib/zap"
@@ -84,14 +85,13 @@ var serverCmd = &cobra.Command{
 		if err != nil {
 			logger.Fatal("failed to listen", zap.Error(err))
 		}
-		grpcAuth := auth.NewGRPC()
 		grpcServer := grpc.NewServer(
 			grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 				grpc_ctxtags.UnaryServerInterceptor(),
 				grpc_prometheus.UnaryServerInterceptor,
 				grpc_zap.UnaryServerInterceptor(logger),
 				grpc_validator.UnaryServerInterceptor(),
-				grpc_auth.UnaryServerInterceptor(grpcAuth.GRPCAuthFunc),
+				grpc_auth.UnaryServerInterceptor(auth.GRPCAuthFunc),
 				grpc_recovery.UnaryServerInterceptor(),
 			)),
 			grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
@@ -99,14 +99,18 @@ var serverCmd = &cobra.Command{
 				grpc_prometheus.StreamServerInterceptor,
 				grpc_zap.StreamServerInterceptor(logger),
 				grpc_validator.StreamServerInterceptor(),
-				grpc_auth.StreamServerInterceptor(grpcAuth.GRPCAuthFunc),
+				grpc_auth.StreamServerInterceptor(auth.GRPCAuthFunc),
 				grpc_recovery.StreamServerInterceptor(),
 			)),
 		)
-		reflection.Register(grpcServer)
+		// Only enable grpc server reflection when in debug mode
+		if gin.Mode() == gin.DebugMode {
+			reflection.Register(grpcServer)
+		}
 
 		// Attach our GRPC services
-		livemap.RegisterLivemapServiceServer(grpcServer, livemap.NewServer(logger.Named("grpc_livemap")))
+		pbauth.RegisterAccountServiceServer(grpcServer, pbauth.NewServer())
+		pblivemap.RegisterLivemapServiceServer(grpcServer, pblivemap.NewServer(logger.Named("grpc_livemap")))
 
 		go func() {
 			if err := grpcServer.Serve(lis); err != nil {

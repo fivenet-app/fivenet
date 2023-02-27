@@ -17,7 +17,7 @@ import (
 
 var (
 	Q                  = new(Query)
-	Accounts           *accounts
+	Account            *account
 	Document           *document
 	DocumentJobAccess  *documentJobAccess
 	DocumentUserAccess *documentUserAccess
@@ -30,7 +30,7 @@ var (
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
-	Accounts = &Q.Accounts
+	Account = &Q.Account
 	Document = &Q.Document
 	DocumentJobAccess = &Q.DocumentJobAccess
 	DocumentUserAccess = &Q.DocumentUserAccess
@@ -44,7 +44,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:                 db,
-		Accounts:           newAccounts(db, opts...),
+		Account:            newAccount(db, opts...),
 		Document:           newDocument(db, opts...),
 		DocumentJobAccess:  newDocumentJobAccess(db, opts...),
 		DocumentUserAccess: newDocumentUserAccess(db, opts...),
@@ -59,7 +59,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 type Query struct {
 	db *gorm.DB
 
-	Accounts           accounts
+	Account            account
 	Document           document
 	DocumentJobAccess  documentJobAccess
 	DocumentUserAccess documentUserAccess
@@ -75,7 +75,7 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:                 db,
-		Accounts:           q.Accounts.clone(db),
+		Account:            q.Account.clone(db),
 		Document:           q.Document.clone(db),
 		DocumentJobAccess:  q.DocumentJobAccess.clone(db),
 		DocumentUserAccess: q.DocumentUserAccess.clone(db),
@@ -98,7 +98,7 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:                 db,
-		Accounts:           q.Accounts.replaceDB(db),
+		Account:            q.Account.replaceDB(db),
 		Document:           q.Document.replaceDB(db),
 		DocumentJobAccess:  q.DocumentJobAccess.replaceDB(db),
 		DocumentUserAccess: q.DocumentUserAccess.replaceDB(db),
@@ -111,7 +111,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 }
 
 type queryCtx struct {
-	Accounts           IAccountsDo
+	Account            IAccountDo
 	Document           IDocumentDo
 	DocumentJobAccess  IDocumentJobAccessDo
 	DocumentUserAccess IDocumentUserAccessDo
@@ -124,7 +124,7 @@ type queryCtx struct {
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Accounts:           q.Accounts.WithContext(ctx),
+		Account:            q.Account.WithContext(ctx),
 		Document:           q.Document.WithContext(ctx),
 		DocumentJobAccess:  q.DocumentJobAccess.WithContext(ctx),
 		DocumentUserAccess: q.DocumentUserAccess.WithContext(ctx),

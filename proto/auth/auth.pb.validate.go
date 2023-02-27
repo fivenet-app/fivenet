@@ -417,7 +417,16 @@ func (m *ChooseCharacterRequest) validate(all bool) error {
 
 	// no validation rules for Token
 
-	// no validation rules for Index
+	if m.GetIndex() < 1 {
+		err := ChooseCharacterRequestValidationError{
+			field:  "Index",
+			reason: "value must be greater than or equal to 1",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ChooseCharacterRequestMultiError(errors)

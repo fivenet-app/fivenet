@@ -23,21 +23,21 @@ func init() {
 	}
 }
 
-func Test_accountsQuery(t *testing.T) {
-	accounts := newAccounts(db)
-	accounts = *accounts.As(accounts.TableName())
-	_do := accounts.WithContext(context.Background()).Debug()
+func Test_accountQuery(t *testing.T) {
+	account := newAccount(db)
+	account = *account.As(account.TableName())
+	_do := account.WithContext(context.Background()).Debug()
 
-	primaryKey := field.NewString(accounts.TableName(), clause.PrimaryKey)
+	primaryKey := field.NewString(account.TableName(), clause.PrimaryKey)
 	_, err := _do.Unscoped().Where(primaryKey.IsNotNull()).Delete()
 	if err != nil {
 		t.Error("clean table <arpanet_accounts> fail:", err)
 		return
 	}
 
-	_, ok := accounts.GetFieldByName("")
+	_, ok := account.GetFieldByName("")
 	if ok {
-		t.Error("GetFieldByName(\"\") from accounts success")
+		t.Error("GetFieldByName(\"\") from account success")
 	}
 
 	err = _do.Create(&model.Account{})
@@ -55,7 +55,7 @@ func Test_accountsQuery(t *testing.T) {
 		t.Error("create item in table <arpanet_accounts> fail:", err)
 	}
 
-	_, err = _do.Select(accounts.ALL).Take()
+	_, err = _do.Select(account.ALL).Take()
 	if err != nil {
 		t.Error("Take() on table <arpanet_accounts> fail:", err)
 	}
@@ -80,7 +80,7 @@ func Test_accountsQuery(t *testing.T) {
 		t.Error("FindInBatches() on table <arpanet_accounts> fail:", err)
 	}
 
-	_, err = _do.Select(accounts.ALL).Where(primaryKey.IsNotNull()).Order(primaryKey.Desc()).Find()
+	_, err = _do.Select(account.ALL).Where(primaryKey.IsNotNull()).Order(primaryKey.Desc()).Find()
 	if err != nil {
 		t.Error("Find() on table <arpanet_accounts> fail:", err)
 	}
@@ -90,7 +90,7 @@ func Test_accountsQuery(t *testing.T) {
 		t.Error("select Distinct() on table <arpanet_accounts> fail:", err)
 	}
 
-	_, err = _do.Select(accounts.ALL).Omit(primaryKey).Take()
+	_, err = _do.Select(account.ALL).Omit(primaryKey).Take()
 	if err != nil {
 		t.Error("Omit() on table <arpanet_accounts> fail:", err)
 	}

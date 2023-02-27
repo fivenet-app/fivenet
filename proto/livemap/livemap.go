@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/galexrt/arpanet/pkg/grpchelper"
+	"github.com/galexrt/arpanet/pkg/auth"
 	"go.uber.org/zap"
 )
 
@@ -22,7 +22,7 @@ func NewServer(logger *zap.Logger) *Server {
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) error {
-	user, err := grpchelper.GetUserFromContext(srv.Context())
+	user, err := auth.GetUserFromContext(srv.Context())
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) err
 
 		s.logger.Info("sending random markers")
 		if err := srv.Send(resp); err != nil {
-			s.logger.Error("failed to send livemap stream", zap.Error(err))
 			return err
 		}
 		time.Sleep(2 * time.Second)

@@ -1,12 +1,12 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/galexrt/arpanet/model"
+	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/session"
 	"github.com/galexrt/arpanet/query"
 	"github.com/gin-contrib/sessions"
@@ -41,10 +41,10 @@ func (r *Auth) IndexGET(c *gin.Context) {
 	c.JSON(http.StatusOK, "You are already authenticated!")
 }
 
-func (r *Auth) createTokenForAccount(account *model.Account) (string, error) {
+func (r *Auth) createTokenForAccount(account *model.Account, charIndex int) (string, error) {
 	return session.Tokens.NewWithClaims(&session.UserInfoClaims{
 		AccountID: account.ID,
-		CharIndex: account.ActiveChar,
+		CharIndex: charIndex,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// A usual scenario is to set the expiration time relative to the current time
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
@@ -59,7 +59,7 @@ func (r *Auth) createTokenForAccount(account *model.Account) (string, error) {
 }
 
 func (r *Auth) getAccountFromDB(userID string) (*model.Account, error) {
-	accounts := query.Accounts
+	accounts := query.Account
 	account, err := accounts.Where(accounts.Enabled.Is(true), accounts.Username.Eq(userID)).Limit(1).First()
 	if err != nil {
 		return nil, err
@@ -99,7 +99,7 @@ func (r *Auth) LoginPOST(c *gin.Context) {
 		return
 	}
 
-	token, err := r.createTokenForAccount(account)
+	token, err := r.createTokenForAccount(account, 1)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -144,7 +144,7 @@ func (r *Auth) TokenPOST(c *gin.Context) {
 
 	// Find user info for the new/old char index in the claim
 	users := query.User
-	if _, err := users.Where(users.Identifier.Like(fmt.Sprintf("char%d:%s", form.CharIndex, claims.Subject))).Limit(1).First(); err != nil {
+	if _, err := users.Where(users.Identifier.Like(auth.BuildIdentifierFromLicense(form.CharIndex, claims.Subject))).Limit(1).First(); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}

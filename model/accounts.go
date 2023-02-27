@@ -19,7 +19,6 @@ type Account struct {
 	Password       string `gorm:"-" json:"-"`
 	HashedPassword []byte `gorm:"column:password;type:varchar(64)" json:"-"`
 	License        string `gorm:"index;type:varchar(64)"`
-	ActiveChar     int
 }
 
 func (*Account) TableName() string {

@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as validate_validate_pb from '../validate/validate_pb';
 
 
 export class LoginRequest extends jspb.Message {

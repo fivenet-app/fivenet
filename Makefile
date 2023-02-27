@@ -21,9 +21,13 @@ run-server:
 gen-gorm:
 	go run ./gorm/main.go
 
+protoc-gen-validate:
+	if test ! -d validate/; then git clone https://github.com/bufbuild/protoc-gen-validate.git validate; fi
+
 .PHONY: gen-proto
-gen-proto:
+gen-proto: protoc-gen-validate
 	protoc \
+		--proto_path=./validate \
 		--proto_path=./proto \
 		--go_out=./proto \
 		--go_opt=paths=source_relative \
@@ -34,13 +38,14 @@ gen-proto:
 		$(shell find proto/ -iname "*.proto")
 
 	PATH="$$PATH:node_modules/protoc-gen-js/bin/" protoc \
+		--proto_path=./validate \
 		--proto_path=./proto \
 		--js_out=import_style=commonjs,binary:./gen \
 		--grpc-web_out=import_style=typescript,mode=grpcwebtext:./gen \
 		$(shell find proto/ -iname "*.proto")
 
 gdal2tiles-leaflet:
-	git clone https://github.com/commenthol/gdal2tiles-leaflet.git
+	if test ! -d gdal2tiles-leaflet/; then git clone https://github.com/commenthol/gdal2tiles-leaflet.git; fi
 
 .PHONY: gen-tiles
 gen-tiles: gdal2tiles-leaflet

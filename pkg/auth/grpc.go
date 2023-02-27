@@ -2,8 +2,11 @@ package auth
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/session"
+	"github.com/galexrt/arpanet/query"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"google.golang.org/grpc/codes"
@@ -16,14 +19,7 @@ const (
 	AuthSubCtxTag     = "auth.sub"
 )
 
-type GRPC struct {
-}
-
-func NewGRPC() *GRPC {
-	return &GRPC{}
-}
-
-func (g *GRPC) GRPCAuthFunc(ctx context.Context) (context.Context, error) {
+func GRPCAuthFunc(ctx context.Context) (context.Context, error) {
 	token, err := grpc_auth.AuthFromMD(ctx, "bearer")
 	if err != nil {
 		return nil, err
@@ -42,4 +38,45 @@ func (g *GRPC) GRPCAuthFunc(ctx context.Context) (context.Context, error) {
 	//newCtx := context.WithValue(ctx, "userInfo", tokenInfo)
 
 	return ctx, nil
+}
+
+func BuildIdentifierFromLicense(charIndex int, license string) string {
+	return fmt.Sprintf("char%d:%s", charIndex, license)
+}
+
+func BuildCharSearchIdentifier(license string) string {
+	return fmt.Sprintf("char%%:%s", license)
+}
+
+func GetUserFromContext(ctx context.Context) (*model.User, error) {
+	values := grpc_ctxtags.Extract(ctx).Values()
+
+	charIndex := values[AuthCharIdxCtxTag].(int)
+	license := values[AuthSubCtxTag].(string)
+
+	return GetCharByIdentifier(BuildIdentifierFromLicense(charIndex, license))
+}
+
+func GetCharByIdentifier(identifier string) (*model.User, error) {
+	// Find user info for the new/old char index in the claim
+	users := query.User
+	user, err := users.Where(users.Identifier.Like(identifier)).
+		Preload(users.UserLicenses.Where(query.UserLicense.Owner.Eq(identifier))).
+		Limit(1).
+		First()
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func GetCharsByLicense(license string) ([]*model.User, error) {
+	licenseSearch := BuildCharSearchIdentifier(license)
+
+	users := query.User
+	return users.Where(users.Identifier.Like(licenseSearch)).
+		Preload(users.UserLicenses.Where(query.UserLicense.Owner.Eq(licenseSearch))).
+		Limit(10).
+		Find()
 }

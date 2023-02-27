@@ -35,5 +35,8 @@ localhost.*
 
 # Map tiles
 public/tiles/*/
-gdal2tiles-leaflet/
 dist/
+
+# Repo checkouts
+gdal2tiles-leaflet/
+validate/
