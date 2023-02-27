@@ -11,7 +11,6 @@ type Routes struct {
 	logger *zap.Logger
 
 	// Routes
-	auth    *Auth
 	testing *Testing
 }
 
@@ -20,18 +19,16 @@ func New(logger *zap.Logger) *Routes {
 		logger: logger,
 
 		// Routes
-		auth:    &Auth{},
 		testing: &Testing{},
 	}
 }
 
-func (rs *Routes) Register(e *gin.Engine) {
-	e.GET("/ping", PingGET)
+func (r *Routes) Register(e *gin.Engine) {
+	e.GET("/ping", r.PingGET)
 
-	rs.auth.Register(e)
-	rs.testing.Register(e)
+	r.testing.Register(e)
 }
 
-func PingGET(g *gin.Context) {
+func (r *Routes) PingGET(g *gin.Context) {
 	g.JSON(http.StatusOK, "Pong")
 }
