@@ -18,8 +18,8 @@ export default defineComponent({
                 <h1 class="text-5xl font-bold">Hello there</h1>
                 <p class="py-6">Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
                     quasi. In deleniti eaque aut repudiandae et a id nisi.</p>
-                <router-link v-if="accessToken" to="/login" class="btn btn-primary">Login</router-link>
-                <router-link v-if="!accessToken" to="/overview" class="btn btn-primary">Overview</router-link>
+                <router-link v-if="!accessToken" to="/login" class="btn btn-primary">Login</router-link>
+                <router-link v-if="accessToken" to="/overview" class="btn btn-primary">Overview</router-link>
             </div>
         </div>
     </div>

@@ -16,9 +16,9 @@ export default defineComponent({
 </script>
 
 <template>
-    <div v-if="accessToken" class="navbar bg-base-100">
+    <div class="navbar bg-base-100">
         <div class="navbar-start">
-            <div class="dropdown">
+            <div v-if="accessToken" class="dropdown">
                 <label tabindex="0" class="btn btn-ghost lg:hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -48,7 +48,7 @@ export default defineComponent({
                 <span class="self-center text-xl font-semibold whitespace-nowrap">aRPaNet</span>
             </router-link>
         </div>
-        <div class="navbar-center hidden lg:flex">
+        <div v-if="accessToken" class="navbar-center hidden lg:flex">
             <ul class="menu menu-horizontal px-1">
                 <li><router-link to="/overview">Overview</router-link></li>
                 <li><router-link to="/users">Citizens</router-link></li>
