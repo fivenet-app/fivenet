@@ -1,0 +1,21 @@
+{
+	"sqltools.connections": [
+		{
+			"mysqlOptions": {
+				"authProtocol": "default"
+			},
+			"previewLimit": 50,
+			"server": "localhost",
+			"port": 3306,
+			"driver": "MariaDB",
+			"name": "arpanet-docker-compose-MariaDB",
+			"database": "arpanet",
+			"username": "arpanet",
+			"password": "changeme"
+		}
+	],
+	"typescript.preferences.autoImportFileExcludePatterns": ["vue-router"],
+	"protoc": {
+		"options": ["--proto_path=./validate"]
+	}
+}
