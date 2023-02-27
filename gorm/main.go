@@ -89,12 +89,14 @@ func main() {
 	// Generate default DAO interface for those generated structs from database
 	g.ApplyBasic(
 		usersModel,
+		userLicenses,
 		jobsModel,
 		jobGradesModel,
 		vpcLSModel,
 		model.Document{},
 		model.DocumentJobAccess{},
 		model.DocumentUserAccess{},
+		model.Account{},
 	)
 
 	// Generate the code

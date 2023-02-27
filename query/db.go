@@ -14,7 +14,7 @@ var DB *gorm.DB
 
 func SetupDB(logger *zap.Logger) error {
 	dbLogger := zapgorm2.New(logger.Named("db"))
-	dbLogger.LogLevel = gormlogger.Info
+	dbLogger.LogLevel = gormlogger.Error
 	dbLogger.SetAsDefault()
 	db, err := gorm.Open(mysql.Open(config.C.Database.DSN), &gorm.Config{Logger: dbLogger})
 	if err != nil {
@@ -22,11 +22,11 @@ func SetupDB(logger *zap.Logger) error {
 	}
 
 	// Need to use gorm's AutoMigrate for our "non-existing" (at least on a basic ESX FiveM server) models
-	db.AutoMigrate(&model.DocumentJobAccess{},
-		&model.DocumentUserAccess{},
+	db.AutoMigrate(
+		&model.Account{},
 		&model.Document{},
-		&model.OAuth2Token{},
-		&model.Accounts{},
+		&model.DocumentJobAccess{},
+		&model.DocumentUserAccess{},
 	)
 
 	// Set the DB var and default for the query package

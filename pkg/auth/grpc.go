@@ -32,10 +32,8 @@ func (g *GRPC) valid(authorization []string) bool {
 		return false
 	}
 	token := strings.TrimPrefix(authorization[0], "Bearer ")
-	// Perform the token validation here. For the sake of this example, the code
-	// here forgoes any of the usual OAuth2 token validation and instead checks
-	// for a token matching an arbitrary string.
-	return token == "some-secret-token"
+
+	return token != ""
 }
 
 // ensureValidToken ensures a valid token exists within a request's metadata. If

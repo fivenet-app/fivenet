@@ -77,12 +77,14 @@ func Test_WithContext(t *testing.T) {
 	qCtx := query.WithContext(context.WithValue(context.Background(), key, value))
 
 	for _, ctx := range []context.Context{
+		qCtx.Accounts.UnderlyingDB().Statement.Context,
 		qCtx.Document.UnderlyingDB().Statement.Context,
 		qCtx.DocumentJobAccess.UnderlyingDB().Statement.Context,
 		qCtx.DocumentUserAccess.UnderlyingDB().Statement.Context,
 		qCtx.Job.UnderlyingDB().Statement.Context,
 		qCtx.JobGrade.UnderlyingDB().Statement.Context,
 		qCtx.User.UnderlyingDB().Statement.Context,
+		qCtx.UserLicense.UnderlyingDB().Statement.Context,
 		qCtx.VpcL.UnderlyingDB().Statement.Context,
 	} {
 		if v := ctx.Value(key); v != value {

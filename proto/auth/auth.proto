@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package gen.auth;
-option go_package = "github.com/galexrt/arpanet/gen/auth";
+option go_package = "github.com/galexrt/arpanet/proto/auth";
 
 message User {
     string email = 1;

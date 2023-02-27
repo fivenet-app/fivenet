@@ -10,13 +10,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/galexrt/arpanet/gen/livemap"
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/config"
 	gormsessions "github.com/galexrt/arpanet/pkg/gormsessions"
 	"github.com/galexrt/arpanet/pkg/routes"
+	"github.com/galexrt/arpanet/pkg/session"
+	"github.com/galexrt/arpanet/proto/livemap"
 	"github.com/galexrt/arpanet/query"
 	"github.com/gin-contrib/sessions"
+	contribsessions "github.com/gin-contrib/sessions"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -31,36 +33,35 @@ var serverCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Gin HTTP Server
 		gin.SetMode(config.C.Mode)
-		r := gin.New()
+		e := gin.New()
 
 		// Add Zap Logger to Gin
-		r.Use(ginzap.Ginzap(logger, time.RFC3339, true))
-		r.Use(ginzap.RecoveryWithZap(logger, true))
+		e.Use(ginzap.Ginzap(logger, time.RFC3339, true))
+		e.Use(ginzap.RecoveryWithZap(logger, true))
 
 		// Sessions
-		store := gormsessions.NewStore(query.DB, true, []byte("secret"))
-		store.Options(sessions.Options{
-			Domain:   "172.16.1.111",
+		sessStore := gormsessions.NewStore(query.DB, true, []byte("secret"))
+		sessStore.Options(contribsessions.Options{
+			Domain:   "localhost",
 			Path:     "/",
 			MaxAge:   int((10 * time.Minute).Seconds()),
 			HttpOnly: true,
 			Secure:   false,
-			SameSite: http.SameSiteLaxMode,
 		})
-		r.Use(sessions.SessionsMany([]string{auth.SessionName}, store))
+		e.Use(sessions.SessionsMany(session.Names, sessStore))
 
 		// Prometheus Metrics endpoint
-		r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+		e.GET("/metrics", gin.WrapH(promhttp.Handler()))
 		// Register app routes
-		routes.RegisterRoutes(r)
-
+		rs := routes.New(logger)
+		rs.Register(e)
 		// Register embed FS for assets and other static files
 		if gin.Mode() == gin.DebugMode {
-			r.StaticFS("/public", gin.Dir(".", false))
+			e.StaticFS("/public", gin.Dir(".", false))
 		} else {
-			r.StaticFS("/public", http.FS(assets))
+			e.StaticFS("/public", http.FS(assets))
 		}
-		r.GET("favicon.ico", func(c *gin.Context) {
+		e.GET("favicon.ico", func(c *gin.Context) {
 			file, _ := assets.ReadFile("assets/favicon.ico")
 			c.Data(
 				http.StatusOK,
@@ -96,7 +97,7 @@ var serverCmd = &cobra.Command{
 		// Create HTTP Server for graceful shutdown handling
 		srv := &http.Server{
 			Addr:    config.C.HTTP.Listen,
-			Handler: r,
+			Handler: e,
 		}
 		// Initializing the server in a goroutine so that
 		// it won't block the graceful shutdown handling below

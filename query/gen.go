@@ -17,35 +17,41 @@ import (
 
 var (
 	Q                  = new(Query)
+	Accounts           *accounts
 	Document           *document
 	DocumentJobAccess  *documentJobAccess
 	DocumentUserAccess *documentUserAccess
 	Job                *job
 	JobGrade           *jobGrade
 	User               *user
+	UserLicense        *userLicense
 	VpcL               *vpcL
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	Accounts = &Q.Accounts
 	Document = &Q.Document
 	DocumentJobAccess = &Q.DocumentJobAccess
 	DocumentUserAccess = &Q.DocumentUserAccess
 	Job = &Q.Job
 	JobGrade = &Q.JobGrade
 	User = &Q.User
+	UserLicense = &Q.UserLicense
 	VpcL = &Q.VpcL
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:                 db,
+		Accounts:           newAccounts(db, opts...),
 		Document:           newDocument(db, opts...),
 		DocumentJobAccess:  newDocumentJobAccess(db, opts...),
 		DocumentUserAccess: newDocumentUserAccess(db, opts...),
 		Job:                newJob(db, opts...),
 		JobGrade:           newJobGrade(db, opts...),
 		User:               newUser(db, opts...),
+		UserLicense:        newUserLicense(db, opts...),
 		VpcL:               newVpcL(db, opts...),
 	}
 }
@@ -53,12 +59,14 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 type Query struct {
 	db *gorm.DB
 
+	Accounts           accounts
 	Document           document
 	DocumentJobAccess  documentJobAccess
 	DocumentUserAccess documentUserAccess
 	Job                job
 	JobGrade           jobGrade
 	User               user
+	UserLicense        userLicense
 	VpcL               vpcL
 }
 
@@ -67,12 +75,14 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:                 db,
+		Accounts:           q.Accounts.clone(db),
 		Document:           q.Document.clone(db),
 		DocumentJobAccess:  q.DocumentJobAccess.clone(db),
 		DocumentUserAccess: q.DocumentUserAccess.clone(db),
 		Job:                q.Job.clone(db),
 		JobGrade:           q.JobGrade.clone(db),
 		User:               q.User.clone(db),
+		UserLicense:        q.UserLicense.clone(db),
 		VpcL:               q.VpcL.clone(db),
 	}
 }
@@ -88,34 +98,40 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:                 db,
+		Accounts:           q.Accounts.replaceDB(db),
 		Document:           q.Document.replaceDB(db),
 		DocumentJobAccess:  q.DocumentJobAccess.replaceDB(db),
 		DocumentUserAccess: q.DocumentUserAccess.replaceDB(db),
 		Job:                q.Job.replaceDB(db),
 		JobGrade:           q.JobGrade.replaceDB(db),
 		User:               q.User.replaceDB(db),
+		UserLicense:        q.UserLicense.replaceDB(db),
 		VpcL:               q.VpcL.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
+	Accounts           IAccountsDo
 	Document           IDocumentDo
 	DocumentJobAccess  IDocumentJobAccessDo
 	DocumentUserAccess IDocumentUserAccessDo
 	Job                IJobDo
 	JobGrade           IJobGradeDo
 	User               IUserDo
+	UserLicense        IUserLicenseDo
 	VpcL               IVpcLDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
+		Accounts:           q.Accounts.WithContext(ctx),
 		Document:           q.Document.WithContext(ctx),
 		DocumentJobAccess:  q.DocumentJobAccess.WithContext(ctx),
 		DocumentUserAccess: q.DocumentUserAccess.WithContext(ctx),
 		Job:                q.Job.WithContext(ctx),
 		JobGrade:           q.JobGrade.WithContext(ctx),
 		User:               q.User.WithContext(ctx),
+		UserLicense:        q.UserLicense.WithContext(ctx),
 		VpcL:               q.VpcL.WithContext(ctx),
 	}
 }

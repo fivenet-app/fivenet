@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package gen.documents;
-option go_package = "github.com/galexrt/arpanet/gen/documents";
+option go_package = "github.com/galexrt/arpanet/proto/documents";
 
 message GetDocumentsResponse {
 }

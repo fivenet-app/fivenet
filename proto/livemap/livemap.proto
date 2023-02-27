@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package gen.livemap;
-option go_package = "github.com/galexrt/arpanet/gen/livemap";
+option go_package = "github.com/galexrt/arpanet/proto/livemap";
 
 message StreamRequest {
 }

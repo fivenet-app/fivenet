@@ -15,6 +15,7 @@ type Config struct {
 	HTTP     HTTP     `yaml:"http"`
 	GRPC     GRPC     `yaml:"grpc"`
 	Database Database `yaml:"database"`
+	JWT      JWT      `yaml:"jwt"`
 }
 
 type HTTP struct {
@@ -33,6 +34,10 @@ type Sessions struct {
 type Database struct {
 	// refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
 	DSN string `yaml:"dsn"`
+}
+
+type JWT struct {
+	Secret string `yaml:"secret"`
 }
 
 func init() {
