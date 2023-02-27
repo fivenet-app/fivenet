@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"time"
 
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"go.uber.org/zap"
 )
 
@@ -21,6 +22,7 @@ func NewServer(logger *zap.Logger) *Server {
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) error {
+	grpc_ctxtags.Extract(srv.Context()).Values()
 	for {
 		randomMarkerCount := rand.Intn(25) + 1
 		resp := &ServerStreamResponse{

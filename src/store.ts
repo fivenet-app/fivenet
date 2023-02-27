@@ -18,7 +18,7 @@ export const store = createStore({
     },
   },
   actions: {
-    doLogin({ commit }, loginData): void {
+    async doLogin({ commit }, loginData) {
       commit("loginStart");
       axios
         .post("http://localhost:8080/auth/login", {

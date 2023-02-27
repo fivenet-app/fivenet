@@ -6,8 +6,8 @@ services:
     image: envoyproxy/envoy:v1.25.1
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
-      - /home/atrost/.vite-plugin-mkcert:/certs
-    user: 0:0
+      - ${HOME}/.vite-plugin-mkcert:/certs:ro
+    user: 1000:1000
     ports:
       - "8181:8181"
     network_mode: host

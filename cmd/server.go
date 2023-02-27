@@ -18,9 +18,15 @@ import (
 	"github.com/galexrt/arpanet/proto/livemap"
 	"github.com/galexrt/arpanet/query"
 	"github.com/gin-contrib/sessions"
-	contribsessions "github.com/gin-contrib/sessions"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -31,6 +37,9 @@ import (
 var serverCmd = &cobra.Command{
 	Use: "server",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// Create JWT Token TokenManager
+		session.Tokens = session.NewTokenManager()
+
 		// Gin HTTP Server
 		gin.SetMode(config.C.Mode)
 		e := gin.New()
@@ -41,7 +50,7 @@ var serverCmd = &cobra.Command{
 
 		// Sessions
 		sessStore := gormsessions.NewStore(query.DB, true, []byte("secret"))
-		sessStore.Options(contribsessions.Options{
+		sessStore.Options(sessions.Options{
 			Domain:   "localhost",
 			Path:     "/",
 			MaxAge:   int((10 * time.Minute).Seconds()),
@@ -75,10 +84,24 @@ var serverCmd = &cobra.Command{
 		if err != nil {
 			logger.Fatal("failed to listen", zap.Error(err))
 		}
-		grpcAuth := auth.NewGRPC(logger.Named("grpc_auth"))
+		grpcAuth := auth.NewGRPC()
 		grpcServer := grpc.NewServer(
-			grpc.UnaryInterceptor(grpcAuth.EnsureValidToken),
-			grpc.StreamInterceptor(grpcAuth.EnsureValidTokenOnStream),
+			grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+				grpc_ctxtags.UnaryServerInterceptor(),
+				grpc_prometheus.UnaryServerInterceptor,
+				grpc_zap.UnaryServerInterceptor(logger),
+				grpc_validator.UnaryServerInterceptor(),
+				grpc_auth.UnaryServerInterceptor(grpcAuth.GRPCAuthFunc),
+				grpc_recovery.UnaryServerInterceptor(),
+			)),
+			grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
+				grpc_ctxtags.StreamServerInterceptor(),
+				grpc_prometheus.StreamServerInterceptor,
+				grpc_zap.StreamServerInterceptor(logger),
+				grpc_validator.StreamServerInterceptor(),
+				grpc_auth.StreamServerInterceptor(grpcAuth.GRPCAuthFunc),
+				grpc_recovery.StreamServerInterceptor(),
+			)),
 		)
 		reflection.Register(grpcServer)
 

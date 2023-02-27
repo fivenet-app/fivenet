@@ -2,68 +2,38 @@ package auth
 
 import (
 	"context"
-	"strings"
 
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
+	"github.com/galexrt/arpanet/pkg/session"
+	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
 type GRPC struct {
-	logger *zap.Logger
 }
 
-var (
-	errMissingMetadata = status.Errorf(codes.InvalidArgument, "missing metadata")
-	errInvalidToken    = status.Errorf(codes.Unauthenticated, "invalid token")
-)
-
-func NewGRPC(logger *zap.Logger) *GRPC {
-	return &GRPC{
-		logger: logger,
-	}
+func NewGRPC() *GRPC {
+	return &GRPC{}
 }
 
-// valid validates the authorization.
-func (g *GRPC) valid(authorization []string) bool {
-	if len(authorization) < 1 {
-		return false
+func (g *GRPC) GRPCAuthFunc(ctx context.Context) (context.Context, error) {
+	token, err := grpc_auth.AuthFromMD(ctx, "bearer")
+	if err != nil {
+		return nil, err
 	}
-	token := strings.TrimPrefix(authorization[0], "Bearer ")
 
-	return token != ""
-}
+	tokenInfo, err := session.Tokens.ParseWithClaims(token)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", err)
+	}
 
-// ensureValidToken ensures a valid token exists within a request's metadata. If
-// the token is missing or invalid, the interceptor blocks execution of the
-// handler and returns an error. Otherwise, the interceptor invokes the unary
-// handler.
-func (g *GRPC) EnsureValidToken(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, errMissingMetadata
-	}
-	// The keys within metadata.MD are normalized to lowercase.
-	// See: https://godoc.org/google.golang.org/grpc/metadata#New
-	if !g.valid(md["authorization"]) {
-		return nil, errInvalidToken
-	}
-	// Continue execution of handler after ensuring a valid token.
-	return handler(ctx, req)
-}
+	grpc_ctxtags.Extract(ctx).Set("auth.sub", tokenInfo.Subject)
+	grpc_ctxtags.Extract(ctx).Set("auth.accid", tokenInfo.AccountID)
+	grpc_ctxtags.Extract(ctx).Set("auth.charidx", tokenInfo.CharIndex)
 
-func (g *GRPC) EnsureValidTokenOnStream(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-	md, ok := metadata.FromIncomingContext(ss.Context())
-	if !ok {
-		return errMissingMetadata
-	}
-	// The keys within metadata.MD are normalized to lowercase.
-	// See: https://godoc.org/google.golang.org/grpc/metadata#New
-	if !g.valid(md["authorization"]) {
-		return errInvalidToken
-	}
-	// Continue execution of handler after ensuring a valid token.
-	return handler(srv, ss)
+	// WARNING: in production define your own type to avoid context collisions
+	newCtx := context.WithValue(ctx, "userInfo", tokenInfo)
+
+	return newCtx, nil
 }

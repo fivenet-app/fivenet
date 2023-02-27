@@ -1,12 +1,12 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/galexrt/arpanet/model"
-	"github.com/galexrt/arpanet/pkg/config"
 	"github.com/galexrt/arpanet/pkg/session"
 	"github.com/galexrt/arpanet/query"
 	"github.com/gin-contrib/sessions"
@@ -15,13 +15,6 @@ import (
 )
 
 type Auth struct {
-	jwtSigningKey []byte
-}
-
-func NewAuth() *Auth {
-	return &Auth{
-		jwtSigningKey: []byte(config.C.JWT.Secret),
-	}
 }
 
 func (r *Auth) Register(e *gin.Engine) {
@@ -31,6 +24,7 @@ func (r *Auth) Register(e *gin.Engine) {
 		g.POST("", r.IndexGET)
 		g.POST("/login", r.LoginPOST)
 		g.POST("/logout", r.LogoutPOST)
+		g.POST("/token", r.TokenPOST)
 	}
 }
 
@@ -48,26 +42,20 @@ func (r *Auth) IndexGET(c *gin.Context) {
 }
 
 func (r *Auth) createTokenForAccount(account *model.Account) (string, error) {
-	claims := &session.UserInfoClaims{
-		License: account.License,
+	return session.Tokens.NewWithClaims(&session.UserInfoClaims{
+		AccountID: account.ID,
+		CharIndex: account.ActiveChar,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// A usual scenario is to set the expiration time relative to the current time
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			Issuer:    "arpanet",
-			Subject:   "somebody",
+			Subject:   account.License,
 			ID:        strconv.FormatUint(uint64(account.ID), 10),
-			Audience:  []string{"somebody_else"},
+			Audience:  []string{"arpanet"},
 		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	ss, err := token.SignedString(r.jwtSigningKey)
-	if err != nil {
-		return "", err
-	}
-	return ss, nil
+	})
 }
 
 func (r *Auth) getAccountFromDB(userID string) (*model.Account, error) {
@@ -86,7 +74,7 @@ type AuthLoginPOSTForm struct {
 	Password string `form:"password" json:"password"`
 }
 
-type AuthLoginPOSTResponse struct {
+type TokenResponse struct {
 	Token string `json:"token"`
 }
 
@@ -117,7 +105,7 @@ func (r *Auth) LoginPOST(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &AuthLoginPOSTResponse{
+	c.JSON(http.StatusOK, &TokenResponse{
 		Token: token,
 	})
 }
@@ -133,4 +121,44 @@ func (r *Auth) LogoutPOST(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "Your are logged out!")
+}
+
+type TokenPOSTRequest struct {
+	Token     string `json:"token"`
+	CharIndex int    `json:"char_index"`
+}
+
+// Basically a way to "switch" characters by updating the claim
+func (r *Auth) TokenPOST(c *gin.Context) {
+	var form TokenPOSTRequest
+	if err := c.ShouldBind(&form); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	claims, err := session.Tokens.ParseWithClaims(form.Token)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	// Find user info for the new/old char index in the claim
+	users := query.User
+	if _, err := users.Where(users.Identifier.Like(fmt.Sprintf("char%d:%s", form.CharIndex, claims.Subject))).Limit(1).First(); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	// Update claims to the new char index
+	claims.CharIndex = form.CharIndex
+
+	token, err := session.Tokens.NewWithClaims(claims)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, &TokenResponse{
+		Token: token,
+	})
 }

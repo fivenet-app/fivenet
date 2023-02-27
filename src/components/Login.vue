@@ -23,14 +23,10 @@ export default {
             this.doLogin({
                 username: this.username,
                 password: this.password,
-            });
-
-            if (this.accessToken) {
-                setTimeout(() => {
-                    const path = this.$route.query.redirect?.toString() || '/overview';
+            }).then(() => {
+                const path = this.$route.query.redirect?.toString() || '/overview';
                     this.$router.push({ path: path, query: {} });
-                }, 2000);
-            }
+            });
         },
     },
 }
