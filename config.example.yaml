@@ -13,3 +13,9 @@ database:
   #dsn: "arpanet:changeme@tcp(127.0.0.1:3306)/arpanet?charset=utf8mb4&parseTime=True&loc=Local"
 jwt:
   secret: "your_generated_jwt_secret"
+fivem:
+  enabledJobs:
+    - ambulance
+    - doj
+    - fib
+    - police

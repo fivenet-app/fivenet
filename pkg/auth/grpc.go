@@ -10,6 +10,12 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	AuthAccIDCtxTag   = "auth.accid"
+	AuthCharIdxCtxTag = "auth.charidx"
+	AuthSubCtxTag     = "auth.sub"
+)
+
 type GRPC struct {
 }
 
@@ -28,12 +34,12 @@ func (g *GRPC) GRPCAuthFunc(ctx context.Context) (context.Context, error) {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", err)
 	}
 
-	grpc_ctxtags.Extract(ctx).Set("auth.sub", tokenInfo.Subject)
-	grpc_ctxtags.Extract(ctx).Set("auth.accid", tokenInfo.AccountID)
-	grpc_ctxtags.Extract(ctx).Set("auth.charidx", tokenInfo.CharIndex)
+	grpc_ctxtags.Extract(ctx).Set(AuthAccIDCtxTag, tokenInfo.AccountID)
+	grpc_ctxtags.Extract(ctx).Set(AuthCharIdxCtxTag, tokenInfo.CharIndex)
+	grpc_ctxtags.Extract(ctx).Set(AuthSubCtxTag, tokenInfo.Subject)
 
 	// WARNING: in production define your own type to avoid context collisions
-	newCtx := context.WithValue(ctx, "userInfo", tokenInfo)
+	//newCtx := context.WithValue(ctx, "userInfo", tokenInfo)
 
-	return newCtx, nil
+	return ctx, nil
 }

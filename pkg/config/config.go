@@ -16,6 +16,8 @@ type Config struct {
 	GRPC     GRPC     `yaml:"grpc"`
 	Database Database `yaml:"database"`
 	JWT      JWT      `yaml:"jwt"`
+
+	FiveM FiveM `yaml:"fivem"`
 }
 
 type HTTP struct {
@@ -38,6 +40,10 @@ type Database struct {
 
 type JWT struct {
 	Secret string `yaml:"secret"`
+}
+
+type FiveM struct {
+	EnabledJobs []string `yaml:"enabledJobs"`
 }
 
 func init() {

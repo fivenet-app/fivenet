@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	"github.com/galexrt/arpanet/pkg/grpchelper"
 	"go.uber.org/zap"
 )
 
@@ -22,7 +22,12 @@ func NewServer(logger *zap.Logger) *Server {
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) error {
-	grpc_ctxtags.Extract(srv.Context()).Values()
+	user, err := grpchelper.GetUserFromContext(srv.Context())
+	if err != nil {
+		return err
+	}
+	_ = user
+
 	for {
 		randomMarkerCount := rand.Intn(25) + 1
 		resp := &ServerStreamResponse{
