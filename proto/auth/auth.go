@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"time"
 
@@ -33,10 +34,11 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (c
 func (s *Server) createTokenForAccount(account *model.Account, charIndex int) (string, error) {
 	return session.Tokens.NewWithClaims(&session.UserInfoClaims{
 		AccountID: account.ID,
+		Username:  account.Username,
 		CharIndex: charIndex,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// A usual scenario is to set the expiration time relative to the current time
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(12 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			Issuer:    "arpanet",
@@ -65,7 +67,7 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 	}
 
 	if !account.CheckPassword(req.Password) {
-		return &LoginResponse{}, nil
+		return &LoginResponse{}, errors.New("wrong username or password")
 	}
 
 	token, err := s.createTokenForAccount(account, 0)
@@ -100,7 +102,22 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
 	resp := &ChooseCharacterResponse{}
-	// TODO validate token in request and create new token
+
+	claims, err := session.Tokens.ParseWithClaims(req.Token)
+	if err != nil {
+		return resp, nil
+	}
+
+	account, err := s.getAccountFromDB(claims.Username)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := s.createTokenForAccount(account, int(req.Index))
+	if err != nil {
+		return nil, err
+	}
+	resp.Token = token
 	return resp, nil
 }
 
