@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const store = createStore({
   state: {
-    accessToken: "",
+    accessToken: null as null | string,
     loggingIn: false,
     loginError: null,
   },
@@ -18,7 +18,7 @@ export const store = createStore({
     },
   },
   actions: {
-    doLogin({ commit }, loginData) {
+    doLogin({ commit }, loginData): void {
       commit("loginStart");
       axios
         .post("http://localhost:8080/auth/login", {
@@ -34,7 +34,7 @@ export const store = createStore({
           commit('updateAccessToken', null);
         });
     },
-    fetchAccessToken({ commit }) {
+    fetchAccessToken({ commit }): void {
       commit('updateAccessToken', localStorage.getItem('accessToken'));
     },
   },

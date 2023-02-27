@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 import * as grpcWeb from 'grpc-web';
 import { LivemapServiceClient } from '@arpanet/gen/livemap/LivemapServiceClientPb';
 import { Marker, StreamRequest, ServerStreamResponse } from '@arpanet/gen/livemap/livemap_pb';
-import { LMap, LTileLayer, LMarker, LControlLayers, LLayerGroup, LPopup } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LMarker, LControlLayers, LLayerGroup, LPopup, LControlScale } from "@vue-leaflet/vue-leaflet";
 import { customCRS } from '../livemap/CRS';
 import { Hash } from '../livemap/Hash';
 import L from 'leaflet';
@@ -37,6 +37,7 @@ export default defineComponent({
         LControlLayers,
         LLayerGroup,
         LPopup,
+        LControlScale,
     },
     data: function () {
         return {
@@ -62,6 +63,7 @@ export default defineComponent({
     methods: {
         onLeafletReady: function () {
             this.map.leafletObject.on('baselayerchange', (context: L.LayersControlEvent) => this.updateBackground(context.name));
+            this.updateBackground('Postal');
 
             // Register Coordinates Display
             // TODO This should probably be a "sub"-component that dynamically listens to the lat/lng changes
@@ -73,12 +75,11 @@ export default defineComponent({
             });
 
             // Map Position Hash
-            this.hash = new Hash(this.map.leafletObject, this.map.leafletObject.getContainer());
+            //this.hash = new Hash(this.map.leafletObject, this.map.leafletObject.getContainer());
 
             this.start();
         },
         updateBackground(layer: string): void {
-            console.log("LAYER NAME: " + layer);
             switch (layer) {
                 case 'Atlas':
                     this.map.leafletObject.getContainer().style.backgroundColor = '#0fa8d2';
@@ -88,6 +89,9 @@ export default defineComponent({
                     return;
                 case 'Road':
                     this.map.leafletObject.getContainer().style.backgroundColor = '#1862ad';
+                    return;
+                case 'Postal':
+                    this.map.leafletObject.getContainer().style.backgroundColor = '#8cb6ce';
                     return;
             }
         },
@@ -129,6 +133,9 @@ export default defineComponent({
             <l-tile-layer url="tiles/satelite/{z}/{x}/{y}.png" layer-type="base" :tms=true :no-wrap=false name="Satelite"
                 attribution="<a href='http://www.rockstargames.com/V/'>Grand Theft Auto V</a>" :min-zoom="0"
                 :max-zoom="6"></l-tile-layer>
+            <l-tile-layer url="tiles/postal/{z}/{x}/{y}.png" layer-type="base" :tms=true :no-wrap=false name="Postals"
+                attribution="<a href='http://www.rockstargames.com/V/'>Grand Theft Auto V</a>" :min-zoom="0"
+                :max-zoom="6"></l-tile-layer>
             <l-layer-group name="Markers">
                 <l-marker v-for="marker in usersList" :lat-lng="[marker.getX(), marker.getY()]" :name="marker.getName()"
                     :draggable=false>
@@ -136,6 +143,7 @@ export default defineComponent({
                 </l-marker>
             </l-layer-group>
             <l-control-layers />
+            <l-control-scale />
         </l-map>
     </div>
 </template>

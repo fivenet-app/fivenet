@@ -5,15 +5,15 @@ export default {
     data() {
         return {
             username: '',
-            password: ''
-        }
+            password: '',
+        };
     },
     computed: {
         ...mapState([
             'loggingIn',
             'loginError',
-            'accessToken'
-        ])
+            'accessToken',
+        ]),
     },
     methods: {
         ...mapActions([
@@ -24,8 +24,15 @@ export default {
                 username: this.username,
                 password: this.password,
             });
-        }
-    }
+
+            if (this.accessToken) {
+                setTimeout(() => {
+                    const path = this.$route.query.redirect?.toString() || '/overview';
+                    this.$router.push({ path: path, query: {} });
+                }, 2000);
+            }
+        },
+    },
 }
 </script>
 
@@ -52,7 +59,7 @@ export default {
                             <label class="label">
                                 <span class="label-text">Password</span>
                             </label>
-                            <input type="text" placeholder="password" class="input input-bordered" v-model="password" />
+                            <input type="password" placeholder="password" class="input input-bordered" v-model="password" />
                             <label class="label">
                                 <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
                             </label>

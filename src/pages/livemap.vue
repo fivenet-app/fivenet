@@ -1,21 +1,29 @@
 <script lang="ts">
+import { defineComponent } from 'vue';
 import Navbar from '../components/Navbar.vue';
 import Footer from '../components/Footer.vue';
-import Home from '../components/Home.vue';
-
-import { defineComponent } from 'vue';
+import Livemap from '../components/Livemap.vue';
 
 export default defineComponent({
   components: {
     Navbar,
     Footer,
-    Home,
+    Livemap,
   },
 });
 </script>
 
+<route lang="json">
+{
+  "name": "livemap",
+  "meta": {
+    "requiresAuth": true
+  }
+}
+</route>
+
 <template>
   <Navbar />
-  <Home />
+  <Livemap />
   <Footer />
 </template>

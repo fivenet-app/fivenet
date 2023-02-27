@@ -1,3 +1,15 @@
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+import FeatureCards from './FeatureCards.vue';
+
+export default defineComponent({
+    components: {
+        FeatureCards,
+    },
+});
+</script>
+
 <template>
-    <h1>Overview</h1> 
+    <FeatureCards />
 </template>

@@ -22,6 +22,17 @@ const router = createRouter({
 
 setupDataFetchingGuard(router);
 
+router.beforeEach((to, from ) => {
+  store.state
+  if (to.meta.requiresAuth && !store.state.accessToken) {
+    return {
+      path: '/login',
+      // save the location we were at to come back later
+      query: { redirect: to.fullPath },
+    }
+  }
+});
+
 const app = createApp(App);
 app.use(router);
 app.use(store);

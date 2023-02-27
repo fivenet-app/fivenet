@@ -12,10 +12,10 @@ export default defineComponent({
 <template>
     <div class="navbar bg-base-100">
         <div class="flex-1">
-            <div class="w-10 rounded-full">
-                <img alt="aRPaNet Logo" src="/images/logo.png" />
-            </div>
-            <a class="btn btn-ghost normal-case text-xl">aRPaNet</a>
+            <a href="/" class="flex items-center">
+                <img src="/images/logo.png" class="h-6 mr-3 sm:h-9" alt="aRPaNet Logo" />
+                <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">aRPaNet</span>
+            </a>
         </div>
         <div class="flex-none">
             <ul class="menu menu-horizontal px-1">

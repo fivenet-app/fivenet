@@ -1,6 +1,5 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { mapActions } from 'vuex';
 
 import Navbar from '../components/Navbar.vue';
 import Footer from '../components/Footer.vue';
@@ -12,14 +11,6 @@ export default defineComponent({
     Footer,
     Login,
   },
-  methods: {
-    ...mapActions([
-      'fetchAccessToken'
-    ]),
-  },
-  created() {
-    this.fetchAccessToken();
-  }
 });
 </script>
 
