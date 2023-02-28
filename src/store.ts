@@ -75,6 +75,9 @@ export const store = createStore({
 		updateActiveChar({ commit }, identifier: string): void {
 			commit('updateActiveChar', identifier);
 		},
+		updateAccessToken({ commit }, token: string): void {
+			commit('updateAccessToken', token);
+		},
 	},
 });
 

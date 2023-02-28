@@ -129,7 +129,7 @@ let stream: grpcWeb.ClientReadableStream<ServerStreamResponse>;
 </script>
 
 <template>
-    <div class="w-full h-screen">
+    <div class="w-screen" style="height: 95vh">
         <l-map ref="map" v-model:zoom="zoom" :center="[0, 0]" :crs="customCRS" :registerControl="position"
             @ready="onLeafletReady">
             <l-tile-layer url="tiles/atlas/{z}/{x}/{y}.png" layer-type="base" :tms=true :no-wrap=false name="Atlas"
@@ -155,23 +155,3 @@ let stream: grpcWeb.ClientReadableStream<ServerStreamResponse>;
         </l-map>
     </div>
 </template>
-
-<style>
-html,
-body {
-    height: 100%;
-    min-width: 100%;
-}
-
-#app {
-    min-height: 100%;
-    min-width: 100%;
-}
-
-body {
-    margin: 0;
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 12px;
-    overflow: hidden;
-}
-</style>
