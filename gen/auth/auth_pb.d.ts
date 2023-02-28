@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as common_character_pb from '../common/character_pb';
 
 
 export class LoginRequest extends jspb.Message {
@@ -28,10 +29,10 @@ export class LoginResponse extends jspb.Message {
   getToken(): string;
   setToken(value: string): LoginResponse;
 
-  getCharsList(): Array<Character>;
-  setCharsList(value: Array<Character>): LoginResponse;
+  getCharsList(): Array<common_character_pb.Character>;
+  setCharsList(value: Array<common_character_pb.Character>): LoginResponse;
   clearCharsList(): LoginResponse;
-  addChars(value?: Character, index?: number): Character;
+  addChars(value?: common_character_pb.Character, index?: number): common_character_pb.Character;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): LoginResponse.AsObject;
@@ -44,61 +45,7 @@ export class LoginResponse extends jspb.Message {
 export namespace LoginResponse {
   export type AsObject = {
     token: string,
-    charsList: Array<Character.AsObject>,
-  }
-}
-
-export class Character extends jspb.Message {
-  getIdentifier(): string;
-  setIdentifier(value: string): Character;
-
-  getJob(): string;
-  setJob(value: string): Character;
-
-  getJobgrade(): number;
-  setJobgrade(value: number): Character;
-
-  getFirstname(): string;
-  setFirstname(value: string): Character;
-
-  getLastname(): string;
-  setLastname(value: string): Character;
-
-  getDateofbirth(): string;
-  setDateofbirth(value: string): Character;
-
-  getSex(): string;
-  setSex(value: string): Character;
-
-  getHeight(): string;
-  setHeight(value: string): Character;
-
-  getVisum(): number;
-  setVisum(value: number): Character;
-
-  getPlaytime(): number;
-  setPlaytime(value: number): Character;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Character.AsObject;
-  static toObject(includeInstance: boolean, msg: Character): Character.AsObject;
-  static serializeBinaryToWriter(message: Character, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Character;
-  static deserializeBinaryFromReader(message: Character, reader: jspb.BinaryReader): Character;
-}
-
-export namespace Character {
-  export type AsObject = {
-    identifier: string,
-    job: string,
-    jobgrade: number,
-    firstname: string,
-    lastname: string,
-    dateofbirth: string,
-    sex: string,
-    height: string,
-    visum: number,
-    playtime: number,
+    charsList: Array<common_character_pb.Character.AsObject>,
   }
 }
 

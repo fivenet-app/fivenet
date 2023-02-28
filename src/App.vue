@@ -14,8 +14,8 @@ export default defineComponent({
     Welcome,
   },
   beforeCreate() {
-		store.commit('initialiseStore');
-	}
+    store.commit('initialiseStore');
+  },
 });
 </script>
 

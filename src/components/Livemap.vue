@@ -1,12 +1,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
-
 import authInterceptor from '../grpcauth';
 import * as grpcWeb from 'grpc-web';
 import { LivemapServiceClient } from '@arpanet/gen/livemap/LivemapServiceClientPb';
 import { Marker, StreamRequest, ServerStreamResponse } from '@arpanet/gen/livemap/livemap_pb';
-
+// Leaflet and Livemap custom parts
 import { LMap, LTileLayer, LMarker, LControlLayers, LLayerGroup, LPopup, LControlScale } from "@vue-leaflet/vue-leaflet";
 import { customCRS } from '../livemap/CRS';
 import { Hash } from '../livemap/Hash';
@@ -106,7 +105,7 @@ export default defineComponent({
 
             let outer = this;
             const request = new StreamRequest();
-            stream = service.stream(request);
+            stream = client.stream(request);
             stream.on('data', function (response) {
                 outer.usersList = response.getUsersList();
             });
@@ -121,7 +120,7 @@ export default defineComponent({
     }
 });
 
-const service = new LivemapServiceClient('https://localhost:8181', null, {
+const client = new LivemapServiceClient('https://localhost:8181', null, {
     unaryInterceptors: [authInterceptor],
     streamInterceptors: [authInterceptor],
 });

@@ -77,6 +77,6 @@ func GetCharsByLicense(license string) ([]*model.User, error) {
 	users := query.User
 	return users.Preload(users.UserLicenses.RelationField).
 		Where(users.Identifier.Like(licenseSearch)).
-		Limit(10).
+		Limit(5).
 		Find()
 }

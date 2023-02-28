@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package gen.users;
+option go_package = "github.com/galexrt/arpanet/proto/users";
+
+import "common/character.proto";
+import "common/database.proto";
+
+message FindUsersRequest {
+    int64 current = 1;
+    repeated gen.common.OrderBy orderBy = 2;
+    string firstname = 3;
+    string lastname = 4;
+}
+
+message FindUsersResponse {
+    int64 totalCount = 1;
+    int64 current = 2;
+    int64 end = 3;
+    repeated gen.common.Character users = 4;
+}
+
+message GetUserRequest {
+    string identifier = 1;
+    string dbID = 2;
+}
+
+message GetUserResponse {
+    gen.common.Character user = 1;
+}
+
+service UsersService {
+    rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}

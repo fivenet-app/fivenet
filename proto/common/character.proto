@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package gen.common;
+option go_package = "github.com/galexrt/arpanet/proto/common";
+
+message Character {
+    string identifier = 1;
+    string job = 2;
+    int32 jobGrade = 3;
+    string firstname = 4;
+    string lastname = 5;
+    string dateofbirth = 6;
+    string sex = 7;
+    string height = 8;
+    int64 visum = 9;
+    int64 playtime = 10;
+}

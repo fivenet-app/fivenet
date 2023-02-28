@@ -8,8 +8,8 @@ const TableNameJob = "jobs"
 
 // Job mapped from table <jobs>
 type Job struct {
-	Name  string  `gorm:"column:name;type:varchar(50);primaryKey" json:"name"`
-	Label *string `gorm:"column:label;type:varchar(50)" json:"label"`
+	Name  string `gorm:"column:name;type:varchar(50);primaryKey" json:"name"`
+	Label string `gorm:"column:label;type:varchar(50)" json:"label"`
 }
 
 // TableName Job's table name

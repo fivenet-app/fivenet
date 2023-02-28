@@ -34,7 +34,7 @@ export default defineComponent({
 <template>
   <Navbar />
   <Login v-if="!accessToken" />
-  <div v-if="accessToken" class="container mx-auto px-4">
+  <div v-if="accessToken" class="container mx-auto py-8">
     <CharacterSelector />
   </div>
   <Footer />

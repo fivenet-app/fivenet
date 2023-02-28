@@ -24,7 +24,7 @@ export default defineComponent({
 
 <template>
   <Navbar />
-  <div class="container mx-auto px-4">
+  <div class="container mx-auto py-8">
     <div class="text-sm breadcrumbs">
       <ul>
         <li>

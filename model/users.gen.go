@@ -14,20 +14,20 @@ const TableNameUser = "users"
 type User struct {
 	ID           int32         `gorm:"column:id;type:int(11);not null;uniqueIndex:id,priority:1" json:"id"`
 	Identifier   string        `gorm:"column:identifier;type:varchar(64);primaryKey" json:"identifier"`
-	Job          *string       `gorm:"column:job;type:varchar(20);index:users_job_IDX,priority:1;default:unemployed" json:"job"`
+	Job          string        `gorm:"column:job;type:varchar(20);index:users_job_IDX,priority:1;default:unemployed" json:"job"`
 	JobGrade     int           `gorm:"column:job_grade;type:int(11);default:1" json:"job_grade"`
-	Firstname    *string       `gorm:"column:firstname;type:varchar(50)" json:"firstname"`
-	Lastname     *string       `gorm:"column:lastname;type:varchar(50)" json:"lastname"`
-	Dateofbirth  *string       `gorm:"column:dateofbirth;type:varchar(25)" json:"dateofbirth"`
+	Firstname    string        `gorm:"column:firstname;type:varchar(50)" json:"firstname"`
+	Lastname     string        `gorm:"column:lastname;type:varchar(50)" json:"lastname"`
+	Dateofbirth  string        `gorm:"column:dateofbirth;type:varchar(25)" json:"dateofbirth"`
 	Sex          Sex           `gorm:"column:sex;type:varchar(10)" json:"sex"`
-	Height       *string       `gorm:"column:height;type:varchar(5)" json:"height"`
+	Height       string        `gorm:"column:height;type:varchar(5)" json:"height"`
 	Jail         int32         `gorm:"column:jail;type:int(11);not null" json:"jail"`
-	PhoneNumber  *string       `gorm:"column:phone_number;type:varchar(20)" json:"phone_number"`
+	PhoneNumber  string        `gorm:"column:phone_number;type:varchar(20)" json:"phone_number"`
 	Accounts     MoneyAccounts `gorm:"serializer:json" json:"-"`
-	Visum        *int32        `gorm:"column:visum;type:int(11)" json:"visum"`
-	Playtime     *int32        `gorm:"column:playtime;type:int(11)" json:"playtime"`
-	CreatedAt    *time.Time    `gorm:"column:created_at;type:timestamp;default:current_timestamp()" json:"created_at"`
-	UpdatedAt    *time.Time    `gorm:"column:last_seen;type:timestamp" json:"updated_at"`
+	Visum        int32         `gorm:"column:visum;type:int(11)" json:"visum"`
+	Playtime     int32         `gorm:"column:playtime;type:int(11)" json:"playtime"`
+	CreatedAt    time.Time     `gorm:"column:created_at;type:timestamp;default:current_timestamp()" json:"created_at"`
+	UpdatedAt    time.Time     `gorm:"column:last_seen;type:timestamp" json:"updated_at"`
 	Documents    []Document    `gorm:"foreignkey:Creator" json:"documents"`
 	UserLicenses []UserLicense `gorm:"foreignkey:Owner" json:"user_licenses"`
 }

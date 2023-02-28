@@ -26,7 +26,7 @@ func main() {
 	g := gen.NewGenerator(gen.Config{
 		OutPath:           "./query",
 		WithUnitTest:      true,
-		FieldNullable:     true,
+		FieldNullable:     false,
 		FieldWithTypeTag:  true,
 		FieldSignable:     true,
 		FieldWithIndexTag: true,

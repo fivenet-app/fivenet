@@ -3,12 +3,14 @@ import { defineComponent } from 'vue';
 
 import Navbar from '../../components/Navbar.vue';
 import Footer from '../../components/Footer.vue';
+import CitizensList from '../../components/CitizensList.vue';
 
 export default defineComponent({
   components: {
     Navbar,
     Footer,
-  },
+    CitizensList
+},
 });
 </script>
 
@@ -23,7 +25,7 @@ export default defineComponent({
 
 <template>
   <Navbar />
-  <div class="container mx-auto px-4">
+  <div class="container mx-auto py-8">
     <div class="text-sm breadcrumbs">
       <ul>
         <li>
@@ -46,7 +48,8 @@ export default defineComponent({
         </li>
       </ul>
     </div>
-    <h1>Citizens</h1>
+    <h1 class="text-4xl">Citizens</h1>
+    <CitizensList />
   </div>
   <Footer />
 </template>

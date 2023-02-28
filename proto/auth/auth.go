@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/galexrt/arpanet/api"
 	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/session"
@@ -83,18 +84,7 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 	}
 
 	for _, char := range chars {
-		resp.Chars = append(resp.Chars, &Character{
-			Identifier:  char.Identifier,
-			Job:         *char.Job,
-			JobGrade:    int32(char.JobGrade),
-			Firstname:   *char.Firstname,
-			Lastname:    *char.Lastname,
-			Dateofbirth: *char.Dateofbirth,
-			Sex:         string(char.Sex),
-			Height:      *char.Height,
-			Visum:       int64(*char.Visum),
-			Playtime:    int64(*char.Playtime),
-		})
+		resp.Chars = append(resp.Chars, api.ConvertModelUserToCommonCharacter(char))
 	}
 
 	return resp, nil
