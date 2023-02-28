@@ -108,19 +108,15 @@ export default defineComponent({
             const request = new StreamRequest();
             stream = service.stream(request);
             stream.on('data', function (response) {
-                console.log("livemap data received");
                 outer.usersList = response.getUsersList();
             });
             stream.on('end', function () {
                 console.log('livemap data stream ended');
             });
-
-            console.log("started livemap data stream");
         },
         stop: function () {
             console.log("stopping livemap data stream");
             stream.cancel();
-            console.log("stopped livemap data stream");
         },
     }
 });

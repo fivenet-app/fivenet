@@ -9,9 +9,9 @@ import (
 )
 
 type UserInfoClaims struct {
-	AccountID uint   `json:"accid"`
-	Username  string `json:"usrname"`
-	CharIndex int    `json:"charidx"`
+	AccountID  uint   `json:"accid"`
+	Username   string `json:"usrname"`
+	ActiveChar string `json:"charidx"`
 
 	jwt.RegisteredClaims
 }

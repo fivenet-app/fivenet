@@ -1,6 +1,8 @@
 <script lang="ts">
 import { mapState, mapActions } from 'vuex';
 
+import { LoginRequest } from '@arpanet/gen/auth/auth_pb';
+
 export default {
     data() {
         return {
@@ -20,16 +22,13 @@ export default {
             'doLogin',
         ]),
         loginSubmit() {
-            this.doLogin({
-                username: this.username,
-                password: this.password,
-            }).then(() => {
-                const path = this.$route.query.redirect?.toString() || '/overview';
-                    this.$router.push({ path: path, query: {} });
-            });
+            const req = new LoginRequest();
+            req.setUsername(this.username);
+            req.setPassword(this.password);
+            this.doLogin(req);
         },
     },
-}
+};
 </script>
 
 <template>
@@ -37,8 +36,7 @@ export default {
         <div class="hero-content flex-col lg:flex-row-reverse">
             <div class="text-center lg:text-left">
                 <h1 class="text-5xl font-bold">Login now!</h1>
-                <p class="py-6">Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-                    quasi. In deleniti eaque aut repudiandae et a id nisi.</p>
+                <p class="py-6">Welcome to aRPaNet! Custom made to be better integrated with your FiveM servers.</p>
             </div>
             <form @submit.prevent="loginSubmit">
                 <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">

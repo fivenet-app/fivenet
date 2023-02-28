@@ -5,6 +5,7 @@ import Welcome from './components/Home.vue';
 
 import { mapActions } from 'vuex';
 import { defineComponent } from 'vue';
+import { store } from './store';
 
 export default defineComponent({
   components: {
@@ -12,14 +13,9 @@ export default defineComponent({
     Footer,
     Welcome,
   },
-  methods: {
-    ...mapActions([
-      'fetchAccessToken'
-    ]),
-  },
-  created() {
-    this.fetchAccessToken();
-  },
+  beforeCreate() {
+		store.commit('initialiseStore');
+	}
 });
 </script>
 

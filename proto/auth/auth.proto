@@ -30,7 +30,7 @@ message Character {
 
 message ChooseCharacterRequest {
     string token = 1;
-    int32 index = 2 [(validate.rules).int32.gte =1];
+    string identifier = 2 [(validate.rules).string = {min_len: 46, max_len: 64}];
 }
 
 message ChooseCharacterResponse {

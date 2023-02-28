@@ -4,12 +4,20 @@ import { defineComponent } from 'vue';
 import Navbar from '../components/Navbar.vue';
 import Footer from '../components/Footer.vue';
 import Login from '../components/Login.vue';
+import CharacterSelector from '../components/CharacterSelector.vue';
+import { mapState } from 'vuex';
 
 export default defineComponent({
   components: {
     Navbar,
     Footer,
     Login,
+    CharacterSelector
+  },
+  computed: {
+    ...mapState({
+      accessToken: 'accessToken',
+    }),
   },
 });
 </script>
@@ -25,6 +33,9 @@ export default defineComponent({
 
 <template>
   <Navbar />
-  <Login />
+  <Login v-if="!accessToken" />
+  <div v-if="accessToken" class="container mx-auto px-4">
+    <CharacterSelector />
+  </div>
   <Footer />
 </template>

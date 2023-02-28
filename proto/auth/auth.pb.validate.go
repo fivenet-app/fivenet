@@ -417,10 +417,10 @@ func (m *ChooseCharacterRequest) validate(all bool) error {
 
 	// no validation rules for Token
 
-	if m.GetIndex() < 1 {
+	if l := utf8.RuneCountInString(m.GetIdentifier()); l < 46 || l > 64 {
 		err := ChooseCharacterRequestValidationError{
-			field:  "Index",
-			reason: "value must be greater than or equal to 1",
+			field:  "Identifier",
+			reason: "value length must be between 46 and 64 runes, inclusive",
 		}
 		if !all {
 			return err

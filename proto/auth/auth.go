@@ -31,11 +31,11 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (c
 	return auth.GRPCAuthFunc(ctx)
 }
 
-func (s *Server) createTokenForAccount(account *model.Account, charIndex int) (string, error) {
+func (s *Server) createTokenForAccount(account *model.Account, activeChar string) (string, error) {
 	return session.Tokens.NewWithClaims(&session.UserInfoClaims{
-		AccountID: account.ID,
-		Username:  account.Username,
-		CharIndex: charIndex,
+		AccountID:  account.ID,
+		Username:   account.Username,
+		ActiveChar: activeChar,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// A usual scenario is to set the expiration time relative to the current time
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(12 * time.Hour)),
@@ -70,14 +70,14 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 		return &LoginResponse{}, errors.New("wrong username or password")
 	}
 
-	token, err := s.createTokenForAccount(account, 0)
+	token, err := s.createTokenForAccount(account, "")
 	if err != nil {
 		return nil, err
 	}
 	resp.Token = token
 
 	// Load chars and add them to the response
-	chars, err := auth.GetCharsByLicense(auth.BuildCharSearchIdentifier(account.License))
+	chars, err := auth.GetCharsByLicense(account.License)
 	if err != nil {
 		return resp, err
 	}
@@ -113,7 +113,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	token, err := s.createTokenForAccount(account, int(req.Index))
+	token, err := s.createTokenForAccount(account, req.Identifier)
 	if err != nil {
 		return nil, err
 	}

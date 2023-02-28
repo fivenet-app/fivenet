@@ -21,8 +21,6 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
-var validate_validate_pb = require('../validate/validate_pb.js');
-goog.object.extend(proto, validate_validate_pb);
 goog.exportSymbol('proto.gen.auth.Character', null, global);
 goog.exportSymbol('proto.gen.auth.ChooseCharacterRequest', null, global);
 goog.exportSymbol('proto.gen.auth.ChooseCharacterResponse', null, global);
@@ -960,7 +958,7 @@ proto.gen.auth.ChooseCharacterRequest.prototype.toObject = function(opt_includeI
 proto.gen.auth.ChooseCharacterRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     token: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    index: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    identifier: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -1002,8 +1000,8 @@ proto.gen.auth.ChooseCharacterRequest.deserializeBinaryFromReader = function(msg
       msg.setToken(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setIndex(value);
+      var value = /** @type {string} */ (reader.readString());
+      msg.setIdentifier(value);
       break;
     default:
       reader.skipField();
@@ -1041,9 +1039,9 @@ proto.gen.auth.ChooseCharacterRequest.serializeBinaryToWriter = function(message
       f
     );
   }
-  f = message.getIndex();
-  if (f !== 0) {
-    writer.writeInt32(
+  f = message.getIdentifier();
+  if (f.length > 0) {
+    writer.writeString(
       2,
       f
     );
@@ -1070,20 +1068,20 @@ proto.gen.auth.ChooseCharacterRequest.prototype.setToken = function(value) {
 
 
 /**
- * optional int32 index = 2;
- * @return {number}
+ * optional string identifier = 2;
+ * @return {string}
  */
-proto.gen.auth.ChooseCharacterRequest.prototype.getIndex = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+proto.gen.auth.ChooseCharacterRequest.prototype.getIdentifier = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * @param {number} value
+ * @param {string} value
  * @return {!proto.gen.auth.ChooseCharacterRequest} returns this
  */
-proto.gen.auth.ChooseCharacterRequest.prototype.setIndex = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+proto.gen.auth.ChooseCharacterRequest.prototype.setIdentifier = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

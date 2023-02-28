@@ -16,7 +16,7 @@ type UserInfo struct {
 	ID int `json:"id"`
 
 	Identifier string `json:"identifier"`
-	CharIndex  int    `json:"char_index"`
+	activeChar int    `json:"char_index"`
 
 	Job      string `json:"job"`
 	JobGrade int    `json:"job_grade"`

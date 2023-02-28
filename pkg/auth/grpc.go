@@ -31,7 +31,7 @@ func GRPCAuthFunc(ctx context.Context) (context.Context, error) {
 	}
 
 	grpc_ctxtags.Extract(ctx).Set(AuthAccIDCtxTag, tokenInfo.AccountID)
-	grpc_ctxtags.Extract(ctx).Set(AuthCharIdxCtxTag, tokenInfo.CharIndex)
+	grpc_ctxtags.Extract(ctx).Set(AuthCharIdxCtxTag, tokenInfo.ActiveChar)
 	grpc_ctxtags.Extract(ctx).Set(AuthSubCtxTag, tokenInfo.Subject)
 
 	// WARNING: in production define your own type to avoid context collisions
@@ -40,8 +40,8 @@ func GRPCAuthFunc(ctx context.Context) (context.Context, error) {
 	return ctx, nil
 }
 
-func BuildIdentifierFromLicense(charIndex int, license string) string {
-	return fmt.Sprintf("char%d:%s", charIndex, license)
+func BuildIdentifierFromLicense(activeChar int, license string) string {
+	return fmt.Sprintf("char%d:%s", activeChar, license)
 }
 
 func BuildCharSearchIdentifier(license string) string {
@@ -51,10 +51,10 @@ func BuildCharSearchIdentifier(license string) string {
 func GetUserFromContext(ctx context.Context) (*model.User, error) {
 	values := grpc_ctxtags.Extract(ctx).Values()
 
-	charIndex := values[AuthCharIdxCtxTag].(int)
+	activeChar := values[AuthCharIdxCtxTag].(int)
 	license := values[AuthSubCtxTag].(string)
 
-	return GetCharByIdentifier(BuildIdentifierFromLicense(charIndex, license))
+	return GetCharByIdentifier(BuildIdentifierFromLicense(activeChar, license))
 }
 
 func GetCharByIdentifier(identifier string) (*model.User, error) {
@@ -75,8 +75,8 @@ func GetCharsByLicense(license string) ([]*model.User, error) {
 	licenseSearch := BuildCharSearchIdentifier(license)
 
 	users := query.User
-	return users.Where(users.Identifier.Like(licenseSearch)).
-		Preload(users.UserLicenses.Where(query.UserLicense.Owner.Eq(licenseSearch))).
+	return users.Preload(users.UserLicenses.RelationField).
+		Where(users.Identifier.Like(licenseSearch)).
 		Limit(10).
 		Find()
 }

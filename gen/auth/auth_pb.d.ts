@@ -1,6 +1,5 @@
 import * as jspb from 'google-protobuf'
 
-import * as validate_validate_pb from '../validate/validate_pb';
 
 
 export class LoginRequest extends jspb.Message {
@@ -107,8 +106,8 @@ export class ChooseCharacterRequest extends jspb.Message {
   getToken(): string;
   setToken(value: string): ChooseCharacterRequest;
 
-  getIndex(): number;
-  setIndex(value: number): ChooseCharacterRequest;
+  getIdentifier(): string;
+  setIdentifier(value: string): ChooseCharacterRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ChooseCharacterRequest.AsObject;
@@ -121,7 +120,7 @@ export class ChooseCharacterRequest extends jspb.Message {
 export namespace ChooseCharacterRequest {
   export type AsObject = {
     token: string,
-    index: number,
+    identifier: string,
   }
 }
 

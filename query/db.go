@@ -14,7 +14,7 @@ var DB *gorm.DB
 
 func SetupDB(logger *zap.Logger) error {
 	dbLogger := zapgorm2.New(logger.Named("db"))
-	dbLogger.LogLevel = gormlogger.Error
+	dbLogger.LogLevel = gormlogger.Info
 	dbLogger.SetAsDefault()
 	db, err := gorm.Open(mysql.Open(config.C.Database.DSN), &gorm.Config{Logger: dbLogger})
 	if err != nil {

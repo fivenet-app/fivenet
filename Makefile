@@ -37,12 +37,19 @@ gen-proto: protoc-gen-validate
 		--validate_out="lang=go:./proto" \
 		$(shell find proto/ -iname "*.proto")
 
-	PATH="$$PATH:node_modules/protoc-gen-js/bin/" protoc \
+	PATH="$$PATH:node_modules/protoc-gen-js/bin/" \
+	protoc \
 		--proto_path=./validate \
 		--proto_path=./proto \
 		--js_out=import_style=commonjs,binary:./gen \
 		--grpc-web_out=import_style=typescript,mode=grpcwebtext:./gen \
 		$(shell find proto/ -iname "*.proto")
+
+	# Remove validate_pb imports from JS files
+	find ./gen -type f \( -iname '*.js' -o -iname '*.ts' \) -exec sed -i '/validate_pb/d' {} +
+
+	# Update local yarn package
+	yarn upgrade '@arpanet/gen@file:./gen'
 
 gdal2tiles-leaflet:
 	if test ! -d gdal2tiles-leaflet/; then git clone https://github.com/commenthol/gdal2tiles-leaflet.git; fi

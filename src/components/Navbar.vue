@@ -27,7 +27,7 @@ export default defineComponent({
                 </label>
                 <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
                     <li><router-link to="/overview">Overview</router-link></li>
-                    <li><router-link to="/users">Citizens</router-link></li>
+                    <li><router-link to="/citizens">Citizens</router-link></li>
                     <li tabindex="0">
                         <router-link to="/documents" class="justify-between">
                             Documents
@@ -51,7 +51,7 @@ export default defineComponent({
         <div v-if="accessToken" class="navbar-center hidden lg:flex">
             <ul class="menu menu-horizontal px-1">
                 <li><router-link to="/overview">Overview</router-link></li>
-                <li><router-link to="/users">Citizens</router-link></li>
+                <li><router-link to="/citizens">Citizens</router-link></li>
                 <li tabindex="0">
                     <router-link to="/documents">
                         Documents
