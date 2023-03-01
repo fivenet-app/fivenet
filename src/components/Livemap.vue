@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 import authInterceptor from '../grpcauth';
-import * as grpcWeb from 'grpc-web';
+import { ClientReadableStream, RpcError } from 'grpc-web';
 import { LivemapServiceClient } from '@arpanet/gen/livemap/LivemapServiceClientPb';
 import { Marker, StreamRequest, ServerStreamResponse } from '@arpanet/gen/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
@@ -105,11 +105,14 @@ export default defineComponent({
 
             let outer = this;
             const request = new StreamRequest();
-            stream = client.stream(request);
-            stream.on('data', function (response) {
+            stream = client.stream(request)
+            .on('data', function (response) {
                 outer.usersList = response.getUsersList();
-            });
-            stream.on('end', function () {
+            })
+            .on('error', (err: RpcError) => {
+                authInterceptor.handleError(err, this.$route);
+            })
+            .on('end', function () {
                 console.log('livemap data stream ended');
             });
         },
@@ -124,7 +127,7 @@ const client = new LivemapServiceClient('https://localhost:8181', null, {
     unaryInterceptors: [authInterceptor],
     streamInterceptors: [authInterceptor],
 });
-let stream: grpcWeb.ClientReadableStream<ServerStreamResponse>;
+let stream: ClientReadableStream<ServerStreamResponse>;
 </script>
 
 <template>

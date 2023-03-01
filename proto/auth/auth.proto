@@ -13,26 +13,31 @@ message LoginRequest {
 
 message LoginResponse {
     string token = 1;
-    repeated gen.common.Character chars = 2;
+}
+
+message GetCharactersRequest {}
+
+message GetCharactersResponse {
+    repeated gen.common.Character chars = 1;
 }
 
 message ChooseCharacterRequest {
-    string token = 1;
-    string identifier = 2 [(validate.rules).string = {min_len: 46, max_len: 64}];
+    string identifier = 1 [(validate.rules).string = {min_len: 46, max_len: 64}];
 }
 
 message ChooseCharacterResponse {
     string token = 1;
 }
 
-message LogoutRequest {
-    string token = 1;
-}
+message LogoutRequest {}
 
-message LogoutResponse {}
+message LogoutResponse {
+    bool success = 1;
+}
 
 service AccountService {
     rpc Login(LoginRequest) returns (LoginResponse);
+    rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse);
     rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);
     rpc Logout(LogoutRequest) returns (LogoutResponse);
 }

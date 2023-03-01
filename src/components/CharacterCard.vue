@@ -15,31 +15,26 @@ export default defineComponent({
     computed: {
         ...mapState([
             'accessToken',
-            'chars',
-            'activeChar',
+            'activeCharIdentifier',
         ]),
-    },
-    data() {
-        return {
-            'chosenChar': 0,
-        }
     },
     props: [
         'char',
-        'charIndex',
+        'identifier',
     ],
     methods: {
         ...mapActions([
             'updateAccessToken',
             'updateActiveChar',
+            'updateActiveCharIdentifier',
         ]),
-        chooseCharacter(identifier: string) {
+        chooseCharacter() {
             const req = new ChooseCharacterRequest();
-            req.setIdentifier(identifier);
-            req.setToken(this.accessToken);
+            req.setIdentifier(this.identifier);
             client.chooseCharacter(req, null).then((resp) => {
                 this.updateAccessToken(resp.getToken());
-                this.updateActiveChar(identifier);
+                this.updateActiveChar(this.char);
+                this.updateActiveCharIdentifier(this.identifier);
 
                 const path = this.$route.query.redirect?.toString() || '/overview';
                 this.$router.push({ path: path, query: {} });
@@ -91,7 +86,7 @@ export default defineComponent({
                             d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2H9.5zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />
                     </svg>
                 </div>
-                <div v-if="activeChar == char.getIdentifier()" class="badge badge-primary badge-outline">Last Used
+                <div v-if="activeCharIdentifier == char.getIdentifier()" class="badge badge-primary badge-outline">Last Used
                 </div>
             </h2>
             <div class="badge">Job: {{ char.getJob() }} (Rank: {{ char.getJobgrade() }})</div>
@@ -144,7 +139,7 @@ export default defineComponent({
                 </div>
             </div>
             <div class="card-actions">
-                <button @click="chooseCharacter(char.getIdentifier())" class="btn btn-primary">Choose</button>
+                <button @click="chooseCharacter()" class="btn btn-primary">Choose</button>
             </div>
         </div>
     </div>

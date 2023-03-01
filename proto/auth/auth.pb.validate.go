@@ -162,40 +162,6 @@ func (m *LoginResponse) validate(all bool) error {
 
 	// no validation rules for Token
 
-	for idx, item := range m.GetChars() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, LoginResponseValidationError{
-						field:  fmt.Sprintf("Chars[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, LoginResponseValidationError{
-						field:  fmt.Sprintf("Chars[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return LoginResponseValidationError{
-					field:  fmt.Sprintf("Chars[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if len(errors) > 0 {
 		return LoginResponseMultiError(errors)
 	}
@@ -274,6 +240,244 @@ var _ interface {
 	ErrorName() string
 } = LoginResponseValidationError{}
 
+// Validate checks the field values on GetCharactersRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCharactersRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCharactersRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCharactersRequestMultiError, or nil if none found.
+func (m *GetCharactersRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCharactersRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetCharactersRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCharactersRequestMultiError is an error wrapping multiple validation
+// errors returned by GetCharactersRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetCharactersRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCharactersRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCharactersRequestMultiError) AllErrors() []error { return m }
+
+// GetCharactersRequestValidationError is the validation error returned by
+// GetCharactersRequest.Validate if the designated constraints aren't met.
+type GetCharactersRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCharactersRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCharactersRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCharactersRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCharactersRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCharactersRequestValidationError) ErrorName() string {
+	return "GetCharactersRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCharactersRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCharactersRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCharactersRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCharactersRequestValidationError{}
+
+// Validate checks the field values on GetCharactersResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCharactersResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCharactersResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCharactersResponseMultiError, or nil if none found.
+func (m *GetCharactersResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCharactersResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetChars() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetCharactersResponseValidationError{
+						field:  fmt.Sprintf("Chars[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetCharactersResponseValidationError{
+						field:  fmt.Sprintf("Chars[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetCharactersResponseValidationError{
+					field:  fmt.Sprintf("Chars[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetCharactersResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCharactersResponseMultiError is an error wrapping multiple validation
+// errors returned by GetCharactersResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetCharactersResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCharactersResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCharactersResponseMultiError) AllErrors() []error { return m }
+
+// GetCharactersResponseValidationError is the validation error returned by
+// GetCharactersResponse.Validate if the designated constraints aren't met.
+type GetCharactersResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCharactersResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCharactersResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCharactersResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCharactersResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCharactersResponseValidationError) ErrorName() string {
+	return "GetCharactersResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCharactersResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCharactersResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCharactersResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCharactersResponseValidationError{}
+
 // Validate checks the field values on ChooseCharacterRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -295,8 +499,6 @@ func (m *ChooseCharacterRequest) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for Token
 
 	if l := utf8.RuneCountInString(m.GetIdentifier()); l < 46 || l > 64 {
 		err := ChooseCharacterRequestValidationError{
@@ -515,8 +717,6 @@ func (m *LogoutRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Token
-
 	if len(errors) > 0 {
 		return LogoutRequestMultiError(errors)
 	}
@@ -616,6 +816,8 @@ func (m *LogoutResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return LogoutResponseMultiError(errors)

@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/galexrt/arpanet/pkg/auth"
+	"github.com/galexrt/arpanet/api"
 	"go.uber.org/zap"
 )
 
@@ -22,7 +22,7 @@ func NewServer(logger *zap.Logger) *Server {
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) error {
-	user, err := auth.GetUserFromContext(srv.Context())
+	user, err := api.GetUserFromContext(srv.Context())
 	if err != nil {
 		return err
 	}

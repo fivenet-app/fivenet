@@ -1,3 +1,0 @@
-<template>
-    TODO
-</template>

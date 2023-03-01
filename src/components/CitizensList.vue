@@ -4,7 +4,7 @@ import { OrderBy } from '@arpanet/gen/common/database_pb';
 import { defineComponent } from 'vue';
 
 import authInterceptor from '../grpcauth';
-import * as grpcWeb from 'grpc-web';
+import { RpcError } from 'grpc-web';
 import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import { FindUsersRequest } from '@arpanet/gen/users/users_pb';
 
@@ -17,7 +17,7 @@ export default defineComponent({
             'users': [] as Array<Character>,
             'offset': 0,
             'totalCount': 0,
-            'end': 0,
+            'listEnd': 0,
         };
     },
     methods: {
@@ -38,9 +38,9 @@ export default defineComponent({
                     this.users = resp.getUsersList();
                     this.totalCount = resp.getTotalcount();
                     this.offset = resp.getCurrent();
-                    this.end = resp.getEnd();
-                }).catch((err: grpcWeb.RpcError) => {
-                    console.log(err);
+                    this.listEnd = resp.getEnd();
+                }).catch((err: RpcError) => {
+                    authInterceptor.handleError(err, this.$route);
                 });
         },
         toggleOrderBy: function (column: string) {
@@ -105,14 +105,14 @@ const client = new UsersServiceClient('https://localhost:8181', null, {
             <div class="form-control">
                 <label class="input-group input-group-vertical">
                     <span>First Name</span>
-                    <input v-model="searchFirstname" v-on:keyup.enter="findUsers" type="text" placeholder="First Name"
+                    <input v-model="searchFirstname" v-on:keyup.enter="findUsers(offset)" type="text" placeholder="First Name"
                         class="input input-bordered" />
                 </label>
             </div>
             <div class="form-control">
                 <label class="input-group input-group-vertical">
                     <span>Last Name</span>
-                    <input v-model="searchLastname" v-on:keyup.enter="findUsers" type="text" placeholder="Last Name"
+                    <input v-model="searchLastname" v-on:keyup.enter="findUsers(offset)" type="text" placeholder="Last Name"
                         class="input input-bordered" />
                 </label>
             </div>
@@ -140,17 +140,17 @@ const client = new UsersServiceClient('https://localhost:8181', null, {
                     <td>{{ user.getDateofbirth() }}</td>
                     <td>{{ user.getHeight() }}cm</td>
                     <td><router-link
-                            :to="{ name: '/citizens/[id]', params: { id: user.getIdentifier() } }">VIEW</router-link></td>
+                            :to="{ name: 'citizens-byid', params: { identifier: user.getIdentifier() } }">VIEW</router-link></td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
                     <th></th>
-                    <th>Name</th>
-                    <th>Job</th>
-                    <th>Sex</th>
-                    <th>Date Of Birth</th>
-                    <th>Height</th>
+                    <th v-on:click="toggleOrderBy('firstname')">Name</th>
+                    <th v-on:click="toggleOrderBy('job')">Job</th>
+                    <th v-on:click="toggleOrderBy('sex')">Sex</th>
+                    <th v-on:click="toggleOrderBy('dateofbirth')">Date Of Birth</th>
+                    <th v-on:click="toggleOrderBy('height')">Height</th>
                     <th></th>
                 </tr>
             </tfoot>
@@ -161,14 +161,14 @@ const client = new UsersServiceClient('https://localhost:8181', null, {
     <div class="flex flex-col items-center">
         <!-- Help text -->
         <span class="text-sm text-gray-700 dark:text-gray-400">
-            Showing <span class="font-semibold text-gray-900 dark:text-white">{{ offset + 1 }}</span> to <span
-                class="font-semibold text-gray-900 dark:text-white">{{ end }}</span> of <span
-                class="font-semibold text-gray-900 dark:text-white">{{ totalCount }}</span> Entries
+            Showing <span class="font-semibold text-gray-700">{{ offset + 1 }}</span> to <span
+                class="font-semibold text-gray-700">{{ listEnd }}</span> of <span
+                class="font-semibold text-gray-700">{{ totalCount }}</span> Entries
         </span>
         <div class="inline-flex mt-2 xs:mt-0">
             <!-- Buttons -->
             <button :class="[offset <= 0 ? 'disabled' : '' ]" :disabled="offset <= 0" v-on:click="findUsers(offset-users.length)"
-                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                class="inline-flex items-center px-4 py-2 text-sm font-medium bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                 <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd"
@@ -177,8 +177,8 @@ const client = new UsersServiceClient('https://localhost:8181', null, {
                 </svg>
                 Prev
             </button>
-            <button :class="[offset >= totalCount ? 'disabled' : '' ]" :disabled="offset >= totalCount" v-on:click="findUsers(end)"
-                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            <button :class="[offset >= totalCount ? 'disabled' : '' ]" :disabled="offset >= totalCount" v-on:click="findUsers(listEnd)"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium bg-gray-800 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                 Next
                 <svg aria-hidden="true" class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg">

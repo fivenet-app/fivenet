@@ -4,9 +4,9 @@ import App from './App.vue';
 import './style.css';
 import '@fontsource/inter';
 
-import { store } from './store';
-
+import store from './store';
 import { createWebHistory, createRouter, setupDataFetchingGuard, RouteRecordRaw } from 'vue-router/auto';
+import jwt_decode from 'jwt-decode';
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -14,12 +14,13 @@ const router = createRouter({
 		return routes;
 	},
 });
-
 setupDataFetchingGuard(router);
 
 router.beforeEach((to, from) => {
-	store.state;
 	if (to.meta.requiresAuth && !store.state.accessToken) {
+		var decoded = jwt_decode(store.state.accessToken as string);
+		console.log(JSON.stringify(decoded));
+
 		return {
 			path: '/login',
 			// save the location we were at to come back later
@@ -27,6 +28,7 @@ router.beforeEach((to, from) => {
 		};
 	}
 });
+export default router;
 
 const app = createApp(App);
 app.use(router);

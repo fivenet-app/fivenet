@@ -62,7 +62,7 @@ func main() {
 
 	usersModel := g.GenerateModel("users",
 		// Ignore certain fields
-		gen.FieldIgnore("license", "group", "skin", "loadout", "position", "is_dead", "last_property", "inventory", "tattoos", "disabled", "levelData", "onDuty", "health", "armor"),
+		gen.FieldIgnore("license", "group", "skin", "loadout", "position", "is_dead", "last_property", "inventory", "tattoos", "levelData", "onDuty", "health", "armor"),
 
 		// Fixup some field types and column names
 		gen.FieldType("sex", "Sex"),

@@ -14,4 +14,11 @@ message Character {
     string height = 8;
     int64 visum = 9;
     int64 playtime = 10;
+
+    repeated License licenses = 11;
+}
+
+message License {
+    string name = 1;
+    string displayName = 2;
 }

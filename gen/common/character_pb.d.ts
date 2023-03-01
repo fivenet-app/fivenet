@@ -33,6 +33,11 @@ export class Character extends jspb.Message {
   getPlaytime(): number;
   setPlaytime(value: number): Character;
 
+  getLicensesList(): Array<License>;
+  setLicensesList(value: Array<License>): Character;
+  clearLicensesList(): Character;
+  addLicenses(value?: License, index?: number): License;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Character.AsObject;
   static toObject(includeInstance: boolean, msg: Character): Character.AsObject;
@@ -53,6 +58,29 @@ export namespace Character {
     height: string,
     visum: number,
     playtime: number,
+    licensesList: Array<License.AsObject>,
+  }
+}
+
+export class License extends jspb.Message {
+  getName(): string;
+  setName(value: string): License;
+
+  getDisplayname(): string;
+  setDisplayname(value: string): License;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): License.AsObject;
+  static toObject(includeInstance: boolean, msg: License): License.AsObject;
+  static serializeBinaryToWriter(message: License, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): License;
+  static deserializeBinaryFromReader(message: License, reader: jspb.BinaryReader): License;
+}
+
+export namespace License {
+  export type AsObject = {
+    name: string,
+    displayname: string,
   }
 }
 

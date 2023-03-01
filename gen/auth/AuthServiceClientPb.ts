@@ -82,6 +82,49 @@ export class AccountServiceClient {
     this.methodDescriptorLogin);
   }
 
+  methodDescriptorGetCharacters = new grpcWeb.MethodDescriptor(
+    '/gen.auth.AccountService/GetCharacters',
+    grpcWeb.MethodType.UNARY,
+    auth_auth_pb.GetCharactersRequest,
+    auth_auth_pb.GetCharactersResponse,
+    (request: auth_auth_pb.GetCharactersRequest) => {
+      return request.serializeBinary();
+    },
+    auth_auth_pb.GetCharactersResponse.deserializeBinary
+  );
+
+  getCharacters(
+    request: auth_auth_pb.GetCharactersRequest,
+    metadata: grpcWeb.Metadata | null): Promise<auth_auth_pb.GetCharactersResponse>;
+
+  getCharacters(
+    request: auth_auth_pb.GetCharactersRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: auth_auth_pb.GetCharactersResponse) => void): grpcWeb.ClientReadableStream<auth_auth_pb.GetCharactersResponse>;
+
+  getCharacters(
+    request: auth_auth_pb.GetCharactersRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: auth_auth_pb.GetCharactersResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.auth.AccountService/GetCharacters',
+        request,
+        metadata || {},
+        this.methodDescriptorGetCharacters,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.auth.AccountService/GetCharacters',
+    request,
+    metadata || {},
+    this.methodDescriptorGetCharacters);
+  }
+
   methodDescriptorChooseCharacter = new grpcWeb.MethodDescriptor(
     '/gen.auth.AccountService/ChooseCharacter',
     grpcWeb.MethodType.UNARY,

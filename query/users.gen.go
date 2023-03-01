@@ -39,6 +39,7 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.Jail = field.NewInt32(tableName, "jail")
 	_user.PhoneNumber = field.NewString(tableName, "phone_number")
 	_user.Accounts = field.NewField(tableName, "accounts")
+	_user.Disabled = field.NewBool(tableName, "disabled")
 	_user.Visum = field.NewInt32(tableName, "visum")
 	_user.Playtime = field.NewInt32(tableName, "playtime")
 	_user.CreatedAt = field.NewTime(tableName, "created_at")
@@ -115,6 +116,7 @@ type user struct {
 	Jail        field.Int32
 	PhoneNumber field.String
 	Accounts    field.Field
+	Disabled    field.Bool
 	Visum       field.Int32
 	Playtime    field.Int32
 	CreatedAt   field.Time
@@ -150,6 +152,7 @@ func (u *user) updateTableName(table string) *user {
 	u.Jail = field.NewInt32(table, "jail")
 	u.PhoneNumber = field.NewString(table, "phone_number")
 	u.Accounts = field.NewField(table, "accounts")
+	u.Disabled = field.NewBool(table, "disabled")
 	u.Visum = field.NewInt32(table, "visum")
 	u.Playtime = field.NewInt32(table, "playtime")
 	u.CreatedAt = field.NewTime(table, "created_at")
@@ -170,7 +173,7 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 18)
+	u.fieldMap = make(map[string]field.Expr, 19)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["identifier"] = u.Identifier
 	u.fieldMap["job"] = u.Job
@@ -183,6 +186,7 @@ func (u *user) fillFieldMap() {
 	u.fieldMap["jail"] = u.Jail
 	u.fieldMap["phone_number"] = u.PhoneNumber
 	u.fieldMap["accounts"] = u.Accounts
+	u.fieldMap["disabled"] = u.Disabled
 	u.fieldMap["visum"] = u.Visum
 	u.fieldMap["playtime"] = u.Playtime
 	u.fieldMap["created_at"] = u.CreatedAt

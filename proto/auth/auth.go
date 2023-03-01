@@ -32,11 +32,11 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (c
 	return auth.GRPCAuthFunc(ctx)
 }
 
-func (s *Server) createTokenForAccount(account *model.Account, activeChar string) (string, error) {
+func (s *Server) createTokenForAccount(account *model.Account, activeCharIdentifier string) (string, error) {
 	return session.Tokens.NewWithClaims(&session.UserInfoClaims{
 		AccountID:  account.ID,
 		Username:   account.Username,
-		ActiveChar: activeChar,
+		ActiveChar: activeCharIdentifier,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// A usual scenario is to set the expiration time relative to the current time
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(12 * time.Hour)),
@@ -77,8 +77,19 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 	}
 	resp.Token = token
 
+	return resp, nil
+}
+
+func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {
+	resp := &GetCharactersResponse{}
+
+	claims, err := session.Tokens.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	if err != nil {
+		return resp, nil
+	}
+
 	// Load chars and add them to the response
-	chars, err := auth.GetCharsByLicense(account.License)
+	chars, err := api.GetCharsByLicense(claims.Subject)
 	if err != nil {
 		return resp, err
 	}
@@ -86,14 +97,13 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 	for _, char := range chars {
 		resp.Chars = append(resp.Chars, api.ConvertModelUserToCommonCharacter(char))
 	}
-
 	return resp, nil
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
 	resp := &ChooseCharacterResponse{}
 
-	claims, err := session.Tokens.ParseWithClaims(req.Token)
+	claims, err := session.Tokens.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
 	if err != nil {
 		return resp, nil
 	}
@@ -112,7 +122,9 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 }
 
 func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutResponse, error) {
-	resp := &LogoutResponse{}
 	// TODO till we have a JWT token manager "blocking" users when they logout, nothing todo here
+	resp := &LogoutResponse{
+		Success: true,
+	}
 	return resp, nil
 }

@@ -15,8 +15,8 @@ var Names = []string{
 type UserInfo struct {
 	ID int `json:"id"`
 
-	Identifier string `json:"identifier"`
-	activeChar int    `json:"char_index"`
+	Identifier           string `json:"identifier"`
+	activeCharIdentifier int    `json:"char_index"`
 
 	Job      string `json:"job"`
 	JobGrade int    `json:"job_grade"`

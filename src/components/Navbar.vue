@@ -7,6 +7,7 @@ export default defineComponent({
     computed: {
         ...mapState({
             accessToken: 'accessToken',
+            activeChar: 'activeChar',
         }),
     },
     mounted: function () {
@@ -77,7 +78,8 @@ export default defineComponent({
                             <path fill-rule="evenodd"
                                 d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
                         </svg>
-                        Account
+                        <span v-if="activeChar">{{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}</span>
+                        <span v-else>Account</span>
                         <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                             viewBox="0 0 24 24">
                             <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
@@ -88,8 +90,8 @@ export default defineComponent({
                         <li class="menu-title">
                             <span>Account</span>
                         </li>
-                        <li><router-link to="/logout" active-class="active"
-                                for="modal-navbar-changetheme">Logout</router-link></li>
+                        <li><router-link active-class="active" to="/login">Switch Character</router-link></li>
+                        <li><router-link active-class="active" to="/logout">Logout</router-link></li>
                     </ul>
                 </li>
             </ul>

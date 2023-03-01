@@ -29,11 +29,6 @@ export class LoginResponse extends jspb.Message {
   getToken(): string;
   setToken(value: string): LoginResponse;
 
-  getCharsList(): Array<common_character_pb.Character>;
-  setCharsList(value: Array<common_character_pb.Character>): LoginResponse;
-  clearCharsList(): LoginResponse;
-  addChars(value?: common_character_pb.Character, index?: number): common_character_pb.Character;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): LoginResponse.AsObject;
   static toObject(includeInstance: boolean, msg: LoginResponse): LoginResponse.AsObject;
@@ -45,14 +40,44 @@ export class LoginResponse extends jspb.Message {
 export namespace LoginResponse {
   export type AsObject = {
     token: string,
+  }
+}
+
+export class GetCharactersRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetCharactersRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetCharactersRequest): GetCharactersRequest.AsObject;
+  static serializeBinaryToWriter(message: GetCharactersRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetCharactersRequest;
+  static deserializeBinaryFromReader(message: GetCharactersRequest, reader: jspb.BinaryReader): GetCharactersRequest;
+}
+
+export namespace GetCharactersRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetCharactersResponse extends jspb.Message {
+  getCharsList(): Array<common_character_pb.Character>;
+  setCharsList(value: Array<common_character_pb.Character>): GetCharactersResponse;
+  clearCharsList(): GetCharactersResponse;
+  addChars(value?: common_character_pb.Character, index?: number): common_character_pb.Character;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetCharactersResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetCharactersResponse): GetCharactersResponse.AsObject;
+  static serializeBinaryToWriter(message: GetCharactersResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetCharactersResponse;
+  static deserializeBinaryFromReader(message: GetCharactersResponse, reader: jspb.BinaryReader): GetCharactersResponse;
+}
+
+export namespace GetCharactersResponse {
+  export type AsObject = {
     charsList: Array<common_character_pb.Character.AsObject>,
   }
 }
 
 export class ChooseCharacterRequest extends jspb.Message {
-  getToken(): string;
-  setToken(value: string): ChooseCharacterRequest;
-
   getIdentifier(): string;
   setIdentifier(value: string): ChooseCharacterRequest;
 
@@ -66,7 +91,6 @@ export class ChooseCharacterRequest extends jspb.Message {
 
 export namespace ChooseCharacterRequest {
   export type AsObject = {
-    token: string,
     identifier: string,
   }
 }
@@ -90,9 +114,6 @@ export namespace ChooseCharacterResponse {
 }
 
 export class LogoutRequest extends jspb.Message {
-  getToken(): string;
-  setToken(value: string): LogoutRequest;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): LogoutRequest.AsObject;
   static toObject(includeInstance: boolean, msg: LogoutRequest): LogoutRequest.AsObject;
@@ -103,11 +124,13 @@ export class LogoutRequest extends jspb.Message {
 
 export namespace LogoutRequest {
   export type AsObject = {
-    token: string,
   }
 }
 
 export class LogoutResponse extends jspb.Message {
+  getSuccess(): boolean;
+  setSuccess(value: boolean): LogoutResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): LogoutResponse.AsObject;
   static toObject(includeInstance: boolean, msg: LogoutResponse): LogoutResponse.AsObject;
@@ -118,6 +141,7 @@ export class LogoutResponse extends jspb.Message {
 
 export namespace LogoutResponse {
   export type AsObject = {
+    success: boolean,
   }
 }
 
