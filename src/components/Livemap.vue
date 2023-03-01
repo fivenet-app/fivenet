@@ -10,6 +10,7 @@ import { LMap, LTileLayer, LMarker, LControlLayers, LLayerGroup, LPopup, LContro
 import { customCRS } from '../livemap/CRS';
 import { Hash } from '../livemap/Hash';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 // Latitude and Longitiude popup on mouse over
 let _latlng: HTMLDivElement;
@@ -106,15 +107,15 @@ export default defineComponent({
             let outer = this;
             const request = new StreamRequest();
             stream = client.stream(request)
-            .on('data', function (response) {
-                outer.usersList = response.getUsersList();
-            })
-            .on('error', (err: RpcError) => {
-                authInterceptor.handleError(err, this.$route);
-            })
-            .on('end', function () {
-                console.log('livemap data stream ended');
-            });
+                .on('data', function (response) {
+                    outer.usersList = response.getUsersList();
+                })
+                .on('error', (err: RpcError) => {
+                    authInterceptor.handleError(err, this.$route);
+                })
+                .on('end', function () {
+                    console.log('livemap data stream ended');
+                });
         },
         stop: function () {
             console.log("stopping livemap data stream");

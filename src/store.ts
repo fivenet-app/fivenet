@@ -42,9 +42,9 @@ const store = createStore({
 		updateAccessToken: (state, accessToken) => {
 			state.accessToken = accessToken;
 		},
-        updateActiveChar: (state, char) => {
-            state.activeChar = char;
-        },
+		updateActiveChar: (state, char) => {
+			state.activeChar = char;
+		},
 		updateActiveCharIdentifier: (state, identifier: null | string) => {
 			state.activeCharIdentifier = identifier;
 		},
@@ -79,7 +79,7 @@ const store = createStore({
 			return client
 				.logout(new LogoutRequest(), null)
 				.then((response) => {
-                    commit('loginStop', null);
+					commit('loginStop', null);
 					commit('updateAccessToken', null);
 					commit('updateActiveChar', null);
 					commit('updateActiveCharIdentifier', null);
@@ -88,7 +88,7 @@ const store = createStore({
 					}
 				})
 				.catch((err: RpcError) => {
-                    commit('loginStop', err.message);
+					commit('loginStop', err.message);
 					console.log('Error during logout process: ' + err);
 				});
 		},

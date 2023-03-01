@@ -1,12 +1,11 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-
-import './style.css';
-import '@fontsource/inter';
-
 import store from './store';
 import { createWebHistory, createRouter, setupDataFetchingGuard, RouteRecordRaw } from 'vue-router/auto';
 import jwt_decode from 'jwt-decode';
+
+import './style.css';
+import '@fontsource/inter';
 
 const router = createRouter({
 	history: createWebHistory(),

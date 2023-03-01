@@ -105,8 +105,8 @@ const client = new UsersServiceClient('https://localhost:8181', null, {
             <div class="form-control">
                 <label class="input-group input-group-vertical">
                     <span>First Name</span>
-                    <input v-model="searchFirstname" v-on:keyup.enter="findUsers(offset)" type="text" placeholder="First Name"
-                        class="input input-bordered" />
+                    <input v-model="searchFirstname" v-on:keyup.enter="findUsers(offset)" type="text"
+                        placeholder="First Name" class="input input-bordered" />
                 </label>
             </div>
             <div class="form-control">
@@ -140,7 +140,8 @@ const client = new UsersServiceClient('https://localhost:8181', null, {
                     <td>{{ user.getDateofbirth() }}</td>
                     <td>{{ user.getHeight() }}cm</td>
                     <td><router-link
-                            :to="{ name: 'citizens-byid', params: { identifier: user.getIdentifier() } }">VIEW</router-link></td>
+                            :to="{ name: 'citizens-byid', params: { identifier: user.getIdentifier() } }">VIEW</router-link>
+                    </td>
                 </tr>
             </tbody>
             <tfoot>
@@ -159,15 +160,16 @@ const client = new UsersServiceClient('https://localhost:8181', null, {
 
     <!-- Pagination -->
     <div class="flex flex-col items-center">
-        <!-- Help text -->
+        <!-- Page Stats text -->
         <span class="text-sm text-gray-700 dark:text-gray-400">
             Showing <span class="font-semibold text-gray-700">{{ offset + 1 }}</span> to <span
-                class="font-semibold text-gray-700">{{ listEnd }}</span> of <span
-                class="font-semibold text-gray-700">{{ totalCount }}</span> Entries
+                class="font-semibold text-gray-700">{{ listEnd }}</span> of <span class="font-semibold text-gray-700">{{
+                    totalCount }}</span> Entries
         </span>
         <div class="inline-flex mt-2 xs:mt-0">
             <!-- Buttons -->
-            <button :class="[offset <= 0 ? 'disabled' : '' ]" :disabled="offset <= 0" v-on:click="findUsers(offset-users.length)"
+            <button :class="[offset <= 0 ? 'disabled' : '']" :disabled="offset <= 0"
+                v-on:click="findUsers(offset - users.length)"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                 <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg">
@@ -177,7 +179,8 @@ const client = new UsersServiceClient('https://localhost:8181', null, {
                 </svg>
                 Prev
             </button>
-            <button :class="[offset >= totalCount ? 'disabled' : '' ]" :disabled="offset >= totalCount" v-on:click="findUsers(listEnd)"
+            <button :class="[offset >= totalCount ? 'disabled' : '']" :disabled="offset >= totalCount"
+                v-on:click="findUsers(listEnd)"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium bg-gray-800 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                 Next
                 <svg aria-hidden="true" class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20"

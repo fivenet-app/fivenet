@@ -1,4 +1,10 @@
 {
+	"javascript.preferences.quoteStyle": "single",
+	"typescript.preferences.quoteStyle": "single",
+	"typescript.preferences.autoImportFileExcludePatterns": ["vue-router"],
+	"protoc": {
+		"options": ["--proto_path=./validate"]
+	},
 	"sqltools.connections": [
 		{
 			"mysqlOptions": {
@@ -13,9 +19,5 @@
 			"username": "arpanet",
 			"password": "changeme"
 		}
-	],
-	"typescript.preferences.autoImportFileExcludePatterns": ["vue-router"],
-	"protoc": {
-		"options": ["--proto_path=./validate"]
-	}
+	]
 }

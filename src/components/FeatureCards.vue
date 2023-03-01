@@ -6,13 +6,13 @@ export default defineComponent({
         return {
             features: {
                 citizens: {
-                    name: "Citizen Search",
+                    name: 'Citizen Search',
                     image: '/images/features/citizens_database.jpg',
                     description: 'Search and find information about Citizens, including basic info, their licenses and related documents.',
                     to: '/citizens',
                 },
                 documents: {
-                    name: "Documents",
+                    name: 'Documents',
                     image: '/images/features/documents.jpg',
                     description: 'Create and share documents for and about citizens easily with your colleagues and other jobs.',
                     to: '/documents',

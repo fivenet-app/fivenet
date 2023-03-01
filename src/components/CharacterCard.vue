@@ -47,8 +47,8 @@ export default defineComponent({
                 const minsTemp = timeInsSeconds / 60;
                 let hours = Math.floor(minsTemp / 60);
                 const mins = minsTemp % 60;
-                const hoursText = "hrs";
-                const minsText = "mins";
+                const hoursText = 'hrs';
+                const minsText = 'mins';
 
                 if (hours !== 0 && mins !== 0) {
                     if (mins >= 59) {
@@ -63,7 +63,7 @@ export default defineComponent({
                     return `${hours} ${hoursText}`;
                 }
             }
-            return "-";
+            return '-';
         },
     },
 });

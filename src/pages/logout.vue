@@ -18,7 +18,7 @@ export default defineComponent({
         this.doLogout().then(() => {
             setTimeout(() => {
                 this.$router.push('/');
-            }, 2250);
+            }, 2150);
         });
     },
 });

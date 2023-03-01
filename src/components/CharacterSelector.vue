@@ -18,9 +18,8 @@ export default defineComponent({
     },
     methods: {
         fetchCharacters() {
-            const req = new GetCharactersRequest();
             client.
-                getCharacters(req, null).
+                getCharacters(new GetCharactersRequest(), null).
                 then((resp) => {
                     this.chars = resp.getCharsList();
                 }).catch((err: RpcError) => {
