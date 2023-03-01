@@ -1,160 +1,156 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
 import authInterceptor from '../grpcauth';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { LivemapServiceClient } from '@arpanet/gen/livemap/LivemapServiceClientPb';
 import { Marker, StreamRequest, ServerStreamResponse } from '@arpanet/gen/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
-import { LMap, LTileLayer, LMarker, LControlLayers, LLayerGroup, LPopup, LControlScale } from "@vue-leaflet/vue-leaflet";
-import { customCRS } from '../livemap/CRS';
-import { Hash } from '../livemap/Hash';
+import { customCRS, Livemap } from '../class/Livemap';
+import { Hash } from '../class/Hash';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 // Latitude and Longitiude popup on mouse over
 let _latlng: HTMLDivElement;
 const Position = L.Control.extend({
-    _container: null,
-    options: {
-        position: 'bottomleft',
-    },
-    onAdd: function () {
-        const latlng = L.DomUtil.create('div', 'mouseposition');
-        _latlng = latlng;
-        return latlng;
-    },
-    updateHTML: function (lat: number, lng: number) {
-        _latlng.innerHTML = 'Latitude: ' + lat + '   Longitiude: ' + lng;
-    },
+	_container: null,
+	options: {
+		position: 'bottomleft',
+	},
+	onAdd: function () {
+		const latlng = L.DomUtil.create('div', 'mouseposition');
+		_latlng = latlng;
+		return latlng;
+	},
+	updateHTML: function (lat: number, lng: number) {
+		_latlng.innerHTML = 'Latitude: ' + lat + '   Longitiude: ' + lng;
+	},
 });
 const position = new Position();
 
 export default defineComponent({
-    components: {
-        LMap,
-        LTileLayer,
-        LMarker,
-        LControlLayers,
-        LLayerGroup,
-        LPopup,
-        LControlScale,
-    },
-    computed: {
-        ...mapState({
-            accessToken: 'accessToken',
-        }),
-    },
-    data: function () {
-        return {
-            map: {} as LMap,
-            hash: {} as Hash,
-            zoom: 1,
-            usersList: [] as Array<Marker>,
-            dispatchesList: [] as Array<Marker>,
-        };
-    },
-    beforeUnmount: function () {
-        this.stop();
-    },
-    setup: function () {
-        return {
-            customCRS,
-            position,
-        }
-    },
-    mounted() {
-        this.map = this.$refs.map as LMap;
-    },
-    methods: {
-        onLeafletReady: function () {
-            this.map.leafletObject.on('baselayerchange', (context: L.LayersControlEvent) => this.updateBackground(context.name));
-            this.updateBackground('Postal');
+	data: function () {
+		return {
+			map: {} as Livemap,
+			hash: {} as Hash,
+			zoom: 1,
+			usersList: [] as Array<Marker>,
+			dispatchesList: [] as Array<Marker>,
+		};
+	},
+	beforeUnmount: function () {
+		this.stop();
+	},
+	setup: function () {
+		return {
+			customCRS,
+			position,
+		};
+	},
+	mounted() {
+		this.map = new Livemap('map', { layers: [postal], crs: customCRS });
+		this.map.addHash();
+		this.map.setView([0, 0], 2);
 
-            // Register Coordinates Display
-            // TODO This should probably be a "sub"-component that dynamically listens to the lat/lng changes
-            this.map.leafletObject.addControl(position);
-            this.map.leafletObject.addEventListener('mousemove', (event: L.LeafletMouseEvent) => {
-                const lat = Math.round(event.latlng.lat * 100000) / 100000;
-                const lng = Math.round(event.latlng.lng * 100000) / 100000;
-                position.updateHTML(lat, lng);
-            });
+		const markersLayer = new L.LayerGroup().addTo(this.map as L.Map);
+		L.control
+			.layers({ Satelite: satelite, Atlas: atlas, Road: road, Postal: postal }, { Markers: markersLayer })
+			.addTo(this.map as L.Map);
+		postal.bringToFront();
 
-            // Map Position Hash
-            //this.hash = new Hash(this.map.leafletObject, this.map.leafletObject.getContainer());
+		this.updateBackground('Postal');
+		this.map.on('baselayerchange', (context) => this.updateBackground(context.name));
 
-            this.start();
-        },
-        updateBackground(layer: string): void {
-            switch (layer) {
-                case 'Atlas':
-                    this.map.leafletObject.getContainer().style.backgroundColor = '#0fa8d2';
-                    return;
-                case 'Satelite':
-                    this.map.leafletObject.getContainer().style.backgroundColor = '#143d6b';
-                    return;
-                case 'Road':
-                    this.map.leafletObject.getContainer().style.backgroundColor = '#1862ad';
-                    return;
-                case 'Postal':
-                    this.map.leafletObject.getContainer().style.backgroundColor = '#8cb6ce';
-                    return;
-            }
-        },
-        start: function () {
-            console.log("starting livemap data stream");
+		this.map.addControl(position);
+		this.map.addEventListener('mousemove', (event: L.LeafletMouseEvent) => {
+			const lat = Math.round(event.latlng.lat * 100000) / 100000;
+			const lng = Math.round(event.latlng.lng * 100000) / 100000;
+			position.updateHTML(lat, lng);
+		});
 
-            let outer = this;
-            const request = new StreamRequest();
-            stream = client.stream(request)
-                .on('data', function (response) {
-                    outer.usersList = response.getUsersList();
-                })
-                .on('error', (err: RpcError) => {
-                    authInterceptor.handleError(err, this.$route);
-                })
-                .on('end', function () {
-                    console.log('livemap data stream ended');
-                });
-        },
-        stop: function () {
-            console.log("stopping livemap data stream");
-            stream.cancel();
-        },
-    }
+		this.start();
+	},
+	methods: {
+		updateBackground(layer: string): void {
+			switch (layer) {
+				case 'Atlas':
+					this.map.getContainer().style.backgroundColor = '#0fa8d2';
+					return;
+				case 'Satelite':
+					this.map.getContainer().style.backgroundColor = '#143d6b';
+					return;
+				case 'Road':
+					this.map.getContainer().style.backgroundColor = '#1862ad';
+					return;
+				case 'Postal':
+					this.map.getContainer().style.backgroundColor = '#63a7ce';
+					return;
+			}
+		},
+		start: function () {
+			console.log('starting livemap data stream');
+
+			let outer = this;
+			const request = new StreamRequest();
+			stream = client
+				.stream(request)
+				.on('data', function (response) {
+					outer.usersList = response.getUsersList();
+				})
+				.on('error', (err: RpcError) => {
+					authInterceptor.handleError(err, this.$route);
+				})
+				.on('end', function () {
+					console.log('livemap data stream ended');
+				});
+		},
+		stop: function () {
+			console.log('stopping livemap data stream');
+			stream.cancel();
+		},
+	},
+});
+
+const atlas = L.tileLayer('tiles/atlas/{z}/{x}/{y}.png', {
+	attribution:
+		'<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+	minZoom: 1,
+	maxZoom: 6,
+	noWrap: false,
+	tms: true,
+});
+const road = L.tileLayer('tiles/road/{z}/{x}/{y}.png', {
+	attribution:
+		'<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+	minZoom: 1,
+	maxZoom: 6,
+	noWrap: false,
+	tms: true,
+});
+const satelite = L.tileLayer('tiles/satelite/{z}/{x}/{y}.png', {
+	attribution:
+		'<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+	minZoom: 1,
+	maxZoom: 6,
+	noWrap: false,
+	tms: true,
+});
+const postal = L.tileLayer('tiles/postal/{z}/{x}/{y}.png', {
+	attribution:
+		'<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+	minZoom: 1,
+	maxZoom: 6,
+	noWrap: false,
+	tms: true,
 });
 
 const client = new LivemapServiceClient('https://localhost:8181', null, {
-    unaryInterceptors: [authInterceptor],
-    streamInterceptors: [authInterceptor],
+	unaryInterceptors: [authInterceptor],
+	streamInterceptors: [authInterceptor],
 });
 let stream: ClientReadableStream<ServerStreamResponse>;
 </script>
 
 <template>
-    <div class="w-screen" style="height: 95vh">
-        <l-map ref="map" v-model:zoom="zoom" :center="[0, 0]" :crs="customCRS" :registerControl="position"
-            @ready="onLeafletReady">
-            <l-tile-layer url="tiles/atlas/{z}/{x}/{y}.png" layer-type="base" :tms=true :no-wrap=false name="Atlas"
-                attribution="<a href='http://www.rockstargames.com/V/'>Grand Theft Auto V</a>" :min-zoom="0"
-                :max-zoom="6"></l-tile-layer>
-            <l-tile-layer url="tiles/road/{z}/{x}/{y}.png" layer-type="base" :tms=true :no-wrap=false name="Road"
-                attribution="<a href='http://www.rockstargames.com/V/'>Grand Theft Auto V</a>" :min-zoom="0"
-                :max-zoom="6"></l-tile-layer>
-            <l-tile-layer url="tiles/satelite/{z}/{x}/{y}.png" layer-type="base" :tms=true :no-wrap=false name="Satelite"
-                attribution="<a href='http://www.rockstargames.com/V/'>Grand Theft Auto V</a>" :min-zoom="0"
-                :max-zoom="6"></l-tile-layer>
-            <l-tile-layer url="tiles/postal/{z}/{x}/{y}.png" layer-type="base" :tms=true :no-wrap=false name="Postals"
-                attribution="<a href='http://www.rockstargames.com/V/'>Grand Theft Auto V</a>" :min-zoom="0"
-                :max-zoom="6"></l-tile-layer>
-            <l-layer-group name="Markers">
-                <l-marker v-for="marker in usersList" :lat-lng="[marker.getX(), marker.getY()]" :name="marker.getName()"
-                    :draggable=false>
-                    <l-popup>{{ marker.getPopup() ? marker.getPopup() : marker.getName() }}</l-popup>
-                </l-marker>
-            </l-layer-group>
-            <l-control-layers />
-            <l-control-scale />
-        </l-map>
-    </div>
+	<div class="w-screen" id="map" style="height: 95vh"></div>
 </template>
