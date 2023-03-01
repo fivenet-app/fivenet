@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	AuthAccIDCtxTag   = "auth.accid"
-	AuthCharIdxCtxTag = "auth.charidx"
-	AuthSubCtxTag     = "auth.sub"
+	AuthAccIDCtxTag      = "auth.accid"
+	AuthActiveCharCtxTag = "auth.act_char"
+	AuthSubCtxTag        = "auth.sub"
 )
 
 func GRPCAuthFunc(ctx context.Context) (context.Context, error) {
@@ -28,7 +28,7 @@ func GRPCAuthFunc(ctx context.Context) (context.Context, error) {
 	}
 
 	grpc_ctxtags.Extract(ctx).Set(AuthAccIDCtxTag, tokenInfo.AccountID)
-	grpc_ctxtags.Extract(ctx).Set(AuthCharIdxCtxTag, tokenInfo.ActiveChar)
+	grpc_ctxtags.Extract(ctx).Set(AuthActiveCharCtxTag, tokenInfo.ActiveChar)
 	grpc_ctxtags.Extract(ctx).Set(AuthSubCtxTag, tokenInfo.Subject)
 
 	// WARNING: in production define your own type to avoid context collisions

@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/auth"
@@ -21,10 +22,13 @@ func BuildCharSearchIdentifier(license string) string {
 func GetUserFromContext(ctx context.Context) (*model.User, error) {
 	values := grpc_ctxtags.Extract(ctx).Values()
 
-	activeCharIdentifier := values[auth.AuthCharIdxCtxTag].(int)
+	activeCharIdentifier := values[auth.AuthActiveCharCtxTag].(string)
 	license := values[auth.AuthSubCtxTag].(string)
+	if !strings.Contains(activeCharIdentifier, license) {
+		return nil, fmt.Errorf("wrong license for char identifier")
+	}
 
-	return GetCharByIdentifier(BuildIdentifierFromLicense(activeCharIdentifier, license))
+	return GetCharByIdentifier(activeCharIdentifier)
 }
 
 func GetCharByIdentifier(identifier string) (*model.User, error) {

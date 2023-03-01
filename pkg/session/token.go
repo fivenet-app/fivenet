@@ -11,7 +11,7 @@ import (
 type UserInfoClaims struct {
 	AccountID  uint   `json:"accid"`
 	Username   string `json:"usrname"`
-	ActiveChar string `json:"charidx"`
+	ActiveChar string `json:"act_char"`
 
 	jwt.RegisteredClaims
 }
