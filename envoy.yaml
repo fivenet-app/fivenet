@@ -55,6 +55,9 @@ static_resources:
                 tls_certificates:
                 - certificate_chain: {filename: "/certs/cert.pem"}
                   private_key: {filename: "/certs/dev.pem"}
+                validation_context:
+                  trusted_ca:
+                    filename: /certs/rootCA.pem
   clusters:
     - name: arpanet_service
       connect_timeout: 0.25s

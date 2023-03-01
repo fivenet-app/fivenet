@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import CharacterCard from './CharacterCard.vue';
+import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
 import { GetCharactersRequest } from '@arpanet/gen/auth/auth_pb';
 import { Character } from '@arpanet/gen/common/character_pb';
@@ -9,7 +9,7 @@ import { RpcError } from 'grpc-web';
 
 export default defineComponent({
     components: {
-        CharacterCard,
+        CharacterSelectorCard,
     },
     data: function () {
         return {
@@ -42,7 +42,7 @@ const client = new AccountServiceClient('https://localhost:8181', null, {
 <template>
     <div class="grid place-items-center">
         <div class="flex w-full">
-            <CharacterCard v-for="char in chars" :char="char" :identifier="char.getIdentifier()"
+            <CharacterSelectorCard v-for="char in chars" :char="char" :identifier="char.getIdentifier()"
                 :key="char.getIdentifier()" />
         </div>
     </div>

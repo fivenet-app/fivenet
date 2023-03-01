@@ -3,7 +3,7 @@ version: '3.5'
 services:
   envoy:
     container_name: envoy
-    image: envoyproxy/envoy:v1.25.1
+    image: docker.io/envoyproxy/envoy:v1.25.1
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
       - ${HOME}/.vite-plugin-mkcert:/certs:ro
@@ -15,7 +15,7 @@ services:
 
   mysql:
     container_name: mysql
-    image: mariadb:10.11.2-jammy
+    image: docker.io/library/mariadb:10.11.2-jammy
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-secret-pw-for-root-user}
       MYSQL_USER: ${MYSQL_USER:-arpanet}
