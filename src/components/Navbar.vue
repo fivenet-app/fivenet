@@ -8,6 +8,7 @@ export default defineComponent({
         ...mapState({
             accessToken: 'accessToken',
             activeChar: 'activeChar',
+            activeCharIdentifier: 'activeCharIdentifier',
         }),
     },
     mounted: function () {
@@ -19,7 +20,7 @@ export default defineComponent({
 <template>
     <div class="navbar bg-base-100">
         <div class="navbar-start">
-            <div v-if="accessToken" class="dropdown">
+            <div v-if="accessToken && activeCharIdentifier" class="dropdown">
                 <label tabindex="0" class="btn btn-ghost lg:hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -49,7 +50,7 @@ export default defineComponent({
                 <span class="self-center text-xl font-semibold whitespace-nowrap">aRPaNet</span>
             </router-link>
         </div>
-        <div v-if="accessToken" class="navbar-center hidden lg:flex">
+        <div v-if="accessToken && activeCharIdentifier" class="navbar-center hidden lg:flex">
             <ul class="menu menu-horizontal px-1">
                 <li><router-link active-class="active" to="/overview">Overview</router-link></li>
                 <li><router-link active-class="active" to="/citizens">Citizens</router-link></li>
@@ -72,26 +73,27 @@ export default defineComponent({
             <ul class="menu menu-horizontal px-1">
                 <li tabindex="0">
                     <button>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        <svg v-if="activeChar" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-person-circle" viewBox="0 0 16 16">
                             <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
                             <path fill-rule="evenodd"
                                 d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
                         </svg>
-                        <span v-if="activeChar">{{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}</span>
-                        <span v-else>Account</span>
+                        <span v-if="accessToken && activeChar">{{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}</span>
+                        <span v-else-if="accessToken && !activeChar">Account</span>
+                        <span v-else>Settings</span>
                         <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                             viewBox="0 0 24 24">
                             <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
                         </svg>
                     </button>
                     <ul class="p-2 bg-base-100">
-                        <li><a><label for="modal-navbar-changetheme">Change Theme</label></a></li>
-                        <li class="menu-title">
+                        <li><a><label for="modal-navbar-changetheme">Themes</label></a></li>
+                        <li v-if="accessToken" class="menu-title">
                             <span>Account</span>
                         </li>
-                        <li><router-link active-class="active" to="/login">Switch Character</router-link></li>
-                        <li><router-link active-class="active" to="/logout">Logout</router-link></li>
+                        <li v-if="accessToken && activeChar"><router-link active-class="active" to="/login">Switch Character</router-link></li>
+                        <li v-if="accessToken"><router-link active-class="active" to="/logout">Logout</router-link></li>
                     </ul>
                 </li>
             </ul>

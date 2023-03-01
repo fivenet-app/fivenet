@@ -2,7 +2,6 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import store from './store';
 import { createWebHistory, createRouter, setupDataFetchingGuard, RouteRecordRaw } from 'vue-router/auto';
-import jwt_decode from 'jwt-decode';
 
 import './style.css';
 import '@fontsource/inter';
@@ -16,9 +15,10 @@ const router = createRouter({
 setupDataFetchingGuard(router);
 
 router.beforeEach((to, from) => {
-	if (to.meta.requiresAuth && !store.state.accessToken) {
-		var decoded = jwt_decode(store.state.accessToken as string);
-		console.log(JSON.stringify(decoded));
+	if (to.meta.requiresAuth) {
+		if (store.state.accessToken && store.state.activeChar) {
+			return;
+		}
 
 		return {
 			path: '/login',

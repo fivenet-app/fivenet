@@ -6,6 +6,7 @@ import { GetCharactersRequest } from '@arpanet/gen/auth/auth_pb';
 import { Character } from '@arpanet/gen/common/character_pb';
 import authInterceptor from '../grpcauth';
 import { RpcError } from 'grpc-web';
+import { mapActions } from 'vuex';
 
 export default defineComponent({
     components: {
@@ -17,6 +18,10 @@ export default defineComponent({
         };
     },
     methods: {
+        ...mapActions([
+            'updateActiveChar',
+            'updateActiveCharIdentifier',
+        ]),
         fetchCharacters() {
             client.
                 getCharacters(new GetCharactersRequest(), null).
@@ -26,6 +31,10 @@ export default defineComponent({
                     authInterceptor.handleError(err, this.$route);
                 });
         },
+    },
+    beforeMount() {
+        this.updateActiveChar(null);
+        this.updateActiveCharIdentifier(null);
     },
     mounted() {
         // Fetch user's characters

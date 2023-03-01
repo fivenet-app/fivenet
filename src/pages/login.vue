@@ -33,7 +33,7 @@ export default defineComponent({
 <template>
     <Navbar />
     <Login v-if="!accessToken" />
-    <transition v-if="accessToken" name="fade" mode="out-in">
+    <transition v-else name="fade" mode="out-in">
         <div class="container mx-auto py-8">
             <CharacterSelector />
         </div>

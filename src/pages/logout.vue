@@ -14,7 +14,7 @@ export default defineComponent({
             'doLogout',
         ]),
     },
-    mounted: function () {
+    beforeMount: function () {
         this.doLogout().then(() => {
             setTimeout(() => {
                 this.$router.push('/');

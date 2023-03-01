@@ -13,6 +13,8 @@ export default defineComponent({
     beforeCreate() {
         store.commit('initialiseStore');
     },
+    mounted: function () {
+    },
 });
 </script>
 

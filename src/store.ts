@@ -71,6 +71,9 @@ const store = createStore({
 		},
 		async doLogout({ commit }) {
 			commit('loginStart');
+            commit('updateAccessToken', null);
+            commit('updateActiveChar', null);
+            commit('updateActiveCharIdentifier', null);
 
 			const client = new AccountServiceClient('https://localhost:8181', null, {
 				unaryInterceptors: [authInterceptor],
@@ -79,10 +82,7 @@ const store = createStore({
 			return client
 				.logout(new LogoutRequest(), null)
 				.then((response) => {
-					commit('loginStop', null);
-					commit('updateAccessToken', null);
-					commit('updateActiveChar', null);
-					commit('updateActiveCharIdentifier', null);
+                    commit('loginStop', null);
 					if (response.getSuccess()) {
 						return;
 					}
