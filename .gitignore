@@ -42,3 +42,6 @@ dist/
 # Repo checkouts
 /gdal2tiles-leaflet/
 /validate/
+
+# Dev stuff
+dev/
