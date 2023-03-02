@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type UserInfoClaims struct {
+type CitizenInfoClaims struct {
 	AccountID  uint   `json:"accid"`
 	Username   string `json:"usrname"`
 	ActiveChar string `json:"act_char"`
@@ -28,13 +28,13 @@ func NewTokenManager() *TokenManager {
 	}
 }
 
-func (t *TokenManager) NewWithClaims(claims *UserInfoClaims) (string, error) {
+func (t *TokenManager) NewWithClaims(claims *CitizenInfoClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(t.jwtSigningKey)
 }
 
-func (t *TokenManager) ParseWithClaims(tokenString string) (*UserInfoClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &UserInfoClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (t *TokenManager) ParseWithClaims(tokenString string) (*CitizenInfoClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &CitizenInfoClaims{}, func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
 			return "", errors.New("failed to verify jwt token method")
@@ -45,7 +45,7 @@ func (t *TokenManager) ParseWithClaims(tokenString string) (*UserInfoClaims, err
 		return nil, errors.New("failed to parse jwt token")
 	}
 
-	claims, ok := token.Claims.(*UserInfoClaims)
+	claims, ok := token.Claims.(*CitizenInfoClaims)
 	if ok && token.Valid {
 		return claims, nil
 	}

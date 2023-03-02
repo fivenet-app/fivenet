@@ -33,7 +33,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (c
 }
 
 func (s *Server) createTokenForAccount(account *model.Account, activeCharIdentifier string) (string, error) {
-	return session.Tokens.NewWithClaims(&session.UserInfoClaims{
+	return session.Tokens.NewWithClaims(&session.CitizenInfoClaims{
 		AccountID:  account.ID,
 		Username:   account.Username,
 		ActiveChar: activeCharIdentifier,

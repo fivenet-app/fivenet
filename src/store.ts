@@ -7,6 +7,7 @@ import { LoginRequest, LogoutRequest } from '@arpanet/gen/auth/auth_pb';
 import { version } from '../package.json';
 import { Character } from '@arpanet/gen/common/character_pb';
 import authInterceptor from './grpcauth';
+import config from './config';
 
 const store = createStore({
 	state: {
@@ -53,7 +54,7 @@ const store = createStore({
 		async doLogin({ commit }, loginData: LoginRequest) {
 			commit('loginStart');
 
-			const client = new AccountServiceClient('https://localhost:8181', null, null);
+			const client = new AccountServiceClient(config.apiProtoURL, null, null);
 			return client
 				.login(loginData, null)
 				.then((response) => {
@@ -75,7 +76,7 @@ const store = createStore({
             commit('updateActiveChar', null);
             commit('updateActiveCharIdentifier', null);
 
-			const client = new AccountServiceClient('https://localhost:8181', null, {
+			const client = new AccountServiceClient(config.apiProtoURL, null, {
 				unaryInterceptors: [authInterceptor],
 				streamInterceptors: [authInterceptor],
 			});

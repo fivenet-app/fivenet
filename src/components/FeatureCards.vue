@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-    data: function () {
+    data() {
         return {
             features: {
                 citizens: {

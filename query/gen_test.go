@@ -85,6 +85,7 @@ func Test_WithContext(t *testing.T) {
 		qCtx.JobGrade.UnderlyingDB().Statement.Context,
 		qCtx.User.UnderlyingDB().Statement.Context,
 		qCtx.UserLicense.UnderlyingDB().Statement.Context,
+		qCtx.UserProps.UnderlyingDB().Statement.Context,
 		qCtx.VpcL.UnderlyingDB().Statement.Context,
 	} {
 		if v := ctx.Value(key); v != value {

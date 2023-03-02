@@ -557,8 +557,7 @@ proto.gen.common.License.prototype.toObject = function(opt_includeInstance) {
  */
 proto.gen.common.License.toObject = function(includeInstance, msg) {
   var f, obj = {
-    name: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    displayname: jspb.Message.getFieldWithDefault(msg, 2, "")
+    name: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -599,10 +598,6 @@ proto.gen.common.License.deserializeBinaryFromReader = function(msg, reader) {
       var value = /** @type {string} */ (reader.readString());
       msg.setName(value);
       break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setDisplayname(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -639,13 +634,6 @@ proto.gen.common.License.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getDisplayname();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
-    );
-  }
 };
 
 
@@ -664,24 +652,6 @@ proto.gen.common.License.prototype.getName = function() {
  */
 proto.gen.common.License.prototype.setName = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
-};
-
-
-/**
- * optional string displayName = 2;
- * @return {string}
- */
-proto.gen.common.License.prototype.getDisplayname = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.gen.common.License} returns this
- */
-proto.gen.common.License.prototype.setDisplayname = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

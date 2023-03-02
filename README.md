@@ -17,7 +17,12 @@
     - [ ] Category System (no directories/ paths)
         - [ ] Sub-categories
 - [ ] Dispatch System
-    - [ ] Livemap
+    - [ ] Livemap that shows the dispatches
+    - [ ] Tools to coordinate dispatches
+        - [ ] Manually by user input
+        - [ ] Automatically
+- [ ] Livemap
+    - [ ] See your colleagues
 - [ ] Employee Management
     - [ ] Warn Employees ("Führungsregister")
     - [ ] Promote and Demote Employees

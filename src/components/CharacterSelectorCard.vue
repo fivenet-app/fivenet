@@ -5,16 +5,19 @@ import { ChooseCharacterRequest } from '@arpanet/gen/auth/auth_pb';
 import { defineComponent } from 'vue';
 import { mapActions, mapState } from 'vuex';
 import * as grpcWeb from 'grpc-web';
-
-const client = new AccountServiceClient('https://localhost:8181', null, {
-    unaryInterceptors: [authInterceptor],
-    streamInterceptors: [authInterceptor],
-});
+import config from '../config';
 
 export default defineComponent({
+    data() {
+        return {
+            'client': new AccountServiceClient(config.apiProtoURL, null, {
+                unaryInterceptors: [authInterceptor],
+                streamInterceptors: [authInterceptor],
+            }),
+        };
+    },
     computed: {
         ...mapState([
-            'accessToken',
             'activeCharIdentifier',
         ]),
     },
@@ -31,7 +34,7 @@ export default defineComponent({
         chooseCharacter() {
             const req = new ChooseCharacterRequest();
             req.setIdentifier(this.identifier);
-            client.chooseCharacter(req, null).then((resp) => {
+            this.client.chooseCharacter(req, null).then((resp) => {
                 this.updateAccessToken(resp.getToken());
                 this.updateActiveChar(this.char);
                 this.updateActiveCharIdentifier(this.identifier);

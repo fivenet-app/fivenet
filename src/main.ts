@@ -2,7 +2,6 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import store from './store';
 import { createWebHistory, createRouter, setupDataFetchingGuard, RouteRecordRaw } from 'vue-router/auto';
-
 import './style.css';
 import '@fontsource/inter';
 

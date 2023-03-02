@@ -20,5 +20,4 @@ message Character {
 
 message License {
     string name = 1;
-    string displayName = 2;
 }

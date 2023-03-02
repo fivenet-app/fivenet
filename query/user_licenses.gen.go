@@ -27,7 +27,7 @@ func newUserLicense(db *gorm.DB, opts ...gen.DOOption) userLicense {
 
 	tableName := _userLicense.userLicenseDo.TableName()
 	_userLicense.ALL = field.NewAsterisk(tableName)
-	_userLicense.Type = field.NewString(tableName, "type")
+	_userLicense.Type = field.NewField(tableName, "type")
 	_userLicense.Owner = field.NewString(tableName, "owner")
 
 	_userLicense.fillFieldMap()
@@ -39,7 +39,7 @@ type userLicense struct {
 	userLicenseDo
 
 	ALL   field.Asterisk
-	Type  field.String
+	Type  field.Field
 	Owner field.String
 
 	fieldMap map[string]field.Expr
@@ -57,7 +57,7 @@ func (u userLicense) As(alias string) *userLicense {
 
 func (u *userLicense) updateTableName(table string) *userLicense {
 	u.ALL = field.NewAsterisk(table)
-	u.Type = field.NewString(table, "type")
+	u.Type = field.NewField(table, "type")
 	u.Owner = field.NewString(table, "owner")
 
 	u.fillFieldMap()

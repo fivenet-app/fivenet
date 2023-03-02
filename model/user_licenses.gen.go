@@ -8,8 +8,8 @@ const TableNameUserLicense = "user_licenses"
 
 // UserLicense mapped from table <user_licenses>
 type UserLicense struct {
-	Type  string `gorm:"column:type;type:varchar(60);primaryKey" json:"type"`
-	Owner string `gorm:"column:owner;type:varchar(64);primaryKey;index:user_licenses_owner_IDX,priority:1" json:"-"`
+	Type  LicenseType `gorm:"column:type;type:varchar(60);primaryKey" json:"type"`
+	Owner string      `gorm:"column:owner;type:varchar(64);primaryKey;index:user_licenses_owner_IDX,priority:1" json:"-"`
 }
 
 // TableName UserLicense's table name

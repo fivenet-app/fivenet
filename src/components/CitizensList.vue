@@ -9,15 +9,20 @@ import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import { FindUsersRequest } from '@arpanet/gen/users/users_pb';
 
 export default defineComponent({
-    data: function () {
+    data() {
         return {
-            'searchFirstname': '',
-            'searchLastname': '',
-            'orderBys': [] as Array<OrderBy>,
-            'users': [] as Array<Character>,
-            'offset': 0,
-            'totalCount': 0,
-            'listEnd': 0,
+            client: new UsersServiceClient('https://localhost:8181', null, {
+                unaryInterceptors: [authInterceptor],
+                streamInterceptors: [authInterceptor],
+            }),
+            loading: false,
+            searchFirstname: '',
+            searchLastname: '',
+            orderBys: [] as Array<OrderBy>,
+            users: [] as Array<Character>,
+            offset: 0,
+            totalCount: 0,
+            listEnd: 0,
         };
     },
     methods: {
@@ -25,6 +30,8 @@ export default defineComponent({
             if (offset < 0) {
                 return;
             }
+            if (this.loading) return;
+            this.loading = true;
 
             const req = new FindUsersRequest();
             req.setCurrent(offset);
@@ -32,14 +39,16 @@ export default defineComponent({
             req.setLastname(this.searchLastname);
             req.setOrderbyList(this.orderBys);
 
-            client.
+            this.client.
                 findUsers(req, null).
                 then((resp) => {
                     this.users = resp.getUsersList();
                     this.totalCount = resp.getTotalcount();
                     this.offset = resp.getCurrent();
                     this.listEnd = resp.getEnd();
+                    this.loading = false;
                 }).catch((err: RpcError) => {
+                    this.loading = false;
                     authInterceptor.handleError(err, this.$route);
                 });
         },
@@ -91,11 +100,6 @@ export default defineComponent({
 
         this.findUsers(this.offset);
     },
-});
-
-const client = new UsersServiceClient('https://localhost:8181', null, {
-    unaryInterceptors: [authInterceptor],
-    streamInterceptors: [authInterceptor],
 });
 </script>
 

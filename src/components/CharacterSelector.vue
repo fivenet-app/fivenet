@@ -7,13 +7,18 @@ import { Character } from '@arpanet/gen/common/character_pb';
 import authInterceptor from '../grpcauth';
 import { RpcError } from 'grpc-web';
 import { mapActions } from 'vuex';
+import config from '../config';
 
 export default defineComponent({
     components: {
         CharacterSelectorCard,
     },
-    data: function () {
+    data() {
         return {
+            'client': new AccountServiceClient(config.apiProtoURL, null, {
+                unaryInterceptors: [authInterceptor],
+                streamInterceptors: [authInterceptor],
+            }),
             'chars': [] as Array<Character>,
         };
     },
@@ -22,8 +27,8 @@ export default defineComponent({
             'updateActiveChar',
             'updateActiveCharIdentifier',
         ]),
-        fetchCharacters() {
-            client.
+        async fetchCharacters() {
+            return this.client.
                 getCharacters(new GetCharactersRequest(), null).
                 then((resp) => {
                     this.chars = resp.getCharsList();
@@ -35,15 +40,10 @@ export default defineComponent({
     beforeMount() {
         this.updateActiveChar(null);
         this.updateActiveCharIdentifier(null);
-    },
-    mounted() {
+
         // Fetch user's characters
         this.fetchCharacters();
     },
-});
-const client = new AccountServiceClient('https://localhost:8181', null, {
-    unaryInterceptors: [authInterceptor],
-    streamInterceptors: [authInterceptor],
 });
 
 </script>

@@ -3,16 +3,16 @@ package session
 import "encoding/gob"
 
 const (
-	UserSession = "arpanet_user"
-	UserIDKey   = "LoggedInUserID"
-	UserInfoKey = "LoggedInUserInfo"
+	UserSession    = "arpanet_user"
+	UserIDKey      = "LoggedInUserID"
+	CitizenInfoKey = "LoggedInCitizenInfo"
 )
 
 var Names = []string{
 	UserSession,
 }
 
-type UserInfo struct {
+type CitizenInfo struct {
 	ID int `json:"id"`
 
 	Identifier           string `json:"identifier"`
@@ -23,5 +23,5 @@ type UserInfo struct {
 }
 
 func init() {
-	gob.Register(&UserInfo{})
+	gob.Register(&CitizenInfo{})
 }

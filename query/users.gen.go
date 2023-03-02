@@ -44,6 +44,12 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.Playtime = field.NewInt32(tableName, "playtime")
 	_user.CreatedAt = field.NewTime(tableName, "created_at")
 	_user.UpdatedAt = field.NewTime(tableName, "last_seen")
+	_user.UserLicenses = userHasManyUserLicenses{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("UserLicenses", "model.UserLicense"),
+	}
+
 	_user.Documents = userHasManyDocuments{
 		db: db.Session(&gorm.Session{}),
 
@@ -89,12 +95,6 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 		},
 	}
 
-	_user.UserLicenses = userHasManyUserLicenses{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("UserLicenses", "model.UserLicense"),
-	}
-
 	_user.fillFieldMap()
 
 	return _user
@@ -103,27 +103,27 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 type user struct {
 	userDo
 
-	ALL         field.Asterisk
-	ID          field.Int32
-	Identifier  field.String
-	Job         field.String
-	JobGrade    field.Int
-	Firstname   field.String
-	Lastname    field.String
-	Dateofbirth field.String
-	Sex         field.Field
-	Height      field.String
-	Jail        field.Int32
-	PhoneNumber field.String
-	Accounts    field.Field
-	Disabled    field.Bool
-	Visum       field.Int32
-	Playtime    field.Int32
-	CreatedAt   field.Time
-	UpdatedAt   field.Time
-	Documents   userHasManyDocuments
-
+	ALL          field.Asterisk
+	ID           field.Int32
+	Identifier   field.String
+	Job          field.String
+	JobGrade     field.Int
+	Firstname    field.String
+	Lastname     field.String
+	Dateofbirth  field.String
+	Sex          field.Field
+	Height       field.String
+	Jail         field.Int32
+	PhoneNumber  field.String
+	Accounts     field.Field
+	Disabled     field.Bool
+	Visum        field.Int32
+	Playtime     field.Int32
+	CreatedAt    field.Time
+	UpdatedAt    field.Time
 	UserLicenses userHasManyUserLicenses
+
+	Documents userHasManyDocuments
 
 	fieldMap map[string]field.Expr
 }
@@ -202,6 +202,72 @@ func (u user) clone(db *gorm.DB) user {
 func (u user) replaceDB(db *gorm.DB) user {
 	u.userDo.ReplaceDB(db)
 	return u
+}
+
+type userHasManyUserLicenses struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a userHasManyUserLicenses) Where(conds ...field.Expr) *userHasManyUserLicenses {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userHasManyUserLicenses) WithContext(ctx context.Context) *userHasManyUserLicenses {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userHasManyUserLicenses) Model(m *model.User) *userHasManyUserLicensesTx {
+	return &userHasManyUserLicensesTx{a.db.Model(m).Association(a.Name())}
+}
+
+type userHasManyUserLicensesTx struct{ tx *gorm.Association }
+
+func (a userHasManyUserLicensesTx) Find() (result []*model.UserLicense, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userHasManyUserLicensesTx) Append(values ...*model.UserLicense) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userHasManyUserLicensesTx) Replace(values ...*model.UserLicense) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userHasManyUserLicensesTx) Delete(values ...*model.UserLicense) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userHasManyUserLicensesTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userHasManyUserLicensesTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type userHasManyDocuments struct {
@@ -286,72 +352,6 @@ func (a userHasManyDocumentsTx) Clear() error {
 }
 
 func (a userHasManyDocumentsTx) Count() int64 {
-	return a.tx.Count()
-}
-
-type userHasManyUserLicenses struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a userHasManyUserLicenses) Where(conds ...field.Expr) *userHasManyUserLicenses {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a userHasManyUserLicenses) WithContext(ctx context.Context) *userHasManyUserLicenses {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a userHasManyUserLicenses) Model(m *model.User) *userHasManyUserLicensesTx {
-	return &userHasManyUserLicensesTx{a.db.Model(m).Association(a.Name())}
-}
-
-type userHasManyUserLicensesTx struct{ tx *gorm.Association }
-
-func (a userHasManyUserLicensesTx) Find() (result []*model.UserLicense, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a userHasManyUserLicensesTx) Append(values ...*model.UserLicense) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a userHasManyUserLicensesTx) Replace(values ...*model.UserLicense) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a userHasManyUserLicensesTx) Delete(values ...*model.UserLicense) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a userHasManyUserLicensesTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a userHasManyUserLicensesTx) Count() int64 {
 	return a.tx.Count()
 }
 

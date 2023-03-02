@@ -36,6 +36,7 @@ func (a *users) SearchUsersByNamePagesWithLimit(firstname string, lastname strin
 		q = q.Where(u.Lastname.Like("%" + lastname + "%"))
 	}
 
+	// Convert our proto abstracted `common.OrderBy` to actual gorm order by instructions
 	if len(orderBys) > 0 {
 		for _, orderBy := range orderBys {
 			field, ok := u.GetFieldByName(orderBy.Column)
@@ -58,10 +59,18 @@ func (a *users) SearchUsersByNamePagesWithLimit(firstname string, lastname strin
 
 func (a *users) GetUserByIdentifier(identifier string) (*model.User, error) {
 	u := query.User
-	return u.Where(u.Identifier.Eq(identifier)).Limit(1).First()
+	q := u.Preload(u.UserLicenses.RelationField)
+	return q.Where(u.Identifier.Eq(identifier)).Limit(1).First()
 }
 
 func ConvertModelUserToCommonCharacter(user *model.User) *common.Character {
+	licenses := make([]*common.License, len(user.UserLicenses))
+	for i := 0; i < len(user.UserLicenses); i++ {
+		licenses[i] = &common.License{
+			Name: string(user.UserLicenses[i].Type),
+		}
+	}
+
 	return &common.Character{
 		Identifier:  user.Identifier,
 		Firstname:   user.Firstname,
@@ -73,5 +82,6 @@ func ConvertModelUserToCommonCharacter(user *model.User) *common.Character {
 		JobGrade:    int32(user.JobGrade),
 		Visum:       int64(user.Visum),
 		Playtime:    int64(user.Playtime),
+		Licenses:    licenses,
 	}
 }

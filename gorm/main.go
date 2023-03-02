@@ -58,7 +58,9 @@ func main() {
 	)
 
 	userLicenses := g.GenerateModel("user_licenses",
-		gen.FieldJSONTag("owner", "-"))
+		gen.FieldType("type", "LicenseType"),
+		gen.FieldJSONTag("owner", "-"),
+	)
 
 	usersModel := g.GenerateModel("users",
 		// Ignore certain fields
@@ -76,13 +78,13 @@ func main() {
 		gen.FieldJSONTag("accounts", "-"),
 
 		// Add relations for lazy loading
-		gen.FieldRelateModel(field.HasMany, "Documents", model.Document{},
-			&field.RelateConfig{
-				GORMTag: "foreignkey:Creator",
-			}),
 		gen.FieldRelate(field.HasMany, "UserLicenses", userLicenses,
 			&field.RelateConfig{
 				GORMTag: "foreignkey:Owner",
+			}),
+		gen.FieldRelateModel(field.HasMany, "Documents", model.Document{},
+			&field.RelateConfig{
+				GORMTag: "foreignkey:Creator",
 			}),
 	)
 
@@ -97,6 +99,7 @@ func main() {
 		model.DocumentJobAccess{},
 		model.DocumentUserAccess{},
 		model.Account{},
+		model.UserProps{},
 	)
 
 	// Generate the code

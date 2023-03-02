@@ -23,7 +23,7 @@ func (r *Testing) Register(e *gin.Engine) {
 }
 
 func (r *Testing) DocumentsGET(c *gin.Context) {
-	info := session.UserInfo{
+	info := session.CitizenInfo{
 		Identifier: "",
 		Job:        "ambulance",
 		JobGrade:   20,
@@ -72,7 +72,7 @@ func (r *Testing) DocumentsGET(c *gin.Context) {
 }
 
 func (r *Testing) DocumentsByIDGET(c *gin.Context) {
-	info := session.UserInfo{
+	info := session.CitizenInfo{
 		Identifier: "",
 		Job:        "ambulance",
 		JobGrade:   20,

@@ -27,6 +27,7 @@ func SetupDB(logger *zap.Logger) error {
 		&model.Document{},
 		&model.DocumentJobAccess{},
 		&model.DocumentUserAccess{},
+		&model.UserProps{},
 	)
 
 	// Set the DB var and default for the query package

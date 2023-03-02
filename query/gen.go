@@ -25,6 +25,7 @@ var (
 	JobGrade           *jobGrade
 	User               *user
 	UserLicense        *userLicense
+	UserProps          *userProps
 	VpcL               *vpcL
 )
 
@@ -38,6 +39,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	JobGrade = &Q.JobGrade
 	User = &Q.User
 	UserLicense = &Q.UserLicense
+	UserProps = &Q.UserProps
 	VpcL = &Q.VpcL
 }
 
@@ -52,6 +54,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		JobGrade:           newJobGrade(db, opts...),
 		User:               newUser(db, opts...),
 		UserLicense:        newUserLicense(db, opts...),
+		UserProps:          newUserProps(db, opts...),
 		VpcL:               newVpcL(db, opts...),
 	}
 }
@@ -67,6 +70,7 @@ type Query struct {
 	JobGrade           jobGrade
 	User               user
 	UserLicense        userLicense
+	UserProps          userProps
 	VpcL               vpcL
 }
 
@@ -83,6 +87,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		JobGrade:           q.JobGrade.clone(db),
 		User:               q.User.clone(db),
 		UserLicense:        q.UserLicense.clone(db),
+		UserProps:          q.UserProps.clone(db),
 		VpcL:               q.VpcL.clone(db),
 	}
 }
@@ -106,6 +111,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		JobGrade:           q.JobGrade.replaceDB(db),
 		User:               q.User.replaceDB(db),
 		UserLicense:        q.UserLicense.replaceDB(db),
+		UserProps:          q.UserProps.replaceDB(db),
 		VpcL:               q.VpcL.replaceDB(db),
 	}
 }
@@ -119,6 +125,7 @@ type queryCtx struct {
 	JobGrade           IJobGradeDo
 	User               IUserDo
 	UserLicense        IUserLicenseDo
+	UserProps          IUserPropsDo
 	VpcL               IVpcLDo
 }
 
@@ -132,6 +139,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		JobGrade:           q.JobGrade.WithContext(ctx),
 		User:               q.User.WithContext(ctx),
 		UserLicense:        q.UserLicense.WithContext(ctx),
+		UserProps:          q.UserProps.WithContext(ctx),
 		VpcL:               q.VpcL.WithContext(ctx),
 	}
 }
