@@ -56,9 +56,9 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) err
 			x, _ := strconv.ParseFloat(loc.Coordsx, 32)
 			y, _ := strconv.ParseFloat(loc.Coordsy, 32)
 			resp.Users[key] = &Marker{
+				Id:    loc.PlayerID,
 				X:     float32(x),
 				Y:     float32(y),
-				Id:    loc.PlayerID,
 				Name:  loc.PlayerID,
 				Popup: loc.PlayerID,
 			}

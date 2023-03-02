@@ -4,6 +4,7 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
 	content: ['node_modules/daisyui/**/*', './public/**/*.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+	plugins: [require('@tailwindcss/forms')],
 	theme: {
 		extend: {
 			fontFamily: {

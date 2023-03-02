@@ -12,6 +12,12 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-text-size-adjust: 100%;
+
+    /* Make the mention background blue. */
+    --ck-color-mention-background: hsla(220, 100%, 54%, 0.4);
+
+    /* Make the mention text dark grey. */
+    --ck-color-mention-text: hsl(0, 0%, 15%);
 }
 
 html,

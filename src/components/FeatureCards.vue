@@ -17,6 +17,18 @@ export default defineComponent({
                     description: 'Create and share documents for and about citizens easily with your colleagues and other jobs.',
                     to: '/documents',
                 },
+                dispatches: {
+                    name: 'Dispatches',
+                    image: '/images/features/dispatches.jpg',
+                    description: 'Dispatch Center and Management. Coming soon.',
+                    to: '#',
+                },
+                job: {
+                    name: 'Job',
+                    image: '/images/features/job.jpg',
+                    description: 'Infos about your job and employee management. Coming soon',
+                    to: '/job',
+                },
                 livemap: {
                     name: 'Livemap',
                     image: '/images/features/livemap.jpg',
@@ -30,7 +42,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="grid grid-cols-3">
+    <div class="grid grid-cols-3 px-2 py-2">
         <div v-for="feature in features" class="card card-compact w-96 bg-base-100 shadow-xl image-full">
             <figure><img :src="feature.image" :alt="feature.name" /></figure>
             <div class="card-body">

@@ -3,7 +3,27 @@ import { themeChange } from 'theme-change';
 import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+import { Bars3Icon, BellIcon, XMarkIcon, UserCircleIcon } from '@heroicons/vue/24/outline';
+import { HomeIcon } from '@heroicons/vue/20/solid';
+import Breadcrumbs from './Breadcrumbs.vue';
+
 export default defineComponent({
+    components: {
+        Disclosure,
+        DisclosureButton,
+        DisclosurePanel,
+        Menu,
+        MenuButton,
+        MenuItem,
+        MenuItems,
+        Bars3Icon,
+        BellIcon,
+        XMarkIcon,
+        UserCircleIcon,
+        HomeIcon,
+        Breadcrumbs,
+    },
     computed: {
         ...mapState({
             accessToken: 'accessToken',
@@ -11,280 +31,120 @@ export default defineComponent({
             activeCharIdentifier: 'activeCharIdentifier',
         }),
     },
-    mounted: function () {
+    data() {
+        return {
+            navigation: [
+                { name: 'Overview', href: '/overview' },
+                { name: 'Citizens', href: '/citizens' },
+                { name: 'Documents', href: '/documents' },
+                { name: 'Dispatches', href: '/dispatches' },
+                { name: 'Job', href: '/job' },
+                { name: 'Livemap', href: '/livemap' },
+            ],
+            userNavigation: [
+                { name: 'Change Characters', href: '/login', },
+                { name: 'Sign out', href: '/logout', },
+            ],
+        };
+    },
+    mounted() {
         themeChange(false);
     },
 });
 </script>
 
 <template>
-    <div class="navbar bg-base-100">
-        <div class="navbar-start">
-            <div v-if="accessToken && activeCharIdentifier" class="dropdown">
-                <label tabindex="0" class="btn btn-ghost lg:hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
-                    </svg>
-                </label>
-                <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-                    <li><router-link active-class="active" to="/overview">Overview</router-link></li>
-                    <li><router-link active-class="active" to="/citizens">Citizens</router-link></li>
-                    <li tabindex="0">
-                        <router-link active-class="active" to="/documents" class="justify-between">
-                            Documents
-                            <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24">
-                                <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
-                            </svg>
-                        </router-link>
-                        <ul class="p-2 bg-base-100">
-                            <li><router-link active-class="active" to="/">Submenu 1</router-link></li>
-                        </ul>
-                    </li>
-                    <li><router-link active-class="active" to="/livemap">Livemap</router-link></li>
-                </ul>
-            </div>
-            <router-link active-class="active" to="/" class="flex items-center">
-                <img src="/images/logo.png" class="h-6 mr-3 sm:h-9" alt="aRPaNet Logo" />
-                <span class="self-center text-xl font-semibold whitespace-nowrap">aRPaNet</span>
-            </router-link>
-        </div>
-        <div v-if="accessToken && activeCharIdentifier" class="navbar-center hidden lg:flex">
-            <ul class="menu menu-horizontal px-1">
-                <li><router-link active-class="active" to="/overview">Overview</router-link></li>
-                <li><router-link active-class="active" to="/citizens">Citizens</router-link></li>
-                <li tabindex="0">
-                    <router-link active-class="active" to="/documents">
-                        Documents
-                        <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                            viewBox="0 0 24 24">
-                            <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
-                        </svg>
-                    </router-link>
-                    <ul class="p-2 bg-base-100">
-                        <li><router-link active-class="active" to="/">Submenu 1</router-link></li>
-                    </ul>
-                </li>
-                <li><router-link active-class="active" to="/livemap">Livemap</router-link></li>
-            </ul>
-        </div>
-        <div class="navbar-end">
-            <ul class="menu menu-horizontal px-1">
-                <li tabindex="0">
-                    <button>
-                        <svg v-if="activeChar" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-person-circle" viewBox="0 0 16 16">
-                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                            <path fill-rule="evenodd"
-                                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
-                        </svg>
-                        <span v-if="accessToken && activeChar">{{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}</span>
-                        <span v-else-if="accessToken && !activeChar">Account</span>
-                        <span v-else>Settings</span>
-                        <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                            viewBox="0 0 24 24">
-                            <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
-                        </svg>
+    <Disclosure as="nav" class="bg-gray-800" v-slot="{ open }">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-8 w-8" src="/images/logo.png" alt="aRPaNet Logo" />
+                    </div>
+                    <div v-if="accessToken" class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <router-link v-for="item in navigation" :key="item.name" :to="item.href"
+                                class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                                active-class="bg-gray-900 text-white"
+                                :aria-current="$route.name == item.href ? 'page' : undefined">{{ item.name
+                                }}</router-link>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="accessToken" class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <button type="button"
+                            class="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                            <span class="sr-only">View notifications</span>
+                            <BellIcon class="h-6 w-6" aria-hidden="true" />
+                        </button>
+
+                        <!-- Profile dropdown -->
+                        <Menu as="div" class="relative ml-3">
+                            <div class="text-gray-400">
+                                <MenuButton
+                                    class="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                    <span class="sr-only">Open user menu</span>
+                                    <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
+                                </MenuButton>
+                            </div>
+                            <transition enter-active-class="transition ease-out duration-100"
+                                enter-from-class="transform opacity-0 scale-95"
+                                enter-to-class="transform opacity-100 scale-100"
+                                leave-active-class="transition ease-in duration-75"
+                                leave-from-class="transform opacity-100 scale-100"
+                                leave-to-class="transform opacity-0 scale-95">
+                                <MenuItems
+                                    class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                    <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
+                                    <router-link :to="item.href"
+                                        :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">{{
+                                            item.name }}</router-link>
+                                    </MenuItem>
+                                </MenuItems>
+                            </transition>
+                        </Menu>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <!-- Mobile menu button -->
+                    <button
+                        class="inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <span class="sr-only">Open main menu</span>
+                        <Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
+                        <XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />
                     </button>
-                    <ul class="p-2 bg-base-100">
-                        <li><a><label for="modal-navbar-changetheme">Themes</label></a></li>
-                        <li v-if="accessToken" class="menu-title">
-                            <span>Account</span>
-                        </li>
-                        <li v-if="accessToken && activeChar"><router-link active-class="active" to="/login">Switch Character</router-link></li>
-                        <li v-if="accessToken"><router-link active-class="active" to="/logout">Logout</router-link></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <input type="checkbox" id="modal-navbar-changetheme" class="modal-toggle" />
-    <label for="modal-navbar-changetheme" class="modal cursor-pointer">
-        <label class="modal-box w-11/12 max-w-5xl" for="">
-            <h2 class="text-lg font-bold">Change Theme</h2>
-            <div class="rounded-box grid grid-cols-3 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3">
-                <div class="border-base-content/20 hover:border-base-content/40 outline-base-content overflow-hidden rounded-lg border outline-2 outline-offset-2"
-                    data-set-theme="light" data-act-class="outline">
-                    <div data-theme="light" class="bg-base-100 text-base-content w-full cursor-pointer font-sans">
-                        <div class="grid grid-cols-5 grid-rows-3">
-                            <div class="bg-base-200 col-start-1 row-span-2 row-start-1"></div>
-                            <div class="bg-base-300 col-start-1 row-start-3"></div>
-                            <div class="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
-                                <div class="font-bold">light</div>
-                                <div class="flex flex-wrap gap-1">
-                                    <div
-                                        class="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-primary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-secondary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-accent-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-neutral-content text-sm font-bold">A</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="border-base-content/20 hover:border-base-content/40 outline-base-content overflow-hidden rounded-lg border outline-2 outline-offset-2"
-                    data-set-theme="dark" data-act-class="outline">
-                    <div data-theme="dark" class="bg-base-100 text-base-content w-full cursor-pointer font-sans">
-                        <div class="grid grid-cols-5 grid-rows-3">
-                            <div class="bg-base-200 col-start-1 row-span-2 row-start-1"></div>
-                            <div class="bg-base-300 col-start-1 row-start-3"></div>
-                            <div class="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
-                                <div class="font-bold">dark</div>
-                                <div class="flex flex-wrap gap-1">
-                                    <div
-                                        class="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-primary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-secondary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-accent-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-neutral-content text-sm font-bold">A</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="border-base-content/20 hover:border-base-content/40 outline-base-content overflow-hidden rounded-lg border outline-2 outline-offset-2"
-                    data-set-theme="corporate" data-act-class="outline">
-                    <div data-theme="corporate" class="bg-base-100 text-base-content w-full cursor-pointer font-sans">
-                        <div class="grid grid-cols-5 grid-rows-3">
-                            <div class="bg-base-200 col-start-1 row-span-2 row-start-1"></div>
-                            <div class="bg-base-300 col-start-1 row-start-3"></div>
-                            <div class="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
-                                <div class="font-bold">corporate</div>
-                                <div class="flex flex-wrap gap-1">
-                                    <div
-                                        class="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-primary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-secondary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-accent-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-neutral-content text-sm font-bold">A</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="border-base-content/20 hover:border-base-content/40 outline-base-content overflow-hidden rounded-lg border outline-2 outline-offset-2"
-                    data-set-theme="business" data-act-class="outline">
-                    <div data-theme="business" class="bg-base-100 text-base-content w-full cursor-pointer font-sans">
-                        <div class="grid grid-cols-5 grid-rows-3">
-                            <div class="bg-base-200 col-start-1 row-span-2 row-start-1"></div>
-                            <div class="bg-base-300 col-start-1 row-start-3"></div>
-                            <div class="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
-                                <div class="font-bold">business</div>
-                                <div class="flex flex-wrap gap-1">
-                                    <div
-                                        class="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-primary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-secondary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-accent-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-neutral-content text-sm font-bold">A</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="border-base-content/20 hover:border-base-content/40 outline-base-content overflow-hidden rounded-lg border outline-2 outline-offset-2"
-                    data-set-theme="acid" data-act-class="outline">
-                    <div data-theme="acid" class="bg-base-100 text-base-content w-full cursor-pointer font-sans">
-                        <div class="grid grid-cols-5 grid-rows-3">
-                            <div class="bg-base-200 col-start-1 row-span-2 row-start-1"></div>
-                            <div class="bg-base-300 col-start-1 row-start-3"></div>
-                            <div class="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
-                                <div class="font-bold">acid</div>
-                                <div class="flex flex-wrap gap-1">
-                                    <div
-                                        class="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-primary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-secondary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-accent-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-neutral-content text-sm font-bold">A</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="border-base-content/20 hover:border-base-content/40 outline-base-content overflow-hidden rounded-lg border outline-2 outline-offset-2"
-                    data-set-theme="night" data-act-class="outline">
-                    <div data-theme="night" class="bg-base-100 text-base-content w-full cursor-pointer font-sans">
-                        <div class="grid grid-cols-5 grid-rows-3">
-                            <div class="bg-base-200 col-start-1 row-span-2 row-start-1"></div>
-                            <div class="bg-base-300 col-start-1 row-start-3"></div>
-                            <div class="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
-                                <div class="font-bold">night</div>
-                                <div class="flex flex-wrap gap-1">
-                                    <div
-                                        class="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-primary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-secondary-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-accent-content text-sm font-bold">A</div>
-                                    </div>
-                                    <div
-                                        class="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                                        <div class="text-neutral-content text-sm font-bold">A</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
-        </label>
-    </label>
+        </div>
+
+        <DisclosurePanel class="md:hidden" v-if="activeChar">
+            <div class="space-y-1 px-2 pt-2 pb-3 sm:px-3">
+                <router-link v-for="item in navigation" :key="item.name" as="a" :to="item.href"
+                    :class="[$route.name == item.href ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block rounded-md px-3 py-2 text-base font-medium']"
+                    :aria-current="$route.name == item.href ? 'page' : undefined">{{ item.name }}</router-link>
+            </div>
+            <div class="border-t border-gray-700 pt-4 pb-3">
+                <div class="flex items-center px-5">
+                    <div class="flex-shrink-0">
+                        <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-base font-medium leading-none text-white">{{ activeChar.getFirstname() }}</div>
+                        <div class="text-sm font-medium leading-none text-gray-400">{{ activeChar.getLastname() }}</div>
+                    </div>
+                    <button type="button"
+                        class="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <span class="sr-only">View notifications</span>
+                        <BellIcon class="h-6 w-6" aria-hidden="true" />
+                    </button>
+                </div>
+                <div class="mt-3 space-y-1 px-2">
+                    <router-link v-for="item in userNavigation" :key="item.name" :to="item.href"
+                        class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">
+                        {{ item.name }}</router-link>
+                </div>
+            </div>
+        </DisclosurePanel>
+    </Disclosure>
 </template>

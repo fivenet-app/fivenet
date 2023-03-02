@@ -8,7 +8,7 @@ export default defineComponent({});
 {
     "name": "account-profile",
     "meta": {
-        "requiresAuth": false
+        "requiresAuth": true
     }
 }
 </route>

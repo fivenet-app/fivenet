@@ -4,17 +4,18 @@ import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import { GetUserRequest } from '@arpanet/gen/users/users_pb';
 import { RpcError } from 'grpc-web';
 import { defineComponent } from 'vue';
-import { ref, watch } from 'vue';
 import Navbar from '../../components/Navbar.vue';
 import Footer from '../../components/Footer.vue';
 import CitizenInfo from '../../components/CitizenInfo.vue';
 import authInterceptor from '../../grpcauth';
+import ContentWrapper from '../../components/ContentWrapper.vue';
 
 export default defineComponent({
     components: {
         Navbar,
         Footer,
         CitizenInfo,
+        ContentWrapper,
     },
     data() {
         return {
@@ -57,43 +58,8 @@ export default defineComponent({
 
 <template>
     <Navbar />
-    <div class="container mx-auto py-8">
-        <div class="text-sm breadcrumbs">
-            <ul>
-                <li>
-                    <a>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            class="w-4 h-4 mr-2 stroke-current">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-                        </svg>
-                        Overview
-                    </a>
-                </li>
-                <li>
-                    <a>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            class="w-4 h-4 mr-2 stroke-current">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-                        </svg>
-                        Citizens
-                    </a>
-                </li>
-                <li>
-                    <a>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            class="w-4 h-4 mr-2 stroke-current">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-                        </svg>
-                        <span v-if="!char">Citizen</span>
-                        <span v-else>{{ char.getFirstname() }}, {{ char.getLastname() }}</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <ContentWrapper>
         <CitizenInfo v-if="char" :char="char" />
-    </div>
+    </ContentWrapper>
     <Footer />
 </template>

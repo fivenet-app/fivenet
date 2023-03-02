@@ -1,16 +1,17 @@
 <script lang="ts">
+import { defineComponent } from 'vue';
 import Navbar from '../../components/Navbar.vue';
 import Footer from '../../components/Footer.vue';
-
-import { defineComponent } from 'vue';
-
-import './index.css';
+import NavPageHeader from '../../components/NavPageHeader.vue';
+import ContentWrapper from '../../components/ContentWrapper.vue';
 
 export default defineComponent({
     components: {
-        Navbar,
-        Footer,
-    },
+    Navbar,
+    Footer,
+    ContentWrapper,
+    NavPageHeader
+},
 });
 </script>
 
@@ -25,6 +26,9 @@ export default defineComponent({
 
 <template>
     <Navbar />
-    <h1>DISPATCHES SYSTEM</h1>
+    <NavPageHeader title="Dispatches" />
+    <ContentWrapper>
+        <h1>DISPATCHES SYSTEM</h1>
+    </ContentWrapper>
     <Footer />
 </template>

@@ -18,7 +18,7 @@ export default defineComponent({
                         {
                             marker: '@',
                             feed: ['@Barney', '@Lily', '@Marry Ann', '@Marshall', '@Robin', '@Ted'],
-                            minimumCharacters: 2
+                            minimumCharacters: 1
                         },
                     ],
                 },

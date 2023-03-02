@@ -20,5 +20,10 @@ export default defineComponent({
 </route>
 
 <template>
-    <Editor />
+    <Navbar />
+    <NavPageHeader title="Documents" />
+    <ContentWrapper>
+        <Editor />
+    </ContentWrapper>
+    <Footer />
 </template>

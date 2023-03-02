@@ -4,6 +4,8 @@ import { mapState } from 'vuex';
 import Navbar from '../components/Navbar.vue';
 import Footer from '../components/Footer.vue';
 import Login from '../components/Login.vue';
+import ContentWrapper from '../components/ContentWrapper.vue';
+import NavPageHeader from '../components/NavPageHeader.vue';
 import CharacterSelector from '../components/CharacterSelector.vue';
 
 export default defineComponent({
@@ -11,6 +13,8 @@ export default defineComponent({
         Navbar,
         Footer,
         Login,
+        NavPageHeader,
+        ContentWrapper,
         CharacterSelector,
     },
     computed: {
@@ -32,11 +36,13 @@ export default defineComponent({
 
 <template>
     <Navbar />
-    <Login v-if="!accessToken" />
-    <transition v-else name="fade" mode="out-in">
-        <div class="container mx-auto py-8">
-            <CharacterSelector />
-        </div>
-    </transition>
+    <NavPageHeader v-if="!accessToken" title="Login" />
+    <NavPageHeader v-else title="Character Selector" />
+    <ContentWrapper>
+        <transition name="fade" mode="out-in">
+            <Login v-if="!accessToken" />
+            <CharacterSelector v-else />
+        </transition>
+    </ContentWrapper>
     <Footer />
 </template>

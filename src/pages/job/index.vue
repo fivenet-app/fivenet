@@ -3,14 +3,18 @@ import Navbar from '../../components/Navbar.vue';
 import Footer from '../../components/Footer.vue';
 
 import { defineComponent } from 'vue';
-
-import './index.css';
+import ContentWrapper from '../../components/ContentWrapper.vue';
+import Breadcrumbs from '../../components/Breadcrumbs.vue';
+import NavPageHeader from '../../components/NavPageHeader.vue';
 
 export default defineComponent({
     components: {
-        Navbar,
-        Footer,
-    },
+    Navbar,
+    Footer,
+    ContentWrapper,
+    Breadcrumbs,
+    NavPageHeader
+},
 });
 </script>
 
@@ -25,6 +29,9 @@ export default defineComponent({
 
 <template>
     <Navbar />
-    <h1>JOBS - EMPLOYEE MANAGEMENT SYSTEM</h1>
+    <NavPageHeader title="Job" />
+    <ContentWrapper>
+        <h1>JOBS - EMPLOYEE MANAGEMENT SYSTEM</h1>
+    </ContentWrapper>
     <Footer />
 </template>

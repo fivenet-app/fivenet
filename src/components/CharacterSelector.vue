@@ -25,7 +25,6 @@ export default defineComponent({
     methods: {
         ...mapActions([
             'updateActiveChar',
-            'updateActiveCharIdentifier',
         ]),
         async fetchCharacters() {
             return this.client.
@@ -39,7 +38,6 @@ export default defineComponent({
     },
     beforeMount() {
         this.updateActiveChar(null);
-        this.updateActiveCharIdentifier(null);
 
         // Fetch user's characters
         this.fetchCharacters();
@@ -49,10 +47,8 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="grid place-items-center">
-        <div class="flex w-full">
-            <CharacterSelectorCard v-for="char in chars" :char="char" :identifier="char.getIdentifier()"
-                :key="char.getIdentifier()" />
-        </div>
-    </div>
+    <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <CharacterSelectorCard v-for="char in chars" :char="char" :identifier="char.getIdentifier()"
+            :key="char.getIdentifier()" />
+    </ul>
 </template>

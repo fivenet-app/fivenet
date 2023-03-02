@@ -15,9 +15,14 @@ message Character {
     int64 visum = 9;
     int64 playtime = 10;
 
-    repeated License licenses = 11;
+    Props props = 11;
+    repeated License licenses = 12;
 }
 
 message License {
     string name = 1;
+}
+
+message Props {
+    bool wanted = 1;
 }

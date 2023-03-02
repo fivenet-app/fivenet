@@ -125,5 +125,48 @@ export class UsersServiceClient {
     this.methodDescriptorGetUser);
   }
 
+  methodDescriptorUpdateUser = new grpcWeb.MethodDescriptor(
+    '/gen.users.UsersService/UpdateUser',
+    grpcWeb.MethodType.UNARY,
+    users_users_pb.UpdateUserRequest,
+    users_users_pb.UpdateUserResponse,
+    (request: users_users_pb.UpdateUserRequest) => {
+      return request.serializeBinary();
+    },
+    users_users_pb.UpdateUserResponse.deserializeBinary
+  );
+
+  updateUser(
+    request: users_users_pb.UpdateUserRequest,
+    metadata: grpcWeb.Metadata | null): Promise<users_users_pb.UpdateUserResponse>;
+
+  updateUser(
+    request: users_users_pb.UpdateUserRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: users_users_pb.UpdateUserResponse) => void): grpcWeb.ClientReadableStream<users_users_pb.UpdateUserResponse>;
+
+  updateUser(
+    request: users_users_pb.UpdateUserRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: users_users_pb.UpdateUserResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.users.UsersService/UpdateUser',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateUser,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.users.UsersService/UpdateUser',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateUser);
+  }
+
 }
 

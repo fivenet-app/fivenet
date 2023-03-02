@@ -29,7 +29,16 @@ message GetUserResponse {
     gen.common.Character user = 1;
 }
 
+message SetUserPropsRequest {
+    string identifier = 1;
+    bool wanted = 2;
+}
+
+message SetUserPropsResponse {
+}
+
 service UsersService {
     rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
     rpc GetUser(GetUserRequest) returns (GetUserResponse);
+    rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 }
