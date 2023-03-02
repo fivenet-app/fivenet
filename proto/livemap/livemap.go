@@ -45,6 +45,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) err
 			Dispatches: []*Marker{},
 		}
 
+		// Start
 		locations, err := q.Find()
 		if err != nil {
 			s.logger.Error("failed to retrieve user locations from database", zap.Error(err))
@@ -62,6 +63,8 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) err
 				Popup: loc.PlayerID,
 			}
 		}
+		// or
+		//resp.Users = s.generateRandomMarker()
 
 		if err := srv.Send(resp); err != nil {
 			return err
