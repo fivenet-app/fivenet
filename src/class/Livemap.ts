@@ -1,6 +1,7 @@
 import { Marker } from '@arpanet/gen/livemap/livemap_pb';
 import L from 'leaflet';
 
+import { AnimatedMarker } from './AnimatedMarker';
 import { Hash } from './Hash';
 
 export enum MarkerType {
@@ -12,7 +13,7 @@ export class Livemap extends L.Map {
 	public hash: Hash | undefined;
 	public hasLoaded: boolean = false;
 
-	public markers: Map<string, L.Marker<any>> = new Map();
+	public markers: Map<string, AnimatedMarker> = new Map();
 	private prevMarkerLists: Map<MarkerType, Array<Marker.AsObject>> = new Map();
 
 	private element: HTMLElement;
@@ -57,11 +58,11 @@ export class Livemap extends L.Map {
 		const marker = this.markers.get(id);
 
 		if (marker) {
-			marker.setLatLng(L.latLng(latitude, longitude));
+			marker.moveTo(L.latLng(latitude, longitude));
 			if (options?.icon) marker.setIcon(options.icon);
 			if (options?.opacity) marker.setOpacity(options.opacity);
 		} else {
-			this.markers.set(id, L.marker(L.latLng(latitude, longitude), options).addTo(this));
+			this.markers.set(id, new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(this));
 		}
 	}
 
@@ -87,7 +88,7 @@ export class Livemap extends L.Map {
 
 		const previousList = this.prevMarkerLists.get(type);
 		if (previousList) {
-			const markersToRemove = previousList.filter((entry) => list.find((e) => e.getId() !== entry.id));
+			const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getId() === entry.id));
 			markersToRemove.forEach((marker) => {
 				this.removeMarker(marker.id);
 			});
