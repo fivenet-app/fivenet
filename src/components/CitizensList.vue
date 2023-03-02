@@ -80,7 +80,6 @@ export default defineComponent({
                 orderBy.setDesc(false);
                 this.orderBys.push(orderBy);
             }
-            console.log(this.orderBys);
             this.findUsers(this.offset);
         },
         getDefaultOrderBy(): OrderBy {
@@ -111,7 +110,8 @@ export default defineComponent({
                     <form @submit.prevent="findUsers(offset)">
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-white">First Name</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-white">First
+                                    Name</label>
                                 <div class="relative mt-2 flex items-center">
                                     <input v-model="searchFirstname" v-on:keyup.enter="findUsers(offset)" type="text"
                                         name="search" id="search"
@@ -130,7 +130,7 @@ export default defineComponent({
                     </form>
                 </div>
             </div>
-            <div class="mt-8 flow-root">
+            <div class="mt-2 flow-root">
                 <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <table class="min-w-full divide-y divide-gray-700">
@@ -199,10 +199,11 @@ export default defineComponent({
                             </thead>
                         </table>
 
-                        <TablePagination :start="offset" :entries="users.length" :end="listEnd" :total="totalCount"
+                        <TablePagination :current="offset" :entries="users.length" :end="listEnd" :total="totalCount"
                             :callback="findUsers" />
                     </div>
+                </div>
             </div>
         </div>
     </div>
-</div></template>
+</template>

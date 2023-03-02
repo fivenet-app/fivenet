@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
     props: {
-        start: {
+        current: {
             required: true,
             type: Number,
         },
@@ -32,7 +32,7 @@ export default defineComponent({
             <p class="text-sm text-gray-300">
                 Showing
                 {{ ' ' }}
-                <span class="font-medium text-white">{{ start + 1 }}</span>
+                <span class="font-medium text-white">{{ current + 1 }}</span>
                 {{ ' ' }}
                 to
                 {{ ' ' }}
@@ -46,10 +46,10 @@ export default defineComponent({
             </p>
         </div>
         <div class="flex flex-1 justify-between sm:justify-end">
-            <button :class="[start <= 0 ? 'disabled' : '']" :disabled="start <= 0" v-on:click="callback(start - end)"
-                class="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0">Previous</button>
-            <button :class="[start >= total ? 'disabled' : '']" :disabled="start >= total" v-on:click="callback(end)"
-                class="relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0">Next</button>
+            <button :class="[current <= 0 ? 'disabled' : '']" :disabled="current <= 0" v-on:click="callback(current - entries)" type="button"
+                class="relative inline-flex items-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Previous</button>
+            <button :class="[current >= total ? 'disabled' : '']" :disabled="current >= total" v-on:click="callback(end)" type="button"
+                class="relative ml-3 inline-flex items-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Next</button>
         </div>
     </nav>
 </template>
