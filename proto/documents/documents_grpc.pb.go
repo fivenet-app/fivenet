@@ -23,6 +23,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DocumentsServiceClient interface {
 	GetDocuments(ctx context.Context, in *GetDocumentsRequest, opts ...grpc.CallOption) (*GetDocumentsResponse, error)
+	FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error)
+	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
+	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
 }
 
 type documentsServiceClient struct {
@@ -42,11 +45,41 @@ func (c *documentsServiceClient) GetDocuments(ctx context.Context, in *GetDocume
 	return out, nil
 }
 
+func (c *documentsServiceClient) FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error) {
+	out := new(FindDocumentsResponse)
+	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/FindDocuments", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentsServiceClient) GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error) {
+	out := new(GetDocumentResponse)
+	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/GetDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentsServiceClient) CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error) {
+	out := new(CreateDocumentResponse)
+	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/CreateDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DocumentsServiceServer is the server API for DocumentsService service.
 // All implementations must embed UnimplementedDocumentsServiceServer
 // for forward compatibility
 type DocumentsServiceServer interface {
 	GetDocuments(context.Context, *GetDocumentsRequest) (*GetDocumentsResponse, error)
+	FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error)
+	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
+	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
 	mustEmbedUnimplementedDocumentsServiceServer()
 }
 
@@ -56,6 +89,15 @@ type UnimplementedDocumentsServiceServer struct {
 
 func (UnimplementedDocumentsServiceServer) GetDocuments(context.Context, *GetDocumentsRequest) (*GetDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocuments not implemented")
+}
+func (UnimplementedDocumentsServiceServer) FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindDocuments not implemented")
+}
+func (UnimplementedDocumentsServiceServer) GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDocument not implemented")
+}
+func (UnimplementedDocumentsServiceServer) CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDocument not implemented")
 }
 func (UnimplementedDocumentsServiceServer) mustEmbedUnimplementedDocumentsServiceServer() {}
 
@@ -88,6 +130,60 @@ func _DocumentsService_GetDocuments_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DocumentsService_FindDocuments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindDocumentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentsServiceServer).FindDocuments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gen.documents.DocumentsService/FindDocuments",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentsServiceServer).FindDocuments(ctx, req.(*FindDocumentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocumentsService_GetDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentsServiceServer).GetDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gen.documents.DocumentsService/GetDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentsServiceServer).GetDocument(ctx, req.(*GetDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocumentsService_CreateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentsServiceServer).CreateDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gen.documents.DocumentsService/CreateDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentsServiceServer).CreateDocument(ctx, req.(*CreateDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DocumentsService_ServiceDesc is the grpc.ServiceDesc for DocumentsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +194,18 @@ var DocumentsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDocuments",
 			Handler:    _DocumentsService_GetDocuments_Handler,
+		},
+		{
+			MethodName: "FindDocuments",
+			Handler:    _DocumentsService_FindDocuments_Handler,
+		},
+		{
+			MethodName: "GetDocument",
+			Handler:    _DocumentsService_GetDocument_Handler,
+		},
+		{
+			MethodName: "CreateDocument",
+			Handler:    _DocumentsService_CreateDocument_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

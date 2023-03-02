@@ -33,6 +33,11 @@ export class Character extends jspb.Message {
   getPlaytime(): number;
   setPlaytime(value: number): Character;
 
+  getProps(): Props | undefined;
+  setProps(value?: Props): Character;
+  hasProps(): boolean;
+  clearProps(): Character;
+
   getLicensesList(): Array<License>;
   setLicensesList(value: Array<License>): Character;
   clearLicensesList(): Character;
@@ -58,6 +63,7 @@ export namespace Character {
     height: string,
     visum: number,
     playtime: number,
+    props?: Props.AsObject,
     licensesList: Array<License.AsObject>,
   }
 }
@@ -77,6 +83,24 @@ export class License extends jspb.Message {
 export namespace License {
   export type AsObject = {
     name: string,
+  }
+}
+
+export class Props extends jspb.Message {
+  getWanted(): boolean;
+  setWanted(value: boolean): Props;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Props.AsObject;
+  static toObject(includeInstance: boolean, msg: Props): Props.AsObject;
+  static serializeBinaryToWriter(message: Props, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Props;
+  static deserializeBinaryFromReader(message: Props, reader: jspb.BinaryReader): Props;
+}
+
+export namespace Props {
+  export type AsObject = {
+    wanted: boolean,
   }
 }
 

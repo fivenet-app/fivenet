@@ -125,47 +125,47 @@ export class UsersServiceClient {
     this.methodDescriptorGetUser);
   }
 
-  methodDescriptorUpdateUser = new grpcWeb.MethodDescriptor(
-    '/gen.users.UsersService/UpdateUser',
+  methodDescriptorSetUserProps = new grpcWeb.MethodDescriptor(
+    '/gen.users.UsersService/SetUserProps',
     grpcWeb.MethodType.UNARY,
-    users_users_pb.UpdateUserRequest,
-    users_users_pb.UpdateUserResponse,
-    (request: users_users_pb.UpdateUserRequest) => {
+    users_users_pb.SetUserPropsRequest,
+    users_users_pb.SetUserPropsResponse,
+    (request: users_users_pb.SetUserPropsRequest) => {
       return request.serializeBinary();
     },
-    users_users_pb.UpdateUserResponse.deserializeBinary
+    users_users_pb.SetUserPropsResponse.deserializeBinary
   );
 
-  updateUser(
-    request: users_users_pb.UpdateUserRequest,
-    metadata: grpcWeb.Metadata | null): Promise<users_users_pb.UpdateUserResponse>;
+  setUserProps(
+    request: users_users_pb.SetUserPropsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<users_users_pb.SetUserPropsResponse>;
 
-  updateUser(
-    request: users_users_pb.UpdateUserRequest,
+  setUserProps(
+    request: users_users_pb.SetUserPropsRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: users_users_pb.UpdateUserResponse) => void): grpcWeb.ClientReadableStream<users_users_pb.UpdateUserResponse>;
+               response: users_users_pb.SetUserPropsResponse) => void): grpcWeb.ClientReadableStream<users_users_pb.SetUserPropsResponse>;
 
-  updateUser(
-    request: users_users_pb.UpdateUserRequest,
+  setUserProps(
+    request: users_users_pb.SetUserPropsRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: users_users_pb.UpdateUserResponse) => void) {
+               response: users_users_pb.SetUserPropsResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/gen.users.UsersService/UpdateUser',
+          '/gen.users.UsersService/SetUserProps',
         request,
         metadata || {},
-        this.methodDescriptorUpdateUser,
+        this.methodDescriptorSetUserProps,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/gen.users.UsersService/UpdateUser',
+      '/gen.users.UsersService/SetUserProps',
     request,
     metadata || {},
-    this.methodDescriptorUpdateUser);
+    this.methodDescriptorSetUserProps);
   }
 
 }

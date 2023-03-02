@@ -48,3 +48,11 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 	return resp, nil
 }
+
+func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*SetUserPropsResponse, error) {
+	resp := &SetUserPropsResponse{}
+
+	// TODO
+
+	return resp, nil
+}

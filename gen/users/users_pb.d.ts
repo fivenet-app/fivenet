@@ -110,30 +110,38 @@ export namespace GetUserResponse {
   }
 }
 
-export class UpdateUserRequest extends jspb.Message {
+export class SetUserPropsRequest extends jspb.Message {
+  getIdentifier(): string;
+  setIdentifier(value: string): SetUserPropsRequest;
+
+  getWanted(): boolean;
+  setWanted(value: boolean): SetUserPropsRequest;
+
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): UpdateUserRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: UpdateUserRequest): UpdateUserRequest.AsObject;
-  static serializeBinaryToWriter(message: UpdateUserRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): UpdateUserRequest;
-  static deserializeBinaryFromReader(message: UpdateUserRequest, reader: jspb.BinaryReader): UpdateUserRequest;
+  toObject(includeInstance?: boolean): SetUserPropsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: SetUserPropsRequest): SetUserPropsRequest.AsObject;
+  static serializeBinaryToWriter(message: SetUserPropsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SetUserPropsRequest;
+  static deserializeBinaryFromReader(message: SetUserPropsRequest, reader: jspb.BinaryReader): SetUserPropsRequest;
 }
 
-export namespace UpdateUserRequest {
+export namespace SetUserPropsRequest {
   export type AsObject = {
+    identifier: string,
+    wanted: boolean,
   }
 }
 
-export class UpdateUserResponse extends jspb.Message {
+export class SetUserPropsResponse extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): UpdateUserResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: UpdateUserResponse): UpdateUserResponse.AsObject;
-  static serializeBinaryToWriter(message: UpdateUserResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): UpdateUserResponse;
-  static deserializeBinaryFromReader(message: UpdateUserResponse, reader: jspb.BinaryReader): UpdateUserResponse;
+  toObject(includeInstance?: boolean): SetUserPropsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SetUserPropsResponse): SetUserPropsResponse.AsObject;
+  static serializeBinaryToWriter(message: SetUserPropsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SetUserPropsResponse;
+  static deserializeBinaryFromReader(message: SetUserPropsResponse, reader: jspb.BinaryReader): SetUserPropsResponse;
 }
 
-export namespace UpdateUserResponse {
+export namespace SetUserPropsResponse {
   export type AsObject = {
   }
 }

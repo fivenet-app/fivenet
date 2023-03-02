@@ -9,9 +9,38 @@ message GetDocumentsResponse {
 message GetDocumentsRequest {
 }
 
+message FindDocumentsRequest {
+
+}
+
+message FindDocumentsResponse {
+
+}
+
+message GetDocumentRequest {
+
+}
+
+message GetDocumentResponse {
+
+}
+
+message CreateDocumentRequest {
+
+}
+
+message CreateDocumentResponse {
+
+}
+
 message Document {
 }
 
 service DocumentsService {
     rpc GetDocuments(GetDocumentsRequest) returns (GetDocumentsResponse);
+    rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
+
+    rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
+    rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
+    // TODO add/update/remove for document access is needed
 }

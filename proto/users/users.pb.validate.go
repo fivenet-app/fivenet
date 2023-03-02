@@ -550,144 +550,46 @@ var _ interface {
 	ErrorName() string
 } = GetUserResponseValidationError{}
 
-// Validate checks the field values on UpdateUserRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *UpdateUserRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UpdateUserRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UpdateUserRequestMultiError, or nil if none found.
-func (m *UpdateUserRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UpdateUserRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return UpdateUserRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// UpdateUserRequestMultiError is an error wrapping multiple validation errors
-// returned by UpdateUserRequest.ValidateAll() if the designated constraints
-// aren't met.
-type UpdateUserRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UpdateUserRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UpdateUserRequestMultiError) AllErrors() []error { return m }
-
-// UpdateUserRequestValidationError is the validation error returned by
-// UpdateUserRequest.Validate if the designated constraints aren't met.
-type UpdateUserRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UpdateUserRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UpdateUserRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UpdateUserRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UpdateUserRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UpdateUserRequestValidationError) ErrorName() string {
-	return "UpdateUserRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UpdateUserRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdateUserRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UpdateUserRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UpdateUserRequestValidationError{}
-
-// Validate checks the field values on UpdateUserResponse with the rules
+// Validate checks the field values on SetUserPropsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateUserResponse) Validate() error {
+func (m *SetUserPropsRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateUserResponse with the rules
+// ValidateAll checks the field values on SetUserPropsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// UpdateUserResponseMultiError, or nil if none found.
-func (m *UpdateUserResponse) ValidateAll() error {
+// SetUserPropsRequestMultiError, or nil if none found.
+func (m *SetUserPropsRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateUserResponse) validate(all bool) error {
+func (m *SetUserPropsRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for Identifier
+
+	// no validation rules for Wanted
+
 	if len(errors) > 0 {
-		return UpdateUserResponseMultiError(errors)
+		return SetUserPropsRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateUserResponseMultiError is an error wrapping multiple validation errors
-// returned by UpdateUserResponse.ValidateAll() if the designated constraints
-// aren't met.
-type UpdateUserResponseMultiError []error
+// SetUserPropsRequestMultiError is an error wrapping multiple validation
+// errors returned by SetUserPropsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SetUserPropsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateUserResponseMultiError) Error() string {
+func (m SetUserPropsRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -696,11 +598,11 @@ func (m UpdateUserResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateUserResponseMultiError) AllErrors() []error { return m }
+func (m SetUserPropsRequestMultiError) AllErrors() []error { return m }
 
-// UpdateUserResponseValidationError is the validation error returned by
-// UpdateUserResponse.Validate if the designated constraints aren't met.
-type UpdateUserResponseValidationError struct {
+// SetUserPropsRequestValidationError is the validation error returned by
+// SetUserPropsRequest.Validate if the designated constraints aren't met.
+type SetUserPropsRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -708,24 +610,24 @@ type UpdateUserResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateUserResponseValidationError) Field() string { return e.field }
+func (e SetUserPropsRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateUserResponseValidationError) Reason() string { return e.reason }
+func (e SetUserPropsRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateUserResponseValidationError) Cause() error { return e.cause }
+func (e SetUserPropsRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateUserResponseValidationError) Key() bool { return e.key }
+func (e SetUserPropsRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateUserResponseValidationError) ErrorName() string {
-	return "UpdateUserResponseValidationError"
+func (e SetUserPropsRequestValidationError) ErrorName() string {
+	return "SetUserPropsRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateUserResponseValidationError) Error() string {
+func (e SetUserPropsRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -737,14 +639,14 @@ func (e UpdateUserResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateUserResponse.%s: %s%s",
+		"invalid %sSetUserPropsRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateUserResponseValidationError{}
+var _ error = SetUserPropsRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -752,4 +654,106 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateUserResponseValidationError{}
+} = SetUserPropsRequestValidationError{}
+
+// Validate checks the field values on SetUserPropsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetUserPropsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetUserPropsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetUserPropsResponseMultiError, or nil if none found.
+func (m *SetUserPropsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetUserPropsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return SetUserPropsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetUserPropsResponseMultiError is an error wrapping multiple validation
+// errors returned by SetUserPropsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type SetUserPropsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetUserPropsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetUserPropsResponseMultiError) AllErrors() []error { return m }
+
+// SetUserPropsResponseValidationError is the validation error returned by
+// SetUserPropsResponse.Validate if the designated constraints aren't met.
+type SetUserPropsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetUserPropsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetUserPropsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetUserPropsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetUserPropsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetUserPropsResponseValidationError) ErrorName() string {
+	return "SetUserPropsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetUserPropsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetUserPropsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetUserPropsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetUserPropsResponseValidationError{}

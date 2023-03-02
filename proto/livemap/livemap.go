@@ -3,7 +3,6 @@ package livemap
 import (
 	"fmt"
 	"math/rand"
-	"strconv"
 	"time"
 
 	"github.com/galexrt/arpanet/api"
@@ -40,31 +39,32 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) err
 	}
 
 	q := v.Where(v.Net.Eq(net))
+	_ = q
 	for {
 		resp := &ServerStreamResponse{
 			Dispatches: []*Marker{},
 		}
 
 		// Start
-		locations, err := q.Find()
-		if err != nil {
-			s.logger.Error("failed to retrieve user locations from database", zap.Error(err))
-			continue
-		}
-		resp.Users = make([]*Marker, len(locations))
-		for key, loc := range locations {
-			x, _ := strconv.ParseFloat(loc.Coordsx, 32)
-			y, _ := strconv.ParseFloat(loc.Coordsy, 32)
-			resp.Users[key] = &Marker{
-				Id:    loc.PlayerID,
-				X:     float32(x),
-				Y:     float32(y),
-				Name:  loc.PlayerID,
-				Popup: loc.PlayerID,
-			}
-		}
+		//locations, err := q.Find()
+		//if err != nil {
+		//	s.logger.Error("failed to retrieve user locations from database", zap.Error(err))
+		//	continue
+		//}
+		//resp.Users = make([]*Marker, len(locations))
+		//for key, loc := range locations {
+		//	x, _ := strconv.ParseFloat(loc.Coordsx, 32)
+		//	y, _ := strconv.ParseFloat(loc.Coordsy, 32)
+		//	resp.Users[key] = &Marker{
+		//		Id:    loc.PlayerID,
+		//		X:     float32(x),
+		//		Y:     float32(y),
+		//		Name:  loc.PlayerID,
+		//		Popup: loc.PlayerID,
+		//	}
+		//}
 		// or
-		//resp.Users = s.generateRandomMarker()
+		resp.Users = s.generateRandomMarker()
 
 		if err := srv.Send(resp); err != nil {
 			return err

@@ -82,5 +82,134 @@ export class DocumentsServiceClient {
     this.methodDescriptorGetDocuments);
   }
 
+  methodDescriptorFindDocuments = new grpcWeb.MethodDescriptor(
+    '/gen.documents.DocumentsService/FindDocuments',
+    grpcWeb.MethodType.UNARY,
+    documents_documents_pb.FindDocumentsRequest,
+    documents_documents_pb.FindDocumentsResponse,
+    (request: documents_documents_pb.FindDocumentsRequest) => {
+      return request.serializeBinary();
+    },
+    documents_documents_pb.FindDocumentsResponse.deserializeBinary
+  );
+
+  findDocuments(
+    request: documents_documents_pb.FindDocumentsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.FindDocumentsResponse>;
+
+  findDocuments(
+    request: documents_documents_pb.FindDocumentsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.FindDocumentsResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.FindDocumentsResponse>;
+
+  findDocuments(
+    request: documents_documents_pb.FindDocumentsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.FindDocumentsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.documents.DocumentsService/FindDocuments',
+        request,
+        metadata || {},
+        this.methodDescriptorFindDocuments,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.documents.DocumentsService/FindDocuments',
+    request,
+    metadata || {},
+    this.methodDescriptorFindDocuments);
+  }
+
+  methodDescriptorGetDocument = new grpcWeb.MethodDescriptor(
+    '/gen.documents.DocumentsService/GetDocument',
+    grpcWeb.MethodType.UNARY,
+    documents_documents_pb.GetDocumentRequest,
+    documents_documents_pb.GetDocumentResponse,
+    (request: documents_documents_pb.GetDocumentRequest) => {
+      return request.serializeBinary();
+    },
+    documents_documents_pb.GetDocumentResponse.deserializeBinary
+  );
+
+  getDocument(
+    request: documents_documents_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.GetDocumentResponse>;
+
+  getDocument(
+    request: documents_documents_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.GetDocumentResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.GetDocumentResponse>;
+
+  getDocument(
+    request: documents_documents_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.GetDocumentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.documents.DocumentsService/GetDocument',
+        request,
+        metadata || {},
+        this.methodDescriptorGetDocument,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.documents.DocumentsService/GetDocument',
+    request,
+    metadata || {},
+    this.methodDescriptorGetDocument);
+  }
+
+  methodDescriptorCreateDocument = new grpcWeb.MethodDescriptor(
+    '/gen.documents.DocumentsService/CreateDocument',
+    grpcWeb.MethodType.UNARY,
+    documents_documents_pb.CreateDocumentRequest,
+    documents_documents_pb.CreateDocumentResponse,
+    (request: documents_documents_pb.CreateDocumentRequest) => {
+      return request.serializeBinary();
+    },
+    documents_documents_pb.CreateDocumentResponse.deserializeBinary
+  );
+
+  createDocument(
+    request: documents_documents_pb.CreateDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.CreateDocumentResponse>;
+
+  createDocument(
+    request: documents_documents_pb.CreateDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.CreateDocumentResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.CreateDocumentResponse>;
+
+  createDocument(
+    request: documents_documents_pb.CreateDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.CreateDocumentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.documents.DocumentsService/CreateDocument',
+        request,
+        metadata || {},
+        this.methodDescriptorCreateDocument,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.documents.DocumentsService/CreateDocument',
+    request,
+    metadata || {},
+    this.methodDescriptorCreateDocument);
+  }
+
 }
 
