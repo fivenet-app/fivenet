@@ -139,7 +139,7 @@ func (r *Testing) UsersGET(c *gin.Context) {
 
 	offset, _ := strconv.Atoi(offsetQuery)
 	u := query.User
-	users, count, err := u.Clauses(hints.UseIndex("users_firstname_lastname_IDX")).Preload(u.UserLicenses).Where(u.Firstname.Like(firstname), u.Lastname.Like(lastname)).FindByPage(offset, 25)
+	users, count, err := u.Clauses(hints.UseIndex("idx_users_firstname_lastname")).Preload(u.UserLicenses).Where(u.Firstname.Like(firstname), u.Lastname.Like(lastname)).FindByPage(offset, 25)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

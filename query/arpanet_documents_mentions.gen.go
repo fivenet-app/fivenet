@@ -27,85 +27,11 @@ func newDocumentMentions(db *gorm.DB, opts ...gen.DOOption) documentMentions {
 
 	tableName := _documentMentions.documentMentionsDo.TableName()
 	_documentMentions.ALL = field.NewAsterisk(tableName)
-	_documentMentions.ID = field.NewInt32(tableName, "id")
+	_documentMentions.ID = field.NewUint(tableName, "id")
 	_documentMentions.CreatedAt = field.NewTime(tableName, "created_at")
-	_documentMentions.UpdatedAt = field.NewTime(tableName, "last_seen")
+	_documentMentions.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_documentMentions.DocumentID = field.NewUint(tableName, "document_id")
 	_documentMentions.Identifier = field.NewString(tableName, "identifier")
-	_documentMentions.Job = field.NewString(tableName, "job")
-	_documentMentions.JobGrade = field.NewInt(tableName, "job_grade")
-	_documentMentions.Firstname = field.NewString(tableName, "firstname")
-	_documentMentions.Lastname = field.NewString(tableName, "lastname")
-	_documentMentions.Dateofbirth = field.NewString(tableName, "dateofbirth")
-	_documentMentions.Sex = field.NewString(tableName, "sex")
-	_documentMentions.Height = field.NewString(tableName, "height")
-	_documentMentions.Jail = field.NewInt32(tableName, "jail")
-	_documentMentions.PhoneNumber = field.NewString(tableName, "phone_number")
-	_documentMentions.Accounts = field.NewField(tableName, "accounts")
-	_documentMentions.Disabled = field.NewBool(tableName, "disabled")
-	_documentMentions.Visum = field.NewInt32(tableName, "visum")
-	_documentMentions.Playtime = field.NewInt32(tableName, "playtime")
-	_documentMentions.UserProps = documentMentionsHasManyUserProps{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("UserProps", "model.UserProps"),
-	}
-
-	_documentMentions.UserLicenses = documentMentionsHasManyUserLicenses{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("UserLicenses", "model.UserLicense"),
-	}
-
-	_documentMentions.Documents = documentMentionsHasManyDocuments{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("Documents", "model.Document"),
-		Responses: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("Documents.Responses", "model.Document"),
-		},
-		Mentions: struct {
-			field.RelationField
-			UserProps struct {
-				field.RelationField
-			}
-			UserLicenses struct {
-				field.RelationField
-			}
-			Documents struct {
-				field.RelationField
-			}
-		}{
-			RelationField: field.NewRelation("Documents.Mentions", "model.DocumentMentions"),
-			UserProps: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("Documents.Mentions.UserProps", "model.UserProps"),
-			},
-			UserLicenses: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("Documents.Mentions.UserLicenses", "model.UserLicense"),
-			},
-			Documents: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("Documents.Mentions.Documents", "model.Document"),
-			},
-		},
-		JobAccess: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("Documents.JobAccess", "model.DocumentJobAccess"),
-		},
-		UserAccess: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("Documents.UserAccess", "model.DocumentUserAccess"),
-		},
-	}
 
 	_documentMentions.fillFieldMap()
 
@@ -115,30 +41,12 @@ func newDocumentMentions(db *gorm.DB, opts ...gen.DOOption) documentMentions {
 type documentMentions struct {
 	documentMentionsDo
 
-	ALL         field.Asterisk
-	ID          field.Int32
-	CreatedAt   field.Time
-	UpdatedAt   field.Time
-	DocumentID  field.Uint
-	Identifier  field.String
-	Job         field.String
-	JobGrade    field.Int
-	Firstname   field.String
-	Lastname    field.String
-	Dateofbirth field.String
-	Sex         field.String
-	Height      field.String
-	Jail        field.Int32
-	PhoneNumber field.String
-	Accounts    field.Field
-	Disabled    field.Bool
-	Visum       field.Int32
-	Playtime    field.Int32
-	UserProps   documentMentionsHasManyUserProps
-
-	UserLicenses documentMentionsHasManyUserLicenses
-
-	Documents documentMentionsHasManyDocuments
+	ALL        field.Asterisk
+	ID         field.Uint
+	CreatedAt  field.Time
+	UpdatedAt  field.Time
+	DocumentID field.Uint
+	Identifier field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -155,24 +63,11 @@ func (d documentMentions) As(alias string) *documentMentions {
 
 func (d *documentMentions) updateTableName(table string) *documentMentions {
 	d.ALL = field.NewAsterisk(table)
-	d.ID = field.NewInt32(table, "id")
+	d.ID = field.NewUint(table, "id")
 	d.CreatedAt = field.NewTime(table, "created_at")
-	d.UpdatedAt = field.NewTime(table, "last_seen")
+	d.UpdatedAt = field.NewTime(table, "updated_at")
 	d.DocumentID = field.NewUint(table, "document_id")
 	d.Identifier = field.NewString(table, "identifier")
-	d.Job = field.NewString(table, "job")
-	d.JobGrade = field.NewInt(table, "job_grade")
-	d.Firstname = field.NewString(table, "firstname")
-	d.Lastname = field.NewString(table, "lastname")
-	d.Dateofbirth = field.NewString(table, "dateofbirth")
-	d.Sex = field.NewString(table, "sex")
-	d.Height = field.NewString(table, "height")
-	d.Jail = field.NewInt32(table, "jail")
-	d.PhoneNumber = field.NewString(table, "phone_number")
-	d.Accounts = field.NewField(table, "accounts")
-	d.Disabled = field.NewBool(table, "disabled")
-	d.Visum = field.NewInt32(table, "visum")
-	d.Playtime = field.NewInt32(table, "playtime")
 
 	d.fillFieldMap()
 
@@ -189,26 +84,12 @@ func (d *documentMentions) GetFieldByName(fieldName string) (field.OrderExpr, bo
 }
 
 func (d *documentMentions) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 21)
+	d.fieldMap = make(map[string]field.Expr, 5)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["created_at"] = d.CreatedAt
-	d.fieldMap["last_seen"] = d.UpdatedAt
+	d.fieldMap["updated_at"] = d.UpdatedAt
 	d.fieldMap["document_id"] = d.DocumentID
 	d.fieldMap["identifier"] = d.Identifier
-	d.fieldMap["job"] = d.Job
-	d.fieldMap["job_grade"] = d.JobGrade
-	d.fieldMap["firstname"] = d.Firstname
-	d.fieldMap["lastname"] = d.Lastname
-	d.fieldMap["dateofbirth"] = d.Dateofbirth
-	d.fieldMap["sex"] = d.Sex
-	d.fieldMap["height"] = d.Height
-	d.fieldMap["jail"] = d.Jail
-	d.fieldMap["phone_number"] = d.PhoneNumber
-	d.fieldMap["accounts"] = d.Accounts
-	d.fieldMap["disabled"] = d.Disabled
-	d.fieldMap["visum"] = d.Visum
-	d.fieldMap["playtime"] = d.Playtime
-
 }
 
 func (d documentMentions) clone(db *gorm.DB) documentMentions {
@@ -219,226 +100,6 @@ func (d documentMentions) clone(db *gorm.DB) documentMentions {
 func (d documentMentions) replaceDB(db *gorm.DB) documentMentions {
 	d.documentMentionsDo.ReplaceDB(db)
 	return d
-}
-
-type documentMentionsHasManyUserProps struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a documentMentionsHasManyUserProps) Where(conds ...field.Expr) *documentMentionsHasManyUserProps {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a documentMentionsHasManyUserProps) WithContext(ctx context.Context) *documentMentionsHasManyUserProps {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a documentMentionsHasManyUserProps) Model(m *model.DocumentMentions) *documentMentionsHasManyUserPropsTx {
-	return &documentMentionsHasManyUserPropsTx{a.db.Model(m).Association(a.Name())}
-}
-
-type documentMentionsHasManyUserPropsTx struct{ tx *gorm.Association }
-
-func (a documentMentionsHasManyUserPropsTx) Find() (result []*model.UserProps, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a documentMentionsHasManyUserPropsTx) Append(values ...*model.UserProps) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a documentMentionsHasManyUserPropsTx) Replace(values ...*model.UserProps) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a documentMentionsHasManyUserPropsTx) Delete(values ...*model.UserProps) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a documentMentionsHasManyUserPropsTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a documentMentionsHasManyUserPropsTx) Count() int64 {
-	return a.tx.Count()
-}
-
-type documentMentionsHasManyUserLicenses struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a documentMentionsHasManyUserLicenses) Where(conds ...field.Expr) *documentMentionsHasManyUserLicenses {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a documentMentionsHasManyUserLicenses) WithContext(ctx context.Context) *documentMentionsHasManyUserLicenses {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a documentMentionsHasManyUserLicenses) Model(m *model.DocumentMentions) *documentMentionsHasManyUserLicensesTx {
-	return &documentMentionsHasManyUserLicensesTx{a.db.Model(m).Association(a.Name())}
-}
-
-type documentMentionsHasManyUserLicensesTx struct{ tx *gorm.Association }
-
-func (a documentMentionsHasManyUserLicensesTx) Find() (result []*model.UserLicense, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a documentMentionsHasManyUserLicensesTx) Append(values ...*model.UserLicense) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a documentMentionsHasManyUserLicensesTx) Replace(values ...*model.UserLicense) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a documentMentionsHasManyUserLicensesTx) Delete(values ...*model.UserLicense) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a documentMentionsHasManyUserLicensesTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a documentMentionsHasManyUserLicensesTx) Count() int64 {
-	return a.tx.Count()
-}
-
-type documentMentionsHasManyDocuments struct {
-	db *gorm.DB
-
-	field.RelationField
-
-	Responses struct {
-		field.RelationField
-	}
-	Mentions struct {
-		field.RelationField
-		UserProps struct {
-			field.RelationField
-		}
-		UserLicenses struct {
-			field.RelationField
-		}
-		Documents struct {
-			field.RelationField
-		}
-	}
-	JobAccess struct {
-		field.RelationField
-	}
-	UserAccess struct {
-		field.RelationField
-	}
-}
-
-func (a documentMentionsHasManyDocuments) Where(conds ...field.Expr) *documentMentionsHasManyDocuments {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a documentMentionsHasManyDocuments) WithContext(ctx context.Context) *documentMentionsHasManyDocuments {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a documentMentionsHasManyDocuments) Model(m *model.DocumentMentions) *documentMentionsHasManyDocumentsTx {
-	return &documentMentionsHasManyDocumentsTx{a.db.Model(m).Association(a.Name())}
-}
-
-type documentMentionsHasManyDocumentsTx struct{ tx *gorm.Association }
-
-func (a documentMentionsHasManyDocumentsTx) Find() (result []*model.Document, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a documentMentionsHasManyDocumentsTx) Append(values ...*model.Document) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a documentMentionsHasManyDocumentsTx) Replace(values ...*model.Document) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a documentMentionsHasManyDocumentsTx) Delete(values ...*model.Document) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a documentMentionsHasManyDocumentsTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a documentMentionsHasManyDocumentsTx) Count() int64 {
-	return a.tx.Count()
 }
 
 type documentMentionsDo struct{ gen.DO }

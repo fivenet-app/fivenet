@@ -12,12 +12,11 @@ const TableNameUser = "users"
 
 // User mapped from table <users>
 type User struct {
-	ID           int32         `gorm:"column:id;type:int(11);not null;uniqueIndex:id,priority:1" json:"id"`
 	Identifier   string        `gorm:"column:identifier;type:varchar(64);primaryKey" json:"identifier"`
-	Job          string        `gorm:"column:job;type:varchar(20);index:users_job_IDX,priority:1;default:unemployed" json:"job"`
+	Job          string        `gorm:"column:job;type:varchar(20);index:idx_users_job,priority:1;default:unemployed" json:"job"`
 	JobGrade     int           `gorm:"column:job_grade;type:int(11);default:1" json:"job_grade"`
-	Firstname    string        `gorm:"column:firstname;type:varchar(50)" json:"firstname"`
-	Lastname     string        `gorm:"column:lastname;type:varchar(50)" json:"lastname"`
+	Firstname    string        `gorm:"column:firstname;type:varchar(50);index:idx_users_firstname_lastname,priority:1" json:"firstname"`
+	Lastname     string        `gorm:"column:lastname;type:varchar(50);index:idx_users_firstname_lastname,priority:2" json:"lastname"`
 	Dateofbirth  string        `gorm:"column:dateofbirth;type:varchar(25)" json:"dateofbirth"`
 	Sex          Sex           `gorm:"column:sex;type:varchar(10)" json:"sex"`
 	Height       string        `gorm:"column:height;type:varchar(5)" json:"height"`

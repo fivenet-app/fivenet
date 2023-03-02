@@ -58,7 +58,7 @@ func main() {
 
 	usersModel := g.GenerateModel("users",
 		// Ignore certain fields
-		gen.FieldIgnore("license", "group", "skin", "loadout", "position", "is_dead", "last_property", "inventory", "tattoos", "levelData", "onDuty", "health", "armor"),
+		gen.FieldIgnore("id", "license", "group", "skin", "loadout", "position", "is_dead", "last_property", "inventory", "tattoos", "levelData", "onDuty", "health", "armor"),
 
 		// Fixup some field types and column names
 		gen.FieldType("sex", "Sex"),
@@ -95,14 +95,14 @@ func main() {
 		model.UserProps{},
 		jobsModel,
 		jobGradesModel,
+		// User location
+		model.UserLocation{},
+		vpcLSModel,
 		// Document related
 		model.Document{},
 		model.DocumentJobAccess{},
 		model.DocumentUserAccess{},
 		model.DocumentMentions{},
-		// User Location
-		model.UserLocation{},
-		vpcLSModel,
 	)
 
 	// Generate the code

@@ -49,32 +49,8 @@ func newDocument(db *gorm.DB, opts ...gen.DOOption) document {
 		},
 		Mentions: struct {
 			field.RelationField
-			UserProps struct {
-				field.RelationField
-			}
-			UserLicenses struct {
-				field.RelationField
-			}
-			Documents struct {
-				field.RelationField
-			}
 		}{
 			RelationField: field.NewRelation("Responses.Mentions", "model.DocumentMentions"),
-			UserProps: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("Responses.Mentions.UserProps", "model.UserProps"),
-			},
-			UserLicenses: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("Responses.Mentions.UserLicenses", "model.UserLicense"),
-			},
-			Documents: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("Responses.Mentions.Documents", "model.Document"),
-			},
 		},
 		JobAccess: struct {
 			field.RelationField
@@ -211,15 +187,6 @@ type documentHasManyResponses struct {
 	}
 	Mentions struct {
 		field.RelationField
-		UserProps struct {
-			field.RelationField
-		}
-		UserLicenses struct {
-			field.RelationField
-		}
-		Documents struct {
-			field.RelationField
-		}
 	}
 	JobAccess struct {
 		field.RelationField

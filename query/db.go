@@ -22,13 +22,20 @@ func SetupDB(logger *zap.Logger) error {
 	}
 
 	// Need to use gorm's AutoMigrate for our "non-existing" (at least on a basic ESX FiveM server) models
-	db.AutoMigrate(
+	if err := db.AutoMigrate(
 		&model.Account{},
+		// User related
+		&model.UserProps{},
+		// User location
+		model.UserLocation{},
+		// Document related
 		&model.Document{},
+		&model.DocumentMentions{},
 		&model.DocumentJobAccess{},
 		&model.DocumentUserAccess{},
-		&model.UserProps{},
-	)
+	); err != nil {
+		return err
+	}
 
 	// Set the DB var and default for the query package
 	DB = db

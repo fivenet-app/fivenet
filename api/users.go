@@ -26,7 +26,7 @@ func (a *users) SearchUsersByNamePages(firstname string, lastname string, offset
 
 func (a *users) SearchUsersByNamePagesWithLimit(firstname string, lastname string, offset int64, limit int, orderBys ...*common.OrderBy) ([]*model.User, int64, error) {
 	u := query.User
-	q := u.Clauses(hints.UseIndex("users_firstname_lastname_IDX"))
+	q := u.Clauses(hints.UseIndex("idx_users_firstname_lastname")).Preload(u.UserProps.RelationField)
 
 	if firstname != "" {
 		q = q.Where(u.Firstname.Like("%" + firstname + "%"))
@@ -58,7 +58,7 @@ func (a *users) SearchUsersByNamePagesWithLimit(firstname string, lastname strin
 
 func (a *users) GetUserByIdentifier(identifier string) (*model.User, error) {
 	u := query.User
-	q := u.Preload(u.UserLicenses.RelationField)
+	q := u.Preload(u.UserLicenses.RelationField, u.UserProps.RelationField)
 	return q.Where(u.Identifier.Eq(identifier)).Limit(1).First()
 }
 

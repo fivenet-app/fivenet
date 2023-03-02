@@ -47,7 +47,7 @@
 * `users`
     * More Indexes
         * `firstname` and `lastname` Columns:
-            * `CREATE FULLTEXT INDEX IF NOT EXISTS users_firstname_IDX ON s4_fivem.users (firstname, lastname);`
+            * `CREATE FULLTEXT INDEX IF NOT EXISTS idx_users_firstname_lastname ON s4_fivem.users (firstname, lastname);`
         * `job` and `job_grade` Spalten:
             * `CREATE INDEX IF NOT EXISTS users_job_grade_IDX USING BTREE ON s4_fivem.users (job_grade, job);`
 

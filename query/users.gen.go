@@ -27,7 +27,6 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 
 	tableName := _user.userDo.TableName()
 	_user.ALL = field.NewAsterisk(tableName)
-	_user.ID = field.NewInt32(tableName, "id")
 	_user.Identifier = field.NewString(tableName, "identifier")
 	_user.Job = field.NewString(tableName, "job")
 	_user.JobGrade = field.NewInt(tableName, "job_grade")
@@ -67,15 +66,6 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 			}
 			Mentions struct {
 				field.RelationField
-				UserProps struct {
-					field.RelationField
-				}
-				UserLicenses struct {
-					field.RelationField
-				}
-				Documents struct {
-					field.RelationField
-				}
 			}
 			JobAccess struct {
 				field.RelationField
@@ -92,32 +82,8 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 			},
 			Mentions: struct {
 				field.RelationField
-				UserProps struct {
-					field.RelationField
-				}
-				UserLicenses struct {
-					field.RelationField
-				}
-				Documents struct {
-					field.RelationField
-				}
 			}{
 				RelationField: field.NewRelation("Documents.Responses.Mentions", "model.DocumentMentions"),
-				UserProps: struct {
-					field.RelationField
-				}{
-					RelationField: field.NewRelation("Documents.Responses.Mentions.UserProps", "model.UserProps"),
-				},
-				UserLicenses: struct {
-					field.RelationField
-				}{
-					RelationField: field.NewRelation("Documents.Responses.Mentions.UserLicenses", "model.UserLicense"),
-				},
-				Documents: struct {
-					field.RelationField
-				}{
-					RelationField: field.NewRelation("Documents.Responses.Mentions.Documents", "model.Document"),
-				},
 			},
 			JobAccess: struct {
 				field.RelationField
@@ -156,7 +122,6 @@ type user struct {
 	userDo
 
 	ALL         field.Asterisk
-	ID          field.Int32
 	Identifier  field.String
 	Job         field.String
 	JobGrade    field.Int
@@ -194,7 +159,6 @@ func (u user) As(alias string) *user {
 
 func (u *user) updateTableName(table string) *user {
 	u.ALL = field.NewAsterisk(table)
-	u.ID = field.NewInt32(table, "id")
 	u.Identifier = field.NewString(table, "identifier")
 	u.Job = field.NewString(table, "job")
 	u.JobGrade = field.NewInt(table, "job_grade")
@@ -227,8 +191,7 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 20)
-	u.fieldMap["id"] = u.ID
+	u.fieldMap = make(map[string]field.Expr, 19)
 	u.fieldMap["identifier"] = u.Identifier
 	u.fieldMap["job"] = u.Job
 	u.fieldMap["job_grade"] = u.JobGrade
@@ -402,15 +365,6 @@ type userHasManyDocuments struct {
 		}
 		Mentions struct {
 			field.RelationField
-			UserProps struct {
-				field.RelationField
-			}
-			UserLicenses struct {
-				field.RelationField
-			}
-			Documents struct {
-				field.RelationField
-			}
 		}
 		JobAccess struct {
 			field.RelationField

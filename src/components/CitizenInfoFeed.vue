@@ -45,8 +45,8 @@
                                     {{ ' ' }}
                                     assigned
                                     {{ ' ' }}
-                                    <a :href="activityItem.assigned.href" class="font-medium text-gray-900">{{
-                                        activityItem.assigned.name }}</a>
+                                    <a :href="activityItem.assigned?.href" class="font-medium text-gray-900">{{
+                                        activityItem.assigned?.name }}</a>
                                     {{ ' ' }}
                                     <span class="whitespace-nowrap">{{ activityItem.date }}</span>
                                 </div>

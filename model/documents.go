@@ -17,21 +17,21 @@ const TableNameDocument = "arpanet_documents"
 
 type Document struct {
 	ID        uint           `gorm:"primarykey" json:"id"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
+	CreatedAt time.Time      `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
 	Type       DocumentType `gorm:"column:content_type;type:varchar(24)" json:"content_type"`
 	Title      string       `json:"title"`
 	Content    string       `json:"content"`
-	Creator    string       `gorm:"column:creator;index:arpanet_documents_FK,priority:1" json:"creator"`
-	CreatorJob string       `gorm:"column:creator_job;index:arpanet_documents_creator_job_FK,priority:1" json:"creator_job"`
+	Creator    string       `gorm:"column:creator;type:varchar(64);index" json:"creator"`
+	CreatorJob string       `gorm:"column:creator_job;type:varchar(20);index" json:"creator_job"`
 	Public     bool         `gorm:"column:public;default:0" json:"public"`
 
 	ResponseID uint        `gorm:"index" json:"response_id"`
 	Responses  []*Document `gorm:"foreignKey:ResponseID" json:"response"`
 
-	Mentions []*DocumentMentions `gorm:"foreignKey:DocumentID" json:"mentions"`
+	Mentions []DocumentMentions `json:"mentions"`
 
 	JobAccess  []DocumentJobAccess  `json:"jobAccess"`
 	UserAccess []DocumentUserAccess `json:"userAccess"`
@@ -42,15 +42,15 @@ func (*Document) TableName() string {
 	return TableNameDocument
 }
 
-const TableNameDocumentMentions = "arpanet_document_relations"
+const TableNameDocumentMentions = "arpanet_documents_mentions"
 
 type DocumentMentions struct {
 	ID        uint      `gorm:"primarykey" json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
-	DocumentID uint `gorm:"index" jsond:"document_id"`
-	User       `gorm:"column:user;index" json:"user"`
+	DocumentID uint   `gorm:"index" json:"document_id"`
+	Identifier string `gorm:"column:identifier;index" json:"identifier"`
 }
 
 // TableName Document's table name
