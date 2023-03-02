@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@arpanet/gen": "file:./gen",
+    "@ckeditor/ckeditor5-alignment": "^36.0.1",
+    "@ckeditor/ckeditor5-build-classic": "^36.0.1",
+    "@ckeditor/ckeditor5-mention": "^36.0.1",
+    "@ckeditor/ckeditor5-vue": "^4.0.1",
     "@fontsource/inter": "^4.5.15",
     "@headlessui/vue": "^1.7.11",
     "@heroicons/vue": "^2.0.16",
@@ -22,6 +26,7 @@
     "grpc-web": "^1.4.2",
     "jwt-decode": "^3.1.2",
     "leaflet": "^1.9.3",
+    "postcss-nesting": "^11.2.1",
     "theme-change": "^2.3.0",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6",

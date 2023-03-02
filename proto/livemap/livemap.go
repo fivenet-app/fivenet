@@ -88,6 +88,7 @@ func (s *Server) generateRandomMarker() []*Marker {
 		y := float32(rand.Intn(yMax-yMin+1) + yMin)
 
 		markers[i] = &Marker{
+			Id:   fmt.Sprintf("%d", i),
 			Name: fmt.Sprintf("Test Marker %d", i),
 			X:    x,
 			Y:    y,

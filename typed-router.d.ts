@@ -42,6 +42,7 @@ declare module 'vue-router/auto/routes' {
     'citizens-byid': RouteRecordInfo<'citizens-byid', '/citizens/:identifier', { identifier: ParamValue<true> }, { identifier: ParamValue<false> }>,
     'dispatches': RouteRecordInfo<'dispatches', '/dispatches', Record<never, never>, Record<never, never>>,
     'documents': RouteRecordInfo<'documents', '/documents', Record<never, never>, Record<never, never>>,
+    'documents-new': RouteRecordInfo<'documents-new', '/documents/new', Record<never, never>, Record<never, never>>,
     'jobs': RouteRecordInfo<'jobs', '/job', Record<never, never>, Record<never, never>>,
     'livemap': RouteRecordInfo<'livemap', '/livemap', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
