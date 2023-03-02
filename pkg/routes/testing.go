@@ -59,8 +59,8 @@ func (r *Testing) DocumentsGET(c *gin.Context) {
 		).
 		Order(d.CreatedAt.Desc()).
 		Preload(
-			d.Jobs.On(dja.Name.Eq(info.Job)),
-			d.Users.On(dua.Identifier.Eq(info.Identifier)),
+			d.JobAccess.On(dja.Name.Eq(info.Job)),
+			d.UserAccess.On(dua.Identifier.Eq(info.Identifier)),
 		).
 		Find()
 	if err != nil {
@@ -116,8 +116,8 @@ func (r *Testing) DocumentsByIDGET(c *gin.Context) {
 		).
 		Order(d.CreatedAt.Desc()).
 		Preload(
-			d.Jobs.On(dja.Name.Eq(info.Job)),
-			d.Users.On(dua.Identifier.Eq(info.Identifier)),
+			d.JobAccess.On(dja.Name.Eq(info.Job)),
+			d.UserAccess.On(dua.Identifier.Eq(info.Identifier)),
 		).
 		First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {

@@ -47,28 +47,63 @@ func newDocument(db *gorm.DB, opts ...gen.DOOption) document {
 		}{
 			RelationField: field.NewRelation("Responses.Responses", "model.Document"),
 		},
-		Jobs: struct {
+		Mentions: struct {
 			field.RelationField
+			UserProps struct {
+				field.RelationField
+			}
+			UserLicenses struct {
+				field.RelationField
+			}
+			Documents struct {
+				field.RelationField
+			}
 		}{
-			RelationField: field.NewRelation("Responses.Jobs", "model.DocumentJobAccess"),
+			RelationField: field.NewRelation("Responses.Mentions", "model.DocumentMentions"),
+			UserProps: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Responses.Mentions.UserProps", "model.UserProps"),
+			},
+			UserLicenses: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Responses.Mentions.UserLicenses", "model.UserLicense"),
+			},
+			Documents: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Responses.Mentions.Documents", "model.Document"),
+			},
 		},
-		Users: struct {
+		JobAccess: struct {
 			field.RelationField
 		}{
-			RelationField: field.NewRelation("Responses.Users", "model.DocumentUserAccess"),
+			RelationField: field.NewRelation("Responses.JobAccess", "model.DocumentJobAccess"),
+		},
+		UserAccess: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Responses.UserAccess", "model.DocumentUserAccess"),
 		},
 	}
 
-	_document.Jobs = documentHasManyJobs{
+	_document.Mentions = documentHasManyMentions{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("Jobs", "model.DocumentJobAccess"),
+		RelationField: field.NewRelation("Mentions", "model.DocumentMentions"),
 	}
 
-	_document.Users = documentHasManyUsers{
+	_document.JobAccess = documentHasManyJobAccess{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("Users", "model.DocumentUserAccess"),
+		RelationField: field.NewRelation("JobAccess", "model.DocumentJobAccess"),
+	}
+
+	_document.UserAccess = documentHasManyUserAccess{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("UserAccess", "model.DocumentUserAccess"),
 	}
 
 	_document.fillFieldMap()
@@ -93,9 +128,11 @@ type document struct {
 	ResponseID field.Uint
 	Responses  documentHasManyResponses
 
-	Jobs documentHasManyJobs
+	Mentions documentHasManyMentions
 
-	Users documentHasManyUsers
+	JobAccess documentHasManyJobAccess
+
+	UserAccess documentHasManyUserAccess
 
 	fieldMap map[string]field.Expr
 }
@@ -139,7 +176,7 @@ func (d *document) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (d *document) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 14)
+	d.fieldMap = make(map[string]field.Expr, 15)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["created_at"] = d.CreatedAt
 	d.fieldMap["updated_at"] = d.UpdatedAt
@@ -172,10 +209,22 @@ type documentHasManyResponses struct {
 	Responses struct {
 		field.RelationField
 	}
-	Jobs struct {
+	Mentions struct {
+		field.RelationField
+		UserProps struct {
+			field.RelationField
+		}
+		UserLicenses struct {
+			field.RelationField
+		}
+		Documents struct {
+			field.RelationField
+		}
+	}
+	JobAccess struct {
 		field.RelationField
 	}
-	Users struct {
+	UserAccess struct {
 		field.RelationField
 	}
 }
@@ -240,13 +289,13 @@ func (a documentHasManyResponsesTx) Count() int64 {
 	return a.tx.Count()
 }
 
-type documentHasManyJobs struct {
+type documentHasManyMentions struct {
 	db *gorm.DB
 
 	field.RelationField
 }
 
-func (a documentHasManyJobs) Where(conds ...field.Expr) *documentHasManyJobs {
+func (a documentHasManyMentions) Where(conds ...field.Expr) *documentHasManyMentions {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -259,22 +308,22 @@ func (a documentHasManyJobs) Where(conds ...field.Expr) *documentHasManyJobs {
 	return &a
 }
 
-func (a documentHasManyJobs) WithContext(ctx context.Context) *documentHasManyJobs {
+func (a documentHasManyMentions) WithContext(ctx context.Context) *documentHasManyMentions {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a documentHasManyJobs) Model(m *model.Document) *documentHasManyJobsTx {
-	return &documentHasManyJobsTx{a.db.Model(m).Association(a.Name())}
+func (a documentHasManyMentions) Model(m *model.Document) *documentHasManyMentionsTx {
+	return &documentHasManyMentionsTx{a.db.Model(m).Association(a.Name())}
 }
 
-type documentHasManyJobsTx struct{ tx *gorm.Association }
+type documentHasManyMentionsTx struct{ tx *gorm.Association }
 
-func (a documentHasManyJobsTx) Find() (result []*model.DocumentJobAccess, err error) {
+func (a documentHasManyMentionsTx) Find() (result []*model.DocumentMentions, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a documentHasManyJobsTx) Append(values ...*model.DocumentJobAccess) (err error) {
+func (a documentHasManyMentionsTx) Append(values ...*model.DocumentMentions) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -282,7 +331,7 @@ func (a documentHasManyJobsTx) Append(values ...*model.DocumentJobAccess) (err e
 	return a.tx.Append(targetValues...)
 }
 
-func (a documentHasManyJobsTx) Replace(values ...*model.DocumentJobAccess) (err error) {
+func (a documentHasManyMentionsTx) Replace(values ...*model.DocumentMentions) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -290,7 +339,7 @@ func (a documentHasManyJobsTx) Replace(values ...*model.DocumentJobAccess) (err 
 	return a.tx.Replace(targetValues...)
 }
 
-func (a documentHasManyJobsTx) Delete(values ...*model.DocumentJobAccess) (err error) {
+func (a documentHasManyMentionsTx) Delete(values ...*model.DocumentMentions) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -298,21 +347,21 @@ func (a documentHasManyJobsTx) Delete(values ...*model.DocumentJobAccess) (err e
 	return a.tx.Delete(targetValues...)
 }
 
-func (a documentHasManyJobsTx) Clear() error {
+func (a documentHasManyMentionsTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a documentHasManyJobsTx) Count() int64 {
+func (a documentHasManyMentionsTx) Count() int64 {
 	return a.tx.Count()
 }
 
-type documentHasManyUsers struct {
+type documentHasManyJobAccess struct {
 	db *gorm.DB
 
 	field.RelationField
 }
 
-func (a documentHasManyUsers) Where(conds ...field.Expr) *documentHasManyUsers {
+func (a documentHasManyJobAccess) Where(conds ...field.Expr) *documentHasManyJobAccess {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -325,22 +374,22 @@ func (a documentHasManyUsers) Where(conds ...field.Expr) *documentHasManyUsers {
 	return &a
 }
 
-func (a documentHasManyUsers) WithContext(ctx context.Context) *documentHasManyUsers {
+func (a documentHasManyJobAccess) WithContext(ctx context.Context) *documentHasManyJobAccess {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a documentHasManyUsers) Model(m *model.Document) *documentHasManyUsersTx {
-	return &documentHasManyUsersTx{a.db.Model(m).Association(a.Name())}
+func (a documentHasManyJobAccess) Model(m *model.Document) *documentHasManyJobAccessTx {
+	return &documentHasManyJobAccessTx{a.db.Model(m).Association(a.Name())}
 }
 
-type documentHasManyUsersTx struct{ tx *gorm.Association }
+type documentHasManyJobAccessTx struct{ tx *gorm.Association }
 
-func (a documentHasManyUsersTx) Find() (result []*model.DocumentUserAccess, err error) {
+func (a documentHasManyJobAccessTx) Find() (result []*model.DocumentJobAccess, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a documentHasManyUsersTx) Append(values ...*model.DocumentUserAccess) (err error) {
+func (a documentHasManyJobAccessTx) Append(values ...*model.DocumentJobAccess) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -348,7 +397,7 @@ func (a documentHasManyUsersTx) Append(values ...*model.DocumentUserAccess) (err
 	return a.tx.Append(targetValues...)
 }
 
-func (a documentHasManyUsersTx) Replace(values ...*model.DocumentUserAccess) (err error) {
+func (a documentHasManyJobAccessTx) Replace(values ...*model.DocumentJobAccess) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -356,7 +405,7 @@ func (a documentHasManyUsersTx) Replace(values ...*model.DocumentUserAccess) (er
 	return a.tx.Replace(targetValues...)
 }
 
-func (a documentHasManyUsersTx) Delete(values ...*model.DocumentUserAccess) (err error) {
+func (a documentHasManyJobAccessTx) Delete(values ...*model.DocumentJobAccess) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -364,11 +413,77 @@ func (a documentHasManyUsersTx) Delete(values ...*model.DocumentUserAccess) (err
 	return a.tx.Delete(targetValues...)
 }
 
-func (a documentHasManyUsersTx) Clear() error {
+func (a documentHasManyJobAccessTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a documentHasManyUsersTx) Count() int64 {
+func (a documentHasManyJobAccessTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type documentHasManyUserAccess struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a documentHasManyUserAccess) Where(conds ...field.Expr) *documentHasManyUserAccess {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a documentHasManyUserAccess) WithContext(ctx context.Context) *documentHasManyUserAccess {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a documentHasManyUserAccess) Model(m *model.Document) *documentHasManyUserAccessTx {
+	return &documentHasManyUserAccessTx{a.db.Model(m).Association(a.Name())}
+}
+
+type documentHasManyUserAccessTx struct{ tx *gorm.Association }
+
+func (a documentHasManyUserAccessTx) Find() (result []*model.DocumentUserAccess, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a documentHasManyUserAccessTx) Append(values ...*model.DocumentUserAccess) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a documentHasManyUserAccessTx) Replace(values ...*model.DocumentUserAccess) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a documentHasManyUserAccessTx) Delete(values ...*model.DocumentUserAccess) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a documentHasManyUserAccessTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a documentHasManyUserAccessTx) Count() int64 {
 	return a.tx.Count()
 }
 

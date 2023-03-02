@@ -80,6 +80,7 @@ func Test_WithContext(t *testing.T) {
 		qCtx.Account.UnderlyingDB().Statement.Context,
 		qCtx.Document.UnderlyingDB().Statement.Context,
 		qCtx.DocumentJobAccess.UnderlyingDB().Statement.Context,
+		qCtx.DocumentMentions.UnderlyingDB().Statement.Context,
 		qCtx.DocumentUserAccess.UnderlyingDB().Statement.Context,
 		qCtx.Job.UnderlyingDB().Statement.Context,
 		qCtx.JobGrade.UnderlyingDB().Statement.Context,

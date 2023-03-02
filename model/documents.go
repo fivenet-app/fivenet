@@ -27,14 +27,33 @@ type Document struct {
 	Creator    string       `gorm:"column:creator;index:arpanet_documents_FK,priority:1" json:"creator"`
 	CreatorJob string       `gorm:"column:creator_job;index:arpanet_documents_creator_job_FK,priority:1" json:"creator_job"`
 	Public     bool         `gorm:"column:public;default:0" json:"public"`
-	ResponseID uint         `gorm:"index" json:"response_id"`
-	Responses  []*Document  `gorm:"foreignKey:ResponseID" json:"response"`
 
-	Jobs  []DocumentJobAccess  `json:"jobs"`
-	Users []DocumentUserAccess `json:"users"`
+	ResponseID uint        `gorm:"index" json:"response_id"`
+	Responses  []*Document `gorm:"foreignKey:ResponseID" json:"response"`
+
+	Mentions []*DocumentMentions `gorm:"foreignKey:DocumentID" json:"mentions"`
+
+	JobAccess  []DocumentJobAccess  `json:"jobAccess"`
+	UserAccess []DocumentUserAccess `json:"userAccess"`
 }
 
 // TableName Document's table name
 func (*Document) TableName() string {
 	return TableNameDocument
+}
+
+const TableNameDocumentMentions = "arpanet_document_relations"
+
+type DocumentMentions struct {
+	ID        uint      `gorm:"primarykey" json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
+	DocumentID uint `gorm:"index" jsond:"document_id"`
+	User       `gorm:"column:user;index" json:"user"`
+}
+
+// TableName Document's table name
+func (*DocumentMentions) TableName() string {
+	return TableNameDocumentMentions
 }

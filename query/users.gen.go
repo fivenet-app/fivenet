@@ -65,10 +65,22 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 			Responses struct {
 				field.RelationField
 			}
-			Jobs struct {
+			Mentions struct {
+				field.RelationField
+				UserProps struct {
+					field.RelationField
+				}
+				UserLicenses struct {
+					field.RelationField
+				}
+				Documents struct {
+					field.RelationField
+				}
+			}
+			JobAccess struct {
 				field.RelationField
 			}
-			Users struct {
+			UserAccess struct {
 				field.RelationField
 			}
 		}{
@@ -78,26 +90,60 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 			}{
 				RelationField: field.NewRelation("Documents.Responses.Responses", "model.Document"),
 			},
-			Jobs: struct {
+			Mentions: struct {
+				field.RelationField
+				UserProps struct {
+					field.RelationField
+				}
+				UserLicenses struct {
+					field.RelationField
+				}
+				Documents struct {
+					field.RelationField
+				}
+			}{
+				RelationField: field.NewRelation("Documents.Responses.Mentions", "model.DocumentMentions"),
+				UserProps: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Documents.Responses.Mentions.UserProps", "model.UserProps"),
+				},
+				UserLicenses: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Documents.Responses.Mentions.UserLicenses", "model.UserLicense"),
+				},
+				Documents: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Documents.Responses.Mentions.Documents", "model.Document"),
+				},
+			},
+			JobAccess: struct {
 				field.RelationField
 			}{
-				RelationField: field.NewRelation("Documents.Responses.Jobs", "model.DocumentJobAccess"),
+				RelationField: field.NewRelation("Documents.Responses.JobAccess", "model.DocumentJobAccess"),
 			},
-			Users: struct {
+			UserAccess: struct {
 				field.RelationField
 			}{
-				RelationField: field.NewRelation("Documents.Responses.Users", "model.DocumentUserAccess"),
+				RelationField: field.NewRelation("Documents.Responses.UserAccess", "model.DocumentUserAccess"),
 			},
 		},
-		Jobs: struct {
+		Mentions: struct {
 			field.RelationField
 		}{
-			RelationField: field.NewRelation("Documents.Jobs", "model.DocumentJobAccess"),
+			RelationField: field.NewRelation("Documents.Mentions", "model.DocumentMentions"),
 		},
-		Users: struct {
+		JobAccess: struct {
 			field.RelationField
 		}{
-			RelationField: field.NewRelation("Documents.Users", "model.DocumentUserAccess"),
+			RelationField: field.NewRelation("Documents.JobAccess", "model.DocumentJobAccess"),
+		},
+		UserAccess: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Documents.UserAccess", "model.DocumentUserAccess"),
 		},
 	}
 
@@ -354,17 +400,32 @@ type userHasManyDocuments struct {
 		Responses struct {
 			field.RelationField
 		}
-		Jobs struct {
+		Mentions struct {
+			field.RelationField
+			UserProps struct {
+				field.RelationField
+			}
+			UserLicenses struct {
+				field.RelationField
+			}
+			Documents struct {
+				field.RelationField
+			}
+		}
+		JobAccess struct {
 			field.RelationField
 		}
-		Users struct {
+		UserAccess struct {
 			field.RelationField
 		}
 	}
-	Jobs struct {
+	Mentions struct {
 		field.RelationField
 	}
-	Users struct {
+	JobAccess struct {
+		field.RelationField
+	}
+	UserAccess struct {
 		field.RelationField
 	}
 }

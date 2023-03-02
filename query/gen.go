@@ -20,6 +20,7 @@ var (
 	Account            *account
 	Document           *document
 	DocumentJobAccess  *documentJobAccess
+	DocumentMentions   *documentMentions
 	DocumentUserAccess *documentUserAccess
 	Job                *job
 	JobGrade           *jobGrade
@@ -35,6 +36,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	Account = &Q.Account
 	Document = &Q.Document
 	DocumentJobAccess = &Q.DocumentJobAccess
+	DocumentMentions = &Q.DocumentMentions
 	DocumentUserAccess = &Q.DocumentUserAccess
 	Job = &Q.Job
 	JobGrade = &Q.JobGrade
@@ -51,6 +53,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		Account:            newAccount(db, opts...),
 		Document:           newDocument(db, opts...),
 		DocumentJobAccess:  newDocumentJobAccess(db, opts...),
+		DocumentMentions:   newDocumentMentions(db, opts...),
 		DocumentUserAccess: newDocumentUserAccess(db, opts...),
 		Job:                newJob(db, opts...),
 		JobGrade:           newJobGrade(db, opts...),
@@ -68,6 +71,7 @@ type Query struct {
 	Account            account
 	Document           document
 	DocumentJobAccess  documentJobAccess
+	DocumentMentions   documentMentions
 	DocumentUserAccess documentUserAccess
 	Job                job
 	JobGrade           jobGrade
@@ -86,6 +90,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Account:            q.Account.clone(db),
 		Document:           q.Document.clone(db),
 		DocumentJobAccess:  q.DocumentJobAccess.clone(db),
+		DocumentMentions:   q.DocumentMentions.clone(db),
 		DocumentUserAccess: q.DocumentUserAccess.clone(db),
 		Job:                q.Job.clone(db),
 		JobGrade:           q.JobGrade.clone(db),
@@ -111,6 +116,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		Account:            q.Account.replaceDB(db),
 		Document:           q.Document.replaceDB(db),
 		DocumentJobAccess:  q.DocumentJobAccess.replaceDB(db),
+		DocumentMentions:   q.DocumentMentions.replaceDB(db),
 		DocumentUserAccess: q.DocumentUserAccess.replaceDB(db),
 		Job:                q.Job.replaceDB(db),
 		JobGrade:           q.JobGrade.replaceDB(db),
@@ -126,6 +132,7 @@ type queryCtx struct {
 	Account            IAccountDo
 	Document           IDocumentDo
 	DocumentJobAccess  IDocumentJobAccessDo
+	DocumentMentions   IDocumentMentionsDo
 	DocumentUserAccess IDocumentUserAccessDo
 	Job                IJobDo
 	JobGrade           IJobGradeDo
@@ -141,6 +148,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		Account:            q.Account.WithContext(ctx),
 		Document:           q.Document.WithContext(ctx),
 		DocumentJobAccess:  q.DocumentJobAccess.WithContext(ctx),
+		DocumentMentions:   q.DocumentMentions.WithContext(ctx),
 		DocumentUserAccess: q.DocumentUserAccess.WithContext(ctx),
 		Job:                q.Job.WithContext(ctx),
 		JobGrade:           q.JobGrade.WithContext(ctx),
