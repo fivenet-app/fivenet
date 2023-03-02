@@ -1,11 +1,11 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, watchEffect } from 'vue';
 import authInterceptor from '../grpcauth';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { LivemapServiceClient } from '@arpanet/gen/livemap/LivemapServiceClientPb';
 import { Marker, StreamRequest, ServerStreamResponse } from '@arpanet/gen/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
-import { customCRS, Livemap } from '../class/Livemap';
+import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import { Hash } from '../class/Hash';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -85,7 +85,7 @@ export default defineComponent({
 				.stream(request)
 				.on('data', function (response) {
 					outer.usersList = response.getUsersList();
-					// TODO Marker management
+					outer.map.parseMarkerlist(MarkerType.player, outer.usersList);
 				})
 				.on('error', (err: RpcError) => {
 					authInterceptor.handleError(err, this.$route);
