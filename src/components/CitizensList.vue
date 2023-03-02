@@ -111,8 +111,7 @@ export default defineComponent({
                     <form @submit.prevent="findUsers(offset)">
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-white">Quick
-                                    search</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-white">First Name</label>
                                 <div class="relative mt-2 flex items-center">
                                     <input v-model="searchFirstname" v-on:keyup.enter="findUsers(offset)" type="text"
                                         name="search" id="search"
