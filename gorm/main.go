@@ -11,12 +11,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// Dynamic SQL
-type Querier interface {
-	// SELECT * FROM @@table WHERE name = @name{{if role !=""}} AND role = @role{{end}}
-	FilterWithNameAndRole(name, role string) ([]gen.T, error)
-}
-
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -78,6 +72,10 @@ func main() {
 		gen.FieldJSONTag("accounts", "-"),
 
 		// Add relations for lazy loading
+		gen.FieldRelateModel(field.HasMany, "UserProps", model.UserProps{},
+			&field.RelateConfig{
+				GORMTag: "foreignkey:Identifier",
+			}),
 		gen.FieldRelate(field.HasMany, "UserLicenses", userLicenses,
 			&field.RelateConfig{
 				GORMTag: "foreignkey:Owner",
@@ -100,6 +98,7 @@ func main() {
 		model.DocumentUserAccess{},
 		model.Account{},
 		model.UserProps{},
+		model.UserLocation{},
 	)
 
 	// Generate the code

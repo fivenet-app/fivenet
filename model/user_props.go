@@ -1,6 +1,6 @@
 package model
 
-const TableNameUserProps = "arpanet_users_props"
+const TableNameUserProps = "arpanet_user_props"
 
 type UserProps struct {
 	Identifier string `gorm:"primaryKey"`

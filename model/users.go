@@ -1,5 +1,5 @@
 package model
 
 func (u *User) GetLicenseFromIdentifier() string {
-	return u.Identifier[6:]
+	return "license:" + u.Identifier[6:]
 }
