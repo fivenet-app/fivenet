@@ -35,6 +35,9 @@ export class Livemap extends Map {
 			case 'Road':
 				this.element.style.backgroundColor = '#1862ad';
 				return;
+			case 'Postal':
+				this.element.style.backgroundColor = '#63a7ce';
+				return;
 		}
 	}
 }
