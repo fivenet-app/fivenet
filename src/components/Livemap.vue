@@ -101,6 +101,7 @@ export default defineComponent({
                 .stream(request)
                 .on('data', function (response) {
                     outer.usersList = response.getUsersList();
+                    // TODO Marker management
                 })
                 .on('error', (err: RpcError) => {
                     authInterceptor.handleError(err, this.$route);
