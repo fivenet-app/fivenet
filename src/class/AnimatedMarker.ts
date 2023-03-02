@@ -63,7 +63,7 @@ export class AnimatedMarker extends L.Marker {
 
 		if (L.DomUtil.TRANSITION) {
 			if (this._shadow) {
-				this._shadow.style.transition = 'all ' + speed + 'ms linear';
+				this._shadow.style.transition = 'all ' + speed + 'ms ease';
 			}
 
 			if (this.getIcon()) {
@@ -74,7 +74,7 @@ export class AnimatedMarker extends L.Marker {
 					style = document.getElementById('AnimatedMarker');
 				}
 
-				if (style) style.innerHTML = '.leaflet-marker-icon { transition: all ' + speed + 'ms linear }';
+				if (style) style.innerHTML = '.leaflet-marker-icon { transition: all ' + speed + 'ms ease }';
 			}
 		}
 
