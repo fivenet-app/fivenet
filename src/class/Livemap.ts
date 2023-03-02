@@ -14,6 +14,7 @@ export class Livemap extends L.Map {
 	public hasLoaded: boolean = false;
 
 	public markers: Map<string, AnimatedMarker> = new Map();
+	public popups: Map<string, L.Popup> = new Map();
 	private prevMarkerLists: Map<MarkerType, Array<Marker.AsObject>> = new Map();
 
 	private element: HTMLElement;
@@ -54,7 +55,13 @@ export class Livemap extends L.Map {
 		}
 	}
 
-	public addMarker(id: string, latitude: number, longitude: number, options: L.MarkerOptions | undefined = undefined): void {
+	public addMarker(
+		id: string,
+		latitude: number,
+		longitude: number,
+		content: string,
+		options: L.MarkerOptions | undefined = undefined
+	): void {
 		const marker = this.markers.get(id);
 
 		if (marker) {
@@ -62,7 +69,11 @@ export class Livemap extends L.Map {
 			if (options?.icon) marker.setIcon(options.icon);
 			if (options?.opacity) marker.setOpacity(options.opacity);
 		} else {
-			this.markers.set(id, new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(this));
+			const popup = L.popup({ content, closeButton: false });
+			const marker = new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(this).bindPopup(popup);
+
+			this.popups.set(id, popup);
+			this.markers.set(id, marker);
 		}
 	}
 
@@ -95,7 +106,7 @@ export class Livemap extends L.Map {
 		}
 
 		list.forEach((marker) => {
-			this.addMarker(marker.getId(), marker.getY(), marker.getX(), options);
+			this.addMarker(marker.getId(), marker.getY(), marker.getX(), marker.getPopup(), options);
 		});
 
 		this.prevMarkerLists.set(
