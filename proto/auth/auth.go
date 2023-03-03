@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/arpanet/api"
 	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/auth"
+	"github.com/galexrt/arpanet/pkg/helpers"
 	"github.com/galexrt/arpanet/pkg/session"
 	"github.com/galexrt/arpanet/query"
 	"github.com/golang-jwt/jwt/v5"
@@ -89,14 +90,15 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	}
 
 	// Load chars and add them to the response
-	chars, err := api.GetCharsByLicense(claims.Subject)
+	chars, err := api.Auth.GetCharsByLicense(claims.Subject)
 	if err != nil {
 		return resp, err
 	}
 
 	for _, char := range chars {
-		resp.Chars = append(resp.Chars, api.ConvertModelUserToCommonCharacter(char))
+		resp.Chars = append(resp.Chars, helpers.ConvertModelUserToCommonCharacter(char))
 	}
+
 	return resp, nil
 }
 

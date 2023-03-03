@@ -26,7 +26,11 @@ gen-gorm:
 	go run ./gorm/main.go
 
 protoc-gen-validate:
-	if test ! -d validate/; then git clone https://github.com/bufbuild/protoc-gen-validate.git validate; fi
+	if test ! -d validate/; then \
+		git clone https://github.com/bufbuild/protoc-gen-validate.git validate; \
+	else \
+		git -C validate/ pull --all; \
+	fi
 
 .PHONY: gen-proto
 gen-proto: protoc-gen-validate
@@ -56,13 +60,17 @@ gen-proto: protoc-gen-validate
 	yarn upgrade '@arpanet/gen@file:./gen'
 
 gdal2tiles-leaflet:
-	if test ! -d gdal2tiles-leaflet/; then git clone https://github.com/commenthol/gdal2tiles-leaflet.git; fi
+	if test ! -d gdal2tiles-leaflet/; then \
+		git clone https://github.com/commenthol/gdal2tiles-leaflet.git gdal2tiles-leaflet; \
+	else \
+		git -C gdal2tiles-leaflet pull --all; \
+	fi
 
 .PHONY: gen-tiles
 gen-tiles: gdal2tiles-leaflet
 	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ATLAS_8192x8192.jpg ./public/tiles/atlas
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ROAD_8192x8192.jpg ./public/tiles/road
 	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_POSTAL_8192x8192.jpg ./public/tiles/postal
+	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ROAD_8192x8192.jpg ./public/tiles/road
 	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_SATELITE_8192x8192.jpg ./public/tiles/satelite
 
 .PHONY: optimize-tiles

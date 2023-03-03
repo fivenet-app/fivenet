@@ -3,12 +3,6 @@ syntax = "proto3";
 package gen.documents;
 option go_package = "github.com/galexrt/arpanet/proto/documents";
 
-message GetDocumentsResponse {
-}
-
-message GetDocumentsRequest {
-}
-
 message FindDocumentsRequest {
 
 }
@@ -37,7 +31,6 @@ message Document {
 }
 
 service DocumentsService {
-    rpc GetDocuments(GetDocumentsRequest) returns (GetDocumentsResponse);
     rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
 
     rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);

@@ -1,6 +1,7 @@
 package query
 
 import (
+	permify "github.com/Permify/go-role"
 	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/config"
 	"go.uber.org/zap"
@@ -10,7 +11,10 @@ import (
 	"moul.io/zapgorm2"
 )
 
-var DB *gorm.DB
+var (
+	DB    *gorm.DB
+	Perms *permify.Permify
+)
 
 func SetupDB(logger *zap.Logger) error {
 	dbLogger := zapgorm2.New(logger.Named("db"))
@@ -23,8 +27,9 @@ func SetupDB(logger *zap.Logger) error {
 
 	// Need to use gorm's AutoMigrate for our "non-existing" (at least on a basic ESX FiveM server) models
 	if err := db.AutoMigrate(
-		&model.Account{},
 		// User related
+		&model.Account{},
+		&model.AccountUser{},
 		&model.UserProps{},
 		// User location
 		model.UserLocation{},
@@ -34,6 +39,17 @@ func SetupDB(logger *zap.Logger) error {
 		&model.DocumentJobAccess{},
 		&model.DocumentUserAccess{},
 	); err != nil {
+		return err
+	}
+
+	// Initialize Permify go-role
+	tablePrefix := "arpanet_"
+	Perms, err = permify.New(permify.Options{
+		Migrate:     true,
+		DB:          db,
+		TablePrefix: &tablePrefix,
+	})
+	if err != nil {
 		return err
 	}
 

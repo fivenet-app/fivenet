@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/galexrt/arpanet/api"
+	"github.com/galexrt/arpanet/pkg/helpers"
 )
 
 type Server struct {
@@ -31,7 +32,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	resp.End = resp.Current + int64(len(users))
 
 	for _, user := range users {
-		resp.Users = append(resp.Users, api.ConvertModelUserToCommonCharacter(user))
+		resp.Users = append(resp.Users, helpers.ConvertModelUserToCommonCharacter(user))
 	}
 
 	return resp, nil
@@ -44,7 +45,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		return resp, err
 	}
 
-	resp.User = api.ConvertModelUserToCommonCharacter(user)
+	resp.User = helpers.ConvertModelUserToCommonCharacter(user)
 
 	return resp, nil
 }

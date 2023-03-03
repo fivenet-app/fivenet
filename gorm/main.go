@@ -93,6 +93,7 @@ func main() {
 		usersModel,
 		userLicenses,
 		model.UserProps{},
+		model.AccountUser{},
 		jobsModel,
 		jobGradesModel,
 		// User location

@@ -23,7 +23,7 @@ func NewServer(logger *zap.Logger) *Server {
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) error {
-	user, err := api.GetUserFromContext(srv.Context())
+	user, err := api.Auth.GetUserFromContext(srv.Context())
 	if err != nil {
 		return err
 	}
