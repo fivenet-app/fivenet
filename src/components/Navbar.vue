@@ -34,12 +34,12 @@ export default defineComponent({
     data() {
         return {
             navigation: [
-                { name: 'Overview', href: '/overview', can: 'overview', },
-                { name: 'Citizens', href: '/citizens', can: 'citizens' },
-                { name: 'Documents', href: '/documents', can: 'documents' },
-                { name: 'Dispatches', href: '/dispatches', can: 'dispatches' },
-                { name: 'Job', href: '/job', can: 'job' },
-                { name: 'Livemap', href: '/livemap', can: 'livemap' },
+                { name: 'Overview', href: '/overview', can: 'overview-view', },
+                { name: 'Citizens', href: '/citizens', can: 'users-view' },
+                { name: 'Documents', href: '/documents', can: 'documents-view' },
+                { name: 'Dispatches', href: '/dispatches', can: 'dispatches-view' },
+                { name: 'Job', href: '/job', can: 'job-view' },
+                { name: 'Livemap', href: '/livemap', can: 'livemap-view' },
             ],
             userNavigation: [
                 { name: 'Change Characters', href: '/login', },

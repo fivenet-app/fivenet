@@ -93,7 +93,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.gen.common.Character.repeatedFields_ = [12];
+proto.gen.common.Character.repeatedFields_ = [13];
 
 
 
@@ -126,16 +126,17 @@ proto.gen.common.Character.prototype.toObject = function(opt_includeInstance) {
  */
 proto.gen.common.Character.toObject = function(includeInstance, msg) {
   var f, obj = {
-    identifier: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    job: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    jobgrade: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    firstname: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    lastname: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    dateofbirth: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    sex: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    height: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    visum: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    playtime: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    identifier: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    job: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    jobgrade: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    firstname: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    lastname: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    dateofbirth: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    sex: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    height: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    visum: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    playtime: jspb.Message.getFieldWithDefault(msg, 11, 0),
     props: (f = msg.getProps()) && proto.gen.common.Props.toObject(includeInstance, f),
     licensesList: jspb.Message.toObjectList(msg.getLicensesList(),
     proto.gen.common.License.toObject, includeInstance)
@@ -176,51 +177,55 @@ proto.gen.common.Character.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setIdentifier(value);
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setId(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setJob(value);
+      msg.setIdentifier(value);
       break;
     case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setJob(value);
+      break;
+    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setJobgrade(value);
       break;
-    case 4:
+    case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.setFirstname(value);
       break;
-    case 5:
+    case 6:
       var value = /** @type {string} */ (reader.readString());
       msg.setLastname(value);
       break;
-    case 6:
+    case 7:
       var value = /** @type {string} */ (reader.readString());
       msg.setDateofbirth(value);
       break;
-    case 7:
+    case 8:
       var value = /** @type {string} */ (reader.readString());
       msg.setSex(value);
       break;
-    case 8:
+    case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setHeight(value);
       break;
-    case 9:
+    case 10:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setVisum(value);
       break;
-    case 10:
+    case 11:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setPlaytime(value);
       break;
-    case 11:
+    case 12:
       var value = new proto.gen.common.Props;
       reader.readMessage(value,proto.gen.common.Props.deserializeBinaryFromReader);
       msg.setProps(value);
       break;
-    case 12:
+    case 13:
       var value = new proto.gen.common.License;
       reader.readMessage(value,proto.gen.common.License.deserializeBinaryFromReader);
       msg.addLicenses(value);
@@ -254,80 +259,87 @@ proto.gen.common.Character.prototype.serializeBinary = function() {
  */
 proto.gen.common.Character.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getIdentifier();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeUint64(
       1,
       f
     );
   }
-  f = message.getJob();
+  f = message.getIdentifier();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
+  f = message.getJob();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
   f = message.getJobgrade();
   if (f !== 0) {
     writer.writeInt32(
-      3,
+      4,
       f
     );
   }
   f = message.getFirstname();
   if (f.length > 0) {
     writer.writeString(
-      4,
+      5,
       f
     );
   }
   f = message.getLastname();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      6,
       f
     );
   }
   f = message.getDateofbirth();
   if (f.length > 0) {
     writer.writeString(
-      6,
+      7,
       f
     );
   }
   f = message.getSex();
   if (f.length > 0) {
     writer.writeString(
-      7,
+      8,
       f
     );
   }
   f = message.getHeight();
   if (f.length > 0) {
     writer.writeString(
-      8,
+      9,
       f
     );
   }
   f = message.getVisum();
   if (f !== 0) {
     writer.writeInt64(
-      9,
+      10,
       f
     );
   }
   f = message.getPlaytime();
   if (f !== 0) {
     writer.writeInt64(
-      10,
+      11,
       f
     );
   }
   f = message.getProps();
   if (f != null) {
     writer.writeMessage(
-      11,
+      12,
       f,
       proto.gen.common.Props.serializeBinaryToWriter
     );
@@ -335,7 +347,7 @@ proto.gen.common.Character.serializeBinaryToWriter = function(message, writer) {
   f = message.getLicensesList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      12,
+      13,
       f,
       proto.gen.common.License.serializeBinaryToWriter
     );
@@ -344,28 +356,28 @@ proto.gen.common.Character.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional string identifier = 1;
+ * optional uint64 id = 1;
+ * @return {number}
+ */
+proto.gen.common.Character.prototype.getId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.gen.common.Character} returns this
+ */
+proto.gen.common.Character.prototype.setId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional string identifier = 2;
  * @return {string}
  */
 proto.gen.common.Character.prototype.getIdentifier = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.gen.common.Character} returns this
- */
-proto.gen.common.Character.prototype.setIdentifier = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
-};
-
-
-/**
- * optional string job = 2;
- * @return {string}
- */
-proto.gen.common.Character.prototype.getJob = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -374,17 +386,35 @@ proto.gen.common.Character.prototype.getJob = function() {
  * @param {string} value
  * @return {!proto.gen.common.Character} returns this
  */
-proto.gen.common.Character.prototype.setJob = function(value) {
+proto.gen.common.Character.prototype.setIdentifier = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional int32 jobGrade = 3;
+ * optional string job = 3;
+ * @return {string}
+ */
+proto.gen.common.Character.prototype.getJob = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.gen.common.Character} returns this
+ */
+proto.gen.common.Character.prototype.setJob = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional int32 jobGrade = 4;
  * @return {number}
  */
 proto.gen.common.Character.prototype.getJobgrade = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
@@ -393,33 +423,15 @@ proto.gen.common.Character.prototype.getJobgrade = function() {
  * @return {!proto.gen.common.Character} returns this
  */
 proto.gen.common.Character.prototype.setJobgrade = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * optional string firstname = 4;
+ * optional string firstname = 5;
  * @return {string}
  */
 proto.gen.common.Character.prototype.getFirstname = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.gen.common.Character} returns this
- */
-proto.gen.common.Character.prototype.setFirstname = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
-};
-
-
-/**
- * optional string lastname = 5;
- * @return {string}
- */
-proto.gen.common.Character.prototype.getLastname = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
@@ -428,16 +440,16 @@ proto.gen.common.Character.prototype.getLastname = function() {
  * @param {string} value
  * @return {!proto.gen.common.Character} returns this
  */
-proto.gen.common.Character.prototype.setLastname = function(value) {
+proto.gen.common.Character.prototype.setFirstname = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
 /**
- * optional string dateofbirth = 6;
+ * optional string lastname = 6;
  * @return {string}
  */
-proto.gen.common.Character.prototype.getDateofbirth = function() {
+proto.gen.common.Character.prototype.getLastname = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
@@ -446,16 +458,16 @@ proto.gen.common.Character.prototype.getDateofbirth = function() {
  * @param {string} value
  * @return {!proto.gen.common.Character} returns this
  */
-proto.gen.common.Character.prototype.setDateofbirth = function(value) {
+proto.gen.common.Character.prototype.setLastname = function(value) {
   return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
 /**
- * optional string sex = 7;
+ * optional string dateofbirth = 7;
  * @return {string}
  */
-proto.gen.common.Character.prototype.getSex = function() {
+proto.gen.common.Character.prototype.getDateofbirth = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
@@ -464,16 +476,16 @@ proto.gen.common.Character.prototype.getSex = function() {
  * @param {string} value
  * @return {!proto.gen.common.Character} returns this
  */
-proto.gen.common.Character.prototype.setSex = function(value) {
+proto.gen.common.Character.prototype.setDateofbirth = function(value) {
   return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
 /**
- * optional string height = 8;
+ * optional string sex = 8;
  * @return {string}
  */
-proto.gen.common.Character.prototype.getHeight = function() {
+proto.gen.common.Character.prototype.getSex = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
@@ -482,34 +494,34 @@ proto.gen.common.Character.prototype.getHeight = function() {
  * @param {string} value
  * @return {!proto.gen.common.Character} returns this
  */
-proto.gen.common.Character.prototype.setHeight = function(value) {
+proto.gen.common.Character.prototype.setSex = function(value) {
   return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 
 /**
- * optional int64 visum = 9;
+ * optional string height = 9;
+ * @return {string}
+ */
+proto.gen.common.Character.prototype.getHeight = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.gen.common.Character} returns this
+ */
+proto.gen.common.Character.prototype.setHeight = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional int64 visum = 10;
  * @return {number}
  */
 proto.gen.common.Character.prototype.getVisum = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.gen.common.Character} returns this
- */
-proto.gen.common.Character.prototype.setVisum = function(value) {
-  return jspb.Message.setProto3IntField(this, 9, value);
-};
-
-
-/**
- * optional int64 playtime = 10;
- * @return {number}
- */
-proto.gen.common.Character.prototype.getPlaytime = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
 };
 
@@ -518,18 +530,36 @@ proto.gen.common.Character.prototype.getPlaytime = function() {
  * @param {number} value
  * @return {!proto.gen.common.Character} returns this
  */
-proto.gen.common.Character.prototype.setPlaytime = function(value) {
+proto.gen.common.Character.prototype.setVisum = function(value) {
   return jspb.Message.setProto3IntField(this, 10, value);
 };
 
 
 /**
- * optional Props props = 11;
+ * optional int64 playtime = 11;
+ * @return {number}
+ */
+proto.gen.common.Character.prototype.getPlaytime = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.gen.common.Character} returns this
+ */
+proto.gen.common.Character.prototype.setPlaytime = function(value) {
+  return jspb.Message.setProto3IntField(this, 11, value);
+};
+
+
+/**
+ * optional Props props = 12;
  * @return {?proto.gen.common.Props}
  */
 proto.gen.common.Character.prototype.getProps = function() {
   return /** @type{?proto.gen.common.Props} */ (
-    jspb.Message.getWrapperField(this, proto.gen.common.Props, 11));
+    jspb.Message.getWrapperField(this, proto.gen.common.Props, 12));
 };
 
 
@@ -538,7 +568,7 @@ proto.gen.common.Character.prototype.getProps = function() {
  * @return {!proto.gen.common.Character} returns this
 */
 proto.gen.common.Character.prototype.setProps = function(value) {
-  return jspb.Message.setWrapperField(this, 11, value);
+  return jspb.Message.setWrapperField(this, 12, value);
 };
 
 
@@ -556,17 +586,17 @@ proto.gen.common.Character.prototype.clearProps = function() {
  * @return {boolean}
  */
 proto.gen.common.Character.prototype.hasProps = function() {
-  return jspb.Message.getField(this, 11) != null;
+  return jspb.Message.getField(this, 12) != null;
 };
 
 
 /**
- * repeated License licenses = 12;
+ * repeated License licenses = 13;
  * @return {!Array<!proto.gen.common.License>}
  */
 proto.gen.common.Character.prototype.getLicensesList = function() {
   return /** @type{!Array<!proto.gen.common.License>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.gen.common.License, 12));
+    jspb.Message.getRepeatedWrapperField(this, proto.gen.common.License, 13));
 };
 
 
@@ -575,7 +605,7 @@ proto.gen.common.Character.prototype.getLicensesList = function() {
  * @return {!proto.gen.common.Character} returns this
 */
 proto.gen.common.Character.prototype.setLicensesList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 12, value);
+  return jspb.Message.setRepeatedWrapperField(this, 13, value);
 };
 
 
@@ -585,7 +615,7 @@ proto.gen.common.Character.prototype.setLicensesList = function(value) {
  * @return {!proto.gen.common.License}
  */
 proto.gen.common.Character.prototype.addLicenses = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 12, opt_value, proto.gen.common.License, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 13, opt_value, proto.gen.common.License, opt_index);
 };
 
 

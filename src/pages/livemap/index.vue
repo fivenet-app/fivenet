@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Navbar from '../components/Navbar.vue';
-import Footer from '../components/Footer.vue';
-import Livemap from '../components/Livemap.vue';
+import Navbar from '../../components/Navbar.vue';
+import Footer from '../../components/Footer.vue';
+import Livemap from '../../components/Livemap.vue';
 
 export default defineComponent({
     components: {
@@ -17,7 +17,8 @@ export default defineComponent({
 {
     "name": "livemap",
     "meta": {
-        "requiresAuth": true
+        "requiresAuth": true,
+        "permission": "livemap-view"
     }
 }
 </route>

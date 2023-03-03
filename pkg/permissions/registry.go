@@ -10,7 +10,9 @@ import (
 )
 
 var (
-	Perms = []*Perm{}
+	Perms = []*Perm{
+		{Key: "overview", Name: "View"},
+	}
 
 	mu sync.Mutex
 )

@@ -16,14 +16,16 @@ class AuthInterceptor implements StreamInterceptor<any, any>, UnaryInterceptor<a
 		if (err.code == StatusCode.UNAUTHENTICATED) {
 			store.commit('doLogout');
 
-            router.push({ name: 'login', query: { redirect: route.fullPath } });
+			router.push({ name: 'login', query: { redirect: route.fullPath } });
 
-            dispatchNotification({ title: 'Please login again!', content: 'You are not signed in anymore', type: 'warning' });
+			dispatchNotification({ title: 'Please login again!', content: 'You are not signed in anymore', type: 'warning' });
 			return true;
 		} else if (err.code == StatusCode.PERMISSION_DENIED) {
-            dispatchNotification({ title: 'Error!', content: err.message, type: 'error' });
+			dispatchNotification({ title: 'Error!', content: err.message, type: 'error' });
 			return true;
-		}
+		} else {
+            dispatchNotification({ title: 'Unknown error occured!', content: err.message, type: 'error' })
+        }
 
 		return false;
 	}

@@ -19,7 +19,8 @@ export default defineComponent({
 {
     "name": "dispatches",
     "meta": {
-        "requiresAuth": true
+        "requiresAuth": true,
+        "permission": "dispatches-view"
     }
 }
 </route>

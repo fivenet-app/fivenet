@@ -3,6 +3,9 @@ import * as jspb from 'google-protobuf'
 
 
 export class Character extends jspb.Message {
+  getId(): number;
+  setId(value: number): Character;
+
   getIdentifier(): string;
   setIdentifier(value: string): Character;
 
@@ -53,6 +56,7 @@ export class Character extends jspb.Message {
 
 export namespace Character {
   export type AsObject = {
+    id: number,
     identifier: string,
     job: string,
     jobgrade: number,

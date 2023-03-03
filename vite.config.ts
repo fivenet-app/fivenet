@@ -1,37 +1,32 @@
-import { defineConfig } from "vite";
-import mkcert from "vite-plugin-mkcert";
-import vue from "@vitejs/plugin-vue";
-import VueRouter from "unplugin-vue-router/vite";
-import { esbuildCommonjs } from "@originjs/vite-plugin-commonjs";
+import { defineConfig } from 'vite';
+import mkcert from 'vite-plugin-mkcert';
+import vue from '@vitejs/plugin-vue';
+import VueRouter from 'unplugin-vue-router/vite';
+import { esbuildCommonjs } from '@originjs/vite-plugin-commonjs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    mkcert(),
-    VueRouter({
-      dataFetching: true,
-      exclude: [
-        "ignored",
-        "**/__*",
-        "**/__**/*",
-        "!*.component.vue",
-      ],
-      extensions: [".page.vue", ".vue", ".md"],
-      logs: true,
-      routesFolder: [
-        {
-          src: "src/pages",
-        },
-      ],
-    }),
-    vue(),
-  ],
-  optimizeDeps: {
-    esbuildOptions: {
-      plugins: [esbuildCommonjs()],
-    },
-  },
-  server: {
-    https: true,
-  },
+	plugins: [
+		mkcert(),
+		VueRouter({
+			dataFetching: true,
+			exclude: ['ignored', '**/__*', '**/__**/*', '!*.component.vue'],
+			extensions: ['.page.vue', '.vue', '.md'],
+			logs: true,
+			routesFolder: [
+				{
+					src: 'src/pages',
+				},
+			],
+		}),
+		vue(),
+	],
+	optimizeDeps: {
+		esbuildOptions: {
+			plugins: [esbuildCommonjs()],
+		},
+	},
+	server: {
+		https: true,
+	},
 });

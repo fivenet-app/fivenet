@@ -19,8 +19,8 @@ import (
 
 func init() {
 	permissions.RegisterPerms([]*permissions.Perm{
+		{Key: "users", Name: "View"},
 		{Key: "users", Name: "FindUsers"},
-		{Key: "users", Name: "GetUser"},
 		{Key: "users", Name: "GetUser", Fields: []string{"Licenses"}},
 		{Key: "users", Name: "SetUserProps", Fields: []string{"Wanted"}},
 	})

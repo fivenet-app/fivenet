@@ -57,6 +57,8 @@ func (m *Character) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	// no validation rules for Identifier
 
 	// no validation rules for Job

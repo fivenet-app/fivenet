@@ -8,25 +8,24 @@ import { NotificationProvider } from './components/Notification';
 
 export default defineComponent({
     components: {
-    Navbar,
-    Footer,
-    NotificationProvider
-},
+        Navbar,
+        Footer,
+        NotificationProvider,
+    },
     beforeCreate() {
         store.commit('initialiseStore');
-    },
-    mounted: function () {
     },
 });
 </script>
 
 <template>
-    <NotificationProvider />
-    <RouterView v-slot="{ Component, route }">
-        <transition name="fade" mode="out-in">
-            <div :key="route.path">
-                <component :is="Component" />
-            </div>
-        </transition>
-    </RouterView>
+    <NotificationProvider>
+        <RouterView v-slot="{ Component, route }">
+            <transition name="fade" mode="out-in">
+                <div :key="route.path">
+                    <component :is="Component" />
+                </div>
+            </transition>
+        </RouterView>
+    </NotificationProvider>
 </template>

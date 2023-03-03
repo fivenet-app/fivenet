@@ -14,6 +14,7 @@ func ConvertModelUserToCommonCharacter(user *model.User) *common.Character {
 	}
 
 	return &common.Character{
+		Id:          uint64(user.ID),
 		Identifier:  user.Identifier,
 		Firstname:   user.Firstname,
 		Lastname:    user.Lastname,

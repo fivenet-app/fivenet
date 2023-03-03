@@ -24,7 +24,8 @@ export default defineComponent({
 {
     "name": "users",
     "meta": {
-        "requiresAuth": true
+        "requiresAuth": true,
+        "permission": "users-findusers"
     }
 }
 </route>

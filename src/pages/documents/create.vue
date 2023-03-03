@@ -14,7 +14,8 @@ export default defineComponent({
 {
     "name": "documents-new",
     "meta": {
-        "requiresAuth": true
+        "requiresAuth": true,
+        "permission": "documents-createdocument"
     }
 }
 </route>

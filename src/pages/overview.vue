@@ -21,7 +21,8 @@ export default defineComponent({
 {
     "name": "overview",
     "meta": {
-        "requiresAuth": true
+        "requiresAuth": true,
+        "permission": "overview-view"
     }
 }
 </route>

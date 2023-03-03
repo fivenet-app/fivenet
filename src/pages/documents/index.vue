@@ -22,7 +22,8 @@ export default defineComponent({
 {
     "name": "documents",
     "meta": {
-        "requiresAuth": true
+        "requiresAuth": true,
+        "permission": "documents-view"
     }
 }
 </route>

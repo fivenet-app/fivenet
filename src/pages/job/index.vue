@@ -22,7 +22,8 @@ export default defineComponent({
 {
     "name": "jobs",
     "meta": {
-        "requiresAuth": true
+        "requiresAuth": true,
+        "permission": "job-view"
     }
 }
 </route>

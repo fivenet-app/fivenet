@@ -49,9 +49,10 @@ export default defineComponent({
 
 <route lang="json">
 {
-    "name": "citizens-byid",
+    "name": "citizens-getuser",
     "meta": {
-        "requiresAuth": true
+        "requiresAuth": true,
+        "permission": "users-getuser"
     }
 }
 </route>
