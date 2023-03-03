@@ -29,6 +29,10 @@ router.beforeEach((to, from) => {
 						content: "You don't have permission to go to " + to.path + '.',
 						type: 'warning',
 					});
+
+                    return {
+                        path: '/overview'
+                    };
 				}
 			} else {
                 // No route permission check, so we can go ahead and return
