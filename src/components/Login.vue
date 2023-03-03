@@ -1,14 +1,11 @@
 <script lang="ts">
 import { mapState, mapActions } from 'vuex';
-
 import { LoginRequest } from '@arpanet/gen/auth/auth_pb';
+import { XCircleIcon } from '@heroicons/vue/20/solid';
 
 export default {
-    data() {
-        return {
-            username: '',
-            password: '',
-        };
+    components: {
+        XCircleIcon,
     },
     computed: {
         ...mapState([
@@ -16,6 +13,12 @@ export default {
             'loginError',
             'accessToken',
         ]),
+    },
+    data() {
+        return {
+            username: '',
+            password: '',
+        };
     },
     methods: {
         ...mapActions([
@@ -59,7 +62,6 @@ export default {
                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
                         <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
                     </div>
-
                     <div class="text-sm">
                         <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
                     </div>
@@ -72,13 +74,16 @@ export default {
                 </div>
             </form>
 
-            <div v-if="loginError" class="mt-6">
-                <div class="relative">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-300" />
+            <div v-if="loginError" class="mt-6 rounded-md bg-red-50 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <XCircleIcon class="h-5 w-5 text-red-400" aria-hidden="true" />
                     </div>
-                    <div>
-                        <p>{{ loginError }}</p>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">There was an error signing you in, please try again!</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            {{ loginError }}
+                        </div>
                     </div>
                 </div>
             </div>

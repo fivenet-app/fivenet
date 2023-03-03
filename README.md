@@ -3,10 +3,15 @@
 ## Features
 
 - [ ] Authentication
-    - [ ] Use Discord Login and an in-game "register" command of some sorts
+    - [x] Separate "accounts" table that allows users to login to the network
+    - [ ] Create in-game "register" command to set username and password
 - [ ] User Database - 1. Prio
-    - [ ] Search by `firstname`, `lastname` and `job`
-    - [ ] Display a single user's info
+    - [x] Search by name (`firstname`, `lastname`)
+    - [x] Display a single user's info
+        - [ ] Show a feed of activity of the user (e.g., documents created, documents mentioned in)
+    - [ ] Wanted
+        - [ ] Allow certain jobs to set a person as wanted
+        - [ ] Add list to display only wanted people
 - [ ] Documents
     - [ ] Templates (e.g., Haftbefehl)
     - [ ] Sharing
@@ -17,12 +22,15 @@
     - [ ] Category System (no directories/ paths)
         - [ ] Sub-categories
 - [ ] Dispatch System
-    - [ ] Livemap that shows the dispatches
+    - [ ] Livemap display the dispatches
     - [ ] Tools to coordinate dispatches
         - [ ] Manually by user input
         - [ ] Automatically
-- [ ] Livemap
-    - [ ] See your colleagues
+- [x] Livemap
+    - [x] See your colleagues (for now using Copnet VPC Connector's data)
+        - [x] Create table model for our own player location table
+        - [ ] Write FiveM plugin that writes into our own location table
+    - [x] Multiple different designs
 - [ ] Employee Management
     - [ ] Warn Employees ("Führungsregister")
     - [ ] Promote and Demote Employees
@@ -42,10 +50,24 @@
 * `protoc-gen-grpc-web`: Download and install the latest release from https://github.com/grpc/grpc-web/releases
 * `protoc-gen-validate`: Download and install the latest release from https://github.com/bufbuild/protoc-gen-validate/releases
 
-### What data is currently missing from FiveM tables?
+### Codium/ VSCode Users
+
+Make sure to disable the builtin Typescript plugin.
+
+> 1. In your project workspace, bring up the command palette with Ctrl + Shift + P (macOS: Cmd + Shift + P).
+> 2. Type built and select "Extensions: Show Built-in Extensions".
+> 3. Type typescript in the extension search box (do not remove @builtin prefix).
+> 4. Click the little gear icon of "TypeScript and JavaScript Language Features", and select "Disable (Workspace)".
+> 5. Reload the workspace. Takeover mode will be enabled when you open a Vue or TS file.
+
+Copied from and for more information on "why you should do this", see: https://vuejs.org/guide/typescript/overview.html#volar-takeover-mode
+
+## Database
+
+### Indexes for existing Tables
 
 * `users`
-    * More Indexes
+    * Indexes
         * `firstname` and `lastname` Columns:
             * `CREATE FULLTEXT INDEX IF NOT EXISTS idx_users_firstname_lastname ON s4_fivem.users (firstname, lastname);`
         * `job` and `job_grade` Spalten:

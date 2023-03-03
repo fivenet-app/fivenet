@@ -99,6 +99,11 @@ export class ChooseCharacterResponse extends jspb.Message {
   getToken(): string;
   setToken(value: string): ChooseCharacterResponse;
 
+  getPermissionsList(): Array<string>;
+  setPermissionsList(value: Array<string>): ChooseCharacterResponse;
+  clearPermissionsList(): ChooseCharacterResponse;
+  addPermissions(value: string, index?: number): ChooseCharacterResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ChooseCharacterResponse.AsObject;
   static toObject(includeInstance: boolean, msg: ChooseCharacterResponse): ChooseCharacterResponse.AsObject;
@@ -110,6 +115,7 @@ export class ChooseCharacterResponse extends jspb.Message {
 export namespace ChooseCharacterResponse {
   export type AsObject = {
     token: string,
+    permissionsList: Array<string>,
   }
 }
 

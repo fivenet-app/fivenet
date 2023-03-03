@@ -19,6 +19,7 @@ const store = createStore({
 		// Temporary
 		loggingIn: false as boolean,
 		loginError: null as null | string,
+        permissions: [] as string[],
 	},
 	mutations: {
 		initialiseStore(state) {

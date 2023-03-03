@@ -27,6 +27,7 @@ message ChooseCharacterRequest {
 
 message ChooseCharacterResponse {
     string token = 1;
+    repeated string permissions = 2;
 }
 
 message LogoutRequest {}

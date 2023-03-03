@@ -1,3 +1,11 @@
 {
-	"recommendations": ["Vue.volar", "Vue.vscode-typescript-vue-plugin", "EditorConfig.EditorConfig"]
+    "recommendations": [
+        "vue.volar",
+        "vue.vscode-typescript-vue-plugin",
+        "editorconfig.editorconfig",
+        "zxh404.vscode-proto3"
+    ],
+    "unwantedRecommendations": [
+        "vscode.typescript-language-features"
+    ]
 }

@@ -147,7 +147,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.gen.auth.ChooseCharacterResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.gen.auth.ChooseCharacterResponse.repeatedFields_, null);
 };
 goog.inherits(proto.gen.auth.ChooseCharacterResponse, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -881,6 +881,13 @@ proto.gen.auth.ChooseCharacterRequest.prototype.setIdentifier = function(value) 
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.gen.auth.ChooseCharacterResponse.repeatedFields_ = [2];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -912,7 +919,8 @@ proto.gen.auth.ChooseCharacterResponse.prototype.toObject = function(opt_include
  */
 proto.gen.auth.ChooseCharacterResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    token: jspb.Message.getFieldWithDefault(msg, 1, "")
+    token: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    permissionsList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -953,6 +961,10 @@ proto.gen.auth.ChooseCharacterResponse.deserializeBinaryFromReader = function(ms
       var value = /** @type {string} */ (reader.readString());
       msg.setToken(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.addPermissions(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -989,6 +1001,13 @@ proto.gen.auth.ChooseCharacterResponse.serializeBinaryToWriter = function(messag
       f
     );
   }
+  f = message.getPermissionsList();
+  if (f.length > 0) {
+    writer.writeRepeatedString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -1007,6 +1026,43 @@ proto.gen.auth.ChooseCharacterResponse.prototype.getToken = function() {
  */
 proto.gen.auth.ChooseCharacterResponse.prototype.setToken = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * repeated string permissions = 2;
+ * @return {!Array<string>}
+ */
+proto.gen.auth.ChooseCharacterResponse.prototype.getPermissionsList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 2));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.gen.auth.ChooseCharacterResponse} returns this
+ */
+proto.gen.auth.ChooseCharacterResponse.prototype.setPermissionsList = function(value) {
+  return jspb.Message.setField(this, 2, value || []);
+};
+
+
+/**
+ * @param {string} value
+ * @param {number=} opt_index
+ * @return {!proto.gen.auth.ChooseCharacterResponse} returns this
+ */
+proto.gen.auth.ChooseCharacterResponse.prototype.addPermissions = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 2, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.gen.auth.ChooseCharacterResponse} returns this
+ */
+proto.gen.auth.ChooseCharacterResponse.prototype.clearPermissionsList = function() {
+  return this.setPermissionsList([]);
 };
 
 
