@@ -43,7 +43,7 @@ type JWT struct {
 }
 
 type FiveM struct {
-	EnabledJobs []string `yaml:"enabledJobs"`
+	PermissionRoleJobs []string `yaml:"permissionRoleJobs"`
 }
 
 func init() {

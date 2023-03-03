@@ -574,7 +574,9 @@ func (m *SetUserPropsRequest) validate(all bool) error {
 
 	// no validation rules for Identifier
 
-	// no validation rules for Wanted
+	if m.Wanted != nil {
+		// no validation rules for Wanted
+	}
 
 	if len(errors) > 0 {
 		return SetUserPropsRequestMultiError(errors)

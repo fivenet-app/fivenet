@@ -1,9 +1,9 @@
 package query
 
 import (
-	permify "github.com/Permify/go-role"
 	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/config"
+	"github.com/galexrt/arpanet/pkg/permify"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,18 +18,28 @@ var (
 
 func SetupDB(logger *zap.Logger) error {
 	dbLogger := zapgorm2.New(logger.Named("db"))
-	dbLogger.LogLevel = gormlogger.Info
+	dbLogger.LogLevel = gormlogger.Error
 	dbLogger.SetAsDefault()
 	db, err := gorm.Open(mysql.Open(config.C.Database.DSN), &gorm.Config{Logger: dbLogger})
 	if err != nil {
 		return err
 	}
 
-	// Need to use gorm's AutoMigrate for our "non-existing" (at least on a basic ESX FiveM server) models
+	// Initialize Permify for RBAC
+	tablePrefix := "arpanet_"
+	Perms, err = permify.New(permify.Options{
+		Migrate:     true,
+		DB:          db,
+		TablePrefix: &tablePrefix,
+	})
+	if err != nil {
+		return err
+	}
+
+	// Use gorm's AutoMigrate for "non-existing" tablers (at least on a basic ESX FiveM server)
 	if err := db.AutoMigrate(
 		// User related
 		&model.Account{},
-		&model.AccountUser{},
 		&model.UserProps{},
 		// User location
 		model.UserLocation{},
@@ -39,17 +49,6 @@ func SetupDB(logger *zap.Logger) error {
 		&model.DocumentJobAccess{},
 		&model.DocumentUserAccess{},
 	); err != nil {
-		return err
-	}
-
-	// Initialize Permify go-role
-	tablePrefix := "arpanet_"
-	Perms, err = permify.New(permify.Options{
-		Migrate:     true,
-		DB:          db,
-		TablePrefix: &tablePrefix,
-	})
-	if err != nil {
 		return err
 	}
 

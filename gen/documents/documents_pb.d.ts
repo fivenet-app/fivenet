@@ -2,34 +2,6 @@ import * as jspb from 'google-protobuf'
 
 
 
-export class GetDocumentsResponse extends jspb.Message {
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetDocumentsResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: GetDocumentsResponse): GetDocumentsResponse.AsObject;
-  static serializeBinaryToWriter(message: GetDocumentsResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetDocumentsResponse;
-  static deserializeBinaryFromReader(message: GetDocumentsResponse, reader: jspb.BinaryReader): GetDocumentsResponse;
-}
-
-export namespace GetDocumentsResponse {
-  export type AsObject = {
-  }
-}
-
-export class GetDocumentsRequest extends jspb.Message {
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetDocumentsRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: GetDocumentsRequest): GetDocumentsRequest.AsObject;
-  static serializeBinaryToWriter(message: GetDocumentsRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetDocumentsRequest;
-  static deserializeBinaryFromReader(message: GetDocumentsRequest, reader: jspb.BinaryReader): GetDocumentsRequest;
-}
-
-export namespace GetDocumentsRequest {
-  export type AsObject = {
-  }
-}
-
 export class FindDocumentsRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindDocumentsRequest.AsObject;
@@ -59,6 +31,9 @@ export namespace FindDocumentsResponse {
 }
 
 export class GetDocumentRequest extends jspb.Message {
+  getId(): number;
+  setId(value: number): GetDocumentRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetDocumentRequest): GetDocumentRequest.AsObject;
@@ -69,10 +44,16 @@ export class GetDocumentRequest extends jspb.Message {
 
 export namespace GetDocumentRequest {
   export type AsObject = {
+    id: number,
   }
 }
 
 export class GetDocumentResponse extends jspb.Message {
+  getDocument(): Document | undefined;
+  setDocument(value?: Document): GetDocumentResponse;
+  hasDocument(): boolean;
+  clearDocument(): GetDocumentResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetDocumentResponse): GetDocumentResponse.AsObject;
@@ -83,6 +64,7 @@ export class GetDocumentResponse extends jspb.Message {
 
 export namespace GetDocumentResponse {
   export type AsObject = {
+    document?: Document.AsObject,
   }
 }
 

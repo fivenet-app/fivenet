@@ -4,12 +4,14 @@ import Footer from './components/Footer.vue';
 
 import { defineComponent } from 'vue';
 import store from './store';
+import { NotificationProvider } from './components/Notification';
 
 export default defineComponent({
     components: {
-        Navbar,
-        Footer,
-    },
+    Navbar,
+    Footer,
+    NotificationProvider
+},
     beforeCreate() {
         store.commit('initialiseStore');
     },
@@ -19,6 +21,7 @@ export default defineComponent({
 </script>
 
 <template>
+    <NotificationProvider />
     <RouterView v-slot="{ Component, route }">
         <transition name="fade" mode="out-in">
             <div :key="route.path">

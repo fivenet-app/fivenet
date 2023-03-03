@@ -27,3 +27,12 @@ func ConvertModelUserToCommonCharacter(user *model.User) *common.Character {
 		Licenses:    licenses,
 	}
 }
+
+func ConvertModelUserListToCommonCharacterList(users []*model.User) []*common.Character {
+	chars := make([]*common.Character, len(users))
+	for k := 0; k < len(users); k++ {
+		chars[k] = ConvertModelUserToCommonCharacter(users[k])
+	}
+
+	return chars
+}

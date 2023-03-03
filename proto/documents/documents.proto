@@ -12,11 +12,11 @@ message FindDocumentsResponse {
 }
 
 message GetDocumentRequest {
-
+    int64 id = 1;
 }
 
 message GetDocumentResponse {
-
+    Document document = 1;
 }
 
 message CreateDocumentRequest {

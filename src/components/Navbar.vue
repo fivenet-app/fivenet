@@ -34,12 +34,12 @@ export default defineComponent({
     data() {
         return {
             navigation: [
-                { name: 'Overview', href: '/overview' },
-                { name: 'Citizens', href: '/citizens' },
-                { name: 'Documents', href: '/documents' },
-                { name: 'Dispatches', href: '/dispatches' },
-                { name: 'Job', href: '/job' },
-                { name: 'Livemap', href: '/livemap' },
+                { name: 'Overview', href: '/overview', can: 'overview', },
+                { name: 'Citizens', href: '/citizens', can: 'citizens' },
+                { name: 'Documents', href: '/documents', can: 'documents' },
+                { name: 'Dispatches', href: '/dispatches', can: 'dispatches' },
+                { name: 'Job', href: '/job', can: 'job' },
+                { name: 'Livemap', href: '/livemap', can: 'livemap' },
             ],
             userNavigation: [
                 { name: 'Change Characters', href: '/login', },
@@ -63,7 +63,7 @@ export default defineComponent({
                     </div>
                     <div v-if="accessToken" class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <router-link v-for="item in navigation" :key="item.name" :to="item.href"
+                            <router-link v-for="item in navigation" :key="item.name" :to="item.href" v-can="item.can ? item.can : true"
                                 class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                                 active-class="bg-gray-900 text-white"
                                 :aria-current="$route.name == item.href ? 'page' : undefined">{{ item.name

@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/galexrt/arpanet/model"
+	"github.com/galexrt/arpanet/pkg/permify/models"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
@@ -58,7 +59,7 @@ func main() {
 
 	usersModel := g.GenerateModel("users",
 		// Ignore certain fields
-		gen.FieldIgnore("id", "license", "group", "skin", "loadout", "position", "is_dead", "last_property", "inventory", "tattoos", "levelData", "onDuty", "health", "armor"),
+		gen.FieldIgnore("license", "group", "skin", "loadout", "position", "is_dead", "last_property", "inventory", "tattoos", "levelData", "onDuty", "health", "armor"),
 
 		// Fixup some field types and column names
 		gen.FieldType("sex", "Sex"),
@@ -84,6 +85,15 @@ func main() {
 			&field.RelateConfig{
 				GORMTag: "foreignkey:Creator",
 			}),
+		// User Roles + Permissions for Permify
+		gen.FieldRelateModel(field.Many2Many, "Roles", models.Role{},
+			&field.RelateConfig{
+				GORMTag: "many2many:arpanet_user_roles;constraint:OnUpdate:CASCADE,OnDelete:CASCADE",
+			}),
+		gen.FieldRelateModel(field.Many2Many, "Permissions", models.Permission{},
+			&field.RelateConfig{
+				GORMTag: "many2many:arpanet_user_permissions;constraint:OnUpdate:CASCADE,OnDelete:CASCADE",
+			}),
 	)
 
 	// Generate default DAO interface for those generated structs from database
@@ -93,7 +103,6 @@ func main() {
 		usersModel,
 		userLicenses,
 		model.UserProps{},
-		model.AccountUser{},
 		jobsModel,
 		jobGradesModel,
 		// User location

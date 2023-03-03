@@ -19,7 +19,7 @@ const store = createStore({
 		// Temporary
 		loggingIn: false as boolean,
 		loginError: null as null | string,
-        permissions: [] as string[],
+		permissions: [] as Array<String>,
 	},
 	mutations: {
 		initialiseStore(state) {
@@ -50,6 +50,9 @@ const store = createStore({
 		updateActiveCharIdentifier: (state, identifier: null | string) => {
 			state.activeCharIdentifier = identifier;
 		},
+		updatePermissions: (state, permissions: string[]) => {
+			state.permissions = permissions;
+		},
 	},
 	actions: {
 		async doLogin({ commit }, loginData: LoginRequest) {
@@ -63,19 +66,22 @@ const store = createStore({
 					commit('updateAccessToken', response.getToken());
 					commit('updateActiveChar', null);
 					commit('updateActiveCharIdentifier', null);
+					commit('updatePermissions', []);
 				})
 				.catch((err: RpcError) => {
 					commit('loginStop', err.message);
 					commit('updateAccessToken', null);
 					commit('updateActiveChar', null);
 					commit('updateActiveCharIdentifier', null);
+					commit('updatePermissions', []);
 				});
 		},
 		async doLogout({ commit }) {
 			commit('loginStart');
-            commit('updateAccessToken', null);
-            commit('updateActiveChar', null);
-            commit('updateActiveCharIdentifier', null);
+			commit('updateAccessToken', null);
+			commit('updateActiveChar', null);
+			commit('updateActiveCharIdentifier', null);
+			commit('updatePermissions', []);
 
 			const client = new AccountServiceClient(config.apiProtoURL, null, {
 				unaryInterceptors: [authInterceptor],
@@ -84,7 +90,7 @@ const store = createStore({
 			return client
 				.logout(new LogoutRequest(), null)
 				.then((response) => {
-                    commit('loginStop', null);
+					commit('loginStop', null);
 					if (response.getSuccess()) {
 						return;
 					}
@@ -94,14 +100,17 @@ const store = createStore({
 					console.log('Error during logout process: ' + err);
 				});
 		},
+		updateAccessToken({ commit }, token: string): void {
+			commit('updateAccessToken', token);
+		},
 		updateActiveChar({ commit }, char: null | Character): void {
 			commit('updateActiveChar', char);
 		},
 		updateActiveCharIdentifier({ commit }, identifier: null | string): void {
 			commit('updateActiveCharIdentifier', identifier);
 		},
-		updateAccessToken({ commit }, token: string): void {
-			commit('updateAccessToken', token);
+		updatePermissions({ commit }, permissions: string[]): void {
+			commit('updatePermissions', permissions);
 		},
 	},
 });

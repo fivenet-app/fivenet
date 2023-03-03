@@ -33,14 +33,18 @@ export default defineComponent({
             'updateAccessToken',
             'updateActiveChar',
             'updateActiveCharIdentifier',
+            'updatePermissions',
         ]),
         chooseCharacter() {
             const req = new ChooseCharacterRequest();
             req.setIdentifier(this.char.getIdentifier());
+
             this.client.chooseCharacter(req, null).then((resp) => {
                 this.updateAccessToken(resp.getToken());
                 this.updateActiveChar(this.char);
                 this.updateActiveCharIdentifier(this.char.getIdentifier());
+                this.updatePermissions(resp.getPermissionsList());
+                console.log(resp.getPermissionsList());
 
                 const path = this.$route.query.redirect?.toString() || '/overview';
                 this.$router.push({ path: path, query: {} });
@@ -97,10 +101,11 @@ export default defineComponent({
             </h2>
             <dl class="mt-1 flex flex-grow flex-col justify-between">
                 <dd>
-                <span v-if="activeCharIdentifier == char.getIdentifier()" class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
-                    Last Used
-                </span>
-                <br v-else />
+                    <span v-if="activeCharIdentifier == char.getIdentifier()"
+                        class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
+                        Last Used
+                    </span>
+                    <br v-else />
                 </dd>
                 <dd class="mt-3">
                     <span
@@ -125,6 +130,7 @@ export default defineComponent({
                         Choose
                     </button>
                 </div>
+            </div>
         </div>
-    </div>
-</li></template>
+    </li>
+</template>

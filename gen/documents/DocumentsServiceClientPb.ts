@@ -39,49 +39,6 @@ export class DocumentsServiceClient {
     this.options_ = options;
   }
 
-  methodDescriptorGetDocuments = new grpcWeb.MethodDescriptor(
-    '/gen.documents.DocumentsService/GetDocuments',
-    grpcWeb.MethodType.UNARY,
-    documents_documents_pb.GetDocumentsRequest,
-    documents_documents_pb.GetDocumentsResponse,
-    (request: documents_documents_pb.GetDocumentsRequest) => {
-      return request.serializeBinary();
-    },
-    documents_documents_pb.GetDocumentsResponse.deserializeBinary
-  );
-
-  getDocuments(
-    request: documents_documents_pb.GetDocumentsRequest,
-    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.GetDocumentsResponse>;
-
-  getDocuments(
-    request: documents_documents_pb.GetDocumentsRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: documents_documents_pb.GetDocumentsResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.GetDocumentsResponse>;
-
-  getDocuments(
-    request: documents_documents_pb.GetDocumentsRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: documents_documents_pb.GetDocumentsResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/gen.documents.DocumentsService/GetDocuments',
-        request,
-        metadata || {},
-        this.methodDescriptorGetDocuments,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/gen.documents.DocumentsService/GetDocuments',
-    request,
-    metadata || {},
-    this.methodDescriptorGetDocuments);
-  }
-
   methodDescriptorFindDocuments = new grpcWeb.MethodDescriptor(
     '/gen.documents.DocumentsService/FindDocuments',
     grpcWeb.MethodType.UNARY,

@@ -116,6 +116,8 @@ export class SetUserPropsRequest extends jspb.Message {
 
   getWanted(): boolean;
   setWanted(value: boolean): SetUserPropsRequest;
+  hasWanted(): boolean;
+  clearWanted(): SetUserPropsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SetUserPropsRequest.AsObject;
@@ -128,7 +130,12 @@ export class SetUserPropsRequest extends jspb.Message {
 export namespace SetUserPropsRequest {
   export type AsObject = {
     identifier: string,
-    wanted: boolean,
+    wanted?: boolean,
+  }
+
+  export enum WantedCase { 
+    _WANTED_NOT_SET = 0,
+    WANTED = 2,
   }
 }
 

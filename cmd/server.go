@@ -13,10 +13,13 @@ import (
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/config"
 	gormsessions "github.com/galexrt/arpanet/pkg/gormsessions"
+	"github.com/galexrt/arpanet/pkg/permissions"
 	"github.com/galexrt/arpanet/pkg/routes"
 	"github.com/galexrt/arpanet/pkg/session"
 	pbauth "github.com/galexrt/arpanet/proto/auth"
+	pbdispatches "github.com/galexrt/arpanet/proto/dispatches"
 	pbdocuments "github.com/galexrt/arpanet/proto/documents"
+	pbjob "github.com/galexrt/arpanet/proto/job"
 	pblivemap "github.com/galexrt/arpanet/proto/livemap"
 	pbusers "github.com/galexrt/arpanet/proto/users"
 	"github.com/galexrt/arpanet/query"
@@ -42,6 +45,9 @@ var serverCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Create JWT Token TokenManager
 		session.Tokens = session.NewTokenManager()
+
+		// Register Permissions
+		permissions.Register()
 
 		// Gin HTTP Server
 		gin.SetMode(config.C.Mode)
@@ -112,8 +118,10 @@ var serverCmd = &cobra.Command{
 
 		// Attach our GRPC services
 		pbauth.RegisterAccountServiceServer(grpcServer, pbauth.NewServer())
+		pbdispatches.RegisterDispatchesServiceServer(grpcServer, pbdispatches.NewServer())
 		pbdocuments.RegisterDocumentsServiceServer(grpcServer, pbdocuments.NewServer())
-		pblivemap.RegisterLivemapServiceServer(grpcServer, pblivemap.NewServer(logger.Named("grpc_livemap")))
+		pbjob.RegisterJobServiceServer(grpcServer, pbjob.NewServer())
+		pblivemap.RegisterLivemapServiceServer(grpcServer, pblivemap.NewServer())
 		pbusers.RegisterUsersServiceServer(grpcServer, pbusers.NewServer())
 
 		go func() {

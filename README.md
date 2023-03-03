@@ -35,6 +35,8 @@
     - [ ] Warn Employees ("Führungsregister")
     - [ ] Promote and Demote Employees
     - [ ] Fire employees
+- [ ] Permissions System
+    - [ ] Based on Job + Job Rank/ Grade
 
 ## Development
 

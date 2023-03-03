@@ -5,25 +5,27 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/galexrt/arpanet/api"
+	"github.com/galexrt/arpanet/pkg/auth"
+	"github.com/galexrt/arpanet/pkg/permissions"
 	"github.com/galexrt/arpanet/query"
-	"go.uber.org/zap"
 )
+
+func init() {
+	permissions.RegisterPerms([]*permissions.Perm{
+		{Key: "livemap", Name: "Stream", PerJob: true},
+	})
+}
 
 type Server struct {
 	LivemapServiceServer
-
-	logger *zap.Logger
 }
 
-func NewServer(logger *zap.Logger) *Server {
-	return &Server{
-		logger: logger,
-	}
+func NewServer() *Server {
+	return &Server{}
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) error {
-	user, err := api.Auth.GetUserFromContext(srv.Context())
+	user, err := auth.GetUserFromContext(srv.Context())
 	if err != nil {
 		return err
 	}
@@ -48,7 +50,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) err
 		// Start
 		//locations, err := q.Find()
 		//if err != nil {
-		//	s.logger.Error("failed to retrieve user locations from database", zap.Error(err))
 		//	continue
 		//}
 		//resp.Users = make([]*Marker, len(locations))

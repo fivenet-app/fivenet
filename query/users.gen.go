@@ -17,6 +17,7 @@ import (
 	"gorm.io/plugin/dbresolver"
 
 	"github.com/galexrt/arpanet/model"
+	"github.com/galexrt/arpanet/pkg/permify/models"
 )
 
 func newUser(db *gorm.DB, opts ...gen.DOOption) user {
@@ -27,6 +28,7 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 
 	tableName := _user.userDo.TableName()
 	_user.ALL = field.NewAsterisk(tableName)
+	_user.ID = field.NewInt32(tableName, "id")
 	_user.Identifier = field.NewString(tableName, "identifier")
 	_user.Job = field.NewString(tableName, "job")
 	_user.JobGrade = field.NewInt(tableName, "job_grade")
@@ -113,6 +115,23 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 		},
 	}
 
+	_user.Roles = userManyToManyRoles{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Roles", "models.Role"),
+		Permissions: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Roles.Permissions", "models.Permission"),
+		},
+	}
+
+	_user.Permissions = userManyToManyPermissions{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Permissions", "models.Permission"),
+	}
+
 	_user.fillFieldMap()
 
 	return _user
@@ -122,6 +141,7 @@ type user struct {
 	userDo
 
 	ALL         field.Asterisk
+	ID          field.Int32
 	Identifier  field.String
 	Job         field.String
 	JobGrade    field.Int
@@ -144,6 +164,10 @@ type user struct {
 
 	Documents userHasManyDocuments
 
+	Roles userManyToManyRoles
+
+	Permissions userManyToManyPermissions
+
 	fieldMap map[string]field.Expr
 }
 
@@ -159,6 +183,7 @@ func (u user) As(alias string) *user {
 
 func (u *user) updateTableName(table string) *user {
 	u.ALL = field.NewAsterisk(table)
+	u.ID = field.NewInt32(table, "id")
 	u.Identifier = field.NewString(table, "identifier")
 	u.Job = field.NewString(table, "job")
 	u.JobGrade = field.NewInt(table, "job_grade")
@@ -191,7 +216,8 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 19)
+	u.fieldMap = make(map[string]field.Expr, 22)
+	u.fieldMap["id"] = u.ID
 	u.fieldMap["identifier"] = u.Identifier
 	u.fieldMap["job"] = u.Job
 	u.fieldMap["job_grade"] = u.JobGrade
@@ -441,6 +467,142 @@ func (a userHasManyDocumentsTx) Clear() error {
 }
 
 func (a userHasManyDocumentsTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type userManyToManyRoles struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	Permissions struct {
+		field.RelationField
+	}
+}
+
+func (a userManyToManyRoles) Where(conds ...field.Expr) *userManyToManyRoles {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userManyToManyRoles) WithContext(ctx context.Context) *userManyToManyRoles {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userManyToManyRoles) Model(m *model.User) *userManyToManyRolesTx {
+	return &userManyToManyRolesTx{a.db.Model(m).Association(a.Name())}
+}
+
+type userManyToManyRolesTx struct{ tx *gorm.Association }
+
+func (a userManyToManyRolesTx) Find() (result []*models.Role, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userManyToManyRolesTx) Append(values ...*models.Role) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userManyToManyRolesTx) Replace(values ...*models.Role) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userManyToManyRolesTx) Delete(values ...*models.Role) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userManyToManyRolesTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userManyToManyRolesTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type userManyToManyPermissions struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a userManyToManyPermissions) Where(conds ...field.Expr) *userManyToManyPermissions {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userManyToManyPermissions) WithContext(ctx context.Context) *userManyToManyPermissions {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userManyToManyPermissions) Model(m *model.User) *userManyToManyPermissionsTx {
+	return &userManyToManyPermissionsTx{a.db.Model(m).Association(a.Name())}
+}
+
+type userManyToManyPermissionsTx struct{ tx *gorm.Association }
+
+func (a userManyToManyPermissionsTx) Find() (result []*models.Permission, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userManyToManyPermissionsTx) Append(values ...*models.Permission) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userManyToManyPermissionsTx) Replace(values ...*models.Permission) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userManyToManyPermissionsTx) Delete(values ...*models.Permission) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userManyToManyPermissionsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userManyToManyPermissionsTx) Count() int64 {
 	return a.tx.Count()
 }
 

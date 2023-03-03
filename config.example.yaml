@@ -14,7 +14,7 @@ database:
 jwt:
   secret: "your_generated_jwt_secret"
 fivem:
-  enabledJobs:
+  permissionRoleJobs:
     - ambulance
     - doj
     - fib

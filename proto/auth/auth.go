@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/galexrt/arpanet/api"
 	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/helpers"
@@ -90,14 +89,18 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	}
 
 	// Load chars and add them to the response
-	chars, err := api.Auth.GetCharsByLicense(claims.Subject)
+	licenseSearch := helpers.BuildCharSearchIdentifier(claims.Subject)
+
+	u := query.User
+	users, err := u.Preload(u.UserLicenses.RelationField).
+		Where(u.Identifier.Like(licenseSearch)).
+		Limit(5).
+		Find()
 	if err != nil {
-		return resp, err
+		return nil, nil
 	}
 
-	for _, char := range chars {
-		resp.Chars = append(resp.Chars, helpers.ConvertModelUserToCommonCharacter(char))
-	}
+	resp.Chars = helpers.ConvertModelUserListToCommonCharacterList(users)
 
 	return resp, nil
 }
@@ -120,6 +123,14 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 	resp.Token = token
+
+	// Load permissions of user
+	perms, err := query.Perms.GetAllPermissionsOfUser(account.ID)
+	if err != nil {
+		return nil, err
+	}
+	resp.Permissions = perms.Names()
+
 	return resp, nil
 }
 
@@ -128,5 +139,6 @@ func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutRespons
 	resp := &LogoutResponse{
 		Success: true,
 	}
+
 	return resp, nil
 }

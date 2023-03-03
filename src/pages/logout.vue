@@ -3,8 +3,6 @@ import { defineComponent } from 'vue';
 import { mapActions } from 'vuex';
 import Navbar from '../components/Navbar.vue';
 import Footer from '../components/Footer.vue';
-import Breadcrumbs from '../components/Breadcrumbs.vue';
-import ContentWrapper from '../components/ContentWrapper.vue';
 import HeroFull from '../components/HeroFull.vue';
 
 export default defineComponent({
@@ -22,7 +20,7 @@ export default defineComponent({
         this.doLogout().then(() => {
             setTimeout(() => {
                 this.$router.push('/');
-            }, 2150);
+            }, 2000);
         });
     },
 });

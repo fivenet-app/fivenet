@@ -1082,8 +1082,8 @@ proto.gen.users.SetUserPropsRequest.serializeBinaryToWriter = function(message, 
       f
     );
   }
-  f = message.getWanted();
-  if (f) {
+  f = /** @type {boolean} */ (jspb.Message.getField(message, 2));
+  if (f != null) {
     writer.writeBool(
       2,
       f
@@ -1124,7 +1124,25 @@ proto.gen.users.SetUserPropsRequest.prototype.getWanted = function() {
  * @return {!proto.gen.users.SetUserPropsRequest} returns this
  */
 proto.gen.users.SetUserPropsRequest.prototype.setWanted = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 2, value);
+  return jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.gen.users.SetUserPropsRequest} returns this
+ */
+proto.gen.users.SetUserPropsRequest.prototype.clearWanted = function() {
+  return jspb.Message.setField(this, 2, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.gen.users.SetUserPropsRequest.prototype.hasWanted = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 

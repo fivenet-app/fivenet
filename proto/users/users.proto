@@ -31,7 +31,7 @@ message GetUserResponse {
 
 message SetUserPropsRequest {
     string identifier = 1;
-    bool wanted = 2;
+    optional bool wanted = 2;
 }
 
 message SetUserPropsResponse {

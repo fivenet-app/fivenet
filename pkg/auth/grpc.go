@@ -2,8 +2,12 @@ package auth
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
+	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/session"
+	"github.com/galexrt/arpanet/query"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"google.golang.org/grpc/codes"
@@ -44,4 +48,43 @@ func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
 func MustGetTokenFromGRPCContext(ctx context.Context) (token string) {
 	token, _ = GetTokenFromGRPCContext(ctx)
 	return
+}
+
+func GetUserFromContext(ctx context.Context) (*model.User, error) {
+	values := grpc_ctxtags.Extract(ctx).Values()
+
+	activeCharIdentifier := values[AuthActiveCharCtxTag].(string)
+	license := values[AuthSubCtxTag].(string)
+	if !strings.Contains(activeCharIdentifier, license) {
+		return nil, fmt.Errorf("wrong license for char identifier")
+	}
+
+	return getCharByIdentifier(activeCharIdentifier)
+}
+
+func getCharByIdentifier(identifier string) (*model.User, error) {
+	// Find user info for the new/old char index in the claim
+	u := query.User
+	user, err := u.Where(u.Identifier.Like(identifier)).
+		Preload(u.UserLicenses.Where(query.UserLicense.Owner.Eq(identifier))).
+		Limit(1).
+		First()
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func CanUser(user *model.User, perm string) bool {
+	return CanUserID(uint(user.ID), perm)
+}
+
+func CanUserID(userID uint, perm string) bool {
+	can, err := query.Perms.UserHasPermission(userID, perm)
+	if err != nil {
+		return false
+	}
+
+	return can
 }
