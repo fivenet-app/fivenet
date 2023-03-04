@@ -1,9 +1,12 @@
 {
+    "javascript.preferences.autoImportFileExcludePatterns": [
+        "vue-router"
+    ],
     "javascript.preferences.quoteStyle": "single",
-    "typescript.preferences.quoteStyle": "single",
     "typescript.preferences.autoImportFileExcludePatterns": [
         "vue-router"
     ],
+    "typescript.preferences.quoteStyle": "single",
     "protoc": {
         "options": [
             "--proto_path=./validate"

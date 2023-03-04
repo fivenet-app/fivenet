@@ -8,7 +8,7 @@ import { FindUsersRequest } from '@arpanet/gen/users/users_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenInfoSlideOver from './CitizenInfoSlideOver.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
-import { UsersServiceClient } from '../../../gen/users/UsersServiceClientPb';
+import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import config from '../../config';
 
 export default defineComponent({

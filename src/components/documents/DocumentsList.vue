@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { DocumentsServiceClient } from '../../../gen/documents/DocumentsServiceClientPb';
+import { DocumentsServiceClient } from '@arpanet/gen/documents/DocumentsServiceClientPb';
 import config from '../../config';
 import { clientAuthOptions } from '../../grpc';
 

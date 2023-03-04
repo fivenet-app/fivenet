@@ -2,15 +2,14 @@
 import { defineComponent } from 'vue';
 import { clientAuthOptions, handleGRPCError } from '../grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
-import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
 import config from '../config';
+import { LivemapServiceClient } from '@arpanet/gen/livemap/LivemapServiceClientPb';
 import { Marker, StreamRequest, ServerStreamResponse } from '@arpanet/gen/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import { Hash } from '../class/Hash';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { LivemapServiceClient } from '../../gen/livemap/LivemapServiceClientPb';
 
 // Latitude and Longitiude popup on mouse over
 let _latlng: HTMLDivElement;
