@@ -20,8 +20,7 @@ import (
 func init() {
 	permissions.RegisterPerms([]*permissions.Perm{
 		{Key: "users", Name: "View"},
-		{Key: "users", Name: "FindUsers"},
-		{Key: "users", Name: "GetUser", Fields: []string{"Licenses"}},
+		{Key: "users", Name: "FindUsers", Fields: []string{"Licenses", "UserProps"}},
 		{Key: "users", Name: "SetUserProps", Fields: []string{"Wanted"}},
 	})
 }
@@ -48,7 +47,14 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	req.Lastname = strings.ReplaceAll(req.Lastname, "%", "")
 
 	u := query.User
-	q := u.Clauses(hints.UseIndex("idx_users_firstname_lastname")).Preload(u.UserProps.RelationField)
+	q := u.Clauses(hints.UseIndex("idx_users_firstname_lastname"))
+
+	if auth.CanUserAccessField(user, "users.FindUsers", "Licenses") {
+		q = q.Preload(u.UserLicenses.RelationField)
+	}
+	if auth.CanUserAccessField(user, "users.FindUsers", "UserProps") {
+		q = q.Preload(u.UserProps.RelationField)
+	}
 
 	if req.Firstname != "" {
 		q = q.Where(u.Firstname.Like("%" + req.Firstname + "%"))
@@ -91,27 +97,12 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 
 	return resp, nil
 }
-func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
-
-	u := query.User
-	q := u.Preload(u.UserLicenses.RelationField, u.UserProps.RelationField)
-	user, err := q.Where(u.Identifier.Eq(req.Identifier)).Limit(1).First()
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &GetUserResponse{
-		User: helpers.ConvertModelUserToCommonCharacter(user),
-	}
-	return resp, nil
-}
 
 func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*SetUserPropsResponse, error) {
-
 	// TODO filter if user is allowed to set certain user props
 	userProps := &model.UserProps{
 		Identifier: req.Identifier,
-		Wanted:     *req.Wanted,
+		Wanted:     req.Wanted,
 	}
 	ups := query.UserProps
 	if err := ups.Clauses(clause.OnConflict{

@@ -31,7 +31,7 @@ type User struct {
 	Playtime     int32               `gorm:"column:playtime;type:int(11)" json:"playtime"`
 	CreatedAt    time.Time           `gorm:"column:created_at;type:timestamp;default:current_timestamp()" json:"created_at"`
 	UpdatedAt    time.Time           `gorm:"column:last_seen;type:timestamp" json:"updated_at"`
-	UserProps    []UserProps         `gorm:"foreignkey:Identifier" json:"user_props"`
+	UserProps    UserProps           `gorm:"foreignkey:Identifier" json:"user_props"`
 	UserLicenses []UserLicense       `gorm:"foreignkey:Owner" json:"user_licenses"`
 	Documents    []Document          `gorm:"foreignkey:Creator" json:"documents"`
 	Roles        []models.Role       `gorm:"many2many:arpanet_user_roles;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"roles"`

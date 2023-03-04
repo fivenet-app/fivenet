@@ -13,6 +13,11 @@ func ConvertModelUserToCommonCharacter(user *model.User) *common.Character {
 		}
 	}
 
+	wanted := false
+	if user.UserProps.Wanted != nil {
+		wanted = *user.UserProps.Wanted
+	}
+
 	return &common.Character{
 		Id:          uint64(user.ID),
 		Identifier:  user.Identifier,
@@ -26,6 +31,9 @@ func ConvertModelUserToCommonCharacter(user *model.User) *common.Character {
 		Visum:       int64(user.Visum),
 		Playtime:    int64(user.Playtime),
 		Licenses:    licenses,
+		Props: &common.Props{
+			Wanted: wanted,
+		},
 	}
 }
 

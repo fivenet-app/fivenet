@@ -76,8 +76,12 @@ func getCharByIdentifier(identifier string) (*model.User, error) {
 	return user, nil
 }
 
-func CanUser(user *model.User, perm string) bool {
+func CanUser(user *model.User, perm string, field ...string) bool {
 	return CanUserID(uint(user.ID), perm)
+}
+
+func CanUserAccessField(user *model.User, perm string, field string) bool {
+	return CanUserID(uint(user.ID), perm+"."+field)
 }
 
 func CanUserID(userID uint, perm string) bool {

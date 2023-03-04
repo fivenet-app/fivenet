@@ -12,23 +12,31 @@ import {
     TransitionRoot,
 } from '@headlessui/vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
-import { EllipsisVerticalIcon } from '@heroicons/vue/20/solid';
+import { EllipsisVerticalIcon, KeyIcon } from '@heroicons/vue/20/solid';
+import { Character } from '@arpanet/gen/common/character_pb';
+import CitizenActivityFeed from './CitizenActivityFeed.vue';
 
 export default defineComponent({
     components: {
-        Dialog,
-        DialogPanel,
-        DialogTitle,
-        Menu,
-        MenuButton,
-        MenuItem,
-        MenuItems,
-        TransitionChild,
-        TransitionRoot,
-        XMarkIcon,
-        EllipsisVerticalIcon,
-    },
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems,
+    TransitionChild,
+    TransitionRoot,
+    XMarkIcon,
+    EllipsisVerticalIcon,
+    KeyIcon,
+    CitizenActivityFeed,
+},
     props: {
+        'user': {
+            required: true,
+            type: Character,
+        },
         'open': {
             required: true,
             type: Boolean,
@@ -37,6 +45,29 @@ export default defineComponent({
     methods: {
         handleClose() {
             this.$emit('close');
+        },
+        getTimeInHoursAndMins(timeInsSeconds: number): string {
+            if (timeInsSeconds && timeInsSeconds > 0) {
+                const minsTemp = timeInsSeconds / 60;
+                let hours = Math.floor(minsTemp / 60);
+                const mins = minsTemp % 60;
+                const hoursText = 'hrs';
+                const minsText = 'mins';
+
+                if (hours !== 0 && mins !== 0) {
+                    if (mins >= 59) {
+                        hours += 1;
+                        return `${hours} ${hoursText} `;
+                    } else {
+                        return `${hours} ${hoursText} ${mins.toFixed(0)} ${minsText}`;
+                    }
+                } else if (hours === 0 && mins !== 0) {
+                    return `${mins.toFixed(0)} ${minsText}`;
+                } else if (hours !== 0 && mins === 0) {
+                    return `${hours} ${hoursText}`;
+                }
+            }
+            return '-';
         },
     },
 });
@@ -54,11 +85,12 @@ export default defineComponent({
                             enter-from="translate-x-full" enter-to="translate-x-0"
                             leave="transform transition ease-in-out duration-500 sm:duration-700" leave-from="translate-x-0"
                             leave-to="translate-x-full">
-                            <DialogPanel class="pointer-events-auto w-screen max-w-2xl">
+                            <DialogPanel class="pointer-events-auto w-screen max-w-5xl">
                                 <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                                     <div class="px-4 py-6 sm:px-6">
                                         <div class="flex items-start justify-between">
-                                            <DialogTitle class="text-base font-semibold leading-6 text-gray-900">Profile
+                                            <DialogTitle class="text-base font-semibold leading-6 text-gray-900">
+                                                Citizen Info
                                             </DialogTitle>
                                             <div class="ml-3 flex h-7 items-center">
                                                 <button type="button"
@@ -73,30 +105,22 @@ export default defineComponent({
                                     <!-- Main -->
                                     <div class="divide-y divide-gray-200">
                                         <div class="pb-6">
-                                            <div class="h-24 bg-indigo-700 sm:h-20 lg:h-28" />
                                             <div
                                                 class="lg:-mt-15 -mt-12 flow-root px-4 sm:-mt-8 sm:flex sm:items-end sm:px-6">
-                                                <div>
-                                                    <div class="-m-1 flex">
-                                                        <div
-                                                            class="inline-flex overflow-hidden rounded-lg border-4 border-white">
-                                                            <img class="h-24 w-24 flex-shrink-0 sm:h-40 sm:w-40 lg:h-48 lg:w-48"
-                                                                src="https://images.unsplash.com/photo-1501031170107-cfd33f0cbdcc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&h=256&q=80"
-                                                                alt="" />
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 <div class="mt-6 sm:ml-6 sm:flex-1">
                                                     <div>
                                                         <div class="flex items-center">
-                                                            <h3 class="text-xl font-bold text-gray-900 sm:text-2xl">Ashley
-                                                                Porter</h3>
-                                                            <span
-                                                                class="ml-2.5 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400">
-                                                                <span class="sr-only">Online</span>
-                                                            </span>
+                                                            <h3 class="text-xl font-bold text-gray-900 sm:text-2xl">
+                                                                {{ user.getFirstname() }}, {{ user.getLastname() }}
+                                                                <span v-if="user.getProps()?.getWanted()" class="inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">WANTED</span>
+                                                            </h3>
                                                         </div>
-                                                        <p class="text-sm text-gray-500">@ashleyporter</p>
+                                                        <p class="text-sm text-gray-500">
+                                                            <span
+                                                                class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
+                                                                    user.getJob() }} (Rank: {{ user.getJobgrade() }})
+                                                            </span>
+                                                        </p>
                                                     </div>
                                                     <div class="mt-5 flex flex-wrap space-y-3 sm:space-y-0 sm:space-x-3">
                                                         <button type="button"
@@ -145,35 +169,62 @@ export default defineComponent({
                                                 <div class="sm:flex sm:px-6 sm:py-5">
                                                     <dt
                                                         class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                                        Bio</dt>
+                                                        Date of Birth</dt>
                                                     <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                                        <p>Enim feugiat ut ipsum, neque ut. Tristique mi id elementum
-                                                            praesent. Gravida in tempus feugiat netus enim aliquet a, quam
-                                                            scelerisque. Dictumst in convallis nec in bibendum aenean arcu.
-                                                        </p>
+                                                        {{ user.getDateofbirth() }}
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-6 sm:py-5">
                                                     <dt
                                                         class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                                        Location</dt>
-                                                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">New
-                                                        York, NY, USA</dd>
+                                                        Sex</dt>
+                                                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">{{
+                                                        user.getSex() }}cm</dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-6 sm:py-5">
                                                     <dt
                                                         class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                                        Website</dt>
-                                                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                                        ashleyporter.com</dd>
+                                                        Height</dt>
+                                                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">{{
+                                                        user.getHeight() }}cm</dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-6 sm:py-5">
                                                     <dt
                                                         class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                                        Birthday</dt>
+                                                        Visum</dt>
                                                     <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                                        <time datetime="1982-06-23">June 23, 1982</time>
+                                                        {{ user.getVisum() }}</dd>
+                                                </div>
+                                                <div class="sm:flex sm:px-6 sm:py-5">
+                                                    <dt
+                                                        class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
+                                                        Playtime</dt>
+                                                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                                        {{ getTimeInHoursAndMins(user.getPlaytime()) }}
                                                     </dd>
+                                                </div>
+                                                <div v-can="'users-findusers-licenses'" class="sm:flex sm:px-6 sm:py-5">
+                                                    <dt
+                                                        class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
+                                                        Licenses</dt>
+                                                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                                        <span v-if="user.getLicensesList().length == 0">No Licenses.</span>
+                                                        <ul v-else role="list"
+                                                            class="divide-y divide-gray-200 rounded-md border border-gray-200">
+                                                            <li v-for="license in user.getLicensesList()"
+                                                                class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                                                                <div class="flex flex-1 items-center">
+                                                                    <KeyIcon class="h-5 w-5 flex-shrink-0 text-gray-400"
+                                                                        aria-hidden="true" />
+                                                                    <span class="ml-2 flex-1 truncate">{{
+                                                                        license.getName().toUpperCase() }}</span>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </dd>
+                                                </div>
+                                                <div class="sm:flex sm:px-6 sm:py-5">
+                                                    <CitizenActivityFeed />
                                                 </div>
                                             </dl>
                                         </div>

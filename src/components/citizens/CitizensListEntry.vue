@@ -26,9 +26,6 @@ export default defineComponent({
     components: {
         CitizenInfoSlideOver,
     },
-    updated() {
-        console.log(this.open);
-    },
 });
 </script>
 
@@ -50,8 +47,10 @@ export default defineComponent({
             {{ user.getHeight() }}cm
         </td>
         <td class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-            <button @click="toggleSlideOver()" class="text-indigo-400 hover:text-indigo-300">VIEW</button>
-            <CitizenInfoSlideOver @close="toggleSlideOver()" :open="open" :user="user" />
+            <div v-can="'users-findusers'">
+                <button @click="toggleSlideOver()" class="text-indigo-400 hover:text-indigo-300">VIEW</button>
+                <CitizenInfoSlideOver @close="toggleSlideOver()" :open="open" :user="user" />
+            </div>
         </td>
     </tr>
 </template>

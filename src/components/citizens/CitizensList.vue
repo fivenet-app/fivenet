@@ -96,10 +96,10 @@ export default defineComponent({
         this.findUsers(this.offset);
     },
     components: {
-    TablePagination,
-    CitizenInfoSlideOver,
-    CitizenListEntry
-},
+        TablePagination,
+        CitizenInfoSlideOver,
+        CitizenListEntry
+    },
 });
 </script>
 
@@ -122,7 +122,7 @@ export default defineComponent({
                             <div class="form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-white">Last Name</label>
                                 <div class="relative mt-2 flex items-center">
-                                    <input v-model="searchFirstname" v-on:keyup.enter="findUsers(offset)" type="text"
+                                    <input v-model="searchLastname" v-on:keyup.enter="findUsers(offset)" type="text"
                                         name="search" id="search"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                 </div>

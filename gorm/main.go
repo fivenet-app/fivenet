@@ -73,7 +73,7 @@ func main() {
 		gen.FieldJSONTag("accounts", "-"),
 
 		// Add relations for lazy loading
-		gen.FieldRelateModel(field.HasMany, "UserProps", model.UserProps{},
+		gen.FieldRelateModel(field.HasOne, "UserProps", model.UserProps{},
 			&field.RelateConfig{
 				GORMTag: "foreignkey:Identifier",
 			}),

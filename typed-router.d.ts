@@ -38,7 +38,6 @@ declare module 'vue-router/auto/routes' {
     'index': RouteRecordInfo<'index', '/', Record<never, never>, Record<never, never>>,
     '/[...path]': RouteRecordInfo<'/[...path]', '/:path(.*)', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     'users': RouteRecordInfo<'users', '/citizens', Record<never, never>, Record<never, never>>,
-    'citizens-getuser': RouteRecordInfo<'citizens-getuser', '/citizens/:identifier', { identifier: ParamValue<true> }, { identifier: ParamValue<false> }>,
     'dispatches': RouteRecordInfo<'dispatches', '/dispatches', Record<never, never>, Record<never, never>>,
     'documents': RouteRecordInfo<'documents', '/documents', Record<never, never>, Record<never, never>>,
     'documents-new': RouteRecordInfo<'documents-new', '/documents/create', Record<never, never>, Record<never, never>>,

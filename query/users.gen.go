@@ -45,7 +45,7 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.Playtime = field.NewInt32(tableName, "playtime")
 	_user.CreatedAt = field.NewTime(tableName, "created_at")
 	_user.UpdatedAt = field.NewTime(tableName, "last_seen")
-	_user.UserProps = userHasManyUserProps{
+	_user.UserProps = userHasOneUserProps{
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("UserProps", "model.UserProps"),
@@ -158,7 +158,7 @@ type user struct {
 	Playtime    field.Int32
 	CreatedAt   field.Time
 	UpdatedAt   field.Time
-	UserProps   userHasManyUserProps
+	UserProps   userHasOneUserProps
 
 	UserLicenses userHasManyUserLicenses
 
@@ -247,13 +247,13 @@ func (u user) replaceDB(db *gorm.DB) user {
 	return u
 }
 
-type userHasManyUserProps struct {
+type userHasOneUserProps struct {
 	db *gorm.DB
 
 	field.RelationField
 }
 
-func (a userHasManyUserProps) Where(conds ...field.Expr) *userHasManyUserProps {
+func (a userHasOneUserProps) Where(conds ...field.Expr) *userHasOneUserProps {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -266,22 +266,22 @@ func (a userHasManyUserProps) Where(conds ...field.Expr) *userHasManyUserProps {
 	return &a
 }
 
-func (a userHasManyUserProps) WithContext(ctx context.Context) *userHasManyUserProps {
+func (a userHasOneUserProps) WithContext(ctx context.Context) *userHasOneUserProps {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a userHasManyUserProps) Model(m *model.User) *userHasManyUserPropsTx {
-	return &userHasManyUserPropsTx{a.db.Model(m).Association(a.Name())}
+func (a userHasOneUserProps) Model(m *model.User) *userHasOneUserPropsTx {
+	return &userHasOneUserPropsTx{a.db.Model(m).Association(a.Name())}
 }
 
-type userHasManyUserPropsTx struct{ tx *gorm.Association }
+type userHasOneUserPropsTx struct{ tx *gorm.Association }
 
-func (a userHasManyUserPropsTx) Find() (result []*model.UserProps, err error) {
+func (a userHasOneUserPropsTx) Find() (result *model.UserProps, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a userHasManyUserPropsTx) Append(values ...*model.UserProps) (err error) {
+func (a userHasOneUserPropsTx) Append(values ...*model.UserProps) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -289,7 +289,7 @@ func (a userHasManyUserPropsTx) Append(values ...*model.UserProps) (err error) {
 	return a.tx.Append(targetValues...)
 }
 
-func (a userHasManyUserPropsTx) Replace(values ...*model.UserProps) (err error) {
+func (a userHasOneUserPropsTx) Replace(values ...*model.UserProps) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -297,7 +297,7 @@ func (a userHasManyUserPropsTx) Replace(values ...*model.UserProps) (err error) 
 	return a.tx.Replace(targetValues...)
 }
 
-func (a userHasManyUserPropsTx) Delete(values ...*model.UserProps) (err error) {
+func (a userHasOneUserPropsTx) Delete(values ...*model.UserProps) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -305,11 +305,11 @@ func (a userHasManyUserPropsTx) Delete(values ...*model.UserProps) (err error) {
 	return a.tx.Delete(targetValues...)
 }
 
-func (a userHasManyUserPropsTx) Clear() error {
+func (a userHasOneUserPropsTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a userHasManyUserPropsTx) Count() int64 {
+func (a userHasOneUserPropsTx) Count() int64 {
 	return a.tx.Count()
 }
 

@@ -39,6 +39,5 @@ message SetUserPropsResponse {
 
 service UsersService {
     rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
-    rpc GetUser(GetUserRequest) returns (GetUserResponse);
     rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 }

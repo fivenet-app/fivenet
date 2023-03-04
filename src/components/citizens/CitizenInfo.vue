@@ -2,7 +2,7 @@
 import { Character } from '@arpanet/gen/common/character_pb';
 import { defineComponent } from 'vue';
 import { KeyIcon } from '@heroicons/vue/20/solid';
-import CitizenInfoFeed from './CitizenInfoFeed.vue';
+import CitizenInfoFeed from './CitizenActivityFeed.vue';
 
 export default defineComponent({
     components: {
@@ -62,8 +62,10 @@ export default defineComponent({
                         </ul>
                     </dd>
                 </div>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <CitizenInfoFeed />
+                </div>
             </dl>
         </div>
     </div>
-    <CitizenInfoFeed />
 </template>
