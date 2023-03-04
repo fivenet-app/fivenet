@@ -66,10 +66,14 @@ export class Livemap extends L.Map {
             options.icon = options?.icon ? options.icon : new L.Icon.Default();
             options.icon.options.shadowSize = [0, 0];
 
-            const popup = L.popup({ content, closeButton: false });
-            const marker = new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(this).bindPopup(popup);
+            const marker = new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(this);
 
-            this.popups.set(id, popup);
+            if (content) {
+                const popup = L.popup({ content, closeButton: false });
+                this.popups.set(id, popup);
+                marker.bindPopup(popup);
+            }
+
             this.markers.set(id, marker);
         }
     }
