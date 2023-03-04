@@ -1,13 +1,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import CharacterSelectorCard from './CharacterSelectorCard.vue';
-import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
 import { GetCharactersRequest } from '@arpanet/gen/auth/auth_pb';
 import { Character } from '@arpanet/gen/common/character_pb';
-import authInterceptor from '../../grpcauth';
+import { getAccountClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { mapActions } from 'vuex';
-import config from '../../config';
 
 export default defineComponent({
     components: {
@@ -15,10 +13,7 @@ export default defineComponent({
     },
     data() {
         return {
-            'client': new AccountServiceClient(config.apiProtoURL, null, {
-                unaryInterceptors: [authInterceptor],
-                streamInterceptors: [authInterceptor],
-            }),
+            'client': getAccountClient(),
             'chars': [] as Array<Character>,
         };
     },
@@ -32,7 +27,7 @@ export default defineComponent({
                 then((resp) => {
                     this.chars = resp.getCharsList();
                 }).catch((err: RpcError) => {
-                    authInterceptor.handleError(err, this.$route);
+                    handleGRPCError(err, this.$route);
                 });
         },
     },

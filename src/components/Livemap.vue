@@ -1,8 +1,7 @@
 <script lang="ts">
-import { defineComponent, watchEffect } from 'vue';
-import authInterceptor from '../grpcauth';
+import { defineComponent } from 'vue';
+import { getLivemapClient } from '../grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
-import { LivemapServiceClient } from '@arpanet/gen/livemap/LivemapServiceClientPb';
 import { Marker, StreamRequest, ServerStreamResponse } from '@arpanet/gen/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
@@ -31,10 +30,7 @@ const position = new Position();
 export default defineComponent({
     data() {
         return {
-            client: new LivemapServiceClient('https://localhost:8181', null, {
-                unaryInterceptors: [authInterceptor],
-                streamInterceptors: [authInterceptor],
-            }),
+            client: getLivemapClient(),
             stream: null as null | ClientReadableStream<ServerStreamResponse>,
             map: {} as undefined | Livemap,
             hash: {} as Hash,

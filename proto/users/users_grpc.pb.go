@@ -23,7 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersServiceClient interface {
 	FindUsers(ctx context.Context, in *FindUsersRequest, opts ...grpc.CallOption) (*FindUsersResponse, error)
-	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 }
 
@@ -44,15 +43,6 @@ func (c *usersServiceClient) FindUsers(ctx context.Context, in *FindUsersRequest
 	return out, nil
 }
 
-func (c *usersServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
-	out := new(GetUserResponse)
-	err := c.cc.Invoke(ctx, "/gen.users.UsersService/GetUser", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *usersServiceClient) SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error) {
 	out := new(SetUserPropsResponse)
 	err := c.cc.Invoke(ctx, "/gen.users.UsersService/SetUserProps", in, out, opts...)
@@ -67,7 +57,6 @@ func (c *usersServiceClient) SetUserProps(ctx context.Context, in *SetUserPropsR
 // for forward compatibility
 type UsersServiceServer interface {
 	FindUsers(context.Context, *FindUsersRequest) (*FindUsersResponse, error)
-	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	mustEmbedUnimplementedUsersServiceServer()
 }
@@ -78,9 +67,6 @@ type UnimplementedUsersServiceServer struct {
 
 func (UnimplementedUsersServiceServer) FindUsers(context.Context, *FindUsersRequest) (*FindUsersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindUsers not implemented")
-}
-func (UnimplementedUsersServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedUsersServiceServer) SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserProps not implemented")
@@ -116,24 +102,6 @@ func _UsersService_FindUsers_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UsersService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UsersServiceServer).GetUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gen.users.UsersService/GetUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).GetUser(ctx, req.(*GetUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _UsersService_SetUserProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetUserPropsRequest)
 	if err := dec(in); err != nil {
@@ -162,10 +130,6 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindUsers",
 			Handler:    _UsersService_FindUsers_Handler,
-		},
-		{
-			MethodName: "GetUser",
-			Handler:    _UsersService_GetUser_Handler,
 		},
 		{
 			MethodName: "SetUserProps",

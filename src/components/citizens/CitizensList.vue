@@ -2,22 +2,22 @@
 import { Character } from '@arpanet/gen/common/character_pb';
 import { OrderBy } from '@arpanet/gen/common/database_pb';
 import { defineComponent } from 'vue';
-
-import authInterceptor from '../../grpcauth';
+import { getUsersClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
-import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import { FindUsersRequest } from '@arpanet/gen/users/users_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenInfoSlideOver from './CitizenInfoSlideOver.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 
 export default defineComponent({
+    components: {
+        TablePagination,
+        CitizenInfoSlideOver,
+        CitizenListEntry
+    },
     data() {
         return {
-            client: new UsersServiceClient("https://localhost:8181", null, {
-                unaryInterceptors: [authInterceptor],
-                streamInterceptors: [authInterceptor],
-            }),
+            client: getUsersClient(),
             loading: false,
             searchFirstname: "",
             searchLastname: "",
@@ -51,7 +51,7 @@ export default defineComponent({
                     this.loading = false;
                 }).catch((err: RpcError) => {
                     this.loading = false;
-                    authInterceptor.handleError(err, this.$route);
+                    handleGRPCError(err, this.$route);
                 });
         },
         toggleOrderBy: function (column: string) {
@@ -94,11 +94,6 @@ export default defineComponent({
     mounted: function () {
         this.orderBys.push(this.getDefaultOrderBy());
         this.findUsers(this.offset);
-    },
-    components: {
-        TablePagination,
-        CitizenInfoSlideOver,
-        CitizenListEntry
     },
 });
 </script>

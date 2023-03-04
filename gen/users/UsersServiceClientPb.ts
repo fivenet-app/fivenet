@@ -82,49 +82,6 @@ export class UsersServiceClient {
     this.methodDescriptorFindUsers);
   }
 
-  methodDescriptorGetUser = new grpcWeb.MethodDescriptor(
-    '/gen.users.UsersService/GetUser',
-    grpcWeb.MethodType.UNARY,
-    users_users_pb.GetUserRequest,
-    users_users_pb.GetUserResponse,
-    (request: users_users_pb.GetUserRequest) => {
-      return request.serializeBinary();
-    },
-    users_users_pb.GetUserResponse.deserializeBinary
-  );
-
-  getUser(
-    request: users_users_pb.GetUserRequest,
-    metadata: grpcWeb.Metadata | null): Promise<users_users_pb.GetUserResponse>;
-
-  getUser(
-    request: users_users_pb.GetUserRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: users_users_pb.GetUserResponse) => void): grpcWeb.ClientReadableStream<users_users_pb.GetUserResponse>;
-
-  getUser(
-    request: users_users_pb.GetUserRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: users_users_pb.GetUserResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/gen.users.UsersService/GetUser',
-        request,
-        metadata || {},
-        this.methodDescriptorGetUser,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/gen.users.UsersService/GetUser',
-    request,
-    metadata || {},
-    this.methodDescriptorGetUser);
-  }
-
   methodDescriptorSetUserProps = new grpcWeb.MethodDescriptor(
     '/gen.users.UsersService/SetUserProps',
     grpcWeb.MethodType.UNARY,

@@ -1,20 +1,15 @@
 <script lang="ts">
-import authInterceptor from '../../grpcauth';
-import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
+import { getAccountClient, handleGRPCError } from '../../grpc';
 import { ChooseCharacterRequest } from '@arpanet/gen/auth/auth_pb';
 import { defineComponent } from 'vue';
 import { mapActions, mapState } from 'vuex';
 import * as grpcWeb from 'grpc-web';
-import config from '../../config';
 import { Character } from '@arpanet/gen/common/character_pb';
 
 export default defineComponent({
     data() {
         return {
-            'client': new AccountServiceClient(config.apiProtoURL, null, {
-                unaryInterceptors: [authInterceptor],
-                streamInterceptors: [authInterceptor],
-            }),
+            'client': getAccountClient(),
         };
     },
     computed: {
@@ -49,7 +44,7 @@ export default defineComponent({
                 const path = this.$route.query.redirect?.toString() || '/overview';
                 this.$router.push({ path: path, query: {} });
             }).catch((err: grpcWeb.RpcError) => {
-                console.log(err);
+                handleGRPCError(err, this.$route);
             });
         },
         getTimeInHoursAndMins(timeInsSeconds: number): string {
