@@ -1,12 +1,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
-import Navbar from '../components/Navbar.vue';
-import Footer from '../components/Footer.vue';
+import Navbar from '../components/partials/Navbar.vue';
+import Footer from '../components/partials/Footer.vue';
 import Login from '../components/Login.vue';
-import ContentWrapper from '../components/ContentWrapper.vue';
-import NavPageHeader from '../components/NavPageHeader.vue';
-import CharacterSelector from '../components/CharacterSelector.vue';
+import ContentWrapper from '../components/partials/ContentWrapper.vue';
+import NavPageHeader from '../components/partials/NavPageHeader.vue';
+import CharacterSelector from '../components/login/CharacterSelector.vue';
 
 export default defineComponent({
     components: {

@@ -4,11 +4,11 @@ import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import { GetUserRequest } from '@arpanet/gen/users/users_pb';
 import { RpcError } from 'grpc-web';
 import { defineComponent } from 'vue';
-import Navbar from '../../components/Navbar.vue';
-import Footer from '../../components/Footer.vue';
-import CitizenInfo from '../../components/CitizenInfo.vue';
+import Navbar from '../../components/partials/Navbar.vue';
+import Footer from '../../components/partials/Footer.vue';
+import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import authInterceptor from '../../grpcauth';
-import ContentWrapper from '../../components/ContentWrapper.vue';
+import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 
 export default defineComponent({
     components: {

@@ -21,6 +21,7 @@ export default defineComponent({
         },
         callback: {
             required: true,
+            type: Function,
         }
     },
 });

@@ -9,7 +9,7 @@
     - [x] Search by name (`firstname`, `lastname`)
     - [x] Display a single user's info
         - [ ] Show a feed of activity of the user (e.g., documents created, documents mentioned in)
-    - [ ] Wanted
+    - [ ] Wanted aka "additional UserProps"
         - [ ] Allow certain jobs to set a person as wanted
         - [ ] Add list to display only wanted people
 - [ ] Documents

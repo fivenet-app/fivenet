@@ -3,7 +3,7 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
-	content: ['node_modules/daisyui/**/*', './public/**/*.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+	content: ['./public/**/*.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
 	plugins: [require('@tailwindcss/forms')],
 	theme: {
 		extend: {
@@ -12,15 +12,5 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [require('@tailwindcss/typography'), require('daisyui')],
-	daisyui: {
-		styled: true,
-		themes: ['dark', 'business', 'night', 'acid', 'corporate', 'light'],
-		base: true,
-		utils: true,
-		logs: true,
-		rtl: false,
-		prefix: '',
-		darkTheme: 'dark',
-	},
+	plugins: [require('@tailwindcss/typography')],
 };

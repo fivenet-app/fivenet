@@ -1,11 +1,11 @@
 <script lang="ts">
-import authInterceptor from '../grpcauth';
+import authInterceptor from '../../grpcauth';
 import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
 import { ChooseCharacterRequest } from '@arpanet/gen/auth/auth_pb';
 import { defineComponent } from 'vue';
 import { mapActions, mapState } from 'vuex';
 import * as grpcWeb from 'grpc-web';
-import config from '../config';
+import config from '../../config';
 import { Character } from '@arpanet/gen/common/character_pb';
 
 export default defineComponent({

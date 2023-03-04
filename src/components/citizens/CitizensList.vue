@@ -3,11 +3,13 @@ import { Character } from '@arpanet/gen/common/character_pb';
 import { OrderBy } from '@arpanet/gen/common/database_pb';
 import { defineComponent } from 'vue';
 
-import authInterceptor from '../grpcauth';
+import authInterceptor from '../../grpcauth';
 import { RpcError } from 'grpc-web';
 import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import { FindUsersRequest } from '@arpanet/gen/users/users_pb';
-import TablePagination from './TablePagination.vue';
+import TablePagination from '../partials/TablePagination.vue';
+import CitizenInfoSlideOver from './CitizenInfoSlideOver.vue';
+import CitizenListEntry from './CitizensListEntry.vue';
 
 export default defineComponent({
     data() {
@@ -88,17 +90,16 @@ export default defineComponent({
             defaultOrderBy.setDesc(false);
             return defaultOrderBy;
         },
-        toTitleCase(value: string) {
-            return value.replace(/(?:^|\s|-)\S/g, x => x.toUpperCase());
-        },
     },
     mounted: function () {
         this.orderBys.push(this.getDefaultOrderBy());
         this.findUsers(this.offset);
     },
     components: {
-        TablePagination,
-    },
+    TablePagination,
+    CitizenInfoSlideOver,
+    CitizenListEntry
+},
 });
 </script>
 
@@ -155,27 +156,7 @@ export default defineComponent({
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-800">
-                                <tr v-for="user in users" :key="user.getIdentifier()">
-                                    <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
-                                        {{ user.getFirstname() }}, {{ user.getLastname() }}
-                                    </td>
-                                    <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
-                                        {{ toTitleCase(user.getJob()) }}
-                                    </td>
-                                    <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
-                                        {{ user.getSex().toUpperCase() }}
-                                    </td>
-                                    <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
-                                        {{ user.getDateofbirth() }}
-                                    </td>
-                                    <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
-                                        {{ user.getHeight() }}cm
-                                    </td>
-                                    <td
-                                        class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                        <a href="#" class="text-indigo-400 hover:text-indigo-300">VIEW</a>
-                                    </td>
-                                </tr>
+                                <CitizenListEntry v-for="user in users" :key="user.getIdentifier()" :user="user" />
                             </tbody>
                             <thead>
                                 <tr>

@@ -1,10 +1,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Navbar from '../components/Navbar.vue';
-import Footer from '../components/Footer.vue';
+import Navbar from '../components/partials/Navbar.vue';
+import Footer from '../components/partials/Footer.vue';
 import FeatureCards from '../components/FeatureCards.vue';
-import ContentWrapper from '../components/ContentWrapper.vue';
-import NavPageHeader from '../components/NavPageHeader.vue';
+import ContentWrapper from '../components/partials/ContentWrapper.vue';
+import NavPageHeader from '../components/partials/NavPageHeader.vue';
 
 export default defineComponent({
     components: {
