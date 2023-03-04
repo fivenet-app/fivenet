@@ -44,7 +44,7 @@ export default defineComponent({
     setup: function () {
         const atlas = L.tileLayer('tiles/atlas/{z}/{x}/{y}.png', {
             attribution:
-                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
             minZoom: 1,
             maxZoom: 6,
             noWrap: false,
@@ -52,7 +52,7 @@ export default defineComponent({
         });
         const postal = L.tileLayer('tiles/postal/{z}/{x}/{y}.png', {
             attribution:
-                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
             minZoom: 1,
             maxZoom: 6,
             noWrap: false,
@@ -60,7 +60,7 @@ export default defineComponent({
         });
         const road = L.tileLayer('tiles/road/{z}/{x}/{y}.png', {
             attribution:
-                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
             minZoom: 1,
             maxZoom: 6,
             noWrap: false,
@@ -68,7 +68,7 @@ export default defineComponent({
         });
         const satelite = L.tileLayer('tiles/satelite/{z}/{x}/{y}.png', {
             attribution:
-                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
             minZoom: 1,
             maxZoom: 6,
             noWrap: false,
