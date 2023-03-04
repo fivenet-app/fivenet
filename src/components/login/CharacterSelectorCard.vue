@@ -41,7 +41,7 @@ export default defineComponent({
 
                 const path = this.$route.query.redirect?.toString() || '/overview';
 
-                const url = new URL(path);
+                const url = new URL("https://example.com"+path);
                 this.$router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
             }).catch((err: grpcWeb.RpcError) => {
                 handleGRPCError(err, this.$route);
