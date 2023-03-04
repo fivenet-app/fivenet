@@ -34,12 +34,12 @@ export default defineComponent({
     data() {
         return {
             navigation: [
-                { name: 'Overview', href: '/overview', can: 'overview-view', },
-                { name: 'Citizens', href: '/citizens', can: 'users-view' },
-                { name: 'Documents', href: '/documents', can: 'documents-view' },
-                { name: 'Dispatches', href: '/dispatches', can: 'dispatches-view' },
-                { name: 'Job', href: '/job', can: 'job-view' },
-                { name: 'Livemap', href: '/livemap', can: 'livemap-view' },
+                { name: 'Overview', href: '/overview', permission: 'overview-view', },
+                { name: 'Citizens', href: '/citizens', permission: 'users-view' },
+                { name: 'Documents', href: '/documents', permission: 'documents-view' },
+                { name: 'Dispatches', href: '/dispatches', permission: 'dispatches-view' },
+                { name: 'Job', href: '/job', permission: 'job-view' },
+                { name: 'Livemap', href: '/livemap', permission: 'livemap-stream' },
             ],
             userNavigation: [
                 { name: 'Change Characters', href: '/login', },
@@ -63,7 +63,7 @@ export default defineComponent({
                     </div>
                     <div v-if="accessToken" class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <router-link v-for="item in navigation" :key="item.name" :to="item.href" v-can="item.can ? item.can : true"
+                            <router-link v-for="item in navigation" :key="item.name" :to="item.href" v-can="item.permission"
                                 class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                                 active-class="bg-gray-900 text-white"
                                 :aria-current="$route.name == item.href ? 'page' : undefined">{{ item.name

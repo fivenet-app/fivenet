@@ -31,7 +31,7 @@
         - [x] Create table model for our own player location table
         - [ ] Write FiveM plugin that writes into our own location table
     - [x] Multiple different designs
-    - [ ] Future: See other jobs positions and/ or dispatches
+    - [ ] Future: See other jobs' positions and/ or dispatches
 - [ ] Employee Management
     - [ ] Warn Employees ("Führungsregister")
     - [ ] Promote and Demote Employees

@@ -34,11 +34,11 @@ func NewServer() *Server {
 }
 
 func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUsersResponse, error) {
-
 	user, err := auth.GetUserFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
+
 	if !auth.CanUser(user, "users.FindUsers") {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users")
 	}
@@ -99,11 +99,24 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 }
 
 func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*SetUserPropsResponse, error) {
-	// TODO filter if user is allowed to set certain user props
+	user, err := auth.GetUserFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if !auth.CanUser(user, "users.SetUserProps") {
+		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user properties!")
+	}
+
+	if !auth.CanUserAccessField(user, "users.SetUserProps", "Fields") {
+		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set an user wanted!")
+	}
+
 	userProps := &model.UserProps{
 		Identifier: req.Identifier,
 		Wanted:     req.Wanted,
 	}
+
 	ups := query.UserProps
 	if err := ups.Clauses(clause.OnConflict{
 		UpdateAll: true,
