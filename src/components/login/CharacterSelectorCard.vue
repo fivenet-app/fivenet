@@ -7,6 +7,7 @@ import * as grpcWeb from 'grpc-web';
 import { Character } from '@arpanet/gen/common/character_pb';
 import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
 import config from '../../config';
+import { parseQuery } from 'vue-router/auto';
 
 export default defineComponent({
     data() {
@@ -44,7 +45,9 @@ export default defineComponent({
                 console.log(resp.getPermissionsList());
 
                 const path = this.$route.query.redirect?.toString() || '/overview';
-                this.$router.push({ path: path, query: {} });
+
+                const url = new URL(path);
+                this.$router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
             }).catch((err: grpcWeb.RpcError) => {
                 handleGRPCError(err, this.$route);
             });
