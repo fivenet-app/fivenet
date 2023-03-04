@@ -153,5 +153,5 @@ export default defineComponent({
 </style>
 
 <template>
-    <div class="w-screen z-0" id="map"></div>
+    <div class="w-full z-0" id="map"></div>
 </template>

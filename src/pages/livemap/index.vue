@@ -25,7 +25,7 @@ export default defineComponent({
 
 <template>
     <Navbar />
-    <div class="container w-screen">
+    <div class="w-full">
         <Livemap />
     </div>
     <Footer />
