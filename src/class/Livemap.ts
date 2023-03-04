@@ -5,115 +5,112 @@ import { AnimatedMarker } from './AnimatedMarker';
 import { Hash } from './Hash';
 
 export enum MarkerType {
-	'player',
-	'dispatch',
+    'player',
+    'dispatch',
 }
 
 export class Livemap extends L.Map {
-	public hash: Hash | undefined;
-	public hasLoaded: boolean = false;
+    public hash: Hash | undefined;
+    public hasLoaded: boolean = false;
 
-	public markers: Map<string, AnimatedMarker> = new Map();
-	public popups: Map<string, L.Popup> = new Map();
-	private prevMarkerLists: Map<MarkerType, Array<Marker.AsObject>> = new Map();
+    public markers: Map<string, AnimatedMarker> = new Map();
+    public popups: Map<string, L.Popup> = new Map();
+    private prevMarkerLists: Map<MarkerType, Array<Marker.AsObject>> = new Map();
 
-	private element: HTMLElement;
+    private element: HTMLElement;
 
-	constructor(element: string | HTMLElement, options?: L.MapOptions | undefined) {
-		super(element, options);
-		this.element = typeof element === 'string' ? (document.getElementById(element) as HTMLElement) : element;
+    constructor(element: string | HTMLElement, options?: L.MapOptions | undefined) {
+        super(element, options);
+        this.element = typeof element === 'string' ? (document.getElementById(element) as HTMLElement) : element;
 
-		this.on('load', () => (this.hasLoaded = true));
-		this.on('baselayerchange', (context) => this.updateBackground(context.name));
-	}
+        this.on('load', () => (this.hasLoaded = true));
+        this.on('baselayerchange', (context) => this.updateBackground(context.name));
+    }
 
-	public addHash(): void {
-		this.hash = new Hash(this, this.element);
-	}
+    public addHash(): void {
+        this.hash = new Hash(this, this.element);
+    }
 
-	public removeHash(): boolean {
-		if (!this.hash) return false;
+    public removeHash(): boolean {
+        if (!this.hash) return false;
 
-		this.hash.remove();
-		return true;
-	}
+        this.hash.remove();
+        return true;
+    }
 
-	public updateBackground(layer: string): void {
-		switch (layer) {
-			case 'Atlas':
-				this.element.style.backgroundColor = '#0fa8d2';
-				return;
-			case 'Satelite':
-				this.element.style.backgroundColor = '#143d6b';
-				return;
-			case 'Road':
-				this.element.style.backgroundColor = '#1862ad';
-				return;
-			case 'Postal':
-				this.element.style.backgroundColor = '#63a7ce';
-				return;
-		}
-	}
+    public updateBackground(layer: string): void {
+        switch (layer) {
+            case 'Atlas':
+                this.element.style.backgroundColor = '#0fa8d2';
+                return;
+            case 'Satelite':
+                this.element.style.backgroundColor = '#143d6b';
+                return;
+            case 'Road':
+                this.element.style.backgroundColor = '#1862ad';
+                return;
+            case 'Postal':
+                this.element.style.backgroundColor = '#63a7ce';
+                return;
+        }
+    }
 
-	public addMarker(
-		id: string,
-		latitude: number,
-		longitude: number,
-		content: string,
-		options: L.MarkerOptions | undefined = undefined
-	): void {
-		const marker = this.markers.get(id);
+    public addMarker(id: string, latitude: number, longitude: number, content: string, options: L.MarkerOptions): void {
+        const marker = this.markers.get(id);
 
-		if (marker) {
-			marker.moveTo(L.latLng(latitude, longitude));
-			if (options?.icon) marker.setIcon(options.icon);
-			if (options?.opacity) marker.setOpacity(options.opacity);
-		} else {
-			const popup = L.popup({ content, closeButton: false });
-			const marker = new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(this).bindPopup(popup);
+        if (marker) {
+            marker.moveTo(L.latLng(latitude, longitude));
+            if (options?.icon) marker.setIcon(options.icon);
+            if (options?.opacity) marker.setOpacity(options.opacity);
+        } else {
+            options.icon = options?.icon ? options.icon : new L.Icon.Default();
+            options.icon.options.shadowSize = [0, 0];
 
-			this.popups.set(id, popup);
-			this.markers.set(id, marker);
-		}
-	}
+            const popup = L.popup({ content, closeButton: false });
+            const marker = new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(this).bindPopup(popup);
 
-	public removeMarker(id: string): boolean {
-		const marker = this.markers.get(id);
-		if (!marker) return false;
+            this.popups.set(id, popup);
+            this.markers.set(id, marker);
+        }
+    }
 
-		marker.remove();
-		return this.markers.delete(id);
-	}
+    public removeMarker(id: string): boolean {
+        const marker = this.markers.get(id);
+        if (!marker) return false;
 
-	public parseMarkerlist(type: MarkerType, list: Array<Marker>): void {
-		let options: L.MarkerOptions = {};
-		switch (type) {
-			case MarkerType.player: {
-				options = {};
-			}
+        marker.remove();
+        return this.markers.delete(id);
+    }
 
-			case MarkerType.dispatch: {
-				options = {};
-			}
-		}
+    public parseMarkerlist(type: MarkerType, list: Array<Marker>): void {
+        let options: L.MarkerOptions = {};
+        switch (type) {
+            case MarkerType.player: {
+                options = {};
+            }
 
-		const previousList = this.prevMarkerLists.get(type);
-		if (previousList) {
-			const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getId() === entry.id));
-			markersToRemove.forEach((marker) => {
-				this.removeMarker(marker.id);
-			});
-		}
+            case MarkerType.dispatch: {
+                options = {};
+            }
+        }
 
-		list.forEach((marker) => {
-			this.addMarker(marker.getId(), marker.getY(), marker.getX(), marker.getPopup(), options);
-		});
+        const previousList = this.prevMarkerLists.get(type);
+        if (previousList) {
+            const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getId() === entry.id));
+            markersToRemove.forEach((marker) => {
+                this.removeMarker(marker.id);
+            });
+        }
 
-		this.prevMarkerLists.set(
-			type,
-			list.map((e) => e.toObject())
-		);
-	}
+        list.forEach((marker) => {
+            this.addMarker(marker.getId(), marker.getY(), marker.getX(), marker.getPopup(), options);
+        });
+
+        this.prevMarkerLists.set(
+            type,
+            list.map((e) => e.toObject())
+        );
+    }
 }
 
 export const centerX = 117.3;
@@ -122,18 +119,18 @@ export const scaleX = 0.02072;
 export const scaleY = 0.0205;
 
 export const customCRS = L.extend({}, L.CRS.Simple, {
-	projection: L.Projection.LonLat,
-	scale: function (zoom: number) {
-		return Math.pow(2, zoom);
-	},
-	zoom: function (sc: number) {
-		return Math.log(sc) / 0.6931471805599453;
-	},
-	distance: function (pos1: L.LatLng, pos2: L.LatLng) {
-		var x_difference = pos2.lng - pos1.lng;
-		var y_difference = pos2.lat - pos1.lat;
-		return Math.sqrt(x_difference * x_difference + y_difference * y_difference);
-	},
-	transformation: new L.Transformation(scaleX, centerX, -scaleY, centerY),
-	infinite: true,
+    projection: L.Projection.LonLat,
+    scale: function (zoom: number) {
+        return Math.pow(2, zoom);
+    },
+    zoom: function (sc: number) {
+        return Math.log(sc) / 0.6931471805599453;
+    },
+    distance: function (pos1: L.LatLng, pos2: L.LatLng) {
+        var x_difference = pos2.lng - pos1.lng;
+        var y_difference = pos2.lat - pos1.lat;
+        return Math.sqrt(x_difference * x_difference + y_difference * y_difference);
+    },
+    transformation: new L.Transformation(scaleX, centerX, -scaleY, centerY),
+    infinite: true,
 });
