@@ -3,7 +3,8 @@
         "vue.volar",
         "vue.vscode-typescript-vue-plugin",
         "editorconfig.editorconfig",
-        "zxh404.vscode-proto3"
+        "zxh404.vscode-proto3",
+        "moalamri.inline-fold"
     ],
     "unwantedRecommendations": [
         "vscode.typescript-language-features"

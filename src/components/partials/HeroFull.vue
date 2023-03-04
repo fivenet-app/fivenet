@@ -1,9 +1,10 @@
 <template>
-    <div class="hero min-h-screen bg-base-200 index">
-        <div class="hero-overlay bg-opacity-60"></div>
-        <div class="hero-content text-center">
-            <div class="max-w-md">
-                <slot />
+    <div class="relative isolate overflow-hidden bg-gray-900 hero index min-h-screen">
+        <div class="px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+                <div class="text-center">
+                    <slot />
+                </div>
             </div>
         </div>
     </div>

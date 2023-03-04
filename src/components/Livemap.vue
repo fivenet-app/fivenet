@@ -13,134 +13,147 @@ import 'leaflet/dist/leaflet.css';
 // Latitude and Longitiude popup on mouse over
 let _latlng: HTMLDivElement;
 const Position = L.Control.extend({
-	_container: null,
-	options: {
-		position: 'bottomleft',
-	},
-	onAdd: function () {
-		const latlng = L.DomUtil.create('div', 'mouseposition');
-		_latlng = latlng;
-		return latlng;
-	},
-	updateHTML: function (lat: number, lng: number) {
-		_latlng.innerHTML = 'Latitude: ' + lat + '   Longitiude: ' + lng;
-	},
+    _container: null,
+    options: {
+        position: 'bottomleft',
+    },
+    onAdd: function () {
+        const latlng = L.DomUtil.create('div', 'mouseposition');
+        _latlng = latlng;
+        return latlng;
+    },
+    updateHTML: function (lat: number, lng: number) {
+        _latlng.innerHTML = 'Latitude: ' + lat + '   Longitiude: ' + lng;
+    },
 });
 const position = new Position();
 
 export default defineComponent({
-	data() {
-		return {
-			client: new LivemapServiceClient('https://localhost:8181', null, {
-				unaryInterceptors: [authInterceptor],
-				streamInterceptors: [authInterceptor],
-			}),
-			stream: null as null | ClientReadableStream<ServerStreamResponse>,
-			map: {} as Livemap,
-			hash: {} as Hash,
-			zoom: 1,
-			usersList: [] as Array<Marker>,
-			dispatchesList: [] as Array<Marker>,
-		};
-	},
-	beforeUnmount: function () {
-		this.stop();
-	},
-	setup: function () {
-		return {
-			customCRS,
-			position,
-		};
-	},
-	mounted() {
-		this.map = new Livemap('map', { layers: [postal], crs: customCRS });
-		this.map.addHash();
-		this.map.setView([0, 0], 2);
+    data() {
+        return {
+            client: new LivemapServiceClient('https://localhost:8181', null, {
+                unaryInterceptors: [authInterceptor],
+                streamInterceptors: [authInterceptor],
+            }),
+            stream: null as null | ClientReadableStream<ServerStreamResponse>,
+            map: {} as undefined | Livemap,
+            hash: {} as Hash,
+            zoom: 1,
+            usersList: [] as Array<Marker>,
+            dispatchesList: [] as Array<Marker>,
+        };
+    },
+    setup: function () {
+        const atlas = L.tileLayer('tiles/atlas/{z}/{x}/{y}.png', {
+            attribution:
+                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+            minZoom: 1,
+            maxZoom: 6,
+            noWrap: false,
+            tms: true,
+        });
+        const postal = L.tileLayer('tiles/postal/{z}/{x}/{y}.png', {
+            attribution:
+                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+            minZoom: 1,
+            maxZoom: 6,
+            noWrap: false,
+            tms: true,
+        });
+        const road = L.tileLayer('tiles/road/{z}/{x}/{y}.png', {
+            attribution:
+                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+            minZoom: 1,
+            maxZoom: 6,
+            noWrap: false,
+            tms: true,
+        });
+        const satelite = L.tileLayer('tiles/satelite/{z}/{x}/{y}.png', {
+            attribution:
+                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
+            minZoom: 1,
+            maxZoom: 6,
+            noWrap: false,
+            tms: true,
+        });
 
-		const markersLayer = new L.LayerGroup().addTo(this.map as L.Map);
-		L.control
-			.layers({ Satelite: satelite, Atlas: atlas, Road: road, Postal: postal }, { Markers: markersLayer })
-			.addTo(this.map as L.Map);
-		postal.bringToFront();
+        return {
+            customCRS,
+            position,
+            atlas,
+            postal,
+            road,
+            satelite,
+        };
+    },
+    mounted() {
+        this.map = new Livemap('map', { layers: [this.postal], crs: customCRS });
+        this.map.addHash();
+        this.map.setView([0, 0], 2);
 
-		this.map.updateBackground('Postal');
-		this.map.on('baselayerchange', (context) => this.map.updateBackground(context.name));
+        const markersLayer = new L.LayerGroup().addTo(this.map as L.Map);
+        L.control
+            .layers({ Satelite: this.satelite, Atlas: this.atlas, Road: this.road, Postal: this.postal }, { Markers: markersLayer })
+            .addTo(this.map as L.Map);
+        this.postal.bringToFront();
 
-		this.map.addControl(position);
-		this.map.addEventListener('mousemove', (event: L.LeafletMouseEvent) => {
-			const lat = Math.round(event.latlng.lat * 100000) / 100000;
-			const lng = Math.round(event.latlng.lng * 100000) / 100000;
-			position.updateHTML(lat, lng);
-		});
+        this.map.updateBackground('Postal');
+        this.map.on('baselayerchange', (context) => this.map?.updateBackground(context.name));
 
-		this.start();
-	},
-	methods: {
-		start: function () {
-			console.log('starting livemap data stream');
+        this.map.addControl(position);
+        this.map.addEventListener('mousemove', (event: L.LeafletMouseEvent) => {
+            const lat = Math.round(event.latlng.lat * 100000) / 100000;
+            const lng = Math.round(event.latlng.lng * 100000) / 100000;
+            position.updateHTML(lat, lng);
+        });
 
-			let outer = this;
-			const request = new StreamRequest();
-			this.stream = this.client
-				.stream(request)
-				.on('data', function (response) {
-					outer.usersList = response.getUsersList();
-					outer.map.parseMarkerlist(MarkerType.player, outer.usersList);
-				})
-				.on('error', (err: RpcError) => {
-					authInterceptor.handleError(err, this.$route);
-				})
-				.on('end', function () {
-					console.log('livemap data stream ended');
-				});
-		},
-		stop: function () {
-			console.log('stopping livemap data stream');
-			if (this.stream) {
-				this.stream.cancel();
-				this.stream = null;
-			}
-		},
-		updateBackground: function (layer: string) {
-			this.map.updateBackground(layer);
-		},
-	},
-});
+        this.start();
+    },
+    beforeUnmount: function () {
+        this.stop();
+    },
+    unmounted() {
+        this.map = undefined;
+    },
+    methods: {
+        start: function () {
+            console.log('starting livemap data stream');
 
-const atlas = L.tileLayer('tiles/atlas/{z}/{x}/{y}.png', {
-	attribution:
-		'<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
-	minZoom: 1,
-	maxZoom: 6,
-	noWrap: false,
-	tms: true,
-});
-const road = L.tileLayer('tiles/road/{z}/{x}/{y}.png', {
-	attribution:
-		'<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
-	minZoom: 1,
-	maxZoom: 6,
-	noWrap: false,
-	tms: true,
-});
-const satelite = L.tileLayer('tiles/satelite/{z}/{x}/{y}.png', {
-	attribution:
-		'<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
-	minZoom: 1,
-	maxZoom: 6,
-	noWrap: false,
-	tms: true,
-});
-const postal = L.tileLayer('tiles/postal/{z}/{x}/{y}.png', {
-	attribution:
-		'<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>, web version quickly done by <a href="http://www.somebits.com/weblog/">Nelson Minar</a>',
-	minZoom: 1,
-	maxZoom: 6,
-	noWrap: false,
-	tms: true,
+            let outer = this;
+            const request = new StreamRequest();
+            this.stream = this.client
+                .stream(request)
+                .on('data', function (response) {
+                    outer.usersList = response.getUsersList();
+                    outer.map?.parseMarkerlist(MarkerType.player, outer.usersList);
+                })
+                .on('error', (err: RpcError) => {
+                    authInterceptor.handleError(err, this.$route);
+                })
+                .on('end', function () {
+                    console.log('livemap data stream ended');
+                });
+        },
+        stop: function () {
+            console.log('stopping livemap data stream');
+            if (this.stream) {
+                this.stream.cancel();
+                this.stream = null;
+            }
+        },
+        updateBackground: function (layer: string) {
+            this.map?.updateBackground(layer);
+        },
+    },
 });
 </script>
 
+<style scoped>
+#map {
+    height: 94vh;
+}
+</style>
+
 <template>
-	<div class="w-screen" id="map" style="height: 95vh"></div>
+    <div class="w-screen z-0" id="map"></div>
 </template>

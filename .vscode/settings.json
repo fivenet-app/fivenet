@@ -9,6 +9,7 @@
             "--proto_path=./validate"
         ]
     },
+    "inlineFold.maskChar": "...",
     "sqltools.connections": [
         {
             "mysqlOptions": {

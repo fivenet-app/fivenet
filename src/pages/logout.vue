@@ -38,8 +38,12 @@ export default defineComponent({
 <template>
     <Navbar />
     <HeroFull>
-        <h1 class="text-5xl font-bold">Signed out</h1>
-        <p class="py-6">We will redirect you to the home page in a few seconds.</p>
+        <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+            Signed out
+        </h1>
+        <p class="mt-6 text-lg leading-8 text-gray-300">
+            We will redirect you to the home page in a few seconds.
+        </p>
     </HeroFull>
     <Footer />
 </template>

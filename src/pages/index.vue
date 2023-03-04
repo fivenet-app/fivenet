@@ -43,13 +43,18 @@ export default defineComponent({
 <template>
     <Navbar />
     <HeroFull>
-        <h1 class="text-5xl font-bold text-white">Welcome to aRPaNet!</h1>
-        <p class="py-6 text-white">aRPaNet is your access to FiveM roleplay. From searching the state's user
+        <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">Welcome to aRPaNet!</h1>
+        <p class="mt-6 text-lg leading-8 text-gray-300">
+            aRPaNet is your access to FiveM roleplay. From searching the state's user
             database, filling documents for court and a livemap of your colleagues and dispatches.<br />It's all
-            in here.</p>
-        <router-link v-if="accessToken" to="/overview" class="btn btn-primary">Overview</router-link>
-        <router-link v-else to="/login" class="btn btn-primary">Login</router-link>
-        <button @click="addNotification">Add notification</button>
+            in here.
+        </p>
+        <div class="mt-10 flex items-center justify-center gap-x-6">
+            <router-link v-if="accessToken" to="/overview"
+                class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400">Overview</router-link>
+            <router-link v-else to="/login"
+                class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400">Login</router-link>
+        </div>
     </HeroFull>
     <Footer />
 </template>

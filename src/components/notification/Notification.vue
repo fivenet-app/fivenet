@@ -19,8 +19,7 @@ const closeNotification = (id: string) => {
         enter-from-class="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
         enter-to-class="translate-y-0 opacity-100 sm:translate-x-0" leave-active-class="transition ease-in duration-100"
         leave-from-class="opacity-100" leave-to-class="opacity-0">
-        <div
-            class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+        <div class="z-20 pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
             <div class="p-4">
                 <div class="flex items-start">
                     <div class="flex-shrink-0" v-if="notification.type">
