@@ -153,3 +153,31 @@ export namespace SetUserPropsResponse {
   }
 }
 
+export class GetUserActivityRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetUserActivityRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetUserActivityRequest): GetUserActivityRequest.AsObject;
+  static serializeBinaryToWriter(message: GetUserActivityRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetUserActivityRequest;
+  static deserializeBinaryFromReader(message: GetUserActivityRequest, reader: jspb.BinaryReader): GetUserActivityRequest;
+}
+
+export namespace GetUserActivityRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetUserActivityResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetUserActivityResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetUserActivityResponse): GetUserActivityResponse.AsObject;
+  static serializeBinaryToWriter(message: GetUserActivityResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetUserActivityResponse;
+  static deserializeBinaryFromReader(message: GetUserActivityResponse, reader: jspb.BinaryReader): GetUserActivityResponse;
+}
+
+export namespace GetUserActivityResponse {
+  export type AsObject = {
+  }
+}
+

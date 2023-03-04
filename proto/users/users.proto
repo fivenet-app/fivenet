@@ -37,7 +37,15 @@ message SetUserPropsRequest {
 message SetUserPropsResponse {
 }
 
+message GetUserActivityRequest {
+
+}
+
+message GetUserActivityResponse {
+}
+
 service UsersService {
     rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
     rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
+    rpc GetUserActivity(GetUserActivityRequest) returns (GetUserActivityResponse);
 }

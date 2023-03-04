@@ -125,5 +125,48 @@ export class UsersServiceClient {
     this.methodDescriptorSetUserProps);
   }
 
+  methodDescriptorGetUserActivity = new grpcWeb.MethodDescriptor(
+    '/gen.users.UsersService/GetUserActivity',
+    grpcWeb.MethodType.UNARY,
+    users_users_pb.GetUserActivityRequest,
+    users_users_pb.GetUserActivityResponse,
+    (request: users_users_pb.GetUserActivityRequest) => {
+      return request.serializeBinary();
+    },
+    users_users_pb.GetUserActivityResponse.deserializeBinary
+  );
+
+  getUserActivity(
+    request: users_users_pb.GetUserActivityRequest,
+    metadata: grpcWeb.Metadata | null): Promise<users_users_pb.GetUserActivityResponse>;
+
+  getUserActivity(
+    request: users_users_pb.GetUserActivityRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: users_users_pb.GetUserActivityResponse) => void): grpcWeb.ClientReadableStream<users_users_pb.GetUserActivityResponse>;
+
+  getUserActivity(
+    request: users_users_pb.GetUserActivityRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: users_users_pb.GetUserActivityResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.users.UsersService/GetUserActivity',
+        request,
+        metadata || {},
+        this.methodDescriptorGetUserActivity,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.users.UsersService/GetUserActivity',
+    request,
+    metadata || {},
+    this.methodDescriptorGetUserActivity);
+  }
+
 }
 

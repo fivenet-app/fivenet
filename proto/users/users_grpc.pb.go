@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UsersServiceClient interface {
 	FindUsers(ctx context.Context, in *FindUsersRequest, opts ...grpc.CallOption) (*FindUsersResponse, error)
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
+	GetUserActivity(ctx context.Context, in *GetUserActivityRequest, opts ...grpc.CallOption) (*GetUserActivityResponse, error)
 }
 
 type usersServiceClient struct {
@@ -52,12 +53,22 @@ func (c *usersServiceClient) SetUserProps(ctx context.Context, in *SetUserPropsR
 	return out, nil
 }
 
+func (c *usersServiceClient) GetUserActivity(ctx context.Context, in *GetUserActivityRequest, opts ...grpc.CallOption) (*GetUserActivityResponse, error) {
+	out := new(GetUserActivityResponse)
+	err := c.cc.Invoke(ctx, "/gen.users.UsersService/GetUserActivity", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsersServiceServer is the server API for UsersService service.
 // All implementations must embed UnimplementedUsersServiceServer
 // for forward compatibility
 type UsersServiceServer interface {
 	FindUsers(context.Context, *FindUsersRequest) (*FindUsersResponse, error)
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
+	GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error)
 	mustEmbedUnimplementedUsersServiceServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedUsersServiceServer) FindUsers(context.Context, *FindUsersRequ
 }
 func (UnimplementedUsersServiceServer) SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserProps not implemented")
+}
+func (UnimplementedUsersServiceServer) GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserActivity not implemented")
 }
 func (UnimplementedUsersServiceServer) mustEmbedUnimplementedUsersServiceServer() {}
 
@@ -120,6 +134,24 @@ func _UsersService_SetUserProps_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UsersService_GetUserActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserActivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).GetUserActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gen.users.UsersService/GetUserActivity",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).GetUserActivity(ctx, req.(*GetUserActivityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UsersService_ServiceDesc is the grpc.ServiceDesc for UsersService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetUserProps",
 			Handler:    _UsersService_SetUserProps_Handler,
+		},
+		{
+			MethodName: "GetUserActivity",
+			Handler:    _UsersService_GetUserActivity_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

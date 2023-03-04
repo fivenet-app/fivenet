@@ -759,3 +759,207 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SetUserPropsResponseValidationError{}
+
+// Validate checks the field values on GetUserActivityRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUserActivityRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUserActivityRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUserActivityRequestMultiError, or nil if none found.
+func (m *GetUserActivityRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUserActivityRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetUserActivityRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUserActivityRequestMultiError is an error wrapping multiple validation
+// errors returned by GetUserActivityRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetUserActivityRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUserActivityRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUserActivityRequestMultiError) AllErrors() []error { return m }
+
+// GetUserActivityRequestValidationError is the validation error returned by
+// GetUserActivityRequest.Validate if the designated constraints aren't met.
+type GetUserActivityRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserActivityRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserActivityRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserActivityRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserActivityRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserActivityRequestValidationError) ErrorName() string {
+	return "GetUserActivityRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserActivityRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserActivityRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserActivityRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserActivityRequestValidationError{}
+
+// Validate checks the field values on GetUserActivityResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUserActivityResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUserActivityResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUserActivityResponseMultiError, or nil if none found.
+func (m *GetUserActivityResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUserActivityResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetUserActivityResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUserActivityResponseMultiError is an error wrapping multiple validation
+// errors returned by GetUserActivityResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetUserActivityResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUserActivityResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUserActivityResponseMultiError) AllErrors() []error { return m }
+
+// GetUserActivityResponseValidationError is the validation error returned by
+// GetUserActivityResponse.Validate if the designated constraints aren't met.
+type GetUserActivityResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserActivityResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserActivityResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserActivityResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserActivityResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserActivityResponseValidationError) ErrorName() string {
+	return "GetUserActivityResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserActivityResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserActivityResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserActivityResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserActivityResponseValidationError{}
