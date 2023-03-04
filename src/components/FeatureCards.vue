@@ -70,8 +70,9 @@ export default defineComponent({
             :class="[
                 featureIdx === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
                 featureIdx === 1 ? 'sm:rounded-tr-lg' : '',
-                featureIdx === features.length - 2 ? 'sm:rounded-bl-lg' : '',
-                featureIdx === features.length - 1 ? 'rounded-bl-lg rounded-br-lg sm:rounded-bl-none' : '',
+                featureIdx === features.length - 2 && features.length % 2 === 0 ? 'sm:rounded-bl-lg' : '',
+                featureIdx === features.length - 1 && features.length % 2 === 0 ? 'rounded-br-lg' : '',
+                featureIdx === features.length - 1 ? 'rounded-bl-lg sm:rounded-bl-none' : '',
                 'group relative bg-gray-700 p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-white',
             ]"
         >
