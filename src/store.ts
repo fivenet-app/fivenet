@@ -4,7 +4,7 @@ import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
 import { LoginRequest, LogoutRequest } from '@arpanet/gen/auth/auth_pb';
 import { version } from '../package.json';
 import { Character } from '@arpanet/gen/common/character_pb';
-import { getAccountClient } from './grpc';
+import { clientAuthOptions } from './grpc';
 import config from './config';
 
 const store = createStore({
@@ -80,7 +80,7 @@ const store = createStore({
             commit('updateActiveCharIdentifier', null);
             commit('updatePermissions', []);
 
-            return getAccountClient()
+            return new AccountServiceClient(config.apiProtoURL, null, clientAuthOptions)
                 .logout(new LogoutRequest(), null)
                 .then((response) => {
                     commit('loginStop', null);

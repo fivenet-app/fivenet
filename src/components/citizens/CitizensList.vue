@@ -2,12 +2,14 @@
 import { Character } from '@arpanet/gen/common/character_pb';
 import { OrderBy } from '@arpanet/gen/common/database_pb';
 import { defineComponent } from 'vue';
-import { getUsersClient, handleGRPCError } from '../../grpc';
+import { clientAuthOptions, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { FindUsersRequest } from '@arpanet/gen/users/users_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenInfoSlideOver from './CitizenInfoSlideOver.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
+import { UsersServiceClient } from '../../../gen/users/UsersServiceClientPb';
+import config from '../../config';
 
 export default defineComponent({
     components: {
@@ -17,7 +19,7 @@ export default defineComponent({
     },
     data() {
         return {
-            client: getUsersClient(),
+            client: new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions),
             loading: false,
             searchFirstname: "",
             searchLastname: "",

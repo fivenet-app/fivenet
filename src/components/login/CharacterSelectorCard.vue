@@ -1,15 +1,17 @@
 <script lang="ts">
-import { getAccountClient, handleGRPCError } from '../../grpc';
+import { clientAuthOptions, handleGRPCError } from '../../grpc';
 import { ChooseCharacterRequest } from '@arpanet/gen/auth/auth_pb';
 import { defineComponent } from 'vue';
 import { mapActions, mapState } from 'vuex';
 import * as grpcWeb from 'grpc-web';
 import { Character } from '@arpanet/gen/common/character_pb';
+import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
+import config from '../../config';
 
 export default defineComponent({
     data() {
         return {
-            'client': getAccountClient(),
+            'client': new AccountServiceClient(config.apiProtoURL, null, clientAuthOptions),
         };
     },
     computed: {

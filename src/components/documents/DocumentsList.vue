@@ -1,12 +1,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getDocumentsClient } from '../../grpc';
+import { DocumentsServiceClient } from '../../../gen/documents/DocumentsServiceClientPb';
+import config from '../../config';
+import { clientAuthOptions } from '../../grpc';
 
 
 export default defineComponent({
     data() {
         return {
-            client: getDocumentsClient(),
+            client: new DocumentsServiceClient(config.apiProtoURL, null, clientAuthOptions),
             loading: false,
         };
     },

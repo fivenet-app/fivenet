@@ -2,10 +2,10 @@
 import { defineComponent } from 'vue';
 
 import Navbar from '../../components/partials/Navbar.vue';
+import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import Footer from '../../components/partials/Footer.vue';
 import DocumentsList from '../../components/documents/DocumentsList.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 
 export default defineComponent({
     components: {

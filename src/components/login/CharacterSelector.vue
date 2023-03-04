@@ -3,9 +3,11 @@ import { defineComponent } from 'vue';
 import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { GetCharactersRequest } from '@arpanet/gen/auth/auth_pb';
 import { Character } from '@arpanet/gen/common/character_pb';
-import { getAccountClient, handleGRPCError } from '../../grpc';
+import { clientAuthOptions, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { mapActions } from 'vuex';
+import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
+import config from '../../config';
 
 export default defineComponent({
     components: {
@@ -13,7 +15,7 @@ export default defineComponent({
     },
     data() {
         return {
-            'client': getAccountClient(),
+            'client': new AccountServiceClient(config.apiProtoURL, null, clientAuthOptions),
             'chars': [] as Array<Character>,
         };
     },
