@@ -115,6 +115,18 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 		},
 	}
 
+	_user.UserActivity = userHasManyUserActivity{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("UserActivity", "model.UserActivity"),
+	}
+
+	_user.CausedActivity = userHasManyCausedActivity{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("CausedActivity", "model.UserActivity"),
+	}
+
 	_user.Roles = userManyToManyRoles{
 		db: db.Session(&gorm.Session{}),
 
@@ -163,6 +175,10 @@ type user struct {
 	UserLicenses userHasManyUserLicenses
 
 	Documents userHasManyDocuments
+
+	UserActivity userHasManyUserActivity
+
+	CausedActivity userHasManyCausedActivity
 
 	Roles userManyToManyRoles
 
@@ -216,7 +232,7 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 22)
+	u.fieldMap = make(map[string]field.Expr, 24)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["identifier"] = u.Identifier
 	u.fieldMap["job"] = u.Job
@@ -467,6 +483,138 @@ func (a userHasManyDocumentsTx) Clear() error {
 }
 
 func (a userHasManyDocumentsTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type userHasManyUserActivity struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a userHasManyUserActivity) Where(conds ...field.Expr) *userHasManyUserActivity {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userHasManyUserActivity) WithContext(ctx context.Context) *userHasManyUserActivity {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userHasManyUserActivity) Model(m *model.User) *userHasManyUserActivityTx {
+	return &userHasManyUserActivityTx{a.db.Model(m).Association(a.Name())}
+}
+
+type userHasManyUserActivityTx struct{ tx *gorm.Association }
+
+func (a userHasManyUserActivityTx) Find() (result []*model.UserActivity, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userHasManyUserActivityTx) Append(values ...*model.UserActivity) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userHasManyUserActivityTx) Replace(values ...*model.UserActivity) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userHasManyUserActivityTx) Delete(values ...*model.UserActivity) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userHasManyUserActivityTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userHasManyUserActivityTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type userHasManyCausedActivity struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a userHasManyCausedActivity) Where(conds ...field.Expr) *userHasManyCausedActivity {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userHasManyCausedActivity) WithContext(ctx context.Context) *userHasManyCausedActivity {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userHasManyCausedActivity) Model(m *model.User) *userHasManyCausedActivityTx {
+	return &userHasManyCausedActivityTx{a.db.Model(m).Association(a.Name())}
+}
+
+type userHasManyCausedActivityTx struct{ tx *gorm.Association }
+
+func (a userHasManyCausedActivityTx) Find() (result []*model.UserActivity, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userHasManyCausedActivityTx) Append(values ...*model.UserActivity) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userHasManyCausedActivityTx) Replace(values ...*model.UserActivity) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userHasManyCausedActivityTx) Delete(values ...*model.UserActivity) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userHasManyCausedActivityTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userHasManyCausedActivityTx) Count() int64 {
 	return a.tx.Count()
 }
 

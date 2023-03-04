@@ -85,6 +85,7 @@ func Test_WithContext(t *testing.T) {
 		qCtx.Job.UnderlyingDB().Statement.Context,
 		qCtx.JobGrade.UnderlyingDB().Statement.Context,
 		qCtx.User.UnderlyingDB().Statement.Context,
+		qCtx.UserActivity.UnderlyingDB().Statement.Context,
 		qCtx.UserLicense.UnderlyingDB().Statement.Context,
 		qCtx.UserLocation.UnderlyingDB().Statement.Context,
 		qCtx.UserProps.UnderlyingDB().Statement.Context,

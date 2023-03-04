@@ -40,13 +40,14 @@ func SetupDB(logger *zap.Logger) error {
 	if err := db.AutoMigrate(
 		// User related
 		&model.Account{},
+		&model.UserActivity{},
 		&model.UserProps{},
 		// User location
 		model.UserLocation{},
 		// Document related
 		&model.Document{},
-		&model.DocumentMentions{},
 		&model.DocumentJobAccess{},
+		&model.DocumentMentions{},
 		&model.DocumentUserAccess{},
 	); err != nil {
 		return err

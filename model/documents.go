@@ -50,10 +50,10 @@ type DocumentMentions struct {
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
 	DocumentID uint   `gorm:"index" json:"document_id"`
-	Identifier string `gorm:"column:identifier;index" json:"identifier"`
+	Identifier string `gorm:"index;type:varchar(64)" json:"identifier"`
 }
 
-// TableName Document's table name
+// TableName DocumentMentions's table name
 func (*DocumentMentions) TableName() string {
 	return TableNameDocumentMentions
 }

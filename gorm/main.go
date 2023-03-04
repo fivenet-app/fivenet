@@ -85,6 +85,17 @@ func main() {
 			&field.RelateConfig{
 				GORMTag: "foreignkey:Creator",
 			}),
+
+		// Activity
+		gen.FieldRelateModel(field.HasMany, "UserActivity", model.UserActivity{},
+			&field.RelateConfig{
+				GORMTag: "foreignkey:Identifier",
+			}),
+		gen.FieldRelateModel(field.HasMany, "CausedActivity", model.UserActivity{},
+			&field.RelateConfig{
+				GORMTag: "foreignkey:CauseIdentifier",
+			}),
+
 		// User Roles + Permissions for Permify
 		gen.FieldRelateModel(field.Many2Many, "Roles", models.Role{},
 			&field.RelateConfig{
@@ -98,10 +109,11 @@ func main() {
 
 	// Generate default DAO interface for those generated structs from database
 	g.ApplyBasic(
-		model.Account{},
 		// User related
+		model.Account{},
 		usersModel,
 		userLicenses,
+		model.UserActivity{},
 		model.UserProps{},
 		jobsModel,
 		jobGradesModel,
@@ -111,8 +123,8 @@ func main() {
 		// Document related
 		model.Document{},
 		model.DocumentJobAccess{},
-		model.DocumentUserAccess{},
 		model.DocumentMentions{},
+		model.DocumentUserAccess{},
 	)
 
 	// Generate the code

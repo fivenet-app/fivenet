@@ -25,6 +25,7 @@ var (
 	Job                *job
 	JobGrade           *jobGrade
 	User               *user
+	UserActivity       *userActivity
 	UserLicense        *userLicense
 	UserLocation       *userLocation
 	UserProps          *userProps
@@ -41,6 +42,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	Job = &Q.Job
 	JobGrade = &Q.JobGrade
 	User = &Q.User
+	UserActivity = &Q.UserActivity
 	UserLicense = &Q.UserLicense
 	UserLocation = &Q.UserLocation
 	UserProps = &Q.UserProps
@@ -58,6 +60,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		Job:                newJob(db, opts...),
 		JobGrade:           newJobGrade(db, opts...),
 		User:               newUser(db, opts...),
+		UserActivity:       newUserActivity(db, opts...),
 		UserLicense:        newUserLicense(db, opts...),
 		UserLocation:       newUserLocation(db, opts...),
 		UserProps:          newUserProps(db, opts...),
@@ -76,6 +79,7 @@ type Query struct {
 	Job                job
 	JobGrade           jobGrade
 	User               user
+	UserActivity       userActivity
 	UserLicense        userLicense
 	UserLocation       userLocation
 	UserProps          userProps
@@ -95,6 +99,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Job:                q.Job.clone(db),
 		JobGrade:           q.JobGrade.clone(db),
 		User:               q.User.clone(db),
+		UserActivity:       q.UserActivity.clone(db),
 		UserLicense:        q.UserLicense.clone(db),
 		UserLocation:       q.UserLocation.clone(db),
 		UserProps:          q.UserProps.clone(db),
@@ -121,6 +126,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		Job:                q.Job.replaceDB(db),
 		JobGrade:           q.JobGrade.replaceDB(db),
 		User:               q.User.replaceDB(db),
+		UserActivity:       q.UserActivity.replaceDB(db),
 		UserLicense:        q.UserLicense.replaceDB(db),
 		UserLocation:       q.UserLocation.replaceDB(db),
 		UserProps:          q.UserProps.replaceDB(db),
@@ -137,6 +143,7 @@ type queryCtx struct {
 	Job                IJobDo
 	JobGrade           IJobGradeDo
 	User               IUserDo
+	UserActivity       IUserActivityDo
 	UserLicense        IUserLicenseDo
 	UserLocation       IUserLocationDo
 	UserProps          IUserPropsDo
@@ -153,6 +160,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		Job:                q.Job.WithContext(ctx),
 		JobGrade:           q.JobGrade.WithContext(ctx),
 		User:               q.User.WithContext(ctx),
+		UserActivity:       q.UserActivity.WithContext(ctx),
 		UserLicense:        q.UserLicense.WithContext(ctx),
 		UserLocation:       q.UserLocation.WithContext(ctx),
 		UserProps:          q.UserProps.WithContext(ctx),
