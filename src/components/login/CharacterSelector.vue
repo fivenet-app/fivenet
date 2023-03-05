@@ -45,7 +45,6 @@ export default defineComponent({
 
 <template>
     <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <CharacterSelectorCard v-for="char in chars" :char="char" :identifier="char.getIdentifier()"
-            :key="char.getIdentifier()" />
+        <CharacterSelectorCard v-for="char in chars" :char="char" :key="char.getUserid()" />
     </ul>
 </template>

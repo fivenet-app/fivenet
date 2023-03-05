@@ -2,8 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/session"
@@ -15,9 +13,9 @@ import (
 )
 
 const (
-	AuthAccIDCtxTag      = "auth.accid"
-	AuthActiveCharCtxTag = "auth.act_char"
-	AuthSubCtxTag        = "auth.sub"
+	AuthAccIDCtxTag        = "auth.accid"
+	AuthActiveCharIDCtxTag = "auth.actcharid"
+	AuthSubCtxTag          = "auth.sub"
 )
 
 func GRPCAuthFunc(ctx context.Context) (context.Context, error) {
@@ -32,7 +30,7 @@ func GRPCAuthFunc(ctx context.Context) (context.Context, error) {
 	}
 
 	grpc_ctxtags.Extract(ctx).Set(AuthAccIDCtxTag, tokenInfo.AccountID)
-	grpc_ctxtags.Extract(ctx).Set(AuthActiveCharCtxTag, tokenInfo.ActiveChar)
+	grpc_ctxtags.Extract(ctx).Set(AuthActiveCharIDCtxTag, tokenInfo.ActiveCharID)
 	grpc_ctxtags.Extract(ctx).Set(AuthSubCtxTag, tokenInfo.Subject)
 
 	// WARNING: in production define your own type to avoid context collisions
@@ -45,28 +43,23 @@ func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
 	return grpc_auth.AuthFromMD(ctx, "bearer")
 }
 
-func MustGetTokenFromGRPCContext(ctx context.Context) (token string) {
-	token, _ = GetTokenFromGRPCContext(ctx)
-	return
+func MustGetTokenFromGRPCContext(ctx context.Context) string {
+	token, _ := GetTokenFromGRPCContext(ctx)
+	return token
 }
 
 func GetUserFromContext(ctx context.Context) (*model.User, error) {
 	values := grpc_ctxtags.Extract(ctx).Values()
 
-	activeCharIdentifier := values[AuthActiveCharCtxTag].(string)
-	license := values[AuthSubCtxTag].(string)
-	if !strings.Contains(activeCharIdentifier, license) {
-		return nil, fmt.Errorf("wrong license for char identifier")
-	}
+	activeCharIdentifier := values[AuthActiveCharIDCtxTag].(uint64)
 
-	return getCharByIdentifier(activeCharIdentifier)
+	return getCharByID(activeCharIdentifier)
 }
 
-func getCharByIdentifier(identifier string) (*model.User, error) {
+func getCharByID(userID uint64) (*model.User, error) {
 	// Find user info for the new/old char index in the claim
 	u := query.User
-	user, err := u.Where(u.Identifier.Like(identifier)).
-		Preload(u.UserLicenses.Where(query.UserLicense.Owner.Eq(identifier))).
+	user, err := u.Where(u.ID.Eq(int32(userID))).
 		Limit(1).
 		First()
 	if err != nil {

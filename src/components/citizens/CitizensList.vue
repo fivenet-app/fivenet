@@ -56,7 +56,7 @@ export default defineComponent({
                     handleGRPCError(err, this.$route);
                 });
         },
-        toggleOrderBy: function (column: string) {
+        toggleOrderBy: function (column: string): void {
             // Check if the first one is the default entry, if so, remove if another column has been toggled
             if (this.orderBys.at(0)?.getColumn() != column) {
                 this.orderBys.pop();
@@ -91,6 +91,9 @@ export default defineComponent({
             defaultOrderBy.setColumn("firstname");
             defaultOrderBy.setDesc(false);
             return defaultOrderBy;
+        },
+        handleUserUpdate(): void {
+            // TODO
         },
     },
     mounted: function () {
@@ -153,7 +156,7 @@ export default defineComponent({
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-800">
-                                <CitizenListEntry v-for="user in users" :key="user.getIdentifier()" :user="user" />
+                                <CitizenListEntry v-for="user in users" :key="user.getUserid()" :user="user" />
                             </tbody>
                             <thead>
                                 <tr>

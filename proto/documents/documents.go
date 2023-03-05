@@ -37,13 +37,13 @@ func (s *Server) prepareDocumentQuery(start query.IDocumentDo, user *model.User)
 		start = d.Where()
 	}
 	return start.
-		LeftJoin(dua, dua.DocumentID.EqCol(d.ID), dua.Identifier.Eq(user.Identifier)).
+		LeftJoin(dua, dua.DocumentID.EqCol(d.ID), dua.UserID.Eq(user.ID)).
 		LeftJoin(dja, dja.DocumentID.EqCol(d.ID), dja.Name.Eq(user.Job), dja.MinimumGrade.Lte(user.JobGrade)).
 		Where(
 			d.Where(
 				d.Where(
 					d.Public.Is(true)).
-					Or(d.Creator.Eq(user.Identifier)),
+					Or(d.CreatorID.Eq(user.ID)),
 			).
 				Or(
 					d.Where(
@@ -64,7 +64,7 @@ func (s *Server) prepareDocumentQuery(start query.IDocumentDo, user *model.User)
 		Order(d.CreatedAt.Desc()).
 		Preload(
 			d.JobAccess.On(dja.Name.Eq(user.Job)),
-			d.UserAccess.On(dua.Identifier.Eq(user.Identifier)),
+			d.UserAccess.On(dua.UserID.Eq(user.ID)),
 		)
 }
 
@@ -97,7 +97,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 
 	d := query.Document
-	document, err := s.prepareDocumentQuery(d.Where(d.ID.Eq(uint(req.Id))), user).First()
+	document, err := s.prepareDocumentQuery(d.Where(d.ID.Eq(int32(req.Id))), user).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}

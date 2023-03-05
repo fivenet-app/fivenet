@@ -15,23 +15,33 @@ import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { EllipsisVerticalIcon, KeyIcon } from '@heroicons/vue/20/solid';
 import { Character } from '@arpanet/gen/common/character_pb';
 import CitizenActivityFeed from './CitizenActivityFeed.vue';
+import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
+import { RpcError } from 'grpc-web';
+import config from '../../config';
+import { clientAuthOptions, handleGRPCError } from '../../grpc';
+import { SetUserPropsRequest } from '@arpanet/gen/users/users_pb';
 
 export default defineComponent({
     components: {
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-    TransitionChild,
-    TransitionRoot,
-    XMarkIcon,
-    EllipsisVerticalIcon,
-    KeyIcon,
-    CitizenActivityFeed,
-},
+        Dialog,
+        DialogPanel,
+        DialogTitle,
+        Menu,
+        MenuButton,
+        MenuItem,
+        MenuItems,
+        TransitionChild,
+        TransitionRoot,
+        XMarkIcon,
+        EllipsisVerticalIcon,
+        KeyIcon,
+        CitizenActivityFeed,
+    },
+    data() {
+        return {
+            client: new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions),
+        };
+    },
     props: {
         'user': {
             required: true,
@@ -68,6 +78,18 @@ export default defineComponent({
                 }
             }
             return '-';
+        },
+        toggleWantedStatus() {
+            const req = new SetUserPropsRequest();
+            req.setUserid(this.user.getUserid());
+            const wantedState = !this.user.getProps()?.getWanted();
+            req.setWanted(wantedState);
+            this.client.setUserProps(req, null)
+                .then((resp) => {
+                    this.user.getProps()?.setWanted(wantedState);
+                }).catch((err: RpcError) => {
+                    handleGRPCError(err, this.$route);
+                });
         },
     },
 });
@@ -112,7 +134,8 @@ export default defineComponent({
                                                         <div class="flex items-center">
                                                             <h3 class="text-xl font-bold text-gray-900 sm:text-2xl">
                                                                 {{ user.getFirstname() }}, {{ user.getLastname() }}
-                                                                <span v-if="user.getProps()?.getWanted()" class="inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">WANTED</span>
+                                                                <span v-if="user.getProps()?.getWanted()"
+                                                                    class="inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">WANTED</span>
                                                             </h3>
                                                         </div>
                                                         <p class="text-sm text-gray-500">
@@ -123,8 +146,10 @@ export default defineComponent({
                                                         </p>
                                                     </div>
                                                     <div class="mt-5 flex flex-wrap space-y-3 sm:space-y-0 sm:space-x-3">
-                                                        <button type="button"
-                                                            class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:flex-1">Set Wanted</button>
+                                                        <button v-can="'users-setuserprops-wanted'" type="button"
+                                                            class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:flex-1"
+                                                            @click="toggleWantedStatus()">Set
+                                                            Wanted Status</button>
                                                         <div class="ml-3 inline-flex sm:ml-0">
                                                             <Menu as="div" class="relative inline-block text-left">
                                                                 <MenuButton
@@ -222,7 +247,7 @@ export default defineComponent({
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-6 sm:py-5">
-                                                    <CitizenActivityFeed />
+                                                    <CitizenActivityFeed :identifier="user.getUserid()" />
                                                 </div>
                                             </dl>
                                         </div>

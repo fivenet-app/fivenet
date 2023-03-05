@@ -53,11 +53,11 @@ func (s *Server) createTokenFromAccountAndChar(account *model.Account, activeCha
 	}
 
 	if activeChar != nil {
-		claims.ActiveChar = activeChar.Identifier
-		claims.ActiveCharID = uint(activeChar.Id)
+		claims.ActiveCharID = activeChar.UserID
+		claims.ActiveCharIdentifier = activeChar.Identifier
 	} else {
-		claims.ActiveChar = "N/A"
 		claims.ActiveCharID = 0
+		claims.ActiveCharIdentifier = ""
 	}
 
 	return session.Tokens.NewWithClaims(claims)
@@ -125,25 +125,25 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return resp, nil
 	}
 
-	// Make sure the user isn't sending us a different char identifier than his own
-	if !strings.Contains(req.Identifier, claims.Subject) {
-		return nil, status.Error(codes.OutOfRange, "That's not your character!")
-	}
-
 	account, err := s.getAccountFromDB(claims.Username)
 	if err != nil {
 		return nil, err
 	}
 
 	u := query.User
-	char, err := u.Where(u.Identifier.Eq(req.Identifier)).First()
+	char, err := u.Where(u.ID.Eq(int32(req.UserID))).First()
 	if err != nil {
 		return nil, err
 	}
 
+	// Make sure the user isn't sending us a different char ID than their own
+	if !strings.Contains(char.Identifier, claims.Subject) {
+		return nil, status.Error(codes.OutOfRange, "That's not your character!")
+	}
+
 	token, err := s.createTokenFromAccountAndChar(account, &common.Character{
-		Id:         uint64(char.ID),
-		Identifier: req.Identifier,
+		UserID:     uint64(char.ID),
+		Identifier: char.Identifier,
 	})
 	if err != nil {
 		return nil, err

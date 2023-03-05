@@ -19,69 +19,63 @@ import (
 	"github.com/galexrt/arpanet/model"
 )
 
-func newUserActivity(db *gorm.DB, opts ...gen.DOOption) userActivity {
-	_userActivity := userActivity{}
+func newDocumentMentions(db *gorm.DB, opts ...gen.DOOption) documentMentions {
+	_documentMentions := documentMentions{}
 
-	_userActivity.userActivityDo.UseDB(db, opts...)
-	_userActivity.userActivityDo.UseModel(&model.UserActivity{})
+	_documentMentions.documentMentionsDo.UseDB(db, opts...)
+	_documentMentions.documentMentionsDo.UseModel(&model.DocumentMentions{})
 
-	tableName := _userActivity.userActivityDo.TableName()
-	_userActivity.ALL = field.NewAsterisk(tableName)
-	_userActivity.ID = field.NewUint(tableName, "id")
-	_userActivity.Identifier = field.NewString(tableName, "identifier")
-	_userActivity.AcitvityType = field.NewString(tableName, "type")
-	_userActivity.OldValue = field.NewString(tableName, "old_value")
-	_userActivity.NewValue = field.NewString(tableName, "new_value")
-	_userActivity.Reason = field.NewString(tableName, "reason")
-	_userActivity.CauseIdentifier = field.NewString(tableName, "cause_identifier")
+	tableName := _documentMentions.documentMentionsDo.TableName()
+	_documentMentions.ALL = field.NewAsterisk(tableName)
+	_documentMentions.ID = field.NewUint(tableName, "id")
+	_documentMentions.CreatedAt = field.NewTime(tableName, "created_at")
+	_documentMentions.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_documentMentions.DocumentID = field.NewUint(tableName, "document_id")
+	_documentMentions.Identifier = field.NewString(tableName, "identifier")
 
-	_userActivity.fillFieldMap()
+	_documentMentions.fillFieldMap()
 
-	return _userActivity
+	return _documentMentions
 }
 
-type userActivity struct {
-	userActivityDo
+type documentMentions struct {
+	documentMentionsDo
 
-	ALL             field.Asterisk
-	ID              field.Uint
-	Identifier      field.String
-	AcitvityType    field.String
-	OldValue        field.String
-	NewValue        field.String
-	Reason          field.String
-	CauseIdentifier field.String
+	ALL        field.Asterisk
+	ID         field.Uint
+	CreatedAt  field.Time
+	UpdatedAt  field.Time
+	DocumentID field.Uint
+	Identifier field.String
 
 	fieldMap map[string]field.Expr
 }
 
-func (u userActivity) Table(newTableName string) *userActivity {
-	u.userActivityDo.UseTable(newTableName)
-	return u.updateTableName(newTableName)
+func (d documentMentions) Table(newTableName string) *documentMentions {
+	d.documentMentionsDo.UseTable(newTableName)
+	return d.updateTableName(newTableName)
 }
 
-func (u userActivity) As(alias string) *userActivity {
-	u.userActivityDo.DO = *(u.userActivityDo.As(alias).(*gen.DO))
-	return u.updateTableName(alias)
+func (d documentMentions) As(alias string) *documentMentions {
+	d.documentMentionsDo.DO = *(d.documentMentionsDo.As(alias).(*gen.DO))
+	return d.updateTableName(alias)
 }
 
-func (u *userActivity) updateTableName(table string) *userActivity {
-	u.ALL = field.NewAsterisk(table)
-	u.ID = field.NewUint(table, "id")
-	u.Identifier = field.NewString(table, "identifier")
-	u.AcitvityType = field.NewString(table, "type")
-	u.OldValue = field.NewString(table, "old_value")
-	u.NewValue = field.NewString(table, "new_value")
-	u.Reason = field.NewString(table, "reason")
-	u.CauseIdentifier = field.NewString(table, "cause_identifier")
+func (d *documentMentions) updateTableName(table string) *documentMentions {
+	d.ALL = field.NewAsterisk(table)
+	d.ID = field.NewUint(table, "id")
+	d.CreatedAt = field.NewTime(table, "created_at")
+	d.UpdatedAt = field.NewTime(table, "updated_at")
+	d.DocumentID = field.NewUint(table, "document_id")
+	d.Identifier = field.NewString(table, "identifier")
 
-	u.fillFieldMap()
+	d.fillFieldMap()
 
-	return u
+	return d
 }
 
-func (u *userActivity) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
-	_f, ok := u.fieldMap[fieldName]
+func (d *documentMentions) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
+	_f, ok := d.fieldMap[fieldName]
 	if !ok || _f == nil {
 		return nil, false
 	}
@@ -89,69 +83,67 @@ func (u *userActivity) GetFieldByName(fieldName string) (field.OrderExpr, bool) 
 	return _oe, ok
 }
 
-func (u *userActivity) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 7)
-	u.fieldMap["id"] = u.ID
-	u.fieldMap["identifier"] = u.Identifier
-	u.fieldMap["type"] = u.AcitvityType
-	u.fieldMap["old_value"] = u.OldValue
-	u.fieldMap["new_value"] = u.NewValue
-	u.fieldMap["reason"] = u.Reason
-	u.fieldMap["cause_identifier"] = u.CauseIdentifier
+func (d *documentMentions) fillFieldMap() {
+	d.fieldMap = make(map[string]field.Expr, 5)
+	d.fieldMap["id"] = d.ID
+	d.fieldMap["created_at"] = d.CreatedAt
+	d.fieldMap["updated_at"] = d.UpdatedAt
+	d.fieldMap["document_id"] = d.DocumentID
+	d.fieldMap["identifier"] = d.Identifier
 }
 
-func (u userActivity) clone(db *gorm.DB) userActivity {
-	u.userActivityDo.ReplaceConnPool(db.Statement.ConnPool)
-	return u
+func (d documentMentions) clone(db *gorm.DB) documentMentions {
+	d.documentMentionsDo.ReplaceConnPool(db.Statement.ConnPool)
+	return d
 }
 
-func (u userActivity) replaceDB(db *gorm.DB) userActivity {
-	u.userActivityDo.ReplaceDB(db)
-	return u
+func (d documentMentions) replaceDB(db *gorm.DB) documentMentions {
+	d.documentMentionsDo.ReplaceDB(db)
+	return d
 }
 
-type userActivityDo struct{ gen.DO }
+type documentMentionsDo struct{ gen.DO }
 
-type IUserActivityDo interface {
+type IDocumentMentionsDo interface {
 	gen.SubQuery
-	Debug() IUserActivityDo
-	WithContext(ctx context.Context) IUserActivityDo
+	Debug() IDocumentMentionsDo
+	WithContext(ctx context.Context) IDocumentMentionsDo
 	WithResult(fc func(tx gen.Dao)) gen.ResultInfo
 	ReplaceDB(db *gorm.DB)
-	ReadDB() IUserActivityDo
-	WriteDB() IUserActivityDo
+	ReadDB() IDocumentMentionsDo
+	WriteDB() IDocumentMentionsDo
 	As(alias string) gen.Dao
-	Session(config *gorm.Session) IUserActivityDo
+	Session(config *gorm.Session) IDocumentMentionsDo
 	Columns(cols ...field.Expr) gen.Columns
-	Clauses(conds ...clause.Expression) IUserActivityDo
-	Not(conds ...gen.Condition) IUserActivityDo
-	Or(conds ...gen.Condition) IUserActivityDo
-	Select(conds ...field.Expr) IUserActivityDo
-	Where(conds ...gen.Condition) IUserActivityDo
-	Order(conds ...field.Expr) IUserActivityDo
-	Distinct(cols ...field.Expr) IUserActivityDo
-	Omit(cols ...field.Expr) IUserActivityDo
-	Join(table schema.Tabler, on ...field.Expr) IUserActivityDo
-	LeftJoin(table schema.Tabler, on ...field.Expr) IUserActivityDo
-	RightJoin(table schema.Tabler, on ...field.Expr) IUserActivityDo
-	Group(cols ...field.Expr) IUserActivityDo
-	Having(conds ...gen.Condition) IUserActivityDo
-	Limit(limit int) IUserActivityDo
-	Offset(offset int) IUserActivityDo
+	Clauses(conds ...clause.Expression) IDocumentMentionsDo
+	Not(conds ...gen.Condition) IDocumentMentionsDo
+	Or(conds ...gen.Condition) IDocumentMentionsDo
+	Select(conds ...field.Expr) IDocumentMentionsDo
+	Where(conds ...gen.Condition) IDocumentMentionsDo
+	Order(conds ...field.Expr) IDocumentMentionsDo
+	Distinct(cols ...field.Expr) IDocumentMentionsDo
+	Omit(cols ...field.Expr) IDocumentMentionsDo
+	Join(table schema.Tabler, on ...field.Expr) IDocumentMentionsDo
+	LeftJoin(table schema.Tabler, on ...field.Expr) IDocumentMentionsDo
+	RightJoin(table schema.Tabler, on ...field.Expr) IDocumentMentionsDo
+	Group(cols ...field.Expr) IDocumentMentionsDo
+	Having(conds ...gen.Condition) IDocumentMentionsDo
+	Limit(limit int) IDocumentMentionsDo
+	Offset(offset int) IDocumentMentionsDo
 	Count() (count int64, err error)
-	Scopes(funcs ...func(gen.Dao) gen.Dao) IUserActivityDo
-	Unscoped() IUserActivityDo
-	Create(values ...*model.UserActivity) error
-	CreateInBatches(values []*model.UserActivity, batchSize int) error
-	Save(values ...*model.UserActivity) error
-	First() (*model.UserActivity, error)
-	Take() (*model.UserActivity, error)
-	Last() (*model.UserActivity, error)
-	Find() ([]*model.UserActivity, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.UserActivity, err error)
-	FindInBatches(result *[]*model.UserActivity, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Scopes(funcs ...func(gen.Dao) gen.Dao) IDocumentMentionsDo
+	Unscoped() IDocumentMentionsDo
+	Create(values ...*model.DocumentMentions) error
+	CreateInBatches(values []*model.DocumentMentions, batchSize int) error
+	Save(values ...*model.DocumentMentions) error
+	First() (*model.DocumentMentions, error)
+	Take() (*model.DocumentMentions, error)
+	Last() (*model.DocumentMentions, error)
+	Find() ([]*model.DocumentMentions, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.DocumentMentions, err error)
+	FindInBatches(result *[]*model.DocumentMentions, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*model.UserActivity) (info gen.ResultInfo, err error)
+	Delete(...*model.DocumentMentions) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -159,218 +151,218 @@ type IUserActivityDo interface {
 	UpdateColumnSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	UpdateColumns(value interface{}) (info gen.ResultInfo, err error)
 	UpdateFrom(q gen.SubQuery) gen.Dao
-	Attrs(attrs ...field.AssignExpr) IUserActivityDo
-	Assign(attrs ...field.AssignExpr) IUserActivityDo
-	Joins(fields ...field.RelationField) IUserActivityDo
-	Preload(fields ...field.RelationField) IUserActivityDo
-	FirstOrInit() (*model.UserActivity, error)
-	FirstOrCreate() (*model.UserActivity, error)
-	FindByPage(offset int, limit int) (result []*model.UserActivity, count int64, err error)
+	Attrs(attrs ...field.AssignExpr) IDocumentMentionsDo
+	Assign(attrs ...field.AssignExpr) IDocumentMentionsDo
+	Joins(fields ...field.RelationField) IDocumentMentionsDo
+	Preload(fields ...field.RelationField) IDocumentMentionsDo
+	FirstOrInit() (*model.DocumentMentions, error)
+	FirstOrCreate() (*model.DocumentMentions, error)
+	FindByPage(offset int, limit int) (result []*model.DocumentMentions, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
 	Scan(result interface{}) (err error)
-	Returning(value interface{}, columns ...string) IUserActivityDo
+	Returning(value interface{}, columns ...string) IDocumentMentionsDo
 	UnderlyingDB() *gorm.DB
 	schema.Tabler
 }
 
-func (u userActivityDo) Debug() IUserActivityDo {
-	return u.withDO(u.DO.Debug())
+func (d documentMentionsDo) Debug() IDocumentMentionsDo {
+	return d.withDO(d.DO.Debug())
 }
 
-func (u userActivityDo) WithContext(ctx context.Context) IUserActivityDo {
-	return u.withDO(u.DO.WithContext(ctx))
+func (d documentMentionsDo) WithContext(ctx context.Context) IDocumentMentionsDo {
+	return d.withDO(d.DO.WithContext(ctx))
 }
 
-func (u userActivityDo) ReadDB() IUserActivityDo {
-	return u.Clauses(dbresolver.Read)
+func (d documentMentionsDo) ReadDB() IDocumentMentionsDo {
+	return d.Clauses(dbresolver.Read)
 }
 
-func (u userActivityDo) WriteDB() IUserActivityDo {
-	return u.Clauses(dbresolver.Write)
+func (d documentMentionsDo) WriteDB() IDocumentMentionsDo {
+	return d.Clauses(dbresolver.Write)
 }
 
-func (u userActivityDo) Session(config *gorm.Session) IUserActivityDo {
-	return u.withDO(u.DO.Session(config))
+func (d documentMentionsDo) Session(config *gorm.Session) IDocumentMentionsDo {
+	return d.withDO(d.DO.Session(config))
 }
 
-func (u userActivityDo) Clauses(conds ...clause.Expression) IUserActivityDo {
-	return u.withDO(u.DO.Clauses(conds...))
+func (d documentMentionsDo) Clauses(conds ...clause.Expression) IDocumentMentionsDo {
+	return d.withDO(d.DO.Clauses(conds...))
 }
 
-func (u userActivityDo) Returning(value interface{}, columns ...string) IUserActivityDo {
-	return u.withDO(u.DO.Returning(value, columns...))
+func (d documentMentionsDo) Returning(value interface{}, columns ...string) IDocumentMentionsDo {
+	return d.withDO(d.DO.Returning(value, columns...))
 }
 
-func (u userActivityDo) Not(conds ...gen.Condition) IUserActivityDo {
-	return u.withDO(u.DO.Not(conds...))
+func (d documentMentionsDo) Not(conds ...gen.Condition) IDocumentMentionsDo {
+	return d.withDO(d.DO.Not(conds...))
 }
 
-func (u userActivityDo) Or(conds ...gen.Condition) IUserActivityDo {
-	return u.withDO(u.DO.Or(conds...))
+func (d documentMentionsDo) Or(conds ...gen.Condition) IDocumentMentionsDo {
+	return d.withDO(d.DO.Or(conds...))
 }
 
-func (u userActivityDo) Select(conds ...field.Expr) IUserActivityDo {
-	return u.withDO(u.DO.Select(conds...))
+func (d documentMentionsDo) Select(conds ...field.Expr) IDocumentMentionsDo {
+	return d.withDO(d.DO.Select(conds...))
 }
 
-func (u userActivityDo) Where(conds ...gen.Condition) IUserActivityDo {
-	return u.withDO(u.DO.Where(conds...))
+func (d documentMentionsDo) Where(conds ...gen.Condition) IDocumentMentionsDo {
+	return d.withDO(d.DO.Where(conds...))
 }
 
-func (u userActivityDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IUserActivityDo {
-	return u.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
+func (d documentMentionsDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) IDocumentMentionsDo {
+	return d.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
-func (u userActivityDo) Order(conds ...field.Expr) IUserActivityDo {
-	return u.withDO(u.DO.Order(conds...))
+func (d documentMentionsDo) Order(conds ...field.Expr) IDocumentMentionsDo {
+	return d.withDO(d.DO.Order(conds...))
 }
 
-func (u userActivityDo) Distinct(cols ...field.Expr) IUserActivityDo {
-	return u.withDO(u.DO.Distinct(cols...))
+func (d documentMentionsDo) Distinct(cols ...field.Expr) IDocumentMentionsDo {
+	return d.withDO(d.DO.Distinct(cols...))
 }
 
-func (u userActivityDo) Omit(cols ...field.Expr) IUserActivityDo {
-	return u.withDO(u.DO.Omit(cols...))
+func (d documentMentionsDo) Omit(cols ...field.Expr) IDocumentMentionsDo {
+	return d.withDO(d.DO.Omit(cols...))
 }
 
-func (u userActivityDo) Join(table schema.Tabler, on ...field.Expr) IUserActivityDo {
-	return u.withDO(u.DO.Join(table, on...))
+func (d documentMentionsDo) Join(table schema.Tabler, on ...field.Expr) IDocumentMentionsDo {
+	return d.withDO(d.DO.Join(table, on...))
 }
 
-func (u userActivityDo) LeftJoin(table schema.Tabler, on ...field.Expr) IUserActivityDo {
-	return u.withDO(u.DO.LeftJoin(table, on...))
+func (d documentMentionsDo) LeftJoin(table schema.Tabler, on ...field.Expr) IDocumentMentionsDo {
+	return d.withDO(d.DO.LeftJoin(table, on...))
 }
 
-func (u userActivityDo) RightJoin(table schema.Tabler, on ...field.Expr) IUserActivityDo {
-	return u.withDO(u.DO.RightJoin(table, on...))
+func (d documentMentionsDo) RightJoin(table schema.Tabler, on ...field.Expr) IDocumentMentionsDo {
+	return d.withDO(d.DO.RightJoin(table, on...))
 }
 
-func (u userActivityDo) Group(cols ...field.Expr) IUserActivityDo {
-	return u.withDO(u.DO.Group(cols...))
+func (d documentMentionsDo) Group(cols ...field.Expr) IDocumentMentionsDo {
+	return d.withDO(d.DO.Group(cols...))
 }
 
-func (u userActivityDo) Having(conds ...gen.Condition) IUserActivityDo {
-	return u.withDO(u.DO.Having(conds...))
+func (d documentMentionsDo) Having(conds ...gen.Condition) IDocumentMentionsDo {
+	return d.withDO(d.DO.Having(conds...))
 }
 
-func (u userActivityDo) Limit(limit int) IUserActivityDo {
-	return u.withDO(u.DO.Limit(limit))
+func (d documentMentionsDo) Limit(limit int) IDocumentMentionsDo {
+	return d.withDO(d.DO.Limit(limit))
 }
 
-func (u userActivityDo) Offset(offset int) IUserActivityDo {
-	return u.withDO(u.DO.Offset(offset))
+func (d documentMentionsDo) Offset(offset int) IDocumentMentionsDo {
+	return d.withDO(d.DO.Offset(offset))
 }
 
-func (u userActivityDo) Scopes(funcs ...func(gen.Dao) gen.Dao) IUserActivityDo {
-	return u.withDO(u.DO.Scopes(funcs...))
+func (d documentMentionsDo) Scopes(funcs ...func(gen.Dao) gen.Dao) IDocumentMentionsDo {
+	return d.withDO(d.DO.Scopes(funcs...))
 }
 
-func (u userActivityDo) Unscoped() IUserActivityDo {
-	return u.withDO(u.DO.Unscoped())
+func (d documentMentionsDo) Unscoped() IDocumentMentionsDo {
+	return d.withDO(d.DO.Unscoped())
 }
 
-func (u userActivityDo) Create(values ...*model.UserActivity) error {
+func (d documentMentionsDo) Create(values ...*model.DocumentMentions) error {
 	if len(values) == 0 {
 		return nil
 	}
-	return u.DO.Create(values)
+	return d.DO.Create(values)
 }
 
-func (u userActivityDo) CreateInBatches(values []*model.UserActivity, batchSize int) error {
-	return u.DO.CreateInBatches(values, batchSize)
+func (d documentMentionsDo) CreateInBatches(values []*model.DocumentMentions, batchSize int) error {
+	return d.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (u userActivityDo) Save(values ...*model.UserActivity) error {
+func (d documentMentionsDo) Save(values ...*model.DocumentMentions) error {
 	if len(values) == 0 {
 		return nil
 	}
-	return u.DO.Save(values)
+	return d.DO.Save(values)
 }
 
-func (u userActivityDo) First() (*model.UserActivity, error) {
-	if result, err := u.DO.First(); err != nil {
+func (d documentMentionsDo) First() (*model.DocumentMentions, error) {
+	if result, err := d.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.UserActivity), nil
+		return result.(*model.DocumentMentions), nil
 	}
 }
 
-func (u userActivityDo) Take() (*model.UserActivity, error) {
-	if result, err := u.DO.Take(); err != nil {
+func (d documentMentionsDo) Take() (*model.DocumentMentions, error) {
+	if result, err := d.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.UserActivity), nil
+		return result.(*model.DocumentMentions), nil
 	}
 }
 
-func (u userActivityDo) Last() (*model.UserActivity, error) {
-	if result, err := u.DO.Last(); err != nil {
+func (d documentMentionsDo) Last() (*model.DocumentMentions, error) {
+	if result, err := d.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.UserActivity), nil
+		return result.(*model.DocumentMentions), nil
 	}
 }
 
-func (u userActivityDo) Find() ([]*model.UserActivity, error) {
-	result, err := u.DO.Find()
-	return result.([]*model.UserActivity), err
+func (d documentMentionsDo) Find() ([]*model.DocumentMentions, error) {
+	result, err := d.DO.Find()
+	return result.([]*model.DocumentMentions), err
 }
 
-func (u userActivityDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.UserActivity, err error) {
-	buf := make([]*model.UserActivity, 0, batchSize)
-	err = u.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
+func (d documentMentionsDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.DocumentMentions, err error) {
+	buf := make([]*model.DocumentMentions, 0, batchSize)
+	err = d.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
 	})
 	return results, err
 }
 
-func (u userActivityDo) FindInBatches(result *[]*model.UserActivity, batchSize int, fc func(tx gen.Dao, batch int) error) error {
-	return u.DO.FindInBatches(result, batchSize, fc)
+func (d documentMentionsDo) FindInBatches(result *[]*model.DocumentMentions, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+	return d.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (u userActivityDo) Attrs(attrs ...field.AssignExpr) IUserActivityDo {
-	return u.withDO(u.DO.Attrs(attrs...))
+func (d documentMentionsDo) Attrs(attrs ...field.AssignExpr) IDocumentMentionsDo {
+	return d.withDO(d.DO.Attrs(attrs...))
 }
 
-func (u userActivityDo) Assign(attrs ...field.AssignExpr) IUserActivityDo {
-	return u.withDO(u.DO.Assign(attrs...))
+func (d documentMentionsDo) Assign(attrs ...field.AssignExpr) IDocumentMentionsDo {
+	return d.withDO(d.DO.Assign(attrs...))
 }
 
-func (u userActivityDo) Joins(fields ...field.RelationField) IUserActivityDo {
+func (d documentMentionsDo) Joins(fields ...field.RelationField) IDocumentMentionsDo {
 	for _, _f := range fields {
-		u = *u.withDO(u.DO.Joins(_f))
+		d = *d.withDO(d.DO.Joins(_f))
 	}
-	return &u
+	return &d
 }
 
-func (u userActivityDo) Preload(fields ...field.RelationField) IUserActivityDo {
+func (d documentMentionsDo) Preload(fields ...field.RelationField) IDocumentMentionsDo {
 	for _, _f := range fields {
-		u = *u.withDO(u.DO.Preload(_f))
+		d = *d.withDO(d.DO.Preload(_f))
 	}
-	return &u
+	return &d
 }
 
-func (u userActivityDo) FirstOrInit() (*model.UserActivity, error) {
-	if result, err := u.DO.FirstOrInit(); err != nil {
+func (d documentMentionsDo) FirstOrInit() (*model.DocumentMentions, error) {
+	if result, err := d.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.UserActivity), nil
+		return result.(*model.DocumentMentions), nil
 	}
 }
 
-func (u userActivityDo) FirstOrCreate() (*model.UserActivity, error) {
-	if result, err := u.DO.FirstOrCreate(); err != nil {
+func (d documentMentionsDo) FirstOrCreate() (*model.DocumentMentions, error) {
+	if result, err := d.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.UserActivity), nil
+		return result.(*model.DocumentMentions), nil
 	}
 }
 
-func (u userActivityDo) FindByPage(offset int, limit int) (result []*model.UserActivity, count int64, err error) {
-	result, err = u.Offset(offset).Limit(limit).Find()
+func (d documentMentionsDo) FindByPage(offset int, limit int) (result []*model.DocumentMentions, count int64, err error) {
+	result, err = d.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
 	}
@@ -380,29 +372,29 @@ func (u userActivityDo) FindByPage(offset int, limit int) (result []*model.UserA
 		return
 	}
 
-	count, err = u.Offset(-1).Limit(-1).Count()
+	count, err = d.Offset(-1).Limit(-1).Count()
 	return
 }
 
-func (u userActivityDo) ScanByPage(result interface{}, offset int, limit int) (count int64, err error) {
-	count, err = u.Count()
+func (d documentMentionsDo) ScanByPage(result interface{}, offset int, limit int) (count int64, err error) {
+	count, err = d.Count()
 	if err != nil {
 		return
 	}
 
-	err = u.Offset(offset).Limit(limit).Scan(result)
+	err = d.Offset(offset).Limit(limit).Scan(result)
 	return
 }
 
-func (u userActivityDo) Scan(result interface{}) (err error) {
-	return u.DO.Scan(result)
+func (d documentMentionsDo) Scan(result interface{}) (err error) {
+	return d.DO.Scan(result)
 }
 
-func (u userActivityDo) Delete(models ...*model.UserActivity) (result gen.ResultInfo, err error) {
-	return u.DO.Delete(models)
+func (d documentMentionsDo) Delete(models ...*model.DocumentMentions) (result gen.ResultInfo, err error) {
+	return d.DO.Delete(models)
 }
 
-func (u *userActivityDo) withDO(do gen.Dao) *userActivityDo {
-	u.DO = *do.(*gen.DO)
-	return u
+func (d *documentMentionsDo) withDO(do gen.Dao) *documentMentionsDo {
+	d.DO = *do.(*gen.DO)
+	return d
 }

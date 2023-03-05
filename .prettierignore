@@ -8,3 +8,5 @@ build/
 .next/
 maps/
 gdal2tiles-leaflet/
+
+*.proto

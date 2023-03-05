@@ -500,10 +500,10 @@ func (m *ChooseCharacterRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetIdentifier()); l < 46 || l > 64 {
+	if m.GetUserID() <= 0 {
 		err := ChooseCharacterRequestValidationError{
-			field:  "Identifier",
-			reason: "value length must be between 46 and 64 runes, inclusive",
+			field:  "UserID",
+			reason: "value must be greater than 0",
 		}
 		if !all {
 			return err

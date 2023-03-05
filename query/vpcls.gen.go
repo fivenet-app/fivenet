@@ -28,8 +28,8 @@ func newVpcL(db *gorm.DB, opts ...gen.DOOption) vpcL {
 	tableName := _vpcL.vpcLDo.TableName()
 	_vpcL.ALL = field.NewAsterisk(tableName)
 	_vpcL.PlayerID = field.NewString(tableName, "playerId")
-	_vpcL.Coordsx = field.NewString(tableName, "coordsx")
-	_vpcL.Coordsy = field.NewString(tableName, "coordsy")
+	_vpcL.Coordsx = field.NewFloat32(tableName, "coordsx")
+	_vpcL.Coordsy = field.NewFloat32(tableName, "coordsy")
 	_vpcL.Net = field.NewString(tableName, "NET")
 
 	_vpcL.fillFieldMap()
@@ -42,8 +42,8 @@ type vpcL struct {
 
 	ALL      field.Asterisk
 	PlayerID field.String
-	Coordsx  field.String
-	Coordsy  field.String
+	Coordsx  field.Float32
+	Coordsy  field.Float32
 	Net      field.String
 
 	fieldMap map[string]field.Expr
@@ -62,8 +62,8 @@ func (v vpcL) As(alias string) *vpcL {
 func (v *vpcL) updateTableName(table string) *vpcL {
 	v.ALL = field.NewAsterisk(table)
 	v.PlayerID = field.NewString(table, "playerId")
-	v.Coordsx = field.NewString(table, "coordsx")
-	v.Coordsy = field.NewString(table, "coordsy")
+	v.Coordsx = field.NewFloat32(table, "coordsx")
+	v.Coordsy = field.NewFloat32(table, "coordsy")
 	v.Net = field.NewString(table, "NET")
 
 	v.fillFieldMap()

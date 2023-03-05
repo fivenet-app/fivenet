@@ -3,8 +3,8 @@ syntax = "proto3";
 package gen.auth;
 option go_package = "github.com/galexrt/arpanet/proto/auth";
 
-import "common/character.proto";
 import "validate/validate.proto";
+import "common/character.proto";
 
 message LoginRequest {
     string username = 1;
@@ -22,7 +22,7 @@ message GetCharactersResponse {
 }
 
 message ChooseCharacterRequest {
-    string identifier = 1 [(validate.rules).string = {min_len: 46, max_len: 64}];
+    uint64 userID = 1 [(validate.rules).uint64.gt = 0];
 }
 
 message ChooseCharacterResponse {

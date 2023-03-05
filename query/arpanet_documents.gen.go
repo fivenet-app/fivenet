@@ -27,14 +27,14 @@ func newDocument(db *gorm.DB, opts ...gen.DOOption) document {
 
 	tableName := _document.documentDo.TableName()
 	_document.ALL = field.NewAsterisk(tableName)
-	_document.ID = field.NewUint(tableName, "id")
+	_document.ID = field.NewInt32(tableName, "id")
 	_document.CreatedAt = field.NewTime(tableName, "created_at")
 	_document.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_document.DeletedAt = field.NewField(tableName, "deleted_at")
 	_document.Type = field.NewString(tableName, "content_type")
 	_document.Title = field.NewString(tableName, "title")
 	_document.Content = field.NewString(tableName, "content")
-	_document.Creator = field.NewString(tableName, "creator")
+	_document.CreatorID = field.NewInt32(tableName, "creator")
 	_document.CreatorJob = field.NewString(tableName, "creator_job")
 	_document.Public = field.NewBool(tableName, "public")
 	_document.ResponseID = field.NewUint(tableName, "response_id")
@@ -91,14 +91,14 @@ type document struct {
 	documentDo
 
 	ALL        field.Asterisk
-	ID         field.Uint
+	ID         field.Int32
 	CreatedAt  field.Time
 	UpdatedAt  field.Time
 	DeletedAt  field.Field
 	Type       field.String
 	Title      field.String
 	Content    field.String
-	Creator    field.String
+	CreatorID  field.Int32
 	CreatorJob field.String
 	Public     field.Bool
 	ResponseID field.Uint
@@ -125,14 +125,14 @@ func (d document) As(alias string) *document {
 
 func (d *document) updateTableName(table string) *document {
 	d.ALL = field.NewAsterisk(table)
-	d.ID = field.NewUint(table, "id")
+	d.ID = field.NewInt32(table, "id")
 	d.CreatedAt = field.NewTime(table, "created_at")
 	d.UpdatedAt = field.NewTime(table, "updated_at")
 	d.DeletedAt = field.NewField(table, "deleted_at")
 	d.Type = field.NewString(table, "content_type")
 	d.Title = field.NewString(table, "title")
 	d.Content = field.NewString(table, "content")
-	d.Creator = field.NewString(table, "creator")
+	d.CreatorID = field.NewInt32(table, "creator")
 	d.CreatorJob = field.NewString(table, "creator_job")
 	d.Public = field.NewBool(table, "public")
 	d.ResponseID = field.NewUint(table, "response_id")
@@ -160,7 +160,7 @@ func (d *document) fillFieldMap() {
 	d.fieldMap["content_type"] = d.Type
 	d.fieldMap["title"] = d.Title
 	d.fieldMap["content"] = d.Content
-	d.fieldMap["creator"] = d.Creator
+	d.fieldMap["creator"] = d.CreatorID
 	d.fieldMap["creator_job"] = d.CreatorJob
 	d.fieldMap["public"] = d.Public
 	d.fieldMap["response_id"] = d.ResponseID

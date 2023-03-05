@@ -3,8 +3,8 @@ import * as jspb from 'google-protobuf'
 
 
 export class Character extends jspb.Message {
-  getId(): number;
-  setId(value: number): Character;
+  getUserid(): number;
+  setUserid(value: number): Character;
 
   getIdentifier(): string;
   setIdentifier(value: string): Character;
@@ -56,7 +56,7 @@ export class Character extends jspb.Message {
 
 export namespace Character {
   export type AsObject = {
-    id: number,
+    userid: number,
     identifier: string,
     job: string,
     jobgrade: number,
@@ -105,6 +105,44 @@ export class Props extends jspb.Message {
 export namespace Props {
   export type AsObject = {
     wanted: boolean,
+  }
+}
+
+export class ShortCharacter extends jspb.Message {
+  getUserid(): number;
+  setUserid(value: number): ShortCharacter;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): ShortCharacter;
+
+  getJob(): string;
+  setJob(value: string): ShortCharacter;
+
+  getJobgrade(): number;
+  setJobgrade(value: number): ShortCharacter;
+
+  getFirstname(): string;
+  setFirstname(value: string): ShortCharacter;
+
+  getLastname(): string;
+  setLastname(value: string): ShortCharacter;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ShortCharacter.AsObject;
+  static toObject(includeInstance: boolean, msg: ShortCharacter): ShortCharacter.AsObject;
+  static serializeBinaryToWriter(message: ShortCharacter, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ShortCharacter;
+  static deserializeBinaryFromReader(message: ShortCharacter, reader: jspb.BinaryReader): ShortCharacter;
+}
+
+export namespace ShortCharacter {
+  export type AsObject = {
+    userid: number,
+    identifier: string,
+    job: string,
+    jobgrade: number,
+    firstname: string,
+    lastname: string,
   }
 }
 

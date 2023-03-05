@@ -28,7 +28,7 @@ export default defineComponent({
         ...mapState({
             accessToken: 'accessToken',
             activeChar: 'activeChar',
-            activeCharIdentifier: 'activeCharIdentifier',
+            activeCharID: 'activeCharID',
         }),
     },
     data() {

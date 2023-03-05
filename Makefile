@@ -4,7 +4,6 @@
 clean:
 	rm -rf ./dist/ ./public/tiles/*/
 	rm -rf gdal2tiles-leaflet
-	rm -rf model/*.gen.go query/*.gen.go
 
 .PHONY: watch
 watch:

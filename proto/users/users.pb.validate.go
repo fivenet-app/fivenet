@@ -339,9 +339,16 @@ func (m *GetUserRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Identifier
-
-	// no validation rules for DbID
+	if m.GetUserID() <= 0 {
+		err := GetUserRequestValidationError{
+			field:  "UserID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetUserRequestMultiError(errors)
@@ -572,7 +579,16 @@ func (m *SetUserPropsRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Identifier
+	if m.GetUserID() <= 0 {
+		err := SetUserPropsRequestValidationError{
+			field:  "UserID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.Wanted != nil {
 		// no validation rules for Wanted
@@ -782,6 +798,17 @@ func (m *GetUserActivityRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetUserID() <= 0 {
+		err := GetUserActivityRequestValidationError{
+			field:  "UserID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return GetUserActivityRequestMultiError(errors)
 	}
@@ -884,6 +911,40 @@ func (m *GetUserActivityResponse) validate(all bool) error {
 
 	var errors []error
 
+	for idx, item := range m.GetActivity() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetUserActivityResponseValidationError{
+						field:  fmt.Sprintf("Activity[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetUserActivityResponseValidationError{
+						field:  fmt.Sprintf("Activity[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetUserActivityResponseValidationError{
+					field:  fmt.Sprintf("Activity[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return GetUserActivityResponseMultiError(errors)
 	}
@@ -963,3 +1024,210 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetUserActivityResponseValidationError{}
+
+// Validate checks the field values on UserActivity with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserActivity) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserActivity with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserActivityMultiError, or
+// nil if none found.
+func (m *UserActivity) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserActivity) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetUserID() <= 0 {
+		err := UserActivityValidationError{
+			field:  "UserID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Type
+
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserActivityValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserActivityValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserActivityValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetTargetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserActivityValidationError{
+					field:  "TargetUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserActivityValidationError{
+					field:  "TargetUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTargetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserActivityValidationError{
+				field:  "TargetUser",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetCauseUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserActivityValidationError{
+					field:  "CauseUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserActivityValidationError{
+					field:  "CauseUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCauseUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserActivityValidationError{
+				field:  "CauseUser",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Key
+
+	// no validation rules for OldValue
+
+	// no validation rules for NewValue
+
+	// no validation rules for Reason
+
+	if len(errors) > 0 {
+		return UserActivityMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserActivityMultiError is an error wrapping multiple validation errors
+// returned by UserActivity.ValidateAll() if the designated constraints aren't met.
+type UserActivityMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserActivityMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserActivityMultiError) AllErrors() []error { return m }
+
+// UserActivityValidationError is the validation error returned by
+// UserActivity.Validate if the designated constraints aren't met.
+type UserActivityValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserActivityValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserActivityValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserActivityValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserActivityValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserActivityValidationError) ErrorName() string { return "UserActivityValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserActivityValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserActivity.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserActivityValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserActivityValidationError{}

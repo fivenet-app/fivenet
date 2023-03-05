@@ -49,7 +49,9 @@ func main() {
 	vpcLSModel := g.GenerateModel("vpcLS",
 		gen.FieldRename("NET", "net"),
 		gen.FieldJSONTag("coordsx", "coords_x"),
+		gen.FieldType("coordsx", "float32"),
 		gen.FieldJSONTag("coordsy", "coords_y"),
+		gen.FieldType("coordsy", "float32"),
 	)
 
 	userLicenses := g.GenerateModel("user_licenses",
@@ -75,25 +77,15 @@ func main() {
 		// Add relations for lazy loading
 		gen.FieldRelateModel(field.HasOne, "UserProps", model.UserProps{},
 			&field.RelateConfig{
-				GORMTag: "foreignkey:Identifier",
+				GORMTag: "foreignKey:ID;references:UserID",
 			}),
 		gen.FieldRelate(field.HasMany, "UserLicenses", userLicenses,
 			&field.RelateConfig{
-				GORMTag: "foreignkey:Owner",
+				GORMTag: "foreignKey:Owner;references:Identifier",
 			}),
 		gen.FieldRelateModel(field.HasMany, "Documents", model.Document{},
 			&field.RelateConfig{
-				GORMTag: "foreignkey:Creator",
-			}),
-
-		// Activity
-		gen.FieldRelateModel(field.HasMany, "UserActivity", model.UserActivity{},
-			&field.RelateConfig{
-				GORMTag: "foreignkey:Identifier",
-			}),
-		gen.FieldRelateModel(field.HasMany, "CausedActivity", model.UserActivity{},
-			&field.RelateConfig{
-				GORMTag: "foreignkey:CauseIdentifier",
+				GORMTag: "foreignKey:CreatorID;references:ID",
 			}),
 
 		// User Roles + Permissions for Permify

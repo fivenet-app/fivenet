@@ -27,7 +27,8 @@ func newUserProps(db *gorm.DB, opts ...gen.DOOption) userProps {
 
 	tableName := _userProps.userPropsDo.TableName()
 	_userProps.ALL = field.NewAsterisk(tableName)
-	_userProps.Identifier = field.NewString(tableName, "identifier")
+	_userProps.ID = field.NewUint(tableName, "id")
+	_userProps.UserID = field.NewInt32(tableName, "user_id")
 	_userProps.Wanted = field.NewBool(tableName, "wanted")
 
 	_userProps.fillFieldMap()
@@ -38,9 +39,10 @@ func newUserProps(db *gorm.DB, opts ...gen.DOOption) userProps {
 type userProps struct {
 	userPropsDo
 
-	ALL        field.Asterisk
-	Identifier field.String
-	Wanted     field.Bool
+	ALL    field.Asterisk
+	ID     field.Uint
+	UserID field.Int32
+	Wanted field.Bool
 
 	fieldMap map[string]field.Expr
 }
@@ -57,7 +59,8 @@ func (u userProps) As(alias string) *userProps {
 
 func (u *userProps) updateTableName(table string) *userProps {
 	u.ALL = field.NewAsterisk(table)
-	u.Identifier = field.NewString(table, "identifier")
+	u.ID = field.NewUint(table, "id")
+	u.UserID = field.NewInt32(table, "user_id")
 	u.Wanted = field.NewBool(table, "wanted")
 
 	u.fillFieldMap()
@@ -75,8 +78,9 @@ func (u *userProps) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *userProps) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 2)
-	u.fieldMap["identifier"] = u.Identifier
+	u.fieldMap = make(map[string]field.Expr, 3)
+	u.fieldMap["id"] = u.ID
+	u.fieldMap["user_id"] = u.UserID
 	u.fieldMap["wanted"] = u.Wanted
 }
 

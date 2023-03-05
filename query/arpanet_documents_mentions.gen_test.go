@@ -17,45 +17,45 @@ import (
 
 func init() {
 	InitializeDB()
-	err := db.AutoMigrate(&model.UserActivity{})
+	err := db.AutoMigrate(&model.DocumentMentions{})
 	if err != nil {
-		fmt.Printf("Error: AutoMigrate(&model.UserActivity{}) fail: %s", err)
+		fmt.Printf("Error: AutoMigrate(&model.DocumentMentions{}) fail: %s", err)
 	}
 }
 
-func Test_userActivityQuery(t *testing.T) {
-	userActivity := newUserActivity(db)
-	userActivity = *userActivity.As(userActivity.TableName())
-	_do := userActivity.WithContext(context.Background()).Debug()
+func Test_documentMentionsQuery(t *testing.T) {
+	documentMentions := newDocumentMentions(db)
+	documentMentions = *documentMentions.As(documentMentions.TableName())
+	_do := documentMentions.WithContext(context.Background()).Debug()
 
-	primaryKey := field.NewString(userActivity.TableName(), clause.PrimaryKey)
+	primaryKey := field.NewString(documentMentions.TableName(), clause.PrimaryKey)
 	_, err := _do.Unscoped().Where(primaryKey.IsNotNull()).Delete()
 	if err != nil {
 		t.Error("clean table <arpanet_documents_mentions> fail:", err)
 		return
 	}
 
-	_, ok := userActivity.GetFieldByName("")
+	_, ok := documentMentions.GetFieldByName("")
 	if ok {
-		t.Error("GetFieldByName(\"\") from userActivity success")
+		t.Error("GetFieldByName(\"\") from documentMentions success")
 	}
 
-	err = _do.Create(&model.UserActivity{})
+	err = _do.Create(&model.DocumentMentions{})
 	if err != nil {
 		t.Error("create item in table <arpanet_documents_mentions> fail:", err)
 	}
 
-	err = _do.Save(&model.UserActivity{})
+	err = _do.Save(&model.DocumentMentions{})
 	if err != nil {
 		t.Error("create item in table <arpanet_documents_mentions> fail:", err)
 	}
 
-	err = _do.CreateInBatches([]*model.UserActivity{{}, {}}, 10)
+	err = _do.CreateInBatches([]*model.DocumentMentions{{}, {}}, 10)
 	if err != nil {
 		t.Error("create item in table <arpanet_documents_mentions> fail:", err)
 	}
 
-	_, err = _do.Select(userActivity.ALL).Take()
+	_, err = _do.Select(documentMentions.ALL).Take()
 	if err != nil {
 		t.Error("Take() on table <arpanet_documents_mentions> fail:", err)
 	}
@@ -75,12 +75,12 @@ func Test_userActivityQuery(t *testing.T) {
 		t.Error("FindInBatch() on table <arpanet_documents_mentions> fail:", err)
 	}
 
-	err = _do.Where(primaryKey.IsNotNull()).FindInBatches(&[]*model.UserActivity{}, 10, func(tx gen.Dao, batch int) error { return nil })
+	err = _do.Where(primaryKey.IsNotNull()).FindInBatches(&[]*model.DocumentMentions{}, 10, func(tx gen.Dao, batch int) error { return nil })
 	if err != nil {
 		t.Error("FindInBatches() on table <arpanet_documents_mentions> fail:", err)
 	}
 
-	_, err = _do.Select(userActivity.ALL).Where(primaryKey.IsNotNull()).Order(primaryKey.Desc()).Find()
+	_, err = _do.Select(documentMentions.ALL).Where(primaryKey.IsNotNull()).Order(primaryKey.Desc()).Find()
 	if err != nil {
 		t.Error("Find() on table <arpanet_documents_mentions> fail:", err)
 	}
@@ -90,7 +90,7 @@ func Test_userActivityQuery(t *testing.T) {
 		t.Error("select Distinct() on table <arpanet_documents_mentions> fail:", err)
 	}
 
-	_, err = _do.Select(userActivity.ALL).Omit(primaryKey).Take()
+	_, err = _do.Select(documentMentions.ALL).Omit(primaryKey).Take()
 	if err != nil {
 		t.Error("Omit() on table <arpanet_documents_mentions> fail:", err)
 	}
@@ -110,7 +110,7 @@ func Test_userActivityQuery(t *testing.T) {
 		t.Error("FindByPage() on table <arpanet_documents_mentions> fail:", err)
 	}
 
-	_, err = _do.ScanByPage(&model.UserActivity{}, 0, 1)
+	_, err = _do.ScanByPage(&model.DocumentMentions{}, 0, 1)
 	if err != nil {
 		t.Error("ScanByPage() on table <arpanet_documents_mentions> fail:", err)
 	}

@@ -782,7 +782,7 @@ proto.gen.auth.ChooseCharacterRequest.prototype.toObject = function(opt_includeI
  */
 proto.gen.auth.ChooseCharacterRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    identifier: jspb.Message.getFieldWithDefault(msg, 1, "")
+    userid: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -820,8 +820,8 @@ proto.gen.auth.ChooseCharacterRequest.deserializeBinaryFromReader = function(msg
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setIdentifier(value);
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setUserid(value);
       break;
     default:
       reader.skipField();
@@ -852,9 +852,9 @@ proto.gen.auth.ChooseCharacterRequest.prototype.serializeBinary = function() {
  */
 proto.gen.auth.ChooseCharacterRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getIdentifier();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getUserid();
+  if (f !== 0) {
+    writer.writeUint64(
       1,
       f
     );
@@ -863,20 +863,20 @@ proto.gen.auth.ChooseCharacterRequest.serializeBinaryToWriter = function(message
 
 
 /**
- * optional string identifier = 1;
- * @return {string}
+ * optional uint64 userID = 1;
+ * @return {number}
  */
-proto.gen.auth.ChooseCharacterRequest.prototype.getIdentifier = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+proto.gen.auth.ChooseCharacterRequest.prototype.getUserid = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
 /**
- * @param {string} value
+ * @param {number} value
  * @return {!proto.gen.auth.ChooseCharacterRequest} returns this
  */
-proto.gen.auth.ChooseCharacterRequest.prototype.setIdentifier = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
+proto.gen.auth.ChooseCharacterRequest.prototype.setUserid = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 

@@ -12,7 +12,7 @@ message FindDocumentsResponse {
 }
 
 message GetDocumentRequest {
-    int64 id = 1;
+    uint64 id = 1;
 }
 
 message GetDocumentResponse {

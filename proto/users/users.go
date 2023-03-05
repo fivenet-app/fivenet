@@ -13,6 +13,7 @@ import (
 	"github.com/galexrt/arpanet/query"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm/clause"
 	"gorm.io/hints"
 )
@@ -22,6 +23,7 @@ func init() {
 		{Key: "users", Name: "View"},
 		{Key: "users", Name: "FindUsers", Fields: []string{"Licenses", "UserProps"}},
 		{Key: "users", Name: "SetUserProps", Fields: []string{"Wanted"}},
+		{Key: "users", Name: "GetUserActivityRequest", Fields: []string{"CauseUser", ""}},
 	})
 }
 
@@ -107,14 +109,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	if !auth.CanUser(user, "users.SetUserProps") {
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user properties!")
 	}
-
-	if !auth.CanUserAccessField(user, "users.SetUserProps", "Fields") {
+	if !auth.CanUserAccessField(user, "users.SetUserProps", "Wanted") {
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set an user wanted!")
 	}
 
 	userProps := &model.UserProps{
-		Identifier: req.Identifier,
-		Wanted:     req.Wanted,
+		UserID: int32(req.UserID),
+		Wanted: req.Wanted,
 	}
 
 	ups := query.UserProps
@@ -125,5 +126,34 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	resp := &SetUserPropsResponse{}
+	return resp, nil
+}
+
+func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityRequest) (*GetUserActivityResponse, error) {
+	ua := query.UserActivity
+	activities, err := ua.Where(ua.TargetUserID.Eq(0)).Limit(10).Find()
+	if err != nil {
+		return nil, err
+	}
+
+	protoActivity := make([]*UserActivity, len(activities))
+	for k := 0; k < len(activities); k++ {
+		protoActivity[k] = &UserActivity{
+			UserID:    uint64(activities[k].ID),
+			CreatedAt: timestamppb.New(activities[k].CreatedAt),
+			TargetUser: &common.ShortCharacter{
+				UserID: 0,
+			},
+			CauseUser: &common.ShortCharacter{},
+			Key:       activities[k].Key,
+			OldValue:  activities[k].OldValue,
+			NewValue:  activities[k].NewValue,
+			Reason:    activities[k].Reason,
+		}
+	}
+
+	resp := &GetUserActivityResponse{
+		Activity: protoActivity,
+	}
 	return resp, nil
 }

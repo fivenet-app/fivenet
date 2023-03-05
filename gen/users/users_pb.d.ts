@@ -2,6 +2,7 @@ import * as jspb from 'google-protobuf'
 
 import * as common_character_pb from '../common/character_pb';
 import * as common_database_pb from '../common/database_pb';
+import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
 
 export class FindUsersRequest extends jspb.Message {
@@ -69,11 +70,8 @@ export namespace FindUsersResponse {
 }
 
 export class GetUserRequest extends jspb.Message {
-  getIdentifier(): string;
-  setIdentifier(value: string): GetUserRequest;
-
-  getDbid(): string;
-  setDbid(value: string): GetUserRequest;
+  getUserid(): number;
+  setUserid(value: number): GetUserRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetUserRequest.AsObject;
@@ -85,8 +83,7 @@ export class GetUserRequest extends jspb.Message {
 
 export namespace GetUserRequest {
   export type AsObject = {
-    identifier: string,
-    dbid: string,
+    userid: number,
   }
 }
 
@@ -111,8 +108,8 @@ export namespace GetUserResponse {
 }
 
 export class SetUserPropsRequest extends jspb.Message {
-  getIdentifier(): string;
-  setIdentifier(value: string): SetUserPropsRequest;
+  getUserid(): number;
+  setUserid(value: number): SetUserPropsRequest;
 
   getWanted(): boolean;
   setWanted(value: boolean): SetUserPropsRequest;
@@ -129,7 +126,7 @@ export class SetUserPropsRequest extends jspb.Message {
 
 export namespace SetUserPropsRequest {
   export type AsObject = {
-    identifier: string,
+    userid: number,
     wanted?: boolean,
   }
 
@@ -154,6 +151,9 @@ export namespace SetUserPropsResponse {
 }
 
 export class GetUserActivityRequest extends jspb.Message {
+  getUserid(): number;
+  setUserid(value: number): GetUserActivityRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetUserActivityRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetUserActivityRequest): GetUserActivityRequest.AsObject;
@@ -164,10 +164,16 @@ export class GetUserActivityRequest extends jspb.Message {
 
 export namespace GetUserActivityRequest {
   export type AsObject = {
+    userid: number,
   }
 }
 
 export class GetUserActivityResponse extends jspb.Message {
+  getActivityList(): Array<UserActivity>;
+  setActivityList(value: Array<UserActivity>): GetUserActivityResponse;
+  clearActivityList(): GetUserActivityResponse;
+  addActivity(value?: UserActivity, index?: number): UserActivity;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetUserActivityResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetUserActivityResponse): GetUserActivityResponse.AsObject;
@@ -178,6 +184,63 @@ export class GetUserActivityResponse extends jspb.Message {
 
 export namespace GetUserActivityResponse {
   export type AsObject = {
+    activityList: Array<UserActivity.AsObject>,
+  }
+}
+
+export class UserActivity extends jspb.Message {
+  getUserid(): number;
+  setUserid(value: number): UserActivity;
+
+  getType(): string;
+  setType(value: string): UserActivity;
+
+  getCreatedat(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setCreatedat(value?: google_protobuf_timestamp_pb.Timestamp): UserActivity;
+  hasCreatedat(): boolean;
+  clearCreatedat(): UserActivity;
+
+  getTargetuser(): common_character_pb.ShortCharacter | undefined;
+  setTargetuser(value?: common_character_pb.ShortCharacter): UserActivity;
+  hasTargetuser(): boolean;
+  clearTargetuser(): UserActivity;
+
+  getCauseuser(): common_character_pb.ShortCharacter | undefined;
+  setCauseuser(value?: common_character_pb.ShortCharacter): UserActivity;
+  hasCauseuser(): boolean;
+  clearCauseuser(): UserActivity;
+
+  getKey(): string;
+  setKey(value: string): UserActivity;
+
+  getOldvalue(): string;
+  setOldvalue(value: string): UserActivity;
+
+  getNewvalue(): string;
+  setNewvalue(value: string): UserActivity;
+
+  getReason(): string;
+  setReason(value: string): UserActivity;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserActivity.AsObject;
+  static toObject(includeInstance: boolean, msg: UserActivity): UserActivity.AsObject;
+  static serializeBinaryToWriter(message: UserActivity, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserActivity;
+  static deserializeBinaryFromReader(message: UserActivity, reader: jspb.BinaryReader): UserActivity;
+}
+
+export namespace UserActivity {
+  export type AsObject = {
+    userid: number,
+    type: string,
+    createdat?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    targetuser?: common_character_pb.ShortCharacter.AsObject,
+    causeuser?: common_character_pb.ShortCharacter.AsObject,
+    key: string,
+    oldvalue: string,
+    newvalue: string,
+    reason: string,
   }
 }
 

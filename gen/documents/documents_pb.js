@@ -447,7 +447,7 @@ proto.gen.documents.GetDocumentRequest.deserializeBinaryFromReader = function(ms
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readUint64());
       msg.setId(value);
       break;
     default:
@@ -481,7 +481,7 @@ proto.gen.documents.GetDocumentRequest.serializeBinaryToWriter = function(messag
   var f = undefined;
   f = message.getId();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeUint64(
       1,
       f
     );
@@ -490,7 +490,7 @@ proto.gen.documents.GetDocumentRequest.serializeBinaryToWriter = function(messag
 
 
 /**
- * optional int64 id = 1;
+ * optional uint64 id = 1;
  * @return {number}
  */
 proto.gen.documents.GetDocumentRequest.prototype.getId = function() {

@@ -4,6 +4,14 @@ import { defineComponent } from 'vue';
 import CitizenInfoSlideOver from './CitizenInfoSlideOver.vue';
 
 export default defineComponent({
+    components: {
+        CitizenInfoSlideOver,
+    },
+    data() {
+        return {
+            'open': false,
+        };
+    },
     methods: {
         toTitleCase(value: string) {
             return value.replace(/(?:^|\s|-)\S/g, x => x.toUpperCase());
@@ -13,26 +21,20 @@ export default defineComponent({
         },
     },
     props: {
-        "user": {
+        'user': {
             required: true,
             type: Character,
         },
-    },
-    data() {
-        return {
-            'open': false,
-        };
-    },
-    components: {
-        CitizenInfoSlideOver,
     },
 });
 </script>
 
 <template>
-    <tr :key="user.getIdentifier()">
+    <tr :key="user.getUserid()">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
             {{ user.getFirstname() }}, {{ user.getLastname() }}
+            <span v-if="user.getProps()?.getWanted()"
+                class="inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">WANTED</span>
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
             {{ toTitleCase(user.getJob()) }}

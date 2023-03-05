@@ -57,7 +57,16 @@ func (m *Character) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if m.GetUserID() <= 0 {
+		err := CharacterValidationError{
+			field:  "UserID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Identifier
 
@@ -418,3 +427,124 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PropsValidationError{}
+
+// Validate checks the field values on ShortCharacter with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ShortCharacter) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ShortCharacter with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ShortCharacterMultiError,
+// or nil if none found.
+func (m *ShortCharacter) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ShortCharacter) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetUserID() <= 0 {
+		err := ShortCharacterValidationError{
+			field:  "UserID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Identifier
+
+	// no validation rules for Job
+
+	// no validation rules for JobGrade
+
+	// no validation rules for Firstname
+
+	// no validation rules for Lastname
+
+	if len(errors) > 0 {
+		return ShortCharacterMultiError(errors)
+	}
+
+	return nil
+}
+
+// ShortCharacterMultiError is an error wrapping multiple validation errors
+// returned by ShortCharacter.ValidateAll() if the designated constraints
+// aren't met.
+type ShortCharacterMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ShortCharacterMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ShortCharacterMultiError) AllErrors() []error { return m }
+
+// ShortCharacterValidationError is the validation error returned by
+// ShortCharacter.Validate if the designated constraints aren't met.
+type ShortCharacterValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ShortCharacterValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ShortCharacterValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ShortCharacterValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ShortCharacterValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ShortCharacterValidationError) ErrorName() string { return "ShortCharacterValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ShortCharacterValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sShortCharacter.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ShortCharacterValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ShortCharacterValidationError{}
