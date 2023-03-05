@@ -49,8 +49,74 @@ func newDocument(db *gorm.DB, opts ...gen.DOOption) document {
 		},
 		Mentions: struct {
 			field.RelationField
+			Users struct {
+				field.RelationField
+				UserLicenses struct {
+					field.RelationField
+				}
+				Documents struct {
+					field.RelationField
+				}
+				Roles struct {
+					field.RelationField
+					Permissions struct {
+						field.RelationField
+					}
+				}
+				Permissions struct {
+					field.RelationField
+				}
+			}
 		}{
 			RelationField: field.NewRelation("Responses.Mentions", "model.DocumentMentions"),
+			Users: struct {
+				field.RelationField
+				UserLicenses struct {
+					field.RelationField
+				}
+				Documents struct {
+					field.RelationField
+				}
+				Roles struct {
+					field.RelationField
+					Permissions struct {
+						field.RelationField
+					}
+				}
+				Permissions struct {
+					field.RelationField
+				}
+			}{
+				RelationField: field.NewRelation("Responses.Mentions.Users", "model.User"),
+				UserLicenses: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Responses.Mentions.Users.UserLicenses", "model.UserLicense"),
+				},
+				Documents: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Responses.Mentions.Users.Documents", "model.Document"),
+				},
+				Roles: struct {
+					field.RelationField
+					Permissions struct {
+						field.RelationField
+					}
+				}{
+					RelationField: field.NewRelation("Responses.Mentions.Users.Roles", "models.Role"),
+					Permissions: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Responses.Mentions.Users.Roles.Permissions", "models.Permission"),
+					},
+				},
+				Permissions: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Responses.Mentions.Users.Permissions", "models.Permission"),
+				},
+			},
 		},
 		JobAccess: struct {
 			field.RelationField
@@ -187,6 +253,24 @@ type documentHasManyResponses struct {
 	}
 	Mentions struct {
 		field.RelationField
+		Users struct {
+			field.RelationField
+			UserLicenses struct {
+				field.RelationField
+			}
+			Documents struct {
+				field.RelationField
+			}
+			Roles struct {
+				field.RelationField
+				Permissions struct {
+					field.RelationField
+				}
+			}
+			Permissions struct {
+				field.RelationField
+			}
+		}
 	}
 	JobAccess struct {
 		field.RelationField

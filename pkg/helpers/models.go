@@ -14,9 +14,9 @@ func ConvertModelUserToCommonCharacter(user *model.User) *common.Character {
 	}
 
 	wanted := false
-	if user.UserProps.Wanted != nil {
+	/*if user.UserProps.Wanted != nil {
 		wanted = *user.UserProps.Wanted
-	}
+	}*/
 
 	return &common.Character{
 		UserID:      uint64(user.ID),

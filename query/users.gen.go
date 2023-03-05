@@ -45,12 +45,6 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.Playtime = field.NewInt32(tableName, "playtime")
 	_user.CreatedAt = field.NewTime(tableName, "created_at")
 	_user.UpdatedAt = field.NewTime(tableName, "last_seen")
-	_user.UserProps = userHasOneUserProps{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("UserProps", "model.UserProps"),
-	}
-
 	_user.UserLicenses = userHasManyUserLicenses{
 		db: db.Session(&gorm.Session{}),
 
@@ -68,6 +62,24 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 			}
 			Mentions struct {
 				field.RelationField
+				Users struct {
+					field.RelationField
+					UserLicenses struct {
+						field.RelationField
+					}
+					Documents struct {
+						field.RelationField
+					}
+					Roles struct {
+						field.RelationField
+						Permissions struct {
+							field.RelationField
+						}
+					}
+					Permissions struct {
+						field.RelationField
+					}
+				}
 			}
 			JobAccess struct {
 				field.RelationField
@@ -84,8 +96,74 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 			},
 			Mentions: struct {
 				field.RelationField
+				Users struct {
+					field.RelationField
+					UserLicenses struct {
+						field.RelationField
+					}
+					Documents struct {
+						field.RelationField
+					}
+					Roles struct {
+						field.RelationField
+						Permissions struct {
+							field.RelationField
+						}
+					}
+					Permissions struct {
+						field.RelationField
+					}
+				}
 			}{
 				RelationField: field.NewRelation("Documents.Responses.Mentions", "model.DocumentMentions"),
+				Users: struct {
+					field.RelationField
+					UserLicenses struct {
+						field.RelationField
+					}
+					Documents struct {
+						field.RelationField
+					}
+					Roles struct {
+						field.RelationField
+						Permissions struct {
+							field.RelationField
+						}
+					}
+					Permissions struct {
+						field.RelationField
+					}
+				}{
+					RelationField: field.NewRelation("Documents.Responses.Mentions.Users", "model.User"),
+					UserLicenses: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Documents.Responses.Mentions.Users.UserLicenses", "model.UserLicense"),
+					},
+					Documents: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Documents.Responses.Mentions.Users.Documents", "model.Document"),
+					},
+					Roles: struct {
+						field.RelationField
+						Permissions struct {
+							field.RelationField
+						}
+					}{
+						RelationField: field.NewRelation("Documents.Responses.Mentions.Users.Roles", "models.Role"),
+						Permissions: struct {
+							field.RelationField
+						}{
+							RelationField: field.NewRelation("Documents.Responses.Mentions.Users.Roles.Permissions", "models.Permission"),
+						},
+					},
+					Permissions: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Documents.Responses.Mentions.Users.Permissions", "models.Permission"),
+					},
+				},
 			},
 			JobAccess: struct {
 				field.RelationField
@@ -115,18 +193,6 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 		},
 	}
 
-	_user.TargetActivity = userHasManyTargetActivity{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("TargetActivity", "model.UserActivity"),
-	}
-
-	_user.CauseActivity = userHasManyCauseActivity{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("CauseActivity", "model.UserActivity"),
-	}
-
 	_user.Roles = userManyToManyRoles{
 		db: db.Session(&gorm.Session{}),
 
@@ -152,33 +218,27 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 type user struct {
 	userDo
 
-	ALL         field.Asterisk
-	ID          field.Int32
-	Identifier  field.String
-	Job         field.String
-	JobGrade    field.Int
-	Firstname   field.String
-	Lastname    field.String
-	Dateofbirth field.String
-	Sex         field.Field
-	Height      field.String
-	Jail        field.Int32
-	PhoneNumber field.String
-	Accounts    field.Field
-	Disabled    field.Bool
-	Visum       field.Int32
-	Playtime    field.Int32
-	CreatedAt   field.Time
-	UpdatedAt   field.Time
-	UserProps   userHasOneUserProps
-
+	ALL          field.Asterisk
+	ID           field.Int32
+	Identifier   field.String
+	Job          field.String
+	JobGrade     field.Int
+	Firstname    field.String
+	Lastname     field.String
+	Dateofbirth  field.String
+	Sex          field.Field
+	Height       field.String
+	Jail         field.Int32
+	PhoneNumber  field.String
+	Accounts     field.Field
+	Disabled     field.Bool
+	Visum        field.Int32
+	Playtime     field.Int32
+	CreatedAt    field.Time
+	UpdatedAt    field.Time
 	UserLicenses userHasManyUserLicenses
 
 	Documents userHasManyDocuments
-
-	TargetActivity userHasManyTargetActivity
-
-	CauseActivity userHasManyCauseActivity
 
 	Roles userManyToManyRoles
 
@@ -232,7 +292,7 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 24)
+	u.fieldMap = make(map[string]field.Expr, 21)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["identifier"] = u.Identifier
 	u.fieldMap["job"] = u.Job
@@ -261,72 +321,6 @@ func (u user) clone(db *gorm.DB) user {
 func (u user) replaceDB(db *gorm.DB) user {
 	u.userDo.ReplaceDB(db)
 	return u
-}
-
-type userHasOneUserProps struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a userHasOneUserProps) Where(conds ...field.Expr) *userHasOneUserProps {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a userHasOneUserProps) WithContext(ctx context.Context) *userHasOneUserProps {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a userHasOneUserProps) Model(m *model.User) *userHasOneUserPropsTx {
-	return &userHasOneUserPropsTx{a.db.Model(m).Association(a.Name())}
-}
-
-type userHasOneUserPropsTx struct{ tx *gorm.Association }
-
-func (a userHasOneUserPropsTx) Find() (result *model.UserProps, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a userHasOneUserPropsTx) Append(values ...*model.UserProps) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a userHasOneUserPropsTx) Replace(values ...*model.UserProps) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a userHasOneUserPropsTx) Delete(values ...*model.UserProps) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a userHasOneUserPropsTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a userHasOneUserPropsTx) Count() int64 {
-	return a.tx.Count()
 }
 
 type userHasManyUserLicenses struct {
@@ -407,6 +401,24 @@ type userHasManyDocuments struct {
 		}
 		Mentions struct {
 			field.RelationField
+			Users struct {
+				field.RelationField
+				UserLicenses struct {
+					field.RelationField
+				}
+				Documents struct {
+					field.RelationField
+				}
+				Roles struct {
+					field.RelationField
+					Permissions struct {
+						field.RelationField
+					}
+				}
+				Permissions struct {
+					field.RelationField
+				}
+			}
 		}
 		JobAccess struct {
 			field.RelationField
@@ -483,138 +495,6 @@ func (a userHasManyDocumentsTx) Clear() error {
 }
 
 func (a userHasManyDocumentsTx) Count() int64 {
-	return a.tx.Count()
-}
-
-type userHasManyTargetActivity struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a userHasManyTargetActivity) Where(conds ...field.Expr) *userHasManyTargetActivity {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a userHasManyTargetActivity) WithContext(ctx context.Context) *userHasManyTargetActivity {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a userHasManyTargetActivity) Model(m *model.User) *userHasManyTargetActivityTx {
-	return &userHasManyTargetActivityTx{a.db.Model(m).Association(a.Name())}
-}
-
-type userHasManyTargetActivityTx struct{ tx *gorm.Association }
-
-func (a userHasManyTargetActivityTx) Find() (result []*model.UserActivity, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a userHasManyTargetActivityTx) Append(values ...*model.UserActivity) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a userHasManyTargetActivityTx) Replace(values ...*model.UserActivity) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a userHasManyTargetActivityTx) Delete(values ...*model.UserActivity) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a userHasManyTargetActivityTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a userHasManyTargetActivityTx) Count() int64 {
-	return a.tx.Count()
-}
-
-type userHasManyCauseActivity struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a userHasManyCauseActivity) Where(conds ...field.Expr) *userHasManyCauseActivity {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a userHasManyCauseActivity) WithContext(ctx context.Context) *userHasManyCauseActivity {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a userHasManyCauseActivity) Model(m *model.User) *userHasManyCauseActivityTx {
-	return &userHasManyCauseActivityTx{a.db.Model(m).Association(a.Name())}
-}
-
-type userHasManyCauseActivityTx struct{ tx *gorm.Association }
-
-func (a userHasManyCauseActivityTx) Find() (result []*model.UserActivity, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a userHasManyCauseActivityTx) Append(values ...*model.UserActivity) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a userHasManyCauseActivityTx) Replace(values ...*model.UserActivity) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a userHasManyCauseActivityTx) Delete(values ...*model.UserActivity) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a userHasManyCauseActivityTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a userHasManyCauseActivityTx) Count() int64 {
 	return a.tx.Count()
 }
 

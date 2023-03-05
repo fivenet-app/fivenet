@@ -12,6 +12,7 @@ const (
 
 const TableNameUserActivity = "arpanet_user_activity"
 
+// TODO Create a second table that is used to map the user IDs to the UserActivity entries?
 type UserActivity struct {
 	ID        uint      `gorm:"primarykey" json:"id"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`

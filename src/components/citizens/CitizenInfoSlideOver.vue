@@ -20,23 +20,25 @@ import { RpcError } from 'grpc-web';
 import config from '../../config';
 import { clientAuthOptions, handleGRPCError } from '../../grpc';
 import { SetUserPropsRequest } from '@arpanet/gen/users/users_pb';
+import CharSexBadge from '../misc/CharSexBadge.vue';
 
 export default defineComponent({
     components: {
-        Dialog,
-        DialogPanel,
-        DialogTitle,
-        Menu,
-        MenuButton,
-        MenuItem,
-        MenuItems,
-        TransitionChild,
-        TransitionRoot,
-        XMarkIcon,
-        EllipsisVerticalIcon,
-        KeyIcon,
-        CitizenActivityFeed,
-    },
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems,
+    TransitionChild,
+    TransitionRoot,
+    XMarkIcon,
+    EllipsisVerticalIcon,
+    KeyIcon,
+    CitizenActivityFeed,
+    CharSexBadge,
+},
     data() {
         return {
             client: new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions),
@@ -203,8 +205,11 @@ export default defineComponent({
                                                     <dt
                                                         class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
                                                         Sex</dt>
-                                                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">{{
-                                                        user.getSex() }}cm</dd>
+                                                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                                        {{ user.getSex().toUpperCase() }}
+                                                        {{ ' ' }}
+                                                        <CharSexBadge :sex="user.getSex()" />
+                                                    </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-6 sm:py-5">
                                                     <dt

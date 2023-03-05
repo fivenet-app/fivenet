@@ -75,10 +75,11 @@ func main() {
 		gen.FieldJSONTag("accounts", "-"),
 
 		// Add relations for lazy loading
-		gen.FieldRelateModel(field.HasOne, "UserProps", model.UserProps{},
-			&field.RelateConfig{
-				GORMTag: "foreignKey:ID;references:UserID",
-			}),
+		// gen.FieldRelateModel(field.HasOne, "UserProps", model.UserProps{},
+		// 	&field.RelateConfig{
+		// 		GORMTag:       "foreignKey:ID;references:UserID",
+		// 		RelatePointer: true,
+		// 	}),
 		gen.FieldRelate(field.HasMany, "UserLicenses", userLicenses,
 			&field.RelateConfig{
 				GORMTag: "foreignKey:Owner;references:Identifier",
@@ -89,14 +90,16 @@ func main() {
 			}),
 
 		// Activity
-		gen.FieldRelateModel(field.HasMany, "TargetActivity", model.UserActivity{},
-			&field.RelateConfig{
-				GORMTag: "foreignKey:TargetUserID;references:ID",
-			}),
-		gen.FieldRelateModel(field.HasMany, "CauseActivity", model.UserActivity{},
-			&field.RelateConfig{
-				GORMTag: "foreignKey:CauseUserID;references:ID",
-			}),
+		/*
+			gen.FieldRelateModel(field.HasMany, "TargetActivity", model.UserActivity{},
+				&field.RelateConfig{
+					GORMTag: "foreignKey:TargetUserID;references:ID",
+				}),
+			gen.FieldRelateModel(field.HasMany, "CauseActivity", model.UserActivity{},
+				&field.RelateConfig{
+					GORMTag: "foreignKey:CauseUserID;references:ID",
+				}),
+		*/
 
 		// User Roles + Permissions for Permify
 		gen.FieldRelateModel(field.Many2Many, "Roles", models.Role{},

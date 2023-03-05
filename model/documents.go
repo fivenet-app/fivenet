@@ -50,7 +50,7 @@ type DocumentMentions struct {
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
 	DocumentID uint   `gorm:"index" json:"document_id"`
-	Identifier string `gorm:"index;type:varchar(64)" json:"identifier"`
+	Users      []User `gorm:"many2many:arpanet_documents_mentions_users"`
 }
 
 // TableName DocumentMentions's table name

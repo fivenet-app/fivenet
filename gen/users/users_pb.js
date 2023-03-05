@@ -1607,7 +1607,7 @@ proto.gen.users.UserActivity.prototype.toObject = function(opt_includeInstance) 
  */
 proto.gen.users.UserActivity.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userid: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     type: jspb.Message.getFieldWithDefault(msg, 2, ""),
     createdat: (f = msg.getCreatedat()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
     targetuser: (f = msg.getTargetuser()) && common_character_pb.ShortCharacter.toObject(includeInstance, f),
@@ -1654,7 +1654,7 @@ proto.gen.users.UserActivity.deserializeBinaryFromReader = function(msg, reader)
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readUint64());
-      msg.setUserid(value);
+      msg.setId(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
@@ -1720,7 +1720,7 @@ proto.gen.users.UserActivity.prototype.serializeBinary = function() {
  */
 proto.gen.users.UserActivity.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUserid();
+  f = message.getId();
   if (f !== 0) {
     writer.writeUint64(
       1,
@@ -1790,10 +1790,10 @@ proto.gen.users.UserActivity.serializeBinaryToWriter = function(message, writer)
 
 
 /**
- * optional uint64 userID = 1;
+ * optional uint64 id = 1;
  * @return {number}
  */
-proto.gen.users.UserActivity.prototype.getUserid = function() {
+proto.gen.users.UserActivity.prototype.getId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -1802,7 +1802,7 @@ proto.gen.users.UserActivity.prototype.getUserid = function() {
  * @param {number} value
  * @return {!proto.gen.users.UserActivity} returns this
  */
-proto.gen.users.UserActivity.prototype.setUserid = function(value) {
+proto.gen.users.UserActivity.prototype.setId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 

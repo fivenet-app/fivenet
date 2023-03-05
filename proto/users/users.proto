@@ -47,7 +47,7 @@ message GetUserActivityResponse {
 }
 
 message UserActivity {
-    uint64 userID = 1 [(validate.rules).uint64.gt = 0];
+    uint64 id = 1 [(validate.rules).uint64.gt = 0];
     string type = 2;
     google.protobuf.Timestamp createdAt = 3;
     gen.common.ShortCharacter targetUser = 4;

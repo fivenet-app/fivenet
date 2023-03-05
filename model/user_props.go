@@ -3,8 +3,7 @@ package model
 const TableNameUserProps = "arpanet_user_props"
 
 type UserProps struct {
-	ID     uint  `gorm:"primaryKey"`
-	UserID int32 `gorm:"uniqueIndex;type:int(11)"`
+	UserID int32 `gorm:"index;type:int(11)"`
 
 	Wanted *bool `gorm:"index"`
 }

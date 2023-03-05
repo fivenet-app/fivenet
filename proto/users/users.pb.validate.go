@@ -1047,9 +1047,9 @@ func (m *UserActivity) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetUserID() <= 0 {
+	if m.GetId() <= 0 {
 		err := UserActivityValidationError{
-			field:  "UserID",
+			field:  "Id",
 			reason: "value must be greater than 0",
 		}
 		if !all {

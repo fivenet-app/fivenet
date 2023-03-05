@@ -189,8 +189,8 @@ export namespace GetUserActivityResponse {
 }
 
 export class UserActivity extends jspb.Message {
-  getUserid(): number;
-  setUserid(value: number): UserActivity;
+  getId(): number;
+  setId(value: number): UserActivity;
 
   getType(): string;
   setType(value: string): UserActivity;
@@ -232,7 +232,7 @@ export class UserActivity extends jspb.Message {
 
 export namespace UserActivity {
   export type AsObject = {
-    userid: number,
+    id: number,
     type: string,
     createdat?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     targetuser?: common_character_pb.ShortCharacter.AsObject,

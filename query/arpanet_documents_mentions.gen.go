@@ -31,7 +31,82 @@ func newDocumentMentions(db *gorm.DB, opts ...gen.DOOption) documentMentions {
 	_documentMentions.CreatedAt = field.NewTime(tableName, "created_at")
 	_documentMentions.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_documentMentions.DocumentID = field.NewUint(tableName, "document_id")
-	_documentMentions.Identifier = field.NewString(tableName, "identifier")
+	_documentMentions.Users = documentMentionsManyToManyUsers{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Users", "model.User"),
+		UserLicenses: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Users.UserLicenses", "model.UserLicense"),
+		},
+		Documents: struct {
+			field.RelationField
+			Responses struct {
+				field.RelationField
+			}
+			Mentions struct {
+				field.RelationField
+				Users struct {
+					field.RelationField
+				}
+			}
+			JobAccess struct {
+				field.RelationField
+			}
+			UserAccess struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("Users.Documents", "model.Document"),
+			Responses: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Users.Documents.Responses", "model.Document"),
+			},
+			Mentions: struct {
+				field.RelationField
+				Users struct {
+					field.RelationField
+				}
+			}{
+				RelationField: field.NewRelation("Users.Documents.Mentions", "model.DocumentMentions"),
+				Users: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Users.Documents.Mentions.Users", "model.User"),
+				},
+			},
+			JobAccess: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Users.Documents.JobAccess", "model.DocumentJobAccess"),
+			},
+			UserAccess: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Users.Documents.UserAccess", "model.DocumentUserAccess"),
+			},
+		},
+		Roles: struct {
+			field.RelationField
+			Permissions struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("Users.Roles", "models.Role"),
+			Permissions: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Users.Roles.Permissions", "models.Permission"),
+			},
+		},
+		Permissions: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Users.Permissions", "models.Permission"),
+		},
+	}
 
 	_documentMentions.fillFieldMap()
 
@@ -46,7 +121,7 @@ type documentMentions struct {
 	CreatedAt  field.Time
 	UpdatedAt  field.Time
 	DocumentID field.Uint
-	Identifier field.String
+	Users      documentMentionsManyToManyUsers
 
 	fieldMap map[string]field.Expr
 }
@@ -67,7 +142,6 @@ func (d *documentMentions) updateTableName(table string) *documentMentions {
 	d.CreatedAt = field.NewTime(table, "created_at")
 	d.UpdatedAt = field.NewTime(table, "updated_at")
 	d.DocumentID = field.NewUint(table, "document_id")
-	d.Identifier = field.NewString(table, "identifier")
 
 	d.fillFieldMap()
 
@@ -89,7 +163,7 @@ func (d *documentMentions) fillFieldMap() {
 	d.fieldMap["created_at"] = d.CreatedAt
 	d.fieldMap["updated_at"] = d.UpdatedAt
 	d.fieldMap["document_id"] = d.DocumentID
-	d.fieldMap["identifier"] = d.Identifier
+
 }
 
 func (d documentMentions) clone(db *gorm.DB) documentMentions {
@@ -100,6 +174,103 @@ func (d documentMentions) clone(db *gorm.DB) documentMentions {
 func (d documentMentions) replaceDB(db *gorm.DB) documentMentions {
 	d.documentMentionsDo.ReplaceDB(db)
 	return d
+}
+
+type documentMentionsManyToManyUsers struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	UserLicenses struct {
+		field.RelationField
+	}
+	Documents struct {
+		field.RelationField
+		Responses struct {
+			field.RelationField
+		}
+		Mentions struct {
+			field.RelationField
+			Users struct {
+				field.RelationField
+			}
+		}
+		JobAccess struct {
+			field.RelationField
+		}
+		UserAccess struct {
+			field.RelationField
+		}
+	}
+	Roles struct {
+		field.RelationField
+		Permissions struct {
+			field.RelationField
+		}
+	}
+	Permissions struct {
+		field.RelationField
+	}
+}
+
+func (a documentMentionsManyToManyUsers) Where(conds ...field.Expr) *documentMentionsManyToManyUsers {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a documentMentionsManyToManyUsers) WithContext(ctx context.Context) *documentMentionsManyToManyUsers {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a documentMentionsManyToManyUsers) Model(m *model.DocumentMentions) *documentMentionsManyToManyUsersTx {
+	return &documentMentionsManyToManyUsersTx{a.db.Model(m).Association(a.Name())}
+}
+
+type documentMentionsManyToManyUsersTx struct{ tx *gorm.Association }
+
+func (a documentMentionsManyToManyUsersTx) Find() (result []*model.User, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a documentMentionsManyToManyUsersTx) Append(values ...*model.User) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a documentMentionsManyToManyUsersTx) Replace(values ...*model.User) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a documentMentionsManyToManyUsersTx) Delete(values ...*model.User) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a documentMentionsManyToManyUsersTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a documentMentionsManyToManyUsersTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type documentMentionsDo struct{ gen.DO }

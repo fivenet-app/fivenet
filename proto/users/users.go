@@ -90,7 +90,11 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 
 	resp := &FindUsersResponse{}
 	resp.TotalCount = count
-	resp.Current = req.Current
+	if req.Current >= count {
+		resp.Current = 0
+	} else {
+		resp.Current = req.Current
+	}
 	resp.End = resp.Current + int64(len(users))
 
 	for _, user := range users {
@@ -139,16 +143,19 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 	protoActivity := make([]*UserActivity, len(activities))
 	for k := 0; k < len(activities); k++ {
 		protoActivity[k] = &UserActivity{
-			UserID:    uint64(activities[k].ID),
+			Id:        uint64(activities[k].ID),
 			CreatedAt: timestamppb.New(activities[k].CreatedAt),
+			Type:      string(activities[k].Type),
 			TargetUser: &common.ShortCharacter{
-				UserID: 0,
+				UserID: uint64(activities[k].TargetUserID),
 			},
-			CauseUser: &common.ShortCharacter{},
-			Key:       activities[k].Key,
-			OldValue:  activities[k].OldValue,
-			NewValue:  activities[k].NewValue,
-			Reason:    activities[k].Reason,
+			CauseUser: &common.ShortCharacter{
+				UserID: uint64(activities[k].CauseUserID),
+			},
+			Key:      activities[k].Key,
+			OldValue: activities[k].OldValue,
+			NewValue: activities[k].NewValue,
+			Reason:   activities[k].Reason,
 		}
 	}
 
