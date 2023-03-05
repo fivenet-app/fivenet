@@ -37,82 +37,6 @@ func newUserActivity(db *gorm.DB, opts ...gen.DOOption) userActivity {
 	_userActivity.OldValue = field.NewString(tableName, "old_value")
 	_userActivity.NewValue = field.NewString(tableName, "new_value")
 	_userActivity.Reason = field.NewString(tableName, "reason")
-	_userActivity.TargetUser = userActivityHasOneTargetUser{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("TargetUser", "model.User"),
-		UserProps: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("TargetUser.UserProps", "model.UserProps"),
-		},
-		UserLicenses: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("TargetUser.UserLicenses", "model.UserLicense"),
-		},
-		Documents: struct {
-			field.RelationField
-			Responses struct {
-				field.RelationField
-			}
-			Mentions struct {
-				field.RelationField
-			}
-			JobAccess struct {
-				field.RelationField
-			}
-			UserAccess struct {
-				field.RelationField
-			}
-		}{
-			RelationField: field.NewRelation("TargetUser.Documents", "model.Document"),
-			Responses: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("TargetUser.Documents.Responses", "model.Document"),
-			},
-			Mentions: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("TargetUser.Documents.Mentions", "model.DocumentMentions"),
-			},
-			JobAccess: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("TargetUser.Documents.JobAccess", "model.DocumentJobAccess"),
-			},
-			UserAccess: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("TargetUser.Documents.UserAccess", "model.DocumentUserAccess"),
-			},
-		},
-		Roles: struct {
-			field.RelationField
-			Permissions struct {
-				field.RelationField
-			}
-		}{
-			RelationField: field.NewRelation("TargetUser.Roles", "models.Role"),
-			Permissions: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("TargetUser.Roles.Permissions", "models.Permission"),
-			},
-		},
-		Permissions: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("TargetUser.Permissions", "models.Permission"),
-		},
-	}
-
-	_userActivity.CauseUser = userActivityHasOneCauseUser{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("CauseUser", "model.User"),
-	}
 
 	_userActivity.fillFieldMap()
 
@@ -133,9 +57,6 @@ type userActivity struct {
 	OldValue     field.String
 	NewValue     field.String
 	Reason       field.String
-	TargetUser   userActivityHasOneTargetUser
-
-	CauseUser userActivityHasOneCauseUser
 
 	fieldMap map[string]field.Expr
 }
@@ -178,7 +99,7 @@ func (u *userActivity) GetFieldByName(fieldName string) (field.OrderExpr, bool) 
 }
 
 func (u *userActivity) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 12)
+	u.fieldMap = make(map[string]field.Expr, 10)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["created_at"] = u.CreatedAt
 	u.fieldMap["updated_at"] = u.UpdatedAt
@@ -189,7 +110,6 @@ func (u *userActivity) fillFieldMap() {
 	u.fieldMap["old_value"] = u.OldValue
 	u.fieldMap["new_value"] = u.NewValue
 	u.fieldMap["reason"] = u.Reason
-
 }
 
 func (u userActivity) clone(db *gorm.DB) userActivity {
@@ -200,169 +120,6 @@ func (u userActivity) clone(db *gorm.DB) userActivity {
 func (u userActivity) replaceDB(db *gorm.DB) userActivity {
 	u.userActivityDo.ReplaceDB(db)
 	return u
-}
-
-type userActivityHasOneTargetUser struct {
-	db *gorm.DB
-
-	field.RelationField
-
-	UserProps struct {
-		field.RelationField
-	}
-	UserLicenses struct {
-		field.RelationField
-	}
-	Documents struct {
-		field.RelationField
-		Responses struct {
-			field.RelationField
-		}
-		Mentions struct {
-			field.RelationField
-		}
-		JobAccess struct {
-			field.RelationField
-		}
-		UserAccess struct {
-			field.RelationField
-		}
-	}
-	Roles struct {
-		field.RelationField
-		Permissions struct {
-			field.RelationField
-		}
-	}
-	Permissions struct {
-		field.RelationField
-	}
-}
-
-func (a userActivityHasOneTargetUser) Where(conds ...field.Expr) *userActivityHasOneTargetUser {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a userActivityHasOneTargetUser) WithContext(ctx context.Context) *userActivityHasOneTargetUser {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a userActivityHasOneTargetUser) Model(m *model.UserActivity) *userActivityHasOneTargetUserTx {
-	return &userActivityHasOneTargetUserTx{a.db.Model(m).Association(a.Name())}
-}
-
-type userActivityHasOneTargetUserTx struct{ tx *gorm.Association }
-
-func (a userActivityHasOneTargetUserTx) Find() (result *model.User, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a userActivityHasOneTargetUserTx) Append(values ...*model.User) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a userActivityHasOneTargetUserTx) Replace(values ...*model.User) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a userActivityHasOneTargetUserTx) Delete(values ...*model.User) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a userActivityHasOneTargetUserTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a userActivityHasOneTargetUserTx) Count() int64 {
-	return a.tx.Count()
-}
-
-type userActivityHasOneCauseUser struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a userActivityHasOneCauseUser) Where(conds ...field.Expr) *userActivityHasOneCauseUser {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a userActivityHasOneCauseUser) WithContext(ctx context.Context) *userActivityHasOneCauseUser {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a userActivityHasOneCauseUser) Model(m *model.UserActivity) *userActivityHasOneCauseUserTx {
-	return &userActivityHasOneCauseUserTx{a.db.Model(m).Association(a.Name())}
-}
-
-type userActivityHasOneCauseUserTx struct{ tx *gorm.Association }
-
-func (a userActivityHasOneCauseUserTx) Find() (result *model.User, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a userActivityHasOneCauseUserTx) Append(values ...*model.User) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a userActivityHasOneCauseUserTx) Replace(values ...*model.User) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a userActivityHasOneCauseUserTx) Delete(values ...*model.User) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a userActivityHasOneCauseUserTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a userActivityHasOneCauseUserTx) Count() int64 {
-	return a.tx.Count()
 }
 
 type userActivityDo struct{ gen.DO }

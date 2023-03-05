@@ -27,7 +27,7 @@ func newDocument(db *gorm.DB, opts ...gen.DOOption) document {
 
 	tableName := _document.documentDo.TableName()
 	_document.ALL = field.NewAsterisk(tableName)
-	_document.ID = field.NewInt32(tableName, "id")
+	_document.ID = field.NewUint(tableName, "id")
 	_document.CreatedAt = field.NewTime(tableName, "created_at")
 	_document.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_document.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -91,7 +91,7 @@ type document struct {
 	documentDo
 
 	ALL        field.Asterisk
-	ID         field.Int32
+	ID         field.Uint
 	CreatedAt  field.Time
 	UpdatedAt  field.Time
 	DeletedAt  field.Field
@@ -125,7 +125,7 @@ func (d document) As(alias string) *document {
 
 func (d *document) updateTableName(table string) *document {
 	d.ALL = field.NewAsterisk(table)
-	d.ID = field.NewInt32(table, "id")
+	d.ID = field.NewUint(table, "id")
 	d.CreatedAt = field.NewTime(table, "created_at")
 	d.UpdatedAt = field.NewTime(table, "updated_at")
 	d.DeletedAt = field.NewField(table, "deleted_at")

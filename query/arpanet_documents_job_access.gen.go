@@ -30,7 +30,7 @@ func newDocumentJobAccess(db *gorm.DB, opts ...gen.DOOption) documentJobAccess {
 	_documentJobAccess.ID = field.NewUint(tableName, "id")
 	_documentJobAccess.CreatedAt = field.NewTime(tableName, "created_at")
 	_documentJobAccess.UpdatedAt = field.NewTime(tableName, "updated_at")
-	_documentJobAccess.DocumentID = field.NewInt32(tableName, "document_id")
+	_documentJobAccess.DocumentID = field.NewUint(tableName, "document_id")
 	_documentJobAccess.Name = field.NewString(tableName, "name")
 	_documentJobAccess.MinimumGrade = field.NewInt(tableName, "minimum_grade")
 	_documentJobAccess.Access = field.NewString(tableName, "access")
@@ -47,7 +47,7 @@ type documentJobAccess struct {
 	ID           field.Uint
 	CreatedAt    field.Time
 	UpdatedAt    field.Time
-	DocumentID   field.Int32
+	DocumentID   field.Uint
 	Name         field.String
 	MinimumGrade field.Int
 	Access       field.String
@@ -70,7 +70,7 @@ func (d *documentJobAccess) updateTableName(table string) *documentJobAccess {
 	d.ID = field.NewUint(table, "id")
 	d.CreatedAt = field.NewTime(table, "created_at")
 	d.UpdatedAt = field.NewTime(table, "updated_at")
-	d.DocumentID = field.NewInt32(table, "document_id")
+	d.DocumentID = field.NewUint(table, "document_id")
 	d.Name = field.NewString(table, "name")
 	d.MinimumGrade = field.NewInt(table, "minimum_grade")
 	d.Access = field.NewString(table, "access")

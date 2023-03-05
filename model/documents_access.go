@@ -21,7 +21,7 @@ type DocumentJobAccess struct {
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
-	DocumentID int32 `gorm:"index;type:int(11)" json:"document_id"`
+	DocumentID uint `gorm:"index" json:"document_id"`
 
 	Name         string     `json:"name"`
 	MinimumGrade int        `json:"minimum_grade"`
@@ -40,7 +40,7 @@ type DocumentUserAccess struct {
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
-	DocumentID int32      `gorm:"index;type:int(11)" json:"document_id"`
+	DocumentID uint       `gorm:"index" json:"document_id"`
 	UserID     int32      `gorm:"index;type:int(11)" json:"identifier"`
 	Access     AccessRole `gorm:"type:varchar(12)" json:"access"`
 }

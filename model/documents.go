@@ -16,7 +16,7 @@ const (
 const TableNameDocument = "arpanet_documents"
 
 type Document struct {
-	ID        int32          `gorm:"primarykey;type:int(11)" json:"id"`
+	ID        uint           `gorm:"primarykey" json:"id"`
 	CreatedAt time.Time      `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`

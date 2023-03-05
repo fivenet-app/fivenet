@@ -12,8 +12,8 @@ const store = createStore({
         // Persisted to Local Storage
         version: '' as string,
         accessToken: null as null | string,
-        activeChar: null as Character | null,
-        activeCharID: '' as null | string,
+        activeChar: null as null | Character,
+        activeCharID: 0 as null | number,
         // Temporary
         loggingIn: false as boolean,
         loginError: null as null | string,
@@ -42,11 +42,9 @@ const store = createStore({
         updateAccessToken: (state, accessToken) => {
             state.accessToken = accessToken;
         },
-        updateActiveChar: (state, char) => {
+        updateActiveChar: (state, char: null | Character) => {
             state.activeChar = char;
-        },
-        updateActiveCharID: (state, identifier: null | string) => {
-            state.activeCharID = identifier;
+            state.activeCharID = char ? char.getUserid() : 0;
         },
         updatePermissions: (state, permissions: string[]) => {
             state.permissions = permissions;
@@ -63,21 +61,18 @@ const store = createStore({
                     commit('loginStop', null);
                     commit('updateAccessToken', response.getToken());
                     commit('updateActiveChar', null);
-                    commit('updateActiveCharID', null);
                     commit('updatePermissions', []);
                 })
                 .catch((err: RpcError) => {
                     commit('loginStop', err.message);
                     commit('updateAccessToken', null);
                     commit('updateActiveChar', null);
-                    commit('updateActiveCharID', null);
                     commit('updatePermissions', []);
                 });
         },
         async doLogout({ commit }) {
             commit('loginStart');
             commit('updateActiveChar', null);
-            commit('updateActiveCharID', null);
             commit('updatePermissions', []);
 
             return new AccountServiceClient(config.apiProtoURL, null, clientAuthOptions)
@@ -101,9 +96,6 @@ const store = createStore({
         },
         updateActiveChar({ commit }, char: null | Character): void {
             commit('updateActiveChar', char);
-        },
-        updateActiveCharID({ commit }, identifier: null | string): void {
-            commit('updateActiveCharID', identifier);
         },
         updatePermissions({ commit }, permissions: string[]): void {
             commit('updatePermissions', permissions);

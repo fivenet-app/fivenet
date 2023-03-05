@@ -79,10 +79,12 @@ export default defineComponent({
             }
             return '-';
         },
-        toggleWantedStatus() {
+        toggleWantedStatus(event: any) {
+            const wantedState = !this.user.getProps()?.getWanted();
+            event.target.message = wantedState ? 'Revoke Wanted Status' : 'Set Person as Wanted'
+
             const req = new SetUserPropsRequest();
             req.setUserid(this.user.getUserid());
-            const wantedState = !this.user.getProps()?.getWanted();
             req.setWanted(wantedState);
             this.client.setUserProps(req, null)
                 .then((resp) => {
@@ -148,7 +150,7 @@ export default defineComponent({
                                                     <div class="mt-5 flex flex-wrap space-y-3 sm:space-y-0 sm:space-x-3">
                                                         <button v-can="'users-setuserprops-wanted'" type="button"
                                                             class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:flex-1"
-                                                            @click="toggleWantedStatus()">Set
+                                                            @click="toggleWantedStatus($event)">Set
                                                             Wanted Status</button>
                                                         <div class="ml-3 inline-flex sm:ml-0">
                                                             <Menu as="div" class="relative inline-block text-left">
@@ -247,7 +249,7 @@ export default defineComponent({
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-6 sm:py-5">
-                                                    <CitizenActivityFeed :identifier="user.getUserid()" />
+                                                    <CitizenActivityFeed :userID="user.getUserid()" />
                                                 </div>
                                             </dl>
                                         </div>

@@ -97,7 +97,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 
 	d := query.Document
-	document, err := s.prepareDocumentQuery(d.Where(d.ID.Eq(int32(req.Id))), user).First()
+	document, err := s.prepareDocumentQuery(d.Where(d.ID.Eq(uint(req.Id))), user).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}

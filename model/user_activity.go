@@ -17,10 +17,8 @@ type UserActivity struct {
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
-	TargetUserID int32 `gorm:"index;type:int(11)"`
-	TargetUser   User  `gorm:"foreignKey:ID;references:TargetUserID"`
-	CauseUserID  int32 `gorm:"index;type:int(11)"`
-	CauseUser    User  `gorm:"foreignKey:ID;references:CauseUserID"`
+	TargetUserID int32 `gorm:"index;type:int(11);not null"`
+	CauseUserID  int32 `gorm:"index;type:int(11);not null"`
 
 	Type AcitvityType `gorm:"column:type" json:"type"`
 

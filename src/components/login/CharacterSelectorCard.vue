@@ -25,7 +25,7 @@ export default defineComponent({
         },
     },
     methods: {
-        ...mapActions(['updateAccessToken', 'updateActiveChar', 'updateActiveCharID', 'updatePermissions']),
+        ...mapActions(['updateAccessToken', 'updateActiveChar', 'updatePermissions']),
         chooseCharacter() {
             const req = new ChooseCharacterRequest();
             req.setUserid(this.char.getUserid());
@@ -35,7 +35,6 @@ export default defineComponent({
                 .then((resp) => {
                     this.updateAccessToken(resp.getToken());
                     this.updateActiveChar(this.char);
-                    this.updateActiveCharID(this.char.getUserid());
                     this.updatePermissions(resp.getPermissionsList());
                     console.log(resp.getPermissionsList());
 

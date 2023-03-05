@@ -88,6 +88,16 @@ func main() {
 				GORMTag: "foreignKey:CreatorID;references:ID",
 			}),
 
+		// Activity
+		gen.FieldRelateModel(field.HasMany, "TargetActivity", model.UserActivity{},
+			&field.RelateConfig{
+				GORMTag: "foreignKey:TargetUserID;references:ID",
+			}),
+		gen.FieldRelateModel(field.HasMany, "CauseActivity", model.UserActivity{},
+			&field.RelateConfig{
+				GORMTag: "foreignKey:CauseUserID;references:ID",
+			}),
+
 		// User Roles + Permissions for Permify
 		gen.FieldRelateModel(field.Many2Many, "Roles", models.Role{},
 			&field.RelateConfig{

@@ -131,7 +131,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityRequest) (*GetUserActivityResponse, error) {
 	ua := query.UserActivity
-	activities, err := ua.Where(ua.TargetUserID.Eq(0)).Limit(10).Find()
+	activities, err := ua.Where(ua.TargetUserID.Eq(int32(req.UserID))).Limit(10).Find()
 	if err != nil {
 		return nil, err
 	}
