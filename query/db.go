@@ -9,6 +9,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"go.uber.org/zap"
 )
 
 var (
@@ -18,8 +19,8 @@ var (
 	DB *sql.DB
 )
 
-func SetupDB() error {
-	if err := migrateDB(); err != nil {
+func SetupDB(logger *zap.Logger) error {
+	if err := migrateDB(logger); err != nil {
 		return err
 	}
 
@@ -35,7 +36,8 @@ func SetupDB() error {
 	return nil
 }
 
-func migrateDB() error {
+func migrateDB(logger *zap.Logger) error {
+	logger.Info("starting database migrations")
 	// Connect to database
 	db, err := sql.Open("mysql", config.C.Database.DSN+"&multiStatements=true")
 	if err != nil {
@@ -61,7 +63,11 @@ func migrateDB() error {
 	}
 	// Run migrations
 	if err := m.Up(); err != nil {
-		return err
+		if err != migrate.ErrNoChange {
+			return err
+		} else {
+			logger.Info("database migration have caused no changes")
+		}
 	}
 
 	return db.Close()

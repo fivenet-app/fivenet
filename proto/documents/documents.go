@@ -9,7 +9,9 @@ import (
 	"github.com/galexrt/arpanet/pkg/permissions"
 	"github.com/galexrt/arpanet/proto/common"
 	"github.com/galexrt/arpanet/query"
+	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"gorm.io/gorm"
 )
 
@@ -30,44 +32,45 @@ func NewServer() *Server {
 	return &Server{}
 }
 
-func (s *Server) prepareDocumentQuery(start query.IDocumentDo, user *common.Character) query.IDocumentDo {
+func (s *Server) getDocumentsQuery(where jet.BoolExpression, user *common.ShortUser) jet.SelectStatement {
 	d := table.ArpanetDocuments
-	dja := table.ArpanetDocumentsJobAccess
 	dua := table.ArpanetDocumentsUserAccess
+	dja := table.ArpanetDocumentsJobAccess
 
-	if start == nil {
-		start = d.Where()
-	}
-	return start.
-		LeftJoin(dua, dua.DocumentID.EqCol(d.ID), dua.UserID.Eq(user.UserID)).
-		LeftJoin(dja, dja.DocumentID.EqCol(d.ID), dja.Name.Eq(user.Job), dja.MinimumGrade.Lte(user.JobGrade)).
-		Where(
-			d.Where(
-				d.Where(
-					d.Public.Is(true)).
-					Or(d.CreatorID.Eq(user.UserID)),
-			).
-				Or(
-					d.Where(
-						d.Where(
-							dua.Access.IsNotNull(),
-							dua.Access.Neq(modelhelper.BlockedAccessRole),
-						),
-					).
-						Or(
-							dja.Where(
-								dua.Access.IsNull(),
-								dja.Access.IsNotNull(),
-								dja.Access.Neq(modelhelper.BlockedAccessRole),
-							),
-						),
+	return d.SELECT(d.AllColumns, dja.AllColumns).
+		FROM(
+			d.LEFT_JOIN(dua,
+				dua.DocumentID.EQ(d.ID).
+					AND(dua.UserID.EQ(jet.Int32(user.UserID)))),
+			d.LEFT_JOIN(dja,
+				dja.DocumentID.EQ(d.ID).
+					AND(dja.Name.EQ(jet.String(user.Job))).
+					AND(dja.MinimumGrade.LT_EQ(jet.Int32(user.JobGrade))),
+			),
+		).WHERE(
+		jet.AND(
+			jet.OR(
+				jet.OR(
+					d.Public.IS_TRUE(),
+					d.CreatorID.EQ(jet.Int32(user.UserID)),
 				),
-		).
-		Order(d.CreatedAt.Desc()).
-		Preload(
-			d.JobAccess.On(dja.Name.Eq(user.Job)),
-			d.UserAccess.On(dua.UserID.Eq(user.UserID)),
-		)
+				jet.OR(
+					jet.AND(
+						dua.Access.IS_NOT_NULL(),
+						dua.Access.NOT_EQ(jet.String(modelhelper.BlockedAccessRole)),
+					),
+					jet.AND(
+						dua.Access.IS_NULL(),
+						dja.Access.IS_NOT_NULL(),
+						dja.Access.NOT_EQ(jet.String(modelhelper.BlockedAccessRole)),
+					),
+				),
+			),
+			where,
+		),
+	).
+		ORDER_BY(d.CreatedAt.DESC())
+
 }
 
 func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (*FindDocumentsResponse, error) {
@@ -78,9 +81,13 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		return nil, err
 	}
 
-	documents, err := s.prepareDocumentQuery(nil, user).
-		Find()
-	if err != nil {
+	var documents []struct {
+		model.ArpanetDocuments
+
+		model.ArpanetDocumentsJobAccess
+		model.ArpanetDocumentsUserAccess
+	}
+	if err := s.getDocumentsQuery(nil, user).QueryContext(ctx, query.DB, &documents); err != nil {
 		return nil, err
 	}
 
@@ -99,12 +106,14 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 
 	d := table.ArpanetDocuments
-	document, err := s.prepareDocumentQuery(d.Where(d.ID.Eq(uint(req.Id))), user).First()
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	var documents []model.ArpanetDocuments
+
+	if err := s.getDocumentsQuery(d.ID.EQ(jet.Uint64(req.Id)), user).
+		QueryContext(ctx, query.DB, &documents); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
 
-	_ = document
+	_ = documents
 	// TODO
 
 	return resp, nil

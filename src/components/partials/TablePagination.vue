@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
     props: {
-        current: {
+        offset: {
             required: true,
             type: Number,
         },
@@ -33,7 +33,7 @@ export default defineComponent({
             <p class="text-sm text-gray-300">
                 Showing
                 {{ ' ' }}
-                <span class="font-medium text-white">{{ current + 1 }}</span>
+                <span class="font-medium text-white">{{ offset + 1 }}</span>
                 {{ ' ' }}
                 to
                 {{ ' ' }}
@@ -47,9 +47,9 @@ export default defineComponent({
             </p>
         </div>
         <div class="flex flex-1 justify-between sm:justify-end">
-            <button :class="[current <= 0 ? 'disabled' : '']" :disabled="current <= 0" v-on:click="callback(current - entries)" type="button"
+            <button :class="[offset <= 0 ? 'disabled' : '']" :disabled="offset <= 0" v-on:click="callback(offset - entries)" type="button"
                 class="relative inline-flex items-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Previous</button>
-            <button :class="[current >= total ? 'disabled' : '']" :disabled="current >= total" v-on:click="callback(end)" type="button"
+            <button :class="[offset >= total ? 'disabled' : '']" :disabled="offset >= total" v-on:click="callback(end)" type="button"
                 class="relative ml-3 inline-flex items-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Next</button>
         </div>
     </nav>

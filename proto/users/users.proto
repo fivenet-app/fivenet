@@ -4,12 +4,12 @@ package gen.users;
 option go_package = "github.com/galexrt/arpanet/proto/users";
 
 import "validate/validate.proto";
-import "common/character.proto";
+import "common/userinfo.proto";
 import "common/database.proto";
 import "google/protobuf/timestamp.proto";
 
 message FindUsersRequest {
-    int64 current = 1;
+    int64 offset = 1;
     repeated gen.common.OrderBy orderBy = 2;
     string firstname = 3;
     string lastname = 4;
@@ -17,9 +17,9 @@ message FindUsersRequest {
 
 message FindUsersResponse {
     int64 totalCount = 1;
-    int64 current = 2;
+    int64 offset = 2;
     int64 end = 3;
-    repeated gen.common.Character users = 4;
+    repeated gen.common.User users = 4;
 }
 
 message GetUserRequest {
@@ -27,7 +27,7 @@ message GetUserRequest {
 }
 
 message GetUserResponse {
-    gen.common.Character user = 1;
+    gen.common.User user = 1;
 }
 
 message SetUserPropsRequest {
@@ -47,19 +47,20 @@ message GetUserActivityResponse {
 }
 
 message UserActivity {
-    uint64 id = 1 [(validate.rules).uint64.gt = 0];
-    string type = 2;
-    google.protobuf.Timestamp createdAt = 3;
-    gen.common.ShortCharacter targetUser = 4;
-    gen.common.ShortCharacter causeUser = 5;
-    string key = 6;
-    string oldValue = 7;
-    string newValue = 8;
-    string reason = 9;
+    uint64 id = 1 [(validate.rules).uint64.gt = 0]; // @gotags: sql:"primary_key" alias:"arpanet_user_activity.id"
+    string type = 2; // @gotags: alias:"arpanet_user_activity.type"
+    google.protobuf.Timestamp createdAt = 3; // @gotags: alias:"arpanet_user_activity.created_at"
+    gen.common.ShortUser targetUser = 4; // TODO
+    gen.common.ShortUser causeUser = 5; // TODO
+    string key = 6; // @gotags: alias:"arpanet_user_activity.key"
+    string oldValue = 7; // @gotags: alias:"arpanet_user_activity.old_value"
+    string newValue = 8; // @gotags: alias:"arpanet_user_activity.new_value"
+    string reason = 9; // @gotags: alias:"arpanet_user_activity.reason"
 }
 
 service UsersService {
     rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
     rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
     rpc GetUserActivity(GetUserActivityRequest) returns (GetUserActivityResponse);
 }

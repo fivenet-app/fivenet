@@ -49,6 +49,10 @@ gen-proto: protoc-gen-validate
 		--validate_out="lang=go:./proto" \
 		$(shell find proto/ -iname "*.proto")
 
+	find proto/ -iname "*.pb.go" \
+		-exec protoc-go-inject-tag \
+			-input={} \;
+
 	PATH="$$PATH:node_modules/protoc-gen-js/bin/" \
 	protoc \
 		--proto_path=./validate \

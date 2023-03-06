@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import CharacterSelectorCard from './CharacterSelectorCard.vue';
+import { XCircleIcon } from '@heroicons/vue/20/solid';
 import { GetCharactersRequest } from '@arpanet/gen/auth/auth_pb';
-import { Character } from '@arpanet/gen/common/character_pb';
+import { User } from '@arpanet/gen/common/userinfo_pb';
 import { clientAuthOptions, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { mapActions } from 'vuex';
@@ -12,11 +13,12 @@ import config from '../../config';
 export default defineComponent({
     components: {
         CharacterSelectorCard,
+        XCircleIcon,
     },
     data() {
         return {
             'client': new AccountServiceClient(config.apiProtoURL, null, clientAuthOptions),
-            'chars': [] as Array<Character>,
+            'chars': [] as Array<User>,
         };
     },
     methods: {
@@ -44,7 +46,20 @@ export default defineComponent({
 </script>
 
 <template>
-    <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div v-if="chars.length <= 0" class="rounded-md bg-red-50 p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <XCircleIcon class="h-5 w-5 text-red-400" aria-hidden="true" />
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">Unable to load your characters!</h3>
+                <div class="mt-2 text-sm text-red-700">
+                    <p>Please try again a few minutes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul v-else role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         <CharacterSelectorCard v-for="char in chars" :char="char" :key="char.getUserid()" />
     </ul>
 </template>

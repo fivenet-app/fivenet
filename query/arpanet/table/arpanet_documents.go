@@ -24,7 +24,7 @@ type arpanetDocumentsTable struct {
 	Title       mysql.ColumnString
 	Content     mysql.ColumnString
 	ContentType mysql.ColumnString
-	Creator     mysql.ColumnInteger
+	CreatorID   mysql.ColumnInteger
 	CreatorJob  mysql.ColumnString
 	Public      mysql.ColumnBool
 	ResponseID  mysql.ColumnInteger
@@ -75,12 +75,12 @@ func newArpanetDocumentsTableImpl(schemaName, tableName, alias string) arpanetDo
 		TitleColumn       = mysql.StringColumn("title")
 		ContentColumn     = mysql.StringColumn("content")
 		ContentTypeColumn = mysql.StringColumn("content_type")
-		CreatorColumn     = mysql.IntegerColumn("creator")
+		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn  = mysql.StringColumn("creator_job")
 		PublicColumn      = mysql.BoolColumn("public")
 		ResponseIDColumn  = mysql.IntegerColumn("response_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, ContentTypeColumn, CreatorColumn, CreatorJobColumn, PublicColumn, ResponseIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, ContentTypeColumn, CreatorColumn, CreatorJobColumn, PublicColumn, ResponseIDColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, ContentTypeColumn, CreatorIDColumn, CreatorJobColumn, PublicColumn, ResponseIDColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, ContentTypeColumn, CreatorIDColumn, CreatorJobColumn, PublicColumn, ResponseIDColumn}
 	)
 
 	return arpanetDocumentsTable{
@@ -94,7 +94,7 @@ func newArpanetDocumentsTableImpl(schemaName, tableName, alias string) arpanetDo
 		Title:       TitleColumn,
 		Content:     ContentColumn,
 		ContentType: ContentTypeColumn,
-		Creator:     CreatorColumn,
+		CreatorID:   CreatorIDColumn,
 		CreatorJob:  CreatorJobColumn,
 		Public:      PublicColumn,
 		ResponseID:  ResponseIDColumn,

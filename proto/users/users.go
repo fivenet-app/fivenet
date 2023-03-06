@@ -23,6 +23,12 @@ func init() {
 	})
 }
 
+var (
+	u   = table.Users
+	aup = table.ArpanetUserProps
+	ul  = table.UserLicenses
+)
+
 type Server struct {
 	UsersServiceServer
 }
@@ -37,21 +43,15 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		return nil, err
 	}
 
-	u := table.Users
-	ul := table.UserLicenses
-	aup := table.ArpanetUserProps
-
 	// Permission check
-	if !permissions.Can(user, "users.FindUsers") {
+	if !permissions.Can(user, "users", "FindUsers") {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users")
 	}
 
-	selectors := []jet.Projection{u.AllColumns}
-	if permissions.Can(user, "users", "FindUsers", "Licenses") {
-		selectors = append(selectors, ul.AllColumns)
-	}
+	selectors := make(jet.ProjectionList, len(common.CharacterBaseColumns))
+	copy(selectors, common.CharacterBaseColumns)
 	if permissions.Can(user, "users", "FindUsers", "UserProps") {
-		selectors = append(selectors, aup.AllColumns)
+		selectors = append(selectors, aup.Wanted)
 	}
 
 	req.Firstname = strings.ReplaceAll(req.Firstname, "%", "")
@@ -63,6 +63,27 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	}
 	if req.Lastname != "" {
 		condition = condition.AND(u.Lastname.LIKE(jet.String("%" + req.Lastname + "%")))
+	}
+
+	// Get total count of values
+	countStmt := u.SELECT(
+		jet.COUNT(u.ID).AS("total_count"),
+	).
+		FROM(u).
+		WHERE(condition)
+
+	var count struct{ TotalCount int64 }
+	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
+		return nil, err
+	}
+
+	resp := &FindUsersResponse{
+		Offset:     req.Offset,
+		TotalCount: count.TotalCount,
+		End:        0,
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
 	}
 
 	// Convert our proto abstracted `common.OrderBy` to actual gorm order by instructions
@@ -89,38 +110,67 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		orderBys = append(orderBys, u.Firstname.ASC())
 	}
 
-	countStmt := u.SELECT(jet.COUNT(u.ID)).
-		FROM(u).
-		WHERE(condition)
-	var count int64
-	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
-		return nil, err
-	}
-
-	resp := &FindUsersResponse{}
-
-	stmt := u.SELECT(jet.COUNT(u.ID), selectors...).
+	stmt := u.SELECT(
+		selectors[0], selectors[1:]...,
+	).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
-		FROM(u.
-			LEFT_JOIN(ul, ul.Owner.EQ(u.Identifier)).
-			LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
+		FROM(
+			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
 		).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
-		OFFSET(req.Current).
+		OFFSET(req.Offset).
 		LIMIT(common.DefaultPageLimit)
 
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Users); err != nil {
 		return nil, err
 	}
 
-	resp.TotalCount = count
-	if req.Current >= count {
-		resp.Current = 0
+	resp.TotalCount = count.TotalCount
+	if req.Offset >= resp.TotalCount {
+		resp.Offset = 0
 	} else {
-		resp.Current = req.Current
+		resp.Offset = req.Offset
 	}
-	resp.End = resp.Current + int64(len(resp.Users))
+	resp.End = resp.Offset + int64(len(resp.Users))
+
+	return resp, nil
+}
+
+func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
+	user, err := auth.GetUserFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Permission check
+	if !permissions.Can(user, "users", "FindUsers") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users")
+	}
+
+	selectors := make(jet.ProjectionList, len(common.CharacterBaseColumns))
+	copy(selectors, common.CharacterBaseColumns)
+	if permissions.Can(user, "users", "FindUsers", "UserProps") {
+		selectors = append(selectors, aup.Wanted)
+	}
+	if permissions.Can(user, "users", "FindUsers", "Licenses") {
+		selectors = append(selectors, ul.Type)
+	}
+
+	resp := &GetUserResponse{}
+
+	stmt := u.SELECT(selectors[0], selectors[1:]...).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
+		FROM(
+			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)).
+				LEFT_JOIN(ul, ul.Owner.EQ(u.Identifier)),
+		).
+		WHERE(u.ID.EQ(jet.Int32(req.UserID))).
+		LIMIT(1)
+
+	if err := stmt.QueryContext(ctx, query.DB, &resp.User); err != nil {
+		return nil, err
+	}
 
 	return resp, nil
 }

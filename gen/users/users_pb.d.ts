@@ -1,13 +1,13 @@
 import * as jspb from 'google-protobuf'
 
-import * as common_character_pb from '../common/character_pb';
+import * as common_userinfo_pb from '../common/userinfo_pb';
 import * as common_database_pb from '../common/database_pb';
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
 
 export class FindUsersRequest extends jspb.Message {
-  getCurrent(): number;
-  setCurrent(value: number): FindUsersRequest;
+  getOffset(): number;
+  setOffset(value: number): FindUsersRequest;
 
   getOrderbyList(): Array<common_database_pb.OrderBy>;
   setOrderbyList(value: Array<common_database_pb.OrderBy>): FindUsersRequest;
@@ -30,7 +30,7 @@ export class FindUsersRequest extends jspb.Message {
 
 export namespace FindUsersRequest {
   export type AsObject = {
-    current: number,
+    offset: number,
     orderbyList: Array<common_database_pb.OrderBy.AsObject>,
     firstname: string,
     lastname: string,
@@ -41,16 +41,16 @@ export class FindUsersResponse extends jspb.Message {
   getTotalcount(): number;
   setTotalcount(value: number): FindUsersResponse;
 
-  getCurrent(): number;
-  setCurrent(value: number): FindUsersResponse;
+  getOffset(): number;
+  setOffset(value: number): FindUsersResponse;
 
   getEnd(): number;
   setEnd(value: number): FindUsersResponse;
 
-  getUsersList(): Array<common_character_pb.Character>;
-  setUsersList(value: Array<common_character_pb.Character>): FindUsersResponse;
+  getUsersList(): Array<common_userinfo_pb.User>;
+  setUsersList(value: Array<common_userinfo_pb.User>): FindUsersResponse;
   clearUsersList(): FindUsersResponse;
-  addUsers(value?: common_character_pb.Character, index?: number): common_character_pb.Character;
+  addUsers(value?: common_userinfo_pb.User, index?: number): common_userinfo_pb.User;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindUsersResponse.AsObject;
@@ -63,9 +63,9 @@ export class FindUsersResponse extends jspb.Message {
 export namespace FindUsersResponse {
   export type AsObject = {
     totalcount: number,
-    current: number,
+    offset: number,
     end: number,
-    usersList: Array<common_character_pb.Character.AsObject>,
+    usersList: Array<common_userinfo_pb.User.AsObject>,
   }
 }
 
@@ -88,8 +88,8 @@ export namespace GetUserRequest {
 }
 
 export class GetUserResponse extends jspb.Message {
-  getUser(): common_character_pb.Character | undefined;
-  setUser(value?: common_character_pb.Character): GetUserResponse;
+  getUser(): common_userinfo_pb.User | undefined;
+  setUser(value?: common_userinfo_pb.User): GetUserResponse;
   hasUser(): boolean;
   clearUser(): GetUserResponse;
 
@@ -103,7 +103,7 @@ export class GetUserResponse extends jspb.Message {
 
 export namespace GetUserResponse {
   export type AsObject = {
-    user?: common_character_pb.Character.AsObject,
+    user?: common_userinfo_pb.User.AsObject,
   }
 }
 
@@ -200,13 +200,13 @@ export class UserActivity extends jspb.Message {
   hasCreatedat(): boolean;
   clearCreatedat(): UserActivity;
 
-  getTargetuser(): common_character_pb.ShortCharacter | undefined;
-  setTargetuser(value?: common_character_pb.ShortCharacter): UserActivity;
+  getTargetuser(): common_userinfo_pb.ShortUser | undefined;
+  setTargetuser(value?: common_userinfo_pb.ShortUser): UserActivity;
   hasTargetuser(): boolean;
   clearTargetuser(): UserActivity;
 
-  getCauseuser(): common_character_pb.ShortCharacter | undefined;
-  setCauseuser(value?: common_character_pb.ShortCharacter): UserActivity;
+  getCauseuser(): common_userinfo_pb.ShortUser | undefined;
+  setCauseuser(value?: common_userinfo_pb.ShortUser): UserActivity;
   hasCauseuser(): boolean;
   clearCauseuser(): UserActivity;
 
@@ -235,8 +235,8 @@ export namespace UserActivity {
     id: number,
     type: string,
     createdat?: google_protobuf_timestamp_pb.Timestamp.AsObject,
-    targetuser?: common_character_pb.ShortCharacter.AsObject,
-    causeuser?: common_character_pb.ShortCharacter.AsObject,
+    targetuser?: common_userinfo_pb.ShortUser.AsObject,
+    causeuser?: common_userinfo_pb.ShortUser.AsObject,
     key: string,
     oldvalue: string,
     newvalue: string,

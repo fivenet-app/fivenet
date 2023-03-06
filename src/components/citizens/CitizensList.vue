@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Character } from '@arpanet/gen/common/character_pb';
+import { User } from '@arpanet/gen/common/userinfo_pb';
 import { OrderBy } from '@arpanet/gen/common/database_pb';
 import { defineComponent } from 'vue';
 import { clientAuthOptions, handleGRPCError } from '../../grpc';
@@ -24,7 +24,7 @@ export default defineComponent({
             searchFirstname: "",
             searchLastname: "",
             orderBys: [] as Array<OrderBy>,
-            users: [] as Array<Character>,
+            users: [] as Array<User>,
             offset: 0,
             totalCount: 0,
             listEnd: 0,
@@ -40,7 +40,7 @@ export default defineComponent({
             }
             this.loading = true;
             const req = new FindUsersRequest();
-            req.setCurrent(offset);
+            req.setOffset(offset);
             req.setFirstname(this.searchFirstname);
             req.setLastname(this.searchLastname);
             req.setOrderbyList(this.orderBys);
@@ -50,7 +50,7 @@ export default defineComponent({
                 then((resp) => {
                     this.users = resp.getUsersList();
                     this.totalCount = resp.getTotalcount();
-                    this.offset = resp.getCurrent();
+                    this.offset = resp.getOffset();
                     this.listEnd = resp.getEnd();
                     this.loading = false;
                 }).
@@ -180,7 +180,7 @@ export default defineComponent({
                             </thead>
                         </table>
 
-                        <TablePagination :current="offset" :entries="users.length" :end="listEnd" :total="totalCount"
+                        <TablePagination :offset="offset" :entries="users.length" :end="listEnd" :total="totalCount"
                             :callback="findUsers" />
                     </div>
                 </div>

@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -20,6 +21,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+)
+
+var (
+	u = table.Users
 )
 
 type Server struct {
@@ -40,7 +45,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (c
 	return auth.GRPCAuthFunc(ctx)
 }
 
-func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, activeChar *common.Character) (string, error) {
+func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, activeChar *common.User) (string, error) {
 	claims := &session.CitizenInfoClaims{
 		AccountID: account.ID,
 		Username:  account.Username,
@@ -104,21 +109,22 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 }
 
 func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {
-	resp := &GetCharactersResponse{}
-
 	claims, err := session.Tokens.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
 	if err != nil {
-		return resp, nil
+		return nil, err
 	}
 
-	// Load chars and add them to the response
-	licenseSearch := helpers.BuildCharSearchIdentifier(claims.Subject)
+	resp := &GetCharactersResponse{}
+	// Load chars from database
+	stmt := u.SELECT(
+		u.AllColumns,
+	).
+		FROM(u.LEFT_JOIN(table.ArpanetUserProps, table.ArpanetUserProps.UserID.EQ(u.ID))).
+		WHERE(u.Identifier.LIKE(jet.String(helpers.BuildCharSearchIdentifier(claims.Subject)))).
+		ORDER_BY(u.ID).
+		LIMIT(10)
 
-	u := table.Users
-	stmt := u.SELECT(u.AllColumns).
-		FROM(u).
-		WHERE(u.License.LIKE(jet.String(licenseSearch))).
-		LIMIT(6)
+	fmt.Println(stmt.DebugSql())
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Chars); err != nil {
 		return nil, err
 	}
@@ -134,9 +140,13 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return resp, nil
 	}
 
-	var char common.Character
+	var char common.User
 	u := table.Users
-	stmt := u.SELECT(u.AllColumns).
+	stmt := u.SELECT(
+		u.ID,
+		u.Identifier,
+		u.Job,
+	).
 		FROM(u).
 		WHERE(u.ID.EQ(jet.Int32(req.UserID))).
 		LIMIT(1)
@@ -155,10 +165,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	token, err := s.createTokenFromAccountAndChar(account, &common.Character{
-		UserID:     char.UserID,
-		Identifier: char.Identifier,
-	})
+	token, err := s.createTokenFromAccountAndChar(account, &char)
 	if err != nil {
 		return nil, err
 	}
@@ -169,6 +176,11 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	if err != nil {
 		return nil, err
 	}
+
+	if len(perms) == 0 {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to select this character!")
+	}
+
 	resp.Permissions = perms.GuardNames()
 
 	return resp, nil

@@ -53,8 +53,8 @@ static_resources:
               "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
               common_tls_context:
                 tls_certificates:
-                - certificate_chain: {filename: "/certs/server-cert.pem"}
-                  private_key: {filename: "/certs/server-key.pem"}
+                - certificate_chain: {filename: "/certs/cert.pem"}
+                  private_key: {filename: "/certs/dev.pem"}
                 validation_context:
                   trusted_ca:
                     filename: /certs/rootCA.pem

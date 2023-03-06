@@ -14,6 +14,7 @@ import (
 
 func init() {
 	permissions.RegisterPerms([]*permissions.Perm{
+		{Key: "livemap", Name: "View"},
 		{Key: "livemap", Name: "Stream", PerJob: true},
 	})
 }

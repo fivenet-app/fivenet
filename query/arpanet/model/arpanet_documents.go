@@ -19,7 +19,7 @@ type ArpanetDocuments struct {
 	Title       string
 	Content     string
 	ContentType string
-	Creator     int32
+	CreatorID   int32
 	CreatorJob  string
 	Public      bool
 	ResponseID  *uint64

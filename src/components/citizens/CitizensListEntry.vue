@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Character } from '@arpanet/gen/common/character_pb';
+import { User } from '@arpanet/gen/common/userinfo_pb';
 import { defineComponent } from 'vue';
 import CitizenInfoSlideOver from './CitizenInfoSlideOver.vue';
 
@@ -23,7 +23,7 @@ export default defineComponent({
     props: {
         'user': {
             required: true,
-            type: Character,
+            type: User,
         },
     },
 });

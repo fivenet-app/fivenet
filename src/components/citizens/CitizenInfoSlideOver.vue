@@ -13,7 +13,7 @@ import {
 } from '@headlessui/vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { EllipsisVerticalIcon, KeyIcon } from '@heroicons/vue/20/solid';
-import { Character } from '@arpanet/gen/common/character_pb';
+import { User } from '@arpanet/gen/common/userinfo_pb';
 import CitizenActivityFeed from './CitizenActivityFeed.vue';
 import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import { RpcError } from 'grpc-web';
@@ -47,7 +47,7 @@ export default defineComponent({
     props: {
         'user': {
             required: true,
-            type: Character,
+            type: User,
         },
         'open': {
             required: true,
@@ -247,7 +247,7 @@ export default defineComponent({
                                                                     <KeyIcon class="h-5 w-5 flex-shrink-0 text-gray-400"
                                                                         aria-hidden="true" />
                                                                     <span class="ml-2 flex-1 truncate">{{
-                                                                        license.getName().toUpperCase() }}</span>
+                                                                        license.getType().toUpperCase() }}</span>
                                                                 </div>
                                                             </li>
                                                         </ul>

@@ -22,16 +22,15 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents` (
   `title` longtext NOT NULL,
   `content` longtext NOT NULL,
   `content_type` varchar(24) NOT NULL,
-  `creator` int(11) NOT NULL,
+  `creator_id` int(11) NOT NULL,
   `creator_job` varchar(20) NOT NULL,
   `public` tinyint(1) NOT NULL DEFAULT 0,
   `response_id` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_arpanet_documents_deleted_at` (`deleted_at`),
-  KEY `idx_arpanet_documents_response_id` (`response_id`),
+  KEY `idx_arpanet_documents_creator_id` (`creator_id`),
   KEY `idx_arpanet_documents_creator_job` (`creator_job`),
-  KEY `idx_arpanet_documents_creator` (`creator`),
-  KEY `idx_arpanet_documents_creator_id` (`creator`),
+  KEY `idx_arpanet_documents_response_id` (`response_id`),
   CONSTRAINT `fk_arpanet_documents_responses` FOREIGN KEY (`response_id`) REFERENCES `arpanet_documents` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

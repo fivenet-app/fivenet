@@ -17,8 +17,7 @@ import (
 	"github.com/galexrt/arpanet/pkg/session"
 	pbauth "github.com/galexrt/arpanet/proto/auth"
 	pbdispatches "github.com/galexrt/arpanet/proto/dispatches"
-
-	//pbdocuments "github.com/galexrt/arpanet/proto/documents"
+	pbdocuments "github.com/galexrt/arpanet/proto/documents"
 	pbjob "github.com/galexrt/arpanet/proto/job"
 	pblivemap "github.com/galexrt/arpanet/proto/livemap"
 	pbusers "github.com/galexrt/arpanet/proto/users"
@@ -107,7 +106,7 @@ var serverCmd = &cobra.Command{
 		// Attach our GRPC services
 		pbauth.RegisterAccountServiceServer(grpcServer, pbauth.NewServer())
 		pbdispatches.RegisterDispatchesServiceServer(grpcServer, pbdispatches.NewServer())
-		//pbdocuments.RegisterDocumentsServiceServer(grpcServer, pbdocuments.NewServer())
+		pbdocuments.RegisterDocumentsServiceServer(grpcServer, pbdocuments.NewServer())
 		pbjob.RegisterJobServiceServer(grpcServer, pbjob.NewServer())
 		pblivemap.RegisterLivemapServiceServer(grpcServer, pblivemap.NewServer())
 		pbusers.RegisterUsersServiceServer(grpcServer, pbusers.NewServer())
@@ -164,7 +163,7 @@ var serverCmd = &cobra.Command{
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return query.SetupDB()
+		return query.SetupDB(logger)
 	},
 }
 

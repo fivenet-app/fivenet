@@ -57,7 +57,7 @@ func (m *FindUsersRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Current
+	// no validation rules for Offset
 
 	for idx, item := range m.GetOrderBy() {
 		_, _ = idx, item
@@ -199,7 +199,7 @@ func (m *FindUsersResponse) validate(all bool) error {
 
 	// no validation rules for TotalCount
 
-	// no validation rules for Current
+	// no validation rules for Offset
 
 	// no validation rules for End
 

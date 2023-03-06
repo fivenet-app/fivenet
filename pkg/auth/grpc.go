@@ -56,22 +56,29 @@ func GetUserIDFromContext(ctx context.Context) int32 {
 	return values[AuthActiveCharIDCtxTag].(int32)
 }
 
-func GetUserFromContext(ctx context.Context) (*common.Character, error) {
+func GetUserFromContext(ctx context.Context) (*common.ShortUser, error) {
 	return getUserByID(ctx, GetUserIDFromContext(ctx))
 }
 
-func getUserByID(ctx context.Context, userID int32) (*common.Character, error) {
+func getUserByID(ctx context.Context, userID int32) (*common.ShortUser, error) {
 	// Find user info for the new/old char index in the claim
 	u := table.Users
-	stmt := u.SELECT(u.AllColumns).
+	stmt := u.SELECT(
+		u.ID,
+		u.Identifier,
+		u.Job,
+		u.JobGrade,
+		u.Firstname,
+		u.Lastname,
+	).
 		FROM(u).
 		WHERE(u.ID.EQ(jet.Int32(userID))).
 		LIMIT(1)
 
-	var user *common.Character
+	var user common.ShortUser
 	if err := stmt.QueryContext(ctx, query.DB, &user); err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
 }

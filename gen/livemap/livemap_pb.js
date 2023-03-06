@@ -21,6 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
+var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
+goog.object.extend(proto, google_protobuf_timestamp_pb);
 goog.exportSymbol('proto.gen.livemap.Marker', null, global);
 goog.exportSymbol('proto.gen.livemap.ServerStreamResponse', null, global);
 goog.exportSymbol('proto.gen.livemap.StreamRequest', null, global);
@@ -437,9 +439,11 @@ proto.gen.livemap.Marker.toObject = function(includeInstance, msg) {
     job: jspb.Message.getFieldWithDefault(msg, 2, ""),
     x: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0),
     y: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0),
-    name: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    icon: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    popup: jspb.Message.getFieldWithDefault(msg, 7, "")
+    createdat: (f = msg.getCreatedat()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    name: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    icon: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    popup: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    link: jspb.Message.getFieldWithDefault(msg, 9, "")
   };
 
   if (includeInstance) {
@@ -493,16 +497,25 @@ proto.gen.livemap.Marker.deserializeBinaryFromReader = function(msg, reader) {
       msg.setY(value);
       break;
     case 5:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setName(value);
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setCreatedat(value);
       break;
     case 6:
       var value = /** @type {string} */ (reader.readString());
-      msg.setIcon(value);
+      msg.setName(value);
       break;
     case 7:
       var value = /** @type {string} */ (reader.readString());
+      msg.setIcon(value);
+      break;
+    case 8:
+      var value = /** @type {string} */ (reader.readString());
       msg.setPopup(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLink(value);
       break;
     default:
       reader.skipField();
@@ -561,24 +574,39 @@ proto.gen.livemap.Marker.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getName();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getCreatedat();
+  if (f != null) {
+    writer.writeMessage(
       5,
-      f
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
   }
-  f = message.getIcon();
+  f = message.getName();
   if (f.length > 0) {
     writer.writeString(
       6,
       f
     );
   }
-  f = message.getPopup();
+  f = message.getIcon();
   if (f.length > 0) {
     writer.writeString(
       7,
+      f
+    );
+  }
+  f = message.getPopup();
+  if (f.length > 0) {
+    writer.writeString(
+      8,
+      f
+    );
+  }
+  f = message.getLink();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
       f
     );
   }
@@ -658,28 +686,47 @@ proto.gen.livemap.Marker.prototype.setY = function(value) {
 
 
 /**
- * optional string name = 5;
+ * optional google.protobuf.Timestamp createdAt = 5;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.gen.livemap.Marker.prototype.getCreatedat = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 5));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.gen.livemap.Marker} returns this
+*/
+proto.gen.livemap.Marker.prototype.setCreatedat = function(value) {
+  return jspb.Message.setWrapperField(this, 5, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.gen.livemap.Marker} returns this
+ */
+proto.gen.livemap.Marker.prototype.clearCreatedat = function() {
+  return this.setCreatedat(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.gen.livemap.Marker.prototype.hasCreatedat = function() {
+  return jspb.Message.getField(this, 5) != null;
+};
+
+
+/**
+ * optional string name = 6;
  * @return {string}
  */
 proto.gen.livemap.Marker.prototype.getName = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.gen.livemap.Marker} returns this
- */
-proto.gen.livemap.Marker.prototype.setName = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
-};
-
-
-/**
- * optional string icon = 6;
- * @return {string}
- */
-proto.gen.livemap.Marker.prototype.getIcon = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
@@ -688,16 +735,16 @@ proto.gen.livemap.Marker.prototype.getIcon = function() {
  * @param {string} value
  * @return {!proto.gen.livemap.Marker} returns this
  */
-proto.gen.livemap.Marker.prototype.setIcon = function(value) {
+proto.gen.livemap.Marker.prototype.setName = function(value) {
   return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
 /**
- * optional string popup = 7;
+ * optional string icon = 7;
  * @return {string}
  */
-proto.gen.livemap.Marker.prototype.getPopup = function() {
+proto.gen.livemap.Marker.prototype.getIcon = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
@@ -706,8 +753,44 @@ proto.gen.livemap.Marker.prototype.getPopup = function() {
  * @param {string} value
  * @return {!proto.gen.livemap.Marker} returns this
  */
-proto.gen.livemap.Marker.prototype.setPopup = function(value) {
+proto.gen.livemap.Marker.prototype.setIcon = function(value) {
   return jspb.Message.setProto3StringField(this, 7, value);
+};
+
+
+/**
+ * optional string popup = 8;
+ * @return {string}
+ */
+proto.gen.livemap.Marker.prototype.getPopup = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.gen.livemap.Marker} returns this
+ */
+proto.gen.livemap.Marker.prototype.setPopup = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional string link = 9;
+ * @return {string}
+ */
+proto.gen.livemap.Marker.prototype.getLink = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.gen.livemap.Marker} returns this
+ */
+proto.gen.livemap.Marker.prototype.setLink = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 

@@ -3,6 +3,8 @@ syntax = "proto3";
 package gen.livemap;
 option go_package = "github.com/galexrt/arpanet/proto/livemap";
 
+import "google/protobuf/timestamp.proto";
+
 message StreamRequest {
 }
 
@@ -12,16 +14,18 @@ message ServerStreamResponse {
 }
 
 message Marker {
-    int32 userID = 1;
-    string job = 2;
+    int32 userID = 1; // @gotags: alias:"arpanet_user_locations.user_id"
+    string job = 2; // @gotags: alias:"arpanet_user_locations.job"
 
-    float x = 3;
-    float y = 4;
+    float x = 3; // @gotags: alias:"arpanet_user_locations.x"
+    float y = 4; // @gotags: alias:"arpanet_user_locations.y"
 
-    string name = 5;
+    google.protobuf.Timestamp createdAt = 5; // @gotags: alias:"arpanet_user_locations.updated_at"
 
-    string icon = 6;
-    string popup = 7;
+    string name = 6;
+    string icon = 7;
+    string popup = 8;
+    string link = 9;
 }
 
 service LivemapService {

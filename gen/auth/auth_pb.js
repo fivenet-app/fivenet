@@ -21,8 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
-var common_character_pb = require('../common/character_pb.js');
-goog.object.extend(proto, common_character_pb);
+var common_userinfo_pb = require('../common/userinfo_pb.js');
+goog.object.extend(proto, common_userinfo_pb);
 goog.exportSymbol('proto.gen.auth.ChooseCharacterRequest', null, global);
 goog.exportSymbol('proto.gen.auth.ChooseCharacterResponse', null, global);
 goog.exportSymbol('proto.gen.auth.GetCharactersRequest', null, global);
@@ -630,7 +630,7 @@ proto.gen.auth.GetCharactersResponse.prototype.toObject = function(opt_includeIn
 proto.gen.auth.GetCharactersResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     charsList: jspb.Message.toObjectList(msg.getCharsList(),
-    common_character_pb.Character.toObject, includeInstance)
+    common_userinfo_pb.User.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -668,8 +668,8 @@ proto.gen.auth.GetCharactersResponse.deserializeBinaryFromReader = function(msg,
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new common_character_pb.Character;
-      reader.readMessage(value,common_character_pb.Character.deserializeBinaryFromReader);
+      var value = new common_userinfo_pb.User;
+      reader.readMessage(value,common_userinfo_pb.User.deserializeBinaryFromReader);
       msg.addChars(value);
       break;
     default:
@@ -706,24 +706,24 @@ proto.gen.auth.GetCharactersResponse.serializeBinaryToWriter = function(message,
     writer.writeRepeatedMessage(
       1,
       f,
-      common_character_pb.Character.serializeBinaryToWriter
+      common_userinfo_pb.User.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * repeated gen.common.Character chars = 1;
- * @return {!Array<!proto.gen.common.Character>}
+ * repeated gen.common.User chars = 1;
+ * @return {!Array<!proto.gen.common.User>}
  */
 proto.gen.auth.GetCharactersResponse.prototype.getCharsList = function() {
-  return /** @type{!Array<!proto.gen.common.Character>} */ (
-    jspb.Message.getRepeatedWrapperField(this, common_character_pb.Character, 1));
+  return /** @type{!Array<!proto.gen.common.User>} */ (
+    jspb.Message.getRepeatedWrapperField(this, common_userinfo_pb.User, 1));
 };
 
 
 /**
- * @param {!Array<!proto.gen.common.Character>} value
+ * @param {!Array<!proto.gen.common.User>} value
  * @return {!proto.gen.auth.GetCharactersResponse} returns this
 */
 proto.gen.auth.GetCharactersResponse.prototype.setCharsList = function(value) {
@@ -732,12 +732,12 @@ proto.gen.auth.GetCharactersResponse.prototype.setCharsList = function(value) {
 
 
 /**
- * @param {!proto.gen.common.Character=} opt_value
+ * @param {!proto.gen.common.User=} opt_value
  * @param {number=} opt_index
- * @return {!proto.gen.common.Character}
+ * @return {!proto.gen.common.User}
  */
 proto.gen.auth.GetCharactersResponse.prototype.addChars = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.gen.common.Character, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.gen.common.User, opt_index);
 };
 
 

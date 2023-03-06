@@ -35,8 +35,8 @@ func GetAllPermissions() (collections.Permissions, error) {
 	return dest, nil
 }
 
-func Can(user *common.Character, perm ...string) bool {
-	return CanID(user.UserID, perm...)
+func Can(user common.IGetUserID, perm ...string) bool {
+	return CanID(user.GetUserID(), perm...)
 }
 
 func CanID(userID int32, perm ...string) bool {
@@ -51,7 +51,7 @@ func canID(userID int32, guardName string) bool {
 
 	stmt := ap.
 		SELECT(
-			ap.ID,
+			ap.ID.AS("id"),
 		).
 		FROM(
 			ap.LEFT_JOIN(aup,
@@ -68,8 +68,7 @@ func canID(userID int32, guardName string) bool {
 	var dest struct {
 		ID int32
 	}
-	err := stmt.Query(query.DB, &dest)
-	if err != nil {
+	if err := stmt.Query(query.DB, &dest); err != nil {
 		return false
 	}
 

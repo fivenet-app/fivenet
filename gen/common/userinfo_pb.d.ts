@@ -2,59 +2,59 @@ import * as jspb from 'google-protobuf'
 
 
 
-export class Character extends jspb.Message {
+export class User extends jspb.Message {
   getUserid(): number;
-  setUserid(value: number): Character;
+  setUserid(value: number): User;
 
   getIdentifier(): string;
-  setIdentifier(value: string): Character;
+  setIdentifier(value: string): User;
 
   getJob(): string;
-  setJob(value: string): Character;
+  setJob(value: string): User;
 
   getJobgrade(): number;
-  setJobgrade(value: number): Character;
+  setJobgrade(value: number): User;
 
   getFirstname(): string;
-  setFirstname(value: string): Character;
+  setFirstname(value: string): User;
 
   getLastname(): string;
-  setLastname(value: string): Character;
+  setLastname(value: string): User;
 
   getDateofbirth(): string;
-  setDateofbirth(value: string): Character;
+  setDateofbirth(value: string): User;
 
   getSex(): string;
-  setSex(value: string): Character;
+  setSex(value: string): User;
 
   getHeight(): string;
-  setHeight(value: string): Character;
+  setHeight(value: string): User;
 
   getVisum(): number;
-  setVisum(value: number): Character;
+  setVisum(value: number): User;
 
   getPlaytime(): number;
-  setPlaytime(value: number): Character;
+  setPlaytime(value: number): User;
 
   getProps(): Props | undefined;
-  setProps(value?: Props): Character;
+  setProps(value?: Props): User;
   hasProps(): boolean;
-  clearProps(): Character;
+  clearProps(): User;
 
   getLicensesList(): Array<License>;
-  setLicensesList(value: Array<License>): Character;
-  clearLicensesList(): Character;
+  setLicensesList(value: Array<License>): User;
+  clearLicensesList(): User;
   addLicenses(value?: License, index?: number): License;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Character.AsObject;
-  static toObject(includeInstance: boolean, msg: Character): Character.AsObject;
-  static serializeBinaryToWriter(message: Character, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Character;
-  static deserializeBinaryFromReader(message: Character, reader: jspb.BinaryReader): Character;
+  toObject(includeInstance?: boolean): User.AsObject;
+  static toObject(includeInstance: boolean, msg: User): User.AsObject;
+  static serializeBinaryToWriter(message: User, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): User;
+  static deserializeBinaryFromReader(message: User, reader: jspb.BinaryReader): User;
 }
 
-export namespace Character {
+export namespace User {
   export type AsObject = {
     userid: number,
     identifier: string,
@@ -73,8 +73,8 @@ export namespace Character {
 }
 
 export class License extends jspb.Message {
-  getName(): string;
-  setName(value: string): License;
+  getType(): string;
+  setType(value: string): License;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): License.AsObject;
@@ -86,7 +86,7 @@ export class License extends jspb.Message {
 
 export namespace License {
   export type AsObject = {
-    name: string,
+    type: string,
   }
 }
 
@@ -108,34 +108,34 @@ export namespace Props {
   }
 }
 
-export class ShortCharacter extends jspb.Message {
+export class ShortUser extends jspb.Message {
   getUserid(): number;
-  setUserid(value: number): ShortCharacter;
+  setUserid(value: number): ShortUser;
 
   getIdentifier(): string;
-  setIdentifier(value: string): ShortCharacter;
+  setIdentifier(value: string): ShortUser;
 
   getJob(): string;
-  setJob(value: string): ShortCharacter;
+  setJob(value: string): ShortUser;
 
   getJobgrade(): number;
-  setJobgrade(value: number): ShortCharacter;
+  setJobgrade(value: number): ShortUser;
 
   getFirstname(): string;
-  setFirstname(value: string): ShortCharacter;
+  setFirstname(value: string): ShortUser;
 
   getLastname(): string;
-  setLastname(value: string): ShortCharacter;
+  setLastname(value: string): ShortUser;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ShortCharacter.AsObject;
-  static toObject(includeInstance: boolean, msg: ShortCharacter): ShortCharacter.AsObject;
-  static serializeBinaryToWriter(message: ShortCharacter, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ShortCharacter;
-  static deserializeBinaryFromReader(message: ShortCharacter, reader: jspb.BinaryReader): ShortCharacter;
+  toObject(includeInstance?: boolean): ShortUser.AsObject;
+  static toObject(includeInstance: boolean, msg: ShortUser): ShortUser.AsObject;
+  static serializeBinaryToWriter(message: ShortUser, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ShortUser;
+  static deserializeBinaryFromReader(message: ShortUser, reader: jspb.BinaryReader): ShortUser;
 }
 
-export namespace ShortCharacter {
+export namespace ShortUser {
   export type AsObject = {
     userid: number,
     identifier: string,
