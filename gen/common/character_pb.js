@@ -199,7 +199,7 @@ proto.gen.common.Character.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setUserid(value);
       break;
     case 2:
@@ -283,7 +283,7 @@ proto.gen.common.Character.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getUserid();
   if (f !== 0) {
-    writer.writeUint64(
+    writer.writeInt32(
       1,
       f
     );
@@ -378,7 +378,7 @@ proto.gen.common.Character.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional uint64 userID = 1;
+ * optional int32 userID = 1;
  * @return {number}
  */
 proto.gen.common.Character.prototype.getUserid = function() {
@@ -985,7 +985,7 @@ proto.gen.common.ShortCharacter.deserializeBinaryFromReader = function(msg, read
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setUserid(value);
       break;
     case 2:
@@ -1039,7 +1039,7 @@ proto.gen.common.ShortCharacter.serializeBinaryToWriter = function(message, writ
   var f = undefined;
   f = message.getUserid();
   if (f !== 0) {
-    writer.writeUint64(
+    writer.writeInt32(
       1,
       f
     );
@@ -1083,7 +1083,7 @@ proto.gen.common.ShortCharacter.serializeBinaryToWriter = function(message, writ
 
 
 /**
- * optional uint64 userID = 1;
+ * optional int32 userID = 1;
  * @return {number}
  */
 proto.gen.common.ShortCharacter.prototype.getUserid = function() {

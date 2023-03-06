@@ -7,13 +7,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/helpers"
+	"github.com/galexrt/arpanet/pkg/permissions"
 	"github.com/galexrt/arpanet/pkg/session"
 	"github.com/galexrt/arpanet/proto/common"
 	"github.com/galexrt/arpanet/query"
+	"github.com/galexrt/arpanet/query/arpanet/model"
+	"github.com/galexrt/arpanet/query/arpanet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -36,13 +40,13 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (c
 	return auth.GRPCAuthFunc(ctx)
 }
 
-func (s *Server) createTokenFromAccountAndChar(account *model.Account, activeChar *common.Character) (string, error) {
+func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, activeChar *common.Character) (string, error) {
 	claims := &session.CitizenInfoClaims{
 		AccountID: account.ID,
 		Username:  account.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// A usual scenario is to set the expiration time relative to the current time
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(12 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(10 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			Issuer:    "arpanet",
@@ -63,23 +67,30 @@ func (s *Server) createTokenFromAccountAndChar(account *model.Account, activeCha
 	return session.Tokens.NewWithClaims(claims)
 }
 
-func (s *Server) getAccountFromDB(userID string) (*model.Account, error) {
-	accounts := query.Account
-	account, err := accounts.Where(accounts.Enabled.Is(true), accounts.Username.Eq(userID)).Limit(1).First()
-	if err != nil {
+func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.ArpanetAccounts, error) {
+	var account model.ArpanetAccounts
+	a := table.ArpanetAccounts
+	stmt := a.SELECT(a.AllColumns).
+		FROM(a).WHERE(
+		a.Enabled.IS_TRUE().
+			AND(a.Username.EQ(jet.String(username))),
+	).LIMIT(1)
+	if err := stmt.QueryContext(ctx, query.DB, &account); err != nil {
 		return nil, err
 	}
-	return account, nil
+
+	return &account, nil
 }
 
 func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error) {
 	resp := &LoginResponse{}
-	account, err := s.getAccountFromDB(req.Username)
+	account, err := s.getAccountFromDB(ctx, req.Username)
 	if err != nil {
 		return nil, err
 	}
 
-	if !account.CheckPassword(req.Password) {
+	// Password check logic
+	if err := bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(req.Password)); err != nil {
 		return &LoginResponse{}, errors.New("wrong username or password")
 	}
 
@@ -103,16 +114,14 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	// Load chars and add them to the response
 	licenseSearch := helpers.BuildCharSearchIdentifier(claims.Subject)
 
-	u := query.User
-	users, err := u.Preload(u.UserLicenses.RelationField).
-		Where(u.Identifier.Like(licenseSearch)).
-		Limit(5).
-		Find()
-	if err != nil {
-		return nil, nil
+	u := table.Users
+	stmt := u.SELECT(u.AllColumns).
+		FROM(u).
+		WHERE(u.License.LIKE(jet.String(licenseSearch))).
+		LIMIT(6)
+	if err := stmt.QueryContext(ctx, query.DB, &resp.Chars); err != nil {
+		return nil, err
 	}
-
-	resp.Chars = helpers.ConvertModelUserListToCommonCharacterList(users)
 
 	return resp, nil
 }
@@ -125,14 +134,13 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return resp, nil
 	}
 
-	account, err := s.getAccountFromDB(claims.Username)
-	if err != nil {
-		return nil, err
-	}
-
-	u := query.User
-	char, err := u.Where(u.ID.Eq(int32(req.UserID))).First()
-	if err != nil {
+	var char common.Character
+	u := table.Users
+	stmt := u.SELECT(u.AllColumns).
+		FROM(u).
+		WHERE(u.ID.EQ(jet.Int32(req.UserID))).
+		LIMIT(1)
+	if err := stmt.QueryContext(ctx, query.DB, &char); err != nil {
 		return nil, err
 	}
 
@@ -141,8 +149,14 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, status.Error(codes.OutOfRange, "That's not your character!")
 	}
 
+	// Load account data for token creation
+	account, err := s.getAccountFromDB(ctx, claims.Username)
+	if err != nil {
+		return nil, err
+	}
+
 	token, err := s.createTokenFromAccountAndChar(account, &common.Character{
-		UserID:     uint64(char.ID),
+		UserID:     char.UserID,
 		Identifier: char.Identifier,
 	})
 	if err != nil {
@@ -151,7 +165,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	resp.Token = token
 
 	// Load permissions of user
-	perms, err := query.Perms.GetAllPermissionsOfUser(uint(char.ID))
+	perms, err := permissions.GetAllPermissionsOfUser(char.UserID)
 	if err != nil {
 		return nil, err
 	}

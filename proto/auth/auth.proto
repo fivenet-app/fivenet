@@ -22,7 +22,7 @@ message GetCharactersResponse {
 }
 
 message ChooseCharacterRequest {
-    uint64 userID = 1 [(validate.rules).uint64.gt = 0];
+    int32 userID = 1 [(validate.rules).int32.gt = 0];
 }
 
 message ChooseCharacterResponse {

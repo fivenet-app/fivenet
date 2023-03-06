@@ -12,14 +12,16 @@ message ServerStreamResponse {
 }
 
 message Marker {
-    float x = 1;
-    float y = 2;
+    int32 userID = 1;
+    string job = 2;
 
-    string id = 3;
-    string name = 4;
+    float x = 3;
+    float y = 4;
 
-    string icon = 5;
-    string popup = 6;
+    string name = 5;
+
+    string icon = 6;
+    string popup = 7;
 }
 
 service LivemapService {

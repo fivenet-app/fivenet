@@ -820,7 +820,7 @@ proto.gen.auth.ChooseCharacterRequest.deserializeBinaryFromReader = function(msg
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setUserid(value);
       break;
     default:
@@ -854,7 +854,7 @@ proto.gen.auth.ChooseCharacterRequest.serializeBinaryToWriter = function(message
   var f = undefined;
   f = message.getUserid();
   if (f !== 0) {
-    writer.writeUint64(
+    writer.writeInt32(
       1,
       f
     );
@@ -863,7 +863,7 @@ proto.gen.auth.ChooseCharacterRequest.serializeBinaryToWriter = function(message
 
 
 /**
- * optional uint64 userID = 1;
+ * optional int32 userID = 1;
  * @return {number}
  */
 proto.gen.auth.ChooseCharacterRequest.prototype.getUserid = function() {

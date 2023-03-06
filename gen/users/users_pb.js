@@ -795,7 +795,7 @@ proto.gen.users.GetUserRequest.deserializeBinaryFromReader = function(msg, reade
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setUserid(value);
       break;
     default:
@@ -829,7 +829,7 @@ proto.gen.users.GetUserRequest.serializeBinaryToWriter = function(message, write
   var f = undefined;
   f = message.getUserid();
   if (f !== 0) {
-    writer.writeUint64(
+    writer.writeInt32(
       1,
       f
     );
@@ -838,7 +838,7 @@ proto.gen.users.GetUserRequest.serializeBinaryToWriter = function(message, write
 
 
 /**
- * optional uint64 userID = 1;
+ * optional int32 userID = 1;
  * @return {number}
  */
 proto.gen.users.GetUserRequest.prototype.getUserid = function() {
@@ -1077,7 +1077,7 @@ proto.gen.users.SetUserPropsRequest.deserializeBinaryFromReader = function(msg, 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setUserid(value);
       break;
     case 2:
@@ -1115,7 +1115,7 @@ proto.gen.users.SetUserPropsRequest.serializeBinaryToWriter = function(message, 
   var f = undefined;
   f = message.getUserid();
   if (f !== 0) {
-    writer.writeUint64(
+    writer.writeInt32(
       1,
       f
     );
@@ -1131,7 +1131,7 @@ proto.gen.users.SetUserPropsRequest.serializeBinaryToWriter = function(message, 
 
 
 /**
- * optional uint64 userID = 1;
+ * optional int32 userID = 1;
  * @return {number}
  */
 proto.gen.users.SetUserPropsRequest.prototype.getUserid = function() {
@@ -1355,7 +1355,7 @@ proto.gen.users.GetUserActivityRequest.deserializeBinaryFromReader = function(ms
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setUserid(value);
       break;
     default:
@@ -1389,7 +1389,7 @@ proto.gen.users.GetUserActivityRequest.serializeBinaryToWriter = function(messag
   var f = undefined;
   f = message.getUserid();
   if (f !== 0) {
-    writer.writeUint64(
+    writer.writeInt32(
       1,
       f
     );
@@ -1398,7 +1398,7 @@ proto.gen.users.GetUserActivityRequest.serializeBinaryToWriter = function(messag
 
 
 /**
- * optional uint64 userID = 1;
+ * optional int32 userID = 1;
  * @return {number}
  */
 proto.gen.users.GetUserActivityRequest.prototype.getUserid = function() {

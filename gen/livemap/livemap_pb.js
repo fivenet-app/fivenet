@@ -433,12 +433,13 @@ proto.gen.livemap.Marker.prototype.toObject = function(opt_includeInstance) {
  */
 proto.gen.livemap.Marker.toObject = function(includeInstance, msg) {
   var f, obj = {
-    x: jspb.Message.getFloatingPointFieldWithDefault(msg, 1, 0.0),
-    y: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0),
-    id: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    name: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    icon: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    popup: jspb.Message.getFieldWithDefault(msg, 6, "")
+    userid: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    job: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    x: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0),
+    y: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0),
+    name: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    icon: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    popup: jspb.Message.getFieldWithDefault(msg, 7, "")
   };
 
   if (includeInstance) {
@@ -476,26 +477,30 @@ proto.gen.livemap.Marker.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setUserid(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setJob(value);
+      break;
+    case 3:
       var value = /** @type {number} */ (reader.readFloat());
       msg.setX(value);
       break;
-    case 2:
+    case 4:
       var value = /** @type {number} */ (reader.readFloat());
       msg.setY(value);
       break;
-    case 3:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setId(value);
-      break;
-    case 4:
+    case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.setName(value);
       break;
-    case 5:
+    case 6:
       var value = /** @type {string} */ (reader.readString());
       msg.setIcon(value);
       break;
-    case 6:
+    case 7:
       var value = /** @type {string} */ (reader.readString());
       msg.setPopup(value);
       break;
@@ -528,45 +533,52 @@ proto.gen.livemap.Marker.prototype.serializeBinary = function() {
  */
 proto.gen.livemap.Marker.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getUserid();
+  if (f !== 0) {
+    writer.writeInt32(
+      1,
+      f
+    );
+  }
+  f = message.getJob();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
   f = message.getX();
   if (f !== 0.0) {
     writer.writeFloat(
-      1,
+      3,
       f
     );
   }
   f = message.getY();
   if (f !== 0.0) {
     writer.writeFloat(
-      2,
-      f
-    );
-  }
-  f = message.getId();
-  if (f.length > 0) {
-    writer.writeString(
-      3,
+      4,
       f
     );
   }
   f = message.getName();
   if (f.length > 0) {
     writer.writeString(
-      4,
+      5,
       f
     );
   }
   f = message.getIcon();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      6,
       f
     );
   }
   f = message.getPopup();
   if (f.length > 0) {
     writer.writeString(
-      6,
+      7,
       f
     );
   }
@@ -574,11 +586,47 @@ proto.gen.livemap.Marker.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional float x = 1;
+ * optional int32 userID = 1;
+ * @return {number}
+ */
+proto.gen.livemap.Marker.prototype.getUserid = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.gen.livemap.Marker} returns this
+ */
+proto.gen.livemap.Marker.prototype.setUserid = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional string job = 2;
+ * @return {string}
+ */
+proto.gen.livemap.Marker.prototype.getJob = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.gen.livemap.Marker} returns this
+ */
+proto.gen.livemap.Marker.prototype.setJob = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional float x = 3;
  * @return {number}
  */
 proto.gen.livemap.Marker.prototype.getX = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 1, 0.0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 3, 0.0));
 };
 
 
@@ -587,16 +635,16 @@ proto.gen.livemap.Marker.prototype.getX = function() {
  * @return {!proto.gen.livemap.Marker} returns this
  */
 proto.gen.livemap.Marker.prototype.setX = function(value) {
-  return jspb.Message.setProto3FloatField(this, 1, value);
+  return jspb.Message.setProto3FloatField(this, 3, value);
 };
 
 
 /**
- * optional float y = 2;
+ * optional float y = 4;
  * @return {number}
  */
 proto.gen.livemap.Marker.prototype.getY = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 2, 0.0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 4, 0.0));
 };
 
 
@@ -605,51 +653,15 @@ proto.gen.livemap.Marker.prototype.getY = function() {
  * @return {!proto.gen.livemap.Marker} returns this
  */
 proto.gen.livemap.Marker.prototype.setY = function(value) {
-  return jspb.Message.setProto3FloatField(this, 2, value);
+  return jspb.Message.setProto3FloatField(this, 4, value);
 };
 
 
 /**
- * optional string id = 3;
- * @return {string}
- */
-proto.gen.livemap.Marker.prototype.getId = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.gen.livemap.Marker} returns this
- */
-proto.gen.livemap.Marker.prototype.setId = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
-};
-
-
-/**
- * optional string name = 4;
+ * optional string name = 5;
  * @return {string}
  */
 proto.gen.livemap.Marker.prototype.getName = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.gen.livemap.Marker} returns this
- */
-proto.gen.livemap.Marker.prototype.setName = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
-};
-
-
-/**
- * optional string icon = 5;
- * @return {string}
- */
-proto.gen.livemap.Marker.prototype.getIcon = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
@@ -658,16 +670,16 @@ proto.gen.livemap.Marker.prototype.getIcon = function() {
  * @param {string} value
  * @return {!proto.gen.livemap.Marker} returns this
  */
-proto.gen.livemap.Marker.prototype.setIcon = function(value) {
+proto.gen.livemap.Marker.prototype.setName = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
 /**
- * optional string popup = 6;
+ * optional string icon = 6;
  * @return {string}
  */
-proto.gen.livemap.Marker.prototype.getPopup = function() {
+proto.gen.livemap.Marker.prototype.getIcon = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
@@ -676,8 +688,26 @@ proto.gen.livemap.Marker.prototype.getPopup = function() {
  * @param {string} value
  * @return {!proto.gen.livemap.Marker} returns this
  */
-proto.gen.livemap.Marker.prototype.setPopup = function(value) {
+proto.gen.livemap.Marker.prototype.setIcon = function(value) {
   return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional string popup = 7;
+ * @return {string}
+ */
+proto.gen.livemap.Marker.prototype.getPopup = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.gen.livemap.Marker} returns this
+ */
+proto.gen.livemap.Marker.prototype.setPopup = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 

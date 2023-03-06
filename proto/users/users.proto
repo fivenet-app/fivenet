@@ -23,7 +23,7 @@ message FindUsersResponse {
 }
 
 message GetUserRequest {
-    uint64 userID = 1 [(validate.rules).uint64.gt = 0];
+    int32 userID = 1 [(validate.rules).int32.gt = 0];
 }
 
 message GetUserResponse {
@@ -31,7 +31,7 @@ message GetUserResponse {
 }
 
 message SetUserPropsRequest {
-    uint64 userID = 1 [(validate.rules).uint64.gt = 0];
+    int32 userID = 1 [(validate.rules).int32.gt = 0];
     optional bool wanted = 2;
 }
 
@@ -39,7 +39,7 @@ message SetUserPropsResponse {
 }
 
 message GetUserActivityRequest {
-    uint64 userID = 1 [(validate.rules).uint64.gt = 0];
+    int32 userID = 1 [(validate.rules).int32.gt = 0];
 }
 
 message GetUserActivityResponse {

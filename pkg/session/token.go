@@ -9,9 +9,9 @@ import (
 )
 
 type CitizenInfoClaims struct {
-	AccountID            uint   `json:"accid"`
+	AccountID            uint64 `json:"accid"`
 	Username             string `json:"usrname"`
-	ActiveCharID         uint64 `json:"actcharid"`
+	ActiveCharID         int32  `json:"actcharid"`
 	ActiveCharIdentifier string `json:"actcharident"`
 
 	jwt.RegisteredClaims

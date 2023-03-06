@@ -1,61 +1,68 @@
 package query
 
 import (
-	"github.com/galexrt/arpanet/model"
+	"database/sql"
+	"embed"
+
 	"github.com/galexrt/arpanet/pkg/config"
-	"github.com/galexrt/arpanet/pkg/permify"
-	"go.uber.org/zap"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	gormlogger "gorm.io/gorm/logger"
-	"moul.io/zapgorm2"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/mysql"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 )
 
 var (
-	DB    *gorm.DB
-	Perms *permify.Permify
+	//go:embed migrations/*.sql
+	migrationsFS embed.FS
+
+	DB *sql.DB
 )
 
-func SetupDB(logger *zap.Logger) error {
-	dbLogger := zapgorm2.New(logger.Named("db"))
-	dbLogger.LogLevel = gormlogger.Info
-	dbLogger.SetAsDefault()
-	db, err := gorm.Open(mysql.Open(config.C.Database.DSN), &gorm.Config{Logger: dbLogger})
-	if err != nil {
+func SetupDB() error {
+	if err := migrateDB(); err != nil {
 		return err
 	}
 
-	// Initialize Permify for RBAC
-	tablePrefix := "arpanet_"
-	Perms, err = permify.New(permify.Options{
-		Migrate:     true,
-		DB:          db,
-		TablePrefix: &tablePrefix,
-	})
+	// Connect to database
+	db, err := sql.Open("mysql", config.C.Database.DSN)
 	if err != nil {
-		return err
-	}
-
-	// Use gorm's AutoMigrate for "non-existing" tablers (at least on a basic ESX FiveM server)
-	if err := db.AutoMigrate(
-		// User related
-		&model.Account{},
-		&model.UserActivity{},
-		&model.UserProps{},
-		// User location
-		model.UserLocation{},
-		// Document related
-		&model.Document{},
-		&model.DocumentJobAccess{},
-		&model.DocumentMentions{},
-		&model.DocumentUserAccess{},
-	); err != nil {
 		return err
 	}
 
 	// Set the DB var and default for the query package
 	DB = db
-	SetDefault(DB)
 
 	return nil
+}
+
+func migrateDB() error {
+	// Connect to database
+	db, err := sql.Open("mysql", config.C.Database.DSN+"&multiStatements=true")
+	if err != nil {
+		return err
+	}
+
+	// Setup migrate source and driver
+	source, err := iofs.New(migrationsFS, "migrations")
+	if err != nil {
+		return err
+	}
+	driver, err := mysql.WithInstance(db, &mysql.Config{
+		MigrationsTable: "arpanet_zschema_migrations",
+	})
+	if err != nil {
+		return err
+	}
+	m, err := migrate.NewWithInstance(
+		"iofs", source,
+		"mysql", driver)
+	if err != nil {
+		return err
+	}
+	// Run migrations
+	if err := m.Up(); err != nil {
+		return err
+	}
+
+	return db.Close()
 }

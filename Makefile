@@ -18,11 +18,16 @@ run-server:
 	go run . server
 
 .PHONY: gen
-gen: gen-gorm gen-proto
+gen: gen-sql gen-proto
 
-.PHONY: gen-gorm
-gen-gorm:
-	go run ./gorm/main.go
+IGNORED_TABLES := $(shell paste -s -d, ./query/jet_ignored_tables.txt)
+
+.PHONY: gen-sql
+gen-sql:
+	jet -source=mysql \
+		-dsn="arpanet:changeme@tcp(localhost:3306)/arpanet" \
+		-path=./query \
+		-ignore-tables "$(IGNORED_TABLES)"
 
 protoc-gen-validate:
 	if test ! -d validate/; then \

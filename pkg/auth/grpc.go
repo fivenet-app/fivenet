@@ -3,9 +3,11 @@ package auth
 import (
 	"context"
 
-	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/session"
+	"github.com/galexrt/arpanet/proto/common"
 	"github.com/galexrt/arpanet/query"
+	"github.com/galexrt/arpanet/query/arpanet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"google.golang.org/grpc/codes"
@@ -48,40 +50,28 @@ func MustGetTokenFromGRPCContext(ctx context.Context) string {
 	return token
 }
 
-func GetUserFromContext(ctx context.Context) (*model.User, error) {
+func GetUserIDFromContext(ctx context.Context) int32 {
 	values := grpc_ctxtags.Extract(ctx).Values()
 
-	activeCharIdentifier := values[AuthActiveCharIDCtxTag].(uint64)
-
-	return getCharByID(activeCharIdentifier)
+	return values[AuthActiveCharIDCtxTag].(int32)
 }
 
-func getCharByID(userID uint64) (*model.User, error) {
+func GetUserFromContext(ctx context.Context) (*common.Character, error) {
+	return getUserByID(ctx, GetUserIDFromContext(ctx))
+}
+
+func getUserByID(ctx context.Context, userID int32) (*common.Character, error) {
 	// Find user info for the new/old char index in the claim
-	u := query.User
-	user, err := u.Where(u.ID.Eq(int32(userID))).
-		Limit(1).
-		First()
-	if err != nil {
+	u := table.Users
+	stmt := u.SELECT(u.AllColumns).
+		FROM(u).
+		WHERE(u.ID.EQ(jet.Int32(userID))).
+		LIMIT(1)
+
+	var user *common.Character
+	if err := stmt.QueryContext(ctx, query.DB, &user); err != nil {
 		return nil, err
 	}
 
 	return user, nil
-}
-
-func CanUser(user *model.User, perm string, field ...string) bool {
-	return CanUserID(uint(user.ID), perm)
-}
-
-func CanUserAccessField(user *model.User, perm string, field string) bool {
-	return CanUserID(uint(user.ID), perm+"."+field)
-}
-
-func CanUserID(userID uint, perm string) bool {
-	can, err := query.Perms.UserHasPermission(userID, perm)
-	if err != nil {
-		return false
-	}
-
-	return can
 }

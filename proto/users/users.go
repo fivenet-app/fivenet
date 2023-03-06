@@ -2,20 +2,16 @@ package users
 
 import (
 	context "context"
-	"errors"
 	"strings"
 
-	"github.com/galexrt/arpanet/model"
 	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/helpers"
 	"github.com/galexrt/arpanet/pkg/permissions"
 	"github.com/galexrt/arpanet/proto/common"
 	"github.com/galexrt/arpanet/query"
+	"github.com/galexrt/arpanet/query/arpanet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
-	"gorm.io/gorm/clause"
-	"gorm.io/hints"
 )
 
 func init() {
@@ -41,65 +37,90 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		return nil, err
 	}
 
-	if !auth.CanUser(user, "users.FindUsers") {
+	u := table.Users
+	ul := table.UserLicenses
+	aup := table.ArpanetUserProps
+
+	// Permission check
+	if !permissions.Can(user, "users.FindUsers") {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users")
+	}
+
+	selectors := []jet.Projection{u.AllColumns}
+	if permissions.Can(user, "users", "FindUsers", "Licenses") {
+		selectors = append(selectors, ul.AllColumns)
+	}
+	if permissions.Can(user, "users", "FindUsers", "UserProps") {
+		selectors = append(selectors, aup.AllColumns)
 	}
 
 	req.Firstname = strings.ReplaceAll(req.Firstname, "%", "")
 	req.Lastname = strings.ReplaceAll(req.Lastname, "%", "")
 
-	u := query.User
-	q := u.Clauses(hints.UseIndex("idx_users_firstname_lastname"))
-
-	if auth.CanUserAccessField(user, "users.FindUsers", "Licenses") {
-		q = q.Preload(u.UserLicenses.RelationField)
-	}
-	if auth.CanUserAccessField(user, "users.FindUsers", "UserProps") {
-		q = q.Preload(u.UserProps.RelationField)
-	}
-
+	condition := jet.Bool(true)
 	if req.Firstname != "" {
-		q = q.Where(u.Firstname.Like("%" + req.Firstname + "%"))
+		condition = condition.AND(u.Firstname.LIKE(jet.String("%" + req.Firstname + "%")))
 	}
 	if req.Lastname != "" {
-		q = q.Where(u.Lastname.Like("%" + req.Lastname + "%"))
+		condition = condition.AND(u.Lastname.LIKE(jet.String("%" + req.Lastname + "%")))
 	}
 
 	// Convert our proto abstracted `common.OrderBy` to actual gorm order by instructions
+	orderBys := []jet.OrderByClause{}
 	if len(req.OrderBy) > 0 {
 		for _, orderBy := range req.OrderBy {
-			field, ok := u.GetFieldByName(orderBy.Column)
-			if !ok {
-				return nil, errors.New("orderBy column not found")
+			var column jet.Column
+			switch orderBy.Column {
+			case "firstname":
+				column = u.Firstname
+			case "job":
+				column = u.Job
 			}
 
 			if orderBy.Desc {
-				q = q.Order(field.Desc())
+				orderBys = append(orderBys, column.DESC())
 			} else {
-				q = q.Order(field)
+				orderBys = append(orderBys, column.ASC())
 			}
 		}
-	} else {
-		q = q.Order(u.Firstname)
 	}
 
-	users, count, err := q.FindByPage(int(req.Current), common.DefaultPageLimit)
-	if err != nil {
+	if len(orderBys) == 0 {
+		orderBys = append(orderBys, u.Firstname.ASC())
+	}
+
+	countStmt := u.SELECT(jet.COUNT(u.ID)).
+		FROM(u).
+		WHERE(condition)
+	var count int64
+	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
 		return nil, err
 	}
 
 	resp := &FindUsersResponse{}
+
+	stmt := u.SELECT(jet.COUNT(u.ID), selectors...).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
+		FROM(u.
+			LEFT_JOIN(ul, ul.Owner.EQ(u.Identifier)).
+			LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
+		).
+		WHERE(condition).
+		ORDER_BY(orderBys...).
+		OFFSET(req.Current).
+		LIMIT(common.DefaultPageLimit)
+
+	if err := stmt.QueryContext(ctx, query.DB, &resp.Users); err != nil {
+		return nil, err
+	}
+
 	resp.TotalCount = count
 	if req.Current >= count {
 		resp.Current = 0
 	} else {
 		resp.Current = req.Current
 	}
-	resp.End = resp.Current + int64(len(users))
-
-	for _, user := range users {
-		resp.Users = append(resp.Users, helpers.ConvertModelUserToCommonCharacter(user))
-	}
+	resp.End = resp.Current + int64(len(resp.Users))
 
 	return resp, nil
 }
@@ -110,57 +131,43 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		return nil, err
 	}
 
-	if !auth.CanUser(user, "users.SetUserProps") {
+	// Permission check
+	if !permissions.Can(user, "users.SetUserProps") {
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user properties!")
 	}
-	if !auth.CanUserAccessField(user, "users.SetUserProps", "Wanted") {
+	if !permissions.Can(user, "users", "SetUserProps", "Wanted") {
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set an user wanted!")
 	}
 
-	userProps := &model.UserProps{
-		UserID: int32(req.UserID),
-		Wanted: req.Wanted,
-	}
-
-	ups := query.UserProps
-	if err := ups.Clauses(clause.OnConflict{
-		UpdateAll: true,
-	}).Create(userProps); err != nil {
+	ups := table.ArpanetUserProps
+	if _, err := ups.INSERT(ups.AllColumns).
+		MODEL(req).
+		AS_NEW().
+		ON_DUPLICATE_KEY_UPDATE(
+			ups.Wanted.SET(ups.Wanted),
+		).ExecContext(ctx, query.DB); err != nil {
 		return nil, err
 	}
 
-	resp := &SetUserPropsResponse{}
-	return resp, nil
+	return &SetUserPropsResponse{}, nil
 }
 
 func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityRequest) (*GetUserActivityResponse, error) {
-	ua := query.UserActivity
-	activities, err := ua.Where(ua.TargetUserID.Eq(int32(req.UserID))).Limit(10).Find()
-	if err != nil {
+	var activities []*UserActivity
+
+	ua := table.ArpanetUserActivity
+	if err := ua.SELECT(ua.AllColumns).
+		FROM(ua).
+		WHERE(
+			ua.TargetUserID.EQ(jet.Int32(req.UserID)),
+		).
+		LIMIT(10).
+		QueryContext(ctx, query.DB, &activities); err != nil {
 		return nil, err
 	}
 
-	protoActivity := make([]*UserActivity, len(activities))
-	for k := 0; k < len(activities); k++ {
-		protoActivity[k] = &UserActivity{
-			Id:        uint64(activities[k].ID),
-			CreatedAt: timestamppb.New(activities[k].CreatedAt),
-			Type:      string(activities[k].Type),
-			TargetUser: &common.ShortCharacter{
-				UserID: uint64(activities[k].TargetUserID),
-			},
-			CauseUser: &common.ShortCharacter{
-				UserID: uint64(activities[k].CauseUserID),
-			},
-			Key:      activities[k].Key,
-			OldValue: activities[k].OldValue,
-			NewValue: activities[k].NewValue,
-			Reason:   activities[k].Reason,
-		}
-	}
-
 	resp := &GetUserActivityResponse{
-		Activity: protoActivity,
+		Activity: activities,
 	}
 	return resp, nil
 }

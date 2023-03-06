@@ -43,14 +43,17 @@ export namespace ServerStreamResponse {
 }
 
 export class Marker extends jspb.Message {
+  getUserid(): number;
+  setUserid(value: number): Marker;
+
+  getJob(): string;
+  setJob(value: string): Marker;
+
   getX(): number;
   setX(value: number): Marker;
 
   getY(): number;
   setY(value: number): Marker;
-
-  getId(): string;
-  setId(value: string): Marker;
 
   getName(): string;
   setName(value: string): Marker;
@@ -71,9 +74,10 @@ export class Marker extends jspb.Message {
 
 export namespace Marker {
   export type AsObject = {
+    userid: number,
+    job: string,
     x: number,
     y: number,
-    id: string,
     name: string,
     icon: string,
     popup: string,

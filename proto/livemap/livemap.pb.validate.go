@@ -326,11 +326,13 @@ func (m *Marker) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for UserID
+
+	// no validation rules for Job
+
 	// no validation rules for X
 
 	// no validation rules for Y
-
-	// no validation rules for Id
 
 	// no validation rules for Name
 

@@ -12,18 +12,17 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/config"
-	gormsessions "github.com/galexrt/arpanet/pkg/gormsessions"
 	"github.com/galexrt/arpanet/pkg/permissions"
 	"github.com/galexrt/arpanet/pkg/routes"
 	"github.com/galexrt/arpanet/pkg/session"
 	pbauth "github.com/galexrt/arpanet/proto/auth"
 	pbdispatches "github.com/galexrt/arpanet/proto/dispatches"
-	pbdocuments "github.com/galexrt/arpanet/proto/documents"
+
+	//pbdocuments "github.com/galexrt/arpanet/proto/documents"
 	pbjob "github.com/galexrt/arpanet/proto/job"
 	pblivemap "github.com/galexrt/arpanet/proto/livemap"
 	pbusers "github.com/galexrt/arpanet/proto/users"
 	"github.com/galexrt/arpanet/query"
-	"github.com/gin-contrib/sessions"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -56,17 +55,6 @@ var serverCmd = &cobra.Command{
 		// Add Zap Logger to Gin
 		e.Use(ginzap.Ginzap(logger, time.RFC3339, true))
 		e.Use(ginzap.RecoveryWithZap(logger, true))
-
-		// Sessions
-		sessStore := gormsessions.NewStore(query.DB, true, []byte("secret"))
-		sessStore.Options(sessions.Options{
-			Domain:   "localhost",
-			Path:     "/",
-			MaxAge:   int((10 * time.Minute).Seconds()),
-			HttpOnly: true,
-			Secure:   false,
-		})
-		e.Use(sessions.SessionsMany(session.Names, sessStore))
 
 		// Prometheus Metrics endpoint
 		e.GET("/metrics", gin.WrapH(promhttp.Handler()))
@@ -119,7 +107,7 @@ var serverCmd = &cobra.Command{
 		// Attach our GRPC services
 		pbauth.RegisterAccountServiceServer(grpcServer, pbauth.NewServer())
 		pbdispatches.RegisterDispatchesServiceServer(grpcServer, pbdispatches.NewServer())
-		pbdocuments.RegisterDocumentsServiceServer(grpcServer, pbdocuments.NewServer())
+		//pbdocuments.RegisterDocumentsServiceServer(grpcServer, pbdocuments.NewServer())
 		pbjob.RegisterJobServiceServer(grpcServer, pbjob.NewServer())
 		pblivemap.RegisterLivemapServiceServer(grpcServer, pblivemap.NewServer())
 		pbusers.RegisterUsersServiceServer(grpcServer, pbusers.NewServer())
@@ -176,7 +164,7 @@ var serverCmd = &cobra.Command{
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return query.SetupDB(logger)
+		return query.SetupDB()
 	},
 }
 

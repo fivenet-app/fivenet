@@ -5,8 +5,6 @@ import (
 	"sync"
 
 	"github.com/galexrt/arpanet/pkg/config"
-	"github.com/galexrt/arpanet/pkg/permify/options"
-	"github.com/galexrt/arpanet/query"
 )
 
 var (
@@ -33,7 +31,7 @@ func RegisterPerms(perms []*Perm) {
 }
 
 func createPermission(key string, description string) error {
-	return query.Perms.CreatePermission(key, description)
+	return CreatePermission(key, description)
 }
 
 func Register() {
@@ -59,8 +57,8 @@ func Register() {
 }
 
 func setupRoles() {
-	query.Perms.CreateRole("masterofdisaster", "")
-	perms, _, _ := query.Perms.GetAllPermissions(options.PermissionOption{})
+	CreateRole("masterofdisaster", "")
+	perms, _ := GetAllPermissions()
 	// Ensure the "masterofdisaster" role always has all permissions
-	query.Perms.AddPermissionsToRole("masterofdisaster", perms.IDs())
+	AddPermissionsToRole("masterofdisaster", perms)
 }

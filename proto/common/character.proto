@@ -6,7 +6,7 @@ option go_package = "github.com/galexrt/arpanet/proto/common";
 import "validate/validate.proto";
 
 message Character {
-    uint64 userID = 1 [(validate.rules).uint64.gt = 0];
+    int32 userID = 1 [(validate.rules).int32.gt = 0];
     string identifier = 2;
     string job = 3;
     int32 jobGrade = 4;
@@ -31,7 +31,7 @@ message Props {
 }
 
 message ShortCharacter {
-    uint64 userID = 1 [(validate.rules).uint64.gt = 0];
+    int32 userID = 1 [(validate.rules).int32.gt = 0];
     string identifier = 2;
     string job = 3;
     int32 jobGrade = 4;
