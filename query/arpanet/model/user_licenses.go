@@ -8,6 +8,6 @@
 package model
 
 type UserLicenses struct {
-	Type  string `sql:"primary_key"`
-	Owner string `sql:"primary_key"`
+	Type  string `sql:"primary_key" json:"type"`
+	Owner string `sql:"primary_key" json:"owner"`
 }

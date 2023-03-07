@@ -24,10 +24,7 @@ IGNORED_TABLES := $(shell paste -s -d, ./query/jet_ignored_tables.txt)
 
 .PHONY: gen-sql
 gen-sql:
-	jet -source=mysql \
-		-dsn="arpanet:changeme@tcp(localhost:3306)/arpanet" \
-		-path=./query \
-		-ignore-tables "$(IGNORED_TABLES)"
+	go run ./query/gen/
 
 protoc-gen-validate:
 	if test ! -d validate/; then \

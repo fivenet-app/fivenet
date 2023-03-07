@@ -8,8 +8,8 @@
 package model
 
 type VpcLS struct {
-	PlayerId string `sql:"primary_key"`
-	Coordsx  *string
-	Coordsy  *string
-	Net      *string
+	PlayerId string  `sql:"primary_key" json:"playerId"`
+	Coordsx  *string `json:"coordsx"`
+	Coordsy  *string `json:"coordsy"`
+	Net      *string `json:"NET"`
 }

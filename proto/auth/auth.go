@@ -10,7 +10,7 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/helpers"
-	"github.com/galexrt/arpanet/pkg/permissions"
+	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/pkg/session"
 	"github.com/galexrt/arpanet/proto/common"
 	"github.com/galexrt/arpanet/query"
@@ -172,7 +172,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	resp.Token = token
 
 	// Load permissions of user
-	perms, err := permissions.GetAllPermissionsOfUser(char.UserID)
+	perms, err := perms.P.GetAllPermissionsOfUser(char.UserID)
 	if err != nil {
 		return nil, err
 	}

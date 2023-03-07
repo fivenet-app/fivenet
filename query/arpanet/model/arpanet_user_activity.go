@@ -12,15 +12,15 @@ import (
 )
 
 type ArpanetUserActivity struct {
-	ID           uint64 `sql:"primary_key"`
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	TargetUserID int32
-	CauseUserID  int32
-	Type         *string
-	Key          *string
-	OldValue     *string
-	NewValue     *string
-	Reason       *string
-	TargetUser   int32
+	ID           uint64     `sql:"primary_key" json:"id"`
+	CreatedAt    *time.Time `json:"created_at"`
+	UpdatedAt    *time.Time `json:"updated_at"`
+	TargetUserID int32      `json:"target_user_id"`
+	CauseUserID  int32      `json:"cause_user_id"`
+	Type         *string    `json:"type"`
+	Key          *string    `json:"key"`
+	OldValue     *string    `json:"old_value"`
+	NewValue     *string    `json:"new_value"`
+	Reason       *string    `json:"reason"`
+	TargetUser   int32      `json:"target_user"`
 }

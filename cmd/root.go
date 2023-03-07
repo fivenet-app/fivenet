@@ -7,7 +7,6 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/config"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -22,7 +21,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(config.InitConfigWithViper)
 }
 
 func Execute() {
@@ -45,18 +44,6 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func initConfig() {
-	// Viper Config reading setup
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	// Find and read the config file
-	if err := viper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("fatal error config file: %w", err))
-	}
-	viper.Unmarshal(config.C)
 }
 
 func SetAssets(fs embed.FS) {

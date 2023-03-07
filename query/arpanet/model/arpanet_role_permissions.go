@@ -8,6 +8,6 @@
 package model
 
 type ArpanetRolePermissions struct {
-	RoleID       uint64 `sql:"primary_key"`
-	PermissionID uint64 `sql:"primary_key"`
+	RoleID       uint64 `sql:"primary_key" json:"role_id"`
+	PermissionID uint64 `sql:"primary_key" json:"permission_id"`
 }

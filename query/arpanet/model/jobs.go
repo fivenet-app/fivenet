@@ -8,6 +8,6 @@
 package model
 
 type Jobs struct {
-	Name  string `sql:"primary_key"`
-	Label *string
+	Name  string  `sql:"primary_key" json:"name"`
+	Label *string `json:"label"`
 }

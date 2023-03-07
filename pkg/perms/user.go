@@ -1,24 +1,13 @@
-package permissions
+package perms
 
 import (
-	"time"
-
-	"github.com/galexrt/arpanet/pkg/permissions/collections"
+	"github.com/galexrt/arpanet/pkg/perms/collections"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-type ArpanetPermissions struct {
-	ID          uint64 `sql:"primary_key"`
-	Name        string
-	GuardName   string
-	Description *string
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-}
-
-func GetAllPermissionsOfUser(userID int32) (collections.Permissions, error) {
+func (p *perms) GetAllPermissionsOfUser(userID int32) (collections.Permissions, error) {
 	ap := table.ArpanetPermissions
 	aup := table.ArpanetUserPermissions
 	arp := table.ArpanetRolePermissions
@@ -53,7 +42,7 @@ func GetAllPermissionsOfUser(userID int32) (collections.Permissions, error) {
 	return perms, nil
 }
 
-func GetAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error) {
+func (p *perms) GetAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error) {
 	// TODO
 
 	return nil, nil

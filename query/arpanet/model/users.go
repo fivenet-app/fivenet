@@ -12,34 +12,34 @@ import (
 )
 
 type Users struct {
-	ID           int32
-	Identifier   string `sql:"primary_key"`
-	License      *string
-	Group        *string
-	Skin         *string
-	Job          *string
-	JobGrade     *int32
-	Loadout      *string
-	Position     *string
-	Firstname    *string
-	Lastname     *string
-	Dateofbirth  *string
-	Sex          *string
-	Height       *string
-	IsDead       *bool
-	LastProperty *string
-	Jail         int32
-	Inventory    *string
-	PhoneNumber  *string
-	Accounts     *string
-	Tattoos      *string
-	Disabled     *bool
-	Visum        *int32
-	Playtime     *int32
-	LevelData    *string
-	OnDuty       *int8
-	Health       *int32
-	Armor        *int32
-	CreatedAt    *time.Time
-	LastSeen     *time.Time
+	ID           int32      `json:"id"`
+	Identifier   string     `sql:"primary_key" json:"identifier"`
+	License      *string    `json:"license"`
+	Group        *string    `json:"group"`
+	Skin         *string    `json:"skin"`
+	Job          *string    `json:"job"`
+	JobGrade     *int32     `json:"job_grade"`
+	Loadout      *string    `json:"loadout"`
+	Position     *string    `json:"position"`
+	Firstname    *string    `json:"firstname"`
+	Lastname     *string    `json:"lastname"`
+	Dateofbirth  *string    `json:"dateofbirth"`
+	Sex          *string    `json:"sex"`
+	Height       *string    `json:"height"`
+	IsDead       *bool      `json:"is_dead"`
+	LastProperty *string    `json:"last_property"`
+	Jail         int32      `json:"jail"`
+	Inventory    *string    `json:"inventory"`
+	PhoneNumber  *string    `json:"phone_number"`
+	Accounts     *string    `json:"accounts"`
+	Tattoos      *string    `json:"tattoos"`
+	Disabled     *bool      `json:"disabled"`
+	Visum        *int32     `json:"visum"`
+	Playtime     *int32     `json:"playtime"`
+	LevelData    *string    `json:"levelData"`
+	OnDuty       *int8      `json:"onDuty"`
+	Health       *int32     `json:"health"`
+	Armor        *int32     `json:"armor"`
+	CreatedAt    *time.Time `json:"created_at"`
+	LastSeen     *time.Time `json:"last_seen"`
 }

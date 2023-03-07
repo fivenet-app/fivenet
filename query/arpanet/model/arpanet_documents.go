@@ -12,15 +12,15 @@ import (
 )
 
 type ArpanetDocuments struct {
-	ID          uint64 `sql:"primary_key"`
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	DeletedAt   *time.Time
-	Title       string
-	Content     string
-	ContentType string
-	CreatorID   int32
-	CreatorJob  string
-	Public      bool
-	ResponseID  *uint64
+	ID          uint64     `sql:"primary_key" json:"id"`
+	CreatedAt   *time.Time `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at"`
+	DeletedAt   *time.Time `json:"deleted_at"`
+	Title       string     `json:"title"`
+	Content     string     `json:"content"`
+	ContentType string     `json:"content_type"`
+	CreatorID   int32      `json:"creator_id"`
+	CreatorJob  string     `json:"creator_job"`
+	Public      bool       `json:"public"`
+	ResponseID  *uint64    `json:"response_id"`
 }

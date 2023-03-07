@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/permissions"
+	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/common"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	permissions.RegisterPerms([]*permissions.Perm{
+	perms.AddPermsToList([]*perms.Perm{
 		{Key: "users", Name: "View"},
 		{Key: "users", Name: "FindUsers", Fields: []string{"Licenses", "UserProps"}},
 		{Key: "users", Name: "SetUserProps", Fields: []string{"Wanted"}},
@@ -44,13 +44,13 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	}
 
 	// Permission check
-	if !permissions.Can(user, "users", "FindUsers") {
+	if !perms.P.Can(user, "users", "FindUsers") {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users")
 	}
 
 	selectors := make(jet.ProjectionList, len(common.CharacterBaseColumns))
 	copy(selectors, common.CharacterBaseColumns)
-	if permissions.Can(user, "users", "FindUsers", "UserProps") {
+	if perms.P.Can(user, "users", "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
 
@@ -144,16 +144,16 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	// Permission check
-	if !permissions.Can(user, "users", "FindUsers") {
+	if !perms.P.Can(user, "users", "FindUsers") {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users")
 	}
 
 	selectors := make(jet.ProjectionList, len(common.CharacterBaseColumns))
 	copy(selectors, common.CharacterBaseColumns)
-	if permissions.Can(user, "users", "FindUsers", "UserProps") {
+	if perms.P.Can(user, "users", "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
-	if permissions.Can(user, "users", "FindUsers", "Licenses") {
+	if perms.P.Can(user, "users", "FindUsers", "Licenses") {
 		selectors = append(selectors, ul.Type)
 	}
 
@@ -182,10 +182,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	// Permission check
-	if !permissions.Can(user, "users.SetUserProps") {
+	if !perms.P.Can(user, "users.SetUserProps") {
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user properties!")
 	}
-	if !permissions.Can(user, "users", "SetUserProps", "Wanted") {
+	if !perms.P.Can(user, "users", "SetUserProps", "Wanted") {
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set an user wanted!")
 	}
 

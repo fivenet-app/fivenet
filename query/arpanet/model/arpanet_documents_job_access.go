@@ -12,11 +12,11 @@ import (
 )
 
 type ArpanetDocumentsJobAccess struct {
-	ID           uint64 `sql:"primary_key"`
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	DocumentID   uint64
-	Name         string
-	MinimumGrade int32
-	Access       string
+	ID           uint64     `sql:"primary_key" json:"id"`
+	CreatedAt    *time.Time `json:"created_at"`
+	UpdatedAt    *time.Time `json:"updated_at"`
+	DocumentID   uint64     `json:"document_id"`
+	Name         string     `json:"name"`
+	MinimumGrade int32      `json:"minimum_grade"`
+	Access       string     `json:"access"`
 }

@@ -13,6 +13,14 @@
             "args": [
                 "server"
             ]
+        },
+        {
+            "name": "Launch Query Gen",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/query/gen/",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

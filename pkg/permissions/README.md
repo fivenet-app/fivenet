@@ -1,1 +1,0 @@
-Parts of the code here have been taken from the https://github.com/Permify/go-role repo which is licensed under the [MIT license](https://github.com/Permify/go-role/blob/fe5a762e0605e42a246368dee9c54d2b28723dd0/LICENSE).

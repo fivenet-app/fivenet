@@ -1,9 +1,9 @@
 package job
 
-import "github.com/galexrt/arpanet/pkg/permissions"
+import "github.com/galexrt/arpanet/pkg/perms"
 
 func init() {
-	permissions.RegisterPerms([]*permissions.Perm{
+	perms.AddPermsToList([]*perms.Perm{
 		{Key: "job", Name: "View"},
 	})
 }

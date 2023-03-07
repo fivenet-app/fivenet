@@ -12,7 +12,7 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/config"
-	"github.com/galexrt/arpanet/pkg/permissions"
+	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/pkg/routes"
 	"github.com/galexrt/arpanet/pkg/session"
 	pbauth "github.com/galexrt/arpanet/proto/auth"
@@ -44,8 +44,9 @@ var serverCmd = &cobra.Command{
 		// Create JWT Token TokenManager
 		session.Tokens = session.NewTokenManager()
 
-		// Register Permissions
-		permissions.Register()
+		// Setup and register Permissions
+		perms.Setup()
+		perms.Register()
 
 		// Gin HTTP Server
 		gin.SetMode(config.C.Mode)

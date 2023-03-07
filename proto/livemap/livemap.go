@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/permissions"
+	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	permissions.RegisterPerms([]*permissions.Perm{
+	perms.AddPermsToList([]*perms.Perm{
 		{Key: "livemap", Name: "View"},
 		{Key: "livemap", Name: "Stream", PerJob: true},
 	})

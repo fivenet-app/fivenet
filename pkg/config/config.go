@@ -1,12 +1,32 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/creasty/defaults"
+	"github.com/spf13/viper"
 )
 
 var (
 	C = &Config{}
 )
+
+func init() {
+	// Set defaults on start
+	defaults.Set(C)
+}
+
+func InitConfigWithViper() {
+	// Viper Config reading setup
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	// Find and read the config file
+	if err := viper.ReadInConfig(); err != nil {
+		panic(fmt.Errorf("fatal error config file: %w", err))
+	}
+	viper.Unmarshal(C)
+}
 
 type Config struct {
 	LogLevel string `default:"DEBUG" yaml:"logLevel"`
@@ -44,9 +64,4 @@ type JWT struct {
 
 type FiveM struct {
 	PermissionRoleJobs []string `yaml:"permissionRoleJobs"`
-}
-
-func init() {
-	// Set defaults on start
-	defaults.Set(C)
 }

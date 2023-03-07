@@ -12,11 +12,11 @@ import (
 )
 
 type ArpanetAccounts struct {
-	ID        uint64 `sql:"primary_key"`
-	CreatedAt *time.Time
-	UpdatedAt *time.Time
-	Enabled   *bool
-	Username  string
-	Password  string
-	License   string
+	ID        uint64     `sql:"primary_key" json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	Enabled   *bool      `json:"enabled"`
+	Username  string     `json:"username"`
+	Password  string     `json:"password"`
+	License   string     `json:"license"`
 }

@@ -1,18 +1,46 @@
-package permissions
+package perms
 
 import (
 	"context"
 	"strings"
+	"time"
 
-	"github.com/galexrt/arpanet/pkg/permissions/collections"
-	"github.com/galexrt/arpanet/pkg/permissions/helpers"
+	cache "github.com/Code-Hex/go-generics-cache"
+	"github.com/Code-Hex/go-generics-cache/policy/lru"
+	"github.com/galexrt/arpanet/pkg/perms/collections"
+	"github.com/galexrt/arpanet/pkg/perms/helpers"
 	"github.com/galexrt/arpanet/proto/common"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func CreatePermission(name string, description string) error {
+var P *perms
+
+type perms struct {
+	canCache   *cache.Cache[string, bool]
+	permsCache *cache.Cache[string, []string]
+}
+
+func Setup() {
+	canCache := cache.New(
+		cache.AsLRU[string, bool](lru.WithCapacity(128)),
+		cache.WithJanitorInterval[string, bool](15*time.Second),
+	)
+	permsCache := cache.New(
+		cache.AsLRU[string, []string](lru.WithCapacity(128)),
+		cache.WithJanitorInterval[string, []string](15*time.Second),
+	)
+
+	P = &perms{
+		canCache:   canCache,
+		permsCache: permsCache,
+	}
+}
+
+// TODO Use https://github.com/Code-Hex/go-generics-cache as a cache
+
+func (p *perms) CreatePermission(name string, description string) error {
 	r := table.ArpanetPermissions
 	stmt := r.INSERT(r.Name,
 		r.GuardName,
@@ -23,7 +51,7 @@ func CreatePermission(name string, description string) error {
 	return err
 }
 
-func GetAllPermissions() (collections.Permissions, error) {
+func (p *perms) GetAllPermissions() (collections.Permissions, error) {
 	r := table.ArpanetPermissions
 	stmt := r.SELECT(r.AllColumns).FROM(table.ArpanetPermissions)
 
@@ -35,15 +63,15 @@ func GetAllPermissions() (collections.Permissions, error) {
 	return dest, nil
 }
 
-func Can(user common.IGetUserID, perm ...string) bool {
-	return CanID(user.GetUserID(), perm...)
+func (p *perms) Can(user common.IGetUserID, perm ...string) bool {
+	return p.CanID(user.GetUserID(), perm...)
 }
 
-func CanID(userID int32, perm ...string) bool {
-	return canID(userID, helpers.Guard(strings.Join(perm, ".")))
+func (p *perms) CanID(userID int32, perm ...string) bool {
+	return p.canID(userID, helpers.Guard(strings.Join(perm, ".")))
 }
 
-func canID(userID int32, guardName string) bool {
+func (p *perms) canID(userID int32, guardName string) bool {
 	ap := table.ArpanetPermissions
 	aup := table.ArpanetUserPermissions
 	aur := table.ArpanetUserRoles

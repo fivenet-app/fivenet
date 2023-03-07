@@ -12,11 +12,11 @@ import (
 )
 
 type ArpanetDocumentsUserAccess struct {
-	ID         uint64 `sql:"primary_key"`
-	CreatedAt  *time.Time
-	UpdatedAt  *time.Time
-	DocumentID *uint64
-	Identifier *string
-	Access     *string
-	UserID     *int32
+	ID         uint64     `sql:"primary_key" json:"id"`
+	CreatedAt  *time.Time `json:"created_at"`
+	UpdatedAt  *time.Time `json:"updated_at"`
+	DocumentID *uint64    `json:"document_id"`
+	Identifier *string    `json:"identifier"`
+	Access     *string    `json:"access"`
+	UserID     *int32     `json:"user_id"`
 }

@@ -1,4 +1,4 @@
-package permissions
+package perms
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	Perms = []*Perm{
+	list = []*Perm{
 		{Key: "overview", Name: "View"},
 	}
 
@@ -23,33 +23,29 @@ type Perm struct {
 	PerJob      bool
 }
 
-func RegisterPerms(perms []*Perm) {
+func AddPermsToList(perms []*Perm) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	Perms = append(Perms, perms...)
-}
-
-func createPermission(key string, description string) error {
-	return CreatePermission(key, description)
+	list = append(list, perms...)
 }
 
 func Register() {
-	for _, perm := range Perms {
+	for _, perm := range list {
 		baseKey := fmt.Sprintf("%s.%s", perm.Key, perm.Name)
-		createPermission(baseKey, perm.Description)
+		P.CreatePermission(baseKey, perm.Description)
 
 		if perm.PerJob {
 			for _, job := range config.C.FiveM.PermissionRoleJobs {
 				jobKey := fmt.Sprintf("%s.%s", baseKey, job)
-				createPermission(jobKey, perm.Description)
+				P.CreatePermission(jobKey, perm.Description)
 			}
 			continue
 		}
 
 		for _, field := range perm.Fields {
 			fieldKey := fmt.Sprintf("%s.%s", baseKey, field)
-			createPermission(fieldKey, perm.Description)
+			P.CreatePermission(fieldKey, perm.Description)
 		}
 	}
 
@@ -57,8 +53,8 @@ func Register() {
 }
 
 func setupRoles() {
-	CreateRole("masterofdisaster", "")
-	perms, _ := GetAllPermissions()
+	P.CreateRole("masterofdisaster", "")
+	perms, _ := P.GetAllPermissions()
 	// Ensure the "masterofdisaster" role always has all permissions
-	AddPermissionsToRole("masterofdisaster", perms)
+	P.AddPermissionsToRole("masterofdisaster", perms)
 }

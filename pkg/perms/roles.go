@@ -1,18 +1,18 @@
-package permissions
+package perms
 
 import (
 	"context"
 	"errors"
 
-	"github.com/galexrt/arpanet/pkg/permissions/collections"
-	"github.com/galexrt/arpanet/pkg/permissions/helpers"
+	"github.com/galexrt/arpanet/pkg/perms/collections"
+	"github.com/galexrt/arpanet/pkg/perms/helpers"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-sql-driver/mysql"
 )
 
-func CreateRole(name string, description string) error {
+func (p *perms) CreateRole(name string, description string) error {
 	r := table.ArpanetRoles
 	stmt := r.INSERT(r.Name,
 		r.GuardName,
@@ -23,7 +23,7 @@ func CreateRole(name string, description string) error {
 	return err
 }
 
-func DeleteRole(name string) error {
+func (p *perms) DeleteRole(name string) error {
 	r := table.ArpanetRoles
 	_, err := r.DELETE().
 		WHERE(r.GuardName.EQ(jet.String(helpers.Guard(name)))).
@@ -31,7 +31,7 @@ func DeleteRole(name string) error {
 	return err
 }
 
-func AddPermissionsToRole(name string, perms collections.Permissions) error {
+func (p *perms) AddPermissionsToRole(name string, perms collections.Permissions) error {
 	r := table.ArpanetRoles
 	var roleIDs []uint
 	if err := r.SELECT(r.ID).

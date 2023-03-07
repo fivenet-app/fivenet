@@ -8,6 +8,6 @@
 package model
 
 type ArpanetUserProps struct {
-	UserID int32
-	Wanted bool
+	UserID int32 `json:"user_id"`
+	Wanted bool  `json:"wanted"`
 }

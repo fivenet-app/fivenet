@@ -6,7 +6,7 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/modelhelper"
-	"github.com/galexrt/arpanet/pkg/permissions"
+	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/common"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/model"
@@ -16,7 +16,7 @@ import (
 )
 
 func init() {
-	permissions.RegisterPerms([]*permissions.Perm{
+	perms.AddPermsToList([]*perms.Perm{
 		{Key: "documents", Name: "View"},
 		{Key: "documents", Name: "FindDocuments"},
 		{Key: "documents", Name: "GetDocument"},
