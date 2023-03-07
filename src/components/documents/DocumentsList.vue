@@ -7,10 +7,11 @@ import { clientAuthOptions, handleGRPCError } from '../../grpc';
 import { Document, FindDocumentsRequest } from '@arpanet/gen/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { OrderBy } from '@arpanet/gen/common/database_pb';
-
+import TablePagination from '../partials/TablePagination.vue';
 
 export default defineComponent({
     components: {
+        TablePagination,
         CalendarIcon,
         MapPinIcon,
         UsersIcon,

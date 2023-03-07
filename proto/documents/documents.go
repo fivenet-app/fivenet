@@ -12,6 +12,8 @@ import (
 	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 )
 
@@ -38,7 +40,7 @@ func NewServer() *Server {
 	return &Server{}
 }
 
-func (s *Server) getDocumentsQuery(where jet.BoolExpression, userID int32, job string, jobGrade int32) jet.SelectStatement {
+func (s *Server) getDocumentsQuery(where jet.BoolExpression, additionalColumns jet.ProjectionList, userID int32, job string, jobGrade int32) jet.SelectStatement {
 	wheres := []jet.BoolExpression{jet.OR(
 		jet.OR(
 			d.Public.IS_TRUE(),
@@ -61,10 +63,19 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, userID int32, job s
 		wheres = append(wheres, where)
 	}
 
-	return d.SELECT(
-		d.AllColumns,
-		dja.AllColumns,
-	).
+	var q jet.SelectStatement
+	if additionalColumns == nil {
+		q = d.SELECT(
+			d.AllColumns,
+		)
+	} else {
+		q = d.SELECT(
+			d.AllColumns,
+			additionalColumns...,
+		)
+	}
+
+	return q.
 		FROM(
 			d.LEFT_JOIN(dua,
 				dua.DocumentID.EQ(d.ID).
@@ -85,9 +96,12 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, userID int32, job s
 
 func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (*FindDocumentsResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "documents", "FindDocuments") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to list documents!")
+	}
 
 	resp := &FindDocumentsResponse{}
-	stmt := s.getDocumentsQuery(nil, userID, job, jobGrade)
+	stmt := s.getDocumentsQuery(nil, nil, userID, job, jobGrade)
 	fmt.Println(stmt.DebugSql())
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Documents); err != nil {
 		return nil, err
@@ -106,7 +120,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	d := table.ArpanetDocuments
 	var documents []model.ArpanetDocuments
 
-	if err := s.getDocumentsQuery(d.ID.EQ(jet.Uint64(req.Id)), userID, job, jobGrade).
+	if err := s.getDocumentsQuery(d.ID.EQ(jet.Uint64(req.Id)), nil, userID, job, jobGrade).
 		QueryContext(ctx, query.DB, &documents); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}

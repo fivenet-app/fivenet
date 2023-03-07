@@ -9,7 +9,11 @@ import Footer from '../../components/partials/Footer.vue';
 export default defineComponent({
     name: 'app',
     components: {
-        Editor
+        Navbar,
+        Footer,
+        ContentWrapper,
+        NavPageHeader,
+        Editor,
     },
 });
 </script>

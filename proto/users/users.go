@@ -72,7 +72,9 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	countStmt := u.SELECT(
 		jet.COUNT(u.ID).AS("total_count"),
 	).
-		FROM(u).
+		FROM(
+			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
+		).
 		WHERE(condition)
 
 	var count struct{ TotalCount int64 }
