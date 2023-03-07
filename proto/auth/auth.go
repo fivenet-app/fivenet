@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/helpers"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/pkg/session"
 	"github.com/galexrt/arpanet/proto/common"
@@ -120,7 +119,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 		u.AllColumns,
 	).
 		FROM(u.LEFT_JOIN(table.ArpanetUserProps, table.ArpanetUserProps.UserID.EQ(u.ID))).
-		WHERE(u.Identifier.LIKE(jet.String(helpers.BuildCharSearchIdentifier(claims.Subject)))).
+		WHERE(u.Identifier.LIKE(jet.String(buildCharSearchIdentifier(claims.Subject)))).
 		ORDER_BY(u.ID).
 		LIMIT(10)
 
@@ -132,12 +131,16 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	return resp, nil
 }
 
+func buildCharSearchIdentifier(license string) string {
+	return "char%:" + license
+}
+
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
 	resp := &ChooseCharacterResponse{}
 
 	claims, err := session.Tokens.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
 	if err != nil {
-		return resp, nil
+		return nil, err
 	}
 
 	var char common.User

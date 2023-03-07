@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_permissions` (
   `guard_name` varchar(255) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_permissions_guard_name` (`guard_name`)
+  UNIQUE KEY `idx_arpanet_permissions_guard_name` (`guard_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_roles
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_roles` (
   `guard_name` varchar(255) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_roles_guard_name` (`guard_name`)
+  UNIQUE KEY `idx_arpanet_roles_guard_name` (`guard_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_role_permissions

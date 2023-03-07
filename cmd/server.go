@@ -160,6 +160,8 @@ var serverCmd = &cobra.Command{
 
 		grpcServer.Stop()
 
+		perms.Stop()
+
 		logger.Info("http server exiting")
 		return nil
 	},

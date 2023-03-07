@@ -1,6 +1,8 @@
 package collections
 
 import (
+	"strings"
+
 	"github.com/galexrt/arpanet/query/arpanet/model"
 )
 
@@ -36,6 +38,30 @@ func (u Permissions) Names() (names []string) {
 func (u Permissions) GuardNames() (guards []string) {
 	for _, permission := range u {
 		guards = append(guards, permission.GuardName)
+	}
+	return guards
+}
+
+// HasPrefix checks permissions list if the guard name starts with the given
+// prefix
+// @return Permissions
+func (u Permissions) HasPrefix(prefix string) (perms Permissions) {
+	for _, permission := range u {
+		if strings.HasPrefix(permission.GuardName, prefix) {
+			perms = append(perms, permission)
+		}
+	}
+	return perms
+}
+
+// HasPrefixGuardNames returns an array of permission array's guard names that
+// start with the given prefix.
+// @return []string
+func (u Permissions) HasPrefixGuardNames(prefix string) (guards []string) {
+	for _, permission := range u {
+		if strings.HasPrefix(permission.GuardName, prefix) {
+			guards = append(guards, permission.GuardName)
+		}
 	}
 	return guards
 }

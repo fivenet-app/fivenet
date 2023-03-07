@@ -6,13 +6,14 @@ import { version } from '../package.json';
 import { User } from '@arpanet/gen/common/userinfo_pb';
 import { clientAuthOptions } from './grpc';
 import config from './config';
+import { dispatchNotification } from './components/notification';
 
 const store = createStore({
     state: {
         // Persisted to Local Storage
         version: '' as string,
         accessToken: null as null | string,
-        activeChar: null as null | Character,
+        activeChar: null as null | User,
         activeCharID: 0 as null | number,
         // Temporary
         loggingIn: false as boolean,
@@ -42,7 +43,7 @@ const store = createStore({
         updateAccessToken: (state, accessToken) => {
             state.accessToken = accessToken;
         },
-        updateActiveChar: (state, char: null | Character) => {
+        updateActiveChar: (state, char: null | User) => {
             state.activeChar = char;
             state.activeCharID = char ? char.getUserid() : 0;
         },
@@ -88,13 +89,13 @@ const store = createStore({
                 .catch((err: RpcError) => {
                     commit('loginStop', err.message);
                     commit('updateAccessToken', null);
-                    console.log('Error during logout process: ' + err);
+                    dispatchNotification({ title: 'Error during logout!', content: err.message, type: 'error' });
                 });
         },
         updateAccessToken({ commit }, token: string): void {
             commit('updateAccessToken', token);
         },
-        updateActiveChar({ commit }, char: null | Character): void {
+        updateActiveChar({ commit }, char: null | User): void {
             commit('updateActiveChar', char);
         },
         updatePermissions({ commit }, permissions: string[]): void {

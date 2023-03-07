@@ -19,6 +19,10 @@ func init() {
 	})
 }
 
+var (
+	l = table.ArpanetUserLocations
+)
+
 type Server struct {
 	LivemapServiceServer
 }
@@ -35,13 +39,20 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) err
 		return err
 	}
 
-	// TODO Establish which jobs the user can select
+	jobs, err := perms.P.GetSuffixOfPermissionsByPrefixOfUser(user.UserID, "livemap-stream")
+	if err != nil {
+		return err
+	}
 
-	l := table.ArpanetUserLocations
+	sqlJobs := make([]jet.Expression, len(jobs))
+	for k := 0; k < len(jobs); k++ {
+		sqlJobs[k] = jet.String(jobs[k])
+	}
+
 	stmt := l.SELECT(l.AllColumns).
 		FROM(l).
 		WHERE(
-			l.Job.EQ(jet.String(user.Job)).
+			l.Job.IN(sqlJobs...).
 				AND(l.Hidden.IS_FALSE()),
 		)
 
