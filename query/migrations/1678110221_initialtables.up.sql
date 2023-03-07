@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents` (
   `title` longtext NOT NULL,
   `content` longtext NOT NULL,
   `content_type` varchar(24) NOT NULL,
+  `closed` tinyint(1) DEFAULT 0,
+  `state` varchar(24) NOT NULL,
   `creator_id` int(11) NOT NULL,
   `creator_job` varchar(20) NOT NULL,
   `public` tinyint(1) NOT NULL DEFAULT 0,

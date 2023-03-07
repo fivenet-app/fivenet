@@ -138,14 +138,14 @@ type Document struct {
 	unknownFields protoimpl.UnknownFields
 
 	Id          uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"arpanet_documents.id"`                                     // @gotags: sql:"primary_key" alias:"arpanet_documents.id"
-	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`       // @gotags alias:"arpanet_documents.created_at"
-	UpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`       // @gotags alias:"arpanet_documents.updated_at"
-	Title       string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`                                // @gotags alias:"arpanet_documents.title"
-	Content     string                 `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`                            // @gotags alias:"arpanet_documents.content"
-	ContentType string                 `protobuf:"bytes,7,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // @gotags alias."arpanet_documents.content_type"
-	Creator     *common.ShortUser      `protobuf:"bytes,8,opt,name=creator,proto3" json:"creator,omitempty"`                            // @gotags alias:"arpanet_documents.creator"
-	CreatorJob  string                 `protobuf:"bytes,9,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`    // @gotags alias:"arpanet_documents.creator_job"
-	Public      bool                   `protobuf:"varint,10,opt,name=public,proto3" json:"public,omitempty"`                            // @gotags alias:"arpanet_documents.public"
+	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"arpanet_documents.created_at"`       // @gotags: alias:"arpanet_documents.created_at"
+	UpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"arpanet_documents.updated_at"`       // @gotags: alias:"arpanet_documents.updated_at"
+	Title       string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty" alias:"arpanet_documents.title"`                                // @gotags: alias:"arpanet_documents.title"
+	Content     string                 `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty" alias:"arpanet_documents.content"`                            // @gotags: alias:"arpanet_documents.content"
+	ContentType string                 `protobuf:"bytes,7,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty" alias:"arpanet_documents.content_type"` // @gotags: alias:"arpanet_documents.content_type"
+	Creator     *common.ShortUser      `protobuf:"bytes,8,opt,name=creator,proto3" json:"creator,omitempty" alias:"arpanet_documents.creator"`                            // @gotags: alias:"arpanet_documents.creator"
+	CreatorJob  string                 `protobuf:"bytes,9,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty" alias:"arpanet_documents.creator_job"`    // @gotags: alias:"arpanet_documents.creator_job"
+	Public      bool                   `protobuf:"varint,10,opt,name=public,proto3" json:"public,omitempty" alias:"arpanet_documents.public"`                            // @gotags: alias:"arpanet_documents.public"
 }
 
 func (x *Document) Reset() {

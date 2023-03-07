@@ -61,10 +61,10 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 
 	if activeChar != nil {
 		claims.ActiveCharID = activeChar.UserID
-		claims.ActiveCharIdentifier = activeChar.Identifier
+		claims.ActiveCharJob = activeChar.Job
 	} else {
 		claims.ActiveCharID = 0
-		claims.ActiveCharIdentifier = ""
+		claims.ActiveCharJob = ""
 	}
 
 	return session.Tokens.NewWithClaims(claims)

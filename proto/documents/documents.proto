@@ -19,14 +19,14 @@ message FindDocumentsResponse {
 
 message Document {
     uint64 id = 1; // @gotags: sql:"primary_key" alias:"arpanet_documents.id"
-    google.protobuf.Timestamp created_at = 2; // @gotags alias:"arpanet_documents.created_at"
-    google.protobuf.Timestamp updated_at = 3; // @gotags alias:"arpanet_documents.updated_at"
-    string title = 5; // @gotags alias:"arpanet_documents.title"
-    string content = 6; // @gotags alias:"arpanet_documents.content"
-    string content_type = 7; // @gotags alias."arpanet_documents.content_type"
-    gen.common.ShortUser creator = 8; // @gotags alias:"arpanet_documents.creator"
-    string creator_job = 9; // @gotags alias:"arpanet_documents.creator_job"
-    bool public = 10; // @gotags alias:"arpanet_documents.public"
+    google.protobuf.Timestamp created_at = 2; // @gotags: alias:"arpanet_documents.created_at"
+    google.protobuf.Timestamp updated_at = 3; // @gotags: alias:"arpanet_documents.updated_at"
+    string title = 5; // @gotags: alias:"arpanet_documents.title"
+    string content = 6; // @gotags: alias:"arpanet_documents.content"
+    string content_type = 7; // @gotags: alias:"arpanet_documents.content_type"
+    gen.common.ShortUser creator = 8; // @gotags: alias:"arpanet_documents.creator"
+    string creator_job = 9; // @gotags: alias:"arpanet_documents.creator_job"
+    bool public = 10; // @gotags: alias:"arpanet_documents.public"
 }
 
 message GetDocumentRequest {

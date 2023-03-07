@@ -64,6 +64,9 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	if req.Lastname != "" {
 		condition = condition.AND(u.Lastname.LIKE(jet.String("%" + req.Lastname + "%")))
 	}
+	if req.Wanted {
+		condition = condition.AND(aup.Wanted.IS_TRUE())
+	}
 
 	// Get total count of values
 	countStmt := u.SELECT(

@@ -13,6 +13,7 @@ message FindUsersRequest {
     repeated gen.common.OrderBy orderBy = 2;
     string firstname = 3;
     string lastname = 4;
+    bool wanted = 5;
 }
 
 message FindUsersResponse {

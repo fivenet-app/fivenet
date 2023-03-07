@@ -10,12 +10,14 @@ import CitizenInfoSlideOver from './CitizenInfoSlideOver.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import config from '../../config';
+import { Switch } from '@headlessui/vue';
 
 export default defineComponent({
     components: {
         TablePagination,
         CitizenInfoSlideOver,
-        CitizenListEntry
+        CitizenListEntry,
+        Switch,
     },
     data() {
         return {
@@ -23,6 +25,7 @@ export default defineComponent({
             loading: false,
             searchFirstname: "",
             searchLastname: "",
+            searchWanted: false,
             orderBys: [] as Array<OrderBy>,
             offset: 0,
             totalCount: 0,
@@ -43,6 +46,7 @@ export default defineComponent({
             req.setOffset(offset);
             req.setFirstname(this.searchFirstname);
             req.setLastname(this.searchLastname);
+            req.setWanted(this.searchWanted);
             req.setOrderbyList(this.orderBys);
 
             this.client.
@@ -109,8 +113,8 @@ export default defineComponent({
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="findUsers(0)">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="form-control">
+                        <div class="grid grid-cols-5 gap-4">
+                            <div class="col-span-2 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-white">First
                                     Name</label>
                                 <div class="relative mt-2 flex items-center">
@@ -119,12 +123,24 @@ export default defineComponent({
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
-                            <div class="form-control">
+                            <div class="col-span-2 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-white">Last Name</label>
                                 <div class="relative mt-2 flex items-center">
                                     <input v-model="searchLastname" v-on:keyup.enter="findUsers(0)" type="text"
                                         name="search" id="search"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <label for="search" class="block text-sm font-medium leading-6 text-white">Only Wanted</label>
+                                <div class="relative mt-2 flex items-center">
+                                    <Switch
+                                        v-modeL="searchWanted"
+                                        :class="[searchWanted ? 'bg-indigo-600' : 'bg-gray-200', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2']">
+                                        <span class="sr-only">Wanted</span>
+                                        <span aria-hidden="true"
+                                            :class="[searchWanted ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out']" />
+                                    </Switch>
                                 </div>
                             </div>
                         </div>

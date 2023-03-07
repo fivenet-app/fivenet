@@ -20,6 +20,9 @@ export class FindUsersRequest extends jspb.Message {
   getLastname(): string;
   setLastname(value: string): FindUsersRequest;
 
+  getWanted(): boolean;
+  setWanted(value: boolean): FindUsersRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindUsersRequest.AsObject;
   static toObject(includeInstance: boolean, msg: FindUsersRequest): FindUsersRequest.AsObject;
@@ -34,6 +37,7 @@ export namespace FindUsersRequest {
     orderbyList: Array<common_database_pb.OrderBy.AsObject>,
     firstname: string,
     lastname: string,
+    wanted: boolean,
   }
 }
 

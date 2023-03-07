@@ -268,7 +268,8 @@ proto.gen.users.FindUsersRequest.toObject = function(includeInstance, msg) {
     orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
     common_database_pb.OrderBy.toObject, includeInstance),
     firstname: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    lastname: jspb.Message.getFieldWithDefault(msg, 4, "")
+    lastname: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
   };
 
   if (includeInstance) {
@@ -321,6 +322,10 @@ proto.gen.users.FindUsersRequest.deserializeBinaryFromReader = function(msg, rea
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setLastname(value);
+      break;
+    case 5:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setWanted(value);
       break;
     default:
       reader.skipField();
@@ -377,6 +382,13 @@ proto.gen.users.FindUsersRequest.serializeBinaryToWriter = function(message, wri
   if (f.length > 0) {
     writer.writeString(
       4,
+      f
+    );
+  }
+  f = message.getWanted();
+  if (f) {
+    writer.writeBool(
+      5,
       f
     );
   }
@@ -472,6 +484,24 @@ proto.gen.users.FindUsersRequest.prototype.getLastname = function() {
  */
 proto.gen.users.FindUsersRequest.prototype.setLastname = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional bool wanted = 5;
+ * @return {boolean}
+ */
+proto.gen.users.FindUsersRequest.prototype.getWanted = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.gen.users.FindUsersRequest} returns this
+ */
+proto.gen.users.FindUsersRequest.prototype.setWanted = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 5, value);
 };
 
 

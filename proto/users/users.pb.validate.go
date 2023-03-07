@@ -97,6 +97,8 @@ func (m *FindUsersRequest) validate(all bool) error {
 
 	// no validation rules for Lastname
 
+	// no validation rules for Wanted
+
 	if len(errors) > 0 {
 		return FindUsersRequestMultiError(errors)
 	}

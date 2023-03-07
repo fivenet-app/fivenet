@@ -15,9 +15,11 @@ import (
 )
 
 const (
-	AuthAccIDCtxTag        = "auth.accid"
-	AuthActiveCharIDCtxTag = "auth.actcharid"
-	AuthSubCtxTag          = "auth.sub"
+	AuthAccIDCtxTag              = "auth.accid"
+	AuthActiveCharIDCtxTag       = "auth.chrid"
+	AuthActiveCharJobCtxTag      = "auth.chrjob"
+	AuthActiveCharJobGradeCtxTag = "auth.chrjobg"
+	AuthSubCtxTag                = "auth.sub"
 )
 
 func GRPCAuthFunc(ctx context.Context) (context.Context, error) {
@@ -33,6 +35,8 @@ func GRPCAuthFunc(ctx context.Context) (context.Context, error) {
 
 	grpc_ctxtags.Extract(ctx).Set(AuthAccIDCtxTag, tokenInfo.AccountID)
 	grpc_ctxtags.Extract(ctx).Set(AuthActiveCharIDCtxTag, tokenInfo.ActiveCharID)
+	grpc_ctxtags.Extract(ctx).Set(AuthActiveCharJobCtxTag, tokenInfo.ActiveCharJob)
+	grpc_ctxtags.Extract(ctx).Set(AuthActiveCharJobGradeCtxTag, tokenInfo.ActiveCharJobGrade)
 	grpc_ctxtags.Extract(ctx).Set(AuthSubCtxTag, tokenInfo.Subject)
 
 	// WARNING: in production define your own type to avoid context collisions
@@ -54,6 +58,12 @@ func GetUserIDFromContext(ctx context.Context) int32 {
 	values := grpc_ctxtags.Extract(ctx).Values()
 
 	return values[AuthActiveCharIDCtxTag].(int32)
+}
+
+func GetUserInfoFromContext(ctx context.Context) (int32, string, int32) {
+	values := grpc_ctxtags.Extract(ctx).Values()
+
+	return values[AuthActiveCharIDCtxTag].(int32), values[AuthActiveCharJobCtxTag].(string), values[AuthActiveCharJobGradeCtxTag].(int32)
 }
 
 func GetUserFromContext(ctx context.Context) (*common.ShortUser, error) {

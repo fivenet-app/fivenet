@@ -8,7 +8,6 @@ import (
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/modelhelper"
 	"github.com/galexrt/arpanet/pkg/perms"
-	"github.com/galexrt/arpanet/proto/common"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -39,11 +38,11 @@ func NewServer() *Server {
 	return &Server{}
 }
 
-func (s *Server) getDocumentsQuery(where jet.BoolExpression, user *common.ShortUser) jet.SelectStatement {
+func (s *Server) getDocumentsQuery(where jet.BoolExpression, userID int32, job string, jobGrade int32) jet.SelectStatement {
 	wheres := []jet.BoolExpression{jet.OR(
 		jet.OR(
 			d.Public.IS_TRUE(),
-			d.CreatorID.EQ(jet.Int32(user.UserID)),
+			d.CreatorID.EQ(jet.Int32(userID)),
 		),
 		jet.OR(
 			jet.AND(
@@ -69,11 +68,11 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, user *common.ShortU
 		FROM(
 			d.LEFT_JOIN(dua,
 				dua.DocumentID.EQ(d.ID).
-					AND(dua.UserID.EQ(jet.Int32(user.UserID)))).
+					AND(dua.UserID.EQ(jet.Int32(userID)))).
 				LEFT_JOIN(dja,
 					dja.DocumentID.EQ(d.ID).
-						AND(dja.Name.EQ(jet.String(user.Job))).
-						AND(dja.MinimumGrade.LT_EQ(jet.Int32(user.JobGrade))),
+						AND(dja.Name.EQ(jet.String(job))).
+						AND(dja.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				),
 		).WHERE(
 		jet.AND(
@@ -85,13 +84,10 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, user *common.ShortU
 }
 
 func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (*FindDocumentsResponse, error) {
-	user, err := auth.GetUserFromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
+	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	resp := &FindDocumentsResponse{}
-	stmt := s.getDocumentsQuery(nil, user)
+	stmt := s.getDocumentsQuery(nil, userID, job, jobGrade)
 	fmt.Println(stmt.DebugSql())
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Documents); err != nil {
 		return nil, err
@@ -105,15 +101,12 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*GetDocumentResponse, error) {
 	resp := &GetDocumentResponse{}
 
-	user, err := auth.GetUserFromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
+	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	d := table.ArpanetDocuments
 	var documents []model.ArpanetDocuments
 
-	if err := s.getDocumentsQuery(d.ID.EQ(jet.Uint64(req.Id)), user).
+	if err := s.getDocumentsQuery(d.ID.EQ(jet.Uint64(req.Id)), userID, job, jobGrade).
 		QueryContext(ctx, query.DB, &documents); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
