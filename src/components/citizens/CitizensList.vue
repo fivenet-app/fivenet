@@ -1,7 +1,7 @@
 <script lang="ts">
 import { User } from '@arpanet/gen/common/userinfo_pb';
 import { OrderBy } from '@arpanet/gen/common/database_pb';
-import { defineComponent } from 'vue';
+import { defineComponent, watch } from 'vue';
 import { clientAuthOptions, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { FindUsersRequest } from '@arpanet/gen/users/users_pb';
@@ -23,9 +23,11 @@ export default defineComponent({
         return {
             client: new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions),
             loading: false,
-            searchFirstname: "",
-            searchLastname: "",
-            searchWanted: false,
+            search: {
+                firstname: '',
+                lastname: '',
+                wanted: false
+            },
             orderBys: [] as Array<OrderBy>,
             offset: 0,
             totalCount: 0,
@@ -44,9 +46,9 @@ export default defineComponent({
             this.loading = true;
             const req = new FindUsersRequest();
             req.setOffset(offset);
-            req.setFirstname(this.searchFirstname);
-            req.setLastname(this.searchLastname);
-            req.setWanted(this.searchWanted);
+            req.setFirstname(this.search.firstname);
+            req.setLastname(this.search.lastname);
+            req.setWanted(this.search.wanted);
             req.setOrderbyList(this.orderBys);
 
             this.client.
@@ -103,6 +105,8 @@ export default defineComponent({
     mounted: function () {
         this.orderBys.push(this.getDefaultOrderBy());
         this.findUsers(this.offset);
+
+        watch(this.search, () => this.findUsers(0));
     },
 });
 </script>
@@ -118,7 +122,7 @@ export default defineComponent({
                                 <label for="search" class="block text-sm font-medium leading-6 text-white">First
                                     Name</label>
                                 <div class="relative mt-2 flex items-center">
-                                    <input v-model="searchFirstname" v-on:keyup.enter="findUsers(0)" type="text"
+                                    <input v-model="search.firstname" v-on:keyup.enter="findUsers(0)" type="text"
                                         name="search" id="search"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                 </div>
@@ -126,7 +130,7 @@ export default defineComponent({
                             <div class="col-span-2 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-white">Last Name</label>
                                 <div class="relative mt-2 flex items-center">
-                                    <input v-model="searchLastname" v-on:keyup.enter="findUsers(0)" type="text"
+                                    <input v-model="search.lastname" v-on:keyup.enter="findUsers(0)" type="text"
                                         name="search" id="search"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                 </div>
@@ -135,11 +139,11 @@ export default defineComponent({
                                 <label for="search" class="block text-sm font-medium leading-6 text-white">Only Wanted</label>
                                 <div class="relative mt-2 flex items-center">
                                     <Switch
-                                        v-model="searchWanted"
-                                        :class="[searchWanted ? 'bg-indigo-600' : 'bg-gray-200', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2']">
+                                        v-model="search.wanted"
+                                        :class="[search.wanted ? 'bg-indigo-600' : 'bg-gray-200', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2']">
                                         <span class="sr-only">Wanted</span>
                                         <span aria-hidden="true"
-                                            :class="[searchWanted ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out']" />
+                                            :class="[search.wanted ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out']" />
                                     </Switch>
                                 </div>
                             </div>
