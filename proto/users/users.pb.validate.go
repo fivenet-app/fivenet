@@ -559,225 +559,6 @@ var _ interface {
 	ErrorName() string
 } = GetUserResponseValidationError{}
 
-// Validate checks the field values on SetUserPropsRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *SetUserPropsRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on SetUserPropsRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// SetUserPropsRequestMultiError, or nil if none found.
-func (m *SetUserPropsRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *SetUserPropsRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if m.GetUserID() <= 0 {
-		err := SetUserPropsRequestValidationError{
-			field:  "UserID",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.Wanted != nil {
-		// no validation rules for Wanted
-	}
-
-	if len(errors) > 0 {
-		return SetUserPropsRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// SetUserPropsRequestMultiError is an error wrapping multiple validation
-// errors returned by SetUserPropsRequest.ValidateAll() if the designated
-// constraints aren't met.
-type SetUserPropsRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m SetUserPropsRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m SetUserPropsRequestMultiError) AllErrors() []error { return m }
-
-// SetUserPropsRequestValidationError is the validation error returned by
-// SetUserPropsRequest.Validate if the designated constraints aren't met.
-type SetUserPropsRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e SetUserPropsRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e SetUserPropsRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e SetUserPropsRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e SetUserPropsRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e SetUserPropsRequestValidationError) ErrorName() string {
-	return "SetUserPropsRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e SetUserPropsRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sSetUserPropsRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = SetUserPropsRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = SetUserPropsRequestValidationError{}
-
-// Validate checks the field values on SetUserPropsResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *SetUserPropsResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on SetUserPropsResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// SetUserPropsResponseMultiError, or nil if none found.
-func (m *SetUserPropsResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *SetUserPropsResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return SetUserPropsResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// SetUserPropsResponseMultiError is an error wrapping multiple validation
-// errors returned by SetUserPropsResponse.ValidateAll() if the designated
-// constraints aren't met.
-type SetUserPropsResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m SetUserPropsResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m SetUserPropsResponseMultiError) AllErrors() []error { return m }
-
-// SetUserPropsResponseValidationError is the validation error returned by
-// SetUserPropsResponse.Validate if the designated constraints aren't met.
-type SetUserPropsResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e SetUserPropsResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e SetUserPropsResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e SetUserPropsResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e SetUserPropsResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e SetUserPropsResponseValidationError) ErrorName() string {
-	return "SetUserPropsResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e SetUserPropsResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sSetUserPropsResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = SetUserPropsResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = SetUserPropsResponseValidationError{}
-
 // Validate checks the field values on GetUserActivityRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -1026,6 +807,225 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetUserActivityResponseValidationError{}
+
+// Validate checks the field values on SetUserPropsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetUserPropsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetUserPropsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetUserPropsRequestMultiError, or nil if none found.
+func (m *SetUserPropsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetUserPropsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetUserID() <= 0 {
+		err := SetUserPropsRequestValidationError{
+			field:  "UserID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.Wanted != nil {
+		// no validation rules for Wanted
+	}
+
+	if len(errors) > 0 {
+		return SetUserPropsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetUserPropsRequestMultiError is an error wrapping multiple validation
+// errors returned by SetUserPropsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SetUserPropsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetUserPropsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetUserPropsRequestMultiError) AllErrors() []error { return m }
+
+// SetUserPropsRequestValidationError is the validation error returned by
+// SetUserPropsRequest.Validate if the designated constraints aren't met.
+type SetUserPropsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetUserPropsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetUserPropsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetUserPropsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetUserPropsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetUserPropsRequestValidationError) ErrorName() string {
+	return "SetUserPropsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetUserPropsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetUserPropsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetUserPropsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetUserPropsRequestValidationError{}
+
+// Validate checks the field values on SetUserPropsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetUserPropsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetUserPropsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetUserPropsResponseMultiError, or nil if none found.
+func (m *SetUserPropsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetUserPropsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return SetUserPropsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetUserPropsResponseMultiError is an error wrapping multiple validation
+// errors returned by SetUserPropsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type SetUserPropsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetUserPropsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetUserPropsResponseMultiError) AllErrors() []error { return m }
+
+// SetUserPropsResponseValidationError is the validation error returned by
+// SetUserPropsResponse.Validate if the designated constraints aren't met.
+type SetUserPropsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetUserPropsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetUserPropsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetUserPropsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetUserPropsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetUserPropsResponseValidationError) ErrorName() string {
+	return "SetUserPropsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetUserPropsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetUserPropsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetUserPropsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetUserPropsResponseValidationError{}
 
 // Validate checks the field values on UserActivity with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

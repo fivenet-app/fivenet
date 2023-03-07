@@ -153,30 +153,94 @@ export namespace GetDocumentResponse {
   }
 }
 
-export class CreateDocumentRequest extends jspb.Message {
+export class CreateOrEditDocumentRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CreateDocumentRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: CreateDocumentRequest): CreateDocumentRequest.AsObject;
-  static serializeBinaryToWriter(message: CreateDocumentRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CreateDocumentRequest;
-  static deserializeBinaryFromReader(message: CreateDocumentRequest, reader: jspb.BinaryReader): CreateDocumentRequest;
+  toObject(includeInstance?: boolean): CreateOrEditDocumentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateOrEditDocumentRequest): CreateOrEditDocumentRequest.AsObject;
+  static serializeBinaryToWriter(message: CreateOrEditDocumentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateOrEditDocumentRequest;
+  static deserializeBinaryFromReader(message: CreateOrEditDocumentRequest, reader: jspb.BinaryReader): CreateOrEditDocumentRequest;
 }
 
-export namespace CreateDocumentRequest {
+export namespace CreateOrEditDocumentRequest {
   export type AsObject = {
   }
 }
 
-export class CreateDocumentResponse extends jspb.Message {
+export class CreateOrEditDocumentResponse extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CreateDocumentResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: CreateDocumentResponse): CreateDocumentResponse.AsObject;
-  static serializeBinaryToWriter(message: CreateDocumentResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CreateDocumentResponse;
-  static deserializeBinaryFromReader(message: CreateDocumentResponse, reader: jspb.BinaryReader): CreateDocumentResponse;
+  toObject(includeInstance?: boolean): CreateOrEditDocumentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateOrEditDocumentResponse): CreateOrEditDocumentResponse.AsObject;
+  static serializeBinaryToWriter(message: CreateOrEditDocumentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateOrEditDocumentResponse;
+  static deserializeBinaryFromReader(message: CreateOrEditDocumentResponse, reader: jspb.BinaryReader): CreateOrEditDocumentResponse;
 }
 
-export namespace CreateDocumentResponse {
+export namespace CreateOrEditDocumentResponse {
+  export type AsObject = {
+  }
+}
+
+export class GetDocumentAccessRequest extends jspb.Message {
+  getId(): number;
+  setId(value: number): GetDocumentAccessRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDocumentAccessRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentAccessRequest): GetDocumentAccessRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentAccessRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentAccessRequest;
+  static deserializeBinaryFromReader(message: GetDocumentAccessRequest, reader: jspb.BinaryReader): GetDocumentAccessRequest;
+}
+
+export namespace GetDocumentAccessRequest {
+  export type AsObject = {
+    id: number,
+  }
+}
+
+export class GetDocumentAccessResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDocumentAccessResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentAccessResponse): GetDocumentAccessResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentAccessResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentAccessResponse;
+  static deserializeBinaryFromReader(message: GetDocumentAccessResponse, reader: jspb.BinaryReader): GetDocumentAccessResponse;
+}
+
+export namespace GetDocumentAccessResponse {
+  export type AsObject = {
+  }
+}
+
+export class SetDocumentAccessRequest extends jspb.Message {
+  getId(): number;
+  setId(value: number): SetDocumentAccessRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SetDocumentAccessRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: SetDocumentAccessRequest): SetDocumentAccessRequest.AsObject;
+  static serializeBinaryToWriter(message: SetDocumentAccessRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SetDocumentAccessRequest;
+  static deserializeBinaryFromReader(message: SetDocumentAccessRequest, reader: jspb.BinaryReader): SetDocumentAccessRequest;
+}
+
+export namespace SetDocumentAccessRequest {
+  export type AsObject = {
+    id: number,
+  }
+}
+
+export class SetDocumentAccessResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SetDocumentAccessResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SetDocumentAccessResponse): SetDocumentAccessResponse.AsObject;
+  static serializeBinaryToWriter(message: SetDocumentAccessResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SetDocumentAccessResponse;
+  static deserializeBinaryFromReader(message: SetDocumentAccessResponse, reader: jspb.BinaryReader): SetDocumentAccessResponse;
+}
+
+export namespace SetDocumentAccessResponse {
   export type AsObject = {
   }
 }

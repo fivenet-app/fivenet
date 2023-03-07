@@ -1,5 +1,5 @@
 type ArpanetConfig = {
-    apiProtoURL: string,
+    apiProtoURL: string;
 };
 
 const config: ArpanetConfig = {

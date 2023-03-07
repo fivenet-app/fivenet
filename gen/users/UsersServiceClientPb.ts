@@ -82,49 +82,6 @@ export class UsersServiceClient {
     this.methodDescriptorFindUsers);
   }
 
-  methodDescriptorSetUserProps = new grpcWeb.MethodDescriptor(
-    '/gen.users.UsersService/SetUserProps',
-    grpcWeb.MethodType.UNARY,
-    users_users_pb.SetUserPropsRequest,
-    users_users_pb.SetUserPropsResponse,
-    (request: users_users_pb.SetUserPropsRequest) => {
-      return request.serializeBinary();
-    },
-    users_users_pb.SetUserPropsResponse.deserializeBinary
-  );
-
-  setUserProps(
-    request: users_users_pb.SetUserPropsRequest,
-    metadata: grpcWeb.Metadata | null): Promise<users_users_pb.SetUserPropsResponse>;
-
-  setUserProps(
-    request: users_users_pb.SetUserPropsRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: users_users_pb.SetUserPropsResponse) => void): grpcWeb.ClientReadableStream<users_users_pb.SetUserPropsResponse>;
-
-  setUserProps(
-    request: users_users_pb.SetUserPropsRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: users_users_pb.SetUserPropsResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/gen.users.UsersService/SetUserProps',
-        request,
-        metadata || {},
-        this.methodDescriptorSetUserProps,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/gen.users.UsersService/SetUserProps',
-    request,
-    metadata || {},
-    this.methodDescriptorSetUserProps);
-  }
-
   methodDescriptorGetUser = new grpcWeb.MethodDescriptor(
     '/gen.users.UsersService/GetUser',
     grpcWeb.MethodType.UNARY,
@@ -209,6 +166,49 @@ export class UsersServiceClient {
     request,
     metadata || {},
     this.methodDescriptorGetUserActivity);
+  }
+
+  methodDescriptorSetUserProps = new grpcWeb.MethodDescriptor(
+    '/gen.users.UsersService/SetUserProps',
+    grpcWeb.MethodType.UNARY,
+    users_users_pb.SetUserPropsRequest,
+    users_users_pb.SetUserPropsResponse,
+    (request: users_users_pb.SetUserPropsRequest) => {
+      return request.serializeBinary();
+    },
+    users_users_pb.SetUserPropsResponse.deserializeBinary
+  );
+
+  setUserProps(
+    request: users_users_pb.SetUserPropsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<users_users_pb.SetUserPropsResponse>;
+
+  setUserProps(
+    request: users_users_pb.SetUserPropsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: users_users_pb.SetUserPropsResponse) => void): grpcWeb.ClientReadableStream<users_users_pb.SetUserPropsResponse>;
+
+  setUserProps(
+    request: users_users_pb.SetUserPropsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: users_users_pb.SetUserPropsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.users.UsersService/SetUserProps',
+        request,
+        metadata || {},
+        this.methodDescriptorSetUserProps,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.users.UsersService/SetUserProps',
+    request,
+    metadata || {},
+    this.methodDescriptorSetUserProps);
   }
 
 }

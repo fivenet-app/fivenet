@@ -6,7 +6,6 @@ import { clientAuthOptions, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { FindUsersRequest } from '@arpanet/gen/users/users_pb';
 import TablePagination from '../partials/TablePagination.vue';
-import CitizenInfoSlideOver from './CitizenInfoSlideOver.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import config from '../../config';
@@ -15,7 +14,6 @@ import { Switch } from '@headlessui/vue';
 export default defineComponent({
     components: {
         TablePagination,
-        CitizenInfoSlideOver,
         CitizenListEntry,
         Switch,
     },

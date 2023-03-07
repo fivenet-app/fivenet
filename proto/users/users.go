@@ -162,8 +162,9 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		selectors = append(selectors, ul.Type)
 	}
 
-	resp := &GetUserResponse{}
-
+	resp := &GetUserResponse{
+		User: &common.User{},
+	}
 	stmt := u.SELECT(
 		selectors[0], selectors[1:]...,
 	).
@@ -174,11 +175,30 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		WHERE(u.ID.EQ(jet.Int32(req.UserID))).
 		LIMIT(15)
 
-	var dest common.User
-	if err := stmt.QueryContext(ctx, query.DB, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, query.DB, resp.User); err != nil {
 		return nil, err
 	}
 
+	return resp, nil
+}
+
+func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityRequest) (*GetUserActivityResponse, error) {
+	var activities []*UserActivity
+
+	ua := table.ArpanetUserActivity
+	if err := ua.SELECT(ua.AllColumns).
+		FROM(ua).
+		WHERE(
+			ua.TargetUserID.EQ(jet.Int32(req.UserID)),
+		).
+		LIMIT(10).
+		QueryContext(ctx, query.DB, &activities); err != nil {
+		return nil, err
+	}
+
+	resp := &GetUserActivityResponse{
+		Activity: activities,
+	}
 	return resp, nil
 }
 
@@ -206,24 +226,4 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	return &SetUserPropsResponse{}, nil
-}
-
-func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityRequest) (*GetUserActivityResponse, error) {
-	var activities []*UserActivity
-
-	ua := table.ArpanetUserActivity
-	if err := ua.SELECT(ua.AllColumns).
-		FROM(ua).
-		WHERE(
-			ua.TargetUserID.EQ(jet.Int32(req.UserID)),
-		).
-		LIMIT(10).
-		QueryContext(ctx, query.DB, &activities); err != nil {
-		return nil, err
-	}
-
-	resp := &GetUserActivityResponse{
-		Activity: activities,
-	}
-	return resp, nil
 }

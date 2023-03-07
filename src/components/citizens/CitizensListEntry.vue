@@ -1,24 +1,11 @@
 <script lang="ts">
 import { User } from '@arpanet/gen/common/userinfo_pb';
 import { defineComponent } from 'vue';
-import CitizenInfoSlideOver from './CitizenInfoSlideOver.vue';
+import { toTitleCase } from '../../utils/strings';
 
 export default defineComponent({
-    components: {
-        CitizenInfoSlideOver,
-    },
-    data() {
-        return {
-            'open': false,
-        };
-    },
     methods: {
-        toTitleCase(value: string) {
-            return value.replace(/(?:^|\s|-)\S/g, x => x.toUpperCase());
-        },
-        toggleSlideOver() {
-            this.open = !this.open;
-        },
+        toTitleCase,
     },
     props: {
         'user': {
@@ -50,8 +37,8 @@ export default defineComponent({
         </td>
         <td class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <div v-can="'users-findusers'">
-                <button @click="toggleSlideOver()" class="text-indigo-400 hover:text-indigo-300">VIEW</button>
-                <!-- <CitizenInfoSlideOver @close="toggleSlideOver()" :open="open" :userID="user.getUserid()" /> -->
+                <router-link :to="{ name: 'Citizens Info', params: { id: user.getUserid().toString() } }"
+                    class="text-indigo-400 hover:text-indigo-300">VIEW</router-link>
             </div>
         </td>
     </tr>

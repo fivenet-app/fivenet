@@ -23,9 +23,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersServiceClient interface {
 	FindUsers(ctx context.Context, in *FindUsersRequest, opts ...grpc.CallOption) (*FindUsersResponse, error)
-	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	GetUserActivity(ctx context.Context, in *GetUserActivityRequest, opts ...grpc.CallOption) (*GetUserActivityResponse, error)
+	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 }
 
 type usersServiceClient struct {
@@ -39,15 +39,6 @@ func NewUsersServiceClient(cc grpc.ClientConnInterface) UsersServiceClient {
 func (c *usersServiceClient) FindUsers(ctx context.Context, in *FindUsersRequest, opts ...grpc.CallOption) (*FindUsersResponse, error) {
 	out := new(FindUsersResponse)
 	err := c.cc.Invoke(ctx, "/gen.users.UsersService/FindUsers", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *usersServiceClient) SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error) {
-	out := new(SetUserPropsResponse)
-	err := c.cc.Invoke(ctx, "/gen.users.UsersService/SetUserProps", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,14 +63,23 @@ func (c *usersServiceClient) GetUserActivity(ctx context.Context, in *GetUserAct
 	return out, nil
 }
 
+func (c *usersServiceClient) SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error) {
+	out := new(SetUserPropsResponse)
+	err := c.cc.Invoke(ctx, "/gen.users.UsersService/SetUserProps", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsersServiceServer is the server API for UsersService service.
 // All implementations must embed UnimplementedUsersServiceServer
 // for forward compatibility
 type UsersServiceServer interface {
 	FindUsers(context.Context, *FindUsersRequest) (*FindUsersResponse, error)
-	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error)
+	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	mustEmbedUnimplementedUsersServiceServer()
 }
 
@@ -90,14 +90,14 @@ type UnimplementedUsersServiceServer struct {
 func (UnimplementedUsersServiceServer) FindUsers(context.Context, *FindUsersRequest) (*FindUsersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindUsers not implemented")
 }
-func (UnimplementedUsersServiceServer) SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetUserProps not implemented")
-}
 func (UnimplementedUsersServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedUsersServiceServer) GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserActivity not implemented")
+}
+func (UnimplementedUsersServiceServer) SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUserProps not implemented")
 }
 func (UnimplementedUsersServiceServer) mustEmbedUnimplementedUsersServiceServer() {}
 
@@ -126,24 +126,6 @@ func _UsersService_FindUsers_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UsersServiceServer).FindUsers(ctx, req.(*FindUsersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UsersService_SetUserProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetUserPropsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UsersServiceServer).SetUserProps(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gen.users.UsersService/SetUserProps",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).SetUserProps(ctx, req.(*SetUserPropsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -184,6 +166,24 @@ func _UsersService_GetUserActivity_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UsersService_SetUserProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetUserPropsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).SetUserProps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gen.users.UsersService/SetUserProps",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).SetUserProps(ctx, req.(*SetUserPropsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UsersService_ServiceDesc is the grpc.ServiceDesc for UsersService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -196,16 +196,16 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UsersService_FindUsers_Handler,
 		},
 		{
-			MethodName: "SetUserProps",
-			Handler:    _UsersService_SetUserProps_Handler,
-		},
-		{
 			MethodName: "GetUser",
 			Handler:    _UsersService_GetUser_Handler,
 		},
 		{
 			MethodName: "GetUserActivity",
 			Handler:    _UsersService_GetUserActivity_Handler,
+		},
+		{
+			MethodName: "SetUserProps",
+			Handler:    _UsersService_SetUserProps_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

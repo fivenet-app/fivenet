@@ -7,7 +7,6 @@ import { mapState } from 'vuex';
 
 import './index.css';
 import HeroFull from '../components/partials/HeroFull.vue';
-import { dispatchNotification } from '../components/notification';
 
 export default defineComponent({
     components: {
@@ -19,14 +18,6 @@ export default defineComponent({
         ...mapState({
             accessToken: 'accessToken',
         }),
-    },
-    methods: {
-        addNotification: function () {
-            dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
-            dispatchNotification({ title: 'Info!', content: 'Your action was successfully submitted', type: 'info' });
-            dispatchNotification({ title: 'Warning!', content: 'Your action was successfully submitted', type: 'warning' });
-            dispatchNotification({ title: 'Error!', content: 'Your action was successfully submitted', type: 'error' });
-        },
     },
 });
 </script>

@@ -31,20 +31,20 @@ message GetUserResponse {
     gen.common.User user = 1;
 }
 
-message SetUserPropsRequest {
-    int32 userID = 1 [(validate.rules).int32.gt = 0];
-    optional bool wanted = 2;
-}
-
-message SetUserPropsResponse {
-}
-
 message GetUserActivityRequest {
     int32 userID = 1 [(validate.rules).int32.gt = 0];
 }
 
 message GetUserActivityResponse {
     repeated UserActivity activity = 1;
+}
+
+message SetUserPropsRequest {
+    int32 userID = 1 [(validate.rules).int32.gt = 0];
+    optional bool wanted = 2;
+}
+
+message SetUserPropsResponse {
 }
 
 message UserActivity {
@@ -61,7 +61,7 @@ message UserActivity {
 
 service UsersService {
     rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
-    rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
     rpc GetUser(GetUserRequest) returns (GetUserResponse);
     rpc GetUserActivity(GetUserActivityRequest) returns (GetUserActivityResponse);
+    rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 }

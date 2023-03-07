@@ -778,22 +778,22 @@ var _ interface {
 	ErrorName() string
 } = GetDocumentResponseValidationError{}
 
-// Validate checks the field values on CreateDocumentRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on CreateOrEditDocumentRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateDocumentRequest) Validate() error {
+func (m *CreateOrEditDocumentRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateDocumentRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on CreateOrEditDocumentRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateDocumentRequestMultiError, or nil if none found.
-func (m *CreateDocumentRequest) ValidateAll() error {
+// CreateOrEditDocumentRequestMultiError, or nil if none found.
+func (m *CreateOrEditDocumentRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateDocumentRequest) validate(all bool) error {
+func (m *CreateOrEditDocumentRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -801,19 +801,19 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return CreateDocumentRequestMultiError(errors)
+		return CreateOrEditDocumentRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateDocumentRequestMultiError is an error wrapping multiple validation
-// errors returned by CreateDocumentRequest.ValidateAll() if the designated
-// constraints aren't met.
-type CreateDocumentRequestMultiError []error
+// CreateOrEditDocumentRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateOrEditDocumentRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CreateOrEditDocumentRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateDocumentRequestMultiError) Error() string {
+func (m CreateOrEditDocumentRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -822,11 +822,12 @@ func (m CreateDocumentRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateDocumentRequestMultiError) AllErrors() []error { return m }
+func (m CreateOrEditDocumentRequestMultiError) AllErrors() []error { return m }
 
-// CreateDocumentRequestValidationError is the validation error returned by
-// CreateDocumentRequest.Validate if the designated constraints aren't met.
-type CreateDocumentRequestValidationError struct {
+// CreateOrEditDocumentRequestValidationError is the validation error returned
+// by CreateOrEditDocumentRequest.Validate if the designated constraints
+// aren't met.
+type CreateOrEditDocumentRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -834,24 +835,24 @@ type CreateDocumentRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateDocumentRequestValidationError) Field() string { return e.field }
+func (e CreateOrEditDocumentRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateDocumentRequestValidationError) Reason() string { return e.reason }
+func (e CreateOrEditDocumentRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateDocumentRequestValidationError) Cause() error { return e.cause }
+func (e CreateOrEditDocumentRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateDocumentRequestValidationError) Key() bool { return e.key }
+func (e CreateOrEditDocumentRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateDocumentRequestValidationError) ErrorName() string {
-	return "CreateDocumentRequestValidationError"
+func (e CreateOrEditDocumentRequestValidationError) ErrorName() string {
+	return "CreateOrEditDocumentRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateDocumentRequestValidationError) Error() string {
+func (e CreateOrEditDocumentRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -863,14 +864,14 @@ func (e CreateDocumentRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateDocumentRequest.%s: %s%s",
+		"invalid %sCreateOrEditDocumentRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateDocumentRequestValidationError{}
+var _ error = CreateOrEditDocumentRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -878,24 +879,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateDocumentRequestValidationError{}
+} = CreateOrEditDocumentRequestValidationError{}
 
-// Validate checks the field values on CreateDocumentResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on CreateOrEditDocumentResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateDocumentResponse) Validate() error {
+func (m *CreateOrEditDocumentResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateDocumentResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on CreateOrEditDocumentResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateDocumentResponseMultiError, or nil if none found.
-func (m *CreateDocumentResponse) ValidateAll() error {
+// CreateOrEditDocumentResponseMultiError, or nil if none found.
+func (m *CreateOrEditDocumentResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateDocumentResponse) validate(all bool) error {
+func (m *CreateOrEditDocumentResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -903,19 +904,19 @@ func (m *CreateDocumentResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return CreateDocumentResponseMultiError(errors)
+		return CreateOrEditDocumentResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateDocumentResponseMultiError is an error wrapping multiple validation
-// errors returned by CreateDocumentResponse.ValidateAll() if the designated
-// constraints aren't met.
-type CreateDocumentResponseMultiError []error
+// CreateOrEditDocumentResponseMultiError is an error wrapping multiple
+// validation errors returned by CreateOrEditDocumentResponse.ValidateAll() if
+// the designated constraints aren't met.
+type CreateOrEditDocumentResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateDocumentResponseMultiError) Error() string {
+func (m CreateOrEditDocumentResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -924,11 +925,12 @@ func (m CreateDocumentResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateDocumentResponseMultiError) AllErrors() []error { return m }
+func (m CreateOrEditDocumentResponseMultiError) AllErrors() []error { return m }
 
-// CreateDocumentResponseValidationError is the validation error returned by
-// CreateDocumentResponse.Validate if the designated constraints aren't met.
-type CreateDocumentResponseValidationError struct {
+// CreateOrEditDocumentResponseValidationError is the validation error returned
+// by CreateOrEditDocumentResponse.Validate if the designated constraints
+// aren't met.
+type CreateOrEditDocumentResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -936,24 +938,24 @@ type CreateDocumentResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateDocumentResponseValidationError) Field() string { return e.field }
+func (e CreateOrEditDocumentResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateDocumentResponseValidationError) Reason() string { return e.reason }
+func (e CreateOrEditDocumentResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateDocumentResponseValidationError) Cause() error { return e.cause }
+func (e CreateOrEditDocumentResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateDocumentResponseValidationError) Key() bool { return e.key }
+func (e CreateOrEditDocumentResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateDocumentResponseValidationError) ErrorName() string {
-	return "CreateDocumentResponseValidationError"
+func (e CreateOrEditDocumentResponseValidationError) ErrorName() string {
+	return "CreateOrEditDocumentResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateDocumentResponseValidationError) Error() string {
+func (e CreateOrEditDocumentResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -965,14 +967,14 @@ func (e CreateDocumentResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateDocumentResponse.%s: %s%s",
+		"invalid %sCreateOrEditDocumentResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateDocumentResponseValidationError{}
+var _ error = CreateOrEditDocumentResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -980,4 +982,416 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateDocumentResponseValidationError{}
+} = CreateOrEditDocumentResponseValidationError{}
+
+// Validate checks the field values on GetDocumentAccessRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetDocumentAccessRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDocumentAccessRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDocumentAccessRequestMultiError, or nil if none found.
+func (m *GetDocumentAccessRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDocumentAccessRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return GetDocumentAccessRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDocumentAccessRequestMultiError is an error wrapping multiple validation
+// errors returned by GetDocumentAccessRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetDocumentAccessRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDocumentAccessRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDocumentAccessRequestMultiError) AllErrors() []error { return m }
+
+// GetDocumentAccessRequestValidationError is the validation error returned by
+// GetDocumentAccessRequest.Validate if the designated constraints aren't met.
+type GetDocumentAccessRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDocumentAccessRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDocumentAccessRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDocumentAccessRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDocumentAccessRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDocumentAccessRequestValidationError) ErrorName() string {
+	return "GetDocumentAccessRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetDocumentAccessRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDocumentAccessRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDocumentAccessRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDocumentAccessRequestValidationError{}
+
+// Validate checks the field values on GetDocumentAccessResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetDocumentAccessResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDocumentAccessResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDocumentAccessResponseMultiError, or nil if none found.
+func (m *GetDocumentAccessResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDocumentAccessResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetDocumentAccessResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDocumentAccessResponseMultiError is an error wrapping multiple validation
+// errors returned by GetDocumentAccessResponse.ValidateAll() if the
+// designated constraints aren't met.
+type GetDocumentAccessResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDocumentAccessResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDocumentAccessResponseMultiError) AllErrors() []error { return m }
+
+// GetDocumentAccessResponseValidationError is the validation error returned by
+// GetDocumentAccessResponse.Validate if the designated constraints aren't met.
+type GetDocumentAccessResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDocumentAccessResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDocumentAccessResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDocumentAccessResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDocumentAccessResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDocumentAccessResponseValidationError) ErrorName() string {
+	return "GetDocumentAccessResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetDocumentAccessResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDocumentAccessResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDocumentAccessResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDocumentAccessResponseValidationError{}
+
+// Validate checks the field values on SetDocumentAccessRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetDocumentAccessRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetDocumentAccessRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetDocumentAccessRequestMultiError, or nil if none found.
+func (m *SetDocumentAccessRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetDocumentAccessRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return SetDocumentAccessRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetDocumentAccessRequestMultiError is an error wrapping multiple validation
+// errors returned by SetDocumentAccessRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SetDocumentAccessRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetDocumentAccessRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetDocumentAccessRequestMultiError) AllErrors() []error { return m }
+
+// SetDocumentAccessRequestValidationError is the validation error returned by
+// SetDocumentAccessRequest.Validate if the designated constraints aren't met.
+type SetDocumentAccessRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetDocumentAccessRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetDocumentAccessRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetDocumentAccessRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetDocumentAccessRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetDocumentAccessRequestValidationError) ErrorName() string {
+	return "SetDocumentAccessRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetDocumentAccessRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetDocumentAccessRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetDocumentAccessRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetDocumentAccessRequestValidationError{}
+
+// Validate checks the field values on SetDocumentAccessResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetDocumentAccessResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetDocumentAccessResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetDocumentAccessResponseMultiError, or nil if none found.
+func (m *SetDocumentAccessResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetDocumentAccessResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return SetDocumentAccessResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetDocumentAccessResponseMultiError is an error wrapping multiple validation
+// errors returned by SetDocumentAccessResponse.ValidateAll() if the
+// designated constraints aren't met.
+type SetDocumentAccessResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetDocumentAccessResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetDocumentAccessResponseMultiError) AllErrors() []error { return m }
+
+// SetDocumentAccessResponseValidationError is the validation error returned by
+// SetDocumentAccessResponse.Validate if the designated constraints aren't met.
+type SetDocumentAccessResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetDocumentAccessResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetDocumentAccessResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetDocumentAccessResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetDocumentAccessResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetDocumentAccessResponseValidationError) ErrorName() string {
+	return "SetDocumentAccessResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetDocumentAccessResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetDocumentAccessResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetDocumentAccessResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetDocumentAccessResponseValidationError{}

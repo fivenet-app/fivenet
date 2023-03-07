@@ -24,7 +24,9 @@ const _ = grpc.SupportPackageIsVersion7
 type DocumentsServiceClient interface {
 	FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error)
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
-	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
+	CreateOrEditDocument(ctx context.Context, in *CreateOrEditDocumentRequest, opts ...grpc.CallOption) (*CreateOrEditDocumentResponse, error)
+	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
+	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
 }
 
 type documentsServiceClient struct {
@@ -53,9 +55,27 @@ func (c *documentsServiceClient) GetDocument(ctx context.Context, in *GetDocumen
 	return out, nil
 }
 
-func (c *documentsServiceClient) CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error) {
-	out := new(CreateDocumentResponse)
-	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/CreateDocument", in, out, opts...)
+func (c *documentsServiceClient) CreateOrEditDocument(ctx context.Context, in *CreateOrEditDocumentRequest, opts ...grpc.CallOption) (*CreateOrEditDocumentResponse, error) {
+	out := new(CreateOrEditDocumentResponse)
+	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/CreateOrEditDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentsServiceClient) GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error) {
+	out := new(GetDocumentAccessResponse)
+	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/GetDocumentAccess", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentsServiceClient) SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error) {
+	out := new(SetDocumentAccessResponse)
+	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/SetDocumentAccess", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +88,9 @@ func (c *documentsServiceClient) CreateDocument(ctx context.Context, in *CreateD
 type DocumentsServiceServer interface {
 	FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error)
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
-	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
+	CreateOrEditDocument(context.Context, *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error)
+	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
+	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
 	mustEmbedUnimplementedDocumentsServiceServer()
 }
 
@@ -82,8 +104,14 @@ func (UnimplementedDocumentsServiceServer) FindDocuments(context.Context, *FindD
 func (UnimplementedDocumentsServiceServer) GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocument not implemented")
 }
-func (UnimplementedDocumentsServiceServer) CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateDocument not implemented")
+func (UnimplementedDocumentsServiceServer) CreateOrEditDocument(context.Context, *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrEditDocument not implemented")
+}
+func (UnimplementedDocumentsServiceServer) GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentAccess not implemented")
+}
+func (UnimplementedDocumentsServiceServer) SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetDocumentAccess not implemented")
 }
 func (UnimplementedDocumentsServiceServer) mustEmbedUnimplementedDocumentsServiceServer() {}
 
@@ -134,20 +162,56 @@ func _DocumentsService_GetDocument_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocumentsService_CreateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateDocumentRequest)
+func _DocumentsService_CreateOrEditDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrEditDocumentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocumentsServiceServer).CreateDocument(ctx, in)
+		return srv.(DocumentsServiceServer).CreateOrEditDocument(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gen.documents.DocumentsService/CreateDocument",
+		FullMethod: "/gen.documents.DocumentsService/CreateOrEditDocument",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).CreateDocument(ctx, req.(*CreateDocumentRequest))
+		return srv.(DocumentsServiceServer).CreateOrEditDocument(ctx, req.(*CreateOrEditDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocumentsService_GetDocumentAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDocumentAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentsServiceServer).GetDocumentAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gen.documents.DocumentsService/GetDocumentAccess",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentsServiceServer).GetDocumentAccess(ctx, req.(*GetDocumentAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocumentsService_SetDocumentAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetDocumentAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentsServiceServer).SetDocumentAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gen.documents.DocumentsService/SetDocumentAccess",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentsServiceServer).SetDocumentAccess(ctx, req.(*SetDocumentAccessRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -168,8 +232,16 @@ var DocumentsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocumentsService_GetDocument_Handler,
 		},
 		{
-			MethodName: "CreateDocument",
-			Handler:    _DocumentsService_CreateDocument_Handler,
+			MethodName: "CreateOrEditDocument",
+			Handler:    _DocumentsService_CreateOrEditDocument_Handler,
+		},
+		{
+			MethodName: "GetDocumentAccess",
+			Handler:    _DocumentsService_GetDocumentAccess_Handler,
+		},
+		{
+			MethodName: "SetDocumentAccess",
+			Handler:    _DocumentsService_SetDocumentAccess_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -111,6 +111,44 @@ export namespace GetUserResponse {
   }
 }
 
+export class GetUserActivityRequest extends jspb.Message {
+  getUserid(): number;
+  setUserid(value: number): GetUserActivityRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetUserActivityRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetUserActivityRequest): GetUserActivityRequest.AsObject;
+  static serializeBinaryToWriter(message: GetUserActivityRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetUserActivityRequest;
+  static deserializeBinaryFromReader(message: GetUserActivityRequest, reader: jspb.BinaryReader): GetUserActivityRequest;
+}
+
+export namespace GetUserActivityRequest {
+  export type AsObject = {
+    userid: number,
+  }
+}
+
+export class GetUserActivityResponse extends jspb.Message {
+  getActivityList(): Array<UserActivity>;
+  setActivityList(value: Array<UserActivity>): GetUserActivityResponse;
+  clearActivityList(): GetUserActivityResponse;
+  addActivity(value?: UserActivity, index?: number): UserActivity;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetUserActivityResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetUserActivityResponse): GetUserActivityResponse.AsObject;
+  static serializeBinaryToWriter(message: GetUserActivityResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetUserActivityResponse;
+  static deserializeBinaryFromReader(message: GetUserActivityResponse, reader: jspb.BinaryReader): GetUserActivityResponse;
+}
+
+export namespace GetUserActivityResponse {
+  export type AsObject = {
+    activityList: Array<UserActivity.AsObject>,
+  }
+}
+
 export class SetUserPropsRequest extends jspb.Message {
   getUserid(): number;
   setUserid(value: number): SetUserPropsRequest;
@@ -151,44 +189,6 @@ export class SetUserPropsResponse extends jspb.Message {
 
 export namespace SetUserPropsResponse {
   export type AsObject = {
-  }
-}
-
-export class GetUserActivityRequest extends jspb.Message {
-  getUserid(): number;
-  setUserid(value: number): GetUserActivityRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetUserActivityRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: GetUserActivityRequest): GetUserActivityRequest.AsObject;
-  static serializeBinaryToWriter(message: GetUserActivityRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetUserActivityRequest;
-  static deserializeBinaryFromReader(message: GetUserActivityRequest, reader: jspb.BinaryReader): GetUserActivityRequest;
-}
-
-export namespace GetUserActivityRequest {
-  export type AsObject = {
-    userid: number,
-  }
-}
-
-export class GetUserActivityResponse extends jspb.Message {
-  getActivityList(): Array<UserActivity>;
-  setActivityList(value: Array<UserActivity>): GetUserActivityResponse;
-  clearActivityList(): GetUserActivityResponse;
-  addActivity(value?: UserActivity, index?: number): UserActivity;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetUserActivityResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: GetUserActivityResponse): GetUserActivityResponse.AsObject;
-  static serializeBinaryToWriter(message: GetUserActivityResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetUserActivityResponse;
-  static deserializeBinaryFromReader(message: GetUserActivityResponse, reader: jspb.BinaryReader): GetUserActivityResponse;
-}
-
-export namespace GetUserActivityResponse {
-  export type AsObject = {
-    activityList: Array<UserActivity.AsObject>,
   }
 }
 

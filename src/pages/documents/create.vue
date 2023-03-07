@@ -25,7 +25,8 @@ export default defineComponent({
         "requiresAuth": true,
         "permission": "documents-createdocument",
         "breadCrumbs": [
-            { "name": "Documents", "href": "/documents" }
+            { "name": "Documents", "href": "/documents" },
+            { "name": "Create Document", "href": "#" }
         ]
     }
 }

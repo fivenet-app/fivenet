@@ -22,7 +22,7 @@ export default defineComponent({
 
 <route lang="json">
 {
-    "name": "users",
+    "name": "Citizens",
     "meta": {
         "requiresAuth": true,
         "permission": "users-findusers",

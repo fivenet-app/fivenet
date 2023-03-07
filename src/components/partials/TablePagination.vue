@@ -33,7 +33,7 @@ export default defineComponent({
             <p class="text-sm text-gray-300">
                 Showing
                 {{ ' ' }}
-                <span class="font-medium text-white">{{ offset + 1 }}</span>
+                <span class="font-medium text-white">{{ total == 0 ? offset : offset + 1 }}</span>
                 {{ ' ' }}
                 to
                 {{ ' ' }}

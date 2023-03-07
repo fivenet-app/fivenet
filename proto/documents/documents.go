@@ -3,13 +3,11 @@ package documents
 import (
 	context "context"
 	"errors"
-	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/modelhelper"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/query"
-	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
@@ -102,37 +100,34 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 
 	resp := &FindDocumentsResponse{}
 	stmt := s.getDocumentsQuery(nil, nil, userID, job, jobGrade)
-	fmt.Println(stmt.DebugSql())
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Documents); err != nil {
 		return nil, err
 	}
-
-	// TODO
 
 	return resp, nil
 }
 
 func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*GetDocumentResponse, error) {
-	resp := &GetDocumentResponse{}
-
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "documents", "GetDocument") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get a document!")
+	}
 
-	d := table.ArpanetDocuments
-	var documents []model.ArpanetDocuments
-
+	resp := &GetDocumentResponse{}
 	if err := s.getDocumentsQuery(d.ID.EQ(jet.Uint64(req.Id)), nil, userID, job, jobGrade).
-		QueryContext(ctx, query.DB, &documents); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		QueryContext(ctx, query.DB, &resp); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
 
-	_ = documents
+	return resp, nil
+}
+
+func (s *Server) CreateOrEditDocument(ctx context.Context, in *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error) {
+	resp := &CreateOrEditDocumentResponse{}
+
 	// TODO
 
 	return resp, nil
 }
 
-func (s *Server) CreateDocument(ctx context.Context, in *CreateDocumentRequest) (*CreateDocumentResponse, error) {
-	resp := &CreateDocumentResponse{}
-
-	return resp, nil
-}
+// TODO add/update/remove for document access is needed

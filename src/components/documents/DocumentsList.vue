@@ -59,8 +59,8 @@ export default defineComponent({
                             <div class="form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-white">Search</label>
                                 <div class="relative mt-2 flex items-center">
-                                    <input v-model="search" v-on:keyup.enter="findDocuments(0)" type="text"
-                                        name="search" id="search"
+                                    <input v-model="search" v-on:keyup.enter="findDocuments(0)" type="text" name="search"
+                                        id="search"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
@@ -71,7 +71,8 @@ export default defineComponent({
             <div class="overflow-hidden bg-white shadow sm:rounded-md">
                 <ul role="list" class="divide-y divide-gray-200">
                     <li v-for="doc in documents" :key="doc.getId()">
-                        <a href="#" class="block hover:bg-gray-50">
+                        <router-link :to="{ name: 'Documents: Info', params: { id: doc.getId() } }"
+                            class="block hover:bg-gray-50">
                             <div class="px-4 py-4 sm:px-6">
                                 <div class="flex items-center justify-between">
                                     <p class="truncate text-sm font-medium text-indigo-600">{{ doc.getTitle() }}</p>
@@ -105,7 +106,7 @@ export default defineComponent({
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        </router-link>
                     </li>
                 </ul>
             </div>

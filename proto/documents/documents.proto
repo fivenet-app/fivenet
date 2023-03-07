@@ -38,18 +38,34 @@ message GetDocumentResponse {
     repeated Document responses = 2;
 }
 
-message CreateDocumentRequest {
+message CreateOrEditDocumentRequest {
 
 }
 
-message CreateDocumentResponse {
+message CreateOrEditDocumentResponse {
 
+}
+
+message GetDocumentAccessRequest {
+    uint64 id = 1;
+}
+
+message GetDocumentAccessResponse {
+}
+
+message SetDocumentAccessRequest {
+    uint64 id = 1;
+}
+
+message SetDocumentAccessResponse {
 }
 
 service DocumentsService {
     rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
 
     rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
-    rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
-    // TODO add/update/remove for document access is needed
+    rpc CreateOrEditDocument(CreateOrEditDocumentRequest) returns (CreateOrEditDocumentResponse);
+
+    rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
+    rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
 }

@@ -33,7 +33,7 @@ export default defineComponent({
         },
     },
     props: {
-        'userID': {
+        userID: {
             required: true,
             type: Number,
         },

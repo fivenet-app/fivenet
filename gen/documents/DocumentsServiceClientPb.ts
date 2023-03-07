@@ -125,47 +125,133 @@ export class DocumentsServiceClient {
     this.methodDescriptorGetDocument);
   }
 
-  methodDescriptorCreateDocument = new grpcWeb.MethodDescriptor(
-    '/gen.documents.DocumentsService/CreateDocument',
+  methodDescriptorCreateOrEditDocument = new grpcWeb.MethodDescriptor(
+    '/gen.documents.DocumentsService/CreateOrEditDocument',
     grpcWeb.MethodType.UNARY,
-    documents_documents_pb.CreateDocumentRequest,
-    documents_documents_pb.CreateDocumentResponse,
-    (request: documents_documents_pb.CreateDocumentRequest) => {
+    documents_documents_pb.CreateOrEditDocumentRequest,
+    documents_documents_pb.CreateOrEditDocumentResponse,
+    (request: documents_documents_pb.CreateOrEditDocumentRequest) => {
       return request.serializeBinary();
     },
-    documents_documents_pb.CreateDocumentResponse.deserializeBinary
+    documents_documents_pb.CreateOrEditDocumentResponse.deserializeBinary
   );
 
-  createDocument(
-    request: documents_documents_pb.CreateDocumentRequest,
-    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.CreateDocumentResponse>;
+  createOrEditDocument(
+    request: documents_documents_pb.CreateOrEditDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.CreateOrEditDocumentResponse>;
 
-  createDocument(
-    request: documents_documents_pb.CreateDocumentRequest,
+  createOrEditDocument(
+    request: documents_documents_pb.CreateOrEditDocumentRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: documents_documents_pb.CreateDocumentResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.CreateDocumentResponse>;
+               response: documents_documents_pb.CreateOrEditDocumentResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.CreateOrEditDocumentResponse>;
 
-  createDocument(
-    request: documents_documents_pb.CreateDocumentRequest,
+  createOrEditDocument(
+    request: documents_documents_pb.CreateOrEditDocumentRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: documents_documents_pb.CreateDocumentResponse) => void) {
+               response: documents_documents_pb.CreateOrEditDocumentResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/gen.documents.DocumentsService/CreateDocument',
+          '/gen.documents.DocumentsService/CreateOrEditDocument',
         request,
         metadata || {},
-        this.methodDescriptorCreateDocument,
+        this.methodDescriptorCreateOrEditDocument,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/gen.documents.DocumentsService/CreateDocument',
+      '/gen.documents.DocumentsService/CreateOrEditDocument',
     request,
     metadata || {},
-    this.methodDescriptorCreateDocument);
+    this.methodDescriptorCreateOrEditDocument);
+  }
+
+  methodDescriptorGetDocumentAccess = new grpcWeb.MethodDescriptor(
+    '/gen.documents.DocumentsService/GetDocumentAccess',
+    grpcWeb.MethodType.UNARY,
+    documents_documents_pb.GetDocumentAccessRequest,
+    documents_documents_pb.GetDocumentAccessResponse,
+    (request: documents_documents_pb.GetDocumentAccessRequest) => {
+      return request.serializeBinary();
+    },
+    documents_documents_pb.GetDocumentAccessResponse.deserializeBinary
+  );
+
+  getDocumentAccess(
+    request: documents_documents_pb.GetDocumentAccessRequest,
+    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.GetDocumentAccessResponse>;
+
+  getDocumentAccess(
+    request: documents_documents_pb.GetDocumentAccessRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.GetDocumentAccessResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.GetDocumentAccessResponse>;
+
+  getDocumentAccess(
+    request: documents_documents_pb.GetDocumentAccessRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.GetDocumentAccessResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.documents.DocumentsService/GetDocumentAccess',
+        request,
+        metadata || {},
+        this.methodDescriptorGetDocumentAccess,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.documents.DocumentsService/GetDocumentAccess',
+    request,
+    metadata || {},
+    this.methodDescriptorGetDocumentAccess);
+  }
+
+  methodDescriptorSetDocumentAccess = new grpcWeb.MethodDescriptor(
+    '/gen.documents.DocumentsService/SetDocumentAccess',
+    grpcWeb.MethodType.UNARY,
+    documents_documents_pb.SetDocumentAccessRequest,
+    documents_documents_pb.SetDocumentAccessResponse,
+    (request: documents_documents_pb.SetDocumentAccessRequest) => {
+      return request.serializeBinary();
+    },
+    documents_documents_pb.SetDocumentAccessResponse.deserializeBinary
+  );
+
+  setDocumentAccess(
+    request: documents_documents_pb.SetDocumentAccessRequest,
+    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.SetDocumentAccessResponse>;
+
+  setDocumentAccess(
+    request: documents_documents_pb.SetDocumentAccessRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.SetDocumentAccessResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.SetDocumentAccessResponse>;
+
+  setDocumentAccess(
+    request: documents_documents_pb.SetDocumentAccessRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.SetDocumentAccessResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.documents.DocumentsService/SetDocumentAccess',
+        request,
+        metadata || {},
+        this.methodDescriptorSetDocumentAccess,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.documents.DocumentsService/SetDocumentAccess',
+    request,
+    metadata || {},
+    this.methodDescriptorSetDocumentAccess);
   }
 
 }
