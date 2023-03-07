@@ -21,10 +21,10 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
-var common_userinfo_pb = require('../common/userinfo_pb.js');
-goog.object.extend(proto, common_userinfo_pb);
 var common_database_pb = require('../common/database_pb.js');
 goog.object.extend(proto, common_database_pb);
+var common_userinfo_pb = require('../common/userinfo_pb.js');
+goog.object.extend(proto, common_userinfo_pb);
 var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
 goog.object.extend(proto, google_protobuf_timestamp_pb);
 goog.exportSymbol('proto.gen.users.FindUsersRequest', null, global);

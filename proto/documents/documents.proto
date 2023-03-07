@@ -3,12 +3,30 @@ syntax = "proto3";
 package gen.documents;
 option go_package = "github.com/galexrt/arpanet/proto/documents";
 
-message FindDocumentsRequest {
+import "common/database.proto";
+import "common/userinfo.proto";
+import "google/protobuf/timestamp.proto";
 
+message FindDocumentsRequest {
+    int64 offset = 1;
+    repeated gen.common.OrderBy orderBy = 2;
+    string search = 3;
 }
 
 message FindDocumentsResponse {
+    repeated Document documents = 1;
+}
 
+message Document {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"arpanet_documents.id"
+    google.protobuf.Timestamp created_at = 2; // @gotags alias:"arpanet_documents.created_at"
+    google.protobuf.Timestamp updated_at = 3; // @gotags alias:"arpanet_documents.updated_at"
+    string title = 5; // @gotags alias:"arpanet_documents.title"
+    string content = 6; // @gotags alias:"arpanet_documents.content"
+    string content_type = 7; // @gotags alias."arpanet_documents.content_type"
+    gen.common.ShortUser creator = 8; // @gotags alias:"arpanet_documents.creator"
+    string creator_job = 9; // @gotags alias:"arpanet_documents.creator_job"
+    bool public = 10; // @gotags alias:"arpanet_documents.public"
 }
 
 message GetDocumentRequest {
@@ -17,6 +35,7 @@ message GetDocumentRequest {
 
 message GetDocumentResponse {
     Document document = 1;
+    repeated Document responses = 2;
 }
 
 message CreateDocumentRequest {
@@ -25,9 +44,6 @@ message CreateDocumentRequest {
 
 message CreateDocumentResponse {
 
-}
-
-message Document {
 }
 
 service DocumentsService {

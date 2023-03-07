@@ -1,7 +1,7 @@
 import * as jspb from 'google-protobuf'
 
-import * as common_userinfo_pb from '../common/userinfo_pb';
 import * as common_database_pb from '../common/database_pb';
+import * as common_userinfo_pb from '../common/userinfo_pb';
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
 

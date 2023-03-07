@@ -21,6 +21,7 @@ import config from '../../config';
 import { clientAuthOptions, handleGRPCError } from '../../grpc';
 import { SetUserPropsRequest } from '@arpanet/gen/users/users_pb';
 import CharSexBadge from '../misc/CharSexBadge.vue';
+import { getSecondsFormattedAsDuration } from '../../utils/time';
 
 export default defineComponent({
     components: {
@@ -58,32 +59,9 @@ export default defineComponent({
         handleClose() {
             this.$emit('close');
         },
-        getTimeInHoursAndMins(timeInsSeconds: number): string {
-            if (timeInsSeconds && timeInsSeconds > 0) {
-                const minsTemp = timeInsSeconds / 60;
-                let hours = Math.floor(minsTemp / 60);
-                const mins = minsTemp % 60;
-                const hoursText = 'hrs';
-                const minsText = 'mins';
-
-                if (hours !== 0 && mins !== 0) {
-                    if (mins >= 59) {
-                        hours += 1;
-                        return `${hours} ${hoursText} `;
-                    } else {
-                        return `${hours} ${hoursText} ${mins.toFixed(0)} ${minsText}`;
-                    }
-                } else if (hours === 0 && mins !== 0) {
-                    return `${mins.toFixed(0)} ${minsText}`;
-                } else if (hours !== 0 && mins === 0) {
-                    return `${hours} ${hoursText}`;
-                }
-            }
-            return '-';
-        },
         toggleWantedStatus(event: any) {
             const wantedState = !this.user.getProps()?.getWanted();
-            event.target.message = wantedState ? 'Revoke Wanted Status' : 'Set Person as Wanted'
+            event.target.message = wantedState ? 'Revoke Wanted Status' : 'Set Person Wanted'
 
             const req = new SetUserPropsRequest();
             req.setUserid(this.user.getUserid());
@@ -95,6 +73,7 @@ export default defineComponent({
                     handleGRPCError(err, this.$route);
                 });
         },
+        getSecondsFormattedAsDuration,
     },
 });
 </script>
@@ -230,7 +209,7 @@ export default defineComponent({
                                                         class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
                                                         Playtime</dt>
                                                     <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                                        {{ getTimeInHoursAndMins(user.getPlaytime()) }}
+                                                        {{ getSecondsFormattedAsDuration(user.getPlaytime()) }}
                                                     </dd>
                                                 </div>
                                                 <div v-can="'users-findusers-licenses'" class="sm:flex sm:px-6 sm:py-5">

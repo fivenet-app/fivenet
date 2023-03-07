@@ -15,8 +15,8 @@ message User {
     string dateofbirth = 7; // @gotags: alias:"users.dateofbirth"
     string sex = 8; // @gotags: alias:"users.sex"
     string height = 9; // @gotags: alias:"users.height"
-    int64 visum = 10; // @gotags: alias:"users.visum"
-    int64 playtime = 11; // @gotags: alias:"users.playtime"
+    int32 visum = 10; // @gotags: alias:"users.visum"
+    int32 playtime = 11; // @gotags: alias:"users.playtime"
 
     Props props = 12; // @gotags: alias:"arpanet_user_props"
     repeated License licenses = 13; // @gotags: alias:"user_licenses"

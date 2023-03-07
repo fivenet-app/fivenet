@@ -3,8 +3,9 @@ import { defineComponent } from 'vue';
 import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
 import { DocumentsServiceClient } from '@arpanet/gen/documents/DocumentsServiceClientPb';
 import config from '../../config';
-import { clientAuthOptions } from '../../grpc';
+import { clientAuthOptions, handleGRPCError } from '../../grpc';
 import { FindDocumentsRequest } from '@arpanet/gen/documents/documents_pb';
+import { RpcError } from 'grpc-web';
 
 
 export default defineComponent({
@@ -17,7 +18,7 @@ export default defineComponent({
         return {
             client: new DocumentsServiceClient(config.apiProtoURL, null, clientAuthOptions),
             loading: false,
-            positions: [
+            documents: [
                 {
                     id: 1,
                     title: 'Back End Developer',
@@ -46,13 +47,22 @@ export default defineComponent({
                     closeDateFull: 'January 14, 2020',
                 },
             ],
+            search: '',
         };
     },
     methods: {
-        getDocuments() {
+        getDocuments(offset: number) {
             const req = new FindDocumentsRequest();
-            this.client.findDocuments(req, null);
-            // TODO
+            req.setOffset(offset);
+            req.setSearch(search);
+            req.setOrderbyList([]);
+            this.client.
+                findDocuments(req, null).
+                then((resp) => {
+                    this.documents = resp.getDocuments();
+                }).catch((err: RpcError) => {
+                    handleGRPCError(err, this.$route);
+                });
         },
     },
 });
@@ -63,7 +73,7 @@ export default defineComponent({
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="overflow-hidden bg-white shadow sm:rounded-md">
                 <ul role="list" class="divide-y divide-gray-200">
-                    <li v-for="position in positions" :key="position.id">
+                    <li v-for="position in documents" :key="position.id">
                         <a href="#" class="block hover:bg-gray-50">
                             <div class="px-4 py-4 sm:px-6">
                                 <div class="flex items-center justify-between">

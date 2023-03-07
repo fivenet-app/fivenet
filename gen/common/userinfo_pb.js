@@ -235,11 +235,11 @@ proto.gen.common.User.deserializeBinaryFromReader = function(msg, reader) {
       msg.setHeight(value);
       break;
     case 10:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setVisum(value);
       break;
     case 11:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setPlaytime(value);
       break;
     case 12:
@@ -346,14 +346,14 @@ proto.gen.common.User.serializeBinaryToWriter = function(message, writer) {
   }
   f = message.getVisum();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       10,
       f
     );
   }
   f = message.getPlaytime();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       11,
       f
     );
@@ -540,7 +540,7 @@ proto.gen.common.User.prototype.setHeight = function(value) {
 
 
 /**
- * optional int64 visum = 10;
+ * optional int32 visum = 10;
  * @return {number}
  */
 proto.gen.common.User.prototype.getVisum = function() {
@@ -558,7 +558,7 @@ proto.gen.common.User.prototype.setVisum = function(value) {
 
 
 /**
- * optional int64 playtime = 11;
+ * optional int32 playtime = 11;
  * @return {number}
  */
 proto.gen.common.User.prototype.getPlaytime = function() {

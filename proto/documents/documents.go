@@ -37,7 +37,10 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, user *common.ShortU
 	dua := table.ArpanetDocumentsUserAccess
 	dja := table.ArpanetDocumentsJobAccess
 
-	return d.SELECT(d.AllColumns, dja.AllColumns).
+	return d.SELECT(
+		d.AllColumns,
+		dja.AllColumns,
+	).
 		FROM(
 			d.LEFT_JOIN(dua,
 				dua.DocumentID.EQ(d.ID).

@@ -1,8 +1,22 @@
 import * as jspb from 'google-protobuf'
 
+import * as common_database_pb from '../common/database_pb';
+import * as common_userinfo_pb from '../common/userinfo_pb';
+import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
 
 export class FindDocumentsRequest extends jspb.Message {
+  getOffset(): number;
+  setOffset(value: number): FindDocumentsRequest;
+
+  getOrderbyList(): Array<common_database_pb.OrderBy>;
+  setOrderbyList(value: Array<common_database_pb.OrderBy>): FindDocumentsRequest;
+  clearOrderbyList(): FindDocumentsRequest;
+  addOrderby(value?: common_database_pb.OrderBy, index?: number): common_database_pb.OrderBy;
+
+  getSearch(): string;
+  setSearch(value: string): FindDocumentsRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindDocumentsRequest.AsObject;
   static toObject(includeInstance: boolean, msg: FindDocumentsRequest): FindDocumentsRequest.AsObject;
@@ -13,10 +27,18 @@ export class FindDocumentsRequest extends jspb.Message {
 
 export namespace FindDocumentsRequest {
   export type AsObject = {
+    offset: number,
+    orderbyList: Array<common_database_pb.OrderBy.AsObject>,
+    search: string,
   }
 }
 
 export class FindDocumentsResponse extends jspb.Message {
+  getDocumentsList(): Array<Document>;
+  setDocumentsList(value: Array<Document>): FindDocumentsResponse;
+  clearDocumentsList(): FindDocumentsResponse;
+  addDocuments(value?: Document, index?: number): Document;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindDocumentsResponse.AsObject;
   static toObject(includeInstance: boolean, msg: FindDocumentsResponse): FindDocumentsResponse.AsObject;
@@ -27,6 +49,63 @@ export class FindDocumentsResponse extends jspb.Message {
 
 export namespace FindDocumentsResponse {
   export type AsObject = {
+    documentsList: Array<Document.AsObject>,
+  }
+}
+
+export class Document extends jspb.Message {
+  getId(): number;
+  setId(value: number): Document;
+
+  getCreatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: google_protobuf_timestamp_pb.Timestamp): Document;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): Document;
+
+  getUpdatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setUpdatedAt(value?: google_protobuf_timestamp_pb.Timestamp): Document;
+  hasUpdatedAt(): boolean;
+  clearUpdatedAt(): Document;
+
+  getTitle(): string;
+  setTitle(value: string): Document;
+
+  getContent(): string;
+  setContent(value: string): Document;
+
+  getContentType(): string;
+  setContentType(value: string): Document;
+
+  getCreator(): common_userinfo_pb.ShortUser | undefined;
+  setCreator(value?: common_userinfo_pb.ShortUser): Document;
+  hasCreator(): boolean;
+  clearCreator(): Document;
+
+  getCreatorJob(): string;
+  setCreatorJob(value: string): Document;
+
+  getPublic(): boolean;
+  setPublic(value: boolean): Document;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Document.AsObject;
+  static toObject(includeInstance: boolean, msg: Document): Document.AsObject;
+  static serializeBinaryToWriter(message: Document, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Document;
+  static deserializeBinaryFromReader(message: Document, reader: jspb.BinaryReader): Document;
+}
+
+export namespace Document {
+  export type AsObject = {
+    id: number,
+    createdAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    updatedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    title: string,
+    content: string,
+    contentType: string,
+    creator?: common_userinfo_pb.ShortUser.AsObject,
+    creatorJob: string,
+    pb_public: boolean,
   }
 }
 
@@ -54,6 +133,11 @@ export class GetDocumentResponse extends jspb.Message {
   hasDocument(): boolean;
   clearDocument(): GetDocumentResponse;
 
+  getResponsesList(): Array<Document>;
+  setResponsesList(value: Array<Document>): GetDocumentResponse;
+  clearResponsesList(): GetDocumentResponse;
+  addResponses(value?: Document, index?: number): Document;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetDocumentResponse): GetDocumentResponse.AsObject;
@@ -65,6 +149,7 @@ export class GetDocumentResponse extends jspb.Message {
 export namespace GetDocumentResponse {
   export type AsObject = {
     document?: Document.AsObject,
+    responsesList: Array<Document.AsObject>,
   }
 }
 
@@ -92,20 +177,6 @@ export class CreateDocumentResponse extends jspb.Message {
 }
 
 export namespace CreateDocumentResponse {
-  export type AsObject = {
-  }
-}
-
-export class Document extends jspb.Message {
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Document.AsObject;
-  static toObject(includeInstance: boolean, msg: Document): Document.AsObject;
-  static serializeBinaryToWriter(message: Document, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Document;
-  static deserializeBinaryFromReader(message: Document, reader: jspb.BinaryReader): Document;
-}
-
-export namespace Document {
   export type AsObject = {
   }
 }

@@ -9,6 +9,7 @@ import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
 import config from '../../config';
 import { parseQuery } from 'vue-router/auto';
 import CharSexBadge from '../misc/CharSexBadge.vue';
+import { getSecondsFormattedAsDuration } from '../../utils/time';
 
 export default defineComponent({
     data() {
@@ -44,31 +45,7 @@ export default defineComponent({
                     handleGRPCError(err, this.$route);
                 });
         },
-        getTimeInHoursAndMins(timeInsSeconds: number): string {
-            if (timeInsSeconds && timeInsSeconds > 0) {
-                const minsTemp = timeInsSeconds / 60;
-                let hours = Math.floor(minsTemp / 60);
-                const mins = minsTemp % 60;
-                const hoursText = "hrs";
-                const minsText = "mins";
-                if (hours !== 0 && mins !== 0) {
-                    if (mins >= 59) {
-                        hours += 1;
-                        return `${hours} ${hoursText} `;
-                    }
-                    else {
-                        return `${hours} ${hoursText} ${mins.toFixed(0)} ${minsText}`;
-                    }
-                }
-                else if (hours === 0 && mins !== 0) {
-                    return `${mins.toFixed(0)} ${minsText}`;
-                }
-                else if (hours !== 0 && mins === 0) {
-                    return `${hours} ${hoursText}`;
-                }
-            }
-            return "-";
-        },
+        getSecondsFormattedAsDuration,
     },
     components: {
         CharSexBadge,
@@ -104,7 +81,7 @@ export default defineComponent({
                 <dt class="text-sm text-white">Visum</dt>
                 <dd class="text-sm text-gray-300">{{ char.getVisum() }}</dd>
                 <dt class="text-sm text-white">Playtime</dt>
-                <dd class="text-sm text-gray-300">{{ getTimeInHoursAndMins(char.getPlaytime()) }}</dd>
+                <dd class="text-sm text-gray-300">{{ getSecondsFormattedAsDuration(char.getPlaytime()) }}</dd>
             </dl>
         </div>
         <div>

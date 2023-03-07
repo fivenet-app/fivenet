@@ -49,7 +49,9 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) err
 		sqlJobs[k] = jet.String(jobs[k])
 	}
 
-	stmt := l.SELECT(l.AllColumns).
+	stmt := l.SELECT(
+		l.AllColumns,
+	).
 		FROM(l).
 		WHERE(
 			l.Job.IN(sqlJobs...).

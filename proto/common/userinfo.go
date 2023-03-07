@@ -20,4 +20,5 @@ var CharacterBaseColumns = []jet.Projection{
 	table.Users.Sex,
 	table.Users.Height,
 	table.Users.Visum,
+	table.Users.Playtime,
 }

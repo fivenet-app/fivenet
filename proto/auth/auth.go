@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -74,7 +73,9 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.ArpanetAccounts, error) {
 	var account model.ArpanetAccounts
 	a := table.ArpanetAccounts
-	stmt := a.SELECT(a.AllColumns).
+	stmt := a.SELECT(
+		a.AllColumns,
+	).
 		FROM(a).WHERE(
 		a.Enabled.IS_TRUE().
 			AND(a.Username.EQ(jet.String(username))),
@@ -116,14 +117,14 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	resp := &GetCharactersResponse{}
 	// Load chars from database
 	stmt := u.SELECT(
-		u.AllColumns,
+		common.CharacterBaseColumns[0],
+		common.CharacterBaseColumns[1:]...,
 	).
 		FROM(u.LEFT_JOIN(table.ArpanetUserProps, table.ArpanetUserProps.UserID.EQ(u.ID))).
 		WHERE(u.Identifier.LIKE(jet.String(buildCharSearchIdentifier(claims.Subject)))).
 		ORDER_BY(u.ID).
 		LIMIT(10)
 
-	fmt.Println(stmt.DebugSql())
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Chars); err != nil {
 		return nil, err
 	}

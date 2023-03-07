@@ -17,7 +17,9 @@ func (p *perms) GetAllPermissionsOfUser(userID int32) (collections.Permissions, 
 		return cached, nil
 	}
 
-	stmt := ap.SELECT(ap.AllColumns).
+	stmt := ap.SELECT(
+		ap.AllColumns,
+	).
 		FROM(ap).
 		WHERE(
 			ap.ID.IN(
@@ -59,7 +61,9 @@ func (p *perms) getAllPermissionsByPrefixOfUser(userID int32, prefix string) (co
 		return cached.HasPrefix(prefix), nil
 	}
 
-	stmt := ap.SELECT(ap.AllColumns).
+	stmt := ap.SELECT(
+		ap.AllColumns,
+	).
 		FROM(ap).
 		WHERE(
 			jet.AND(

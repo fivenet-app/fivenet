@@ -4,8 +4,8 @@ package gen.users;
 option go_package = "github.com/galexrt/arpanet/proto/users";
 
 import "validate/validate.proto";
-import "common/userinfo.proto";
 import "common/database.proto";
+import "common/userinfo.proto";
 import "google/protobuf/timestamp.proto";
 
 message FindUsersRequest {
@@ -50,8 +50,8 @@ message UserActivity {
     uint64 id = 1 [(validate.rules).uint64.gt = 0]; // @gotags: sql:"primary_key" alias:"arpanet_user_activity.id"
     string type = 2; // @gotags: alias:"arpanet_user_activity.type"
     google.protobuf.Timestamp createdAt = 3; // @gotags: alias:"arpanet_user_activity.created_at"
-    gen.common.ShortUser targetUser = 4; // TODO
-    gen.common.ShortUser causeUser = 5; // TODO
+    gen.common.ShortUser targetUser = 4; // @gotags: alias:"target_user"
+    gen.common.ShortUser causeUser = 5; // @gotags: alias:"cause_user"
     string key = 6; // @gotags: alias:"arpanet_user_activity.key"
     string oldValue = 7; // @gotags: alias:"arpanet_user_activity.old_value"
     string newValue = 8; // @gotags: alias:"arpanet_user_activity.new_value"
