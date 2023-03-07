@@ -15,10 +15,11 @@ export default defineComponent({
 
 <route lang="json">
 {
-    "name": "livemap",
+    "name": "Livemap",
     "meta": {
         "requiresAuth": true,
-        "permission": "livemap-view"
+        "permission": "livemap-view",
+        "breadCrumbs": null
     }
 }
 </route>

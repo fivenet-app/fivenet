@@ -25,7 +25,10 @@ export default defineComponent({
     "name": "users",
     "meta": {
         "requiresAuth": true,
-        "permission": "users-findusers"
+        "permission": "users-findusers",
+        "breadCrumbs": [
+            { "name": "Citizens", "href": "/citizens" }
+        ]
     }
 }
 </route>

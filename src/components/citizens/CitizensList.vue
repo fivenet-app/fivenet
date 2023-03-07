@@ -24,10 +24,10 @@ export default defineComponent({
             searchFirstname: "",
             searchLastname: "",
             orderBys: [] as Array<OrderBy>,
-            users: [] as Array<User>,
             offset: 0,
             totalCount: 0,
             listEnd: 0,
+            users: [] as Array<User>,
         };
     },
     methods: {

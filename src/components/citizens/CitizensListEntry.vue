@@ -51,7 +51,7 @@ export default defineComponent({
         <td class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <div v-can="'users-findusers'">
                 <button @click="toggleSlideOver()" class="text-indigo-400 hover:text-indigo-300">VIEW</button>
-                <CitizenInfoSlideOver @close="toggleSlideOver()" :open="open" :user="user" />
+                <CitizenInfoSlideOver @close="toggleSlideOver()" :open="open" :userID="user.getUserid()" />
             </div>
         </td>
     </tr>

@@ -35,7 +35,8 @@ export default defineComponent({
 {
     "name": "index",
     "meta": {
-        "requiresAuth": false
+        "requiresAuth": false,
+        "breadCrumbs": null
     }
 }
 </route>

@@ -27,9 +27,10 @@ export default defineComponent({
 
 <route lang="json">
 {
-    "name": "login",
+    "name": "Login",
     "meta": {
-        "requiresAuth": false
+        "requiresAuth": false,
+        "breadCrumbs": null
     }
 }
 </route>

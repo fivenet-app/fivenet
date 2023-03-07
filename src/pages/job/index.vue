@@ -20,10 +20,13 @@ export default defineComponent({
 
 <route lang="json">
 {
-    "name": "jobs",
+    "name": "Job",
     "meta": {
         "requiresAuth": true,
-        "permission": "job-view"
+        "permission": "job-view",
+        "breadCrumbs": [
+            { "name": "Job", "href": "/job" }
+        ]
     }
 }
 </route>
@@ -32,7 +35,7 @@ export default defineComponent({
     <Navbar />
     <NavPageHeader title="Job" />
     <ContentWrapper>
-        <h1>JOBS - EMPLOYEE MANAGEMENT SYSTEM</h1>
+        <h1 class="text-lg font-semibold leading-6 text-white">EMPLOYEE INFO AND MANAGEMENT SYSTEM</h1>
     </ContentWrapper>
     <Footer />
 </template>

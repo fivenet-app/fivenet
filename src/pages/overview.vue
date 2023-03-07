@@ -8,12 +8,12 @@ import NavPageHeader from '../components/partials/NavPageHeader.vue';
 
 export default defineComponent({
     components: {
-    Navbar,
-    Footer,
-    FeatureCards,
-    ContentWrapper,
-    NavPageHeader
-},
+        Navbar,
+        Footer,
+        FeatureCards,
+        ContentWrapper,
+        NavPageHeader,
+    },
 });
 </script>
 
@@ -22,7 +22,8 @@ export default defineComponent({
     "name": "overview",
     "meta": {
         "requiresAuth": true,
-        "permission": "overview-view"
+        "permission": "overview-view",
+        "breadCrumbs": []
     }
 }
 </route>

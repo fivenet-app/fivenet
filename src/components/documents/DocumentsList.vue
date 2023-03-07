@@ -4,8 +4,9 @@ import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
 import { DocumentsServiceClient } from '@arpanet/gen/documents/DocumentsServiceClientPb';
 import config from '../../config';
 import { clientAuthOptions, handleGRPCError } from '../../grpc';
-import { FindDocumentsRequest } from '@arpanet/gen/documents/documents_pb';
+import { Document, FindDocumentsRequest } from '@arpanet/gen/documents/documents_pb';
 import { RpcError } from 'grpc-web';
+import { OrderBy } from '@arpanet/gen/common/database_pb';
 
 
 export default defineComponent({
@@ -18,48 +19,27 @@ export default defineComponent({
         return {
             client: new DocumentsServiceClient(config.apiProtoURL, null, clientAuthOptions),
             loading: false,
-            documents: [
-                {
-                    id: 1,
-                    title: 'Back End Developer',
-                    type: 'Full-time',
-                    location: 'Remote',
-                    department: 'Engineering',
-                    closeDate: '2020-01-07',
-                    closeDateFull: 'January 7, 2020',
-                },
-                {
-                    id: 2,
-                    title: 'Front End Developer',
-                    type: 'Full-time',
-                    location: 'Remote',
-                    department: 'Engineering',
-                    closeDate: '2020-01-07',
-                    closeDateFull: 'January 7, 2020',
-                },
-                {
-                    id: 3,
-                    title: 'User Interface Designer',
-                    type: 'Full-time',
-                    location: 'Remote',
-                    department: 'Design',
-                    closeDate: '2020-01-14',
-                    closeDateFull: 'January 14, 2020',
-                },
-            ],
-            search: '',
+            search: "",
+            orderBys: [] as Array<OrderBy>,
+            offset: 0,
+            totalCount: 0,
+            listEnd: 0,
+            documents: [] as Array<Document>,
         };
     },
+    mounted() {
+        this.findDocuments(0);
+    },
     methods: {
-        getDocuments(offset: number) {
+        findDocuments(offset: number) {
             const req = new FindDocumentsRequest();
             req.setOffset(offset);
-            req.setSearch(search);
+            req.setSearch(this.search);
             req.setOrderbyList([]);
             this.client.
                 findDocuments(req, null).
                 then((resp) => {
-                    this.documents = resp.getDocuments();
+                    this.documents = resp.getDocumentsList();
                 }).catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
                 });
@@ -71,17 +51,33 @@ export default defineComponent({
 <template>
     <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <form @submit.prevent="findDocuments(0)">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-control">
+                                <label for="search" class="block text-sm font-medium leading-6 text-white">Search</label>
+                                <div class="relative mt-2 flex items-center">
+                                    <input v-model="search" v-on:keyup.enter="findDocuments(0)" type="text"
+                                        name="search" id="search"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div class="overflow-hidden bg-white shadow sm:rounded-md">
                 <ul role="list" class="divide-y divide-gray-200">
-                    <li v-for="position in documents" :key="position.id">
+                    <li v-for="doc in documents" :key="doc.getId()">
                         <a href="#" class="block hover:bg-gray-50">
                             <div class="px-4 py-4 sm:px-6">
                                 <div class="flex items-center justify-between">
-                                    <p class="truncate text-sm font-medium text-indigo-600">{{ position.title }}</p>
+                                    <p class="truncate text-sm font-medium text-indigo-600">{{ doc.getTitle() }}</p>
                                     <div class="ml-2 flex flex-shrink-0">
                                         <p
                                             class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                            {{ position.type }}</p>
+                                            {{ doc.getContentType() }}</p>
                                     </div>
                                 </div>
                                 <div class="mt-2 sm:flex sm:justify-between">
@@ -89,12 +85,12 @@ export default defineComponent({
                                         <p class="flex items-center text-sm text-gray-500">
                                             <UsersIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                                                 aria-hidden="true" />
-                                            {{ position.department }}
+                                            {{ doc.getContent() }}
                                         </p>
                                         <p class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
                                             <MapPinIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                                                 aria-hidden="true" />
-                                            {{ position.location }}
+                                            {{ doc.getCreatorJob() }}
                                         </p>
                                     </div>
                                     <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
@@ -103,7 +99,7 @@ export default defineComponent({
                                         <p>
                                             Closing on
                                             {{ ' ' }}
-                                            <time :datetime="position.closeDate">{{ position.closeDateFull }}</time>
+                                            <time :datetime="doc.getCreatedAt()">{{ doc.getCreatedAt() }}</time>
                                         </p>
                                     </div>
                                 </div>
@@ -112,6 +108,9 @@ export default defineComponent({
                     </li>
                 </ul>
             </div>
+
+            <TablePagination :offset="offset" :entries="documents.length" :end="listEnd" :total="totalCount"
+                :callback="findDocuments" />
         </div>
     </div>
 </template>

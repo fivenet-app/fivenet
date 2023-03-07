@@ -16,10 +16,13 @@ export default defineComponent({
 
 <route lang="json">
 {
-    "name": "documents-new",
+    "name": "Documents: Create",
     "meta": {
         "requiresAuth": true,
-        "permission": "documents-createdocument"
+        "permission": "documents-createdocument",
+        "breadCrumbs": [
+            { "name": "Documents", "href": "/documents" }
+        ]
     }
 }
 </route>

@@ -19,7 +19,7 @@ import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import { RpcError } from 'grpc-web';
 import config from '../../config';
 import { clientAuthOptions, handleGRPCError } from '../../grpc';
-import { SetUserPropsRequest } from '@arpanet/gen/users/users_pb';
+import { GetUserRequest, SetUserPropsRequest } from '@arpanet/gen/users/users_pb';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { getSecondsFormattedAsDuration } from '../../utils/time';
 
@@ -43,32 +43,47 @@ export default defineComponent({
     data() {
         return {
             client: new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions),
+            user: undefined as undefined | User,
         };
     },
     props: {
-        'user': {
+        'userID': {
             required: true,
-            type: User,
+            type: Number,
         },
         'open': {
             required: true,
             type: Boolean,
         },
     },
+    mounted() {
+        const req = new GetUserRequest();
+        req.setUserid(this.userID);
+        this.client.getUser(req, null).
+        then((resp) => {
+            this.user = resp.getUser();
+        }).catch((err: RpcError) => {
+            handleGRPCError(err, this.$route);
+        });
+    },
     methods: {
         handleClose() {
             this.$emit('close');
         },
         toggleWantedStatus(event: any) {
-            const wantedState = !this.user.getProps()?.getWanted();
+            if (this.user === undefined) {
+                return;
+            }
+
+            const wantedState = !this.user?.getProps()?.getWanted();
             event.target.message = wantedState ? 'Revoke Wanted Status' : 'Set Person Wanted'
 
             const req = new SetUserPropsRequest();
-            req.setUserid(this.user.getUserid());
+            req.setUserid(this.user?.getUserid());
             req.setWanted(wantedState);
             this.client.setUserProps(req, null)
                 .then((resp) => {
-                    this.user.getProps()?.setWanted(wantedState);
+                    this.user?.getProps()?.setWanted(wantedState);
                 }).catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
                 });

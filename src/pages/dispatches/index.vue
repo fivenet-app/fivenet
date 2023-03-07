@@ -20,7 +20,10 @@ export default defineComponent({
     "name": "dispatches",
     "meta": {
         "requiresAuth": true,
-        "permission": "dispatches-view"
+        "permission": "dispatches-view",
+        "breadCrumbs": [
+            { "name": "Dispatches", "href": "/dispatches" }
+        ]
     }
 }
 </route>
@@ -29,7 +32,7 @@ export default defineComponent({
     <Navbar />
     <NavPageHeader title="Dispatches" />
     <ContentWrapper>
-        <h1>DISPATCHES SYSTEM</h1>
+        <h1 class="text-lg font-semibold leading-6 text-white">DISPATCH CENTER AND MANAGEMENT SYSTEM</h1>
     </ContentWrapper>
     <Footer />
 </template>

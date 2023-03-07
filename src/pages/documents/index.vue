@@ -20,10 +20,13 @@ export default defineComponent({
 
 <route lang="json">
 {
-    "name": "documents",
+    "name": "Documents",
     "meta": {
         "requiresAuth": true,
-        "permission": "documents-view"
+        "permission": "documents-view",
+        "breadCrumbs": [
+            { "name": "Documents", "href": "/documents" }
+        ]
     }
 }
 </route>
