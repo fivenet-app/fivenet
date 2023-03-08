@@ -268,7 +268,7 @@ type ShortUser struct {
 	Job        string `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty" alias:"job"`               // @gotags: alias:"job"
 	JobGrade   int32  `protobuf:"varint,4,opt,name=jobGrade,proto3" json:"jobGrade,omitempty" alias:"job_grade"`    // @gotags: alias:"job_grade"
 	Firstname  string `protobuf:"bytes,5,opt,name=firstname,proto3" json:"firstname,omitempty" alias:"firstname"`   // @gotags: alias:"firstname"
-	Lastname   string `protobuf:"bytes,6,opt,name=lastname,proto3" json:"lastname,omitempty" alias:"identifier"`     // @gotags: alias:"identifier"
+	Lastname   string `protobuf:"bytes,6,opt,name=lastname,proto3" json:"lastname,omitempty" alias:"lastname"`     // @gotags: alias:"lastname"
 }
 
 func (x *ShortUser) Reset() {

@@ -399,6 +399,10 @@ func (m *Document) validate(all bool) error {
 
 	// no validation rules for ContentType
 
+	// no validation rules for Closed
+
+	// no validation rules for State
+
 	if all {
 		switch v := interface{}(m.GetCreator()).(type) {
 		case interface{ ValidateAll() error }:

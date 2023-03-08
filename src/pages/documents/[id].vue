@@ -4,7 +4,7 @@ import Navbar from '../../components/partials/Navbar.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import Footer from '../../components/partials/Footer.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-import { Document } from '@arpanet/gen/documents/documents_pb';
+import DocumentView from '../../components/documents/DocumentView.vue';
 
 export default defineComponent({
     components: {
@@ -12,11 +12,15 @@ export default defineComponent({
         Footer,
         ContentWrapper,
         NavPageHeader,
+        DocumentView
     },
     data() {
         return {
-            document: undefined as undefined | Document,
+            documentID: 0 as number,
         };
+    },
+    beforeMount() {
+        this.documentID = +this.$route.params.id;
     },
 });
 </script>
@@ -39,8 +43,7 @@ export default defineComponent({
     <Navbar />
     <NavPageHeader title="Document" />
     <ContentWrapper>
-        <h1 class="text-lg text-white">Document</h1>
-        {{ document }}
+        <DocumentView v-if="documentID > 0" :documentID="documentID" />
     </ContentWrapper>
     <Footer />
 </template>

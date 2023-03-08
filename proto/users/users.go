@@ -2,7 +2,6 @@ package users
 
 import (
 	context "context"
-	"fmt"
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/auth"
@@ -238,8 +237,6 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 			ua.TargetUserID.EQ(jet.Int32(req.UserID)),
 		).
 		LIMIT(12)
-
-	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Activity); err != nil {
 		return nil, err

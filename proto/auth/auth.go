@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -154,8 +153,6 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		FROM(u).
 		WHERE(u.ID.EQ(jet.Int32(req.UserID))).
 		LIMIT(1)
-
-	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, query.DB, &char); err != nil {
 		return nil, err

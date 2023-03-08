@@ -113,16 +113,27 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get a document!")
 	}
 
-	resp := &GetDocumentResponse{}
-	if err := s.getDocumentsQuery(d.ID.EQ(jet.Uint64(req.Id)), nil, userID, job, jobGrade).
-		QueryContext(ctx, query.DB, &resp); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	resp := &GetDocumentResponse{
+		Document: &Document{},
+	}
+	stmt := s.getDocumentsQuery(d.ID.EQ(jet.Uint64(req.Id)), nil, userID, job, jobGrade).
+		LIMIT(1)
+	var dest Document
+	if err := stmt.QueryContext(ctx, query.DB, &dest); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
+
+	// TODO Load responses
 
 	return resp, nil
 }
 
 func (s *Server) CreateOrEditDocument(ctx context.Context, in *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error) {
+	userID, _, _ := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "documents", "CreateDocument") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to create/ edit a document!")
+	}
+
 	resp := &CreateOrEditDocumentResponse{}
 
 	// TODO

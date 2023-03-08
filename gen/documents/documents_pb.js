@@ -687,9 +687,11 @@ proto.gen.documents.Document.toObject = function(includeInstance, msg) {
     title: jspb.Message.getFieldWithDefault(msg, 5, ""),
     content: jspb.Message.getFieldWithDefault(msg, 6, ""),
     contentType: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    closed: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
+    state: jspb.Message.getFieldWithDefault(msg, 9, ""),
     creator: (f = msg.getCreator()) && common_userinfo_pb.ShortUser.toObject(includeInstance, f),
-    creatorJob: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 10, false)
+    creatorJob: jspb.Message.getFieldWithDefault(msg, 11, ""),
+    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 12, false)
   };
 
   if (includeInstance) {
@@ -753,15 +755,23 @@ proto.gen.documents.Document.deserializeBinaryFromReader = function(msg, reader)
       msg.setContentType(value);
       break;
     case 8:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setClosed(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setState(value);
+      break;
+    case 10:
       var value = new common_userinfo_pb.ShortUser;
       reader.readMessage(value,common_userinfo_pb.ShortUser.deserializeBinaryFromReader);
       msg.setCreator(value);
       break;
-    case 9:
+    case 11:
       var value = /** @type {string} */ (reader.readString());
       msg.setCreatorJob(value);
       break;
-    case 10:
+    case 12:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setPublic(value);
       break;
@@ -838,10 +848,24 @@ proto.gen.documents.Document.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
+  f = message.getClosed();
+  if (f) {
+    writer.writeBool(
+      8,
+      f
+    );
+  }
+  f = message.getState();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
+      f
+    );
+  }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      8,
+      10,
       f,
       common_userinfo_pb.ShortUser.serializeBinaryToWriter
     );
@@ -849,14 +873,14 @@ proto.gen.documents.Document.serializeBinaryToWriter = function(message, writer)
   f = message.getCreatorJob();
   if (f.length > 0) {
     writer.writeString(
-      9,
+      11,
       f
     );
   }
   f = message.getPublic();
   if (f) {
     writer.writeBool(
-      10,
+      12,
       f
     );
   }
@@ -1010,12 +1034,48 @@ proto.gen.documents.Document.prototype.setContentType = function(value) {
 
 
 /**
- * optional gen.common.ShortUser creator = 8;
+ * optional bool closed = 8;
+ * @return {boolean}
+ */
+proto.gen.documents.Document.prototype.getClosed = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 8, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.gen.documents.Document} returns this
+ */
+proto.gen.documents.Document.prototype.setClosed = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 8, value);
+};
+
+
+/**
+ * optional string state = 9;
+ * @return {string}
+ */
+proto.gen.documents.Document.prototype.getState = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.gen.documents.Document} returns this
+ */
+proto.gen.documents.Document.prototype.setState = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional gen.common.ShortUser creator = 10;
  * @return {?proto.gen.common.ShortUser}
  */
 proto.gen.documents.Document.prototype.getCreator = function() {
   return /** @type{?proto.gen.common.ShortUser} */ (
-    jspb.Message.getWrapperField(this, common_userinfo_pb.ShortUser, 8));
+    jspb.Message.getWrapperField(this, common_userinfo_pb.ShortUser, 10));
 };
 
 
@@ -1024,7 +1084,7 @@ proto.gen.documents.Document.prototype.getCreator = function() {
  * @return {!proto.gen.documents.Document} returns this
 */
 proto.gen.documents.Document.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 8, value);
+  return jspb.Message.setWrapperField(this, 10, value);
 };
 
 
@@ -1042,16 +1102,16 @@ proto.gen.documents.Document.prototype.clearCreator = function() {
  * @return {boolean}
  */
 proto.gen.documents.Document.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 8) != null;
+  return jspb.Message.getField(this, 10) != null;
 };
 
 
 /**
- * optional string creator_job = 9;
+ * optional string creator_job = 11;
  * @return {string}
  */
 proto.gen.documents.Document.prototype.getCreatorJob = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 11, ""));
 };
 
 
@@ -1060,16 +1120,16 @@ proto.gen.documents.Document.prototype.getCreatorJob = function() {
  * @return {!proto.gen.documents.Document} returns this
  */
 proto.gen.documents.Document.prototype.setCreatorJob = function(value) {
-  return jspb.Message.setProto3StringField(this, 9, value);
+  return jspb.Message.setProto3StringField(this, 11, value);
 };
 
 
 /**
- * optional bool public = 10;
+ * optional bool public = 12;
  * @return {boolean}
  */
 proto.gen.documents.Document.prototype.getPublic = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 10, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 12, false));
 };
 
 
@@ -1078,7 +1138,7 @@ proto.gen.documents.Document.prototype.getPublic = function() {
  * @return {!proto.gen.documents.Document} returns this
  */
 proto.gen.documents.Document.prototype.setPublic = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 10, value);
+  return jspb.Message.setProto3BooleanField(this, 12, value);
 };
 
 

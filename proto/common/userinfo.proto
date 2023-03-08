@@ -36,5 +36,5 @@ message ShortUser {
     string job = 3; // @gotags: alias:"job"
     int32 jobGrade = 4; // @gotags: alias:"job_grade"
     string firstname = 5; // @gotags: alias:"firstname"
-    string lastname = 6; // @gotags: alias:"identifier"
+    string lastname = 6; // @gotags: alias:"lastname"
 }

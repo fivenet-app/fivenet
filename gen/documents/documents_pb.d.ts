@@ -76,6 +76,12 @@ export class Document extends jspb.Message {
   getContentType(): string;
   setContentType(value: string): Document;
 
+  getClosed(): boolean;
+  setClosed(value: boolean): Document;
+
+  getState(): string;
+  setState(value: string): Document;
+
   getCreator(): common_userinfo_pb.ShortUser | undefined;
   setCreator(value?: common_userinfo_pb.ShortUser): Document;
   hasCreator(): boolean;
@@ -103,6 +109,8 @@ export namespace Document {
     title: string,
     content: string,
     contentType: string,
+    closed: boolean,
+    state: string,
     creator?: common_userinfo_pb.ShortUser.AsObject,
     creatorJob: string,
     pb_public: boolean,
