@@ -27,6 +27,7 @@ var (
 	u   = table.Users
 	aup = table.ArpanetUserProps
 	ul  = table.UserLicenses
+	ua  = table.ArpanetUserActivity
 )
 
 type Server struct {
@@ -183,22 +184,21 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 }
 
 func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityRequest) (*GetUserActivityResponse, error) {
-	var activities []*UserActivity
+	resp := &GetUserActivityResponse{}
 
-	ua := table.ArpanetUserActivity
-	if err := ua.SELECT(ua.AllColumns).
+	stmt := ua.SELECT(
+		ua.AllColumns,
+	).
 		FROM(ua).
 		WHERE(
 			ua.TargetUserID.EQ(jet.Int32(req.UserID)),
 		).
-		LIMIT(10).
-		QueryContext(ctx, query.DB, &activities); err != nil {
+		LIMIT(12)
+
+	if err := stmt.QueryContext(ctx, query.DB, &resp.Activity); err != nil {
 		return nil, err
 	}
 
-	resp := &GetUserActivityResponse{
-		Activity: activities,
-	}
 	return resp, nil
 }
 

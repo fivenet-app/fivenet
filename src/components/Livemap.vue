@@ -1,9 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { clientAuthOptions, handleGRPCError } from '../grpc';
+import { getLivemapClient, handleGRPCError } from '../grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
-import config from '../config';
-import { LivemapServiceClient } from '@arpanet/gen/livemap/LivemapServiceClientPb';
 import { Marker, StreamRequest, ServerStreamResponse } from '@arpanet/gen/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
@@ -32,7 +30,6 @@ const position = new Position();
 export default defineComponent({
     data() {
         return {
-            client: new LivemapServiceClient(config.apiProtoURL, null, clientAuthOptions),
             stream: null as null | ClientReadableStream<ServerStreamResponse>,
             map: {} as undefined | Livemap,
             hash: {} as Hash,
@@ -119,10 +116,11 @@ export default defineComponent({
 
             let outer = this;
             const request = new StreamRequest();
-            this.stream = this.client
+
+            this.stream = getLivemapClient()
                 .stream(request)
-                .on('data', function (response) {
-                    outer.usersList = response.getUsersList();
+                .on('data', function (resp) {
+                    outer.usersList = resp.getUsersList();
                     outer.map?.parseMarkerlist(MarkerType.player, outer.usersList);
                 })
                 .on('error', (err: RpcError) => {

@@ -22,5 +22,4 @@ type ArpanetUserActivity struct {
 	OldValue     *string    `json:"old_value"`
 	NewValue     *string    `json:"new_value"`
 	Reason       *string    `json:"reason"`
-	TargetUser   int32      `json:"target_user"`
 }

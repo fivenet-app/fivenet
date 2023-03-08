@@ -20,8 +20,6 @@ run-server:
 .PHONY: gen
 gen: gen-sql gen-proto
 
-IGNORED_TABLES := $(shell paste -s -d, ./query/jet_ignored_tables.txt)
-
 .PHONY: gen-sql
 gen-sql:
 	go run ./query/gen/

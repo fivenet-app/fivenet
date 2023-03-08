@@ -10,10 +10,8 @@ import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import { GetUserRequest } from '@arpanet/gen/users/users_pb';
 import { User } from '@arpanet/gen/common/userinfo_pb';
-import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import { RpcError } from 'grpc-web';
-import config from '../../config';
-import { clientAuthOptions, handleGRPCError } from '../../grpc';
+import {  getUsersClient, handleGRPCError } from '../../grpc';
 
 export default defineComponent({
     components: {
@@ -27,7 +25,6 @@ export default defineComponent({
     },
     data() {
         return {
-            client: new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions),
             user: undefined as undefined | User,
         };
     },
@@ -35,7 +32,7 @@ export default defineComponent({
         const req = new GetUserRequest();
         req.setUserid(this.$route.params.id);
 
-        this.client
+        getUsersClient()
             .getUser(req, null)
             .then((resp) => {
                 this.user = resp.getUser();

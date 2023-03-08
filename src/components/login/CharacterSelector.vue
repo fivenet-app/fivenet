@@ -4,11 +4,9 @@ import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 import { GetCharactersRequest } from '@arpanet/gen/auth/auth_pb';
 import { User } from '@arpanet/gen/common/userinfo_pb';
-import { clientAuthOptions, handleGRPCError } from '../../grpc';
+import { getAccountClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { mapActions } from 'vuex';
-import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
-import config from '../../config';
 
 export default defineComponent({
     components: {
@@ -17,7 +15,6 @@ export default defineComponent({
     },
     data() {
         return {
-            'client': new AccountServiceClient(config.apiProtoURL, null, clientAuthOptions),
             'chars': [] as Array<User>,
         };
     },
@@ -26,7 +23,7 @@ export default defineComponent({
             'updateActiveChar',
         ]),
         async fetchCharacters() {
-            return this.client.
+            return getAccountClient().
                 getCharacters(new GetCharactersRequest(), null).
                 then((resp) => {
                     this.chars = resp.getCharsList();

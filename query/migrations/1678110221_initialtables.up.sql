@@ -95,11 +95,9 @@ CREATE TABLE IF NOT EXISTS `arpanet_user_activity` (
   `old_value` varchar(256) DEFAULT NULL,
   `new_value` varchar(256) DEFAULT NULL,
   `reason` longtext DEFAULT NULL,
-  `target_user` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_arpanet_user_activity_cause_user_id` (`cause_user_id`),
   KEY `idx_arpanet_user_activity_target_user_id` (`target_user_id`),
-  KEY `idx_arpanet_user_activity_target_user` (`target_user`),
   CONSTRAINT `fk_users_cause_activity` FOREIGN KEY (`cause_user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `fk_users_target_activity` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

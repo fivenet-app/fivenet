@@ -1,9 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
-import { DocumentsServiceClient } from '@arpanet/gen/documents/DocumentsServiceClientPb';
-import config from '../../config';
-import { clientAuthOptions, handleGRPCError } from '../../grpc';
+import {  getDocumentsClient, handleGRPCError } from '../../grpc';
 import { Document, FindDocumentsRequest } from '@arpanet/gen/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { OrderBy } from '@arpanet/gen/common/database_pb';
@@ -18,7 +16,6 @@ export default defineComponent({
     },
     data() {
         return {
-            client: new DocumentsServiceClient(config.apiProtoURL, null, clientAuthOptions),
             loading: false,
             search: "",
             orderBys: [] as Array<OrderBy>,
@@ -37,7 +34,8 @@ export default defineComponent({
             req.setOffset(offset);
             req.setSearch(this.search);
             req.setOrderbyList([]);
-            this.client.
+
+            getDocumentsClient().
                 findDocuments(req, null).
                 then((resp) => {
                     this.documents = resp.getDocumentsList();

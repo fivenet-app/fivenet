@@ -14,10 +14,8 @@ import {
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { EllipsisVerticalIcon, KeyIcon } from '@heroicons/vue/20/solid';
 import { User } from '@arpanet/gen/common/userinfo_pb';
-import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import { RpcError } from 'grpc-web';
-import config from '../../config';
-import { clientAuthOptions, handleGRPCError } from '../../grpc';
+import { getUsersClient, handleGRPCError } from '../../grpc';
 import { SetUserPropsRequest } from '@arpanet/gen/users/users_pb';
 import CitizenActivityFeed from '../../components/citizens/CitizenActivityFeed.vue';
 import CharSexBadge from '../../components/misc/CharSexBadge.vue';
@@ -43,7 +41,6 @@ export default defineComponent({
     },
     data() {
         return {
-            client: new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions),
             wantedState: false as boolean
         };
     },
@@ -71,7 +68,9 @@ export default defineComponent({
             const req = new SetUserPropsRequest();
             req.setUserid(this.user?.getUserid());
             req.setWanted(this.wantedState);
-            this.client.setUserProps(req, null)
+
+            getUsersClient().
+                setUserProps(req, null)
                 .then((resp) => {
                     this.user?.getProps()?.setWanted(this.wantedState);
                     dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
@@ -107,7 +106,9 @@ export default defineComponent({
                     <div class="mt-5 flex flex-wrap space-y-3 sm:space-y-0 sm:space-x-3">
                         <button v-can="'users-setuserprops-wanted'" type="button"
                             class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:flex-1"
-                            @click="toggleWantedStatus($event)">{{ wantedState ? 'Revoke Wanted Status' : 'Set Person Wanted' }}</button>
+                            @click="toggleWantedStatus($event)">{{ wantedState ?
+                                'Revoke Wanted Status' : 'Set Person Wanted' }}
+                        </button>
                         <div class="ml-3 inline-flex sm:ml-0">
                             <Menu as="div" class="relative inline-block text-left">
                                 <MenuButton

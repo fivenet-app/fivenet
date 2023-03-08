@@ -4,6 +4,7 @@ import Navbar from '../../components/partials/Navbar.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import Footer from '../../components/partials/Footer.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
+import { Document } from '@arpanet/gen/documents/documents_pb';
 
 export default defineComponent({
     components: {
@@ -11,6 +12,11 @@ export default defineComponent({
         Footer,
         ContentWrapper,
         NavPageHeader,
+    },
+    data() {
+        return {
+            document: undefined as undefined | Document,
+        };
     },
 });
 </script>
@@ -23,7 +29,7 @@ export default defineComponent({
         "permission": "documents-createdocument",
         "breadCrumbs": [
             { "name": "Documents", "href": "/documents" },
-            { "name": "Documents", "href": "/documents" }
+            { "name": "Document Info: ...", "href": "/documents" }
         ]
     }
 }
@@ -34,6 +40,7 @@ export default defineComponent({
     <NavPageHeader title="Document" />
     <ContentWrapper>
         <h1 class="text-lg text-white">Document</h1>
+        {{ document }}
     </ContentWrapper>
     <Footer />
 </template>

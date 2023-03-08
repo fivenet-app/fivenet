@@ -1,22 +1,15 @@
 <script lang="ts">
-import { clientAuthOptions, handleGRPCError } from '../../grpc';
+import { getAccountClient, handleGRPCError } from '../../grpc';
 import { ChooseCharacterRequest } from '@arpanet/gen/auth/auth_pb';
 import { defineComponent } from 'vue';
 import { mapActions, mapState } from 'vuex';
 import { RpcError } from 'grpc-web';
 import { User } from '@arpanet/gen/common/userinfo_pb';
-import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
-import config from '../../config';
 import { parseQuery } from 'vue-router/auto';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { getSecondsFormattedAsDuration } from '../../utils/time';
 
 export default defineComponent({
-    data() {
-        return {
-            client: new AccountServiceClient(config.apiProtoURL, null, clientAuthOptions),
-        };
-    },
     computed: {
         ...mapState(["activeCharID"]),
     },
@@ -31,7 +24,8 @@ export default defineComponent({
         chooseCharacter() {
             const req = new ChooseCharacterRequest();
             req.setUserid(this.char.getUserid());
-            this.client
+
+            getAccountClient()
                 .chooseCharacter(req, null)
                 .then((resp) => {
                     this.updateAccessToken(resp.getToken());

@@ -1,9 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { BoltIcon, ChatBubbleLeftEllipsisIcon, TagIcon, UserCircleIcon } from '@heroicons/vue/20/solid'
-import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
-import config from '../../config';
-import { clientAuthOptions, handleGRPCError } from '../../grpc';
+import { getUsersClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { GetUserActivityRequest, UserActivity } from '@arpanet/gen/users/users_pb';
 
@@ -17,19 +15,19 @@ export default defineComponent({
     data() {
         return {
             'activities': [] as Array<UserActivity>,
-            'client': new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions),
         };
     },
     methods: {
         getUserActivity() {
             const req = new GetUserActivityRequest();
             req.setUserid(this.userID);
-            this.client.getUserActivity(req, null).then((resp) => {
-                console.log(resp.getActivityList())
-                this.activities = resp.getActivityList();
-            }).catch((err: RpcError) => {
-                handleGRPCError(err, this.$route);
-            });
+
+            getUsersClient().
+                getUserActivity(req, null).then((resp) => {
+                    this.activities = resp.getActivityList();
+                }).catch((err: RpcError) => {
+                    handleGRPCError(err, this.$route);
+                });
         },
     },
     props: {

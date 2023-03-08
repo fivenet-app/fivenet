@@ -23,4 +23,6 @@ type ArpanetDocuments struct {
 	CreatorJob  string     `json:"creator_job"`
 	Public      bool       `json:"public"`
 	ResponseID  *uint64    `json:"response_id"`
+	State       string     `json:"state"`
+	Closed      *bool      `json:"closed"`
 }

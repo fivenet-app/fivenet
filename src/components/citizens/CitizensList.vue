@@ -3,13 +3,11 @@ import { User } from '@arpanet/gen/common/userinfo_pb';
 import { OrderBy } from '@arpanet/gen/common/database_pb';
 import { defineComponent } from 'vue';
 import { watchDebounced } from '@vueuse/core'
-import { clientAuthOptions, handleGRPCError } from '../../grpc';
+import { getUsersClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { FindUsersRequest } from '@arpanet/gen/users/users_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
-import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
-import config from '../../config';
 import { Switch } from '@headlessui/vue';
 
 export default defineComponent({
@@ -20,7 +18,6 @@ export default defineComponent({
     },
     data() {
         return {
-            client: new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions),
             loading: false,
             search: {
                 firstname: '',
@@ -50,7 +47,7 @@ export default defineComponent({
             req.setWanted(this.search.wanted);
             req.setOrderbyList(this.orderBys);
 
-            this.client.
+            getUsersClient().
                 findUsers(req, null).
                 then((resp) => {
                     this.users = resp.getUsersList();

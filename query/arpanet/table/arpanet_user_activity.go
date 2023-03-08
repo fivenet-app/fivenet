@@ -27,7 +27,6 @@ type arpanetUserActivityTable struct {
 	OldValue     mysql.ColumnString
 	NewValue     mysql.ColumnString
 	Reason       mysql.ColumnString
-	TargetUser   mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -78,9 +77,8 @@ func newArpanetUserActivityTableImpl(schemaName, tableName, alias string) arpane
 		OldValueColumn     = mysql.StringColumn("old_value")
 		NewValueColumn     = mysql.StringColumn("new_value")
 		ReasonColumn       = mysql.StringColumn("reason")
-		TargetUserColumn   = mysql.IntegerColumn("target_user")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, TargetUserIDColumn, CauseUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn, ReasonColumn, TargetUserColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, TargetUserIDColumn, CauseUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn, ReasonColumn, TargetUserColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, TargetUserIDColumn, CauseUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn, ReasonColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, TargetUserIDColumn, CauseUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn, ReasonColumn}
 	)
 
 	return arpanetUserActivityTable{
@@ -97,7 +95,6 @@ func newArpanetUserActivityTableImpl(schemaName, tableName, alias string) arpane
 		OldValue:     OldValueColumn,
 		NewValue:     NewValueColumn,
 		Reason:       ReasonColumn,
-		TargetUser:   TargetUserColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
