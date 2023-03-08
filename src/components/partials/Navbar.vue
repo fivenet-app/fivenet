@@ -6,7 +6,6 @@ import { mapState } from 'vuex';
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { Bars3Icon, BellIcon, XMarkIcon, UserCircleIcon } from '@heroicons/vue/24/outline';
 import { HomeIcon } from '@heroicons/vue/20/solid';
-import Breadcrumbs from './Breadcrumbs.vue';
 
 export default defineComponent({
     components: {
@@ -22,7 +21,6 @@ export default defineComponent({
         XMarkIcon,
         UserCircleIcon,
         HomeIcon,
-        Breadcrumbs,
     },
     computed: {
         ...mapState({

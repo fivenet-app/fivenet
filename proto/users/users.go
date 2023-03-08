@@ -2,6 +2,7 @@ package users
 
 import (
 	context "context"
+	"fmt"
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/auth"
@@ -19,12 +20,12 @@ func init() {
 		{Key: "users", Name: "View"},
 		{Key: "users", Name: "FindUsers", Fields: []string{"Licenses", "UserProps"}},
 		{Key: "users", Name: "SetUserProps", Fields: []string{"Wanted"}},
-		{Key: "users", Name: "GetUserActivityRequest", Fields: []string{"CauseUser", ""}},
+		{Key: "users", Name: "GetUserActivity", Fields: []string{"CauseUser", ""}},
 	})
 }
 
 var (
-	u   = table.Users
+	u   = table.Users.AS("user")
 	aup = table.ArpanetUserProps
 	ul  = table.UserLicenses
 	ua  = table.ArpanetUserActivity
@@ -39,19 +40,25 @@ func NewServer() *Server {
 }
 
 func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUsersResponse, error) {
-	user, err := auth.GetUserFromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// Permission check
-	if !perms.P.Can(user, "users", "FindUsers") {
+	userID, _, _ := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "users", "FindUsers") {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users")
 	}
 
-	selectors := make(jet.ProjectionList, len(common.CharacterBaseColumns))
-	copy(selectors, common.CharacterBaseColumns)
-	if perms.P.Can(user, "users", "FindUsers", "UserProps") {
+	selectors := jet.ProjectionList{
+		u.ID,
+		u.Identifier,
+		u.Job,
+		u.JobGrade,
+		u.Firstname,
+		u.Lastname,
+		u.Dateofbirth,
+		u.Sex,
+		u.Height,
+		u.Visum,
+		u.Playtime,
+	}
+	if perms.P.CanID(userID, "users", "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
 
@@ -144,22 +151,28 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 }
 
 func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
-	user, err := auth.GetUserFromContext(ctx)
-	if err != nil {
-		return nil, err
+	userID, _, _ := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "users", "FindUsers") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users!")
 	}
 
-	// Permission check
-	if !perms.P.Can(user, "users", "FindUsers") {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users")
+	selectors := jet.ProjectionList{
+		u.ID,
+		u.Identifier,
+		u.Job,
+		u.JobGrade,
+		u.Firstname,
+		u.Lastname,
+		u.Dateofbirth,
+		u.Sex,
+		u.Height,
+		u.Visum,
+		u.Playtime,
 	}
-
-	selectors := make(jet.ProjectionList, len(common.CharacterBaseColumns))
-	copy(selectors, common.CharacterBaseColumns)
-	if perms.P.Can(user, "users", "FindUsers", "UserProps") {
+	if perms.P.CanID(userID, "users", "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
-	if perms.P.Can(user, "users", "FindUsers", "Licenses") {
+	if perms.P.CanID(userID, "users", "FindUsers", "Licenses") {
 		selectors = append(selectors, ul.Type)
 	}
 
@@ -184,16 +197,49 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 }
 
 func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityRequest) (*GetUserActivityResponse, error) {
+	userID, _, _ := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "users", "GetUserActivity") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get an user's activity!")
+	}
+
 	resp := &GetUserActivityResponse{}
 
+	// An user can never see their own activity on their own "profile"
+	//if userID == req.UserID {
+	//	return resp, nil
+	//}
+
+	uTarget := u.AS("target_user")
+	uCause := u.AS("cause_user")
 	stmt := ua.SELECT(
 		ua.AllColumns,
+		uTarget.ID,
+		uTarget.Identifier,
+		uTarget.Job,
+		uTarget.JobGrade,
+		uTarget.Firstname,
+		uTarget.Lastname,
+		uCause.ID,
+		uCause.Identifier,
+		uCause.Job,
+		uCause.JobGrade,
+		uCause.Firstname,
+		uCause.Lastname,
 	).
-		FROM(ua).
+		FROM(
+			ua.LEFT_JOIN(
+				uTarget, uTarget.ID.EQ(ua.TargetUserID),
+			).
+				LEFT_JOIN(
+					uCause, uCause.ID.EQ(ua.CauseUserID),
+				),
+		).
 		WHERE(
 			ua.TargetUserID.EQ(jet.Int32(req.UserID)),
 		).
 		LIMIT(12)
+
+	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Activity); err != nil {
 		return nil, err

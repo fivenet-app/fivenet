@@ -5,7 +5,6 @@ import Navbar from '../../components/partials/Navbar.vue';
 import Footer from '../../components/partials/Footer.vue';
 import CitizensList from '../../components/citizens/CitizensList.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-import Breadcrumbs from '../../components/partials/Breadcrumbs.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 
 export default defineComponent({
@@ -14,7 +13,6 @@ export default defineComponent({
     Footer,
     CitizensList,
     ContentWrapper,
-    Breadcrumbs,
     NavPageHeader
 },
 });

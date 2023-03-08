@@ -3,23 +3,19 @@ import { defineComponent } from 'vue';
 
 import Navbar from '../../components/partials/Navbar.vue';
 import Footer from '../../components/partials/Footer.vue';
-import CitizensList from '../../components/citizens/CitizensList.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-import Breadcrumbs from '../../components/partials/Breadcrumbs.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import { GetUserRequest } from '@arpanet/gen/users/users_pb';
 import { User } from '@arpanet/gen/common/userinfo_pb';
 import { RpcError } from 'grpc-web';
-import {  getUsersClient, handleGRPCError } from '../../grpc';
+import { getUsersClient, handleGRPCError } from '../../grpc';
 
 export default defineComponent({
     components: {
         Navbar,
         Footer,
-        CitizensList,
         ContentWrapper,
-        Breadcrumbs,
         NavPageHeader,
         CitizenInfo,
     },

@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -22,7 +23,9 @@ import (
 )
 
 var (
-	u = table.Users
+	a   = table.ArpanetAccounts
+	u   = table.Users.AS("user")
+	aup = table.ArpanetUserProps
 )
 
 type Server struct {
@@ -72,7 +75,6 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 
 func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.ArpanetAccounts, error) {
 	var account model.ArpanetAccounts
-	a := table.ArpanetAccounts
 	stmt := a.SELECT(
 		a.AllColumns,
 	).
@@ -117,10 +119,9 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	resp := &GetCharactersResponse{}
 	// Load chars from database
 	stmt := u.SELECT(
-		common.CharacterBaseColumns[0],
-		common.CharacterBaseColumns[1:]...,
+		u.AllColumns,
 	).
-		FROM(u.LEFT_JOIN(table.ArpanetUserProps, table.ArpanetUserProps.UserID.EQ(u.ID))).
+		FROM(u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID))).
 		WHERE(u.Identifier.LIKE(jet.String(buildCharSearchIdentifier(claims.Subject)))).
 		ORDER_BY(u.ID).
 		LIMIT(10)
@@ -145,7 +146,6 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	var char common.User
-	u := table.Users
 	stmt := u.SELECT(
 		u.ID,
 		u.Identifier,
@@ -154,6 +154,9 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		FROM(u).
 		WHERE(u.ID.EQ(jet.Int32(req.UserID))).
 		LIMIT(1)
+
+	fmt.Println(stmt.DebugSql())
+
 	if err := stmt.QueryContext(ctx, query.DB, &char); err != nil {
 		return nil, err
 	}

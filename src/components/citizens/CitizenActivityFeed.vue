@@ -44,7 +44,12 @@ export default defineComponent({
 
 <template>
     <div class="flow-root">
-        <ul role="list" class="-mb-8">
+        <span v-if="activities.length === 0">
+            <p>
+                No Citizen Activities found.
+            </p>
+        </span>
+        <ul v-else role="list" class="-mb-8">
             <li v-for="(activity, activityIdx) in activities" :key="activity.getId()">
                 <div class="relative pb-8">
                     <span v-if="activityIdx !== activities.length - 1"
