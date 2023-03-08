@@ -53,15 +53,15 @@ export default defineComponent({
             type: User,
         },
     },
+    mounted() {
+        const userProps = this.user.getProps();
+        if (!userProps) return;
+
+        this.wantedState = userProps.getWanted();
+    },
     methods: {
         handleClose() {
             this.$emit('close');
-        },
-        mounted() {
-            const userProps = this.user.getProps();
-            if (!userProps) return;
-
-            this.wantedState = userProps.getWanted();
         },
         toggleWantedStatus(event: any) {
             if (!this.user) return;
