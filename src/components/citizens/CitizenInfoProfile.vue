@@ -17,7 +17,6 @@ import { User } from '@arpanet/gen/common/userinfo_pb';
 import { RpcError } from 'grpc-web';
 import { getUsersClient, handleGRPCError } from '../../grpc';
 import { SetUserPropsRequest } from '@arpanet/gen/users/users_pb';
-import CitizenActivityFeed from './CitizenActivityFeed.vue';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { getSecondsFormattedAsDuration } from '../../utils/time';
 import { dispatchNotification } from '../notification';
@@ -36,7 +35,6 @@ export default defineComponent({
         XMarkIcon,
         EllipsisVerticalIcon,
         KeyIcon,
-        CitizenActivityFeed,
         CharSexBadge,
     },
     data() {
@@ -182,9 +180,6 @@ export default defineComponent({
                             </li>
                         </ul>
                     </dd>
-                </div>
-                <div class="sm:flex sm:px-6 sm:py-5">
-                    <CitizenActivityFeed :userID="user?.getUserid()" />
                 </div>
             </dl>
         </div>
