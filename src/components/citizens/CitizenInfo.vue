@@ -91,13 +91,13 @@ export default defineComponent({
                 <div class="mt-6 sm:ml-6 sm:flex-1">
                     <div>
                         <div class="flex items-center">
-                            <h3 class="text-xl font-bold text-gray-900 sm:text-2xl">
+                            <h3 class="text-xl font-bold text-gray-300 sm:text-2xl">
                                 {{ user?.getFirstname() }}, {{ user?.getLastname() }}
                                 <span v-if="wantedState"
                                     class="inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">WANTED</span>
                             </h3>
                         </div>
-                        <p class="text-sm text-gray-500">
+                        <p class="text-sm text-white">
                             <span
                                 class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
                                     user?.getJob() }} (Rank: {{ user?.getJobgrade() }})
@@ -126,12 +126,12 @@ export default defineComponent({
                                         <div class="py-1">
                                             <MenuItem v-slot="{ active }">
                                             <a href="#"
-                                                :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">View
+                                                :class="[active ? 'bg-gray-100 text-gray-300' : 'text-gray-700', 'block px-4 py-2 text-sm']">View
                                                 profile</a>
                                             </MenuItem>
                                             <MenuItem v-slot="{ active }">
                                             <a href="#"
-                                                :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Copy
+                                                :class="[active ? 'bg-gray-100 text-gray-300' : 'text-gray-700', 'block px-4 py-2 text-sm']">Copy
                                                 profile link</a>
                                             </MenuItem>
                                         </div>
@@ -146,44 +146,44 @@ export default defineComponent({
         <div class="px-4 py-5 sm:px-0 sm:py-0">
             <dl class="space-y-8 sm:space-y-0 sm:divide-y sm:divide-gray-200">
                 <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
+                    <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
                         Date of Birth</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
+                    <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                         {{ user?.getDateofbirth() }}
                     </dd>
                 </div>
                 <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
+                    <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
                         Sex</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
+                    <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                         {{ user?.getSex().toUpperCase() }}
                         {{ ' ' }}
                         <CharSexBadge :sex="user?.getSex() ? user?.getSex() : ''" />
                     </dd>
                 </div>
                 <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
+                    <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
                         Height</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">{{
+                    <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
                         user?.getHeight() }}cm</dd>
                 </div>
                 <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
+                    <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
                         Visum</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
+                    <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                         {{ user?.getVisum() }}</dd>
                 </div>
                 <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
+                    <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
                         Playtime</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
+                    <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                         {{ getSecondsFormattedAsDuration(user?.getPlaytime()) }}
                     </dd>
                 </div>
                 <div v-can="'users-findusers-licenses'" class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0 lg:w-48">
+                    <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
                         Licenses</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 sm:ml-6">
+                    <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                         <span v-if="user?.getLicensesList().length == 0">No Licenses.</span>
                         <ul v-else role="list" class="divide-y divide-gray-200 rounded-md border border-gray-200">
                             <li v-for="license in user?.getLicensesList()"
