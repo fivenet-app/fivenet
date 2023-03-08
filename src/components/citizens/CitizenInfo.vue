@@ -44,6 +44,7 @@ export default defineComponent({
     data() {
         return {
             client: new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions),
+            wantedState: false as boolean
         };
     },
     props: {
@@ -56,20 +57,23 @@ export default defineComponent({
         handleClose() {
             this.$emit('close');
         },
-        toggleWantedStatus(event: any) {
-            if (this.user === undefined) {
-                return;
-            }
+        mounted() {
+            const userProps = this.user.getProps();
+            if (!userProps) return;
 
-            const wantedState = !this.user?.getProps()?.getWanted();
-            event.target.message = wantedState ? 'Revoke Wanted Status' : 'Set Person Wanted'
+            this.wantedState = userProps.getWanted();
+        },
+        toggleWantedStatus(event: any) {
+            if (!this.user) return;
+
+            this.wantedState = !this.user.getProps()?.getWanted();
 
             const req = new SetUserPropsRequest();
             req.setUserid(this.user?.getUserid());
-            req.setWanted(wantedState);
+            req.setWanted(this.wantedState);
             this.client.setUserProps(req, null)
                 .then((resp) => {
-                    this.user?.getProps()?.setWanted(wantedState);
+                    this.user?.getProps()?.setWanted(this.wantedState);
                     dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
                 }).catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
@@ -89,7 +93,7 @@ export default defineComponent({
                         <div class="flex items-center">
                             <h3 class="text-xl font-bold text-gray-900 sm:text-2xl">
                                 {{ user?.getFirstname() }}, {{ user?.getLastname() }}
-                                <span v-if="user?.getProps()?.getWanted()"
+                                <span v-if="wantedState"
                                     class="inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">WANTED</span>
                             </h3>
                         </div>
@@ -103,8 +107,7 @@ export default defineComponent({
                     <div class="mt-5 flex flex-wrap space-y-3 sm:space-y-0 sm:space-x-3">
                         <button v-can="'users-setuserprops-wanted'" type="button"
                             class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:flex-1"
-                            @click="toggleWantedStatus($event)">Set
-                            Wanted Status</button>
+                            @click="toggleWantedStatus($event)">{{ wantedState ? 'Revoke Wanted Status' : 'Set Person Wanted' }}</button>
                         <div class="ml-3 inline-flex sm:ml-0">
                             <Menu as="div" class="relative inline-block text-left">
                                 <MenuButton
