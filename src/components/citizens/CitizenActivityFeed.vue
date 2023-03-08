@@ -14,7 +14,8 @@ export default defineComponent({
     },
     data() {
         return {
-            'activities': [] as Array<UserActivity>,
+            activities: [] as Array<UserActivity>,
+            defaultIcon: UserCircleIcon,
         };
     },
     methods: {
@@ -43,34 +44,27 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="flow-root">
+    <div>
         <span v-if="activities.length === 0">
-            <p>
+            <p class="text-sm font-medium text-white">
                 No Citizen Activities found.
             </p>
         </span>
-        <ul v-else role="list" class="-mb-8">
-            <li v-for="(activity, activityIdx) in activities" :key="activity.getId()">
-                <div class="relative pb-8">
-                    <span v-if="activityIdx !== activities.length - 1"
-                        class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
-                    <div class="relative flex space-x-3">
-                        <div>
-                            <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white">
-                                <BoltIcon class="h-5 w-5 text-white" aria-hidden="true" />
-                            </span>
+        <ul role="list" class="divide-y divide-gray-200">
+            <li v-for="activity in activities" :key="activity.getId()" class="py-4">
+                <div class="flex space-x-3">
+                    <div class="h-6 w-6 rounded-full flex items-center justify-center bg-white">
+                        <component :is="defaultIcon" />
+                    </div>
+                    <div class="flex-1 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-medium text-white">{{ activity.getCauseuser()?.getFirstname() }} {{
+                                activity.getCauseuser()?.getLastname() }}</h3>
+                            <p class="text-sm text-gray-400">{{ activity.getCreatedat() }}</p>
                         </div>
-                        <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
-                            <div>
-                                <p class="text-sm text-gray-500">
-                                    {{ activity.getCauseuser() }} <a href="#" class="font-medium text-gray-900">{{
-                                        activity.getTargetuser() }}</a>
-                                </p>
-                            </div>
-                            <div class="whitespace-nowrap text-right text-sm text-gray-500">
-                                <time :datetime="activity.getCreatedat()">{{ activity.getCreatedat() }}</time>
-                            </div>
-                        </div>
+                        <p class="text-sm text-gray-300">{{ activity.getType() }} {{ activity.getKey() }}: {{
+                            activity.getOldvalue() }} ⇒ {{ activity.getNewvalue() }}</p>
+                        <p class="text-sm text-gray-300">{{ activity.getReason() }}</p>
                     </div>
                 </div>
             </li>
