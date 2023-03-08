@@ -62,6 +62,13 @@ export default defineComponent({
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
+                            <div class="form-control">
+                                <div class="relative mt-2 flex items-center">
+                                    <router-link to="/documents/create"
+                                    class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                                    active-class="bg-gray-900 text-white">Create</router-link>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

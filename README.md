@@ -9,9 +9,9 @@
     - [x] Search by name (`firstname`, `lastname`)
     - [x] Display a single user's info
         - [ ] Show a feed of activity of the user (e.g., documents created, documents mentioned in)
-    - [ ] Wanted aka "additional UserProps"
-        - [ ] Allow certain jobs to set a person as wanted
-        - [ ] Add list to display only wanted people
+    - [x] Wanted aka "additional UserProps"
+        - [x] Allow certain jobs to set a person as wanted
+        - [x] Add toggle to display only wanted people
 - [ ] Documents
     - [ ] Templates (e.g., Haftbefehl)
     - [ ] Sharing

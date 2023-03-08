@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_accounts` (
   PRIMARY KEY (`id`),
   KEY `idx_arpanet_accounts_username` (`username`),
   KEY `idx_arpanet_accounts_license` (`license`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_documents
 CREATE TABLE IF NOT EXISTS `arpanet_documents` (
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents` (
   KEY `idx_arpanet_documents_creator_job` (`creator_job`),
   KEY `idx_arpanet_documents_response_id` (`response_id`),
   CONSTRAINT `fk_arpanet_documents_responses` FOREIGN KEY (`response_id`) REFERENCES `arpanet_documents` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_documents_job_access
 CREATE TABLE IF NOT EXISTS `arpanet_documents_job_access` (
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_job_access` (
   KEY `idx_arpanet_documents_job_access_document_id` (`document_id`),
   CONSTRAINT `fk_arpanet_documents_job_access` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`),
   CONSTRAINT `fk_arpanet_documents_jobs` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- arpanet_documents_mentions
 CREATE TABLE IF NOT EXISTS `arpanet_documents_mentions` (
@@ -64,6 +64,22 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_mentions` (
   KEY `idx_arpanet_documents_mentions_identifier` (`identifier`),
   KEY `idx_arpanet_documents_mentions_user_id` (`user_id`),
   CONSTRAINT `fk_arpanet_documents_mentions` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: arpanet_documents_templates
+CREATE TABLE `arpanet_documents_templates` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(3) DEFAULT current_timestamp(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE current_timestamp(3),
+  `job` varchar(20) NOT NULL,
+  `job_grade` int(11) NOT NULL DEFAULT 1,
+  `title` longtext NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `content_title` longtext NOT NULL,
+  `content` text NOT NULL,
+  `additional_data` longtext DEFAULT NULL,
+  `creator_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_documents_user_access
@@ -81,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_user_access` (
   KEY `idx_arpanet_documents_user_access_user_id` (`user_id`),
   CONSTRAINT `fk_arpanet_documents_user_access` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`),
   CONSTRAINT `fk_arpanet_documents_users` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_user_activity
 CREATE TABLE IF NOT EXISTS `arpanet_user_activity` (
@@ -100,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_user_activity` (
   KEY `idx_arpanet_user_activity_target_user_id` (`target_user_id`),
   CONSTRAINT `fk_users_cause_activity` FOREIGN KEY (`cause_user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `fk_users_target_activity` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_user_locations
 CREATE TABLE IF NOT EXISTS `arpanet_user_locations` (
