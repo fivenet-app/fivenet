@@ -72,7 +72,7 @@ func GetUserFromContext(ctx context.Context) (*common.ShortUser, error) {
 
 func getUserByID(ctx context.Context, userID int32) (*common.ShortUser, error) {
 	// Find user info for the new/old char index in the claim
-	u := table.Users
+	u := table.Users.AS("user")
 	stmt := u.SELECT(
 		u.ID,
 		u.Identifier,

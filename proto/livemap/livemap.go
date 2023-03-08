@@ -92,7 +92,6 @@ func (s *Server) generateRandomMarker() {
 		3046,
 	}
 
-	l := table.ArpanetUserLocations
 	for {
 		markers := make([]*model.ArpanetUserLocations, len(userIDs))
 		for i := 0; i < len(userIDs); i++ {

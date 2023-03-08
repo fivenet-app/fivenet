@@ -25,7 +25,7 @@ func init() {
 }
 
 var (
-	d   = table.ArpanetDocuments
+	d   = table.ArpanetDocuments.AS("document")
 	dua = table.ArpanetDocumentsUserAccess
 	dja = table.ArpanetDocumentsJobAccess
 )
@@ -118,8 +118,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 	stmt := s.getDocumentsQuery(d.ID.EQ(jet.Uint64(req.Id)), nil, userID, job, jobGrade).
 		LIMIT(1)
-	var dest Document
-	if err := stmt.QueryContext(ctx, query.DB, &dest); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
 
