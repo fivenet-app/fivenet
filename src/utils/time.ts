@@ -1,3 +1,5 @@
+import * as common_timestamp_timestamp_pb from '@arpanet/gen/common/timestamp/timestamp_pb';
+
 export function getSecondsFormattedAsDuration(seconds: number): string {
     var w = Math.floor(seconds / (7 * (3600 * 24)));
     var d = Math.floor(seconds / (3600 * 24));
@@ -11,4 +13,12 @@ export function getSecondsFormattedAsDuration(seconds: number): string {
     var mDisplay = m > 0 ? m + (m == 1 ? ' minute, ' : ' minutes, ') : '';
     var sDisplay = s > 0 ? s + (s == 1 ? ' second' : ' seconds') : '';
     return dWeeks + dDisplay + hDisplay + mDisplay + sDisplay;
+}
+
+export function getDate(ts: common_timestamp_timestamp_pb.Timestamp): undefined | Date {
+    return ts.getTimestamp()?.toDate();
+}
+
+export function getDateLocaleString(ts: common_timestamp_timestamp_pb.Timestamp): undefined | string {
+    return ts.getTimestamp()?.toDate().toLocaleString();
 }
