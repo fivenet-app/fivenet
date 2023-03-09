@@ -48,6 +48,41 @@ message CreateOrEditDocumentResponse {
 
 }
 
+message Template {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    string job = 2; // @gotags: alias:"job"
+    int32 jobGrade = 3; // @gotags: alias:"job_grade"
+    string title = 4; // @gotags: alias:"title"
+    string description = 5; // @gotags: alias:"description"
+    string content_title = 6; // @gotags: alias:"content_title"
+    string content = 7; // @gotags: alias:"content"
+    string additionalData = 8; // @gotags: alias:"additional_data"
+    int32 creatorID = 9; // @gotags: alias:"creator_id"
+}
+
+message TemplateShort {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    string job = 2; // @gotags: alias:"job"
+    int32 jobGrade = 3; // @gotags: alias:"job_grade"
+    string title = 4; // @gotags: alias:"title"
+    string description = 5; // @gotags: alias:"description"
+    int32 creatorID = 6; // @gotags: alias:"creator_id"
+}
+
+message ListTemplatesRequest {}
+
+message ListTemplatesResponse {
+    repeated TemplateShort templates = 1;
+}
+
+message GetTemplateRequest {
+    uint64 id = 1;
+}
+
+message GetTemplateResponse {
+    Template template = 1;
+}
+
 message GetDocumentAccessRequest {
     uint64 id = 1;
 }
@@ -67,6 +102,10 @@ service DocumentsService {
 
     rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
     rpc CreateOrEditDocument(CreateOrEditDocumentRequest) returns (CreateOrEditDocumentResponse);
+
+    rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
+    rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
+    // TODO add create and update template methods
 
     rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
     rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);

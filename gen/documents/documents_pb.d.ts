@@ -189,6 +189,166 @@ export namespace CreateOrEditDocumentResponse {
   }
 }
 
+export class Template extends jspb.Message {
+  getId(): number;
+  setId(value: number): Template;
+
+  getJob(): string;
+  setJob(value: string): Template;
+
+  getJobgrade(): number;
+  setJobgrade(value: number): Template;
+
+  getTitle(): string;
+  setTitle(value: string): Template;
+
+  getDescription(): string;
+  setDescription(value: string): Template;
+
+  getContentTitle(): string;
+  setContentTitle(value: string): Template;
+
+  getContent(): string;
+  setContent(value: string): Template;
+
+  getAdditionaldata(): string;
+  setAdditionaldata(value: string): Template;
+
+  getCreatorid(): number;
+  setCreatorid(value: number): Template;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Template.AsObject;
+  static toObject(includeInstance: boolean, msg: Template): Template.AsObject;
+  static serializeBinaryToWriter(message: Template, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Template;
+  static deserializeBinaryFromReader(message: Template, reader: jspb.BinaryReader): Template;
+}
+
+export namespace Template {
+  export type AsObject = {
+    id: number,
+    job: string,
+    jobgrade: number,
+    title: string,
+    description: string,
+    contentTitle: string,
+    content: string,
+    additionaldata: string,
+    creatorid: number,
+  }
+}
+
+export class TemplateShort extends jspb.Message {
+  getId(): number;
+  setId(value: number): TemplateShort;
+
+  getJob(): string;
+  setJob(value: string): TemplateShort;
+
+  getJobgrade(): number;
+  setJobgrade(value: number): TemplateShort;
+
+  getTitle(): string;
+  setTitle(value: string): TemplateShort;
+
+  getDescription(): string;
+  setDescription(value: string): TemplateShort;
+
+  getCreatorid(): number;
+  setCreatorid(value: number): TemplateShort;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): TemplateShort.AsObject;
+  static toObject(includeInstance: boolean, msg: TemplateShort): TemplateShort.AsObject;
+  static serializeBinaryToWriter(message: TemplateShort, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): TemplateShort;
+  static deserializeBinaryFromReader(message: TemplateShort, reader: jspb.BinaryReader): TemplateShort;
+}
+
+export namespace TemplateShort {
+  export type AsObject = {
+    id: number,
+    job: string,
+    jobgrade: number,
+    title: string,
+    description: string,
+    creatorid: number,
+  }
+}
+
+export class ListTemplatesRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListTemplatesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ListTemplatesRequest): ListTemplatesRequest.AsObject;
+  static serializeBinaryToWriter(message: ListTemplatesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListTemplatesRequest;
+  static deserializeBinaryFromReader(message: ListTemplatesRequest, reader: jspb.BinaryReader): ListTemplatesRequest;
+}
+
+export namespace ListTemplatesRequest {
+  export type AsObject = {
+  }
+}
+
+export class ListTemplatesResponse extends jspb.Message {
+  getTemplatesList(): Array<TemplateShort>;
+  setTemplatesList(value: Array<TemplateShort>): ListTemplatesResponse;
+  clearTemplatesList(): ListTemplatesResponse;
+  addTemplates(value?: TemplateShort, index?: number): TemplateShort;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListTemplatesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ListTemplatesResponse): ListTemplatesResponse.AsObject;
+  static serializeBinaryToWriter(message: ListTemplatesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListTemplatesResponse;
+  static deserializeBinaryFromReader(message: ListTemplatesResponse, reader: jspb.BinaryReader): ListTemplatesResponse;
+}
+
+export namespace ListTemplatesResponse {
+  export type AsObject = {
+    templatesList: Array<TemplateShort.AsObject>,
+  }
+}
+
+export class GetTemplateRequest extends jspb.Message {
+  getId(): number;
+  setId(value: number): GetTemplateRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetTemplateRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetTemplateRequest): GetTemplateRequest.AsObject;
+  static serializeBinaryToWriter(message: GetTemplateRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetTemplateRequest;
+  static deserializeBinaryFromReader(message: GetTemplateRequest, reader: jspb.BinaryReader): GetTemplateRequest;
+}
+
+export namespace GetTemplateRequest {
+  export type AsObject = {
+    id: number,
+  }
+}
+
+export class GetTemplateResponse extends jspb.Message {
+  getTemplate(): Template | undefined;
+  setTemplate(value?: Template): GetTemplateResponse;
+  hasTemplate(): boolean;
+  clearTemplate(): GetTemplateResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetTemplateResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetTemplateResponse): GetTemplateResponse.AsObject;
+  static serializeBinaryToWriter(message: GetTemplateResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetTemplateResponse;
+  static deserializeBinaryFromReader(message: GetTemplateResponse, reader: jspb.BinaryReader): GetTemplateResponse;
+}
+
+export namespace GetTemplateResponse {
+  export type AsObject = {
+    template?: Template.AsObject,
+  }
+}
+
 export class GetDocumentAccessRequest extends jspb.Message {
   getId(): number;
   setId(value: number): GetDocumentAccessRequest;

@@ -168,6 +168,92 @@ export class DocumentsServiceClient {
     this.methodDescriptorCreateOrEditDocument);
   }
 
+  methodDescriptorListTemplates = new grpcWeb.MethodDescriptor(
+    '/gen.documents.DocumentsService/ListTemplates',
+    grpcWeb.MethodType.UNARY,
+    documents_documents_pb.ListTemplatesRequest,
+    documents_documents_pb.ListTemplatesResponse,
+    (request: documents_documents_pb.ListTemplatesRequest) => {
+      return request.serializeBinary();
+    },
+    documents_documents_pb.ListTemplatesResponse.deserializeBinary
+  );
+
+  listTemplates(
+    request: documents_documents_pb.ListTemplatesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.ListTemplatesResponse>;
+
+  listTemplates(
+    request: documents_documents_pb.ListTemplatesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.ListTemplatesResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.ListTemplatesResponse>;
+
+  listTemplates(
+    request: documents_documents_pb.ListTemplatesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.ListTemplatesResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.documents.DocumentsService/ListTemplates',
+        request,
+        metadata || {},
+        this.methodDescriptorListTemplates,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.documents.DocumentsService/ListTemplates',
+    request,
+    metadata || {},
+    this.methodDescriptorListTemplates);
+  }
+
+  methodDescriptorGetTemplate = new grpcWeb.MethodDescriptor(
+    '/gen.documents.DocumentsService/GetTemplate',
+    grpcWeb.MethodType.UNARY,
+    documents_documents_pb.GetTemplateRequest,
+    documents_documents_pb.GetTemplateResponse,
+    (request: documents_documents_pb.GetTemplateRequest) => {
+      return request.serializeBinary();
+    },
+    documents_documents_pb.GetTemplateResponse.deserializeBinary
+  );
+
+  getTemplate(
+    request: documents_documents_pb.GetTemplateRequest,
+    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.GetTemplateResponse>;
+
+  getTemplate(
+    request: documents_documents_pb.GetTemplateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.GetTemplateResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.GetTemplateResponse>;
+
+  getTemplate(
+    request: documents_documents_pb.GetTemplateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.GetTemplateResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.documents.DocumentsService/GetTemplate',
+        request,
+        metadata || {},
+        this.methodDescriptorGetTemplate,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.documents.DocumentsService/GetTemplate',
+    request,
+    metadata || {},
+    this.methodDescriptorGetTemplate);
+  }
+
   methodDescriptorGetDocumentAccess = new grpcWeb.MethodDescriptor(
     '/gen.documents.DocumentsService/GetDocumentAccess',
     grpcWeb.MethodType.UNARY,

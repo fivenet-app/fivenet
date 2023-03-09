@@ -25,6 +25,8 @@ type DocumentsServiceClient interface {
 	FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error)
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
 	CreateOrEditDocument(ctx context.Context, in *CreateOrEditDocumentRequest, opts ...grpc.CallOption) (*CreateOrEditDocumentResponse, error)
+	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
+	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
 }
@@ -64,6 +66,24 @@ func (c *documentsServiceClient) CreateOrEditDocument(ctx context.Context, in *C
 	return out, nil
 }
 
+func (c *documentsServiceClient) ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error) {
+	out := new(ListTemplatesResponse)
+	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/ListTemplates", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentsServiceClient) GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error) {
+	out := new(GetTemplateResponse)
+	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/GetTemplate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *documentsServiceClient) GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error) {
 	out := new(GetDocumentAccessResponse)
 	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/GetDocumentAccess", in, out, opts...)
@@ -89,6 +109,8 @@ type DocumentsServiceServer interface {
 	FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error)
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
 	CreateOrEditDocument(context.Context, *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error)
+	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
+	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
 	mustEmbedUnimplementedDocumentsServiceServer()
@@ -106,6 +128,12 @@ func (UnimplementedDocumentsServiceServer) GetDocument(context.Context, *GetDocu
 }
 func (UnimplementedDocumentsServiceServer) CreateOrEditDocument(context.Context, *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrEditDocument not implemented")
+}
+func (UnimplementedDocumentsServiceServer) ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTemplates not implemented")
+}
+func (UnimplementedDocumentsServiceServer) GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTemplate not implemented")
 }
 func (UnimplementedDocumentsServiceServer) GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentAccess not implemented")
@@ -180,6 +208,42 @@ func _DocumentsService_CreateOrEditDocument_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DocumentsService_ListTemplates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTemplatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentsServiceServer).ListTemplates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gen.documents.DocumentsService/ListTemplates",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentsServiceServer).ListTemplates(ctx, req.(*ListTemplatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocumentsService_GetTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentsServiceServer).GetTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gen.documents.DocumentsService/GetTemplate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentsServiceServer).GetTemplate(ctx, req.(*GetTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DocumentsService_GetDocumentAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetDocumentAccessRequest)
 	if err := dec(in); err != nil {
@@ -234,6 +298,14 @@ var DocumentsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateOrEditDocument",
 			Handler:    _DocumentsService_CreateOrEditDocument_Handler,
+		},
+		{
+			MethodName: "ListTemplates",
+			Handler:    _DocumentsService_ListTemplates_Handler,
+		},
+		{
+			MethodName: "GetTemplate",
+			Handler:    _DocumentsService_GetTemplate_Handler,
 		},
 		{
 			MethodName: "GetDocumentAccess",

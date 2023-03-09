@@ -127,7 +127,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	return resp, nil
 }
 
-func (s *Server) CreateOrEditDocument(ctx context.Context, in *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error) {
+func (s *Server) CreateOrEditDocument(ctx context.Context, req *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error) {
 	userID, _, _ := auth.GetUserInfoFromContext(ctx)
 	if !perms.P.CanID(userID, "documents", "CreateDocument") {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to create/ edit a document!")
@@ -136,6 +136,20 @@ func (s *Server) CreateOrEditDocument(ctx context.Context, in *CreateOrEditDocum
 	resp := &CreateOrEditDocumentResponse{}
 
 	// TODO
+
+	return resp, nil
+}
+
+func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
+	resp := &ListTemplatesResponse{}
+
+	// TODO list and get document templates
+
+	return resp, nil
+}
+
+func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*GetTemplateResponse, error) {
+	resp := &GetTemplateResponse{}
 
 	return resp, nil
 }
