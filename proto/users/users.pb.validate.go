@@ -1155,8 +1155,6 @@ func (m *UserActivity) validate(all bool) error {
 
 	// no validation rules for NewValue
 
-	// no validation rules for Reason
-
 	if len(errors) > 0 {
 		return UserActivityMultiError(errors)
 	}

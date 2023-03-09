@@ -56,7 +56,6 @@ message UserActivity {
     string key = 6; // @gotags: alias:"arpanet_user_activity.key"
     string oldValue = 7; // @gotags: alias:"arpanet_user_activity.old_value"
     string newValue = 8; // @gotags: alias:"arpanet_user_activity.new_value"
-    string reason = 9; // @gotags: alias:"arpanet_user_activity.reason"
 }
 
 service UsersService {

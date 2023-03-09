@@ -79,7 +79,8 @@ CREATE TABLE `arpanet_documents_templates` (
   `content` text NOT NULL,
   `additional_data` longtext DEFAULT NULL,
   `creator_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_arpanet_documents_templates_job_job_grade` (`job`, `job_grade`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_documents_user_access
@@ -110,7 +111,6 @@ CREATE TABLE IF NOT EXISTS `arpanet_user_activity` (
   `key` varchar(64) DEFAULT NULL,
   `old_value` varchar(256) DEFAULT NULL,
   `new_value` varchar(256) DEFAULT NULL,
-  `reason` longtext DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_arpanet_user_activity_cause_user_id` (`cause_user_id`),
   KEY `idx_arpanet_user_activity_target_user_id` (`target_user_id`),

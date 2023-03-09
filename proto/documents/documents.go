@@ -28,6 +28,7 @@ var (
 	d   = table.ArpanetDocuments.AS("document")
 	dua = table.ArpanetDocumentsUserAccess
 	dja = table.ArpanetDocumentsJobAccess
+	dt  = table.ArpanetDocumentsTemplates
 )
 
 type Server struct {
@@ -141,15 +142,57 @@ func (s *Server) CreateOrEditDocument(ctx context.Context, req *CreateOrEditDocu
 }
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
-	resp := &ListTemplatesResponse{}
+	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "documents", "CreateDocument") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to list/ get document templates!")
+	}
 
-	// TODO list and get document templates
+	resp := &ListTemplatesResponse{}
+	stmt := dt.SELECT(
+		dt.ID,
+		dt.Job,
+		dt.JobGrade,
+		dt.Title,
+		dt.Description,
+		dt.CreatorID,
+	).
+		FROM(dt).
+		WHERE(
+			jet.AND(
+				dt.Job.EQ(jet.String(job)),
+				dt.JobGrade.LT_EQ(jet.Int32(jobGrade)),
+			),
+		)
+
+	if err := stmt.QueryContext(ctx, query.DB, &resp.Templates); err != nil {
+		return nil, err
+	}
 
 	return resp, nil
 }
 
 func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*GetTemplateResponse, error) {
+	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "documents", "CreateDocument") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to list/ get document templates!")
+	}
+
 	resp := &GetTemplateResponse{}
+	stmt := dt.SELECT(
+		dt.AllColumns,
+	).
+		FROM(dt).
+		WHERE(
+			jet.AND(
+				dt.ID.EQ(jet.Uint64(req.Id)),
+				dt.Job.EQ(jet.String(job)),
+				dt.JobGrade.LT_EQ(jet.Int32(jobGrade)),
+			),
+		)
+
+	if err := stmt.QueryContext(ctx, query.DB, &resp.Template); err != nil {
+		return nil, err
+	}
 
 	return resp, nil
 }

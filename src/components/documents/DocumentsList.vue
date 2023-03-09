@@ -65,8 +65,7 @@ export default defineComponent({
                             <div class="form-control">
                                 <div class="relative mt-2 flex items-center">
                                     <router-link to="/documents/create"
-                                    class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                                    active-class="bg-gray-900 text-white">Create</router-link>
+                                    class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Create</router-link>
                                 </div>
                             </div>
                         </div>
