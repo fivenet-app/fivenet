@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 import Navbar from '../../components/partials/Navbar.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-import Editor from '../../components/documents/Editor.vue';
+import DocumentEditor from '../../components/documents/DocumentEditor.vue';
 import Footer from '../../components/partials/Footer.vue';
 
 export default defineComponent({
@@ -13,7 +13,7 @@ export default defineComponent({
         Footer,
         ContentWrapper,
         NavPageHeader,
-        Editor,
+        DocumentEditor,
     },
 });
 </script>
@@ -36,7 +36,7 @@ export default defineComponent({
     <Navbar />
     <NavPageHeader title="Documents" />
     <ContentWrapper>
-        <Editor />
+        <DocumentEditor />
     </ContentWrapper>
     <Footer />
 </template>

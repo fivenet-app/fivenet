@@ -436,6 +436,8 @@ func (m *Document) validate(all bool) error {
 
 	// no validation rules for Public
 
+	// no validation rules for TargetDocumentId
+
 	if len(errors) > 0 {
 		return DocumentMultiError(errors)
 	}
@@ -536,6 +538,8 @@ func (m *GetDocumentRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for Id
+
+	// no validation rules for Responses
 
 	if len(errors) > 0 {
 		return GetDocumentRequestMultiError(errors)
@@ -782,42 +786,56 @@ var _ interface {
 	ErrorName() string
 } = GetDocumentResponseValidationError{}
 
-// Validate checks the field values on CreateOrEditDocumentRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on CreateDocumentRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateOrEditDocumentRequest) Validate() error {
+func (m *CreateDocumentRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateOrEditDocumentRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on CreateDocumentRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateOrEditDocumentRequestMultiError, or nil if none found.
-func (m *CreateOrEditDocumentRequest) ValidateAll() error {
+// CreateDocumentRequestMultiError, or nil if none found.
+func (m *CreateDocumentRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateOrEditDocumentRequest) validate(all bool) error {
+func (m *CreateDocumentRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for Title
+
+	// no validation rules for Content
+
+	// no validation rules for ContentType
+
+	// no validation rules for Closed
+
+	// no validation rules for State
+
+	// no validation rules for Public
+
+	// no validation rules for TargetDocumentId
+
 	if len(errors) > 0 {
-		return CreateOrEditDocumentRequestMultiError(errors)
+		return CreateDocumentRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateOrEditDocumentRequestMultiError is an error wrapping multiple
-// validation errors returned by CreateOrEditDocumentRequest.ValidateAll() if
-// the designated constraints aren't met.
-type CreateOrEditDocumentRequestMultiError []error
+// CreateDocumentRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateDocumentRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateDocumentRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateOrEditDocumentRequestMultiError) Error() string {
+func (m CreateDocumentRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -826,12 +844,11 @@ func (m CreateOrEditDocumentRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateOrEditDocumentRequestMultiError) AllErrors() []error { return m }
+func (m CreateDocumentRequestMultiError) AllErrors() []error { return m }
 
-// CreateOrEditDocumentRequestValidationError is the validation error returned
-// by CreateOrEditDocumentRequest.Validate if the designated constraints
-// aren't met.
-type CreateOrEditDocumentRequestValidationError struct {
+// CreateDocumentRequestValidationError is the validation error returned by
+// CreateDocumentRequest.Validate if the designated constraints aren't met.
+type CreateDocumentRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -839,24 +856,24 @@ type CreateOrEditDocumentRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateOrEditDocumentRequestValidationError) Field() string { return e.field }
+func (e CreateDocumentRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateOrEditDocumentRequestValidationError) Reason() string { return e.reason }
+func (e CreateDocumentRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateOrEditDocumentRequestValidationError) Cause() error { return e.cause }
+func (e CreateDocumentRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateOrEditDocumentRequestValidationError) Key() bool { return e.key }
+func (e CreateDocumentRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateOrEditDocumentRequestValidationError) ErrorName() string {
-	return "CreateOrEditDocumentRequestValidationError"
+func (e CreateDocumentRequestValidationError) ErrorName() string {
+	return "CreateDocumentRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateOrEditDocumentRequestValidationError) Error() string {
+func (e CreateDocumentRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -868,14 +885,14 @@ func (e CreateOrEditDocumentRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateOrEditDocumentRequest.%s: %s%s",
+		"invalid %sCreateDocumentRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateOrEditDocumentRequestValidationError{}
+var _ error = CreateDocumentRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -883,24 +900,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateOrEditDocumentRequestValidationError{}
+} = CreateDocumentRequestValidationError{}
 
-// Validate checks the field values on CreateOrEditDocumentResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on CreateDocumentResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateOrEditDocumentResponse) Validate() error {
+func (m *CreateDocumentResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateOrEditDocumentResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on CreateDocumentResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateOrEditDocumentResponseMultiError, or nil if none found.
-func (m *CreateOrEditDocumentResponse) ValidateAll() error {
+// CreateDocumentResponseMultiError, or nil if none found.
+func (m *CreateDocumentResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateOrEditDocumentResponse) validate(all bool) error {
+func (m *CreateDocumentResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -908,19 +925,19 @@ func (m *CreateOrEditDocumentResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return CreateOrEditDocumentResponseMultiError(errors)
+		return CreateDocumentResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateOrEditDocumentResponseMultiError is an error wrapping multiple
-// validation errors returned by CreateOrEditDocumentResponse.ValidateAll() if
-// the designated constraints aren't met.
-type CreateOrEditDocumentResponseMultiError []error
+// CreateDocumentResponseMultiError is an error wrapping multiple validation
+// errors returned by CreateDocumentResponse.ValidateAll() if the designated
+// constraints aren't met.
+type CreateDocumentResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateOrEditDocumentResponseMultiError) Error() string {
+func (m CreateDocumentResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -929,12 +946,11 @@ func (m CreateOrEditDocumentResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateOrEditDocumentResponseMultiError) AllErrors() []error { return m }
+func (m CreateDocumentResponseMultiError) AllErrors() []error { return m }
 
-// CreateOrEditDocumentResponseValidationError is the validation error returned
-// by CreateOrEditDocumentResponse.Validate if the designated constraints
-// aren't met.
-type CreateOrEditDocumentResponseValidationError struct {
+// CreateDocumentResponseValidationError is the validation error returned by
+// CreateDocumentResponse.Validate if the designated constraints aren't met.
+type CreateDocumentResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -942,24 +958,24 @@ type CreateOrEditDocumentResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateOrEditDocumentResponseValidationError) Field() string { return e.field }
+func (e CreateDocumentResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateOrEditDocumentResponseValidationError) Reason() string { return e.reason }
+func (e CreateDocumentResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateOrEditDocumentResponseValidationError) Cause() error { return e.cause }
+func (e CreateDocumentResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateOrEditDocumentResponseValidationError) Key() bool { return e.key }
+func (e CreateDocumentResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateOrEditDocumentResponseValidationError) ErrorName() string {
-	return "CreateOrEditDocumentResponseValidationError"
+func (e CreateDocumentResponseValidationError) ErrorName() string {
+	return "CreateDocumentResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateOrEditDocumentResponseValidationError) Error() string {
+func (e CreateDocumentResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -971,14 +987,14 @@ func (e CreateOrEditDocumentResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateOrEditDocumentResponse.%s: %s%s",
+		"invalid %sCreateDocumentResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateOrEditDocumentResponseValidationError{}
+var _ error = CreateDocumentResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -986,7 +1002,225 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateOrEditDocumentResponseValidationError{}
+} = CreateDocumentResponseValidationError{}
+
+// Validate checks the field values on UpdateDocumentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateDocumentRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateDocumentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateDocumentRequestMultiError, or nil if none found.
+func (m *UpdateDocumentRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateDocumentRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Title
+
+	// no validation rules for Content
+
+	// no validation rules for ContentType
+
+	// no validation rules for Closed
+
+	// no validation rules for State
+
+	// no validation rules for Public
+
+	if len(errors) > 0 {
+		return UpdateDocumentRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateDocumentRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateDocumentRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateDocumentRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateDocumentRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateDocumentRequestMultiError) AllErrors() []error { return m }
+
+// UpdateDocumentRequestValidationError is the validation error returned by
+// UpdateDocumentRequest.Validate if the designated constraints aren't met.
+type UpdateDocumentRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateDocumentRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateDocumentRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateDocumentRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateDocumentRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateDocumentRequestValidationError) ErrorName() string {
+	return "UpdateDocumentRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateDocumentRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateDocumentRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateDocumentRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateDocumentRequestValidationError{}
+
+// Validate checks the field values on UpdateDocumentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateDocumentResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateDocumentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateDocumentResponseMultiError, or nil if none found.
+func (m *UpdateDocumentResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateDocumentResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdateDocumentResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateDocumentResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateDocumentResponse.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateDocumentResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateDocumentResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateDocumentResponseMultiError) AllErrors() []error { return m }
+
+// UpdateDocumentResponseValidationError is the validation error returned by
+// UpdateDocumentResponse.Validate if the designated constraints aren't met.
+type UpdateDocumentResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateDocumentResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateDocumentResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateDocumentResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateDocumentResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateDocumentResponseValidationError) ErrorName() string {
+	return "UpdateDocumentResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateDocumentResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateDocumentResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateDocumentResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateDocumentResponseValidationError{}
 
 // Validate checks the field values on Template with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -1689,6 +1923,514 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetTemplateResponseValidationError{}
+
+// Validate checks the field values on DocumentAccess with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *DocumentAccess) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DocumentAccess with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in DocumentAccessMultiError,
+// or nil if none found.
+func (m *DocumentAccess) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DocumentAccess) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DocumentID
+
+	for idx, item := range m.GetJobAccess() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentAccessValidationError{
+						field:  fmt.Sprintf("JobAccess[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentAccessValidationError{
+						field:  fmt.Sprintf("JobAccess[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentAccessValidationError{
+					field:  fmt.Sprintf("JobAccess[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetUserAccess() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentAccessValidationError{
+						field:  fmt.Sprintf("UserAccess[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentAccessValidationError{
+						field:  fmt.Sprintf("UserAccess[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentAccessValidationError{
+					field:  fmt.Sprintf("UserAccess[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DocumentAccessMultiError(errors)
+	}
+
+	return nil
+}
+
+// DocumentAccessMultiError is an error wrapping multiple validation errors
+// returned by DocumentAccess.ValidateAll() if the designated constraints
+// aren't met.
+type DocumentAccessMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DocumentAccessMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DocumentAccessMultiError) AllErrors() []error { return m }
+
+// DocumentAccessValidationError is the validation error returned by
+// DocumentAccess.Validate if the designated constraints aren't met.
+type DocumentAccessValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DocumentAccessValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DocumentAccessValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DocumentAccessValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DocumentAccessValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DocumentAccessValidationError) ErrorName() string { return "DocumentAccessValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DocumentAccessValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDocumentAccess.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DocumentAccessValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DocumentAccessValidationError{}
+
+// Validate checks the field values on DocumentJobAccess with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DocumentJobAccess) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DocumentJobAccess with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DocumentJobAccessMultiError, or nil if none found.
+func (m *DocumentJobAccess) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DocumentJobAccess) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentJobAccessValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentJobAccessValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentJobAccessValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentJobAccessValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentJobAccessValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentJobAccessValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for DocumentID
+
+	// no validation rules for Name
+
+	// no validation rules for MinimumGrade
+
+	// no validation rules for Access
+
+	if len(errors) > 0 {
+		return DocumentJobAccessMultiError(errors)
+	}
+
+	return nil
+}
+
+// DocumentJobAccessMultiError is an error wrapping multiple validation errors
+// returned by DocumentJobAccess.ValidateAll() if the designated constraints
+// aren't met.
+type DocumentJobAccessMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DocumentJobAccessMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DocumentJobAccessMultiError) AllErrors() []error { return m }
+
+// DocumentJobAccessValidationError is the validation error returned by
+// DocumentJobAccess.Validate if the designated constraints aren't met.
+type DocumentJobAccessValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DocumentJobAccessValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DocumentJobAccessValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DocumentJobAccessValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DocumentJobAccessValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DocumentJobAccessValidationError) ErrorName() string {
+	return "DocumentJobAccessValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DocumentJobAccessValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDocumentJobAccess.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DocumentJobAccessValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DocumentJobAccessValidationError{}
+
+// Validate checks the field values on DocumentUserAccess with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DocumentUserAccess) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DocumentUserAccess with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DocumentUserAccessMultiError, or nil if none found.
+func (m *DocumentUserAccess) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DocumentUserAccess) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentUserAccessValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentUserAccessValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentUserAccessValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentUserAccessValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentUserAccessValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentUserAccessValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for DocumentID
+
+	// no validation rules for UserID
+
+	// no validation rules for Access
+
+	if len(errors) > 0 {
+		return DocumentUserAccessMultiError(errors)
+	}
+
+	return nil
+}
+
+// DocumentUserAccessMultiError is an error wrapping multiple validation errors
+// returned by DocumentUserAccess.ValidateAll() if the designated constraints
+// aren't met.
+type DocumentUserAccessMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DocumentUserAccessMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DocumentUserAccessMultiError) AllErrors() []error { return m }
+
+// DocumentUserAccessValidationError is the validation error returned by
+// DocumentUserAccess.Validate if the designated constraints aren't met.
+type DocumentUserAccessValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DocumentUserAccessValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DocumentUserAccessValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DocumentUserAccessValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DocumentUserAccessValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DocumentUserAccessValidationError) ErrorName() string {
+	return "DocumentUserAccessValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DocumentUserAccessValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDocumentUserAccess.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DocumentUserAccessValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DocumentUserAccessValidationError{}
 
 // Validate checks the field values on GetDocumentAccessRequest with the rules
 // defined in the proto definition for this message. If any rules are

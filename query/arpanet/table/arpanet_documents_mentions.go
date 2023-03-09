@@ -21,7 +21,6 @@ type arpanetDocumentsMentionsTable struct {
 	CreatedAt  mysql.ColumnTimestamp
 	UpdatedAt  mysql.ColumnTimestamp
 	DocumentID mysql.ColumnInteger
-	Identifier mysql.ColumnString
 	UserID     mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
@@ -67,10 +66,9 @@ func newArpanetDocumentsMentionsTableImpl(schemaName, tableName, alias string) a
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
 		DocumentIDColumn = mysql.IntegerColumn("document_id")
-		IdentifierColumn = mysql.StringColumn("identifier")
 		UserIDColumn     = mysql.IntegerColumn("user_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, IdentifierColumn, UserIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, IdentifierColumn, UserIDColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, UserIDColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, UserIDColumn}
 	)
 
 	return arpanetDocumentsMentionsTable{
@@ -81,7 +79,6 @@ func newArpanetDocumentsMentionsTableImpl(schemaName, tableName, alias string) a
 		CreatedAt:  CreatedAtColumn,
 		UpdatedAt:  UpdatedAtColumn,
 		DocumentID: DocumentIDColumn,
-		Identifier: IdentifierColumn,
 		UserID:     UserIDColumn,
 
 		AllColumns:     allColumns,

@@ -16,7 +16,6 @@ type ArpanetDocumentsUserAccess struct {
 	CreatedAt  *time.Time `json:"created_at"`
 	UpdatedAt  *time.Time `json:"updated_at"`
 	DocumentID *uint64    `json:"document_id"`
-	Identifier *string    `json:"identifier"`
-	Access     *string    `json:"access"`
-	UserID     *int32     `json:"user_id"`
+	UserID     int32      `json:"user_id"`
+	Access     string     `json:"access"`
 }

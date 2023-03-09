@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/microcosm-cc/bluemonday"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -33,10 +34,14 @@ var (
 
 type Server struct {
 	DocumentsServiceServer
+
+	p *bluemonday.Policy
 }
 
 func NewServer() *Server {
-	return &Server{}
+	return &Server{
+		p: bluemonday.UGCPolicy(),
+	}
 }
 
 func (s *Server) getDocumentsQuery(where jet.BoolExpression, additionalColumns jet.ProjectionList, userID int32, job string, jobGrade int32) jet.SelectStatement {
@@ -123,22 +128,48 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, err
 	}
 
-	// TODO Load responses
+	if req.Responses {
+		// Load responses if requested
+		respStmt := s.getDocumentsQuery(d.ResponseID.EQ(jet.Uint64(req.Id)), nil, userID, job, jobGrade)
+		if err := respStmt.QueryContext(ctx, query.DB, &resp.Responses); err != nil {
+			return nil, err
+		}
+	}
 
 	return resp, nil
 }
 
-func (s *Server) CreateOrEditDocument(ctx context.Context, req *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error) {
-	userID, _, _ := auth.GetUserInfoFromContext(ctx)
+func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest) (*CreateDocumentResponse, error) {
+	userID, job, _ := auth.GetUserInfoFromContext(ctx)
 	if !perms.P.CanID(userID, "documents", "CreateDocument") {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to create/ edit a document!")
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to create documents!")
 	}
 
-	resp := &CreateOrEditDocumentResponse{}
+	stmt := d.INSERT(
+		d.Title,
+		d.Content,
+		d.ContentType,
+		d.Closed,
+		d.State,
+		d.Public,
+		d.CreatorID,
+		d.CreatorJob,
+	).VALUES(
+		req.Title,
+		s.p.Sanitize(req.Content),
+		modelhelper.HTMLDocumentType,
+		req.Closed,
+		req.State,
+		req.Public,
+		userID,
+		job,
+	)
 
-	// TODO
+	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+		return nil, err
+	}
 
-	return resp, nil
+	return &CreateDocumentResponse{}, nil
 }
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
@@ -197,4 +228,15 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 	return resp, nil
 }
 
-// TODO add/update/remove for document access is needed
+func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
+	resp := &GetDocumentAccessResponse{}
+
+	// TODO add/update/remove for document access is needed
+
+	return resp, nil
+}
+func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
+	resp := &SetDocumentAccessResponse{}
+
+	return resp, nil
+}

@@ -21,18 +21,20 @@ message Document {
     uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
     gen.common.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
     gen.common.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-    string title = 5; // @gotags: alias:"title"
-    string content = 6; // @gotags: alias:"content"
-    string content_type = 7; // @gotags: alias:"content_type"
-    bool closed = 8; // @gotags: alias:"closed"
-    string state = 9; // @gotags: alias:"state"
-    gen.common.userinfo.ShortUser creator = 10; // @gotags: alias:"creator"
-    string creator_job = 11; // @gotags: alias:"creator_job"
-    bool public = 12; // @gotags: alias:"public"
+    string title = 4; // @gotags: alias:"title"
+    string content = 5; // @gotags: alias:"content"
+    string content_type = 6; // @gotags: alias:"content_type"
+    bool closed = 7; // @gotags: alias:"closed"
+    string state = 8; // @gotags: alias:"state"
+    gen.common.userinfo.ShortUser creator = 9; // @gotags: alias:"creator"
+    string creator_job = 10; // @gotags: alias:"creator_job"
+    bool public = 11; // @gotags: alias:"public"
+    uint64 target_document_id = 12; // @gotags: alias:"response_id"
 }
 
 message GetDocumentRequest {
     uint64 id = 1;
+    bool responses = 2;
 }
 
 message GetDocumentResponse {
@@ -40,13 +42,29 @@ message GetDocumentResponse {
     repeated Document responses = 2;
 }
 
-message CreateOrEditDocumentRequest {
-
+message CreateDocumentRequest {
+    string title = 1; // @gotags: alias:"title"
+    string content = 2; // @gotags: alias:"content"
+    string content_type = 3; // @gotags: alias:"content_type"
+    bool closed = 4; // @gotags: alias:"closed"
+    string state = 5; // @gotags: alias:"state"
+    bool public = 6; // @gotags: alias:"public"
+    uint64 target_document_id = 7; // @gotags: alias:"response_id"
 }
 
-message CreateOrEditDocumentResponse {
+message CreateDocumentResponse {}
 
+message UpdateDocumentRequest {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    string title = 2; // @gotags: alias:"title"
+    string content = 3; // @gotags: alias:"content"
+    string content_type = 4; // @gotags: alias:"content_type"
+    bool closed = 5; // @gotags: alias:"closed"
+    string state = 6; // @gotags: alias:"state"
+    bool public = 7; // @gotags: alias:"public"
 }
+
+message UpdateDocumentResponse {}
 
 message Template {
     uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
@@ -83,6 +101,31 @@ message GetTemplateResponse {
     Template template = 1;
 }
 
+message DocumentAccess {
+    uint64 documentID = 1;
+    repeated DocumentJobAccess jobAccess = 2;
+    repeated DocumentUserAccess userAccess = 3;
+}
+
+message DocumentJobAccess {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    gen.common.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+    gen.common.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+    uint64 documentID = 4; // @gotags: alias:"document_id"
+    string name = 5; // @gotags: alias:"job"
+    int32 minimumGrade = 6; // @gotags: alias:"minimum_grade"
+    string access = 7; // @gotags: alias:"access"
+}
+
+message DocumentUserAccess {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    gen.common.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+    gen.common.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+    uint64 documentID = 4; // @gotags: alias:"document_id"
+    int32 userID = 5; // @gotags: alias:"user_id"
+    string access = 6; // @gotags: alias:"access"
+}
+
 message GetDocumentAccessRequest {
     uint64 id = 1;
 }
@@ -101,7 +144,8 @@ service DocumentsService {
     rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
 
     rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
-    rpc CreateOrEditDocument(CreateOrEditDocumentRequest) returns (CreateOrEditDocumentResponse);
+    rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
+    rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
 
     rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
     rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);

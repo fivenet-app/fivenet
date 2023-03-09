@@ -11,9 +11,7 @@
   "dependencies": {
     "@arpanet/gen": "file:./gen",
     "@ckeditor/ckeditor5-alignment": "^36.0.1",
-    "@ckeditor/ckeditor5-build-classic": "^36.0.1",
     "@ckeditor/ckeditor5-mention": "^36.0.1",
-    "@ckeditor/ckeditor5-vue": "^4.0.1",
     "@fontsource/inter": "^4.5.15",
     "@headlessui/vue": "^1.7.11",
     "@heroicons/vue": "^2.0.16",
@@ -23,6 +21,7 @@
     "@types/leaflet": "^1.5.7",
     "@types/uuid": "^9.0.1",
     "@vue-leaflet/vue-leaflet": "^0.8.4",
+    "@vueup/vue-quill": "^1.1.1",
     "@vueuse/core": "^9.13.0",
     "google-protobuf": "^3.21.2",
     "grpc-web": "^1.4.2",

@@ -24,7 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type DocumentsServiceClient interface {
 	FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error)
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
-	CreateOrEditDocument(ctx context.Context, in *CreateOrEditDocumentRequest, opts ...grpc.CallOption) (*CreateOrEditDocumentResponse, error)
+	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
+	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
 	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
@@ -57,9 +58,18 @@ func (c *documentsServiceClient) GetDocument(ctx context.Context, in *GetDocumen
 	return out, nil
 }
 
-func (c *documentsServiceClient) CreateOrEditDocument(ctx context.Context, in *CreateOrEditDocumentRequest, opts ...grpc.CallOption) (*CreateOrEditDocumentResponse, error) {
-	out := new(CreateOrEditDocumentResponse)
-	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/CreateOrEditDocument", in, out, opts...)
+func (c *documentsServiceClient) CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error) {
+	out := new(CreateDocumentResponse)
+	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/CreateDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *documentsServiceClient) UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error) {
+	out := new(UpdateDocumentResponse)
+	err := c.cc.Invoke(ctx, "/gen.documents.DocumentsService/UpdateDocument", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +118,8 @@ func (c *documentsServiceClient) SetDocumentAccess(ctx context.Context, in *SetD
 type DocumentsServiceServer interface {
 	FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error)
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
-	CreateOrEditDocument(context.Context, *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error)
+	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
+	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
 	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
@@ -126,8 +137,11 @@ func (UnimplementedDocumentsServiceServer) FindDocuments(context.Context, *FindD
 func (UnimplementedDocumentsServiceServer) GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocument not implemented")
 }
-func (UnimplementedDocumentsServiceServer) CreateOrEditDocument(context.Context, *CreateOrEditDocumentRequest) (*CreateOrEditDocumentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrEditDocument not implemented")
+func (UnimplementedDocumentsServiceServer) CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDocument not implemented")
+}
+func (UnimplementedDocumentsServiceServer) UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDocument not implemented")
 }
 func (UnimplementedDocumentsServiceServer) ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTemplates not implemented")
@@ -190,20 +204,38 @@ func _DocumentsService_GetDocument_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocumentsService_CreateOrEditDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrEditDocumentRequest)
+func _DocumentsService_CreateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDocumentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocumentsServiceServer).CreateOrEditDocument(ctx, in)
+		return srv.(DocumentsServiceServer).CreateDocument(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gen.documents.DocumentsService/CreateOrEditDocument",
+		FullMethod: "/gen.documents.DocumentsService/CreateDocument",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).CreateOrEditDocument(ctx, req.(*CreateOrEditDocumentRequest))
+		return srv.(DocumentsServiceServer).CreateDocument(ctx, req.(*CreateDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocumentsService_UpdateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentsServiceServer).UpdateDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gen.documents.DocumentsService/UpdateDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentsServiceServer).UpdateDocument(ctx, req.(*UpdateDocumentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -296,8 +328,12 @@ var DocumentsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocumentsService_GetDocument_Handler,
 		},
 		{
-			MethodName: "CreateOrEditDocument",
-			Handler:    _DocumentsService_CreateOrEditDocument_Handler,
+			MethodName: "CreateDocument",
+			Handler:    _DocumentsService_CreateDocument_Handler,
+		},
+		{
+			MethodName: "UpdateDocument",
+			Handler:    _DocumentsService_UpdateDocument_Handler,
 		},
 		{
 			MethodName: "ListTemplates",

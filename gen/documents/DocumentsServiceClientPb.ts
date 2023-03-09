@@ -125,47 +125,90 @@ export class DocumentsServiceClient {
     this.methodDescriptorGetDocument);
   }
 
-  methodDescriptorCreateOrEditDocument = new grpcWeb.MethodDescriptor(
-    '/gen.documents.DocumentsService/CreateOrEditDocument',
+  methodDescriptorCreateDocument = new grpcWeb.MethodDescriptor(
+    '/gen.documents.DocumentsService/CreateDocument',
     grpcWeb.MethodType.UNARY,
-    documents_documents_pb.CreateOrEditDocumentRequest,
-    documents_documents_pb.CreateOrEditDocumentResponse,
-    (request: documents_documents_pb.CreateOrEditDocumentRequest) => {
+    documents_documents_pb.CreateDocumentRequest,
+    documents_documents_pb.CreateDocumentResponse,
+    (request: documents_documents_pb.CreateDocumentRequest) => {
       return request.serializeBinary();
     },
-    documents_documents_pb.CreateOrEditDocumentResponse.deserializeBinary
+    documents_documents_pb.CreateDocumentResponse.deserializeBinary
   );
 
-  createOrEditDocument(
-    request: documents_documents_pb.CreateOrEditDocumentRequest,
-    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.CreateOrEditDocumentResponse>;
+  createDocument(
+    request: documents_documents_pb.CreateDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.CreateDocumentResponse>;
 
-  createOrEditDocument(
-    request: documents_documents_pb.CreateOrEditDocumentRequest,
+  createDocument(
+    request: documents_documents_pb.CreateDocumentRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: documents_documents_pb.CreateOrEditDocumentResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.CreateOrEditDocumentResponse>;
+               response: documents_documents_pb.CreateDocumentResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.CreateDocumentResponse>;
 
-  createOrEditDocument(
-    request: documents_documents_pb.CreateOrEditDocumentRequest,
+  createDocument(
+    request: documents_documents_pb.CreateDocumentRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: documents_documents_pb.CreateOrEditDocumentResponse) => void) {
+               response: documents_documents_pb.CreateDocumentResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/gen.documents.DocumentsService/CreateOrEditDocument',
+          '/gen.documents.DocumentsService/CreateDocument',
         request,
         metadata || {},
-        this.methodDescriptorCreateOrEditDocument,
+        this.methodDescriptorCreateDocument,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/gen.documents.DocumentsService/CreateOrEditDocument',
+      '/gen.documents.DocumentsService/CreateDocument',
     request,
     metadata || {},
-    this.methodDescriptorCreateOrEditDocument);
+    this.methodDescriptorCreateDocument);
+  }
+
+  methodDescriptorUpdateDocument = new grpcWeb.MethodDescriptor(
+    '/gen.documents.DocumentsService/UpdateDocument',
+    grpcWeb.MethodType.UNARY,
+    documents_documents_pb.UpdateDocumentRequest,
+    documents_documents_pb.UpdateDocumentResponse,
+    (request: documents_documents_pb.UpdateDocumentRequest) => {
+      return request.serializeBinary();
+    },
+    documents_documents_pb.UpdateDocumentResponse.deserializeBinary
+  );
+
+  updateDocument(
+    request: documents_documents_pb.UpdateDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<documents_documents_pb.UpdateDocumentResponse>;
+
+  updateDocument(
+    request: documents_documents_pb.UpdateDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.UpdateDocumentResponse) => void): grpcWeb.ClientReadableStream<documents_documents_pb.UpdateDocumentResponse>;
+
+  updateDocument(
+    request: documents_documents_pb.UpdateDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: documents_documents_pb.UpdateDocumentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/gen.documents.DocumentsService/UpdateDocument',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateDocument,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/gen.documents.DocumentsService/UpdateDocument',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateDocument);
   }
 
   methodDescriptorListTemplates = new grpcWeb.MethodDescriptor(

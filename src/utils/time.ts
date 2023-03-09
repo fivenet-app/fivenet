@@ -15,10 +15,16 @@ export function getSecondsFormattedAsDuration(seconds: number): string {
     return dWeeks + dDisplay + hDisplay + mDisplay + sDisplay;
 }
 
-export function getDate(ts: common_timestamp_timestamp_pb.Timestamp): undefined | Date {
-    return ts.getTimestamp()?.toDate();
+export function getDate(ts: common_timestamp_timestamp_pb.Timestamp | undefined): undefined | Date {
+    if (typeof ts === undefined) {
+        return new Date();
+    }
+    return ts?.getTimestamp()?.toDate();
 }
 
-export function getDateLocaleString(ts: common_timestamp_timestamp_pb.Timestamp): undefined | string {
-    return ts.getTimestamp()?.toDate().toLocaleString();
+export function getDateLocaleString(ts: common_timestamp_timestamp_pb.Timestamp | undefined): undefined | string {
+    if (typeof ts === undefined) {
+        return "-";
+    }
+    return ts?.getTimestamp()?.toDate().toLocaleString();
 }

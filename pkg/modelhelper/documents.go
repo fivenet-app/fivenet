@@ -3,6 +3,6 @@ package modelhelper
 type DocumentType string
 
 const (
-	PlainDocument DocumentType = "plain"
-	FormDocument  DocumentType = "form"
+	HTMLDocumentType  DocumentType = "html"
+	PlainDocumentType DocumentType = "plain"
 )

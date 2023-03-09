@@ -8,12 +8,13 @@
 - [ ] User Database - 1. Prio
     - [x] Search by name (`firstname`, `lastname`)
     - [x] Display a single user's info
-        - [ ] Show a feed of activity of the user (e.g., documents created, documents mentioned in)
+        - [x] Show a feed of activity of the user (e.g., documents created, documents mentioned in)
     - [x] Wanted aka "additional UserProps"
         - [x] Allow certain jobs to set a person as wanted
         - [x] Add toggle to display only wanted people
 - [ ] Documents
     - [ ] Templates (e.g., Haftbefehl)
+        - [ ] Editable templates by the leader of the jobs
     - [ ] Sharing
         - [ ] Sharing with the same job automatically
         - [ ] Sharing with the citizen affected (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ)

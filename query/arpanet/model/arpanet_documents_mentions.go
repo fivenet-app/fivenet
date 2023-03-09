@@ -15,7 +15,6 @@ type ArpanetDocumentsMentions struct {
 	ID         uint64     `sql:"primary_key" json:"id"`
 	CreatedAt  *time.Time `json:"created_at"`
 	UpdatedAt  *time.Time `json:"updated_at"`
-	DocumentID *uint64    `json:"document_id"`
-	Identifier *string    `json:"identifier"`
-	UserID     *int32     `json:"user_id"`
+	DocumentID uint64     `json:"document_id"`
+	UserID     int32      `json:"user_id"`
 }
