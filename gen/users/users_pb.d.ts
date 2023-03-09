@@ -1,18 +1,18 @@
 import * as jspb from 'google-protobuf'
 
-import * as common_database_pb from '../common/database_pb';
-import * as common_userinfo_pb from '../common/userinfo_pb';
-import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
+import * as common_database_database_pb from '../common/database/database_pb';
+import * as common_timestamp_timestamp_pb from '../common/timestamp/timestamp_pb';
+import * as common_userinfo_userinfo_pb from '../common/userinfo/userinfo_pb';
 
 
 export class FindUsersRequest extends jspb.Message {
   getOffset(): number;
   setOffset(value: number): FindUsersRequest;
 
-  getOrderbyList(): Array<common_database_pb.OrderBy>;
-  setOrderbyList(value: Array<common_database_pb.OrderBy>): FindUsersRequest;
+  getOrderbyList(): Array<common_database_database_pb.OrderBy>;
+  setOrderbyList(value: Array<common_database_database_pb.OrderBy>): FindUsersRequest;
   clearOrderbyList(): FindUsersRequest;
-  addOrderby(value?: common_database_pb.OrderBy, index?: number): common_database_pb.OrderBy;
+  addOrderby(value?: common_database_database_pb.OrderBy, index?: number): common_database_database_pb.OrderBy;
 
   getFirstname(): string;
   setFirstname(value: string): FindUsersRequest;
@@ -34,7 +34,7 @@ export class FindUsersRequest extends jspb.Message {
 export namespace FindUsersRequest {
   export type AsObject = {
     offset: number,
-    orderbyList: Array<common_database_pb.OrderBy.AsObject>,
+    orderbyList: Array<common_database_database_pb.OrderBy.AsObject>,
     firstname: string,
     lastname: string,
     wanted: boolean,
@@ -51,10 +51,10 @@ export class FindUsersResponse extends jspb.Message {
   getEnd(): number;
   setEnd(value: number): FindUsersResponse;
 
-  getUsersList(): Array<common_userinfo_pb.User>;
-  setUsersList(value: Array<common_userinfo_pb.User>): FindUsersResponse;
+  getUsersList(): Array<common_userinfo_userinfo_pb.User>;
+  setUsersList(value: Array<common_userinfo_userinfo_pb.User>): FindUsersResponse;
   clearUsersList(): FindUsersResponse;
-  addUsers(value?: common_userinfo_pb.User, index?: number): common_userinfo_pb.User;
+  addUsers(value?: common_userinfo_userinfo_pb.User, index?: number): common_userinfo_userinfo_pb.User;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindUsersResponse.AsObject;
@@ -69,7 +69,7 @@ export namespace FindUsersResponse {
     totalcount: number,
     offset: number,
     end: number,
-    usersList: Array<common_userinfo_pb.User.AsObject>,
+    usersList: Array<common_userinfo_userinfo_pb.User.AsObject>,
   }
 }
 
@@ -92,8 +92,8 @@ export namespace GetUserRequest {
 }
 
 export class GetUserResponse extends jspb.Message {
-  getUser(): common_userinfo_pb.User | undefined;
-  setUser(value?: common_userinfo_pb.User): GetUserResponse;
+  getUser(): common_userinfo_userinfo_pb.User | undefined;
+  setUser(value?: common_userinfo_userinfo_pb.User): GetUserResponse;
   hasUser(): boolean;
   clearUser(): GetUserResponse;
 
@@ -107,7 +107,7 @@ export class GetUserResponse extends jspb.Message {
 
 export namespace GetUserResponse {
   export type AsObject = {
-    user?: common_userinfo_pb.User.AsObject,
+    user?: common_userinfo_userinfo_pb.User.AsObject,
   }
 }
 
@@ -199,18 +199,18 @@ export class UserActivity extends jspb.Message {
   getType(): string;
   setType(value: string): UserActivity;
 
-  getCreatedat(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setCreatedat(value?: google_protobuf_timestamp_pb.Timestamp): UserActivity;
+  getCreatedat(): common_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedat(value?: common_timestamp_timestamp_pb.Timestamp): UserActivity;
   hasCreatedat(): boolean;
   clearCreatedat(): UserActivity;
 
-  getTargetuser(): common_userinfo_pb.ShortUser | undefined;
-  setTargetuser(value?: common_userinfo_pb.ShortUser): UserActivity;
+  getTargetuser(): common_userinfo_userinfo_pb.ShortUser | undefined;
+  setTargetuser(value?: common_userinfo_userinfo_pb.ShortUser): UserActivity;
   hasTargetuser(): boolean;
   clearTargetuser(): UserActivity;
 
-  getCauseuser(): common_userinfo_pb.ShortUser | undefined;
-  setCauseuser(value?: common_userinfo_pb.ShortUser): UserActivity;
+  getCauseuser(): common_userinfo_userinfo_pb.ShortUser | undefined;
+  setCauseuser(value?: common_userinfo_userinfo_pb.ShortUser): UserActivity;
   hasCauseuser(): boolean;
   clearCauseuser(): UserActivity;
 
@@ -238,9 +238,9 @@ export namespace UserActivity {
   export type AsObject = {
     id: number,
     type: string,
-    createdat?: google_protobuf_timestamp_pb.Timestamp.AsObject,
-    targetuser?: common_userinfo_pb.ShortUser.AsObject,
-    causeuser?: common_userinfo_pb.ShortUser.AsObject,
+    createdat?: common_timestamp_timestamp_pb.Timestamp.AsObject,
+    targetuser?: common_userinfo_userinfo_pb.ShortUser.AsObject,
+    causeuser?: common_userinfo_userinfo_pb.ShortUser.AsObject,
     key: string,
     oldvalue: string,
     newvalue: string,

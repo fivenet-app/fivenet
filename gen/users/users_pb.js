@@ -21,12 +21,12 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
-var common_database_pb = require('../common/database_pb.js');
-goog.object.extend(proto, common_database_pb);
-var common_userinfo_pb = require('../common/userinfo_pb.js');
-goog.object.extend(proto, common_userinfo_pb);
-var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
-goog.object.extend(proto, google_protobuf_timestamp_pb);
+var common_database_database_pb = require('../common/database/database_pb.js');
+goog.object.extend(proto, common_database_database_pb);
+var common_timestamp_timestamp_pb = require('../common/timestamp/timestamp_pb.js');
+goog.object.extend(proto, common_timestamp_timestamp_pb);
+var common_userinfo_userinfo_pb = require('../common/userinfo/userinfo_pb.js');
+goog.object.extend(proto, common_userinfo_userinfo_pb);
 goog.exportSymbol('proto.gen.users.FindUsersRequest', null, global);
 goog.exportSymbol('proto.gen.users.FindUsersResponse', null, global);
 goog.exportSymbol('proto.gen.users.GetUserActivityRequest', null, global);
@@ -266,7 +266,7 @@ proto.gen.users.FindUsersRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     offset: jspb.Message.getFieldWithDefault(msg, 1, 0),
     orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
-    common_database_pb.OrderBy.toObject, includeInstance),
+    common_database_database_pb.OrderBy.toObject, includeInstance),
     firstname: jspb.Message.getFieldWithDefault(msg, 3, ""),
     lastname: jspb.Message.getFieldWithDefault(msg, 4, ""),
     wanted: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
@@ -311,8 +311,8 @@ proto.gen.users.FindUsersRequest.deserializeBinaryFromReader = function(msg, rea
       msg.setOffset(value);
       break;
     case 2:
-      var value = new common_database_pb.OrderBy;
-      reader.readMessage(value,common_database_pb.OrderBy.deserializeBinaryFromReader);
+      var value = new common_database_database_pb.OrderBy;
+      reader.readMessage(value,common_database_database_pb.OrderBy.deserializeBinaryFromReader);
       msg.addOrderby(value);
       break;
     case 3:
@@ -368,7 +368,7 @@ proto.gen.users.FindUsersRequest.serializeBinaryToWriter = function(message, wri
     writer.writeRepeatedMessage(
       2,
       f,
-      common_database_pb.OrderBy.serializeBinaryToWriter
+      common_database_database_pb.OrderBy.serializeBinaryToWriter
     );
   }
   f = message.getFirstname();
@@ -414,17 +414,17 @@ proto.gen.users.FindUsersRequest.prototype.setOffset = function(value) {
 
 
 /**
- * repeated gen.common.OrderBy orderBy = 2;
- * @return {!Array<!proto.gen.common.OrderBy>}
+ * repeated gen.common.database.OrderBy orderBy = 2;
+ * @return {!Array<!proto.gen.common.database.OrderBy>}
  */
 proto.gen.users.FindUsersRequest.prototype.getOrderbyList = function() {
-  return /** @type{!Array<!proto.gen.common.OrderBy>} */ (
-    jspb.Message.getRepeatedWrapperField(this, common_database_pb.OrderBy, 2));
+  return /** @type{!Array<!proto.gen.common.database.OrderBy>} */ (
+    jspb.Message.getRepeatedWrapperField(this, common_database_database_pb.OrderBy, 2));
 };
 
 
 /**
- * @param {!Array<!proto.gen.common.OrderBy>} value
+ * @param {!Array<!proto.gen.common.database.OrderBy>} value
  * @return {!proto.gen.users.FindUsersRequest} returns this
 */
 proto.gen.users.FindUsersRequest.prototype.setOrderbyList = function(value) {
@@ -433,12 +433,12 @@ proto.gen.users.FindUsersRequest.prototype.setOrderbyList = function(value) {
 
 
 /**
- * @param {!proto.gen.common.OrderBy=} opt_value
+ * @param {!proto.gen.common.database.OrderBy=} opt_value
  * @param {number=} opt_index
- * @return {!proto.gen.common.OrderBy}
+ * @return {!proto.gen.common.database.OrderBy}
  */
 proto.gen.users.FindUsersRequest.prototype.addOrderby = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.gen.common.OrderBy, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.gen.common.database.OrderBy, opt_index);
 };
 
 
@@ -548,7 +548,7 @@ proto.gen.users.FindUsersResponse.toObject = function(includeInstance, msg) {
     offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
     end: jspb.Message.getFieldWithDefault(msg, 3, 0),
     usersList: jspb.Message.toObjectList(msg.getUsersList(),
-    common_userinfo_pb.User.toObject, includeInstance)
+    common_userinfo_userinfo_pb.User.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -598,8 +598,8 @@ proto.gen.users.FindUsersResponse.deserializeBinaryFromReader = function(msg, re
       msg.setEnd(value);
       break;
     case 4:
-      var value = new common_userinfo_pb.User;
-      reader.readMessage(value,common_userinfo_pb.User.deserializeBinaryFromReader);
+      var value = new common_userinfo_userinfo_pb.User;
+      reader.readMessage(value,common_userinfo_userinfo_pb.User.deserializeBinaryFromReader);
       msg.addUsers(value);
       break;
     default:
@@ -657,7 +657,7 @@ proto.gen.users.FindUsersResponse.serializeBinaryToWriter = function(message, wr
     writer.writeRepeatedMessage(
       4,
       f,
-      common_userinfo_pb.User.serializeBinaryToWriter
+      common_userinfo_userinfo_pb.User.serializeBinaryToWriter
     );
   }
 };
@@ -718,17 +718,17 @@ proto.gen.users.FindUsersResponse.prototype.setEnd = function(value) {
 
 
 /**
- * repeated gen.common.User users = 4;
- * @return {!Array<!proto.gen.common.User>}
+ * repeated gen.common.userinfo.User users = 4;
+ * @return {!Array<!proto.gen.common.userinfo.User>}
  */
 proto.gen.users.FindUsersResponse.prototype.getUsersList = function() {
-  return /** @type{!Array<!proto.gen.common.User>} */ (
-    jspb.Message.getRepeatedWrapperField(this, common_userinfo_pb.User, 4));
+  return /** @type{!Array<!proto.gen.common.userinfo.User>} */ (
+    jspb.Message.getRepeatedWrapperField(this, common_userinfo_userinfo_pb.User, 4));
 };
 
 
 /**
- * @param {!Array<!proto.gen.common.User>} value
+ * @param {!Array<!proto.gen.common.userinfo.User>} value
  * @return {!proto.gen.users.FindUsersResponse} returns this
 */
 proto.gen.users.FindUsersResponse.prototype.setUsersList = function(value) {
@@ -737,12 +737,12 @@ proto.gen.users.FindUsersResponse.prototype.setUsersList = function(value) {
 
 
 /**
- * @param {!proto.gen.common.User=} opt_value
+ * @param {!proto.gen.common.userinfo.User=} opt_value
  * @param {number=} opt_index
- * @return {!proto.gen.common.User}
+ * @return {!proto.gen.common.userinfo.User}
  */
 proto.gen.users.FindUsersResponse.prototype.addUsers = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.gen.common.User, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.gen.common.userinfo.User, opt_index);
 };
 
 
@@ -917,7 +917,7 @@ proto.gen.users.GetUserResponse.prototype.toObject = function(opt_includeInstanc
  */
 proto.gen.users.GetUserResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    user: (f = msg.getUser()) && common_userinfo_pb.User.toObject(includeInstance, f)
+    user: (f = msg.getUser()) && common_userinfo_userinfo_pb.User.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -955,8 +955,8 @@ proto.gen.users.GetUserResponse.deserializeBinaryFromReader = function(msg, read
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new common_userinfo_pb.User;
-      reader.readMessage(value,common_userinfo_pb.User.deserializeBinaryFromReader);
+      var value = new common_userinfo_userinfo_pb.User;
+      reader.readMessage(value,common_userinfo_userinfo_pb.User.deserializeBinaryFromReader);
       msg.setUser(value);
       break;
     default:
@@ -993,24 +993,24 @@ proto.gen.users.GetUserResponse.serializeBinaryToWriter = function(message, writ
     writer.writeMessage(
       1,
       f,
-      common_userinfo_pb.User.serializeBinaryToWriter
+      common_userinfo_userinfo_pb.User.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * optional gen.common.User user = 1;
- * @return {?proto.gen.common.User}
+ * optional gen.common.userinfo.User user = 1;
+ * @return {?proto.gen.common.userinfo.User}
  */
 proto.gen.users.GetUserResponse.prototype.getUser = function() {
-  return /** @type{?proto.gen.common.User} */ (
-    jspb.Message.getWrapperField(this, common_userinfo_pb.User, 1));
+  return /** @type{?proto.gen.common.userinfo.User} */ (
+    jspb.Message.getWrapperField(this, common_userinfo_userinfo_pb.User, 1));
 };
 
 
 /**
- * @param {?proto.gen.common.User|undefined} value
+ * @param {?proto.gen.common.userinfo.User|undefined} value
  * @return {!proto.gen.users.GetUserResponse} returns this
 */
 proto.gen.users.GetUserResponse.prototype.setUser = function(value) {
@@ -1639,9 +1639,9 @@ proto.gen.users.UserActivity.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     type: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    createdat: (f = msg.getCreatedat()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
-    targetuser: (f = msg.getTargetuser()) && common_userinfo_pb.ShortUser.toObject(includeInstance, f),
-    causeuser: (f = msg.getCauseuser()) && common_userinfo_pb.ShortUser.toObject(includeInstance, f),
+    createdat: (f = msg.getCreatedat()) && common_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    targetuser: (f = msg.getTargetuser()) && common_userinfo_userinfo_pb.ShortUser.toObject(includeInstance, f),
+    causeuser: (f = msg.getCauseuser()) && common_userinfo_userinfo_pb.ShortUser.toObject(includeInstance, f),
     key: jspb.Message.getFieldWithDefault(msg, 6, ""),
     oldvalue: jspb.Message.getFieldWithDefault(msg, 7, ""),
     newvalue: jspb.Message.getFieldWithDefault(msg, 8, ""),
@@ -1691,18 +1691,18 @@ proto.gen.users.UserActivity.deserializeBinaryFromReader = function(msg, reader)
       msg.setType(value);
       break;
     case 3:
-      var value = new google_protobuf_timestamp_pb.Timestamp;
-      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      var value = new common_timestamp_timestamp_pb.Timestamp;
+      reader.readMessage(value,common_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setCreatedat(value);
       break;
     case 4:
-      var value = new common_userinfo_pb.ShortUser;
-      reader.readMessage(value,common_userinfo_pb.ShortUser.deserializeBinaryFromReader);
+      var value = new common_userinfo_userinfo_pb.ShortUser;
+      reader.readMessage(value,common_userinfo_userinfo_pb.ShortUser.deserializeBinaryFromReader);
       msg.setTargetuser(value);
       break;
     case 5:
-      var value = new common_userinfo_pb.ShortUser;
-      reader.readMessage(value,common_userinfo_pb.ShortUser.deserializeBinaryFromReader);
+      var value = new common_userinfo_userinfo_pb.ShortUser;
+      reader.readMessage(value,common_userinfo_userinfo_pb.ShortUser.deserializeBinaryFromReader);
       msg.setCauseuser(value);
       break;
     case 6:
@@ -1769,7 +1769,7 @@ proto.gen.users.UserActivity.serializeBinaryToWriter = function(message, writer)
     writer.writeMessage(
       3,
       f,
-      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+      common_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
   }
   f = message.getTargetuser();
@@ -1777,7 +1777,7 @@ proto.gen.users.UserActivity.serializeBinaryToWriter = function(message, writer)
     writer.writeMessage(
       4,
       f,
-      common_userinfo_pb.ShortUser.serializeBinaryToWriter
+      common_userinfo_userinfo_pb.ShortUser.serializeBinaryToWriter
     );
   }
   f = message.getCauseuser();
@@ -1785,7 +1785,7 @@ proto.gen.users.UserActivity.serializeBinaryToWriter = function(message, writer)
     writer.writeMessage(
       5,
       f,
-      common_userinfo_pb.ShortUser.serializeBinaryToWriter
+      common_userinfo_userinfo_pb.ShortUser.serializeBinaryToWriter
     );
   }
   f = message.getKey();
@@ -1856,17 +1856,17 @@ proto.gen.users.UserActivity.prototype.setType = function(value) {
 
 
 /**
- * optional google.protobuf.Timestamp createdAt = 3;
- * @return {?proto.google.protobuf.Timestamp}
+ * optional gen.common.timestamp.Timestamp createdAt = 3;
+ * @return {?proto.gen.common.timestamp.Timestamp}
  */
 proto.gen.users.UserActivity.prototype.getCreatedat = function() {
-  return /** @type{?proto.google.protobuf.Timestamp} */ (
-    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 3));
+  return /** @type{?proto.gen.common.timestamp.Timestamp} */ (
+    jspb.Message.getWrapperField(this, common_timestamp_timestamp_pb.Timestamp, 3));
 };
 
 
 /**
- * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @param {?proto.gen.common.timestamp.Timestamp|undefined} value
  * @return {!proto.gen.users.UserActivity} returns this
 */
 proto.gen.users.UserActivity.prototype.setCreatedat = function(value) {
@@ -1893,17 +1893,17 @@ proto.gen.users.UserActivity.prototype.hasCreatedat = function() {
 
 
 /**
- * optional gen.common.ShortUser targetUser = 4;
- * @return {?proto.gen.common.ShortUser}
+ * optional gen.common.userinfo.ShortUser targetUser = 4;
+ * @return {?proto.gen.common.userinfo.ShortUser}
  */
 proto.gen.users.UserActivity.prototype.getTargetuser = function() {
-  return /** @type{?proto.gen.common.ShortUser} */ (
-    jspb.Message.getWrapperField(this, common_userinfo_pb.ShortUser, 4));
+  return /** @type{?proto.gen.common.userinfo.ShortUser} */ (
+    jspb.Message.getWrapperField(this, common_userinfo_userinfo_pb.ShortUser, 4));
 };
 
 
 /**
- * @param {?proto.gen.common.ShortUser|undefined} value
+ * @param {?proto.gen.common.userinfo.ShortUser|undefined} value
  * @return {!proto.gen.users.UserActivity} returns this
 */
 proto.gen.users.UserActivity.prototype.setTargetuser = function(value) {
@@ -1930,17 +1930,17 @@ proto.gen.users.UserActivity.prototype.hasTargetuser = function() {
 
 
 /**
- * optional gen.common.ShortUser causeUser = 5;
- * @return {?proto.gen.common.ShortUser}
+ * optional gen.common.userinfo.ShortUser causeUser = 5;
+ * @return {?proto.gen.common.userinfo.ShortUser}
  */
 proto.gen.users.UserActivity.prototype.getCauseuser = function() {
-  return /** @type{?proto.gen.common.ShortUser} */ (
-    jspb.Message.getWrapperField(this, common_userinfo_pb.ShortUser, 5));
+  return /** @type{?proto.gen.common.userinfo.ShortUser} */ (
+    jspb.Message.getWrapperField(this, common_userinfo_userinfo_pb.ShortUser, 5));
 };
 
 
 /**
- * @param {?proto.gen.common.ShortUser|undefined} value
+ * @param {?proto.gen.common.userinfo.ShortUser|undefined} value
  * @return {!proto.gen.users.UserActivity} returns this
 */
 proto.gen.users.UserActivity.prototype.setCauseuser = function(value) {

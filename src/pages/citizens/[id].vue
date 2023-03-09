@@ -7,7 +7,7 @@ import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import { GetUserRequest } from '@arpanet/gen/users/users_pb';
-import { User } from '@arpanet/gen/common/userinfo_pb';
+import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
 import { RpcError } from 'grpc-web';
 import { getUsersClient, handleGRPCError } from '../../grpc';
 

@@ -4,13 +4,13 @@ package gen.users;
 option go_package = "github.com/galexrt/arpanet/proto/users";
 
 import "validate/validate.proto";
-import "common/database.proto";
-import "common/userinfo.proto";
-import "google/protobuf/timestamp.proto";
+import "common/database/database.proto";
+import "common/timestamp/timestamp.proto";
+import "common/userinfo/userinfo.proto";
 
 message FindUsersRequest {
     int64 offset = 1;
-    repeated gen.common.OrderBy orderBy = 2;
+    repeated gen.common.database.OrderBy orderBy = 2;
     string firstname = 3;
     string lastname = 4;
     bool wanted = 5;
@@ -20,7 +20,7 @@ message FindUsersResponse {
     int64 totalCount = 1;
     int64 offset = 2;
     int64 end = 3;
-    repeated gen.common.User users = 4;
+    repeated gen.common.userinfo.User users = 4;
 }
 
 message GetUserRequest {
@@ -28,7 +28,7 @@ message GetUserRequest {
 }
 
 message GetUserResponse {
-    gen.common.User user = 1;
+    gen.common.userinfo.User user = 1;
 }
 
 message GetUserActivityRequest {
@@ -50,9 +50,9 @@ message SetUserPropsResponse {
 message UserActivity {
     uint64 id = 1 [(validate.rules).uint64.gt = 0]; // @gotags: sql:"primary_key" alias:"arpanet_user_activity.id"
     string type = 2; // @gotags: alias:"arpanet_user_activity.type"
-    google.protobuf.Timestamp createdAt = 3; // @gotags: alias:"arpanet_user_activity.created_at"
-    gen.common.ShortUser targetUser = 4; // @gotags: alias:"target_user"
-    gen.common.ShortUser causeUser = 5; // @gotags: alias:"cause_user"
+    gen.common.timestamp.Timestamp createdAt = 3; // @gotags: alias:"arpanet_user_activity.created_at"
+    gen.common.userinfo.ShortUser targetUser = 4; // @gotags: alias:"target_user"
+    gen.common.userinfo.ShortUser causeUser = 5; // @gotags: alias:"cause_user"
     string key = 6; // @gotags: alias:"arpanet_user_activity.key"
     string oldValue = 7; // @gotags: alias:"arpanet_user_activity.old_value"
     string newValue = 8; // @gotags: alias:"arpanet_user_activity.new_value"

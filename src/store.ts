@@ -3,7 +3,7 @@ import { RpcError } from 'grpc-web';
 import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
 import { LoginRequest, LogoutRequest } from '@arpanet/gen/auth/auth_pb';
 import { version } from '../package.json';
-import { User } from '@arpanet/gen/common/userinfo_pb';
+import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
 import { getAccountClient } from './grpc';
 import config from './config';
 import { dispatchNotification } from './components/notification';

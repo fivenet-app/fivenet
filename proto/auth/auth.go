@@ -10,7 +10,7 @@ import (
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/pkg/session"
-	"github.com/galexrt/arpanet/proto/common"
+	"github.com/galexrt/arpanet/proto/common/userinfo"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -45,7 +45,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (c
 	return auth.GRPCAuthFunc(ctx)
 }
 
-func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, activeChar *common.User) (string, error) {
+func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, activeChar *userinfo.User) (string, error) {
 	claims := &session.CitizenInfoClaims{
 		AccountID: account.ID,
 		Username:  account.Username,
@@ -144,7 +144,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	var char common.User
+	var char userinfo.User
 	stmt := u.SELECT(
 		u.ID,
 		u.Identifier,

@@ -3,7 +3,7 @@ syntax = "proto3";
 package gen.livemap;
 option go_package = "github.com/galexrt/arpanet/proto/livemap";
 
-import "google/protobuf/timestamp.proto";
+import "common/timestamp/timestamp.proto";
 
 message StreamRequest {
 }
@@ -20,7 +20,7 @@ message Marker {
     float x = 3; // @gotags: alias:"arpanet_user_locations.x"
     float y = 4; // @gotags: alias:"arpanet_user_locations.y"
 
-    google.protobuf.Timestamp createdAt = 5; // @gotags: alias:"arpanet_user_locations.updated_at"
+    gen.common.timestamp.Timestamp createdAt = 5; // @gotags: alias:"arpanet_user_locations.updated_at"
 
     string name = 6;
     string icon = 7;

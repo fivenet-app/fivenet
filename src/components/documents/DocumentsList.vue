@@ -4,7 +4,7 @@ import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
 import {  getDocumentsClient, handleGRPCError } from '../../grpc';
 import { Document, FindDocumentsRequest } from '@arpanet/gen/documents/documents_pb';
 import { RpcError } from 'grpc-web';
-import { OrderBy } from '@arpanet/gen/common/database_pb';
+import { OrderBy } from '@arpanet/gen/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
 
 export default defineComponent({
@@ -104,9 +104,9 @@ export default defineComponent({
                                         <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                                             aria-hidden="true" />
                                         <p>
-                                            Closing on
+                                            Created at
                                             {{ ' ' }}
-                                            <time :datetime="doc.getCreatedAt()">{{ doc.getCreatedAt() }}</time>
+                                            <time :datetime="doc.getCreatedAt()?.getTimestamp()?.toDate().toDateString()">{{ doc.getCreatedAt()?.getTimestamp()?.toDate() }}</time>
                                         </p>
                                     </div>
                                 </div>

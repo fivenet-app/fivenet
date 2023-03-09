@@ -35,7 +35,7 @@ export function handleGRPCError(err: RpcError, route: _RouteLocationBase): boole
 
         dispatchNotification({ title: 'Please login again!', content: 'You are not signed in anymore', type: 'warning' });
 
-        router.push({ name: 'login', query: { redirect: route.fullPath } });
+        router.push({ path: '/login', query: { redirect: route.fullPath } });
         return true;
     } else if (err.code == StatusCode.PERMISSION_DENIED) {
         dispatchNotification({ title: 'Error!', content: err.message, type: 'error' });

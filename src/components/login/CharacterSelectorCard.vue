@@ -4,7 +4,7 @@ import { ChooseCharacterRequest } from '@arpanet/gen/auth/auth_pb';
 import { defineComponent } from 'vue';
 import { mapActions, mapState } from 'vuex';
 import { RpcError } from 'grpc-web';
-import { User } from '@arpanet/gen/common/userinfo_pb';
+import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
 import { parseQuery } from 'vue-router/auto';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { getSecondsFormattedAsDuration } from '../../utils/time';

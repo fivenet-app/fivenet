@@ -21,8 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
-var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
-goog.object.extend(proto, google_protobuf_timestamp_pb);
+var common_timestamp_timestamp_pb = require('../common/timestamp/timestamp_pb.js');
+goog.object.extend(proto, common_timestamp_timestamp_pb);
 goog.exportSymbol('proto.gen.livemap.Marker', null, global);
 goog.exportSymbol('proto.gen.livemap.ServerStreamResponse', null, global);
 goog.exportSymbol('proto.gen.livemap.StreamRequest', null, global);
@@ -439,7 +439,7 @@ proto.gen.livemap.Marker.toObject = function(includeInstance, msg) {
     job: jspb.Message.getFieldWithDefault(msg, 2, ""),
     x: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0),
     y: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0),
-    createdat: (f = msg.getCreatedat()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    createdat: (f = msg.getCreatedat()) && common_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     name: jspb.Message.getFieldWithDefault(msg, 6, ""),
     icon: jspb.Message.getFieldWithDefault(msg, 7, ""),
     popup: jspb.Message.getFieldWithDefault(msg, 8, ""),
@@ -497,8 +497,8 @@ proto.gen.livemap.Marker.deserializeBinaryFromReader = function(msg, reader) {
       msg.setY(value);
       break;
     case 5:
-      var value = new google_protobuf_timestamp_pb.Timestamp;
-      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      var value = new common_timestamp_timestamp_pb.Timestamp;
+      reader.readMessage(value,common_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setCreatedat(value);
       break;
     case 6:
@@ -579,7 +579,7 @@ proto.gen.livemap.Marker.serializeBinaryToWriter = function(message, writer) {
     writer.writeMessage(
       5,
       f,
-      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+      common_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
   }
   f = message.getName();
@@ -686,17 +686,17 @@ proto.gen.livemap.Marker.prototype.setY = function(value) {
 
 
 /**
- * optional google.protobuf.Timestamp createdAt = 5;
- * @return {?proto.google.protobuf.Timestamp}
+ * optional gen.common.timestamp.Timestamp createdAt = 5;
+ * @return {?proto.gen.common.timestamp.Timestamp}
  */
 proto.gen.livemap.Marker.prototype.getCreatedat = function() {
-  return /** @type{?proto.google.protobuf.Timestamp} */ (
-    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 5));
+  return /** @type{?proto.gen.common.timestamp.Timestamp} */ (
+    jspb.Message.getWrapperField(this, common_timestamp_timestamp_pb.Timestamp, 5));
 };
 
 
 /**
- * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @param {?proto.gen.common.timestamp.Timestamp|undefined} value
  * @return {!proto.gen.livemap.Marker} returns this
 */
 proto.gen.livemap.Marker.prototype.setCreatedat = function(value) {

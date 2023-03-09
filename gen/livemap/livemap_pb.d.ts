@@ -1,6 +1,6 @@
 import * as jspb from 'google-protobuf'
 
-import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
+import * as common_timestamp_timestamp_pb from '../common/timestamp/timestamp_pb';
 
 
 export class StreamRequest extends jspb.Message {
@@ -56,8 +56,8 @@ export class Marker extends jspb.Message {
   getY(): number;
   setY(value: number): Marker;
 
-  getCreatedat(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setCreatedat(value?: google_protobuf_timestamp_pb.Timestamp): Marker;
+  getCreatedat(): common_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedat(value?: common_timestamp_timestamp_pb.Timestamp): Marker;
   hasCreatedat(): boolean;
   clearCreatedat(): Marker;
 
@@ -87,7 +87,7 @@ export namespace Marker {
     job: string,
     x: number,
     y: number,
-    createdat?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    createdat?: common_timestamp_timestamp_pb.Timestamp.AsObject,
     name: string,
     icon: string,
     popup: string,

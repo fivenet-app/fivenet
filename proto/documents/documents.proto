@@ -3,13 +3,13 @@ syntax = "proto3";
 package gen.documents;
 option go_package = "github.com/galexrt/arpanet/proto/documents";
 
-import "common/database.proto";
-import "common/userinfo.proto";
-import "google/protobuf/timestamp.proto";
+import "common/database/database.proto";
+import "common/timestamp/timestamp.proto";
+import "common/userinfo/userinfo.proto";
 
 message FindDocumentsRequest {
     int64 offset = 1;
-    repeated gen.common.OrderBy orderBy = 2;
+    repeated gen.common.database.OrderBy orderBy = 2;
     string search = 3;
 }
 
@@ -19,14 +19,14 @@ message FindDocumentsResponse {
 
 message Document {
     uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-    google.protobuf.Timestamp created_at = 2; // @gotags: alias:"created_at"
-    google.protobuf.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+    gen.common.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+    gen.common.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
     string title = 5; // @gotags: alias:"title"
     string content = 6; // @gotags: alias:"content"
     string content_type = 7; // @gotags: alias:"content_type"
     bool closed = 8; // @gotags: alias:"closed"
     string state = 9; // @gotags: alias:"state"
-    gen.common.ShortUser creator = 10; // @gotags: alias:"creator"
+    gen.common.userinfo.ShortUser creator = 10; // @gotags: alias:"creator"
     string creator_job = 11; // @gotags: alias:"creator_job"
     bool public = 12; // @gotags: alias:"public"
 }

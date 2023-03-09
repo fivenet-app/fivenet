@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { DocumentIcon, RectangleGroupIcon, UserIcon, } from '@heroicons/vue/20/solid'
-import { User } from '@arpanet/gen/common/userinfo_pb';
+import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
 import CitizenInfoProfile from './CitizenInfoProfile.vue';
 import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
 import CitizenActivityFeed from './CitizenActivityFeed.vue';

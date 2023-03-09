@@ -1,6 +1,6 @@
 <script lang="ts">
-import { User } from '@arpanet/gen/common/userinfo_pb';
-import { OrderBy } from '@arpanet/gen/common/database_pb';
+import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
+import { OrderBy } from '@arpanet/gen/common/database/database_pb';
 import { defineComponent } from 'vue';
 import { watchDebounced } from '@vueuse/core'
 import { getUsersClient, handleGRPCError } from '../../grpc';

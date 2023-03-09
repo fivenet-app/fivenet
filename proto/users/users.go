@@ -7,6 +7,7 @@ import (
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/common"
+	"github.com/galexrt/arpanet/proto/common/userinfo"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -176,7 +177,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	resp := &GetUserResponse{
-		User: &common.User{},
+		User: &userinfo.User{},
 	}
 	stmt := u.SELECT(
 		selectors[0], selectors[1:]...,

@@ -7,7 +7,7 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/galexrt/arpanet/pkg/perms/collections"
 	"github.com/galexrt/arpanet/pkg/perms/helpers"
-	"github.com/galexrt/arpanet/proto/common"
+	"github.com/galexrt/arpanet/proto/common/userinfo"
 	"github.com/galexrt/arpanet/query"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -111,7 +111,7 @@ func (p *perms) GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string
 	return suffixes, nil
 }
 
-func (p *perms) Can(user common.IGetUserID, perm ...string) bool {
+func (p *perms) Can(user userinfo.IGetUserID, perm ...string) bool {
 	return p.CanID(user.GetUserID(), perm...)
 }
 

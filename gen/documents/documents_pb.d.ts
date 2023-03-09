@@ -1,18 +1,18 @@
 import * as jspb from 'google-protobuf'
 
-import * as common_database_pb from '../common/database_pb';
-import * as common_userinfo_pb from '../common/userinfo_pb';
-import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
+import * as common_database_database_pb from '../common/database/database_pb';
+import * as common_timestamp_timestamp_pb from '../common/timestamp/timestamp_pb';
+import * as common_userinfo_userinfo_pb from '../common/userinfo/userinfo_pb';
 
 
 export class FindDocumentsRequest extends jspb.Message {
   getOffset(): number;
   setOffset(value: number): FindDocumentsRequest;
 
-  getOrderbyList(): Array<common_database_pb.OrderBy>;
-  setOrderbyList(value: Array<common_database_pb.OrderBy>): FindDocumentsRequest;
+  getOrderbyList(): Array<common_database_database_pb.OrderBy>;
+  setOrderbyList(value: Array<common_database_database_pb.OrderBy>): FindDocumentsRequest;
   clearOrderbyList(): FindDocumentsRequest;
-  addOrderby(value?: common_database_pb.OrderBy, index?: number): common_database_pb.OrderBy;
+  addOrderby(value?: common_database_database_pb.OrderBy, index?: number): common_database_database_pb.OrderBy;
 
   getSearch(): string;
   setSearch(value: string): FindDocumentsRequest;
@@ -28,7 +28,7 @@ export class FindDocumentsRequest extends jspb.Message {
 export namespace FindDocumentsRequest {
   export type AsObject = {
     offset: number,
-    orderbyList: Array<common_database_pb.OrderBy.AsObject>,
+    orderbyList: Array<common_database_database_pb.OrderBy.AsObject>,
     search: string,
   }
 }
@@ -57,13 +57,13 @@ export class Document extends jspb.Message {
   getId(): number;
   setId(value: number): Document;
 
-  getCreatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setCreatedAt(value?: google_protobuf_timestamp_pb.Timestamp): Document;
+  getCreatedAt(): common_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: common_timestamp_timestamp_pb.Timestamp): Document;
   hasCreatedAt(): boolean;
   clearCreatedAt(): Document;
 
-  getUpdatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: google_protobuf_timestamp_pb.Timestamp): Document;
+  getUpdatedAt(): common_timestamp_timestamp_pb.Timestamp | undefined;
+  setUpdatedAt(value?: common_timestamp_timestamp_pb.Timestamp): Document;
   hasUpdatedAt(): boolean;
   clearUpdatedAt(): Document;
 
@@ -82,8 +82,8 @@ export class Document extends jspb.Message {
   getState(): string;
   setState(value: string): Document;
 
-  getCreator(): common_userinfo_pb.ShortUser | undefined;
-  setCreator(value?: common_userinfo_pb.ShortUser): Document;
+  getCreator(): common_userinfo_userinfo_pb.ShortUser | undefined;
+  setCreator(value?: common_userinfo_userinfo_pb.ShortUser): Document;
   hasCreator(): boolean;
   clearCreator(): Document;
 
@@ -104,14 +104,14 @@ export class Document extends jspb.Message {
 export namespace Document {
   export type AsObject = {
     id: number,
-    createdAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
-    updatedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    createdAt?: common_timestamp_timestamp_pb.Timestamp.AsObject,
+    updatedAt?: common_timestamp_timestamp_pb.Timestamp.AsObject,
     title: string,
     content: string,
     contentType: string,
     closed: boolean,
     state: string,
-    creator?: common_userinfo_pb.ShortUser.AsObject,
+    creator?: common_userinfo_userinfo_pb.ShortUser.AsObject,
     creatorJob: string,
     pb_public: boolean,
   }

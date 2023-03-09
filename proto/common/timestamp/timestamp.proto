@@ -1,0 +1,18 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
+syntax = "proto3";
+
+package gen.common.timestamp;
+option go_package = "github.com/galexrt/arpanet/proto/common/timestamp";
+
+import "google/protobuf/timestamp.proto";
+
+// Timestamp for storage messages.  We've defined a new local type wrapper
+// of google.protobuf.Timestamp so we can implement sql.Scanner and sql.Valuer
+// interfaces.  See:
+// https://golang.org/pkg/database/sql/#Scanner
+// https://golang.org/pkg/database/sql/driver/#Valuer
+message Timestamp {
+  google.protobuf.Timestamp timestamp = 1;
+}

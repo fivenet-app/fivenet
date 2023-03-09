@@ -1,6 +1,6 @@
 import * as jspb from 'google-protobuf'
 
-import * as common_userinfo_pb from '../common/userinfo_pb';
+import * as common_userinfo_userinfo_pb from '../common/userinfo/userinfo_pb';
 
 
 export class LoginRequest extends jspb.Message {
@@ -58,10 +58,10 @@ export namespace GetCharactersRequest {
 }
 
 export class GetCharactersResponse extends jspb.Message {
-  getCharsList(): Array<common_userinfo_pb.User>;
-  setCharsList(value: Array<common_userinfo_pb.User>): GetCharactersResponse;
+  getCharsList(): Array<common_userinfo_userinfo_pb.User>;
+  setCharsList(value: Array<common_userinfo_userinfo_pb.User>): GetCharactersResponse;
   clearCharsList(): GetCharactersResponse;
-  addChars(value?: common_userinfo_pb.User, index?: number): common_userinfo_pb.User;
+  addChars(value?: common_userinfo_userinfo_pb.User, index?: number): common_userinfo_userinfo_pb.User;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetCharactersResponse.AsObject;
@@ -73,7 +73,7 @@ export class GetCharactersResponse extends jspb.Message {
 
 export namespace GetCharactersResponse {
   export type AsObject = {
-    charsList: Array<common_userinfo_pb.User.AsObject>,
+    charsList: Array<common_userinfo_userinfo_pb.User.AsObject>,
   }
 }
 
