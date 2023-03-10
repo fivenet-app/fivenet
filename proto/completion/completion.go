@@ -2,6 +2,7 @@ package completion
 
 import (
 	context "context"
+	"strings"
 	"time"
 
 	cache "github.com/Code-Hex/go-generics-cache"
@@ -72,7 +73,7 @@ func (s *Server) refreshCache() error {
 
 	// Update cache
 	for _, job := range dest {
-		s.jobsCache.Set(job.Name, job)
+		s.jobsCache.Set(strings.ToLower(job.Name), job)
 	}
 
 	return nil
@@ -81,10 +82,36 @@ func (s *Server) refreshCache() error {
 func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error) {
 	resp := &CompleteJobNamesResponse{}
 
+	keys := s.jobsCache.Keys()
+
+	for i := 0; i < len(keys); i++ {
+		job, ok := s.jobsCache.Get(keys[i])
+		if !ok {
+			continue
+		}
+
+		// TODO use Bleve search in the future
+		if strings.HasPrefix(job.Name, req.Search) || strings.Contains(job.Name, req.Search) {
+			resp.Jobs = append(resp.Jobs, job)
+		}
+	}
+
 	return resp, nil
 }
 func (s *Server) CompleteJobGrades(ctx context.Context, req *CompleteJobGradesRequest) (*CompleteJobGradesResponse, error) {
 	resp := &CompleteJobGradesResponse{}
+
+	job, ok := s.jobsCache.Get(strings.ToLower(req.Job))
+	if !ok {
+		return resp, nil
+	}
+
+	for _, g := range job.Grades {
+		// TODO use Bleve search in the future
+		if strings.HasPrefix(g.Label, req.Search) || strings.Contains(g.Label, req.Search) {
+			resp.Grades = append(resp.Grades, g)
+		}
+	}
 
 	return resp, nil
 }

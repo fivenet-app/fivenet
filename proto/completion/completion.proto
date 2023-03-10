@@ -16,7 +16,8 @@ message JobGrade {
 }
 
 message CompleteJobNamesRequest {
-    bool withGrades = 1;
+    string search = 1;
+    bool withGrades = 2;
 }
 
 message CompleteJobNamesResponse {
@@ -25,10 +26,11 @@ message CompleteJobNamesResponse {
 
 message CompleteJobGradesRequest {
     string job = 1;
+    string search = 2;
 }
 
 message CompleteJobGradesResponse {
-    repeated JobGrade ranks = 1;
+    repeated JobGrade grades = 1;
 }
 
 service CompletionService {

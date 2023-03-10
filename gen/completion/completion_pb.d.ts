@@ -57,6 +57,9 @@ export namespace JobGrade {
 }
 
 export class CompleteJobNamesRequest extends jspb.Message {
+  getSearch(): string;
+  setSearch(value: string): CompleteJobNamesRequest;
+
   getWithgrades(): boolean;
   setWithgrades(value: boolean): CompleteJobNamesRequest;
 
@@ -70,6 +73,7 @@ export class CompleteJobNamesRequest extends jspb.Message {
 
 export namespace CompleteJobNamesRequest {
   export type AsObject = {
+    search: string,
     withgrades: boolean,
   }
 }
@@ -98,6 +102,9 @@ export class CompleteJobGradesRequest extends jspb.Message {
   getJob(): string;
   setJob(value: string): CompleteJobGradesRequest;
 
+  getSearch(): string;
+  setSearch(value: string): CompleteJobGradesRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CompleteJobGradesRequest.AsObject;
   static toObject(includeInstance: boolean, msg: CompleteJobGradesRequest): CompleteJobGradesRequest.AsObject;
@@ -109,14 +116,15 @@ export class CompleteJobGradesRequest extends jspb.Message {
 export namespace CompleteJobGradesRequest {
   export type AsObject = {
     job: string,
+    search: string,
   }
 }
 
 export class CompleteJobGradesResponse extends jspb.Message {
-  getRanksList(): Array<JobGrade>;
-  setRanksList(value: Array<JobGrade>): CompleteJobGradesResponse;
-  clearRanksList(): CompleteJobGradesResponse;
-  addRanks(value?: JobGrade, index?: number): JobGrade;
+  getGradesList(): Array<JobGrade>;
+  setGradesList(value: Array<JobGrade>): CompleteJobGradesResponse;
+  clearGradesList(): CompleteJobGradesResponse;
+  addGrades(value?: JobGrade, index?: number): JobGrade;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CompleteJobGradesResponse.AsObject;
@@ -128,7 +136,7 @@ export class CompleteJobGradesResponse extends jspb.Message {
 
 export namespace CompleteJobGradesResponse {
   export type AsObject = {
-    ranksList: Array<JobGrade.AsObject>,
+    gradesList: Array<JobGrade.AsObject>,
   }
 }
 

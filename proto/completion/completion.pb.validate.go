@@ -298,6 +298,8 @@ func (m *CompleteJobNamesRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Search
+
 	// no validation rules for WithGrades
 
 	if len(errors) > 0 {
@@ -540,6 +542,8 @@ func (m *CompleteJobGradesRequest) validate(all bool) error {
 
 	// no validation rules for Job
 
+	// no validation rules for Search
+
 	if len(errors) > 0 {
 		return CompleteJobGradesRequestMultiError(errors)
 	}
@@ -642,7 +646,7 @@ func (m *CompleteJobGradesResponse) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetRanks() {
+	for idx, item := range m.GetGrades() {
 		_, _ = idx, item
 
 		if all {
@@ -650,7 +654,7 @@ func (m *CompleteJobGradesResponse) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, CompleteJobGradesResponseValidationError{
-						field:  fmt.Sprintf("Ranks[%v]", idx),
+						field:  fmt.Sprintf("Grades[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -658,7 +662,7 @@ func (m *CompleteJobGradesResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, CompleteJobGradesResponseValidationError{
-						field:  fmt.Sprintf("Ranks[%v]", idx),
+						field:  fmt.Sprintf("Grades[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -667,7 +671,7 @@ func (m *CompleteJobGradesResponse) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return CompleteJobGradesResponseValidationError{
-					field:  fmt.Sprintf("Ranks[%v]", idx),
+					field:  fmt.Sprintf("Grades[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

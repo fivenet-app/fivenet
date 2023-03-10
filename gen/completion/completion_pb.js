@@ -595,7 +595,8 @@ proto.gen.completion.CompleteJobNamesRequest.prototype.toObject = function(opt_i
  */
 proto.gen.completion.CompleteJobNamesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    withgrades: jspb.Message.getBooleanFieldWithDefault(msg, 1, false)
+    search: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    withgrades: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {
@@ -633,6 +634,10 @@ proto.gen.completion.CompleteJobNamesRequest.deserializeBinaryFromReader = funct
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSearch(value);
+      break;
+    case 2:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setWithgrades(value);
       break;
@@ -665,10 +670,17 @@ proto.gen.completion.CompleteJobNamesRequest.prototype.serializeBinary = functio
  */
 proto.gen.completion.CompleteJobNamesRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getSearch();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
   f = message.getWithgrades();
   if (f) {
     writer.writeBool(
-      1,
+      2,
       f
     );
   }
@@ -676,11 +688,29 @@ proto.gen.completion.CompleteJobNamesRequest.serializeBinaryToWriter = function(
 
 
 /**
- * optional bool withGrades = 1;
+ * optional string search = 1;
+ * @return {string}
+ */
+proto.gen.completion.CompleteJobNamesRequest.prototype.getSearch = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.gen.completion.CompleteJobNamesRequest} returns this
+ */
+proto.gen.completion.CompleteJobNamesRequest.prototype.setSearch = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional bool withGrades = 2;
  * @return {boolean}
  */
 proto.gen.completion.CompleteJobNamesRequest.prototype.getWithgrades = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 1, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
 };
 
 
@@ -689,7 +719,7 @@ proto.gen.completion.CompleteJobNamesRequest.prototype.getWithgrades = function(
  * @return {!proto.gen.completion.CompleteJobNamesRequest} returns this
  */
 proto.gen.completion.CompleteJobNamesRequest.prototype.setWithgrades = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 1, value);
+  return jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 
@@ -885,7 +915,8 @@ proto.gen.completion.CompleteJobGradesRequest.prototype.toObject = function(opt_
  */
 proto.gen.completion.CompleteJobGradesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    job: jspb.Message.getFieldWithDefault(msg, 1, "")
+    job: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    search: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -926,6 +957,10 @@ proto.gen.completion.CompleteJobGradesRequest.deserializeBinaryFromReader = func
       var value = /** @type {string} */ (reader.readString());
       msg.setJob(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSearch(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -962,6 +997,13 @@ proto.gen.completion.CompleteJobGradesRequest.serializeBinaryToWriter = function
       f
     );
   }
+  f = message.getSearch();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -980,6 +1022,24 @@ proto.gen.completion.CompleteJobGradesRequest.prototype.getJob = function() {
  */
 proto.gen.completion.CompleteJobGradesRequest.prototype.setJob = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string search = 2;
+ * @return {string}
+ */
+proto.gen.completion.CompleteJobGradesRequest.prototype.getSearch = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.gen.completion.CompleteJobGradesRequest} returns this
+ */
+proto.gen.completion.CompleteJobGradesRequest.prototype.setSearch = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -1022,7 +1082,7 @@ proto.gen.completion.CompleteJobGradesResponse.prototype.toObject = function(opt
  */
 proto.gen.completion.CompleteJobGradesResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    ranksList: jspb.Message.toObjectList(msg.getRanksList(),
+    gradesList: jspb.Message.toObjectList(msg.getGradesList(),
     proto.gen.completion.JobGrade.toObject, includeInstance)
   };
 
@@ -1063,7 +1123,7 @@ proto.gen.completion.CompleteJobGradesResponse.deserializeBinaryFromReader = fun
     case 1:
       var value = new proto.gen.completion.JobGrade;
       reader.readMessage(value,proto.gen.completion.JobGrade.deserializeBinaryFromReader);
-      msg.addRanks(value);
+      msg.addGrades(value);
       break;
     default:
       reader.skipField();
@@ -1094,7 +1154,7 @@ proto.gen.completion.CompleteJobGradesResponse.prototype.serializeBinary = funct
  */
 proto.gen.completion.CompleteJobGradesResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getRanksList();
+  f = message.getGradesList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       1,
@@ -1106,10 +1166,10 @@ proto.gen.completion.CompleteJobGradesResponse.serializeBinaryToWriter = functio
 
 
 /**
- * repeated JobGrade ranks = 1;
+ * repeated JobGrade grades = 1;
  * @return {!Array<!proto.gen.completion.JobGrade>}
  */
-proto.gen.completion.CompleteJobGradesResponse.prototype.getRanksList = function() {
+proto.gen.completion.CompleteJobGradesResponse.prototype.getGradesList = function() {
   return /** @type{!Array<!proto.gen.completion.JobGrade>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.gen.completion.JobGrade, 1));
 };
@@ -1119,7 +1179,7 @@ proto.gen.completion.CompleteJobGradesResponse.prototype.getRanksList = function
  * @param {!Array<!proto.gen.completion.JobGrade>} value
  * @return {!proto.gen.completion.CompleteJobGradesResponse} returns this
 */
-proto.gen.completion.CompleteJobGradesResponse.prototype.setRanksList = function(value) {
+proto.gen.completion.CompleteJobGradesResponse.prototype.setGradesList = function(value) {
   return jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
@@ -1129,7 +1189,7 @@ proto.gen.completion.CompleteJobGradesResponse.prototype.setRanksList = function
  * @param {number=} opt_index
  * @return {!proto.gen.completion.JobGrade}
  */
-proto.gen.completion.CompleteJobGradesResponse.prototype.addRanks = function(opt_value, opt_index) {
+proto.gen.completion.CompleteJobGradesResponse.prototype.addGrades = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.gen.completion.JobGrade, opt_index);
 };
 
@@ -1138,8 +1198,8 @@ proto.gen.completion.CompleteJobGradesResponse.prototype.addRanks = function(opt
  * Clears the list making it empty but non-null.
  * @return {!proto.gen.completion.CompleteJobGradesResponse} returns this
  */
-proto.gen.completion.CompleteJobGradesResponse.prototype.clearRanksList = function() {
-  return this.setRanksList([]);
+proto.gen.completion.CompleteJobGradesResponse.prototype.clearGradesList = function() {
+  return this.setGradesList([]);
 };
 
 
