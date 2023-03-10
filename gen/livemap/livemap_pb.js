@@ -439,7 +439,7 @@ proto.gen.livemap.Marker.toObject = function(includeInstance, msg) {
     job: jspb.Message.getFieldWithDefault(msg, 2, ""),
     x: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0),
     y: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0),
-    createdat: (f = msg.getCreatedat()) && common_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    updatedat: (f = msg.getUpdatedat()) && common_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     name: jspb.Message.getFieldWithDefault(msg, 6, ""),
     icon: jspb.Message.getFieldWithDefault(msg, 7, ""),
     popup: jspb.Message.getFieldWithDefault(msg, 8, ""),
@@ -499,7 +499,7 @@ proto.gen.livemap.Marker.deserializeBinaryFromReader = function(msg, reader) {
     case 5:
       var value = new common_timestamp_timestamp_pb.Timestamp;
       reader.readMessage(value,common_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
-      msg.setCreatedat(value);
+      msg.setUpdatedat(value);
       break;
     case 6:
       var value = /** @type {string} */ (reader.readString());
@@ -574,7 +574,7 @@ proto.gen.livemap.Marker.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getCreatedat();
+  f = message.getUpdatedat();
   if (f != null) {
     writer.writeMessage(
       5,
@@ -686,10 +686,10 @@ proto.gen.livemap.Marker.prototype.setY = function(value) {
 
 
 /**
- * optional gen.common.timestamp.Timestamp createdAt = 5;
+ * optional gen.common.timestamp.Timestamp updatedAt = 5;
  * @return {?proto.gen.common.timestamp.Timestamp}
  */
-proto.gen.livemap.Marker.prototype.getCreatedat = function() {
+proto.gen.livemap.Marker.prototype.getUpdatedat = function() {
   return /** @type{?proto.gen.common.timestamp.Timestamp} */ (
     jspb.Message.getWrapperField(this, common_timestamp_timestamp_pb.Timestamp, 5));
 };
@@ -699,7 +699,7 @@ proto.gen.livemap.Marker.prototype.getCreatedat = function() {
  * @param {?proto.gen.common.timestamp.Timestamp|undefined} value
  * @return {!proto.gen.livemap.Marker} returns this
 */
-proto.gen.livemap.Marker.prototype.setCreatedat = function(value) {
+proto.gen.livemap.Marker.prototype.setUpdatedat = function(value) {
   return jspb.Message.setWrapperField(this, 5, value);
 };
 
@@ -708,8 +708,8 @@ proto.gen.livemap.Marker.prototype.setCreatedat = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.gen.livemap.Marker} returns this
  */
-proto.gen.livemap.Marker.prototype.clearCreatedat = function() {
-  return this.setCreatedat(undefined);
+proto.gen.livemap.Marker.prototype.clearUpdatedat = function() {
+  return this.setUpdatedat(undefined);
 };
 
 
@@ -717,7 +717,7 @@ proto.gen.livemap.Marker.prototype.clearCreatedat = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.gen.livemap.Marker.prototype.hasCreatedat = function() {
+proto.gen.livemap.Marker.prototype.hasUpdatedat = function() {
   return jspb.Message.getField(this, 5) != null;
 };
 

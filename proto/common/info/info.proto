@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package gen.common.info;
-option go_package = "github.com/galexrt/arpanet/proto/common/info";
-
-service InfoService {
-}

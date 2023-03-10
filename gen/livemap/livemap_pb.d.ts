@@ -56,10 +56,10 @@ export class Marker extends jspb.Message {
   getY(): number;
   setY(value: number): Marker;
 
-  getCreatedat(): common_timestamp_timestamp_pb.Timestamp | undefined;
-  setCreatedat(value?: common_timestamp_timestamp_pb.Timestamp): Marker;
-  hasCreatedat(): boolean;
-  clearCreatedat(): Marker;
+  getUpdatedat(): common_timestamp_timestamp_pb.Timestamp | undefined;
+  setUpdatedat(value?: common_timestamp_timestamp_pb.Timestamp): Marker;
+  hasUpdatedat(): boolean;
+  clearUpdatedat(): Marker;
 
   getName(): string;
   setName(value: string): Marker;
@@ -87,7 +87,7 @@ export namespace Marker {
     job: string,
     x: number,
     y: number,
-    createdat?: common_timestamp_timestamp_pb.Timestamp.AsObject,
+    updatedat?: common_timestamp_timestamp_pb.Timestamp.AsObject,
     name: string,
     icon: string,
     popup: string,

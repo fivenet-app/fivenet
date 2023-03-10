@@ -13,8 +13,8 @@ export class Livemap extends L.Map {
     public hash: Hash | undefined;
     public hasLoaded: boolean = false;
 
-    public markers: Map<string, AnimatedMarker> = new Map();
-    public popups: Map<string, L.Popup> = new Map();
+    public markers: Map<number, AnimatedMarker> = new Map();
+    public popups: Map<number, L.Popup> = new Map();
     private prevMarkerLists: Map<MarkerType, Array<Marker.AsObject>> = new Map();
 
     private element: HTMLElement;
@@ -55,7 +55,7 @@ export class Livemap extends L.Map {
         }
     }
 
-    public addMarker(id: string, latitude: number, longitude: number, content: string, options: L.MarkerOptions): void {
+    public addMarker(id: number, latitude: number, longitude: number, content: string, options: L.MarkerOptions): void {
         const marker = this.markers.get(id);
 
         if (marker) {
@@ -78,7 +78,7 @@ export class Livemap extends L.Map {
         }
     }
 
-    public removeMarker(id: string): boolean {
+    public removeMarker(id: number): boolean {
         const marker = this.markers.get(id);
         if (!marker) return false;
 
@@ -100,14 +100,14 @@ export class Livemap extends L.Map {
 
         const previousList = this.prevMarkerLists.get(type);
         if (previousList) {
-            const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getId() === entry.id));
+            const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getUserid() === entry.userid));
             markersToRemove.forEach((marker) => {
-                this.removeMarker(marker.id);
+                this.removeMarker(marker.userid);
             });
         }
 
         list.forEach((marker) => {
-            this.addMarker(marker.getId(), marker.getY(), marker.getX(), marker.getPopup(), options);
+            this.addMarker(marker.getUserid(), marker.getY(), marker.getX(), marker.getPopup(), options);
         });
 
         this.prevMarkerLists.set(

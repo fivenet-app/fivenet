@@ -16,6 +16,7 @@ import (
 	"github.com/galexrt/arpanet/pkg/routes"
 	"github.com/galexrt/arpanet/pkg/session"
 	pbauth "github.com/galexrt/arpanet/proto/auth"
+	pbcompletion "github.com/galexrt/arpanet/proto/completion"
 	pbdispatches "github.com/galexrt/arpanet/proto/dispatches"
 	pbdocuments "github.com/galexrt/arpanet/proto/documents"
 	pbjob "github.com/galexrt/arpanet/proto/job"
@@ -106,10 +107,11 @@ var serverCmd = &cobra.Command{
 
 		// Attach our GRPC services
 		pbauth.RegisterAccountServiceServer(grpcServer, pbauth.NewServer())
+		pbcompletion.RegisterCompletionServiceServer(grpcServer, pbcompletion.NewServer())
 		pbdispatches.RegisterDispatchesServiceServer(grpcServer, pbdispatches.NewServer())
 		pbdocuments.RegisterDocumentsServiceServer(grpcServer, pbdocuments.NewServer())
 		pbjob.RegisterJobServiceServer(grpcServer, pbjob.NewServer())
-		pblivemap.RegisterLivemapServiceServer(grpcServer, pblivemap.NewServer())
+		pblivemap.RegisterLivemapServiceServer(grpcServer, pblivemap.NewServer(logger.Named("grpc_livemap")))
 		pbusers.RegisterUsersServiceServer(grpcServer, pbusers.NewServer())
 
 		go func() {

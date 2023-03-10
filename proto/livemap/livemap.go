@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.uber.org/zap"
 )
 
 func init() {
@@ -25,23 +26,28 @@ var (
 
 type Server struct {
 	LivemapServiceServer
+
+	logger *zap.Logger
 }
 
-func NewServer() *Server {
-	s := &Server{}
+func NewServer(logger *zap.Logger) *Server {
+	s := &Server{
+		logger: logger,
+	}
 	go s.generateRandomMarker()
 	return s
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) error {
-	user, err := auth.GetUserFromContext(srv.Context())
+	userID := auth.GetUserIDFromContext(srv.Context())
+
+	jobs, err := perms.P.GetSuffixOfPermissionsByPrefixOfUser(userID, "livemap-stream")
 	if err != nil {
 		return err
 	}
 
-	jobs, err := perms.P.GetSuffixOfPermissionsByPrefixOfUser(user.UserID, "livemap-stream")
-	if err != nil {
-		return err
+	if len(jobs) == 0 {
+		return nil
 	}
 
 	sqlJobs := make([]jet.Expression, len(jobs))
@@ -49,8 +55,13 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) err
 		sqlJobs[k] = jet.String(jobs[k])
 	}
 
+	l := l.AS("marker")
 	stmt := l.SELECT(
-		l.AllColumns,
+		l.UserID,
+		l.Job,
+		l.X,
+		l.Y,
+		l.UpdatedAt,
 	).
 		FROM(l).
 		WHERE(
@@ -115,14 +126,23 @@ func (s *Server) generateRandomMarker() {
 			}
 		}
 
-		stmt := l.INSERT().
+		stmt := l.INSERT(
+			l.UserID,
+			l.Job,
+			l.X,
+			l.Y,
+			l.Hidden,
+		).
 			MODELS(markers).
 			ON_DUPLICATE_KEY_UPDATE(
-				l.X.SET(l.X.ADD(l.X)),
-				l.Y.SET(l.Y.ADD(l.Y)),
+				l.X.SET(jet.RawFloat("VALUES(x)")),
+				l.Y.SET(jet.RawFloat("VALUES(y)")),
 			)
+
 		_, err := stmt.Exec(query.DB)
-		_ = err
+		if err != nil {
+
+		}
 
 		time.Sleep(2 * time.Second)
 	}

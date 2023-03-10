@@ -105,7 +105,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 	}
 
 	resp := &FindDocumentsResponse{}
-	stmt := s.getDocumentsQuery(nil, nil, userID, job, jobGrade)
+	stmt := s.getDocumentsQuery(d.ResponseID.IS_NULL(), nil, userID, job, jobGrade)
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Documents); err != nil {
 		return nil, err
 	}
@@ -122,7 +122,10 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	resp := &GetDocumentResponse{
 		Document: &Document{},
 	}
-	stmt := s.getDocumentsQuery(d.ID.EQ(jet.Uint64(req.Id)), nil, userID, job, jobGrade).
+	stmt := s.getDocumentsQuery(jet.AND(
+		d.ResponseID.IS_NULL(),
+		d.ID.EQ(jet.Uint64(req.Id)),
+	), nil, userID, job, jobGrade).
 		LIMIT(1)
 	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err

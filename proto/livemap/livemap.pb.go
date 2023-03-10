@@ -119,11 +119,11 @@ type Marker struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserID    int32                `protobuf:"varint,1,opt,name=userID,proto3" json:"userID,omitempty" alias:"arpanet_user_locations.user_id"`      // @gotags: alias:"arpanet_user_locations.user_id"
-	Job       string               `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty" alias:"arpanet_user_locations.job"`             // @gotags: alias:"arpanet_user_locations.job"
-	X         float32              `protobuf:"fixed32,3,opt,name=x,proto3" json:"x,omitempty" alias:"arpanet_user_locations.x"`               // @gotags: alias:"arpanet_user_locations.x"
-	Y         float32              `protobuf:"fixed32,4,opt,name=y,proto3" json:"y,omitempty" alias:"arpanet_user_locations.y"`               // @gotags: alias:"arpanet_user_locations.y"
-	CreatedAt *timestamp.Timestamp `protobuf:"bytes,5,opt,name=createdAt,proto3" json:"createdAt,omitempty" alias:"arpanet_user_locations.updated_at"` // @gotags: alias:"arpanet_user_locations.updated_at"
+	UserID    int32                `protobuf:"varint,1,opt,name=userID,proto3" json:"userID,omitempty" sql:"primary_key" alias:"user_id"`      // @gotags: sql:"primary_key" alias:"user_id"
+	Job       string               `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty" alias:"job"`             // @gotags: alias:"job"
+	X         float32              `protobuf:"fixed32,3,opt,name=x,proto3" json:"x,omitempty" alias:"x"`               // @gotags: alias:"x"
+	Y         float32              `protobuf:"fixed32,4,opt,name=y,proto3" json:"y,omitempty" alias:"y"`               // @gotags: alias:"y"
+	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,5,opt,name=updatedAt,proto3" json:"updatedAt,omitempty" alias:"updated_at"` // @gotags: alias:"updated_at"
 	Name      string               `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
 	Icon      string               `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
 	Popup     string               `protobuf:"bytes,8,opt,name=popup,proto3" json:"popup,omitempty"`
@@ -190,9 +190,9 @@ func (x *Marker) GetY() float32 {
 	return 0
 }
 
-func (x *Marker) GetCreatedAt() *timestamp.Timestamp {
+func (x *Marker) GetUpdatedAt() *timestamp.Timestamp {
 	if x != nil {
-		return x.CreatedAt
+		return x.UpdatedAt
 	}
 	return nil
 }
@@ -246,10 +246,10 @@ var file_livemap_livemap_proto_rawDesc = []byte{
 	0x49, 0x44, 0x12, 0x10, 0x0a, 0x03, 0x6a, 0x6f, 0x62, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x03, 0x6a, 0x6f, 0x62, 0x12, 0x0c, 0x0a, 0x01, 0x78, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52,
 	0x01, 0x78, 0x12, 0x0c, 0x0a, 0x01, 0x79, 0x18, 0x04, 0x20, 0x01, 0x28, 0x02, 0x52, 0x01, 0x79,
-	0x12, 0x3d, 0x0a, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x05, 0x20,
+	0x12, 0x3d, 0x0a, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x05, 0x20,
 	0x01, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x67, 0x65, 0x6e, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e,
 	0x2e, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73,
-	0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12,
+	0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12,
 	0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e,
 	0x61, 0x6d, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x69, 0x63, 0x6f, 0x6e, 0x18, 0x07, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x04, 0x69, 0x63, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x70, 0x6f, 0x70, 0x75, 0x70,
@@ -289,7 +289,7 @@ var file_livemap_livemap_proto_goTypes = []interface{}{
 var file_livemap_livemap_proto_depIdxs = []int32{
 	2, // 0: gen.livemap.ServerStreamResponse.users:type_name -> gen.livemap.Marker
 	2, // 1: gen.livemap.ServerStreamResponse.dispatches:type_name -> gen.livemap.Marker
-	3, // 2: gen.livemap.Marker.createdAt:type_name -> gen.common.timestamp.Timestamp
+	3, // 2: gen.livemap.Marker.updatedAt:type_name -> gen.common.timestamp.Timestamp
 	0, // 3: gen.livemap.LivemapService.Stream:input_type -> gen.livemap.StreamRequest
 	1, // 4: gen.livemap.LivemapService.Stream:output_type -> gen.livemap.ServerStreamResponse
 	4, // [4:5] is the sub-list for method output_type

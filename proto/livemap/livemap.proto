@@ -14,13 +14,13 @@ message ServerStreamResponse {
 }
 
 message Marker {
-    int32 userID = 1; // @gotags: alias:"arpanet_user_locations.user_id"
-    string job = 2; // @gotags: alias:"arpanet_user_locations.job"
+    int32 userID = 1; // @gotags: sql:"primary_key" alias:"user_id"
+    string job = 2; // @gotags: alias:"job"
 
-    float x = 3; // @gotags: alias:"arpanet_user_locations.x"
-    float y = 4; // @gotags: alias:"arpanet_user_locations.y"
+    float x = 3; // @gotags: alias:"x"
+    float y = 4; // @gotags: alias:"y"
 
-    gen.common.timestamp.Timestamp createdAt = 5; // @gotags: alias:"arpanet_user_locations.updated_at"
+    gen.common.timestamp.Timestamp updatedAt = 5; // @gotags: alias:"updated_at"
 
     string name = 6;
     string icon = 7;

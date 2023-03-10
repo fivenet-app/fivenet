@@ -118,8 +118,8 @@ CREATE TABLE IF NOT EXISTS `arpanet_user_activity` (
 CREATE TABLE IF NOT EXISTS `arpanet_user_locations` (
   `user_id` int(11) NOT NULL,
   `job` varchar(20) DEFAULT NULL,
-  `x` float DEFAULT NULL,
-  `y` float DEFAULT NULL,
+  `x` decimal(24,14) DEFAULT NULL,
+  `y` decimal(24,14) DEFAULT NULL,
   `hidden` tinyint(1) DEFAULT NULL,
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`),
