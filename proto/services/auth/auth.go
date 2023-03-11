@@ -38,7 +38,7 @@ func NewServer() *Server {
 // AuthFuncOverride is called instead of exampleAuthFunc
 func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	// Skip authentication for the login endpoint
-	if fullMethodName == "/gen.auth.AccountService/Login" {
+	if fullMethodName == "/services.auth.AccountService/Login" {
 		return ctx, nil
 	}
 
