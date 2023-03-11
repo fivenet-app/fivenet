@@ -111,7 +111,7 @@ func (s *Server) refreshDocumentCategories() error {
 		FROM(adc).
 		GROUP_BY(adc.Job).
 		ORDER_BY(adc.Name.ASC())
-	if err := stmt.Query(query.DB, dest); err != nil {
+	if err := stmt.Query(query.DB, &dest); err != nil {
 		return err
 	}
 
