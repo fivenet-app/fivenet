@@ -11,7 +11,7 @@ import { getSecondsFormattedAsDuration } from '../../utils/time';
 
 export default defineComponent({
     computed: {
-        ...mapState(["activeCharID"]),
+        ...mapState(["lastCharID"]),
     },
     props: {
         char: {
@@ -57,7 +57,7 @@ export default defineComponent({
             </h2>
             <dl class="mt-1 flex flex-grow flex-col justify-between">
                 <dd>
-                    <span v-if="activeCharID == char.getUserid()"
+                    <span v-if="lastCharID == char.getUserid()"
                         class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
                         Last Used
                     </span>

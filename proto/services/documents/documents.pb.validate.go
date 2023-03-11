@@ -1028,6 +1028,212 @@ var _ interface {
 	ErrorName() string
 } = UpdateDocumentResponseValidationError{}
 
+// Validate checks the field values on GetDocumentResponsesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetDocumentResponsesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDocumentResponsesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDocumentResponsesRequestMultiError, or nil if none found.
+func (m *GetDocumentResponsesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDocumentResponsesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetDocumentResponsesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDocumentResponsesRequestMultiError is an error wrapping multiple
+// validation errors returned by GetDocumentResponsesRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetDocumentResponsesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDocumentResponsesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDocumentResponsesRequestMultiError) AllErrors() []error { return m }
+
+// GetDocumentResponsesRequestValidationError is the validation error returned
+// by GetDocumentResponsesRequest.Validate if the designated constraints
+// aren't met.
+type GetDocumentResponsesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDocumentResponsesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDocumentResponsesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDocumentResponsesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDocumentResponsesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDocumentResponsesRequestValidationError) ErrorName() string {
+	return "GetDocumentResponsesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetDocumentResponsesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDocumentResponsesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDocumentResponsesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDocumentResponsesRequestValidationError{}
+
+// Validate checks the field values on GetDocumentResponsesResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetDocumentResponsesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDocumentResponsesResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDocumentResponsesResponseMultiError, or nil if none found.
+func (m *GetDocumentResponsesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDocumentResponsesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetDocumentResponsesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDocumentResponsesResponseMultiError is an error wrapping multiple
+// validation errors returned by GetDocumentResponsesResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GetDocumentResponsesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDocumentResponsesResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDocumentResponsesResponseMultiError) AllErrors() []error { return m }
+
+// GetDocumentResponsesResponseValidationError is the validation error returned
+// by GetDocumentResponsesResponse.Validate if the designated constraints
+// aren't met.
+type GetDocumentResponsesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDocumentResponsesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDocumentResponsesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDocumentResponsesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDocumentResponsesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDocumentResponsesResponseValidationError) ErrorName() string {
+	return "GetDocumentResponsesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetDocumentResponsesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDocumentResponsesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDocumentResponsesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDocumentResponsesResponseValidationError{}
+
 // Validate checks the field values on ListTemplatesRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

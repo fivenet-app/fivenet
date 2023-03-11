@@ -23,7 +23,17 @@ message CompleteJobGradesResponse {
     repeated resources.jobs.JobGrade grades = 1;
 }
 
+message CompleteDocumentCategoryRequest {
+    string search = 1;
+}
+
+message CompleteDocumentCategoryResponse {
+    repeated string categories = 1;
+}
+
 service CompletionService {
     rpc CompleteJobNames(CompleteJobNamesRequest) returns (CompleteJobNamesResponse);
     rpc CompleteJobGrades(CompleteJobGradesRequest) returns (CompleteJobGradesResponse);
+
+    rpc CompleteDocumentCategory(CompleteDocumentCategoryRequest) returns (CompleteDocumentCategoryResponse);
 }

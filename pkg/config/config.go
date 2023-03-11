@@ -32,12 +32,17 @@ type Config struct {
 	LogLevel string `default:"DEBUG" yaml:"logLevel"`
 	Mode     string `default:"debug" yaml:"mode"`
 
+	Sentry   Sentry   `yaml:"sentry"`
 	HTTP     HTTP     `yaml:"http"`
 	GRPC     GRPC     `yaml:"grpc"`
 	Database Database `yaml:"database"`
 	JWT      JWT      `yaml:"jwt"`
 
 	FiveM FiveM `yaml:"fivem"`
+}
+
+type Sentry struct {
+	DSN string `yaml:"dsn"`
 }
 
 type HTTP struct {

@@ -87,3 +87,41 @@ export namespace CompleteJobGradesResponse {
   }
 }
 
+export class CompleteDocumentCategoryRequest extends jspb.Message {
+  getSearch(): string;
+  setSearch(value: string): CompleteDocumentCategoryRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CompleteDocumentCategoryRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: CompleteDocumentCategoryRequest): CompleteDocumentCategoryRequest.AsObject;
+  static serializeBinaryToWriter(message: CompleteDocumentCategoryRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CompleteDocumentCategoryRequest;
+  static deserializeBinaryFromReader(message: CompleteDocumentCategoryRequest, reader: jspb.BinaryReader): CompleteDocumentCategoryRequest;
+}
+
+export namespace CompleteDocumentCategoryRequest {
+  export type AsObject = {
+    search: string,
+  }
+}
+
+export class CompleteDocumentCategoryResponse extends jspb.Message {
+  getCategoriesList(): Array<string>;
+  setCategoriesList(value: Array<string>): CompleteDocumentCategoryResponse;
+  clearCategoriesList(): CompleteDocumentCategoryResponse;
+  addCategories(value: string, index?: number): CompleteDocumentCategoryResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CompleteDocumentCategoryResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: CompleteDocumentCategoryResponse): CompleteDocumentCategoryResponse.AsObject;
+  static serializeBinaryToWriter(message: CompleteDocumentCategoryResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CompleteDocumentCategoryResponse;
+  static deserializeBinaryFromReader(message: CompleteDocumentCategoryResponse, reader: jspb.BinaryReader): CompleteDocumentCategoryResponse;
+}
+
+export namespace CompleteDocumentCategoryResponse {
+  export type AsObject = {
+    categoriesList: Array<string>,
+  }
+}
+

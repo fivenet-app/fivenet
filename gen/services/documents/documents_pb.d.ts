@@ -232,6 +232,34 @@ export namespace UpdateDocumentResponse {
   }
 }
 
+export class GetDocumentResponsesRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDocumentResponsesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentResponsesRequest): GetDocumentResponsesRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentResponsesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentResponsesRequest;
+  static deserializeBinaryFromReader(message: GetDocumentResponsesRequest, reader: jspb.BinaryReader): GetDocumentResponsesRequest;
+}
+
+export namespace GetDocumentResponsesRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetDocumentResponsesResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDocumentResponsesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentResponsesResponse): GetDocumentResponsesResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentResponsesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentResponsesResponse;
+  static deserializeBinaryFromReader(message: GetDocumentResponsesResponse, reader: jspb.BinaryReader): GetDocumentResponsesResponse;
+}
+
+export namespace GetDocumentResponsesResponse {
+  export type AsObject = {
+  }
+}
+
 export class ListTemplatesRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ListTemplatesRequest.AsObject;

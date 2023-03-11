@@ -518,3 +518,213 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CompleteJobGradesResponseValidationError{}
+
+// Validate checks the field values on CompleteDocumentCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CompleteDocumentCategoryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CompleteDocumentCategoryRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CompleteDocumentCategoryRequestMultiError, or nil if none found.
+func (m *CompleteDocumentCategoryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CompleteDocumentCategoryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Search
+
+	if len(errors) > 0 {
+		return CompleteDocumentCategoryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CompleteDocumentCategoryRequestMultiError is an error wrapping multiple
+// validation errors returned by CompleteDocumentCategoryRequest.ValidateAll()
+// if the designated constraints aren't met.
+type CompleteDocumentCategoryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CompleteDocumentCategoryRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CompleteDocumentCategoryRequestMultiError) AllErrors() []error { return m }
+
+// CompleteDocumentCategoryRequestValidationError is the validation error
+// returned by CompleteDocumentCategoryRequest.Validate if the designated
+// constraints aren't met.
+type CompleteDocumentCategoryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CompleteDocumentCategoryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CompleteDocumentCategoryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CompleteDocumentCategoryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CompleteDocumentCategoryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CompleteDocumentCategoryRequestValidationError) ErrorName() string {
+	return "CompleteDocumentCategoryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CompleteDocumentCategoryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCompleteDocumentCategoryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CompleteDocumentCategoryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CompleteDocumentCategoryRequestValidationError{}
+
+// Validate checks the field values on CompleteDocumentCategoryResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *CompleteDocumentCategoryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CompleteDocumentCategoryResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CompleteDocumentCategoryResponseMultiError, or nil if none found.
+func (m *CompleteDocumentCategoryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CompleteDocumentCategoryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return CompleteDocumentCategoryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CompleteDocumentCategoryResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// CompleteDocumentCategoryResponse.ValidateAll() if the designated
+// constraints aren't met.
+type CompleteDocumentCategoryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CompleteDocumentCategoryResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CompleteDocumentCategoryResponseMultiError) AllErrors() []error { return m }
+
+// CompleteDocumentCategoryResponseValidationError is the validation error
+// returned by CompleteDocumentCategoryResponse.Validate if the designated
+// constraints aren't met.
+type CompleteDocumentCategoryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CompleteDocumentCategoryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CompleteDocumentCategoryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CompleteDocumentCategoryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CompleteDocumentCategoryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CompleteDocumentCategoryResponseValidationError) ErrorName() string {
+	return "CompleteDocumentCategoryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CompleteDocumentCategoryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCompleteDocumentCategoryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CompleteDocumentCategoryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CompleteDocumentCategoryResponseValidationError{}

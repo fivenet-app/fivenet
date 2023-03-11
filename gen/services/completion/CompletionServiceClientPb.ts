@@ -125,5 +125,48 @@ export class CompletionServiceClient {
     this.methodDescriptorCompleteJobGrades);
   }
 
+  methodDescriptorCompleteDocumentCategory = new grpcWeb.MethodDescriptor(
+    '/services.completion.CompletionService/CompleteDocumentCategory',
+    grpcWeb.MethodType.UNARY,
+    services_completion_completion_pb.CompleteDocumentCategoryRequest,
+    services_completion_completion_pb.CompleteDocumentCategoryResponse,
+    (request: services_completion_completion_pb.CompleteDocumentCategoryRequest) => {
+      return request.serializeBinary();
+    },
+    services_completion_completion_pb.CompleteDocumentCategoryResponse.deserializeBinary
+  );
+
+  completeDocumentCategory(
+    request: services_completion_completion_pb.CompleteDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_completion_completion_pb.CompleteDocumentCategoryResponse>;
+
+  completeDocumentCategory(
+    request: services_completion_completion_pb.CompleteDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_completion_completion_pb.CompleteDocumentCategoryResponse) => void): grpcWeb.ClientReadableStream<services_completion_completion_pb.CompleteDocumentCategoryResponse>;
+
+  completeDocumentCategory(
+    request: services_completion_completion_pb.CompleteDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_completion_completion_pb.CompleteDocumentCategoryResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.completion.CompletionService/CompleteDocumentCategory',
+        request,
+        metadata || {},
+        this.methodDescriptorCompleteDocumentCategory,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.completion.CompletionService/CompleteDocumentCategory',
+    request,
+    metadata || {},
+    this.methodDescriptorCompleteDocumentCategory);
+  }
+
 }
 

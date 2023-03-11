@@ -16,6 +16,7 @@ import (
 	"github.com/galexrt/arpanet/pkg/routes"
 	"github.com/galexrt/arpanet/pkg/session"
 	"github.com/galexrt/arpanet/query"
+	"github.com/getsentry/sentry-go"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -44,6 +45,20 @@ import (
 var serverCmd = &cobra.Command{
 	Use: "server",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// Setup Sentry Integration
+		if config.C.Sentry.DSN != "" {
+			err := sentry.Init(sentry.ClientOptions{
+				Dsn: config.C.Sentry.DSN,
+				// Enable printing of SDK debug messages.
+				// Useful when getting started or trying to figure something out.
+				Debug: true,
+			})
+			if err != nil {
+				logger.Fatal("Sentry init failed", zap.Error(err))
+			}
+			defer sentry.Flush(5 * time.Second)
+		}
+
 		// Create JWT Token TokenManager
 		session.Tokens = session.NewTokenManager()
 

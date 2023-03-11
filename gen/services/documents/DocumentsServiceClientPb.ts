@@ -211,6 +211,49 @@ export class DocumentsServiceClient {
     this.methodDescriptorUpdateDocument);
   }
 
+  methodDescriptorGetDocumentResponses = new grpcWeb.MethodDescriptor(
+    '/services.documents.DocumentsService/GetDocumentResponses',
+    grpcWeb.MethodType.UNARY,
+    services_documents_documents_pb.GetDocumentResponsesRequest,
+    services_documents_documents_pb.GetDocumentResponsesResponse,
+    (request: services_documents_documents_pb.GetDocumentResponsesRequest) => {
+      return request.serializeBinary();
+    },
+    services_documents_documents_pb.GetDocumentResponsesResponse.deserializeBinary
+  );
+
+  getDocumentResponses(
+    request: services_documents_documents_pb.GetDocumentResponsesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_documents_documents_pb.GetDocumentResponsesResponse>;
+
+  getDocumentResponses(
+    request: services_documents_documents_pb.GetDocumentResponsesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_documents_documents_pb.GetDocumentResponsesResponse) => void): grpcWeb.ClientReadableStream<services_documents_documents_pb.GetDocumentResponsesResponse>;
+
+  getDocumentResponses(
+    request: services_documents_documents_pb.GetDocumentResponsesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_documents_documents_pb.GetDocumentResponsesResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.documents.DocumentsService/GetDocumentResponses',
+        request,
+        metadata || {},
+        this.methodDescriptorGetDocumentResponses,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.documents.DocumentsService/GetDocumentResponses',
+    request,
+    metadata || {},
+    this.methodDescriptorGetDocumentResponses);
+  }
+
   methodDescriptorListTemplates = new grpcWeb.MethodDescriptor(
     '/services.documents.DocumentsService/ListTemplates',
     grpcWeb.MethodType.UNARY,

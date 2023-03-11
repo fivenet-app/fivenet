@@ -55,6 +55,14 @@ message UpdateDocumentRequest {
 
 message UpdateDocumentResponse {}
 
+message GetDocumentResponsesRequest {
+    // TODO
+}
+
+message GetDocumentResponsesResponse {
+    // TODO
+}
+
 message ListTemplatesRequest {}
 
 message ListTemplatesResponse {
@@ -92,6 +100,8 @@ service DocumentsService {
     rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
     rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
     rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
+
+    rpc GetDocumentResponses(GetDocumentResponsesRequest) returns (GetDocumentResponsesResponse);
 
     rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
     rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);

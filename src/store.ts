@@ -13,9 +13,9 @@ const store = createStore({
         // Persisted to Local Storage
         version: '' as string,
         accessToken: null as null | string,
-        activeChar: null as null | User,
-        activeCharID: 0 as null | number,
+        lastCharID: 0 as number,
         // Temporary
+        activeChar: null as null | User,
         loggingIn: false as boolean,
         loginError: null as null | string,
         permissions: [] as Array<String>,
@@ -45,7 +45,7 @@ const store = createStore({
         },
         updateActiveChar: (state, char: null | User) => {
             state.activeChar = char;
-            state.activeCharID = char ? char.getUserid() : 0;
+            state.lastCharID = char ? char.getUserid() : state.lastCharID;
         },
         updatePermissions: (state, permissions: string[]) => {
             state.permissions = permissions;
@@ -106,11 +106,12 @@ const store = createStore({
 
 export default store;
 
+// Local Storage saving
 store.subscribe((mutation, state) => {
     const s = {
         version: state.version,
         accessToken: state.accessToken,
-        activeCharID: state.activeCharID,
+        lastCharID: state.lastCharID,
     };
 
     localStorage.setItem('store', JSON.stringify(s));

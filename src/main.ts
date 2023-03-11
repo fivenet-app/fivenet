@@ -2,7 +2,9 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import store from './store';
 import { createWebHistory, createRouter, setupDataFetchingGuard, RouteRecordRaw } from 'vue-router/auto';
+import * as Sentry from '@sentry/vue';
 import { dispatchNotification } from './components/notification';
+import config from './config';
 
 // Load styles and Inter font (all weights)
 import './style.css';
@@ -60,6 +62,15 @@ router.beforeEach((to, from) => {
 export default router;
 
 const app = createApp(App);
+
+Sentry.init({
+    app,
+    dsn: config.sentryDSN,
+    tracesSampleRate: 0.0,
+    logErrors: true,
+    trackComponents: false,
+});
+
 app.use(router);
 app.use(store);
 

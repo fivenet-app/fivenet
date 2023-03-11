@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CompletionServiceClient interface {
 	CompleteJobNames(ctx context.Context, in *CompleteJobNamesRequest, opts ...grpc.CallOption) (*CompleteJobNamesResponse, error)
 	CompleteJobGrades(ctx context.Context, in *CompleteJobGradesRequest, opts ...grpc.CallOption) (*CompleteJobGradesResponse, error)
+	CompleteDocumentCategory(ctx context.Context, in *CompleteDocumentCategoryRequest, opts ...grpc.CallOption) (*CompleteDocumentCategoryResponse, error)
 }
 
 type completionServiceClient struct {
@@ -52,12 +53,22 @@ func (c *completionServiceClient) CompleteJobGrades(ctx context.Context, in *Com
 	return out, nil
 }
 
+func (c *completionServiceClient) CompleteDocumentCategory(ctx context.Context, in *CompleteDocumentCategoryRequest, opts ...grpc.CallOption) (*CompleteDocumentCategoryResponse, error) {
+	out := new(CompleteDocumentCategoryResponse)
+	err := c.cc.Invoke(ctx, "/services.completion.CompletionService/CompleteDocumentCategory", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CompletionServiceServer is the server API for CompletionService service.
 // All implementations must embed UnimplementedCompletionServiceServer
 // for forward compatibility
 type CompletionServiceServer interface {
 	CompleteJobNames(context.Context, *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error)
 	CompleteJobGrades(context.Context, *CompleteJobGradesRequest) (*CompleteJobGradesResponse, error)
+	CompleteDocumentCategory(context.Context, *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error)
 	mustEmbedUnimplementedCompletionServiceServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedCompletionServiceServer) CompleteJobNames(context.Context, *C
 }
 func (UnimplementedCompletionServiceServer) CompleteJobGrades(context.Context, *CompleteJobGradesRequest) (*CompleteJobGradesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteJobGrades not implemented")
+}
+func (UnimplementedCompletionServiceServer) CompleteDocumentCategory(context.Context, *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CompleteDocumentCategory not implemented")
 }
 func (UnimplementedCompletionServiceServer) mustEmbedUnimplementedCompletionServiceServer() {}
 
@@ -120,6 +134,24 @@ func _CompletionService_CompleteJobGrades_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CompletionService_CompleteDocumentCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompleteDocumentCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompletionServiceServer).CompleteDocumentCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.completion.CompletionService/CompleteDocumentCategory",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompletionServiceServer).CompleteDocumentCategory(ctx, req.(*CompleteDocumentCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CompletionService_ServiceDesc is the grpc.ServiceDesc for CompletionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var CompletionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CompleteJobGrades",
 			Handler:    _CompletionService_CompleteJobGrades_Handler,
+		},
+		{
+			MethodName: "CompleteDocumentCategory",
+			Handler:    _CompletionService_CompleteDocumentCategory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
