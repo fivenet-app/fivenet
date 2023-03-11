@@ -55,9 +55,6 @@ export default defineComponent({
         this.wantedState = userProps.getWanted();
     },
     methods: {
-        handleClose() {
-            this.$emit('close');
-        },
         toggleWantedStatus(event: any) {
             if (!this.user) return;
 
