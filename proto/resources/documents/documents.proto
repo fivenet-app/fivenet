@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package resources.documents;
+option go_package = "github.com/galexrt/arpanet/proto/resources/documents;documents";
+
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+
+message Document {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+    resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+    string title = 4; // @gotags: alias:"title"
+    string content = 5; // @gotags: alias:"content"
+    string content_type = 6; // @gotags: alias:"content_type"
+    bool closed = 7; // @gotags: alias:"closed"
+    string state = 8; // @gotags: alias:"state"
+    resources.users.ShortUser creator = 9; // @gotags: alias:"creator"
+    string creator_job = 10; // @gotags: alias:"creator_job"
+    bool public = 11; // @gotags: alias:"public"
+    uint64 target_document_id = 12; // @gotags: alias:"response_id"
+}
+
+message DocumentTemplate {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    string job = 2; // @gotags: alias:"job"
+    int32 jobGrade = 3; // @gotags: alias:"job_grade"
+    string title = 4; // @gotags: alias:"title"
+    string description = 5; // @gotags: alias:"description"
+    string content_title = 6; // @gotags: alias:"content_title"
+    string content = 7; // @gotags: alias:"content"
+    string additionalData = 8; // @gotags: alias:"additional_data"
+    int32 creatorID = 9; // @gotags: alias:"creator_id"
+}
+
+message DocumentTemplateShort {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    string job = 2; // @gotags: alias:"job"
+    int32 jobGrade = 3; // @gotags: alias:"job_grade"
+    string title = 4; // @gotags: alias:"title"
+    string description = 5; // @gotags: alias:"description"
+    int32 creatorID = 6; // @gotags: alias:"creator_id"
+}
+
+message DocumentAccess {
+    uint64 documentID = 1;
+    repeated DocumentJobAccess jobAccess = 2;
+    repeated DocumentUserAccess userAccess = 3;
+}
+
+message DocumentJobAccess {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+    resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+    uint64 documentID = 4; // @gotags: alias:"document_id"
+    string name = 5; // @gotags: alias:"job"
+    int32 minimumGrade = 6; // @gotags: alias:"minimum_grade"
+    string access = 7; // @gotags: alias:"access"
+}
+
+message DocumentUserAccess {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+    resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+    uint64 documentID = 4; // @gotags: alias:"document_id"
+    int32 userID = 5; // @gotags: alias:"user_id"
+    string access = 6; // @gotags: alias:"access"
+}

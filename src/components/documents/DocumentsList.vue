@@ -2,9 +2,10 @@
 import { defineComponent } from 'vue';
 import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
 import {  getDocumentsClient, handleGRPCError } from '../../grpc';
-import { Document, FindDocumentsRequest } from '@arpanet/gen/documents/documents_pb';
+import { FindDocumentsRequest } from '@arpanet/gen/services/documents/documents_pb';
+import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
-import { OrderBy } from '@arpanet/gen/common/database/database_pb';
+import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
 
 export default defineComponent({

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { mapState, mapActions } from 'vuex';
-import { LoginRequest } from '@arpanet/gen/auth/auth_pb';
+import { LoginRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 
 export default {

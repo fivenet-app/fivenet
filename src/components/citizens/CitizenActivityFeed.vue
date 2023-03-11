@@ -3,7 +3,8 @@ import { defineComponent } from 'vue';
 import { BoltIcon, ChatBubbleLeftEllipsisIcon, TagIcon, UserCircleIcon } from '@heroicons/vue/20/solid'
 import { getUsersClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
-import { GetUserActivityRequest, UserActivity } from '@arpanet/gen/users/users_pb';
+import { GetUserActivityRequest } from '@arpanet/gen/services/users/users_pb';
+import { UserActivity } from '@arpanet/gen/resources/users/users_pb';
 
 export default defineComponent({
     components: {
@@ -64,7 +65,6 @@ export default defineComponent({
                         </div>
                         <p class="text-sm text-gray-300">{{ activity.getType() }} {{ activity.getKey() }}: {{
                             activity.getOldvalue() }} ⇒ {{ activity.getNewvalue() }}</p>
-                        <p class="text-sm text-gray-300">{{ activity.getReason() }}</p>
                     </div>
                 </div>
             </li>

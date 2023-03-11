@@ -1,4 +1,4 @@
-import { Marker } from '@arpanet/gen/livemap/livemap_pb';
+import { Marker } from '@arpanet/gen/services/livemap/livemap_pb';
 import L from 'leaflet';
 
 import { AnimatedMarker } from './AnimatedMarker';

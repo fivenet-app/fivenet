@@ -2,14 +2,15 @@ import store from './store';
 import { RpcError, StatusCode, StreamInterceptor, UnaryInterceptor } from 'grpc-web';
 import { _RouteLocationBase } from 'vue-router/auto';
 import router from './main';
-import { dispatchNotification } from './components/notification';
-import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
-import { DispatchesServiceClient } from '@arpanet/gen/dispatches/DispatchesServiceClientPb';
-import { DocumentsServiceClient } from '@arpanet/gen/documents/DocumentsServiceClientPb';
-import { JobServiceClient } from '@arpanet/gen/job/JobServiceClientPb';
-import { LivemapServiceClient } from '@arpanet/gen/livemap/LivemapServiceClientPb';
-import { UsersServiceClient } from '@arpanet/gen/users/UsersServiceClientPb';
 import config from './config';
+import { dispatchNotification } from './components/notification';
+import { AccountServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
+import { CompletionServiceClient } from '@arpanet/gen/services/completion/CompletionServiceClientPb';
+import { DispatchesServiceClient } from '@arpanet/gen/services/dispatches/DispatchesServiceClientPb';
+import { DocumentsServiceClient } from '@arpanet/gen/services/documents/DocumentsServiceClientPb';
+import { JobsServiceClient } from '@arpanet/gen/services/jobs/JobsServiceClientPb';
+import { LivemapServiceClient } from '@arpanet/gen/services/livemap/LivemapServiceClientPb';
+import { UsersServiceClient } from '@arpanet/gen/services/users/UsersServiceClientPb';
 
 class AuthInterceptor implements StreamInterceptor<any, any>, UnaryInterceptor<any, any> {
     intercept(request: any, invoker: any) {
@@ -58,6 +59,16 @@ export function getAccountClient(): AccountServiceClient {
     return authClient;
 }
 
+// Completion
+let completionClient: CompletionServiceClient;
+export function getCompletionClient(): CompletionServiceClient {
+    if (!completionClient) {
+        completionClient = new CompletionServiceClient(config.apiProtoURL, null, clientAuthOptions);
+    }
+
+    return completionClient;
+}
+
 // Dispatches
 let dispatchesClient: DispatchesServiceClient;
 export function getDispatchesClient(): DispatchesServiceClient {
@@ -79,13 +90,13 @@ export function getDocumentsClient(): DocumentsServiceClient {
 }
 
 // Job
-let jobClient: JobServiceClient;
-export function getJobClient(): JobServiceClient {
-    if (!jobClient) {
-        jobClient = new JobServiceClient(config.apiProtoURL, null, clientAuthOptions);
+let jobsClient: JobsServiceClient;
+export function getJobsClient(): JobsServiceClient {
+    if (!jobsClient) {
+        jobsClient = new JobsServiceClient(config.apiProtoURL, null, clientAuthOptions);
     }
 
-    return jobClient;
+    return jobsClient;
 }
 
 // Livemap

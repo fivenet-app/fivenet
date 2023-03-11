@@ -1,10 +1,10 @@
 <script lang="ts">
 import { getAccountClient, handleGRPCError } from '../../grpc';
-import { ChooseCharacterRequest } from '@arpanet/gen/auth/auth_pb';
+import { ChooseCharacterRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { defineComponent } from 'vue';
 import { mapActions, mapState } from 'vuex';
 import { RpcError } from 'grpc-web';
-import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
+import { User } from '@arpanet/gen/resources/users/users_pb';
 import { parseQuery } from 'vue-router/auto';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { getSecondsFormattedAsDuration } from '../../utils/time';

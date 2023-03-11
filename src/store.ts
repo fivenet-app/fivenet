@@ -1,9 +1,9 @@
 import { createStore } from 'vuex';
 import { RpcError } from 'grpc-web';
-import { AccountServiceClient } from '@arpanet/gen/auth/AuthServiceClientPb';
-import { LoginRequest, LogoutRequest } from '@arpanet/gen/auth/auth_pb';
+import { AccountServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
+import { LoginRequest, LogoutRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { version } from '../package.json';
-import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
+import { User } from '@arpanet/gen/resources/users/users_pb';
 import { getAccountClient } from './grpc';
 import config from './config';
 import { dispatchNotification } from './components/notification';

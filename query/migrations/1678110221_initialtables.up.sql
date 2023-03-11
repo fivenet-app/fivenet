@@ -9,9 +9,21 @@ CREATE TABLE IF NOT EXISTS `arpanet_accounts` (
   `password` varchar(64) NOT NULL,
   `license` varchar(64) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_accounts_username` (`username`),
-  KEY `idx_arpanet_accounts_license` (`license`)
+  UNIQUE KEY `idx_arpanet_accounts_username` (`username`),
+  UNIQUE KEY `idx_arpanet_accounts_license` (`license`),
+  UNIQUE KEY `idx_arpanet_accounts_username_license` (`username`, `license`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: arpanet_documents_categories
+CREATE TABLE IF NOT EXISTS `arpanet_documents_categories` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `parent_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_arpanet_documents_categories_parent_id` (`parent_id`)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_documents
 CREATE TABLE IF NOT EXISTS `arpanet_documents` (
@@ -20,20 +32,23 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents` (
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` datetime(3) DEFAULT NULL,
   `title` longtext NOT NULL,
-  `content` longtext NOT NULL,
   `content_type` varchar(24) NOT NULL,
-  `closed` tinyint(1) DEFAULT 0,
-  `state` varchar(24) NOT NULL,
+  `content` longtext NOT NULL,
+  `data` longtext DEFAULT NULL,
   `creator_id` int(11) NOT NULL,
   `creator_job` varchar(20) NOT NULL,
+  `state` varchar(24) NOT NULL,
+  `closed` tinyint(1) DEFAULT 0,
   `public` tinyint(1) NOT NULL DEFAULT 0,
+  `category_id` bigint(20) unsigned DEFAULT NULL,
   `response_id` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_arpanet_documents_deleted_at` (`deleted_at`),
   KEY `idx_arpanet_documents_creator_id` (`creator_id`),
   KEY `idx_arpanet_documents_creator_job` (`creator_job`),
   KEY `idx_arpanet_documents_response_id` (`response_id`),
-  CONSTRAINT `fk_arpanet_documents_responses` FOREIGN KEY (`response_id`) REFERENCES `arpanet_documents` (`id`)
+  CONSTRAINT `fk_arpanet_documents_responses` FOREIGN KEY (`response_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `fk_arpanet_documents_categories` FOREIGN KEY (`category_id`) REFERENCES `arpanet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_documents_job_access
@@ -51,21 +66,24 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_job_access` (
   CONSTRAINT `fk_arpanet_documents_jobs` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- arpanet_documents_mentions
-CREATE TABLE IF NOT EXISTS `arpanet_documents_mentions` (
+-- arpanet_documents_relations
+CREATE TABLE IF NOT EXISTS `arpanet_documents_relations` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `document_id` bigint(20) unsigned NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `target_user_id` int(11) NOT NULL,
+  `relation` varchar(32) NOT NULL,
+  `cause_user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_documents_mentions_document_id` (`document_id`),
-  KEY `idx_arpanet_documents_mentions_user_id` (`user_id`),
-  CONSTRAINT `fk_arpanet_documents_mentions` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`)
+  KEY `idx_arpanet_documents_relations_document_id` (`document_id`),
+  KEY `idx_arpanet_documents_relations_target_user_id` (`target_user_id`),
+  KEY `idx_arpanet_documents_relations_cause_user_id` (`cause_user_id`),
+  CONSTRAINT `fk_arpanet_documents_relations` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_documents_templates
-CREATE TABLE `arpanet_documents_templates` (
+CREATE TABLE IF NOT EXISTS `arpanet_documents_templates` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT current_timestamp(3),
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE current_timestamp(3),

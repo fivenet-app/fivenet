@@ -1,5 +1,5 @@
 <script lang="ts">
-import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
+import { User } from '@arpanet/gen/resources/users/users_pb';
 import { defineComponent } from 'vue';
 import { toTitleCase } from '../../utils/strings';
 

@@ -1,11 +1,11 @@
 <script lang="ts">
-import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
-import { OrderBy } from '@arpanet/gen/common/database/database_pb';
+import { User } from '@arpanet/gen/resources/users/users_pb';
+import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import { defineComponent } from 'vue';
 import { watchDebounced } from '@vueuse/core'
 import { getUsersClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
-import { FindUsersRequest } from '@arpanet/gen/users/users_pb';
+import { FindUsersRequest } from '@arpanet/gen/services/users/users_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';

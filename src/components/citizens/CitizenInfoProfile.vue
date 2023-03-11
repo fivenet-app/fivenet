@@ -13,10 +13,10 @@ import {
 } from '@headlessui/vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { EllipsisVerticalIcon, KeyIcon } from '@heroicons/vue/20/solid';
-import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
+import { User } from '@arpanet/gen/resources/users/users_pb';
 import { RpcError } from 'grpc-web';
 import { getUsersClient, handleGRPCError } from '../../grpc';
-import { SetUserPropsRequest } from '@arpanet/gen/users/users_pb';
+import { SetUserPropsRequest } from '@arpanet/gen/services/users/users_pb';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { getSecondsFormattedAsDuration } from '../../utils/time';
 import { dispatchNotification } from '../notification';

@@ -15,13 +15,6 @@ import (
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/pkg/routes"
 	"github.com/galexrt/arpanet/pkg/session"
-	pbauth "github.com/galexrt/arpanet/proto/auth"
-	pbcompletion "github.com/galexrt/arpanet/proto/completion"
-	pbdispatches "github.com/galexrt/arpanet/proto/dispatches"
-	pbdocuments "github.com/galexrt/arpanet/proto/documents"
-	pbjob "github.com/galexrt/arpanet/proto/job"
-	pblivemap "github.com/galexrt/arpanet/proto/livemap"
-	pbusers "github.com/galexrt/arpanet/proto/users"
 	"github.com/galexrt/arpanet/query"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
@@ -37,6 +30,15 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+
+	// GRPC Services
+	pbauth "github.com/galexrt/arpanet/proto/services/auth"
+	pbcompletion "github.com/galexrt/arpanet/proto/services/completion"
+	pbdispatches "github.com/galexrt/arpanet/proto/services/dispatches"
+	pbdocuments "github.com/galexrt/arpanet/proto/services/documents"
+	pbjobs "github.com/galexrt/arpanet/proto/services/jobs"
+	pblivemap "github.com/galexrt/arpanet/proto/services/livemap"
+	pbusers "github.com/galexrt/arpanet/proto/services/users"
 )
 
 var serverCmd = &cobra.Command{
@@ -110,7 +112,7 @@ var serverCmd = &cobra.Command{
 		pbcompletion.RegisterCompletionServiceServer(grpcServer, pbcompletion.NewServer())
 		pbdispatches.RegisterDispatchesServiceServer(grpcServer, pbdispatches.NewServer())
 		pbdocuments.RegisterDocumentsServiceServer(grpcServer, pbdocuments.NewServer())
-		pbjob.RegisterJobServiceServer(grpcServer, pbjob.NewServer())
+		pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 		pblivemap.RegisterLivemapServiceServer(grpcServer, pblivemap.NewServer(logger.Named("grpc_livemap")))
 		pbusers.RegisterUsersServiceServer(grpcServer, pbusers.NewServer())
 

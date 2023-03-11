@@ -2,8 +2,8 @@
 import { defineComponent } from 'vue';
 import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
-import { GetCharactersRequest } from '@arpanet/gen/auth/auth_pb';
-import { User } from '@arpanet/gen/common/userinfo/userinfo_pb';
+import { GetCharactersRequest } from '@arpanet/gen/services/auth/auth_pb';
+import { User } from '@arpanet/gen/resources/users/users_pb';
 import { getAccountClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { mapActions } from 'vuex';

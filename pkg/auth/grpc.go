@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/galexrt/arpanet/pkg/session"
-	"github.com/galexrt/arpanet/proto/common/userinfo"
+	"github.com/galexrt/arpanet/proto/resources/users"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -66,11 +66,11 @@ func GetUserInfoFromContext(ctx context.Context) (int32, string, int32) {
 	return values[AuthActiveCharIDCtxTag].(int32), values[AuthActiveCharJobCtxTag].(string), values[AuthActiveCharJobGradeCtxTag].(int32)
 }
 
-func GetUserFromContext(ctx context.Context) (*userinfo.ShortUser, error) {
+func GetUserFromContext(ctx context.Context) (*users.ShortUser, error) {
 	return getUserByID(ctx, GetUserIDFromContext(ctx))
 }
 
-func getUserByID(ctx context.Context, userID int32) (*userinfo.ShortUser, error) {
+func getUserByID(ctx context.Context, userID int32) (*users.ShortUser, error) {
 	// Find user info for the new/old char index in the claim
 	u := table.Users.AS("shortuser")
 	stmt := u.SELECT(
@@ -85,7 +85,7 @@ func getUserByID(ctx context.Context, userID int32) (*userinfo.ShortUser, error)
 		WHERE(u.ID.EQ(jet.Int32(userID))).
 		LIMIT(1)
 
-	var user userinfo.ShortUser
+	var user users.ShortUser
 	if err := stmt.QueryContext(ctx, query.DB, &user); err != nil {
 		return nil, err
 	}

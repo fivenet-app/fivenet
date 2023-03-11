@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package resources.users;
+option go_package = "github.com/galexrt/arpanet/proto/resources/users;users";
+
+import "validate/validate.proto";
+import "resources/timestamp/timestamp.proto";
+
+message User {
+    int32 userID = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"id"
+    string identifier = 2; // @gotags: alias:"identifier"
+    string job = 3; // @gotags: alias:"job"
+    int32 jobGrade = 4; // @gotags: alias:"job_grade"
+    string firstname = 5; // @gotags: alias:"firstname"
+    string lastname = 6; // @gotags: alias:"lastname"
+    string dateofbirth = 7; // @gotags: alias:"dateofbirth"
+    string sex = 8; // @gotags: alias:"sex"
+    string height = 9; // @gotags: alias:"height"
+    int32 visum = 10; // @gotags: alias:"visum"
+    int32 playtime = 11; // @gotags: alias:"playtime"
+
+    Props props = 12; // @gotags: alias:"arpanet_user_props"
+    repeated License licenses = 13; // @gotags: alias:"user_licenses"
+}
+
+message License {
+    string type = 1; // @gotags: sql:"primary_key" alias:"type"
+}
+
+message Props {
+    bool wanted = 1; // @gotags: alias:"wanted"
+}
+
+message ShortUser {
+    int32 userID = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"id"
+    string identifier = 2; // @gotags: alias:"identifier"
+    string job = 3; // @gotags: alias:"job"
+    int32 jobGrade = 4; // @gotags: alias:"job_grade"
+    string firstname = 5; // @gotags: alias:"firstname"
+    string lastname = 6; // @gotags: alias:"lastname"
+}
+
+message UserActivity {
+    uint64 id = 1 [(validate.rules).uint64.gt = 0]; // @gotags: sql:"primary_key" alias:"arpanet_user_activity.id"
+    string type = 2; // @gotags: alias:"arpanet_user_activity.type"
+    resources.timestamp.Timestamp createdAt = 3; // @gotags: alias:"arpanet_user_activity.created_at"
+    ShortUser targetUser = 4; // @gotags: alias:"target_user"
+    ShortUser causeUser = 5; // @gotags: alias:"cause_user"
+    string key = 6; // @gotags: alias:"arpanet_user_activity.key"
+    string oldValue = 7; // @gotags: alias:"arpanet_user_activity.old_value"
+    string newValue = 8; // @gotags: alias:"arpanet_user_activity.new_value"
+}

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Document } from '@arpanet/gen/documents/documents_pb';
+import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 
 export default defineComponent({
     data() {

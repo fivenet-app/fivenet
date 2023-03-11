@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package resources.jobs;
+option go_package = "github.com/galexrt/arpanet/proto/resources/jobs;jobs";
+
+message Job {
+    string name = 1; // @gotags: sql:"primary_key" alias:"name"
+    string label = 2; // @gotags: alias:"label"
+    repeated JobGrade grades = 3;
+}
+
+message JobGrade {
+    string job = 1; // @gotags: sql:"primary_key" alias:"job_name"
+    int32 grade = 2; // @gotags: alias:"grade"
+    string label = 3; // @gotags: alias:"label"
+}

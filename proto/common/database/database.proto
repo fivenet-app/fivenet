@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package gen.common.database;
-option go_package = "github.com/galexrt/arpanet/proto/common/database";
-
-message OrderBy {
-    string column = 1;
-    bool desc = 2;
-}

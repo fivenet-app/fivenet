@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package services.completion;
+option go_package = "github.com/galexrt/arpanet/proto/services/completion";
+
+import "resources/jobs/jobs.proto";
+
+message CompleteJobNamesRequest {
+    string search = 1;
+    bool withGrades = 2;
+}
+
+message CompleteJobNamesResponse {
+    repeated resources.jobs.Job jobs = 1;
+}
+
+message CompleteJobGradesRequest {
+    string job = 1;
+    string search = 2;
+}
+
+message CompleteJobGradesResponse {
+    repeated resources.jobs.JobGrade grades = 1;
+}
+
+service CompletionService {
+    rpc CompleteJobNames(CompleteJobNamesRequest) returns (CompleteJobNamesResponse);
+    rpc CompleteJobGrades(CompleteJobGradesRequest) returns (CompleteJobGradesResponse);
+}

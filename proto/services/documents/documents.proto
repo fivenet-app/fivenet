@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package services.documents;
+option go_package = "github.com/galexrt/arpanet/proto/documents;documents";
+
+import "resources/common/database/database.proto";
+import "resources/documents/documents.proto";
+
+message FindDocumentsRequest {
+    int64 offset = 1;
+    repeated resources.common.database.OrderBy orderBy = 2;
+    string search = 3;
+}
+
+message FindDocumentsResponse {
+    repeated resources.documents.Document documents = 1;
+}
+
+message GetDocumentRequest {
+    uint64 id = 1;
+    bool responses = 2;
+}
+
+message GetDocumentResponse {
+    resources.documents.Document document = 1;
+    repeated resources.documents.Document responses = 2;
+}
+
+message CreateDocumentRequest {
+    string title = 1; // @gotags: alias:"title"
+    string content = 2; // @gotags: alias:"content"
+    string content_type = 3; // @gotags: alias:"content_type"
+    bool closed = 4; // @gotags: alias:"closed"
+    string state = 5; // @gotags: alias:"state"
+    bool public = 6; // @gotags: alias:"public"
+    uint64 target_document_id = 7; // @gotags: alias:"response_id"
+}
+
+message CreateDocumentResponse {}
+
+message UpdateDocumentRequest {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    string title = 2; // @gotags: alias:"title"
+    string content = 3; // @gotags: alias:"content"
+    string content_type = 4; // @gotags: alias:"content_type"
+    bool closed = 5; // @gotags: alias:"closed"
+    string state = 6; // @gotags: alias:"state"
+    bool public = 7; // @gotags: alias:"public"
+}
+
+message UpdateDocumentResponse {}
+
+message ListTemplatesRequest {}
+
+message ListTemplatesResponse {
+    repeated resources.documents.DocumentTemplateShort templates = 1;
+}
+
+message GetTemplateRequest {
+    uint64 id = 1;
+}
+
+message GetTemplateResponse {
+    resources.documents.DocumentTemplate template = 1;
+}
+
+message GetDocumentAccessRequest {
+    uint64 id = 1;
+}
+
+message GetDocumentAccessResponse {
+    repeated resources.documents.DocumentJobAccess jobs = 1;
+    repeated resources.documents.DocumentUserAccess users = 2;
+}
+
+message SetDocumentAccessRequest {
+    uint64 id = 1;
+    // TODO
+}
+
+message SetDocumentAccessResponse {
+}
+
+service DocumentsService {
+    rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
+
+    rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
+    rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
+    rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
+
+    rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
+    rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
+    // TODO add create and update template methods
+
+    rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
+    rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
+}
