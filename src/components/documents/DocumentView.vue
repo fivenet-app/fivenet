@@ -12,14 +12,11 @@ import {
     MenuItems,
 } from '@headlessui/vue';
 import {
-    ArchiveBoxIcon,
-    ArrowUturnLeftIcon,
-    ChevronDownIcon,
-    ChevronUpIcon,
-    EllipsisVerticalIcon,
-    FolderArrowDownIcon,
+    LockOpenIcon,
+    BellIcon,
     PencilIcon,
-    UserPlusIcon,
+    ChatBubbleLeftEllipsisIcon,
+    CalendarIcon,
 } from '@heroicons/vue/20/solid';
 
 export default defineComponent({
@@ -28,14 +25,11 @@ export default defineComponent({
         MenuButton,
         MenuItem,
         MenuItems,
-        ArchiveBoxIcon,
-        ArrowUturnLeftIcon,
-        ChevronDownIcon,
-        ChevronUpIcon,
-        EllipsisVerticalIcon,
-        FolderArrowDownIcon,
+        LockOpenIcon,
+        BellIcon,
         PencilIcon,
-        UserPlusIcon,
+        ChatBubbleLeftEllipsisIcon,
+        CalendarIcon
     },
     data() {
         return {
@@ -74,18 +68,14 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="flex h-full flex-col">
-        <!-- Main area -->
+    <!-- <div class="flex h-full flex-col">
         <main class="min-w-0 flex-1 border-t border-gray-200 xl:flex">
             <section aria-labelledby="message-heading"
                 class="flex h-full min-w-0 flex-1 flex-col overflow-hidden xl:order-last">
-                <!-- Top section -->
                 <div class="flex-shrink-0 border-b border-gray-200 bg-white">
-                    <!-- Toolbar-->
                     <div class="flex h-16 flex-col justify-center">
                         <div class="px-4 sm:px-6 lg:px-8">
                             <div class="flex justify-between py-3">
-                                <!-- Left buttons -->
                                 <div>
                                     <div class="isolate inline-flex rounded-md shadow-sm sm:space-x-3 sm:shadow-none">
                                         <span class="inline-flex sm:shadow-sm">
@@ -164,7 +154,6 @@ export default defineComponent({
                                     </div>
                                 </div>
 
-                                <!-- Right buttons -->
                                 <nav aria-label="Pagination">
                                     <span class="isolate inline-flex rounded-md shadow-sm">
                                         <a href="#"
@@ -182,7 +171,6 @@ export default defineComponent({
                             </div>
                         </div>
                     </div>
-                    <!-- Message header -->
                 </div>
 
                 <div class="min-h-0 flex-1 overflow-y-auto">
@@ -192,89 +180,276 @@ export default defineComponent({
                                 <h1 id="message-heading" class="text-lg font-medium text-gray-900">{{ document?.getTitle()
                                 }}
                                 </h1>
-                                <p class="mt-1 truncate text-sm text-gray-500">{{ document?.getCreator() }}</p>
-                            </div>
-
-                            <div
-                                class="mt-4 flex items-center justify-between sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:justify-start">
-                                <span
-                                    class="inline-flex items-center rounded-full bg-cyan-100 px-3 py-0.5 text-sm font-medium text-cyan-800">{{
-                                        document?.getState() }}</span>
-                                <Menu as="div" class="relative ml-3 inline-block text-left">
-                                    <div>
-                                        <MenuButton
-                                            class="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600">
-                                            <span class="sr-only">Open options</span>
-                                            <EllipsisVerticalIcon class="h-5 w-5" aria-hidden="true" />
-                                        </MenuButton>
+                                <p class="mt-1 truncate text-sm text-gray-500">{{ document?.getCreator()?.getFirstname() }} {{ document?.getCreator()?.getLastname() }}</p>
                                     </div>
 
-                                    <transition enter-active-class="transition ease-out duration-100"
-                                        enter-from-class="transform opacity-0 scale-95"
-                                        enter-to-class="transform opacity-100 scale-100"
-                                        leave-active-class="transition ease-in duration-75"
-                                        leave-from-class="transform opacity-100 scale-100"
-                                        leave-to-class="transform opacity-0 scale-95">
-                                        <MenuItems
-                                            class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                            <div class="py-1">
-                                                <MenuItem v-slot="{ active }">
-                                                <button type="button"
-                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex w-full justify-between px-4 py-2 text-sm']">
-                                                    <span>Copy email address</span>
-                                                </button>
-                                                </MenuItem>
-                                                <MenuItem v-slot="{ active }">
-                                                <a href="#"
-                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
-                                                    <span>Previous conversations</span>
+                                            <div
+                                                class="mt-4 flex items-center justify-between sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:justify-start">
+                                                <span
+                                                        class="inline-flex items-center rounded-full bg-cyan-100 px-3 py-0.5 text-sm font-medium text-cyan-800">{{
+                                                            document?.getState() }}</span>
+                                                    <Menu as="div" class="relative ml-3 inline-block text-left">
+                                                                <div>
+                                                                    <MenuButton
+                                                                        class="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                                                        <span class="sr-only">Open options</span>
+                                                                        <EllipsisVerticalIcon class="h-5 w-5" aria-hidden="true" />
+                                                                    </MenuButton>
+                                                                        </div>
+
+                                                                        <transition enter-active-class="transition ease-out duration-100"
+                                                                            enter-from-class="transform opacity-0 scale-95"
+                                                                            enter-to-class="transform opacity-100 scale-100"
+                                                                            leave-active-class="transition ease-in duration-75"
+                                                                            leave-from-class="transform opacity-100 scale-100"
+                                                                            leave-to-class="transform opacity-0 scale-95">
+                                                                            <MenuItems
+                                                                                class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                                                <div class="py-1">
+                                                                                    <MenuItem v-slot="{ active }">
+                                                                                    <button type="button"
+                                                                                        :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex w-full justify-between px-4 py-2 text-sm']">
+                                                                                        <span>Copy email address</span>
+                                                                                    </button>
+                                                                                    </MenuItem>
+                                                                                    <MenuItem v-slot="{ active }">
+                                                                                    <a href="#"
+                                                                                        :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
+                                                                                        <span>Previous conversations</span>
+                                                                                    </a>
+                                                                                    </MenuItem>
+                                                                                    <MenuItem v-slot="{ active }">
+                                                                                    <a href="#"
+                                                                                        :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
+                                                                                        <span>View original</span>
+                                                                                    </a>
+                                                                                    </MenuItem>
+                                                                                </div>
+                                                                            </MenuItems>
+                                                                        </transition>
+                                                                    </Menu>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </section>
+
+                                                <aside class="hidden xl:order-first xl:block xl:flex-shrink-0">
+                                                    <div class="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
+                                                        <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto">
+                                                            <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">
+                                                                <li v-for="response in responses" :key="response.getId()"
+                                                                    class="relative bg-white py-5 px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50">
+                                                                    <div class="flex justify-between space-x-3">
+                                                                        <div class="min-w-0 flex-1">
+                                                                            <a href="#" class="block focus:outline-none">
+                                                                                <span class="absolute inset-0" aria-hidden="true" />
+                                                                                <p class="truncate text-sm font-medium text-gray-900">{{ response.getCreator()
+                                                                                }}
+                                                                                </p>
+                                                                                <p class="truncate text-sm text-gray-500">{{ response.getTitle() }}</p>
+                                                                            </a>
+                                                                        </div>
+                                                                        <time :datetime="getDateLocaleString(response.getCreatedAt())"
+                                                                            class="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">{{
+                                                                                getDateLocaleString(response.getCreatedAt()) }}</time>
+                                                                    </div>
+                                                                    <div class="mt-1">
+                                                                        <p class="text-sm text-gray-600 line-clamp-2">{{ response.getContent() }}</p>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </aside>
+                                            </main>
+                                        </div> -->
+    <div class="mx-auto w-full max-w-7xl flex-grow lg:flex xl:px-8">
+        <!-- Left sidebar & main wrapper -->
+        <div class="min-w-0 flex-1 bg-white xl:flex">
+            <div
+                class="border-b border-gray-200 bg-white xl:w-64 xl:flex-shrink-0 xl:border-b-0 xl:border-r xl:border-gray-200">
+                <div class="h-full py-6 pl-4 pr-6 sm:pl-6 lg:pl-8 xl:pl-0">
+                    <!-- Left column area -->
+                </div>
+            </div>
+
+            <div class="bg-white lg:min-w-0 lg:flex-1">
+                <div class="h-full py-6 px-4 sm:px-6 lg:px-8">
+                    <div>
+                        <div>
+                            <div class="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b xl:pb-6">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-900">{{ document?.getTitle() }}</h1>
+                                    <p class="mt-2 text-sm text-gray-500">
+                                        Created by
+                                        {{ ' ' }}
+                                        <a :href="'/citizens/' + document?.getCreator()?.getUserid()"
+                                            class="font-medium text-gray-900">{{ document?.getCreator()?.getFirstname() }}
+                                            {{ document?.getCreator()?.getLastname() }}</a>
+                                    </p>
+                                </div>
+                                <div class="mt-4 flex space-x-3 md:mt-0">
+                                    <button type="button"
+                                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                        <PencilIcon class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+                                        Edit
+                                    </button>
+                                    <button type="button"
+                                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                        <BellIcon class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+                                        Subscribe
+                                    </button>
+                                </div>
+                            </div>
+                            <aside class="mt-8 xl:hidden">
+                                <h2 class="sr-only">Details</h2>
+                                <div class="space-y-5">
+                                    <div class="flex items-center space-x-2">
+                                        <LockOpenIcon class="h-5 w-5 text-green-500" aria-hidden="true" />
+                                        <span class="text-sm font-medium text-green-700">Open Issue</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <ChatBubbleLeftEllipsisIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                        <span class="text-sm font-medium text-gray-900">{{ responses.length }} replies</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <CalendarIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                        <span class="text-sm font-medium text-gray-900">Created on <time
+                                                :datetime="getDateLocaleString(document?.getCreatedAt())"
+                                                class="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">{{
+                                                    getDateLocaleString(document?.getCreatedAt()) }}</time></span>
+                                    </div>
+                                </div>
+                                <div class="mt-6 space-y-8 border-t border-b border-gray-200 py-6">
+                                    <div>
+                                        <h2 class="text-sm font-medium text-gray-500">Assignees</h2>
+                                        <ul role="list" class="mt-3 space-y-3">
+                                            <li class="flex justify-start">
+                                                <a href="#" class="flex items-center space-x-3">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-5 w-5 rounded-full"
+                                                            src=""
+                                                            alt="" />
+                                                    </div>
+                                                    <div class="text-sm font-medium text-gray-900">Eduardo Benz</div>
                                                 </a>
-                                                </MenuItem>
-                                                <MenuItem v-slot="{ active }">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h2 class="text-sm font-medium text-gray-500">Tags</h2>
+                                        <ul role="list" class="mt-2 leading-8">
+                                            <li class="inline">
                                                 <a href="#"
-                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
-                                                    <span>View original</span>
+                                                    class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                                    <div class="absolute flex flex-shrink-0 items-center justify-center">
+                                                        <span class="h-1.5 w-1.5 rounded-full bg-rose-500"
+                                                            aria-hidden="true" />
+                                                    </div>
+                                                    <div class="ml-3 text-xs font-semibold text-gray-900">Bug</div>
                                                 </a>
-                                                </MenuItem>
-                                            </div>
-                                        </MenuItems>
-                                    </transition>
-                                </Menu>
+                                                {{ ' ' }}
+                                            </li>
+                                            <li class="inline">
+                                                <a href="#"
+                                                    class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                                    <div class="absolute flex flex-shrink-0 items-center justify-center">
+                                                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-500"
+                                                            aria-hidden="true" />
+                                                    </div>
+                                                    <div class="ml-3 text-xs font-semibold text-gray-900">Accessibility
+                                                    </div>
+                                                </a>
+                                                {{ ' ' }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </aside>
+                            <div class="py-3 xl:pt-6 xl:pb-0">
+                                <h2 class="sr-only">Description</h2>
+                                <div class="prose max-w-none">
+                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita, hic? Commodi
+                                        cumque similique id tempora molestiae deserunt at suscipit, dolor voluptatem,
+                                        numquam, harum consequatur laboriosam voluptas tempore aut voluptatum alias?</p>
+                                    <ul role="list">
+                                        <li>Tempor ultrices proin nunc fames nunc ut auctor vitae sed. Eget massa parturient
+                                            vulputate fermentum id facilisis nam pharetra. Aliquet leo tellus.</li>
+                                        <li>Turpis ac nunc adipiscing adipiscing metus tincidunt senectus tellus.</li>
+                                        <li>Semper interdum porta sit tincidunt. Dui suspendisse scelerisque amet metus eget
+                                            sed. Ut tellus in sed dignissim.</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </div>
 
-            <!-- Message list-->
-            <aside class="hidden xl:order-first xl:block xl:flex-shrink-0">
-                <div class="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
-                    <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto">
-                        <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">
-                            <li v-for="response in responses" :key="response.getId()"
-                                class="relative bg-white py-5 px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50">
-                                <div class="flex justify-between space-x-3">
-                                    <div class="min-w-0 flex-1">
-                                        <a href="#" class="block focus:outline-none">
-                                            <span class="absolute inset-0" aria-hidden="true" />
-                                            <p class="truncate text-sm font-medium text-gray-900">{{ response.getCreator()
-                                            }}
-                                            </p>
-                                            <p class="truncate text-sm text-gray-500">{{ response.getTitle() }}</p>
-                                        </a>
-                                    </div>
-                                    <time :datetime="getDateLocaleString(response.getCreatedAt())"
-                                        class="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">{{
-                                            getDateLocaleString(response.getCreatedAt()) }}</time>
-                                </div>
-                                <div class="mt-1">
-                                    <p class="text-sm text-gray-600 line-clamp-2">{{ response.getContent() }}</p>
-                                </div>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </aside>
-        </main>
-    </div>
-</template>
+        <div class="bg-gray-50 pr-4 sm:pr-6 lg:flex-shrink-0 lg:border-l lg:border-gray-200 lg:pr-8 xl:pr-0">
+            <div class="h-full py-6 pl-6 lg:w-80">
+                <aside class="hidden xl:block xl:pl-8">
+                    <h2 class="sr-only">Details</h2>
+                    <div class="space-y-5">
+                        <div class="flex items-center space-x-2">
+                            <LockOpenIcon class="h-5 w-5 text-green-500" aria-hidden="true" />
+                            <span class="text-sm font-medium text-green-700">Open Issue</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <ChatBubbleLeftEllipsisIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                            <span class="text-sm font-medium text-gray-900">4 comments</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <CalendarIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                            <span class="text-sm font-medium text-gray-900">Created on <time datetime="2020-12-02">Dec 2,
+                                    2020</time></span>
+                        </div>
+                    </div>
+                    <div class="mt-6 space-y-8 border-t border-gray-200 py-6">
+                        <div>
+                            <h2 class="text-sm font-medium text-gray-500">Assignees</h2>
+                            <ul role="list" class="mt-3 space-y-3">
+                                <li class="flex justify-start">
+                                    <a href="#" class="flex items-center space-x-3">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-5 w-5 rounded-full"
+                                                src="https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+                                                alt="" />
+                                        </div>
+                                        <div class="text-sm font-medium text-gray-900">Eduardo Benz</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h2 class="text-sm font-medium text-gray-500">Tags</h2>
+                            <ul role="list" class="mt-2 leading-8">
+                                <li class="inline">
+                                    <a href="#"
+                                        class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                        <div class="absolute flex flex-shrink-0 items-center justify-center">
+                                            <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
+                                        </div>
+                                        <div class="ml-3 text-xs font-semibold text-gray-900">Bug</div>
+                                    </a>
+                                    {{ ' ' }}
+                                </li>
+                                <li class="inline">
+                                    <a href="#"
+                                        class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                        <div class="absolute flex flex-shrink-0 items-center justify-center">
+                                            <span class="h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true" />
+                                        </div>
+                                        <div class="ml-3 text-xs font-semibold text-gray-900">Accessibility</div>
+                                    </a>
+                                    {{ ' ' }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div></template>

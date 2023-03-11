@@ -88,7 +88,7 @@ export default defineComponent({
                     </form>
                 </div>
             </div>
-            <div class="overflow-hidden bg-white shadow sm:rounded-md">
+            <div class="overflow-hidden bg-white shadow sm:rounded-md mt-3">
                 <ul role="list" class="divide-y divide-gray-200">
                     <li v-for="doc in documents" :key="doc.getId()">
                         <router-link :to="{ name: 'Documents: Info', params: { id: doc.getId() } }"
