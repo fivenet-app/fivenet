@@ -26,7 +26,7 @@ export const authInterceptor = new AuthInterceptor();
 
 // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
 //@ts-ignore GRPCWeb Devtools only exist when the user has the extension installed
-const devInterceptors = typeof window.__GRPCWEB_DEVTOOLS__ !== 'undefined' ? window.__GRPCWEB_DEVTOOLS__ : (() => {});
+const devInterceptors = typeof window.__GRPCWEB_DEVTOOLS__ !== 'undefined' ? window.__GRPCWEB_DEVTOOLS__ : (() => { return { devToolsUnaryInterceptor: () => {}, devToolsStreamInterceptor: () => {} } });
 const {
     devToolsUnaryInterceptor,
     devToolsStreamInterceptor,
