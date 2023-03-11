@@ -17,7 +17,7 @@ type ArpanetDocuments struct {
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at"`
 	Title       string     `json:"title"`
-	ContentType string     `json:"content_type"`
+	ContentType int32      `json:"content_type"`
 	Content     string     `json:"content"`
 	Data        *string    `json:"data"`
 	CreatorID   int32      `json:"creator_id"`

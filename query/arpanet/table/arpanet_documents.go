@@ -22,7 +22,7 @@ type arpanetDocumentsTable struct {
 	UpdatedAt   mysql.ColumnTimestamp
 	DeletedAt   mysql.ColumnTimestamp
 	Title       mysql.ColumnString
-	ContentType mysql.ColumnString
+	ContentType mysql.ColumnInteger
 	Content     mysql.ColumnString
 	Data        mysql.ColumnString
 	CreatorID   mysql.ColumnInteger
@@ -77,7 +77,7 @@ func newArpanetDocumentsTableImpl(schemaName, tableName, alias string) arpanetDo
 		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
 		TitleColumn       = mysql.StringColumn("title")
-		ContentTypeColumn = mysql.StringColumn("content_type")
+		ContentTypeColumn = mysql.IntegerColumn("content_type")
 		ContentColumn     = mysql.StringColumn("content")
 		DataColumn        = mysql.StringColumn("data")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")

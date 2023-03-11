@@ -660,16 +660,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 
 	// no validation rules for CategoryID
 
-	if m.GetTargetDocumentID() < 0 {
-		err := CreateDocumentRequestValidationError{
-			field:  "TargetDocumentID",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for TargetDocumentID
 
 	for idx, item := range m.GetJobs() {
 		_, _ = idx, item
@@ -943,16 +934,7 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetId() < 0 {
-		err := UpdateDocumentRequestValidationError{
-			field:  "Id",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Id
 
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
 		err := UpdateDocumentRequestValidationError{

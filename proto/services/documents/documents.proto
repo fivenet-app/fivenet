@@ -39,7 +39,7 @@ message CreateDocumentRequest {
     string state = 5 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
     bool public = 6; // @gotags: alias:"public"
     uint64 categoryID = 7; // @gotags: alias:"category_id"
-    uint64 targetDocumentID = 8 [(validate.rules).uint64.gte = 0]; // @gotags: alias:"response_id"
+    uint64 targetDocumentID = 8; // @gotags: alias:"response_id"
 
     repeated resources.documents.DocumentJobAccess jobs = 9;
     repeated resources.documents.DocumentUserAccess users = 10;
@@ -48,7 +48,7 @@ message CreateDocumentRequest {
 message CreateDocumentResponse {}
 
 message UpdateDocumentRequest {
-    uint64 id = 1 [(validate.rules).uint64.gte = 0]; // @gotags: sql:"primary_key" alias:"id"
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
     string title = 2 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
     string content = 3 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
     resources.documents.DOCUMENT_CONTENT_TYPE content_type = 4; // @gotags: alias:"content_type"

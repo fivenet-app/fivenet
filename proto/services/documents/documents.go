@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/modelhelper"
 	"github.com/galexrt/arpanet/pkg/perms"
 	database "github.com/galexrt/arpanet/proto/resources/common/database"
 	"github.com/galexrt/arpanet/proto/resources/documents"
@@ -59,12 +58,12 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		jet.OR(
 			jet.AND(
 				dua.Access.IS_NOT_NULL(),
-				dua.Access.NOT_EQ(jet.String(string(modelhelper.BlockedAccessRole))),
+				dua.Access.NOT_EQ(jet.Int32(int32(documents.DOCUMENT_ACCESS_BLOCKED))),
 			),
 			jet.AND(
 				dua.Access.IS_NULL(),
 				dja.Access.IS_NOT_NULL(),
-				dja.Access.NOT_EQ(jet.String(string(modelhelper.BlockedAccessRole))),
+				dja.Access.NOT_EQ(jet.Int32(int32(documents.DOCUMENT_ACCESS_BLOCKED))),
 			),
 		),
 	)}
@@ -204,7 +203,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	).VALUES(
 		req.Title,
 		s.p.Sanitize(req.Content),
-		"html",
+		documents.DOCUMENT_CONTENT_TYPE_HTML.String(),
 		req.Closed,
 		req.State,
 		req.Public,
@@ -246,17 +245,17 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			jet.AND(
 				dua.Access.IS_NOT_NULL(),
 				dua.Access.IN(
-					jet.String(modelhelper.EditAccessRole),
-					jet.String(modelhelper.AdminAccessRole),
+					jet.Int32(int32(documents.DOCUMENT_ACCESS_EDIT)),
+					jet.Int32(int32(documents.DOCUMENT_ACCESS_ADMIN)),
 				),
 			),
 			jet.AND(
 				dua.Access.IS_NULL(),
 				dja.Access.IS_NOT_NULL(),
 				dja.Access.IN(
-					jet.String(modelhelper.EditAccessRole),
-					jet.String(modelhelper.LeaderAccessRole),
-					jet.String(modelhelper.AdminAccessRole),
+					jet.Int32(int32(documents.DOCUMENT_ACCESS_EDIT)),
+					jet.Int32(int32(documents.DOCUMENT_ACCESS_LEADER)),
+					jet.Int32(int32(documents.DOCUMENT_ACCESS_ADMIN)),
 				),
 			),
 		),
