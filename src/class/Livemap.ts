@@ -50,7 +50,7 @@ export class Livemap extends L.Map {
                 this.element.style.backgroundColor = '#1862ad';
                 return;
             case 'Postal':
-                this.element.style.backgroundColor = '#63a7ce';
+                this.element.style.backgroundColor = '#74aace';
                 return;
         }
     }

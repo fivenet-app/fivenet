@@ -25,6 +25,8 @@ var resources_timestamp_timestamp_pb = require('../../resources/timestamp/timest
 goog.object.extend(proto, resources_timestamp_timestamp_pb);
 var resources_users_users_pb = require('../../resources/users/users_pb.js');
 goog.object.extend(proto, resources_users_users_pb);
+goog.exportSymbol('proto.resources.documents.DOCUMENT_ACCESS', null, global);
+goog.exportSymbol('proto.resources.documents.DOCUMENT_CONTENT_TYPE', null, global);
 goog.exportSymbol('proto.resources.documents.Document', null, global);
 goog.exportSymbol('proto.resources.documents.DocumentAccess', null, global);
 goog.exportSymbol('proto.resources.documents.DocumentCategory', null, global);
@@ -216,7 +218,7 @@ proto.resources.documents.Document.toObject = function(includeInstance, msg) {
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     title: jspb.Message.getFieldWithDefault(msg, 4, ""),
     content: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    contenttype: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    contenttype: jspb.Message.getFieldWithDefault(msg, 6, 0),
     closed: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
     state: jspb.Message.getFieldWithDefault(msg, 8, ""),
     creator: (f = msg.getCreator()) && resources_users_users_pb.ShortUser.toObject(includeInstance, f),
@@ -282,7 +284,7 @@ proto.resources.documents.Document.deserializeBinaryFromReader = function(msg, r
       msg.setContent(value);
       break;
     case 6:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {!proto.resources.documents.DOCUMENT_CONTENT_TYPE} */ (reader.readEnum());
       msg.setContenttype(value);
       break;
     case 7:
@@ -377,8 +379,8 @@ proto.resources.documents.Document.serializeBinaryToWriter = function(message, w
     );
   }
   f = message.getContenttype();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f !== 0.0) {
+    writer.writeEnum(
       6,
       f
     );
@@ -558,20 +560,20 @@ proto.resources.documents.Document.prototype.setContent = function(value) {
 
 
 /**
- * optional string contentType = 6;
- * @return {string}
+ * optional DOCUMENT_CONTENT_TYPE contentType = 6;
+ * @return {!proto.resources.documents.DOCUMENT_CONTENT_TYPE}
  */
 proto.resources.documents.Document.prototype.getContenttype = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+  return /** @type {!proto.resources.documents.DOCUMENT_CONTENT_TYPE} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
 
 /**
- * @param {string} value
+ * @param {!proto.resources.documents.DOCUMENT_CONTENT_TYPE} value
  * @return {!proto.resources.documents.Document} returns this
  */
 proto.resources.documents.Document.prototype.setContenttype = function(value) {
-  return jspb.Message.setProto3StringField(this, 6, value);
+  return jspb.Message.setProto3EnumField(this, 6, value);
 };
 
 
@@ -1631,9 +1633,9 @@ proto.resources.documents.DocumentJobAccess.toObject = function(includeInstance,
     createdAt: (f = msg.getCreatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     documentid: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    name: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    job: jspb.Message.getFieldWithDefault(msg, 5, ""),
     minimumgrade: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    access: jspb.Message.getFieldWithDefault(msg, 7, "")
+    access: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
 
   if (includeInstance) {
@@ -1690,14 +1692,14 @@ proto.resources.documents.DocumentJobAccess.deserializeBinaryFromReader = functi
       break;
     case 5:
       var value = /** @type {string} */ (reader.readString());
-      msg.setName(value);
+      msg.setJob(value);
       break;
     case 6:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setMinimumgrade(value);
       break;
     case 7:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {!proto.resources.documents.DOCUMENT_ACCESS} */ (reader.readEnum());
       msg.setAccess(value);
       break;
     default:
@@ -1759,7 +1761,7 @@ proto.resources.documents.DocumentJobAccess.serializeBinaryToWriter = function(m
       f
     );
   }
-  f = message.getName();
+  f = message.getJob();
   if (f.length > 0) {
     writer.writeString(
       5,
@@ -1774,8 +1776,8 @@ proto.resources.documents.DocumentJobAccess.serializeBinaryToWriter = function(m
     );
   }
   f = message.getAccess();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f !== 0.0) {
+    writer.writeEnum(
       7,
       f
     );
@@ -1894,10 +1896,10 @@ proto.resources.documents.DocumentJobAccess.prototype.setDocumentid = function(v
 
 
 /**
- * optional string name = 5;
+ * optional string job = 5;
  * @return {string}
  */
-proto.resources.documents.DocumentJobAccess.prototype.getName = function() {
+proto.resources.documents.DocumentJobAccess.prototype.getJob = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
@@ -1906,7 +1908,7 @@ proto.resources.documents.DocumentJobAccess.prototype.getName = function() {
  * @param {string} value
  * @return {!proto.resources.documents.DocumentJobAccess} returns this
  */
-proto.resources.documents.DocumentJobAccess.prototype.setName = function(value) {
+proto.resources.documents.DocumentJobAccess.prototype.setJob = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
 };
 
@@ -1930,20 +1932,20 @@ proto.resources.documents.DocumentJobAccess.prototype.setMinimumgrade = function
 
 
 /**
- * optional string access = 7;
- * @return {string}
+ * optional DOCUMENT_ACCESS access = 7;
+ * @return {!proto.resources.documents.DOCUMENT_ACCESS}
  */
 proto.resources.documents.DocumentJobAccess.prototype.getAccess = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+  return /** @type {!proto.resources.documents.DOCUMENT_ACCESS} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
 /**
- * @param {string} value
+ * @param {!proto.resources.documents.DOCUMENT_ACCESS} value
  * @return {!proto.resources.documents.DocumentJobAccess} returns this
  */
 proto.resources.documents.DocumentJobAccess.prototype.setAccess = function(value) {
-  return jspb.Message.setProto3StringField(this, 7, value);
+  return jspb.Message.setProto3EnumField(this, 7, value);
 };
 
 
@@ -1984,7 +1986,7 @@ proto.resources.documents.DocumentUserAccess.toObject = function(includeInstance
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     documentid: jspb.Message.getFieldWithDefault(msg, 4, 0),
     userid: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    access: jspb.Message.getFieldWithDefault(msg, 6, "")
+    access: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -2044,7 +2046,7 @@ proto.resources.documents.DocumentUserAccess.deserializeBinaryFromReader = funct
       msg.setUserid(value);
       break;
     case 6:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {!proto.resources.documents.DOCUMENT_ACCESS} */ (reader.readEnum());
       msg.setAccess(value);
       break;
     default:
@@ -2114,8 +2116,8 @@ proto.resources.documents.DocumentUserAccess.serializeBinaryToWriter = function(
     );
   }
   f = message.getAccess();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f !== 0.0) {
+    writer.writeEnum(
       6,
       f
     );
@@ -2252,20 +2254,20 @@ proto.resources.documents.DocumentUserAccess.prototype.setUserid = function(valu
 
 
 /**
- * optional string access = 6;
- * @return {string}
+ * optional DOCUMENT_ACCESS access = 6;
+ * @return {!proto.resources.documents.DOCUMENT_ACCESS}
  */
 proto.resources.documents.DocumentUserAccess.prototype.getAccess = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+  return /** @type {!proto.resources.documents.DOCUMENT_ACCESS} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
 
 /**
- * @param {string} value
+ * @param {!proto.resources.documents.DOCUMENT_ACCESS} value
  * @return {!proto.resources.documents.DocumentUserAccess} returns this
  */
 proto.resources.documents.DocumentUserAccess.prototype.setAccess = function(value) {
-  return jspb.Message.setProto3StringField(this, 6, value);
+  return jspb.Message.setProto3EnumField(this, 6, value);
 };
 
 
@@ -2488,5 +2490,23 @@ proto.resources.documents.DocumentCategory.prototype.setJob = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
 };
 
+
+/**
+ * @enum {number}
+ */
+proto.resources.documents.DOCUMENT_CONTENT_TYPE = {
+  HTML: 0
+};
+
+/**
+ * @enum {number}
+ */
+proto.resources.documents.DOCUMENT_ACCESS = {
+  BLOCKED: 0,
+  VIEW: 1,
+  EDIT: 2,
+  LEADER: 3,
+  ADMIN: 4
+};
 
 goog.object.extend(exports, proto.resources.documents);

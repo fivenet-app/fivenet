@@ -67,25 +67,119 @@ func (m *User) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Identifier
+	if utf8.RuneCountInString(m.GetIdentifier()) != 46 {
+		err := UserValidationError{
+			field:  "Identifier",
+			reason: "value length must be 46 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 
-	// no validation rules for Job
+	}
 
-	// no validation rules for JobGrade
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := UserValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Firstname
+	if m.GetJobGrade() <= 0 {
+		err := UserValidationError{
+			field:  "JobGrade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Lastname
+	if l := utf8.RuneCountInString(m.GetFirstname()); l < 1 || l > 50 {
+		err := UserValidationError{
+			field:  "Firstname",
+			reason: "value length must be between 1 and 50 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Dateofbirth
+	if l := utf8.RuneCountInString(m.GetLastname()); l < 1 || l > 50 {
+		err := UserValidationError{
+			field:  "Lastname",
+			reason: "value length must be between 1 and 50 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Sex
+	if utf8.RuneCountInString(m.GetDateofbirth()) != 10 {
+		err := UserValidationError{
+			field:  "Dateofbirth",
+			reason: "value length must be 10 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if l := utf8.RuneCountInString(m.GetSex()); l < 1 || l > 2 {
+		err := UserValidationError{
+			field:  "Sex",
+			reason: "value length must be between 1 and 2 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Height
 
-	// no validation rules for Visum
+	if utf8.RuneCountInString(m.GetPhoneNumber()) > 20 {
+		err := UserValidationError{
+			field:  "PhoneNumber",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Playtime
+	if m.GetVisum() < 0 {
+		err := UserValidationError{
+			field:  "Visum",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetPlaytime() < 0 {
+		err := UserValidationError{
+			field:  "Playtime",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetProps()).(type) {
@@ -248,7 +342,16 @@ func (m *License) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Type
+	if l := utf8.RuneCountInString(m.GetType()); l < 3 || l > 60 {
+		err := LicenseValidationError{
+			field:  "Type",
+			reason: "value length must be between 3 and 60 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return LicenseMultiError(errors)
@@ -327,21 +430,22 @@ var _ interface {
 	ErrorName() string
 } = LicenseValidationError{}
 
-// Validate checks the field values on Props with the rules defined in the
+// Validate checks the field values on UserProps with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *Props) Validate() error {
+func (m *UserProps) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Props with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in PropsMultiError, or nil if none found.
-func (m *Props) ValidateAll() error {
+// ValidateAll checks the field values on UserProps with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserPropsMultiError, or nil
+// if none found.
+func (m *UserProps) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Props) validate(all bool) error {
+func (m *UserProps) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -351,18 +455,18 @@ func (m *Props) validate(all bool) error {
 	// no validation rules for Wanted
 
 	if len(errors) > 0 {
-		return PropsMultiError(errors)
+		return UserPropsMultiError(errors)
 	}
 
 	return nil
 }
 
-// PropsMultiError is an error wrapping multiple validation errors returned by
-// Props.ValidateAll() if the designated constraints aren't met.
-type PropsMultiError []error
+// UserPropsMultiError is an error wrapping multiple validation errors returned
+// by UserProps.ValidateAll() if the designated constraints aren't met.
+type UserPropsMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m PropsMultiError) Error() string {
+func (m UserPropsMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -371,11 +475,11 @@ func (m PropsMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m PropsMultiError) AllErrors() []error { return m }
+func (m UserPropsMultiError) AllErrors() []error { return m }
 
-// PropsValidationError is the validation error returned by Props.Validate if
-// the designated constraints aren't met.
-type PropsValidationError struct {
+// UserPropsValidationError is the validation error returned by
+// UserProps.Validate if the designated constraints aren't met.
+type UserPropsValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -383,22 +487,22 @@ type PropsValidationError struct {
 }
 
 // Field function returns field value.
-func (e PropsValidationError) Field() string { return e.field }
+func (e UserPropsValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e PropsValidationError) Reason() string { return e.reason }
+func (e UserPropsValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e PropsValidationError) Cause() error { return e.cause }
+func (e UserPropsValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e PropsValidationError) Key() bool { return e.key }
+func (e UserPropsValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e PropsValidationError) ErrorName() string { return "PropsValidationError" }
+func (e UserPropsValidationError) ErrorName() string { return "UserPropsValidationError" }
 
 // Error satisfies the builtin error interface
-func (e PropsValidationError) Error() string {
+func (e UserPropsValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -410,14 +514,14 @@ func (e PropsValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sProps.%s: %s%s",
+		"invalid %sUserProps.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = PropsValidationError{}
+var _ error = UserPropsValidationError{}
 
 var _ interface {
 	Field() string
@@ -425,7 +529,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = PropsValidationError{}
+} = UserPropsValidationError{}
 
 // Validate checks the field values on ShortUser with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -460,15 +564,61 @@ func (m *ShortUser) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Identifier
+	if utf8.RuneCountInString(m.GetIdentifier()) != 46 {
+		err := ShortUserValidationError{
+			field:  "Identifier",
+			reason: "value length must be 46 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 
-	// no validation rules for Job
+	}
 
-	// no validation rules for JobGrade
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := ShortUserValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Firstname
+	if m.GetJobGrade() <= 0 {
+		err := ShortUserValidationError{
+			field:  "JobGrade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Lastname
+	if l := utf8.RuneCountInString(m.GetFirstname()); l < 1 || l > 50 {
+		err := ShortUserValidationError{
+			field:  "Firstname",
+			reason: "value length must be between 1 and 50 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetLastname()); l < 1 || l > 50 {
+		err := ShortUserValidationError{
+			field:  "Lastname",
+			reason: "value length must be between 1 and 50 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ShortUserMultiError(errors)
@@ -569,18 +719,18 @@ func (m *UserActivity) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetId() <= 0 {
+	// no validation rules for Id
+
+	if _, ok := USER_ACTIVITY_TYPE_name[int32(m.GetType())]; !ok {
 		err := UserActivityValidationError{
-			field:  "Id",
-			reason: "value must be greater than 0",
+			field:  "Type",
+			reason: "value must be one of the defined enum values",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
 	}
-
-	// no validation rules for Type
 
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
@@ -669,11 +819,38 @@ func (m *UserActivity) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Key
+	if l := utf8.RuneCountInString(m.GetKey()); l < 1 || l > 64 {
+		err := UserActivityValidationError{
+			field:  "Key",
+			reason: "value length must be between 1 and 64 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for OldValue
+	if utf8.RuneCountInString(m.GetOldValue()) > 256 {
+		err := UserActivityValidationError{
+			field:  "OldValue",
+			reason: "value length must be at most 256 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for NewValue
+	if utf8.RuneCountInString(m.GetNewValue()) > 256 {
+		err := UserActivityValidationError{
+			field:  "NewValue",
+			reason: "value length must be at most 256 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return UserActivityMultiError(errors)

@@ -57,7 +57,16 @@ func (m *CompleteJobNamesRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Search
+	if utf8.RuneCountInString(m.GetSearch()) > 50 {
+		err := CompleteJobNamesRequestValidationError{
+			field:  "Search",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for WithGrades
 
@@ -299,9 +308,27 @@ func (m *CompleteJobGradesRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Job
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := CompleteJobGradesRequestValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Search
+	if utf8.RuneCountInString(m.GetSearch()) > 50 {
+		err := CompleteJobGradesRequestValidationError{
+			field:  "Search",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return CompleteJobGradesRequestMultiError(errors)
@@ -541,7 +568,16 @@ func (m *CompleteDocumentCategoryRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Search
+	if utf8.RuneCountInString(m.GetSearch()) > 128 {
+		err := CompleteDocumentCategoryRequestValidationError{
+			field:  "Search",
+			reason: "value length must be at most 128 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return CompleteDocumentCategoryRequestMultiError(errors)

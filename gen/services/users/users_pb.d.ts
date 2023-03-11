@@ -1,7 +1,6 @@
 import * as jspb from 'google-protobuf'
 
 import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
-import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
 
@@ -153,10 +152,10 @@ export class SetUserPropsRequest extends jspb.Message {
   getUserid(): number;
   setUserid(value: number): SetUserPropsRequest;
 
-  getWanted(): boolean;
-  setWanted(value: boolean): SetUserPropsRequest;
-  hasWanted(): boolean;
-  clearWanted(): SetUserPropsRequest;
+  getProps(): resources_users_users_pb.UserProps | undefined;
+  setProps(value?: resources_users_users_pb.UserProps): SetUserPropsRequest;
+  hasProps(): boolean;
+  clearProps(): SetUserPropsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SetUserPropsRequest.AsObject;
@@ -169,12 +168,7 @@ export class SetUserPropsRequest extends jspb.Message {
 export namespace SetUserPropsRequest {
   export type AsObject = {
     userid: number,
-    wanted?: boolean,
-  }
-
-  export enum WantedCase { 
-    _WANTED_NOT_SET = 0,
-    WANTED = 2,
+    props?: resources_users_users_pb.UserProps.AsObject,
   }
 }
 

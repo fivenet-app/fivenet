@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/modelhelper"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/common/database"
 	users "github.com/galexrt/arpanet/proto/resources/users"
@@ -58,6 +57,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		u.Dateofbirth,
 		u.Sex,
 		u.Height,
+		u.PhoneNumber,
 		u.Visum,
 		u.Playtime,
 	}
@@ -169,6 +169,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		u.Dateofbirth,
 		u.Sex,
 		u.Height,
+		u.PhoneNumber,
 		u.Visum,
 		u.Playtime,
 	}
@@ -263,17 +264,17 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	stmt := aup.INSERT(aup.AllColumns).
 		MODEL(req).
 		ON_DUPLICATE_KEY_UPDATE(
-			aup.Wanted.SET(jet.Bool(*req.Wanted)),
+			aup.Wanted.SET(jet.Bool(req.Props.Wanted)),
 		)
 	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
 		return nil, err
 	}
 
 	// Create user activity
-	activityType := string(modelhelper.ChangedActivityType)
+	activityType := users.USER_ACTIVITY_TYPE_CHANGED.String()
 	key := "UserProps.Wanted"
-	newValue := strconv.FormatBool(req.GetWanted())
-	oldValue := strconv.FormatBool(!req.GetWanted())
+	newValue := strconv.FormatBool(req.Props.Wanted)
+	oldValue := strconv.FormatBool(!req.Props.Wanted)
 	s.addUserAcitvity(ctx, &model.ArpanetUserActivity{
 		TargetUserID: req.UserID,
 		CauseUserID:  userID,

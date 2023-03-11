@@ -57,7 +57,16 @@ func (m *Document) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if m.GetId() < 0 {
+		err := DocumentValidationError{
+			field:  "Id",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
@@ -117,15 +126,51 @@ func (m *Document) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Title
+	if utf8.RuneCountInString(m.GetTitle()) < 3 {
+		err := DocumentValidationError{
+			field:  "Title",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Content
+	if utf8.RuneCountInString(m.GetContent()) < 30 {
+		err := DocumentValidationError{
+			field:  "Content",
+			reason: "value length must be at least 30 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for ContentType
+	if _, ok := DOCUMENT_CONTENT_TYPE_name[int32(m.GetContentType())]; !ok {
+		err := DocumentValidationError{
+			field:  "ContentType",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Closed
 
-	// no validation rules for State
+	if utf8.RuneCountInString(m.GetState()) > 24 {
+		err := DocumentValidationError{
+			field:  "State",
+			reason: "value length must be at most 24 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetCreator()).(type) {
@@ -160,7 +205,16 @@ func (m *Document) validate(all bool) error {
 
 	// no validation rules for CategoryID
 
-	// no validation rules for TargetDocumentID
+	if m.GetTargetDocumentID() < 0 {
+		err := DocumentValidationError{
+			field:  "TargetDocumentID",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DocumentMultiError(errors)
@@ -263,17 +317,71 @@ func (m *DocumentTemplate) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Job
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := DocumentTemplateValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for JobGrade
+	if m.GetJobGrade() < 0 {
+		err := DocumentTemplateValidationError{
+			field:  "JobGrade",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Title
+	if utf8.RuneCountInString(m.GetTitle()) < 3 {
+		err := DocumentTemplateValidationError{
+			field:  "Title",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Description
+	if utf8.RuneCountInString(m.GetDescription()) > 255 {
+		err := DocumentTemplateValidationError{
+			field:  "Description",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for ContentTitle
+	if utf8.RuneCountInString(m.GetContentTitle()) < 3 {
+		err := DocumentTemplateValidationError{
+			field:  "ContentTitle",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Content
+	if utf8.RuneCountInString(m.GetContent()) < 12 {
+		err := DocumentTemplateValidationError{
+			field:  "Content",
+			reason: "value length must be at least 12 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for AdditionalData
 
@@ -725,11 +833,38 @@ func (m *DocumentJobAccess) validate(all bool) error {
 
 	// no validation rules for DocumentID
 
-	// no validation rules for Name
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := DocumentJobAccessValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for MinimumGrade
+	if m.GetMinimumGrade() < 0 {
+		err := DocumentJobAccessValidationError{
+			field:  "MinimumGrade",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Access
+	if _, ok := DOCUMENT_ACCESS_name[int32(m.GetAccess())]; !ok {
+		err := DocumentJobAccessValidationError{
+			field:  "Access",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DocumentJobAccessMultiError(errors)
@@ -895,9 +1030,27 @@ func (m *DocumentUserAccess) validate(all bool) error {
 
 	// no validation rules for DocumentID
 
-	// no validation rules for UserID
+	if m.GetUserID() <= 0 {
+		err := DocumentUserAccessValidationError{
+			field:  "UserID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Access
+	if _, ok := DOCUMENT_ACCESS_name[int32(m.GetAccess())]; !ok {
+		err := DocumentUserAccessValidationError{
+			field:  "Access",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DocumentUserAccessMultiError(errors)
@@ -1003,11 +1156,38 @@ func (m *DocumentCategory) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Name
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 128 {
+		err := DocumentCategoryValidationError{
+			field:  "Name",
+			reason: "value length must be between 3 and 128 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Description
+	if utf8.RuneCountInString(m.GetDescription()) > 255 {
+		err := DocumentCategoryValidationError{
+			field:  "Description",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Job
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := DocumentCategoryValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DocumentCategoryMultiError(errors)

@@ -5,11 +5,14 @@ option go_package = "github.com/galexrt/arpanet/proto/documents;documents";
 
 import "resources/common/database/database.proto";
 import "resources/documents/documents.proto";
+import "validate/validate.proto";
 
 message FindDocumentsRequest {
-    int64 offset = 1;
+    int64 offset = 1 [(validate.rules).int64.gte = 0];
     repeated resources.common.database.OrderBy orderBy = 2;
+    // Search param
     string search = 3;
+    string category = 4;
 }
 
 message FindDocumentsResponse {
@@ -21,7 +24,6 @@ message FindDocumentsResponse {
 
 message GetDocumentRequest {
     uint64 id = 1;
-    bool responses = 2;
 }
 
 message GetDocumentResponse {
@@ -30,33 +32,36 @@ message GetDocumentResponse {
 }
 
 message CreateDocumentRequest {
-    string title = 1; // @gotags: alias:"title"
-    string content = 2; // @gotags: alias:"content"
-    string content_type = 3; // @gotags: alias:"content_type"
-    uint64 categoryID = 4; // @gotags: alias:"category_id"
-    bool closed = 5; // @gotags: alias:"closed"
-    string state = 6; // @gotags: alias:"state"
-    bool public = 7; // @gotags: alias:"public"
-    uint64 target_document_id = 8; // @gotags: alias:"response_id"
+    string title = 1 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+    string content = 2 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
+    resources.documents.DOCUMENT_CONTENT_TYPE content_type = 3; // @gotags: alias:"content_type"
+    bool closed = 4; // @gotags: alias:"closed"
+    string state = 5 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+    bool public = 6; // @gotags: alias:"public"
+    uint64 categoryID = 7; // @gotags: alias:"category_id"
+    uint64 targetDocumentID = 8 [(validate.rules).uint64.gte = 0]; // @gotags: alias:"response_id"
+
+    repeated resources.documents.DocumentJobAccess jobs = 9;
+    repeated resources.documents.DocumentUserAccess users = 10;
 }
 
 message CreateDocumentResponse {}
 
 message UpdateDocumentRequest {
-    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-    string title = 2; // @gotags: alias:"title"
-    string content = 3; // @gotags: alias:"content"
-    string content_type = 4; // @gotags: alias:"content_type"
+    uint64 id = 1 [(validate.rules).uint64.gte = 0]; // @gotags: sql:"primary_key" alias:"id"
+    string title = 2 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+    string content = 3 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
+    resources.documents.DOCUMENT_CONTENT_TYPE content_type = 4; // @gotags: alias:"content_type"
     uint64 categoryID = 5; // @gotags: alias:"category_id"
     bool closed = 6; // @gotags: alias:"closed"
-    string state = 7; // @gotags: alias:"state"
+    string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
     bool public = 8; // @gotags: alias:"public"
 }
 
 message UpdateDocumentResponse {}
 
 message GetDocumentResponsesRequest {
-    int64 offset = 1;
+    int64 offset = 1 [(validate.rules).int64.gte = 0];
 }
 
 message GetDocumentResponsesResponse {
@@ -89,13 +94,21 @@ message GetDocumentAccessResponse {
     repeated resources.documents.DocumentUserAccess users = 2;
 }
 
-message SetDocumentAccessRequest {
-    uint64 id = 1;
-    // TODO
+enum DOCUMENT_ACCESS_UPDATE_MODE {
+    ADD = 0;
+    REPLACE = 1;
+    DELETE = 2;
+    CLEAR = 3;
 }
 
-message SetDocumentAccessResponse {
+message SetDocumentAccessRequest {
+    uint64 id = 1;
+    DOCUMENT_ACCESS_UPDATE_MODE mode = 2;
+    repeated resources.documents.DocumentJobAccess jobs = 3;
+    repeated resources.documents.DocumentUserAccess users = 4;
 }
+
+message SetDocumentAccessResponse {}
 
 service DocumentsService {
     rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);

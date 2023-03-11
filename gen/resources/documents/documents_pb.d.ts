@@ -24,8 +24,8 @@ export class Document extends jspb.Message {
   getContent(): string;
   setContent(value: string): Document;
 
-  getContenttype(): string;
-  setContenttype(value: string): Document;
+  getContenttype(): DOCUMENT_CONTENT_TYPE;
+  setContenttype(value: DOCUMENT_CONTENT_TYPE): Document;
 
   getClosed(): boolean;
   setClosed(value: boolean): Document;
@@ -62,7 +62,7 @@ export namespace Document {
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     title: string,
     content: string,
-    contenttype: string,
+    contenttype: DOCUMENT_CONTENT_TYPE,
     closed: boolean,
     state: string,
     creator?: resources_users_users_pb.ShortUser.AsObject,
@@ -207,14 +207,14 @@ export class DocumentJobAccess extends jspb.Message {
   getDocumentid(): number;
   setDocumentid(value: number): DocumentJobAccess;
 
-  getName(): string;
-  setName(value: string): DocumentJobAccess;
+  getJob(): string;
+  setJob(value: string): DocumentJobAccess;
 
   getMinimumgrade(): number;
   setMinimumgrade(value: number): DocumentJobAccess;
 
-  getAccess(): string;
-  setAccess(value: string): DocumentJobAccess;
+  getAccess(): DOCUMENT_ACCESS;
+  setAccess(value: DOCUMENT_ACCESS): DocumentJobAccess;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DocumentJobAccess.AsObject;
@@ -230,9 +230,9 @@ export namespace DocumentJobAccess {
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     documentid: number,
-    name: string,
+    job: string,
     minimumgrade: number,
-    access: string,
+    access: DOCUMENT_ACCESS,
   }
 }
 
@@ -256,8 +256,8 @@ export class DocumentUserAccess extends jspb.Message {
   getUserid(): number;
   setUserid(value: number): DocumentUserAccess;
 
-  getAccess(): string;
-  setAccess(value: string): DocumentUserAccess;
+  getAccess(): DOCUMENT_ACCESS;
+  setAccess(value: DOCUMENT_ACCESS): DocumentUserAccess;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DocumentUserAccess.AsObject;
@@ -274,7 +274,7 @@ export namespace DocumentUserAccess {
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     documentid: number,
     userid: number,
-    access: string,
+    access: DOCUMENT_ACCESS,
   }
 }
 
@@ -308,3 +308,13 @@ export namespace DocumentCategory {
   }
 }
 
+export enum DOCUMENT_CONTENT_TYPE { 
+  HTML = 0,
+}
+export enum DOCUMENT_ACCESS { 
+  BLOCKED = 0,
+  VIEW = 1,
+  EDIT = 2,
+  LEADER = 3,
+  ADMIN = 4,
+}

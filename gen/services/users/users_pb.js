@@ -23,8 +23,6 @@ var global =
 
 var resources_common_database_database_pb = require('../../resources/common/database/database_pb.js');
 goog.object.extend(proto, resources_common_database_database_pb);
-var resources_timestamp_timestamp_pb = require('../../resources/timestamp/timestamp_pb.js');
-goog.object.extend(proto, resources_timestamp_timestamp_pb);
 var resources_users_users_pb = require('../../resources/users/users_pb.js');
 goog.object.extend(proto, resources_users_users_pb);
 goog.exportSymbol('proto.users.FindUsersRequest', null, global);
@@ -1337,7 +1335,7 @@ proto.users.SetUserPropsRequest.prototype.toObject = function(opt_includeInstanc
 proto.users.SetUserPropsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     userid: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
+    props: (f = msg.getProps()) && resources_users_users_pb.UserProps.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1379,8 +1377,9 @@ proto.users.SetUserPropsRequest.deserializeBinaryFromReader = function(msg, read
       msg.setUserid(value);
       break;
     case 2:
-      var value = /** @type {boolean} */ (reader.readBool());
-      msg.setWanted(value);
+      var value = new resources_users_users_pb.UserProps;
+      reader.readMessage(value,resources_users_users_pb.UserProps.deserializeBinaryFromReader);
+      msg.setProps(value);
       break;
     default:
       reader.skipField();
@@ -1418,11 +1417,12 @@ proto.users.SetUserPropsRequest.serializeBinaryToWriter = function(message, writ
       f
     );
   }
-  f = /** @type {boolean} */ (jspb.Message.getField(message, 2));
+  f = message.getProps();
   if (f != null) {
-    writer.writeBool(
+    writer.writeMessage(
       2,
-      f
+      f,
+      resources_users_users_pb.UserProps.serializeBinaryToWriter
     );
   }
 };
@@ -1447,29 +1447,30 @@ proto.users.SetUserPropsRequest.prototype.setUserid = function(value) {
 
 
 /**
- * optional bool wanted = 2;
- * @return {boolean}
+ * optional resources.users.UserProps props = 2;
+ * @return {?proto.resources.users.UserProps}
  */
-proto.users.SetUserPropsRequest.prototype.getWanted = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
+proto.users.SetUserPropsRequest.prototype.getProps = function() {
+  return /** @type{?proto.resources.users.UserProps} */ (
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserProps, 2));
 };
 
 
 /**
- * @param {boolean} value
+ * @param {?proto.resources.users.UserProps|undefined} value
  * @return {!proto.users.SetUserPropsRequest} returns this
- */
-proto.users.SetUserPropsRequest.prototype.setWanted = function(value) {
-  return jspb.Message.setField(this, 2, value);
+*/
+proto.users.SetUserPropsRequest.prototype.setProps = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
 };
 
 
 /**
- * Clears the field making it undefined.
+ * Clears the message field making it undefined.
  * @return {!proto.users.SetUserPropsRequest} returns this
  */
-proto.users.SetUserPropsRequest.prototype.clearWanted = function() {
-  return jspb.Message.setField(this, 2, undefined);
+proto.users.SetUserPropsRequest.prototype.clearProps = function() {
+  return this.setProps(undefined);
 };
 
 
@@ -1477,7 +1478,7 @@ proto.users.SetUserPropsRequest.prototype.clearWanted = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.users.SetUserPropsRequest.prototype.hasWanted = function() {
+proto.users.SetUserPropsRequest.prototype.hasProps = function() {
   return jspb.Message.getField(this, 2) != null;
 };
 

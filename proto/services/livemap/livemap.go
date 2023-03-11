@@ -66,7 +66,10 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapService_StreamServer) err
 		FROM(l).
 		WHERE(
 			l.Job.IN(sqlJobs...).
-				AND(l.Hidden.IS_FALSE()),
+				AND(
+					l.Hidden.IS_FALSE(),
+					// TODO Ignore all columns where `updated_at` older than 5 minutes
+				),
 		)
 
 	for {
@@ -141,7 +144,7 @@ func (s *Server) generateRandomMarker() {
 
 		_, err := stmt.Exec(query.DB)
 		if err != nil {
-
+			s.logger.Error("failed to insert/ update random location to locations table", zap.Error(err))
 		}
 
 		time.Sleep(2 * time.Second)

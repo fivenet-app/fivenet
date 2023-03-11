@@ -31,14 +31,17 @@ export class User extends jspb.Message {
   getHeight(): string;
   setHeight(value: string): User;
 
+  getPhonenumber(): string;
+  setPhonenumber(value: string): User;
+
   getVisum(): number;
   setVisum(value: number): User;
 
   getPlaytime(): number;
   setPlaytime(value: number): User;
 
-  getProps(): Props | undefined;
-  setProps(value?: Props): User;
+  getProps(): UserProps | undefined;
+  setProps(value?: UserProps): User;
   hasProps(): boolean;
   clearProps(): User;
 
@@ -66,9 +69,10 @@ export namespace User {
     dateofbirth: string,
     sex: string,
     height: string,
+    phonenumber: string,
     visum: number,
     playtime: number,
-    props?: Props.AsObject,
+    props?: UserProps.AsObject,
     licensesList: Array<License.AsObject>,
   }
 }
@@ -91,19 +95,19 @@ export namespace License {
   }
 }
 
-export class Props extends jspb.Message {
+export class UserProps extends jspb.Message {
   getWanted(): boolean;
-  setWanted(value: boolean): Props;
+  setWanted(value: boolean): UserProps;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Props.AsObject;
-  static toObject(includeInstance: boolean, msg: Props): Props.AsObject;
-  static serializeBinaryToWriter(message: Props, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Props;
-  static deserializeBinaryFromReader(message: Props, reader: jspb.BinaryReader): Props;
+  toObject(includeInstance?: boolean): UserProps.AsObject;
+  static toObject(includeInstance: boolean, msg: UserProps): UserProps.AsObject;
+  static serializeBinaryToWriter(message: UserProps, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserProps;
+  static deserializeBinaryFromReader(message: UserProps, reader: jspb.BinaryReader): UserProps;
 }
 
-export namespace Props {
+export namespace UserProps {
   export type AsObject = {
     wanted: boolean,
   }
@@ -151,8 +155,8 @@ export class UserActivity extends jspb.Message {
   getId(): number;
   setId(value: number): UserActivity;
 
-  getType(): string;
-  setType(value: string): UserActivity;
+  getType(): USER_ACTIVITY_TYPE;
+  setType(value: USER_ACTIVITY_TYPE): UserActivity;
 
   getCreatedat(): resources_timestamp_timestamp_pb.Timestamp | undefined;
   setCreatedat(value?: resources_timestamp_timestamp_pb.Timestamp): UserActivity;
@@ -189,7 +193,7 @@ export class UserActivity extends jspb.Message {
 export namespace UserActivity {
   export type AsObject = {
     id: number,
-    type: string,
+    type: USER_ACTIVITY_TYPE,
     createdat?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     targetuser?: ShortUser.AsObject,
     causeuser?: ShortUser.AsObject,
@@ -199,3 +203,8 @@ export namespace UserActivity {
   }
 }
 
+export enum USER_ACTIVITY_TYPE { 
+  CHANGED = 0,
+  MENTIONED = 1,
+  CREATED = 2,
+}

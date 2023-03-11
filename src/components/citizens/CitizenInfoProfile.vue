@@ -62,12 +62,12 @@ export default defineComponent({
 
             const req = new SetUserPropsRequest();
             req.setUserid(this.user?.getUserid());
-            req.setWanted(this.wantedState);
+            this.user?.getProps()?.setWanted(this.wantedState);
+            req.setProps(this.user.getProps());
 
             getUsersClient().
                 setUserProps(req, null)
                 .then((resp) => {
-                    this.user?.getProps()?.setWanted(this.wantedState);
                     dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
                 }).catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
@@ -147,6 +147,12 @@ export default defineComponent({
                         Height</dt>
                     <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
                         user?.getHeight() }}cm</dd>
+                </div>
+                <div class="sm:flex sm:px-6 sm:py-5">
+                    <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
+                        Phone Number</dt>
+                    <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
+                        user?.getPhonenumber() }}</dd>
                 </div>
                 <div class="sm:flex sm:px-6 sm:py-5">
                     <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">

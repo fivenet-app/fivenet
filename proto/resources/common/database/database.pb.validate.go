@@ -56,7 +56,16 @@ func (m *OrderBy) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Column
+	if l := utf8.RuneCountInString(m.GetColumn()); l < 1 || l > 64 {
+		err := OrderByValidationError{
+			field:  "Column",
+			reason: "value length must be between 1 and 64 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Desc
 

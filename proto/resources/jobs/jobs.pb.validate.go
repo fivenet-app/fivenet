@@ -56,9 +56,27 @@ func (m *Job) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Name
+	if utf8.RuneCountInString(m.GetName()) > 20 {
+		err := JobValidationError{
+			field:  "Name",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Label
+	if utf8.RuneCountInString(m.GetLabel()) > 50 {
+		err := JobValidationError{
+			field:  "Label",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetGrades() {
 		_, _ = idx, item
@@ -193,11 +211,38 @@ func (m *JobGrade) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Job
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := JobGradeValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Grade
+	if m.GetGrade() <= 0 {
+		err := JobGradeValidationError{
+			field:  "Grade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Label
+	if utf8.RuneCountInString(m.GetLabel()) > 50 {
+		err := JobGradeValidationError{
+			field:  "Label",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return JobGradeMultiError(errors)

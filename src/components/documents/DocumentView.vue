@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { GetDocumentRequest } from '@arpanet/gen/services/documents/documents_pb';
+import { GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/documents/documents_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocumentsClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
@@ -62,6 +62,23 @@ export default defineComponent({
                 }).
                 catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
+                });
+        },
+        editDocumentTest() {
+            const req = new UpdateDocumentRequest();
+            req.setId(1);
+            req.setTitle("SCOTT'S DOKUMENTEN WOCHENDSSPAß");
+            req.setContent(this.document?.getContent());
+            req.setClosed(this.document?.getClosed());
+            req.setState(this.document?.getState());
+            req.setPublic(this.document?.getPublic());
+
+            getDocumentsClient().
+                updateDocument(req, null).then((resp) => {
+                    console.log(resp);
+                }).
+                catch((err: RpcError) => {
+                    console.log(err);
                 });
         },
     },
@@ -184,87 +201,87 @@ export default defineComponent({
                                 <p class="mt-1 truncate text-sm text-gray-500">{{ document?.getCreator()?.getFirstname() }} {{ document?.getCreator()?.getLastname() }}</p>
                                     </div>
 
-                                            <div
-                                                class="mt-4 flex items-center justify-between sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:justify-start">
-                                                <span
-                                                        class="inline-flex items-center rounded-full bg-cyan-100 px-3 py-0.5 text-sm font-medium text-cyan-800">{{
-                                                            document?.getState() }}</span>
-                                                    <Menu as="div" class="relative ml-3 inline-block text-left">
-                                                                <div>
-                                                                    <MenuButton
-                                                                        class="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600">
-                                                                        <span class="sr-only">Open options</span>
-                                                                        <EllipsisVerticalIcon class="h-5 w-5" aria-hidden="true" />
-                                                                            </MenuButton>
-                                                                                    </div>
+                                                <div
+                                                    class="mt-4 flex items-center justify-between sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:justify-start">
+                                                    <span
+                                                            class="inline-flex items-center rounded-full bg-cyan-100 px-3 py-0.5 text-sm font-medium text-cyan-800">{{
+                                                                document?.getState() }}</span>
+                                                        <Menu as="div" class="relative ml-3 inline-block text-left">
+                                                                    <div>
+                                                                        <MenuButton
+                                                                            class="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                                                            <span class="sr-only">Open options</span>
+                                                                            <EllipsisVerticalIcon class="h-5 w-5" aria-hidden="true" />
+                                                                                        </MenuButton>
+                                                                                                </div>
 
-                                                                                    <transition enter-active-class="transition ease-out duration-100"
-                                                                                        enter-from-class="transform opacity-0 scale-95"
-                                                                                        enter-to-class="transform opacity-100 scale-100"
-                                                                                        leave-active-class="transition ease-in duration-75"
-                                                                                        leave-from-class="transform opacity-100 scale-100"
-                                                                                        leave-to-class="transform opacity-0 scale-95">
-                                                                                        <MenuItems
-                                                                                            class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                                                            <div class="py-1">
-                                                                                                <MenuItem v-slot="{ active }">
-                                                                                                <button type="button"
-                                                                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex w-full justify-between px-4 py-2 text-sm']">
-                                                                                                    <span>Copy email address</span>
-                                                                                                </button>
-                                                                                                </MenuItem>
-                                                                                                <MenuItem v-slot="{ active }">
-                                                                                                <a href="#"
-                                                                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
-                                                                                                    <span>Previous conversations</span>
-                                                                                                </a>
-                                                                                                </MenuItem>
-                                                                                                <MenuItem v-slot="{ active }">
-                                                                                                <a href="#"
-                                                                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
-                                                                                                    <span>View original</span>
-                                                                                                </a>
-                                                                                                </MenuItem>
-                                                                                            </div>
-                                                                                        </MenuItems>
-                                                                                    </transition>
-                                                                                </Menu>
+                                                                                                <transition enter-active-class="transition ease-out duration-100"
+                                                                                                    enter-from-class="transform opacity-0 scale-95"
+                                                                                                    enter-to-class="transform opacity-100 scale-100"
+                                                                                                    leave-active-class="transition ease-in duration-75"
+                                                                                                    leave-from-class="transform opacity-100 scale-100"
+                                                                                                    leave-to-class="transform opacity-0 scale-95">
+                                                                                                    <MenuItems
+                                                                                                        class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                                                                        <div class="py-1">
+                                                                                                            <MenuItem v-slot="{ active }">
+                                                                                                            <button type="button"
+                                                                                                                :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex w-full justify-between px-4 py-2 text-sm']">
+                                                                                                                <span>Copy email address</span>
+                                                                                                            </button>
+                                                                                                            </MenuItem>
+                                                                                                            <MenuItem v-slot="{ active }">
+                                                                                                            <a href="#"
+                                                                                                                :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
+                                                                                                                <span>Previous conversations</span>
+                                                                                                            </a>
+                                                                                                            </MenuItem>
+                                                                                                            <MenuItem v-slot="{ active }">
+                                                                                                            <a href="#"
+                                                                                                                :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
+                                                                                                                <span>View original</span>
+                                                                                                            </a>
+                                                                                                            </MenuItem>
+                                                                                                        </div>
+                                                                                                    </MenuItems>
+                                                                                                </transition>
+                                                                                            </Menu>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </section>
+                                                                        </section>
 
-                                                            <aside class="hidden xl:order-first xl:block xl:flex-shrink-0">
-                                                                <div class="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
-                                                                    <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto">
-                                                                        <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">
-                                                                            <li v-for="response in responses" :key="response.getId()"
-                                                                                class="relative bg-white py-5 px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50">
-                                                                                <div class="flex justify-between space-x-3">
-                                                                                    <div class="min-w-0 flex-1">
-                                                                                        <a href="#" class="block focus:outline-none">
-                                                                                            <span class="absolute inset-0" aria-hidden="true" />
-                                                                                            <p class="truncate text-sm font-medium text-gray-900">{{ response.getCreator()
-                                                                                            }}
-                                                                                            </p>
-                                                                                            <p class="truncate text-sm text-gray-500">{{ response.getTitle() }}</p>
-                                                                                        </a>
-                                                                                    </div>
-                                                                                    <time :datetime="getDateLocaleString(response.getCreatedAt())"
-                                                                                        class="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">{{
-                                                                                            getDateLocaleString(response.getCreatedAt()) }}</time>
-                                                                                </div>
-                                                                                <div class="mt-1">
-                                                                                    <p class="text-sm text-gray-600 line-clamp-2">{{ response.getContent() }}</p>
-                                                                                </div>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </nav>
-                                                                </div>
-                                                            </aside>
-                                                        </main>
-                                                    </div> -->
+                                                                        <aside class="hidden xl:order-first xl:block xl:flex-shrink-0">
+                                                                            <div class="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
+                                                                                <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto">
+                                                                                    <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">
+                                                                                        <li v-for="response in responses" :key="response.getId()"
+                                                                                            class="relative bg-white py-5 px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50">
+                                                                                            <div class="flex justify-between space-x-3">
+                                                                                                <div class="min-w-0 flex-1">
+                                                                                                    <a href="#" class="block focus:outline-none">
+                                                                                                        <span class="absolute inset-0" aria-hidden="true" />
+                                                                                                        <p class="truncate text-sm font-medium text-gray-900">{{ response.getCreator()
+                                                                                                        }}
+                                                                                                        </p>
+                                                                                                        <p class="truncate text-sm text-gray-500">{{ response.getTitle() }}</p>
+                                                                                                    </a>
+                                                                                                </div>
+                                                                                                <time :datetime="getDateLocaleString(response.getCreatedAt())"
+                                                                                                    class="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">{{
+                                                                                                        getDateLocaleString(response.getCreatedAt()) }}</time>
+                                                                                            </div>
+                                                                                            <div class="mt-1">
+                                                                                                <p class="text-sm text-gray-600 line-clamp-2">{{ response.getContent() }}</p>
+                                                                                            </div>
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                </nav>
+                                                                            </div>
+                                                                        </aside>
+                                                                    </main>
+                                                                </div> -->
     <div class="mx-auto w-full max-w-7xl flex-grow lg:flex xl:px-8">
         <!-- Left sidebar & main wrapper -->
         <div class="min-w-0 flex-1 bg-white xl:flex">
@@ -285,22 +302,20 @@ export default defineComponent({
                                     <p class="mt-2 text-sm text-gray-500">
                                         Created by
                                         {{ ' ' }}
-                                        <a :href="'/citizens/' + document?.getCreator()?.getUserid()"
-                                            class="font-medium text-gray-900">{{ document?.getCreator()?.getFirstname() }}
-                                            {{ document?.getCreator()?.getLastname() }}</a>
+                                        <router-link :to="'/citizens/' + document?.getCreator()?.getUserid()"
+                                            class="font-medium text-gray-900">
+                                            {{ document?.getCreator()?.getFirstname() }}
+                                            {{ document?.getCreator()?.getLastname() }}
+                                        </router-link>
                                     </p>
                                 </div>
                                 <div class="mt-4 flex space-x-3 md:mt-0">
-                                    <button type="button"
+                                    <router-link :to="'/documents/' + document?.getId()" type="button"
                                         class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                                         <PencilIcon class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
                                         Edit
-                                    </button>
-                                    <button type="button"
-                                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                        <BellIcon class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-                                        Subscribe
-                                    </button>
+                                    </router-link>
+                                    <button @click="editDocumentTest()">TEST</button>
                                 </div>
                             </div>
                             <aside class="mt-8 xl:hidden">
@@ -324,15 +339,15 @@ export default defineComponent({
                                 </div>
                                 <div class="mt-6 space-y-8 border-t border-b border-gray-200 py-6">
                                     <div>
-                                        <h2 class="text-sm font-medium text-gray-500">Assignees</h2>
+                                        <h2 class="text-sm font-medium text-gray-500">Creator</h2>
                                         <ul role="list" class="mt-3 space-y-3">
                                             <li class="flex justify-start">
-                                                <a href="#" class="flex items-center space-x-3">
-                                                    <div class="flex-shrink-0">
-                                                        <img class="h-5 w-5 rounded-full" src="" alt="" />
-                                                    </div>
-                                                    <div class="text-sm font-medium text-gray-900">Eduardo Benz</div>
-                                                </a>
+                                                <router-link :to="'/citizens/' + document?.getCreator()?.getUserid()"
+                                                    class="flex items-center space-x-3">
+                                                    <div class="text-sm font-medium text-gray-900">{{
+                                                        document?.getCreator()?.getFirstname() + ", " +
+                                                        document?.getCreator()?.getLastname() }}</div>
+                                                </router-link>
                                             </li>
                                         </ul>
                                     </div>
@@ -369,16 +384,7 @@ export default defineComponent({
                             <div class="py-3 xl:pt-6 xl:pb-0">
                                 <h2 class="sr-only">Description</h2>
                                 <div class="prose max-w-none">
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita, hic? Commodi
-                                        cumque similique id tempora molestiae deserunt at suscipit, dolor voluptatem,
-                                        numquam, harum consequatur laboriosam voluptas tempore aut voluptatum alias?</p>
-                                    <ul role="list">
-                                        <li>Tempor ultrices proin nunc fames nunc ut auctor vitae sed. Eget massa parturient
-                                            vulputate fermentum id facilisis nam pharetra. Aliquet leo tellus.</li>
-                                        <li>Turpis ac nunc adipiscing adipiscing metus tincidunt senectus tellus.</li>
-                                        <li>Semper interdum porta sit tincidunt. Dui suspendisse scelerisque amet metus eget
-                                            sed. Ut tellus in sed dignissim.</li>
-                                    </ul>
+                                    <p v-html="document?.getContent()"></p>
                                 </div>
                             </div>
                         </div>
@@ -410,22 +416,21 @@ export default defineComponent({
                     </div>
                     <div class="mt-6 space-y-8 border-t border-gray-200 py-6">
                         <div>
-                            <h2 class="text-sm font-medium text-gray-500">Assignees</h2>
+                            <h2 class="text-sm font-medium text-gray-500">Creator</h2>
                             <ul role="list" class="mt-3 space-y-3">
                                 <li class="flex justify-start">
-                                    <a href="#" class="flex items-center space-x-3">
-                                        <div class="flex-shrink-0">
-                                            <img class="h-5 w-5 rounded-full"
-                                                src="https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
-                                                alt="" />
+                                    <router-link :to="'/citizens/' + document?.getCreator()?.getUserid()"
+                                        class="flex items-center space-x-3">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ document?.getCreator()?.getFirstname() + ", " +
+                                                document?.getCreator()?.getLastname() }}
                                         </div>
-                                        <div class="text-sm font-medium text-gray-900">Eduardo Benz</div>
-                                    </a>
+                                    </router-link>
                                 </li>
                             </ul>
                         </div>
                         <div>
-                            <h2 class="text-sm font-medium text-gray-500">Tags</h2>
+                            <h2 class="text-sm font-medium text-gray-500">Access</h2>
                             <ul role="list" class="mt-2 leading-8">
                                 <li class="inline">
                                     <a href="#"
@@ -433,17 +438,7 @@ export default defineComponent({
                                         <div class="absolute flex flex-shrink-0 items-center justify-center">
                                             <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
                                         </div>
-                                        <div class="ml-3 text-xs font-semibold text-gray-900">Bug</div>
-                                    </a>
-                                    {{ ' ' }}
-                                </li>
-                                <li class="inline">
-                                    <a href="#"
-                                        class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                        <div class="absolute flex flex-shrink-0 items-center justify-center">
-                                            <span class="h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true" />
-                                        </div>
-                                        <div class="ml-3 text-xs font-semibold text-gray-900">Accessibility</div>
+                                        <div class="ml-3 text-xs font-semibold text-gray-900">LSMD (Rank: 15)</div>
                                     </a>
                                     {{ ' ' }}
                                 </li>

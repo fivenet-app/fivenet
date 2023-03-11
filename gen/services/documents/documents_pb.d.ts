@@ -16,6 +16,9 @@ export class FindDocumentsRequest extends jspb.Message {
   getSearch(): string;
   setSearch(value: string): FindDocumentsRequest;
 
+  getCategory(): string;
+  setCategory(value: string): FindDocumentsRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindDocumentsRequest.AsObject;
   static toObject(includeInstance: boolean, msg: FindDocumentsRequest): FindDocumentsRequest.AsObject;
@@ -29,6 +32,7 @@ export namespace FindDocumentsRequest {
     offset: number,
     orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
     search: string,
+    category: string,
   }
 }
 
@@ -68,9 +72,6 @@ export class GetDocumentRequest extends jspb.Message {
   getId(): number;
   setId(value: number): GetDocumentRequest;
 
-  getResponses(): boolean;
-  setResponses(value: boolean): GetDocumentRequest;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetDocumentRequest): GetDocumentRequest.AsObject;
@@ -82,7 +83,6 @@ export class GetDocumentRequest extends jspb.Message {
 export namespace GetDocumentRequest {
   export type AsObject = {
     id: number,
-    responses: boolean,
   }
 }
 
@@ -119,11 +119,8 @@ export class CreateDocumentRequest extends jspb.Message {
   getContent(): string;
   setContent(value: string): CreateDocumentRequest;
 
-  getContentType(): string;
-  setContentType(value: string): CreateDocumentRequest;
-
-  getCategoryid(): number;
-  setCategoryid(value: number): CreateDocumentRequest;
+  getContentType(): resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE;
+  setContentType(value: resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE): CreateDocumentRequest;
 
   getClosed(): boolean;
   setClosed(value: boolean): CreateDocumentRequest;
@@ -134,8 +131,21 @@ export class CreateDocumentRequest extends jspb.Message {
   getPublic(): boolean;
   setPublic(value: boolean): CreateDocumentRequest;
 
-  getTargetDocumentId(): number;
-  setTargetDocumentId(value: number): CreateDocumentRequest;
+  getCategoryid(): number;
+  setCategoryid(value: number): CreateDocumentRequest;
+
+  getTargetdocumentid(): number;
+  setTargetdocumentid(value: number): CreateDocumentRequest;
+
+  getJobsList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
+  setJobsList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): CreateDocumentRequest;
+  clearJobsList(): CreateDocumentRequest;
+  addJobs(value?: resources_documents_documents_pb.DocumentJobAccess, index?: number): resources_documents_documents_pb.DocumentJobAccess;
+
+  getUsersList(): Array<resources_documents_documents_pb.DocumentUserAccess>;
+  setUsersList(value: Array<resources_documents_documents_pb.DocumentUserAccess>): CreateDocumentRequest;
+  clearUsersList(): CreateDocumentRequest;
+  addUsers(value?: resources_documents_documents_pb.DocumentUserAccess, index?: number): resources_documents_documents_pb.DocumentUserAccess;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CreateDocumentRequest.AsObject;
@@ -149,12 +159,14 @@ export namespace CreateDocumentRequest {
   export type AsObject = {
     title: string,
     content: string,
-    contentType: string,
-    categoryid: number,
+    contentType: resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE,
     closed: boolean,
     state: string,
     pb_public: boolean,
-    targetDocumentId: number,
+    categoryid: number,
+    targetdocumentid: number,
+    jobsList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
+    usersList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
   }
 }
 
@@ -182,8 +194,8 @@ export class UpdateDocumentRequest extends jspb.Message {
   getContent(): string;
   setContent(value: string): UpdateDocumentRequest;
 
-  getContentType(): string;
-  setContentType(value: string): UpdateDocumentRequest;
+  getContentType(): resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE;
+  setContentType(value: resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE): UpdateDocumentRequest;
 
   getCategoryid(): number;
   setCategoryid(value: number): UpdateDocumentRequest;
@@ -210,7 +222,7 @@ export namespace UpdateDocumentRequest {
     id: number,
     title: string,
     content: string,
-    contentType: string,
+    contentType: resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE,
     categoryid: number,
     closed: boolean,
     state: string,
@@ -402,6 +414,19 @@ export class SetDocumentAccessRequest extends jspb.Message {
   getId(): number;
   setId(value: number): SetDocumentAccessRequest;
 
+  getMode(): DOCUMENT_ACCESS_UPDATE_MODE;
+  setMode(value: DOCUMENT_ACCESS_UPDATE_MODE): SetDocumentAccessRequest;
+
+  getJobsList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
+  setJobsList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): SetDocumentAccessRequest;
+  clearJobsList(): SetDocumentAccessRequest;
+  addJobs(value?: resources_documents_documents_pb.DocumentJobAccess, index?: number): resources_documents_documents_pb.DocumentJobAccess;
+
+  getUsersList(): Array<resources_documents_documents_pb.DocumentUserAccess>;
+  setUsersList(value: Array<resources_documents_documents_pb.DocumentUserAccess>): SetDocumentAccessRequest;
+  clearUsersList(): SetDocumentAccessRequest;
+  addUsers(value?: resources_documents_documents_pb.DocumentUserAccess, index?: number): resources_documents_documents_pb.DocumentUserAccess;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SetDocumentAccessRequest.AsObject;
   static toObject(includeInstance: boolean, msg: SetDocumentAccessRequest): SetDocumentAccessRequest.AsObject;
@@ -413,6 +438,9 @@ export class SetDocumentAccessRequest extends jspb.Message {
 export namespace SetDocumentAccessRequest {
   export type AsObject = {
     id: number,
+    mode: DOCUMENT_ACCESS_UPDATE_MODE,
+    jobsList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
+    usersList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
   }
 }
 
@@ -430,3 +458,9 @@ export namespace SetDocumentAccessResponse {
   }
 }
 
+export enum DOCUMENT_ACCESS_UPDATE_MODE { 
+  ADD = 0,
+  REPLACE = 1,
+  DELETE = 2,
+  CLEAR = 3,
+}

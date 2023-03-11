@@ -5,8 +5,7 @@ option go_package = "github.com/galexrt/arpanet/proto/services/livemap;livemap";
 
 import "resources/timestamp/timestamp.proto";
 
-message StreamRequest {
-}
+message StreamRequest {}
 
 message ServerStreamResponse {
     repeated Marker users = 1;

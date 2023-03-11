@@ -3,7 +3,9 @@ syntax = "proto3";
 package resources.common.database;
 option go_package = "github.com/galexrt/arpanet/proto/resources/common/database;database";
 
+import "validate/validate.proto";
+
 message OrderBy {
-    string column = 1;
-    bool desc = 2;
+    string column = 1 [(validate.rules).string = {min_len: 1, max_len: 64}];
+    bool desc = 2 ;
 }

@@ -4,6 +4,7 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/modelhelper"
@@ -24,6 +25,7 @@ func init() {
 		{Key: "documents", Name: "FindDocuments"},
 		{Key: "documents", Name: "GetDocument"},
 		{Key: "documents", Name: "CreateDocument"},
+		{Key: "documents", Name: "UpdateDocument"},
 		{Key: "documents", Name: "CompleteCategories", PerJob: true},
 	})
 }
@@ -57,12 +59,12 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		jet.OR(
 			jet.AND(
 				dua.Access.IS_NOT_NULL(),
-				dua.Access.NOT_EQ(jet.String(modelhelper.BlockedAccessRole)),
+				dua.Access.NOT_EQ(jet.String(string(modelhelper.BlockedAccessRole))),
 			),
 			jet.AND(
 				dua.Access.IS_NULL(),
 				dja.Access.IS_NOT_NULL(),
-				dja.Access.NOT_EQ(jet.String(modelhelper.BlockedAccessRole)),
+				dja.Access.NOT_EQ(jet.String(string(modelhelper.BlockedAccessRole))),
 			),
 		),
 	)}
@@ -181,14 +183,6 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, err
 	}
 
-	if req.Responses {
-		// Load responses if requested
-		respStmt := s.getDocumentsQuery(d.ResponseID.EQ(jet.Uint64(req.Id)), nil, nil, userID, job, jobGrade)
-		if err := respStmt.QueryContext(ctx, query.DB, &resp.Responses); err != nil {
-			return nil, err
-		}
-	}
-
 	return resp, nil
 }
 
@@ -210,7 +204,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	).VALUES(
 		req.Title,
 		s.p.Sanitize(req.Content),
-		modelhelper.HTMLDocumentType,
+		"html",
 		req.Closed,
 		req.State,
 		req.Public,
@@ -222,15 +216,87 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, err
 	}
 
-	// TODO need to create job and user access as well
+	// TODO need to create job and user access
 
 	return &CreateDocumentResponse{}, nil
 }
 
 func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
+	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "documents", "UpdateDocument") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit documents!")
+	}
+
+	checkStmt := d.SELECT(
+		d.ID,
+	).
+		FROM(
+			d.LEFT_JOIN(dua,
+				dua.DocumentID.EQ(d.ID).
+					AND(dua.UserID.EQ(jet.Int32(userID)))).
+				LEFT_JOIN(dja,
+					dja.DocumentID.EQ(d.ID).
+						AND(dja.Name.EQ(jet.String(job))).
+						AND(dja.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
+				).
+				LEFT_JOIN(u, u.ID.EQ(jet.Int32(userID))),
+		).WHERE(
+		jet.OR(
+			d.CreatorID.EQ(jet.Int32(userID)),
+			jet.AND(
+				dua.Access.IS_NOT_NULL(),
+				dua.Access.IN(
+					jet.String(modelhelper.EditAccessRole),
+					jet.String(modelhelper.AdminAccessRole),
+				),
+			),
+			jet.AND(
+				dua.Access.IS_NULL(),
+				dja.Access.IS_NOT_NULL(),
+				dja.Access.IN(
+					jet.String(modelhelper.EditAccessRole),
+					jet.String(modelhelper.LeaderAccessRole),
+					jet.String(modelhelper.AdminAccessRole),
+				),
+			),
+		),
+	).
+		LIMIT(1)
+
+	var dest struct {
+		ID uint64 `alias:"document.id"`
+	}
+	if err := checkStmt.QueryContext(ctx, query.DB, &dest); err != nil {
+		return nil, err
+	}
+
+	fmt.Println(checkStmt.DebugSql())
+
+	if dest.ID <= 0 {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
+	}
+
 	resp := &UpdateDocumentResponse{}
 
-	// TODO update (REPLACE) document in database
+	stmt := d.UPDATE(
+		d.Title,
+		d.Content,
+		d.Closed,
+		d.State,
+		d.Public,
+	).
+		SET(
+			req.Title,
+			req.Content,
+			req.Closed,
+			req.State,
+			req.Public,
+		).
+		WHERE(d.ID.EQ(jet.Uint64(req.Id)))
+
+	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+		return nil, err
+	}
 
 	return resp, nil
 }

@@ -57,7 +57,16 @@ func (m *FindDocumentsRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Offset
+	if m.GetOffset() < 0 {
+		err := FindDocumentsRequestValidationError{
+			field:  "Offset",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetOrderBy() {
 		_, _ = idx, item
@@ -94,6 +103,8 @@ func (m *FindDocumentsRequest) validate(all bool) error {
 	}
 
 	// no validation rules for Search
+
+	// no validation rules for Category
 
 	if len(errors) > 0 {
 		return FindDocumentsRequestMultiError(errors)
@@ -340,8 +351,6 @@ func (m *GetDocumentRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for Id
-
-	// no validation rules for Responses
 
 	if len(errors) > 0 {
 		return GetDocumentRequestMultiError(errors)
@@ -610,21 +619,125 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Title
+	if utf8.RuneCountInString(m.GetTitle()) < 3 {
+		err := CreateDocumentRequestValidationError{
+			field:  "Title",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Content
+	if utf8.RuneCountInString(m.GetContent()) < 30 {
+		err := CreateDocumentRequestValidationError{
+			field:  "Content",
+			reason: "value length must be at least 30 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for ContentType
 
-	// no validation rules for CategoryID
-
 	// no validation rules for Closed
 
-	// no validation rules for State
+	if utf8.RuneCountInString(m.GetState()) > 24 {
+		err := CreateDocumentRequestValidationError{
+			field:  "State",
+			reason: "value length must be at most 24 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Public
 
-	// no validation rules for TargetDocumentId
+	// no validation rules for CategoryID
+
+	if m.GetTargetDocumentID() < 0 {
+		err := CreateDocumentRequestValidationError{
+			field:  "TargetDocumentID",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetJobs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateDocumentRequestValidationError{
+						field:  fmt.Sprintf("Jobs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateDocumentRequestValidationError{
+						field:  fmt.Sprintf("Jobs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateDocumentRequestValidationError{
+					field:  fmt.Sprintf("Jobs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetUsers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateDocumentRequestValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateDocumentRequestValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateDocumentRequestValidationError{
+					field:  fmt.Sprintf("Users[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return CreateDocumentRequestMultiError(errors)
@@ -830,11 +943,38 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if m.GetId() < 0 {
+		err := UpdateDocumentRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Title
+	if utf8.RuneCountInString(m.GetTitle()) < 3 {
+		err := UpdateDocumentRequestValidationError{
+			field:  "Title",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Content
+	if utf8.RuneCountInString(m.GetContent()) < 30 {
+		err := UpdateDocumentRequestValidationError{
+			field:  "Content",
+			reason: "value length must be at least 30 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for ContentType
 
@@ -842,7 +982,16 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 
 	// no validation rules for Closed
 
-	// no validation rules for State
+	if utf8.RuneCountInString(m.GetState()) > 24 {
+		err := UpdateDocumentRequestValidationError{
+			field:  "State",
+			reason: "value length must be at most 24 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Public
 
@@ -1050,7 +1199,16 @@ func (m *GetDocumentResponsesRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Offset
+	if m.GetOffset() < 0 {
+		err := GetDocumentResponsesRequestValidationError{
+			field:  "Offset",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetDocumentResponsesRequestMultiError(errors)
@@ -2046,6 +2204,76 @@ func (m *SetDocumentAccessRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for Id
+
+	// no validation rules for Mode
+
+	for idx, item := range m.GetJobs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SetDocumentAccessRequestValidationError{
+						field:  fmt.Sprintf("Jobs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SetDocumentAccessRequestValidationError{
+						field:  fmt.Sprintf("Jobs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SetDocumentAccessRequestValidationError{
+					field:  fmt.Sprintf("Jobs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetUsers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SetDocumentAccessRequestValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SetDocumentAccessRequestValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SetDocumentAccessRequestValidationError{
+					field:  fmt.Sprintf("Users[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return SetDocumentAccessRequestMultiError(errors)

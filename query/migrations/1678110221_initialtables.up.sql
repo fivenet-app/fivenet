@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_accounts` (
 -- Table: arpanet_documents_categories
 CREATE TABLE IF NOT EXISTS `arpanet_documents_categories` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) NOT NULL,
+  `name` varchar(128) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `job` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),

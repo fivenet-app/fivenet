@@ -26,11 +26,3 @@ const (
 	PilotLicense = "aircraft"
 	BoatLicense  = "boat"
 )
-
-type UserActivityType string
-
-const (
-	ChangedActivityType   UserActivityType = "changed"
-	CreatedActivityType   UserActivityType = "created"
-	MentionedActivityType UserActivityType = "mentioned"
-)

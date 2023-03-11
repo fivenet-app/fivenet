@@ -57,7 +57,27 @@ func (m *FindUsersRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Offset
+	if m.GetOffset() < 0 {
+		err := FindUsersRequestValidationError{
+			field:  "Offset",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetOrderBy()) < 1 {
+		err := FindUsersRequestValidationError{
+			field:  "OrderBy",
+			reason: "value must contain at least 1 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetOrderBy() {
 		_, _ = idx, item
@@ -93,9 +113,27 @@ func (m *FindUsersRequest) validate(all bool) error {
 
 	}
 
-	// no validation rules for Firstname
+	if utf8.RuneCountInString(m.GetFirstname()) > 50 {
+		err := FindUsersRequestValidationError{
+			field:  "Firstname",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Lastname
+	if utf8.RuneCountInString(m.GetLastname()) > 50 {
+		err := FindUsersRequestValidationError{
+			field:  "Lastname",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Wanted
 
@@ -841,8 +879,33 @@ func (m *SetUserPropsRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.Wanted != nil {
-		// no validation rules for Wanted
+	if all {
+		switch v := interface{}(m.GetProps()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetUserPropsRequestValidationError{
+					field:  "Props",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetUserPropsRequestValidationError{
+					field:  "Props",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetProps()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetUserPropsRequestValidationError{
+				field:  "Props",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if len(errors) > 0 {
