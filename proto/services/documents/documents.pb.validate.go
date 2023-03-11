@@ -197,6 +197,12 @@ func (m *FindDocumentsResponse) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for TotalCount
+
+	// no validation rules for Offset
+
+	// no validation rules for End
+
 	for idx, item := range m.GetDocuments() {
 		_, _ = idx, item
 
@@ -610,6 +616,8 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 
 	// no validation rules for ContentType
 
+	// no validation rules for CategoryID
+
 	// no validation rules for Closed
 
 	// no validation rules for State
@@ -829,6 +837,8 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 	// no validation rules for Content
 
 	// no validation rules for ContentType
+
+	// no validation rules for CategoryID
 
 	// no validation rules for Closed
 

@@ -156,11 +156,11 @@ func (m *Document) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for CreatorJob
-
 	// no validation rules for Public
 
-	// no validation rules for TargetDocumentId
+	// no validation rules for CategoryID
+
+	// no validation rules for TargetDocumentID
 
 	if len(errors) > 0 {
 		return DocumentMultiError(errors)

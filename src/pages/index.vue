@@ -1,12 +1,11 @@
 <script lang="ts">
-import Navbar from '../components/partials/Navbar.vue';
-import Footer from '../components/partials/Footer.vue';
-
 import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
-
-import './index.css';
+import Navbar from '../components/partials/Navbar.vue';
+import Footer from '../components/partials/Footer.vue';
 import HeroFull from '../components/partials/HeroFull.vue';
+
+import './herofull-pattern.css';
 
 export default defineComponent({
     components: {

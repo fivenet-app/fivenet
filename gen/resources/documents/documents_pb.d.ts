@@ -24,8 +24,8 @@ export class Document extends jspb.Message {
   getContent(): string;
   setContent(value: string): Document;
 
-  getContentType(): string;
-  setContentType(value: string): Document;
+  getContenttype(): string;
+  setContenttype(value: string): Document;
 
   getClosed(): boolean;
   setClosed(value: boolean): Document;
@@ -38,14 +38,14 @@ export class Document extends jspb.Message {
   hasCreator(): boolean;
   clearCreator(): Document;
 
-  getCreatorJob(): string;
-  setCreatorJob(value: string): Document;
-
   getPublic(): boolean;
   setPublic(value: boolean): Document;
 
-  getTargetDocumentId(): number;
-  setTargetDocumentId(value: number): Document;
+  getCategoryid(): number;
+  setCategoryid(value: number): Document;
+
+  getTargetdocumentid(): number;
+  setTargetdocumentid(value: number): Document;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Document.AsObject;
@@ -62,13 +62,13 @@ export namespace Document {
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     title: string,
     content: string,
-    contentType: string,
+    contenttype: string,
     closed: boolean,
     state: string,
     creator?: resources_users_users_pb.ShortUser.AsObject,
-    creatorJob: string,
     pb_public: boolean,
-    targetDocumentId: number,
+    categoryid: number,
+    targetdocumentid: number,
   }
 }
 

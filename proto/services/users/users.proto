@@ -11,6 +11,7 @@ import "resources/users/users.proto";
 message FindUsersRequest {
     int64 offset = 1;
     repeated resources.common.database.OrderBy orderBy = 2;
+    // Search params
     string firstname = 3;
     string lastname = 4;
     bool wanted = 5;

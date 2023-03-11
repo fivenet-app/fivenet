@@ -29,11 +29,12 @@ type FindUsersRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Offset    int64               `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
-	OrderBy   []*database.OrderBy `protobuf:"bytes,2,rep,name=orderBy,proto3" json:"orderBy,omitempty"`
-	Firstname string              `protobuf:"bytes,3,opt,name=firstname,proto3" json:"firstname,omitempty"`
-	Lastname  string              `protobuf:"bytes,4,opt,name=lastname,proto3" json:"lastname,omitempty"`
-	Wanted    bool                `protobuf:"varint,5,opt,name=wanted,proto3" json:"wanted,omitempty"`
+	Offset  int64               `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
+	OrderBy []*database.OrderBy `protobuf:"bytes,2,rep,name=orderBy,proto3" json:"orderBy,omitempty"`
+	// Search params
+	Firstname string `protobuf:"bytes,3,opt,name=firstname,proto3" json:"firstname,omitempty"`
+	Lastname  string `protobuf:"bytes,4,opt,name=lastname,proto3" json:"lastname,omitempty"`
+	Wanted    bool   `protobuf:"varint,5,opt,name=wanted,proto3" json:"wanted,omitempty"`
 }
 
 func (x *FindUsersRequest) Reset() {

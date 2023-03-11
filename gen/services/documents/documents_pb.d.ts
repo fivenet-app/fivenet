@@ -33,6 +33,15 @@ export namespace FindDocumentsRequest {
 }
 
 export class FindDocumentsResponse extends jspb.Message {
+  getTotalcount(): number;
+  setTotalcount(value: number): FindDocumentsResponse;
+
+  getOffset(): number;
+  setOffset(value: number): FindDocumentsResponse;
+
+  getEnd(): number;
+  setEnd(value: number): FindDocumentsResponse;
+
   getDocumentsList(): Array<resources_documents_documents_pb.Document>;
   setDocumentsList(value: Array<resources_documents_documents_pb.Document>): FindDocumentsResponse;
   clearDocumentsList(): FindDocumentsResponse;
@@ -48,6 +57,9 @@ export class FindDocumentsResponse extends jspb.Message {
 
 export namespace FindDocumentsResponse {
   export type AsObject = {
+    totalcount: number,
+    offset: number,
+    end: number,
     documentsList: Array<resources_documents_documents_pb.Document.AsObject>,
   }
 }
@@ -110,6 +122,9 @@ export class CreateDocumentRequest extends jspb.Message {
   getContentType(): string;
   setContentType(value: string): CreateDocumentRequest;
 
+  getCategoryid(): number;
+  setCategoryid(value: number): CreateDocumentRequest;
+
   getClosed(): boolean;
   setClosed(value: boolean): CreateDocumentRequest;
 
@@ -135,6 +150,7 @@ export namespace CreateDocumentRequest {
     title: string,
     content: string,
     contentType: string,
+    categoryid: number,
     closed: boolean,
     state: string,
     pb_public: boolean,
@@ -169,6 +185,9 @@ export class UpdateDocumentRequest extends jspb.Message {
   getContentType(): string;
   setContentType(value: string): UpdateDocumentRequest;
 
+  getCategoryid(): number;
+  setCategoryid(value: number): UpdateDocumentRequest;
+
   getClosed(): boolean;
   setClosed(value: boolean): UpdateDocumentRequest;
 
@@ -192,6 +211,7 @@ export namespace UpdateDocumentRequest {
     title: string,
     content: string,
     contentType: string,
+    categoryid: number,
     closed: boolean,
     state: string,
     pb_public: boolean,

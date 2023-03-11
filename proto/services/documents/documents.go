@@ -7,6 +7,7 @@ import (
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/modelhelper"
 	"github.com/galexrt/arpanet/pkg/perms"
+	database "github.com/galexrt/arpanet/proto/resources/common/database"
 	"github.com/galexrt/arpanet/proto/resources/documents"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -45,7 +46,7 @@ func NewServer() *Server {
 	}
 }
 
-func (s *Server) getDocumentsQuery(where jet.BoolExpression, additionalColumns jet.ProjectionList, userID int32, job string, jobGrade int32) jet.SelectStatement {
+func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, additionalColumns jet.ProjectionList, userID int32, job string, jobGrade int32) jet.SelectStatement {
 	wheres := []jet.BoolExpression{jet.OR(
 		jet.OR(
 			d.Public.IS_TRUE(),
@@ -69,15 +70,21 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, additionalColumns j
 	}
 
 	var q jet.SelectStatement
-	if additionalColumns == nil {
+	if onlyColumns == nil {
 		q = d.SELECT(
-			d.AllColumns,
+			onlyColumns,
 		)
 	} else {
-		q = d.SELECT(
-			d.AllColumns,
-			additionalColumns...,
-		)
+		if additionalColumns == nil {
+			q = d.SELECT(
+				d.AllColumns,
+			)
+		} else {
+			q = d.SELECT(
+				d.AllColumns,
+				additionalColumns...,
+			)
+		}
 	}
 
 	return q.
@@ -95,7 +102,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, additionalColumns j
 			wheres...,
 		),
 	).
-		ORDER_BY(d.CreatedAt.DESC())
+		ORDER_BY(d.CreatedAt.DESC()).
+		LIMIT(database.DefaultPageLimit)
 
 }
 
@@ -105,11 +113,34 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to list documents!")
 	}
 
-	resp := &FindDocumentsResponse{}
-	stmt := s.getDocumentsQuery(d.ResponseID.IS_NULL(), nil, userID, job, jobGrade)
+	countStmt := s.getDocumentsQuery(d.ResponseID.IS_NULL(), nil, nil, userID, job, jobGrade)
+	var count struct{ TotalCount int64 }
+	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
+		return nil, err
+	}
+
+	resp := &FindDocumentsResponse{
+		Offset:     req.Offset,
+		TotalCount: count.TotalCount,
+		End:        0,
+	}
+
+	if count.TotalCount <= 0 {
+		return resp, nil
+	}
+
+	stmt := s.getDocumentsQuery(d.ResponseID.IS_NULL(), nil, nil, userID, job, jobGrade)
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Documents); err != nil {
 		return nil, err
 	}
+
+	resp.TotalCount = count.TotalCount
+	if req.Offset >= resp.TotalCount {
+		resp.Offset = 0
+	} else {
+		resp.Offset = req.Offset
+	}
+	resp.End = resp.Offset + int64(len(resp.Documents))
 
 	return resp, nil
 }
@@ -126,7 +157,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	stmt := s.getDocumentsQuery(jet.AND(
 		d.ResponseID.IS_NULL(),
 		d.ID.EQ(jet.Uint64(req.Id)),
-	), nil, userID, job, jobGrade).
+	), nil, nil, userID, job, jobGrade).
 		LIMIT(1)
 	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
@@ -134,7 +165,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	if req.Responses {
 		// Load responses if requested
-		respStmt := s.getDocumentsQuery(d.ResponseID.EQ(jet.Uint64(req.Id)), nil, userID, job, jobGrade)
+		respStmt := s.getDocumentsQuery(d.ResponseID.EQ(jet.Uint64(req.Id)), nil, nil, userID, job, jobGrade)
 		if err := respStmt.QueryContext(ctx, query.DB, &resp.Responses); err != nil {
 			return nil, err
 		}
@@ -176,6 +207,12 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	// TODO need to create job and user access as well
 
 	return &CreateDocumentResponse{}, nil
+}
+
+func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
+	resp := &UpdateDocumentResponse{}
+
+	return resp, nil
 }
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {

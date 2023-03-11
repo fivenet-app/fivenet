@@ -603,7 +603,7 @@ proto.services.documents.FindDocumentsRequest.prototype.setSearch = function(val
  * @private {!Array<number>}
  * @const
  */
-proto.services.documents.FindDocumentsResponse.repeatedFields_ = [1];
+proto.services.documents.FindDocumentsResponse.repeatedFields_ = [4];
 
 
 
@@ -636,6 +636,9 @@ proto.services.documents.FindDocumentsResponse.prototype.toObject = function(opt
  */
 proto.services.documents.FindDocumentsResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
+    totalcount: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    end: jspb.Message.getFieldWithDefault(msg, 3, 0),
     documentsList: jspb.Message.toObjectList(msg.getDocumentsList(),
     resources_documents_documents_pb.Document.toObject, includeInstance)
   };
@@ -675,6 +678,18 @@ proto.services.documents.FindDocumentsResponse.deserializeBinaryFromReader = fun
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setTotalcount(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setOffset(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setEnd(value);
+      break;
+    case 4:
       var value = new resources_documents_documents_pb.Document;
       reader.readMessage(value,resources_documents_documents_pb.Document.deserializeBinaryFromReader);
       msg.addDocuments(value);
@@ -708,10 +723,31 @@ proto.services.documents.FindDocumentsResponse.prototype.serializeBinary = funct
  */
 proto.services.documents.FindDocumentsResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getTotalcount();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
+  f = message.getOffset();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
+  f = message.getEnd();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
   f = message.getDocumentsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      1,
+      4,
       f,
       resources_documents_documents_pb.Document.serializeBinaryToWriter
     );
@@ -720,12 +756,66 @@ proto.services.documents.FindDocumentsResponse.serializeBinaryToWriter = functio
 
 
 /**
- * repeated resources.documents.Document documents = 1;
+ * optional int64 totalCount = 1;
+ * @return {number}
+ */
+proto.services.documents.FindDocumentsResponse.prototype.getTotalcount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.documents.FindDocumentsResponse} returns this
+ */
+proto.services.documents.FindDocumentsResponse.prototype.setTotalcount = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional int64 offset = 2;
+ * @return {number}
+ */
+proto.services.documents.FindDocumentsResponse.prototype.getOffset = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.documents.FindDocumentsResponse} returns this
+ */
+proto.services.documents.FindDocumentsResponse.prototype.setOffset = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 end = 3;
+ * @return {number}
+ */
+proto.services.documents.FindDocumentsResponse.prototype.getEnd = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.documents.FindDocumentsResponse} returns this
+ */
+proto.services.documents.FindDocumentsResponse.prototype.setEnd = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * repeated resources.documents.Document documents = 4;
  * @return {!Array<!proto.resources.documents.Document>}
  */
 proto.services.documents.FindDocumentsResponse.prototype.getDocumentsList = function() {
   return /** @type{!Array<!proto.resources.documents.Document>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.Document, 1));
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.Document, 4));
 };
 
 
@@ -734,7 +824,7 @@ proto.services.documents.FindDocumentsResponse.prototype.getDocumentsList = func
  * @return {!proto.services.documents.FindDocumentsResponse} returns this
 */
 proto.services.documents.FindDocumentsResponse.prototype.setDocumentsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 1, value);
+  return jspb.Message.setRepeatedWrapperField(this, 4, value);
 };
 
 
@@ -744,7 +834,7 @@ proto.services.documents.FindDocumentsResponse.prototype.setDocumentsList = func
  * @return {!proto.resources.documents.Document}
  */
 proto.services.documents.FindDocumentsResponse.prototype.addDocuments = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.resources.documents.Document, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.resources.documents.Document, opt_index);
 };
 
 
@@ -1163,10 +1253,11 @@ proto.services.documents.CreateDocumentRequest.toObject = function(includeInstan
     title: jspb.Message.getFieldWithDefault(msg, 1, ""),
     content: jspb.Message.getFieldWithDefault(msg, 2, ""),
     contentType: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    closed: jspb.Message.getBooleanFieldWithDefault(msg, 4, false),
-    state: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 6, false),
-    targetDocumentId: jspb.Message.getFieldWithDefault(msg, 7, 0)
+    categoryid: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    closed: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
+    state: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
+    targetDocumentId: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -1216,18 +1307,22 @@ proto.services.documents.CreateDocumentRequest.deserializeBinaryFromReader = fun
       msg.setContentType(value);
       break;
     case 4:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setCategoryid(value);
+      break;
+    case 5:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setClosed(value);
       break;
-    case 5:
+    case 6:
       var value = /** @type {string} */ (reader.readString());
       msg.setState(value);
       break;
-    case 6:
+    case 7:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setPublic(value);
       break;
-    case 7:
+    case 8:
       var value = /** @type {number} */ (reader.readUint64());
       msg.setTargetDocumentId(value);
       break;
@@ -1281,31 +1376,38 @@ proto.services.documents.CreateDocumentRequest.serializeBinaryToWriter = functio
       f
     );
   }
+  f = message.getCategoryid();
+  if (f !== 0) {
+    writer.writeUint64(
+      4,
+      f
+    );
+  }
   f = message.getClosed();
   if (f) {
     writer.writeBool(
-      4,
+      5,
       f
     );
   }
   f = message.getState();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      6,
       f
     );
   }
   f = message.getPublic();
   if (f) {
     writer.writeBool(
-      6,
+      7,
       f
     );
   }
   f = message.getTargetDocumentId();
   if (f !== 0) {
     writer.writeUint64(
-      7,
+      8,
       f
     );
   }
@@ -1367,11 +1469,29 @@ proto.services.documents.CreateDocumentRequest.prototype.setContentType = functi
 
 
 /**
- * optional bool closed = 4;
+ * optional uint64 categoryID = 4;
+ * @return {number}
+ */
+proto.services.documents.CreateDocumentRequest.prototype.getCategoryid = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.documents.CreateDocumentRequest} returns this
+ */
+proto.services.documents.CreateDocumentRequest.prototype.setCategoryid = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional bool closed = 5;
  * @return {boolean}
  */
 proto.services.documents.CreateDocumentRequest.prototype.getClosed = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 4, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
 };
 
 
@@ -1380,16 +1500,16 @@ proto.services.documents.CreateDocumentRequest.prototype.getClosed = function() 
  * @return {!proto.services.documents.CreateDocumentRequest} returns this
  */
 proto.services.documents.CreateDocumentRequest.prototype.setClosed = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 4, value);
+  return jspb.Message.setProto3BooleanField(this, 5, value);
 };
 
 
 /**
- * optional string state = 5;
+ * optional string state = 6;
  * @return {string}
  */
 proto.services.documents.CreateDocumentRequest.prototype.getState = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
 
@@ -1398,16 +1518,16 @@ proto.services.documents.CreateDocumentRequest.prototype.getState = function() {
  * @return {!proto.services.documents.CreateDocumentRequest} returns this
  */
 proto.services.documents.CreateDocumentRequest.prototype.setState = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
 /**
- * optional bool public = 6;
+ * optional bool public = 7;
  * @return {boolean}
  */
 proto.services.documents.CreateDocumentRequest.prototype.getPublic = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 7, false));
 };
 
 
@@ -1416,16 +1536,16 @@ proto.services.documents.CreateDocumentRequest.prototype.getPublic = function() 
  * @return {!proto.services.documents.CreateDocumentRequest} returns this
  */
 proto.services.documents.CreateDocumentRequest.prototype.setPublic = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 6, value);
+  return jspb.Message.setProto3BooleanField(this, 7, value);
 };
 
 
 /**
- * optional uint64 target_document_id = 7;
+ * optional uint64 target_document_id = 8;
  * @return {number}
  */
 proto.services.documents.CreateDocumentRequest.prototype.getTargetDocumentId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
 
@@ -1434,7 +1554,7 @@ proto.services.documents.CreateDocumentRequest.prototype.getTargetDocumentId = f
  * @return {!proto.services.documents.CreateDocumentRequest} returns this
  */
 proto.services.documents.CreateDocumentRequest.prototype.setTargetDocumentId = function(value) {
-  return jspb.Message.setProto3IntField(this, 7, value);
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
@@ -1575,9 +1695,10 @@ proto.services.documents.UpdateDocumentRequest.toObject = function(includeInstan
     title: jspb.Message.getFieldWithDefault(msg, 2, ""),
     content: jspb.Message.getFieldWithDefault(msg, 3, ""),
     contentType: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    closed: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
-    state: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 7, false)
+    categoryid: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    closed: jspb.Message.getBooleanFieldWithDefault(msg, 6, false),
+    state: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 8, false)
   };
 
   if (includeInstance) {
@@ -1631,14 +1752,18 @@ proto.services.documents.UpdateDocumentRequest.deserializeBinaryFromReader = fun
       msg.setContentType(value);
       break;
     case 5:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setCategoryid(value);
+      break;
+    case 6:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setClosed(value);
       break;
-    case 6:
+    case 7:
       var value = /** @type {string} */ (reader.readString());
       msg.setState(value);
       break;
-    case 7:
+    case 8:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setPublic(value);
       break;
@@ -1699,24 +1824,31 @@ proto.services.documents.UpdateDocumentRequest.serializeBinaryToWriter = functio
       f
     );
   }
+  f = message.getCategoryid();
+  if (f !== 0) {
+    writer.writeUint64(
+      5,
+      f
+    );
+  }
   f = message.getClosed();
   if (f) {
     writer.writeBool(
-      5,
+      6,
       f
     );
   }
   f = message.getState();
   if (f.length > 0) {
     writer.writeString(
-      6,
+      7,
       f
     );
   }
   f = message.getPublic();
   if (f) {
     writer.writeBool(
-      7,
+      8,
       f
     );
   }
@@ -1796,11 +1928,29 @@ proto.services.documents.UpdateDocumentRequest.prototype.setContentType = functi
 
 
 /**
- * optional bool closed = 5;
+ * optional uint64 categoryID = 5;
+ * @return {number}
+ */
+proto.services.documents.UpdateDocumentRequest.prototype.getCategoryid = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.documents.UpdateDocumentRequest} returns this
+ */
+proto.services.documents.UpdateDocumentRequest.prototype.setCategoryid = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional bool closed = 6;
  * @return {boolean}
  */
 proto.services.documents.UpdateDocumentRequest.prototype.getClosed = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
 };
 
 
@@ -1809,16 +1959,16 @@ proto.services.documents.UpdateDocumentRequest.prototype.getClosed = function() 
  * @return {!proto.services.documents.UpdateDocumentRequest} returns this
  */
 proto.services.documents.UpdateDocumentRequest.prototype.setClosed = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 5, value);
+  return jspb.Message.setProto3BooleanField(this, 6, value);
 };
 
 
 /**
- * optional string state = 6;
+ * optional string state = 7;
  * @return {string}
  */
 proto.services.documents.UpdateDocumentRequest.prototype.getState = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
 
@@ -1827,16 +1977,16 @@ proto.services.documents.UpdateDocumentRequest.prototype.getState = function() {
  * @return {!proto.services.documents.UpdateDocumentRequest} returns this
  */
 proto.services.documents.UpdateDocumentRequest.prototype.setState = function(value) {
-  return jspb.Message.setProto3StringField(this, 6, value);
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
 /**
- * optional bool public = 7;
+ * optional bool public = 8;
  * @return {boolean}
  */
 proto.services.documents.UpdateDocumentRequest.prototype.getPublic = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 7, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 8, false));
 };
 
 
@@ -1845,7 +1995,7 @@ proto.services.documents.UpdateDocumentRequest.prototype.getPublic = function() 
  * @return {!proto.services.documents.UpdateDocumentRequest} returns this
  */
 proto.services.documents.UpdateDocumentRequest.prototype.setPublic = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 7, value);
+  return jspb.Message.setProto3BooleanField(this, 8, value);
 };
 
 

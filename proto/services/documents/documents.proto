@@ -13,7 +13,10 @@ message FindDocumentsRequest {
 }
 
 message FindDocumentsResponse {
-    repeated resources.documents.Document documents = 1;
+    int64 totalCount = 1;
+    int64 offset = 2;
+    int64 end = 3;
+    repeated resources.documents.Document documents = 4;
 }
 
 message GetDocumentRequest {
@@ -30,10 +33,11 @@ message CreateDocumentRequest {
     string title = 1; // @gotags: alias:"title"
     string content = 2; // @gotags: alias:"content"
     string content_type = 3; // @gotags: alias:"content_type"
-    bool closed = 4; // @gotags: alias:"closed"
-    string state = 5; // @gotags: alias:"state"
-    bool public = 6; // @gotags: alias:"public"
-    uint64 target_document_id = 7; // @gotags: alias:"response_id"
+    uint64 categoryID = 4; // @gotags: alias:"category_id"
+    bool closed = 5; // @gotags: alias:"closed"
+    string state = 6; // @gotags: alias:"state"
+    bool public = 7; // @gotags: alias:"public"
+    uint64 target_document_id = 8; // @gotags: alias:"response_id"
 }
 
 message CreateDocumentResponse {}
@@ -43,9 +47,10 @@ message UpdateDocumentRequest {
     string title = 2; // @gotags: alias:"title"
     string content = 3; // @gotags: alias:"content"
     string content_type = 4; // @gotags: alias:"content_type"
-    bool closed = 5; // @gotags: alias:"closed"
-    string state = 6; // @gotags: alias:"state"
-    bool public = 7; // @gotags: alias:"public"
+    uint64 categoryID = 5; // @gotags: alias:"category_id"
+    bool closed = 6; // @gotags: alias:"closed"
+    string state = 7; // @gotags: alias:"state"
+    bool public = 8; // @gotags: alias:"public"
 }
 
 message UpdateDocumentResponse {}

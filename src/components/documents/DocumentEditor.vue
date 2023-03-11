@@ -2,6 +2,9 @@
 import { defineComponent } from 'vue';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { getDocumentsClient, handleGRPCError } from '../../grpc';
+import { CreateDocumentRequest } from '@arpanet/gen/services/documents/documents_pb';
+import { RpcError } from 'grpc-web';
 
 export default defineComponent({
     components: {
@@ -11,6 +14,12 @@ export default defineComponent({
         return {
             title: "",
             content: "",
+            contentType: "html",
+            categoryID: 0,
+            closed: false,
+            state: "",
+            public: false,
+            targetDocumentID: 0,
         };
     },
     updated() {
@@ -22,6 +31,31 @@ export default defineComponent({
         return {
             modules,
         };
+    },
+    props: {
+        'targetDocumentID': {
+            required: false,
+            type: Number,
+        },
+    },
+    methods: {
+        submitForm(): void {
+            const req = new CreateDocumentRequest();
+            req.setTitle(this.title);
+            req.setContent(this.content);
+            req.setContentType(this.contentType);
+            req.setClosed(this.closed);
+            req.setState(this.state);
+            req.setPublic(this.public);
+            req.setTargetDocumentId(this.targetDocumentID);
+
+            getDocumentsClient().
+                createDocument(req, null).then((resp) => {
+                    // TODO
+                }).catch((err: RpcError) => {
+                    handleGRPCError(err, this.$route);
+                });
+        },
     },
 });
 </script>
