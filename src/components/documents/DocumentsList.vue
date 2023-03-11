@@ -1,12 +1,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
-import {  getDocumentsClient, handleGRPCError } from '../../grpc';
+import { getDocumentsClient, handleGRPCError } from '../../grpc';
 import { FindDocumentsRequest } from '@arpanet/gen/services/documents/documents_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
+import { getDateLocaleString } from '../../utils/time';
 
 export default defineComponent({
     components: {
@@ -30,7 +31,16 @@ export default defineComponent({
         this.findDocuments(0);
     },
     methods: {
+        getDateLocaleString,
         findDocuments(offset: number) {
+            if (offset < 0) {
+                return;
+            }
+            if (this.loading) {
+                return;
+            }
+            this.loading = true;
+
             const req = new FindDocumentsRequest();
             req.setOffset(offset);
             req.setSearch(this.search);
@@ -39,7 +49,12 @@ export default defineComponent({
             getDocumentsClient().
                 findDocuments(req, null).
                 then((resp) => {
+                    this.totalCount = resp.getTotalcount();
+                    this.offset = resp.getOffset();
+                    this.listEnd = resp.getEnd();
                     this.documents = resp.getDocumentsList();
+
+                    this.loading = false;
                 }).catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
                 });
@@ -66,7 +81,7 @@ export default defineComponent({
                             <div class="form-control">
                                 <div class="relative mt-2 flex items-center">
                                     <router-link to="/documents/create"
-                                    class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Create</router-link>
+                                        class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Create</router-link>
                                 </div>
                             </div>
                         </div>
@@ -84,7 +99,7 @@ export default defineComponent({
                                     <div class="ml-2 flex flex-shrink-0">
                                         <p
                                             class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                            {{ doc.getContentType() }}</p>
+                                            {{ doc.getContenttype() }}</p>
                                     </div>
                                 </div>
                                 <div class="mt-2 sm:flex sm:justify-between">
@@ -97,7 +112,7 @@ export default defineComponent({
                                         <p class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
                                             <MapPinIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                                                 aria-hidden="true" />
-                                            {{ doc.getCreatorJob() }}
+                                            {{ doc.getCreator()?.getJob() }}
                                         </p>
                                     </div>
                                     <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
@@ -106,7 +121,8 @@ export default defineComponent({
                                         <p>
                                             Created at
                                             {{ ' ' }}
-                                            <time :datetime="doc.getCreatedAt()?.getTimestamp()?.toDate().toDateString()">{{ doc.getCreatedAt()?.getTimestamp()?.toDate() }}</time>
+                                            <time :datetime="doc.getCreatedAt()?.getTimestamp()?.toDate().toDateString()">{{
+                                                doc.getCreatedAt()?.getTimestamp()?.toDate() }}</time>
                                         </p>
                                     </div>
                                 </div>

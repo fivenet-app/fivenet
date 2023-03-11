@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Document, GetDocumentRequest } from '@arpanet/gen/documents/documents_pb';
+import { GetDocumentRequest } from '@arpanet/gen/services/documents/documents_pb';
+import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocumentsClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { getDateLocaleString } from '../../utils/time';
@@ -52,6 +53,7 @@ export default defineComponent({
         this.getDocument();
     },
     methods: {
+        getDateLocaleString,
         getDocument(): void {
             const req = new GetDocumentRequest();
             req.setId(this.documentID);
@@ -67,7 +69,6 @@ export default defineComponent({
                     handleGRPCError(err, this.$route);
                 });
         },
-        getDateLocaleString,
     },
 });
 </script>

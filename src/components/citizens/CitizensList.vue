@@ -40,6 +40,7 @@ export default defineComponent({
                 return;
             }
             this.loading = true;
+
             const req = new FindUsersRequest();
             req.setOffset(offset);
             req.setFirstname(this.search.firstname);
@@ -50,10 +51,11 @@ export default defineComponent({
             getUsersClient().
                 findUsers(req, null).
                 then((resp) => {
-                    this.users = resp.getUsersList();
                     this.totalCount = resp.getTotalcount();
                     this.offset = resp.getOffset();
                     this.listEnd = resp.getEnd();
+                    this.users = resp.getUsersList();
+
                     this.loading = false;
                 }).
                 catch((err: RpcError) => {

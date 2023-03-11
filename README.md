@@ -5,7 +5,7 @@
 - [ ] Authentication
     - [x] Separate "accounts" table that allows users to login to the network
     - [ ] Create in-game "register" command to set username and password
-- [ ] User Database - 1. Prio
+- [x] User Database - 1. Prio
     - [x] Search by name (`firstname`, `lastname`)
     - [x] Display a single user's info
         - [x] Show a feed of activity of the user (e.g., documents created, documents mentioned in)
@@ -66,6 +66,10 @@ Make sure to disable the builtin Typescript plugin.
 > 5. Reload the workspace. Takeover mode will be enabled when you open a Vue or TS file.
 
 Copied from and for more information on "why you should do this", see: https://vuejs.org/guide/typescript/overview.html#volar-takeover-mode
+
+### GRPC Web Debugging in your Browser
+
+You must use this forked version: [Github jrapoport/grpc-web-devtools](https://github.com/jrapoport/grpc-web-devtools).
 
 ## Database
 

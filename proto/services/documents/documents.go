@@ -70,7 +70,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 	}
 
 	var q jet.SelectStatement
-	if onlyColumns == nil {
+	if onlyColumns != nil {
 		q = d.SELECT(
 			onlyColumns,
 		)
@@ -113,7 +113,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to list documents!")
 	}
 
-	countStmt := s.getDocumentsQuery(d.ResponseID.IS_NULL(), nil, nil, userID, job, jobGrade)
+	countStmt := s.getDocumentsQuery(d.ResponseID.IS_NULL(), jet.ProjectionList{jet.COUNT(d.ID).AS("total_count")}, nil, userID, job, jobGrade)
 	var count struct{ TotalCount int64 }
 	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
 		return nil, err

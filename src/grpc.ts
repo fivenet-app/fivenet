@@ -24,9 +24,17 @@ class AuthInterceptor implements StreamInterceptor<any, any>, UnaryInterceptor<a
 
 export const authInterceptor = new AuthInterceptor();
 
+// See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
+//@ts-ignore GRPCWeb Devtools only exist when the user has the extension installed
+const devInterceptors = typeof window.__GRPCWEB_DEVTOOLS__ !== 'undefined' ? window.__GRPCWEB_DEVTOOLS__ : (() => {});
+const {
+    devToolsUnaryInterceptor,
+    devToolsStreamInterceptor,
+  } = devInterceptors();
+
 export const clientAuthOptions = {
-    unaryInterceptors: [authInterceptor],
-    streamInterceptors: [authInterceptor],
+    unaryInterceptors: [authInterceptor, devToolsUnaryInterceptor],
+    streamInterceptors: [authInterceptor, devToolsStreamInterceptor],
 } as { [index: string]: any };
 
 // Handle GRPC errors
