@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as resources_documents_documents_pb from '../../resources/documents/documents_pb';
 import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
 
 
@@ -106,10 +107,10 @@ export namespace CompleteDocumentCategoryRequest {
 }
 
 export class CompleteDocumentCategoryResponse extends jspb.Message {
-  getCategoriesList(): Array<string>;
-  setCategoriesList(value: Array<string>): CompleteDocumentCategoryResponse;
+  getCategoriesList(): Array<resources_documents_documents_pb.DocumentCategory>;
+  setCategoriesList(value: Array<resources_documents_documents_pb.DocumentCategory>): CompleteDocumentCategoryResponse;
   clearCategoriesList(): CompleteDocumentCategoryResponse;
-  addCategories(value: string, index?: number): CompleteDocumentCategoryResponse;
+  addCategories(value?: resources_documents_documents_pb.DocumentCategory, index?: number): resources_documents_documents_pb.DocumentCategory;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CompleteDocumentCategoryResponse.AsObject;
@@ -121,7 +122,7 @@ export class CompleteDocumentCategoryResponse extends jspb.Message {
 
 export namespace CompleteDocumentCategoryResponse {
   export type AsObject = {
-    categoriesList: Array<string>,
+    categoriesList: Array<resources_documents_documents_pb.DocumentCategory.AsObject>,
   }
 }
 

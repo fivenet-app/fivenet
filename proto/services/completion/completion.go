@@ -10,6 +10,7 @@ import (
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
+	"github.com/galexrt/arpanet/proto/resources/documents"
 	"github.com/galexrt/arpanet/proto/resources/jobs"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -22,8 +23,9 @@ func init() {
 }
 
 var (
-	j  = table.Jobs.AS("job")
-	jg = table.JobGrades.AS("job_grade")
+	j   = table.Jobs.AS("job")
+	jg  = table.JobGrades.AS("job_grade")
+	adc = table.ArpanetDocumentsCategories
 )
 
 type Server struct {
@@ -32,7 +34,7 @@ type Server struct {
 	cancel context.CancelFunc
 
 	jobsCache           *cache.Cache[string, *jobs.Job]
-	docsCategoriesCache *cache.Cache[string, []string]
+	docsCategoriesCache *cache.Cache[string, []*documents.DocumentCategory]
 }
 
 func NewServer() *Server {
@@ -46,7 +48,7 @@ func NewServer() *Server {
 
 	docsCategoriesCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[string, []string](lru.WithCapacity(32)),
+		cache.AsLRU[string, []*documents.DocumentCategory](lru.WithCapacity(32)),
 	)
 
 	s := &Server{
@@ -88,7 +90,6 @@ func (s *Server) refreshJobsCache() error {
 			j.Name.ASC(),
 			jg.Grade.ASC(),
 		)
-
 	if err := stmt.Query(query.DB, &dest); err != nil {
 		return err
 	}
@@ -102,15 +103,36 @@ func (s *Server) refreshJobsCache() error {
 }
 
 func (s *Server) refreshDocumentCategories() error {
-	// TODO fill docsCategoriesCache
+	var dest []*documents.DocumentCategory
+
+	stmt := adc.SELECT(
+		adc.AllColumns,
+	).
+		FROM(adc).
+		GROUP_BY(adc.Job).
+		ORDER_BY(adc.Name.ASC())
+	if err := stmt.Query(query.DB, dest); err != nil {
+		return err
+	}
+
+	categoriesPerJob := map[string][]*documents.DocumentCategory{}
+	for _, c := range dest {
+		if _, ok := categoriesPerJob[c.Job]; !ok {
+			categoriesPerJob[c.Job] = []*documents.DocumentCategory{}
+		}
+		categoriesPerJob[c.Job] = append(categoriesPerJob[c.Job], c)
+	}
+
+	// Update cache
+	for job, cs := range categoriesPerJob {
+		s.docsCategoriesCache.Set(job, cs)
+	}
 
 	return nil
 }
 
 // TODO use Bleve search in the future
 func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error) {
-	req.Search = strings.ToLower(req.Search)
-
 	resp := &CompleteJobNamesResponse{}
 	keys := s.jobsCache.Keys()
 	for i := 0; i < len(keys); i++ {
@@ -128,8 +150,6 @@ func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequ
 }
 
 func (s *Server) CompleteJobGrades(ctx context.Context, req *CompleteJobGradesRequest) (*CompleteJobGradesResponse, error) {
-	req.Search = strings.ToLower(req.Search)
-
 	resp := &CompleteJobGradesResponse{}
 	job, ok := s.jobsCache.Get(strings.ToLower(req.Job))
 	if !ok {
@@ -146,11 +166,30 @@ func (s *Server) CompleteJobGrades(ctx context.Context, req *CompleteJobGradesRe
 }
 
 func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error) {
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	userID := auth.GetUserIDFromContext(ctx)
 
-	_ = job
+	jobs, err := perms.P.GetSuffixOfPermissionsByPrefixOfUser(userID, "documents-completecategories")
+	if err != nil {
+		return nil, err
+	}
 
 	resp := &CompleteDocumentCategoryResponse{}
+	if len(jobs) == 0 {
+		return resp, nil
+	}
+
+	for _, j := range jobs {
+		c, ok := s.docsCategoriesCache.Get(j)
+		if !ok {
+			continue
+		}
+
+		for _, v := range c {
+			if strings.HasPrefix(v.Name, req.Search) || strings.Contains(v.Name, req.Search) {
+				resp.Categories = append(resp.Categories, v)
+			}
+		}
+	}
 
 	return resp, nil
 }

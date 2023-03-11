@@ -21,6 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
+var resources_documents_documents_pb = require('../../resources/documents/documents_pb.js');
+goog.object.extend(proto, resources_documents_documents_pb);
 var resources_jobs_jobs_pb = require('../../resources/jobs/jobs_pb.js');
 goog.object.extend(proto, resources_jobs_jobs_pb);
 goog.exportSymbol('proto.services.completion.CompleteDocumentCategoryRequest', null, global);
@@ -964,7 +966,8 @@ proto.services.completion.CompleteDocumentCategoryResponse.prototype.toObject = 
  */
 proto.services.completion.CompleteDocumentCategoryResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    categoriesList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
+    categoriesList: jspb.Message.toObjectList(msg.getCategoriesList(),
+    resources_documents_documents_pb.DocumentCategory.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -1002,7 +1005,8 @@ proto.services.completion.CompleteDocumentCategoryResponse.deserializeBinaryFrom
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = new resources_documents_documents_pb.DocumentCategory;
+      reader.readMessage(value,resources_documents_documents_pb.DocumentCategory.deserializeBinaryFromReader);
       msg.addCategories(value);
       break;
     default:
@@ -1036,39 +1040,41 @@ proto.services.completion.CompleteDocumentCategoryResponse.serializeBinaryToWrit
   var f = undefined;
   f = message.getCategoriesList();
   if (f.length > 0) {
-    writer.writeRepeatedString(
+    writer.writeRepeatedMessage(
       1,
-      f
+      f,
+      resources_documents_documents_pb.DocumentCategory.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * repeated string categories = 1;
- * @return {!Array<string>}
+ * repeated resources.documents.DocumentCategory categories = 1;
+ * @return {!Array<!proto.resources.documents.DocumentCategory>}
  */
 proto.services.completion.CompleteDocumentCategoryResponse.prototype.getCategoriesList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 1));
+  return /** @type{!Array<!proto.resources.documents.DocumentCategory>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentCategory, 1));
 };
 
 
 /**
- * @param {!Array<string>} value
+ * @param {!Array<!proto.resources.documents.DocumentCategory>} value
  * @return {!proto.services.completion.CompleteDocumentCategoryResponse} returns this
- */
+*/
 proto.services.completion.CompleteDocumentCategoryResponse.prototype.setCategoriesList = function(value) {
-  return jspb.Message.setField(this, 1, value || []);
+  return jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
 
 /**
- * @param {string} value
+ * @param {!proto.resources.documents.DocumentCategory=} opt_value
  * @param {number=} opt_index
- * @return {!proto.services.completion.CompleteDocumentCategoryResponse} returns this
+ * @return {!proto.resources.documents.DocumentCategory}
  */
-proto.services.completion.CompleteDocumentCategoryResponse.prototype.addCategories = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 1, value, opt_index);
+proto.services.completion.CompleteDocumentCategoryResponse.prototype.addCategories = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.resources.documents.DocumentCategory, opt_index);
 };
 
 

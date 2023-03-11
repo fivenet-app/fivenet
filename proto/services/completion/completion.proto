@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.completion;
 option go_package = "github.com/galexrt/arpanet/proto/services/completion";
 
+import "resources/documents/documents.proto";
 import "resources/jobs/jobs.proto";
 
 message CompleteJobNamesRequest {
@@ -28,7 +29,7 @@ message CompleteDocumentCategoryRequest {
 }
 
 message CompleteDocumentCategoryResponse {
-    repeated string categories = 1;
+    repeated resources.documents.DocumentCategory categories = 1;
 }
 
 service CompletionService {

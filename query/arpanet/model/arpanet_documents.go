@@ -17,12 +17,14 @@ type ArpanetDocuments struct {
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at"`
 	Title       string     `json:"title"`
-	Content     string     `json:"content"`
 	ContentType string     `json:"content_type"`
+	Content     string     `json:"content"`
+	Data        *string    `json:"data"`
 	CreatorID   int32      `json:"creator_id"`
 	CreatorJob  string     `json:"creator_job"`
-	Public      bool       `json:"public"`
-	ResponseID  *uint64    `json:"response_id"`
 	State       string     `json:"state"`
 	Closed      *bool      `json:"closed"`
+	Public      bool       `json:"public"`
+	CategoryID  *uint64    `json:"category_id"`
+	ResponseID  *uint64    `json:"response_id"`
 }

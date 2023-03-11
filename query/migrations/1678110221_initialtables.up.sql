@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_categories` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `parent_id` bigint(20) unsigned DEFAULT NULL,
+  `job` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_documents_categories_parent_id` (`parent_id`)
+  KEY `idx_arpanet_documents_categories_job` (`job`)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

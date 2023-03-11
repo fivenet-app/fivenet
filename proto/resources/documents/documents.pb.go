@@ -600,6 +600,77 @@ func (x *DocumentUserAccess) GetAccess() string {
 	return ""
 }
 
+type DocumentCategory struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id          uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                  // @gotags: sql:"primary_key" alias:"id"
+	Name        string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" alias:"name"`               // @gotags: alias:"name"
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty" alias:"description"` // @gotags: alias:"description"
+	Job         string `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                 // @gotags: alias:"job"
+}
+
+func (x *DocumentCategory) Reset() {
+	*x = DocumentCategory{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_resources_documents_documents_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DocumentCategory) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DocumentCategory) ProtoMessage() {}
+
+func (x *DocumentCategory) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_documents_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DocumentCategory.ProtoReflect.Descriptor instead.
+func (*DocumentCategory) Descriptor() ([]byte, []int) {
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *DocumentCategory) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *DocumentCategory) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *DocumentCategory) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *DocumentCategory) GetJob() string {
+	if x != nil {
+		return x.Job
+	}
+	return ""
+}
+
 var File_resources_documents_documents_proto protoreflect.FileDescriptor
 
 var file_resources_documents_documents_proto_rawDesc = []byte{
@@ -710,12 +781,18 @@ var file_resources_documents_documents_proto_rawDesc = []byte{
 	0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x49, 0x44, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73,
 	0x65, 0x72, 0x49, 0x44, 0x18, 0x05, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72,
 	0x49, 0x44, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x06, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x06, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x42, 0x40, 0x5a, 0x3e, 0x67, 0x69,
-	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x61, 0x6c, 0x65, 0x78, 0x72, 0x74,
-	0x2f, 0x61, 0x72, 0x70, 0x61, 0x6e, 0x65, 0x74, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72,
-	0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2f, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e,
-	0x74, 0x73, 0x3b, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x28, 0x09, 0x52, 0x06, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x6a, 0x0a, 0x10, 0x44, 0x6f,
+	0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12,
+	0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61,
+	0x6d, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f,
+	0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70,
+	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x10, 0x0a, 0x03, 0x6a, 0x6f, 0x62, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x03, 0x6a, 0x6f, 0x62, 0x42, 0x40, 0x5a, 0x3e, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62,
+	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x61, 0x6c, 0x65, 0x78, 0x72, 0x74, 0x2f, 0x61, 0x72, 0x70,
+	0x61, 0x6e, 0x65, 0x74, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75,
+	0x72, 0x63, 0x65, 0x73, 0x2f, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x3b, 0x64,
+	0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -730,7 +807,7 @@ func file_resources_documents_documents_proto_rawDescGZIP() []byte {
 	return file_resources_documents_documents_proto_rawDescData
 }
 
-var file_resources_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_resources_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_documents_documents_proto_goTypes = []interface{}{
 	(*Document)(nil),              // 0: resources.documents.Document
 	(*DocumentTemplate)(nil),      // 1: resources.documents.DocumentTemplate
@@ -738,19 +815,20 @@ var file_resources_documents_documents_proto_goTypes = []interface{}{
 	(*DocumentAccess)(nil),        // 3: resources.documents.DocumentAccess
 	(*DocumentJobAccess)(nil),     // 4: resources.documents.DocumentJobAccess
 	(*DocumentUserAccess)(nil),    // 5: resources.documents.DocumentUserAccess
-	(*timestamp.Timestamp)(nil),   // 6: resources.timestamp.Timestamp
-	(*users.ShortUser)(nil),       // 7: resources.users.ShortUser
+	(*DocumentCategory)(nil),      // 6: resources.documents.DocumentCategory
+	(*timestamp.Timestamp)(nil),   // 7: resources.timestamp.Timestamp
+	(*users.ShortUser)(nil),       // 8: resources.users.ShortUser
 }
 var file_resources_documents_documents_proto_depIdxs = []int32{
-	6, // 0: resources.documents.Document.created_at:type_name -> resources.timestamp.Timestamp
-	6, // 1: resources.documents.Document.updated_at:type_name -> resources.timestamp.Timestamp
-	7, // 2: resources.documents.Document.creator:type_name -> resources.users.ShortUser
+	7, // 0: resources.documents.Document.created_at:type_name -> resources.timestamp.Timestamp
+	7, // 1: resources.documents.Document.updated_at:type_name -> resources.timestamp.Timestamp
+	8, // 2: resources.documents.Document.creator:type_name -> resources.users.ShortUser
 	4, // 3: resources.documents.DocumentAccess.jobAccess:type_name -> resources.documents.DocumentJobAccess
 	5, // 4: resources.documents.DocumentAccess.userAccess:type_name -> resources.documents.DocumentUserAccess
-	6, // 5: resources.documents.DocumentJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	6, // 6: resources.documents.DocumentJobAccess.updated_at:type_name -> resources.timestamp.Timestamp
-	6, // 7: resources.documents.DocumentUserAccess.created_at:type_name -> resources.timestamp.Timestamp
-	6, // 8: resources.documents.DocumentUserAccess.updated_at:type_name -> resources.timestamp.Timestamp
+	7, // 5: resources.documents.DocumentJobAccess.created_at:type_name -> resources.timestamp.Timestamp
+	7, // 6: resources.documents.DocumentJobAccess.updated_at:type_name -> resources.timestamp.Timestamp
+	7, // 7: resources.documents.DocumentUserAccess.created_at:type_name -> resources.timestamp.Timestamp
+	7, // 8: resources.documents.DocumentUserAccess.updated_at:type_name -> resources.timestamp.Timestamp
 	9, // [9:9] is the sub-list for method output_type
 	9, // [9:9] is the sub-list for method input_type
 	9, // [9:9] is the sub-list for extension type_name
@@ -836,6 +914,18 @@ func file_resources_documents_documents_proto_init() {
 				return nil
 			}
 		}
+		file_resources_documents_documents_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DocumentCategory); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -843,7 +933,7 @@ func file_resources_documents_documents_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_resources_documents_documents_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

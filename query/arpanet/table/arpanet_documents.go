@@ -22,14 +22,16 @@ type arpanetDocumentsTable struct {
 	UpdatedAt   mysql.ColumnTimestamp
 	DeletedAt   mysql.ColumnTimestamp
 	Title       mysql.ColumnString
-	Content     mysql.ColumnString
 	ContentType mysql.ColumnString
+	Content     mysql.ColumnString
+	Data        mysql.ColumnString
 	CreatorID   mysql.ColumnInteger
 	CreatorJob  mysql.ColumnString
-	Public      mysql.ColumnBool
-	ResponseID  mysql.ColumnInteger
 	State       mysql.ColumnString
 	Closed      mysql.ColumnBool
+	Public      mysql.ColumnBool
+	CategoryID  mysql.ColumnInteger
+	ResponseID  mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -75,16 +77,18 @@ func newArpanetDocumentsTableImpl(schemaName, tableName, alias string) arpanetDo
 		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
 		TitleColumn       = mysql.StringColumn("title")
-		ContentColumn     = mysql.StringColumn("content")
 		ContentTypeColumn = mysql.StringColumn("content_type")
+		ContentColumn     = mysql.StringColumn("content")
+		DataColumn        = mysql.StringColumn("data")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn  = mysql.StringColumn("creator_job")
-		PublicColumn      = mysql.BoolColumn("public")
-		ResponseIDColumn  = mysql.IntegerColumn("response_id")
 		StateColumn       = mysql.StringColumn("state")
 		ClosedColumn      = mysql.BoolColumn("closed")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, ContentTypeColumn, CreatorIDColumn, CreatorJobColumn, PublicColumn, ResponseIDColumn, StateColumn, ClosedColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, ContentTypeColumn, CreatorIDColumn, CreatorJobColumn, PublicColumn, ResponseIDColumn, StateColumn, ClosedColumn}
+		PublicColumn      = mysql.BoolColumn("public")
+		CategoryIDColumn  = mysql.IntegerColumn("category_id")
+		ResponseIDColumn  = mysql.IntegerColumn("response_id")
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn, CategoryIDColumn, ResponseIDColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn, CategoryIDColumn, ResponseIDColumn}
 	)
 
 	return arpanetDocumentsTable{
@@ -96,14 +100,16 @@ func newArpanetDocumentsTableImpl(schemaName, tableName, alias string) arpanetDo
 		UpdatedAt:   UpdatedAtColumn,
 		DeletedAt:   DeletedAtColumn,
 		Title:       TitleColumn,
-		Content:     ContentColumn,
 		ContentType: ContentTypeColumn,
+		Content:     ContentColumn,
+		Data:        DataColumn,
 		CreatorID:   CreatorIDColumn,
 		CreatorJob:  CreatorJobColumn,
-		Public:      PublicColumn,
-		ResponseID:  ResponseIDColumn,
 		State:       StateColumn,
 		Closed:      ClosedColumn,
+		Public:      PublicColumn,
+		CategoryID:  CategoryIDColumn,
+		ResponseID:  ResponseIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

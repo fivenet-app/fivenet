@@ -66,3 +66,10 @@ message DocumentUserAccess {
     int32 userID = 5; // @gotags: alias:"user_id"
     string access = 6; // @gotags: alias:"access"
 }
+
+message DocumentCategory {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+    string name = 2; // @gotags: alias:"name"
+    string description = 3; // @gotags: alias:"description"
+    string job = 4; // @gotags: alias:"job"
+}

@@ -24,6 +24,7 @@ func init() {
 		{Key: "documents", Name: "FindDocuments"},
 		{Key: "documents", Name: "GetDocument"},
 		{Key: "documents", Name: "CreateDocument"},
+		{Key: "documents", Name: "CompleteCategories", PerJob: true},
 	})
 }
 
@@ -228,6 +229,8 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 
 func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
 	resp := &UpdateDocumentResponse{}
+
+	// TODO update (REPLACE) document in database
 
 	return resp, nil
 }
