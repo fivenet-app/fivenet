@@ -27,6 +27,7 @@ import (
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/prometheus/common/version"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -48,10 +49,10 @@ var serverCmd = &cobra.Command{
 		// Setup Sentry Integration
 		if config.C.Sentry.DSN != "" {
 			err := sentry.Init(sentry.ClientOptions{
-				Dsn: config.C.Sentry.DSN,
-				// Enable printing of SDK debug messages.
-				// Useful when getting started or trying to figure something out.
-				Debug: true,
+				Dsn:         config.C.Sentry.DSN,
+				Debug:       false,
+				Environment: config.C.Sentry.Environment,
+				Release:     version.Info(),
 			})
 			if err != nil {
 				logger.Fatal("Sentry init failed", zap.Error(err))

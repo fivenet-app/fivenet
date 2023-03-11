@@ -552,6 +552,8 @@ type GetDocumentResponsesRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Offset int64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
 }
 
 func (x *GetDocumentResponsesRequest) Reset() {
@@ -586,10 +588,22 @@ func (*GetDocumentResponsesRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{8}
 }
 
+func (x *GetDocumentResponsesRequest) GetOffset() int64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
 type GetDocumentResponsesResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	TotalCount int64                 `protobuf:"varint,1,opt,name=totalCount,proto3" json:"totalCount,omitempty"`
+	Offset     int64                 `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	End        int64                 `protobuf:"varint,3,opt,name=end,proto3" json:"end,omitempty"`
+	Responses  []*documents.Document `protobuf:"bytes,4,rep,name=responses,proto3" json:"responses,omitempty"`
 }
 
 func (x *GetDocumentResponsesResponse) Reset() {
@@ -622,6 +636,34 @@ func (x *GetDocumentResponsesResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetDocumentResponsesResponse.ProtoReflect.Descriptor instead.
 func (*GetDocumentResponsesResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetDocumentResponsesResponse) GetTotalCount() int64 {
+	if x != nil {
+		return x.TotalCount
+	}
+	return 0
+}
+
+func (x *GetDocumentResponsesResponse) GetOffset() int64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *GetDocumentResponsesResponse) GetEnd() int64 {
+	if x != nil {
+		return x.End
+	}
+	return 0
+}
+
+func (x *GetDocumentResponsesResponse) GetResponses() []*documents.Document {
+	if x != nil {
+		return x.Responses
+	}
+	return nil
 }
 
 type ListTemplatesRequest struct {
@@ -1066,11 +1108,21 @@ var file_services_documents_documents_proto_rawDesc = []byte{
 	0x28, 0x09, 0x52, 0x05, 0x73, 0x74, 0x61, 0x74, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x70, 0x75, 0x62,
 	0x6c, 0x69, 0x63, 0x18, 0x08, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x70, 0x75, 0x62, 0x6c, 0x69,
 	0x63, 0x22, 0x18, 0x0a, 0x16, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d,
-	0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x1d, 0x0a, 0x1b, 0x47,
+	0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x35, 0x0a, 0x1b, 0x47,
 	0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x1e, 0x0a, 0x1c, 0x47, 0x65,
-	0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x16, 0x0a, 0x14, 0x4c, 0x69,
+	0x73, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x6f, 0x66,
+	0x66, 0x73, 0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x73,
+	0x65, 0x74, 0x22, 0xa5, 0x01, 0x0a, 0x1c, 0x47, 0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65,
+	0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x1e, 0x0a, 0x0a, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x43, 0x6f, 0x75, 0x6e,
+	0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0a, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x43, 0x6f,
+	0x75, 0x6e, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x03, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x65,
+	0x6e, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x03, 0x65, 0x6e, 0x64, 0x12, 0x3b, 0x0a,
+	0x09, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b,
+	0x32, 0x1d, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63,
+	0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52,
+	0x09, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x73, 0x22, 0x16, 0x0a, 0x14, 0x4c, 0x69,
 	0x73, 0x74, 0x54, 0x65, 0x6d, 0x70, 0x6c, 0x61, 0x74, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
 	0x73, 0x74, 0x22, 0x61, 0x0a, 0x15, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x65, 0x6d, 0x70, 0x6c, 0x61,
 	0x74, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x48, 0x0a, 0x09, 0x74,
@@ -1215,33 +1267,34 @@ var file_services_documents_documents_proto_depIdxs = []int32{
 	19, // 1: services.documents.FindDocumentsResponse.documents:type_name -> resources.documents.Document
 	19, // 2: services.documents.GetDocumentResponse.document:type_name -> resources.documents.Document
 	19, // 3: services.documents.GetDocumentResponse.responses:type_name -> resources.documents.Document
-	20, // 4: services.documents.ListTemplatesResponse.templates:type_name -> resources.documents.DocumentTemplateShort
-	21, // 5: services.documents.GetTemplateResponse.template:type_name -> resources.documents.DocumentTemplate
-	22, // 6: services.documents.GetDocumentAccessResponse.jobs:type_name -> resources.documents.DocumentJobAccess
-	23, // 7: services.documents.GetDocumentAccessResponse.users:type_name -> resources.documents.DocumentUserAccess
-	0,  // 8: services.documents.DocumentsService.FindDocuments:input_type -> services.documents.FindDocumentsRequest
-	2,  // 9: services.documents.DocumentsService.GetDocument:input_type -> services.documents.GetDocumentRequest
-	4,  // 10: services.documents.DocumentsService.CreateDocument:input_type -> services.documents.CreateDocumentRequest
-	6,  // 11: services.documents.DocumentsService.UpdateDocument:input_type -> services.documents.UpdateDocumentRequest
-	8,  // 12: services.documents.DocumentsService.GetDocumentResponses:input_type -> services.documents.GetDocumentResponsesRequest
-	10, // 13: services.documents.DocumentsService.ListTemplates:input_type -> services.documents.ListTemplatesRequest
-	12, // 14: services.documents.DocumentsService.GetTemplate:input_type -> services.documents.GetTemplateRequest
-	14, // 15: services.documents.DocumentsService.GetDocumentAccess:input_type -> services.documents.GetDocumentAccessRequest
-	16, // 16: services.documents.DocumentsService.SetDocumentAccess:input_type -> services.documents.SetDocumentAccessRequest
-	1,  // 17: services.documents.DocumentsService.FindDocuments:output_type -> services.documents.FindDocumentsResponse
-	3,  // 18: services.documents.DocumentsService.GetDocument:output_type -> services.documents.GetDocumentResponse
-	5,  // 19: services.documents.DocumentsService.CreateDocument:output_type -> services.documents.CreateDocumentResponse
-	7,  // 20: services.documents.DocumentsService.UpdateDocument:output_type -> services.documents.UpdateDocumentResponse
-	9,  // 21: services.documents.DocumentsService.GetDocumentResponses:output_type -> services.documents.GetDocumentResponsesResponse
-	11, // 22: services.documents.DocumentsService.ListTemplates:output_type -> services.documents.ListTemplatesResponse
-	13, // 23: services.documents.DocumentsService.GetTemplate:output_type -> services.documents.GetTemplateResponse
-	15, // 24: services.documents.DocumentsService.GetDocumentAccess:output_type -> services.documents.GetDocumentAccessResponse
-	17, // 25: services.documents.DocumentsService.SetDocumentAccess:output_type -> services.documents.SetDocumentAccessResponse
-	17, // [17:26] is the sub-list for method output_type
-	8,  // [8:17] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	19, // 4: services.documents.GetDocumentResponsesResponse.responses:type_name -> resources.documents.Document
+	20, // 5: services.documents.ListTemplatesResponse.templates:type_name -> resources.documents.DocumentTemplateShort
+	21, // 6: services.documents.GetTemplateResponse.template:type_name -> resources.documents.DocumentTemplate
+	22, // 7: services.documents.GetDocumentAccessResponse.jobs:type_name -> resources.documents.DocumentJobAccess
+	23, // 8: services.documents.GetDocumentAccessResponse.users:type_name -> resources.documents.DocumentUserAccess
+	0,  // 9: services.documents.DocumentsService.FindDocuments:input_type -> services.documents.FindDocumentsRequest
+	2,  // 10: services.documents.DocumentsService.GetDocument:input_type -> services.documents.GetDocumentRequest
+	4,  // 11: services.documents.DocumentsService.CreateDocument:input_type -> services.documents.CreateDocumentRequest
+	6,  // 12: services.documents.DocumentsService.UpdateDocument:input_type -> services.documents.UpdateDocumentRequest
+	8,  // 13: services.documents.DocumentsService.GetDocumentResponses:input_type -> services.documents.GetDocumentResponsesRequest
+	10, // 14: services.documents.DocumentsService.ListTemplates:input_type -> services.documents.ListTemplatesRequest
+	12, // 15: services.documents.DocumentsService.GetTemplate:input_type -> services.documents.GetTemplateRequest
+	14, // 16: services.documents.DocumentsService.GetDocumentAccess:input_type -> services.documents.GetDocumentAccessRequest
+	16, // 17: services.documents.DocumentsService.SetDocumentAccess:input_type -> services.documents.SetDocumentAccessRequest
+	1,  // 18: services.documents.DocumentsService.FindDocuments:output_type -> services.documents.FindDocumentsResponse
+	3,  // 19: services.documents.DocumentsService.GetDocument:output_type -> services.documents.GetDocumentResponse
+	5,  // 20: services.documents.DocumentsService.CreateDocument:output_type -> services.documents.CreateDocumentResponse
+	7,  // 21: services.documents.DocumentsService.UpdateDocument:output_type -> services.documents.UpdateDocumentResponse
+	9,  // 22: services.documents.DocumentsService.GetDocumentResponses:output_type -> services.documents.GetDocumentResponsesResponse
+	11, // 23: services.documents.DocumentsService.ListTemplates:output_type -> services.documents.ListTemplatesResponse
+	13, // 24: services.documents.DocumentsService.GetTemplate:output_type -> services.documents.GetTemplateResponse
+	15, // 25: services.documents.DocumentsService.GetDocumentAccess:output_type -> services.documents.GetDocumentAccessResponse
+	17, // 26: services.documents.DocumentsService.SetDocumentAccess:output_type -> services.documents.SetDocumentAccessResponse
+	18, // [18:27] is the sub-list for method output_type
+	9,  // [9:18] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_services_documents_documents_proto_init() }

@@ -243,7 +243,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.services.documents.GetDocumentResponsesResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.services.documents.GetDocumentResponsesResponse.repeatedFields_, null);
 };
 goog.inherits(proto.services.documents.GetDocumentResponsesResponse, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -2176,7 +2176,7 @@ proto.services.documents.GetDocumentResponsesRequest.prototype.toObject = functi
  */
 proto.services.documents.GetDocumentResponsesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    offset: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -2213,6 +2213,10 @@ proto.services.documents.GetDocumentResponsesRequest.deserializeBinaryFromReader
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setOffset(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2242,9 +2246,41 @@ proto.services.documents.GetDocumentResponsesRequest.prototype.serializeBinary =
  */
 proto.services.documents.GetDocumentResponsesRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getOffset();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
 };
 
 
+/**
+ * optional int64 offset = 1;
+ * @return {number}
+ */
+proto.services.documents.GetDocumentResponsesRequest.prototype.getOffset = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.documents.GetDocumentResponsesRequest} returns this
+ */
+proto.services.documents.GetDocumentResponsesRequest.prototype.setOffset = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.services.documents.GetDocumentResponsesResponse.repeatedFields_ = [4];
 
 
 
@@ -2277,7 +2313,11 @@ proto.services.documents.GetDocumentResponsesResponse.prototype.toObject = funct
  */
 proto.services.documents.GetDocumentResponsesResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    totalcount: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    end: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    responsesList: jspb.Message.toObjectList(msg.getResponsesList(),
+    resources_documents_documents_pb.Document.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -2314,6 +2354,23 @@ proto.services.documents.GetDocumentResponsesResponse.deserializeBinaryFromReade
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setTotalcount(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setOffset(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setEnd(value);
+      break;
+    case 4:
+      var value = new resources_documents_documents_pb.Document;
+      reader.readMessage(value,resources_documents_documents_pb.Document.deserializeBinaryFromReader);
+      msg.addResponses(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2343,6 +2400,127 @@ proto.services.documents.GetDocumentResponsesResponse.prototype.serializeBinary 
  */
 proto.services.documents.GetDocumentResponsesResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getTotalcount();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
+  f = message.getOffset();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
+  f = message.getEnd();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
+  f = message.getResponsesList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      4,
+      f,
+      resources_documents_documents_pb.Document.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional int64 totalCount = 1;
+ * @return {number}
+ */
+proto.services.documents.GetDocumentResponsesResponse.prototype.getTotalcount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.documents.GetDocumentResponsesResponse} returns this
+ */
+proto.services.documents.GetDocumentResponsesResponse.prototype.setTotalcount = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional int64 offset = 2;
+ * @return {number}
+ */
+proto.services.documents.GetDocumentResponsesResponse.prototype.getOffset = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.documents.GetDocumentResponsesResponse} returns this
+ */
+proto.services.documents.GetDocumentResponsesResponse.prototype.setOffset = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 end = 3;
+ * @return {number}
+ */
+proto.services.documents.GetDocumentResponsesResponse.prototype.getEnd = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.documents.GetDocumentResponsesResponse} returns this
+ */
+proto.services.documents.GetDocumentResponsesResponse.prototype.setEnd = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * repeated resources.documents.Document responses = 4;
+ * @return {!Array<!proto.resources.documents.Document>}
+ */
+proto.services.documents.GetDocumentResponsesResponse.prototype.getResponsesList = function() {
+  return /** @type{!Array<!proto.resources.documents.Document>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.Document, 4));
+};
+
+
+/**
+ * @param {!Array<!proto.resources.documents.Document>} value
+ * @return {!proto.services.documents.GetDocumentResponsesResponse} returns this
+*/
+proto.services.documents.GetDocumentResponsesResponse.prototype.setResponsesList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 4, value);
+};
+
+
+/**
+ * @param {!proto.resources.documents.Document=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.resources.documents.Document}
+ */
+proto.services.documents.GetDocumentResponsesResponse.prototype.addResponses = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.resources.documents.Document, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.documents.GetDocumentResponsesResponse} returns this
+ */
+proto.services.documents.GetDocumentResponsesResponse.prototype.clearResponsesList = function() {
+  return this.setResponsesList([]);
 };
 
 

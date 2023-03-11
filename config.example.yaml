@@ -2,6 +2,7 @@ logLevel: "DEBUG"
 mode: "debug"
 sentry:
   dsn: "https://d3372a68f9b440618195a6893c3e95a3@glitchtip.edenmal.moe/2"
+  environment: "dev"
 http:
   listen: ":8080"
   sessions:

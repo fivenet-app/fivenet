@@ -1050,6 +1050,8 @@ func (m *GetDocumentResponsesRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Offset
+
 	if len(errors) > 0 {
 		return GetDocumentResponsesRequestMultiError(errors)
 	}
@@ -1152,6 +1154,46 @@ func (m *GetDocumentResponsesResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for TotalCount
+
+	// no validation rules for Offset
+
+	// no validation rules for End
+
+	for idx, item := range m.GetResponses() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetDocumentResponsesResponseValidationError{
+						field:  fmt.Sprintf("Responses[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetDocumentResponsesResponseValidationError{
+						field:  fmt.Sprintf("Responses[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetDocumentResponsesResponseValidationError{
+					field:  fmt.Sprintf("Responses[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return GetDocumentResponsesResponseMultiError(errors)

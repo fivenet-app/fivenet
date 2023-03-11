@@ -8,15 +8,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func Test_TimestampValue(t *testing.T) {
 	t.Parallel()
 	t.Run("valid", func(t *testing.T) {
-		ts := Timestamp{Timestamp: &timestamp.Timestamp{Seconds: 0, Nanos: 0}}
+		ts := Timestamp{Timestamp: &timestamppb.Timestamp{Seconds: 0, Nanos: 0}}
 		v, err := ts.Value()
 		require.Nil(t, err)
 		assert.Equal(t, v, utcDate(1970, 1, 1))
@@ -28,7 +28,7 @@ func Test_TimestampValue(t *testing.T) {
 		assert.Equal(t, v, nil)
 	})
 	t.Run("invalid ts", func(t *testing.T) {
-		ts := Timestamp{Timestamp: &timestamp.Timestamp{Seconds: maxValidSeconds, Nanos: 0}}
+		ts := Timestamp{Timestamp: &timestamppb.Timestamp{Seconds: maxValidSeconds, Nanos: 0}}
 		v, err := ts.Value()
 		require.NoError(t, err)
 		assert.Equal(t, v, utcDate(10000, 1, 1))
@@ -43,14 +43,14 @@ func Test_TimestampScan(t *testing.T) {
 		ts := Timestamp{}
 		err := ts.Scan(v)
 		require.Nil(err)
-		assert.True(reflect.DeepEqual(ts.Timestamp, &timestamp.Timestamp{Seconds: 0, Nanos: 0}))
+		assert.True(reflect.DeepEqual(ts.Timestamp, &timestamppb.Timestamp{Seconds: 0, Nanos: 0}))
 	})
 	t.Run("valid default time", func(t *testing.T) {
 		var v time.Time
 		ts := Timestamp{}
 		err := ts.Scan(v)
 		require.Nil(err)
-		assert.True(reflect.DeepEqual(ts.Timestamp, &timestamp.Timestamp{Seconds: -62135596800, Nanos: 0}))
+		assert.True(reflect.DeepEqual(ts.Timestamp, &timestamppb.Timestamp{Seconds: -62135596800, Nanos: 0}))
 	})
 	t.Run("invalid type", func(t *testing.T) {
 		v := 1

@@ -56,11 +56,14 @@ message UpdateDocumentRequest {
 message UpdateDocumentResponse {}
 
 message GetDocumentResponsesRequest {
-    // TODO
+    int64 offset = 1;
 }
 
 message GetDocumentResponsesResponse {
-    // TODO
+    int64 totalCount = 1;
+    int64 offset = 2;
+    int64 end = 3;
+    repeated resources.documents.Document responses = 4;
 }
 
 message ListTemplatesRequest {}

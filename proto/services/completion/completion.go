@@ -7,6 +7,8 @@ import (
 
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lfu"
+	"github.com/Code-Hex/go-generics-cache/policy/lru"
+	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/jobs"
 	"github.com/galexrt/arpanet/query"
@@ -29,7 +31,8 @@ type Server struct {
 
 	cancel context.CancelFunc
 
-	jobsCache *cache.Cache[string, *jobs.Job]
+	jobsCache           *cache.Cache[string, *jobs.Job]
+	docsCategoriesCache *cache.Cache[string, []string]
 }
 
 func NewServer() *Server {
@@ -41,9 +44,15 @@ func NewServer() *Server {
 		cache.WithJanitorInterval[string, *jobs.Job](120*time.Second),
 	)
 
+	docsCategoriesCache := cache.NewContext(
+		ctx,
+		cache.AsLRU[string, []string](lru.WithCapacity(32)),
+	)
+
 	s := &Server{
-		cancel:    cancel,
-		jobsCache: jobsCache,
+		cancel:              cancel,
+		jobsCache:           jobsCache,
+		docsCategoriesCache: docsCategoriesCache,
 	}
 
 	s.refreshCache()
@@ -52,6 +61,18 @@ func NewServer() *Server {
 }
 
 func (s *Server) refreshCache() error {
+	if err := s.refreshJobsCache(); err != nil {
+		return err
+	}
+
+	if err := s.refreshDocumentCategories(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) refreshJobsCache() error {
 	var dest []*jobs.Job
 
 	stmt := j.SELECT(
@@ -76,6 +97,12 @@ func (s *Server) refreshCache() error {
 	for _, job := range dest {
 		s.jobsCache.Set(strings.ToLower(job.Name), job)
 	}
+
+	return nil
+}
+
+func (s *Server) refreshDocumentCategories() error {
+	// TODO fill docsCategoriesCache
 
 	return nil
 }
@@ -119,6 +146,10 @@ func (s *Server) CompleteJobGrades(ctx context.Context, req *CompleteJobGradesRe
 }
 
 func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error) {
+	_, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	_ = job
+
 	resp := &CompleteDocumentCategoryResponse{}
 
 	return resp, nil

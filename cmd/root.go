@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/galexrt/arpanet/pkg/config"
+	"github.com/prometheus/common/version"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -17,7 +18,8 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use: "arpanet",
+	Use:     "arpanet",
+	Version: version.Print("arpanet"),
 }
 
 func init() {

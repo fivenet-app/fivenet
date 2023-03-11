@@ -233,6 +233,9 @@ export namespace UpdateDocumentResponse {
 }
 
 export class GetDocumentResponsesRequest extends jspb.Message {
+  getOffset(): number;
+  setOffset(value: number): GetDocumentResponsesRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentResponsesRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetDocumentResponsesRequest): GetDocumentResponsesRequest.AsObject;
@@ -243,10 +246,25 @@ export class GetDocumentResponsesRequest extends jspb.Message {
 
 export namespace GetDocumentResponsesRequest {
   export type AsObject = {
+    offset: number,
   }
 }
 
 export class GetDocumentResponsesResponse extends jspb.Message {
+  getTotalcount(): number;
+  setTotalcount(value: number): GetDocumentResponsesResponse;
+
+  getOffset(): number;
+  setOffset(value: number): GetDocumentResponsesResponse;
+
+  getEnd(): number;
+  setEnd(value: number): GetDocumentResponsesResponse;
+
+  getResponsesList(): Array<resources_documents_documents_pb.Document>;
+  setResponsesList(value: Array<resources_documents_documents_pb.Document>): GetDocumentResponsesResponse;
+  clearResponsesList(): GetDocumentResponsesResponse;
+  addResponses(value?: resources_documents_documents_pb.Document, index?: number): resources_documents_documents_pb.Document;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentResponsesResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetDocumentResponsesResponse): GetDocumentResponsesResponse.AsObject;
@@ -257,6 +275,10 @@ export class GetDocumentResponsesResponse extends jspb.Message {
 
 export namespace GetDocumentResponsesResponse {
   export type AsObject = {
+    totalcount: number,
+    offset: number,
+    end: number,
+    responsesList: Array<resources_documents_documents_pb.Document.AsObject>,
   }
 }
 

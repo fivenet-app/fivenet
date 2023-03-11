@@ -2,6 +2,7 @@ package documents
 
 import (
 	context "context"
+	"database/sql"
 	"errors"
 
 	"github.com/galexrt/arpanet/pkg/auth"
@@ -15,7 +16,6 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"gorm.io/gorm"
 )
 
 func init() {
@@ -28,6 +28,7 @@ func init() {
 }
 
 var (
+	u   = table.Users
 	d   = table.ArpanetDocuments.AS("document")
 	dua = table.ArpanetDocumentsUserAccess
 	dja = table.ArpanetDocumentsJobAccess
@@ -78,8 +79,22 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		if additionalColumns == nil {
 			q = d.SELECT(
 				d.AllColumns,
+				u.ID,
+				u.Identifier,
+				u.Job,
+				u.JobGrade,
+				u.Firstname,
+				u.Lastname,
 			)
 		} else {
+			additionalColumns = append(jet.ProjectionList{
+				u.ID,
+				u.Identifier,
+				u.Job,
+				u.JobGrade,
+				u.Firstname,
+				u.Lastname,
+			}, additionalColumns)
 			q = d.SELECT(
 				d.AllColumns,
 				additionalColumns...,
@@ -96,7 +111,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 					dja.DocumentID.EQ(d.ID).
 						AND(dja.Name.EQ(jet.String(job))).
 						AND(dja.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
-				),
+				).
+				LEFT_JOIN(u, u.ID.EQ(jet.Int32(userID))),
 		).WHERE(
 		jet.AND(
 			wheres...,
@@ -159,7 +175,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		d.ID.EQ(jet.Uint64(req.Id)),
 	), nil, nil, userID, job, jobGrade).
 		LIMIT(1)
-	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 
