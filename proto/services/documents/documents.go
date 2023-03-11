@@ -70,6 +70,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		wheres = append(wheres, where)
 	}
 
+	u := u.AS("creator")
 	var q jet.SelectStatement
 	if onlyColumns != nil {
 		q = d.SELECT(
