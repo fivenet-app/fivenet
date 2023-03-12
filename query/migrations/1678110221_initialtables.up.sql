@@ -96,9 +96,12 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_templates` (
   `content_title` longtext NOT NULL,
   `content` text NOT NULL,
   `additional_data` longtext DEFAULT NULL,
+  `category_id` bigint(20) unsigned DEFAULT NULL,
   `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_documents_templates_job_job_grade` (`job`, `job_grade`)
+  KEY `idx_arpanet_documents_templates_job_job_grade` (`job`, `job_grade`),
+  KEY `idx_arpanet_documents_templates_category_id` (`category_id`),
+  CONSTRAINT `fk_arpanet_documents_templates_categories` FOREIGN KEY (`category_id`) REFERENCES `arpanet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_documents_user_access

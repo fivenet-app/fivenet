@@ -35,6 +35,7 @@ var (
 	dua = table.ArpanetDocumentsUserAccess
 	dja = table.ArpanetDocumentsJobAccess
 	dt  = table.ArpanetDocumentsTemplates
+	dc  = table.ArpanetDocumentsCategories.AS("document_category")
 )
 
 type Server struct {
@@ -82,6 +83,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		if additionalColumns == nil {
 			q = d.SELECT(
 				d.AllColumns,
+				dc.ID,
+				dc.Name,
 				u.ID,
 				u.Identifier,
 				u.Job,
@@ -91,6 +94,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			)
 		} else {
 			additionalColumns = append(jet.ProjectionList{
+				dc.Name,
+				dc.ID,
 				u.ID,
 				u.Identifier,
 				u.Job,
@@ -115,7 +120,12 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 						AND(dja.Job.EQ(jet.String(job))).
 						AND(dja.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				).
-				LEFT_JOIN(u, u.ID.EQ(d.CreatorID)),
+				LEFT_JOIN(u,
+					d.CreatorID.EQ(u.ID),
+				).
+				LEFT_JOIN(dc,
+					d.CategoryID.EQ(dc.ID),
+				),
 		).WHERE(
 		jet.AND(
 			wheres...,
@@ -174,18 +184,24 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get a document!")
 	}
 
-	stmt := s.getDocumentsQuery(jet.AND(
-		d.ResponseID.IS_NULL(),
+	stmt := s.getDocumentsQuery(jet.OR(
 		d.ID.EQ(jet.Uint64(req.Id)),
+		d.ResponseID.EQ(jet.Uint64(req.Id)),
 	), nil, nil, userID, job, jobGrade).
-		LIMIT(1)
+		LIMIT(6)
 
-	resp := &GetDocumentResponse{
-		Document:  &documents.Document{},
-		Responses: []*documents.Document{},
-	}
-	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil && !errors.Is(err, sql.ErrNoRows) {
+	fmt.Println(stmt.DebugSql())
+	var dest []*documents.Document
+	if err := stmt.QueryContext(ctx, query.DB, &dest); err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
+	}
+
+	resp := &GetDocumentResponse{}
+	if len(dest) > 0 {
+		resp.Document = dest[len(dest)-1]
+		if len(dest) > 1 {
+			resp.Responses = dest[:len(dest)-1]
+		}
 	}
 
 	return resp, nil
@@ -207,6 +223,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		d.Public,
 		d.CreatorID,
 		d.CreatorJob,
+		d.CategoryID,
 	).VALUES(
 		req.Title,
 		s.p.Sanitize(req.Content),
@@ -216,6 +233,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		req.Public,
 		userID,
 		job,
+		req.CategoryID,
 	)
 
 	result, err := stmt.ExecContext(ctx, query.DB)

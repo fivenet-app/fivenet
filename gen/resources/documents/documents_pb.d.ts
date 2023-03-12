@@ -41,8 +41,10 @@ export class Document extends jspb.Message {
   getPublic(): boolean;
   setPublic(value: boolean): Document;
 
-  getCategoryid(): number;
-  setCategoryid(value: number): Document;
+  getCategory(): DocumentCategory | undefined;
+  setCategory(value?: DocumentCategory): Document;
+  hasCategory(): boolean;
+  clearCategory(): Document;
 
   getTargetdocumentid(): number;
   setTargetdocumentid(value: number): Document;
@@ -67,7 +69,7 @@ export namespace Document {
     state: string,
     creator?: resources_users_users_pb.ShortUser.AsObject,
     pb_public: boolean,
-    categoryid: number,
+    category?: DocumentCategory.AsObject,
     targetdocumentid: number,
   }
 }
@@ -97,6 +99,11 @@ export class DocumentTemplate extends jspb.Message {
   getAdditionaldata(): string;
   setAdditionaldata(value: string): DocumentTemplate;
 
+  getCategory(): DocumentCategory | undefined;
+  setCategory(value?: DocumentCategory): DocumentTemplate;
+  hasCategory(): boolean;
+  clearCategory(): DocumentTemplate;
+
   getCreatorid(): number;
   setCreatorid(value: number): DocumentTemplate;
 
@@ -118,6 +125,7 @@ export namespace DocumentTemplate {
     contenttitle: string,
     content: string,
     additionaldata: string,
+    category?: DocumentCategory.AsObject,
     creatorid: number,
   }
 }
@@ -138,6 +146,11 @@ export class DocumentTemplateShort extends jspb.Message {
   getDescription(): string;
   setDescription(value: string): DocumentTemplateShort;
 
+  getCategory(): DocumentCategory | undefined;
+  setCategory(value?: DocumentCategory): DocumentTemplateShort;
+  hasCategory(): boolean;
+  clearCategory(): DocumentTemplateShort;
+
   getCreatorid(): number;
   setCreatorid(value: number): DocumentTemplateShort;
 
@@ -156,6 +169,7 @@ export namespace DocumentTemplateShort {
     jobgrade: number,
     title: string,
     description: string,
+    category?: DocumentCategory.AsObject,
     creatorid: number,
   }
 }

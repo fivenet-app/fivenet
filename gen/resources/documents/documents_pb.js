@@ -246,7 +246,7 @@ proto.resources.documents.Document.toObject = function(includeInstance, msg) {
     state: jspb.Message.getFieldWithDefault(msg, 8, ""),
     creator: (f = msg.getCreator()) && resources_users_users_pb.ShortUser.toObject(includeInstance, f),
     pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 10, false),
-    categoryid: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    category: (f = msg.getCategory()) && proto.resources.documents.DocumentCategory.toObject(includeInstance, f),
     targetdocumentid: jspb.Message.getFieldWithDefault(msg, 12, 0)
   };
 
@@ -328,8 +328,9 @@ proto.resources.documents.Document.deserializeBinaryFromReader = function(msg, r
       msg.setPublic(value);
       break;
     case 11:
-      var value = /** @type {number} */ (reader.readUint64());
-      msg.setCategoryid(value);
+      var value = new proto.resources.documents.DocumentCategory;
+      reader.readMessage(value,proto.resources.documents.DocumentCategory.deserializeBinaryFromReader);
+      msg.setCategory(value);
       break;
     case 12:
       var value = /** @type {number} */ (reader.readUint64());
@@ -437,11 +438,12 @@ proto.resources.documents.Document.serializeBinaryToWriter = function(message, w
       f
     );
   }
-  f = message.getCategoryid();
-  if (f !== 0) {
-    writer.writeUint64(
+  f = message.getCategory();
+  if (f != null) {
+    writer.writeMessage(
       11,
-      f
+      f,
+      proto.resources.documents.DocumentCategory.serializeBinaryToWriter
     );
   }
   f = message.getTargetdocumentid();
@@ -692,20 +694,39 @@ proto.resources.documents.Document.prototype.setPublic = function(value) {
 
 
 /**
- * optional uint64 categoryID = 11;
- * @return {number}
+ * optional DocumentCategory category = 11;
+ * @return {?proto.resources.documents.DocumentCategory}
  */
-proto.resources.documents.Document.prototype.getCategoryid = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+proto.resources.documents.Document.prototype.getCategory = function() {
+  return /** @type{?proto.resources.documents.DocumentCategory} */ (
+    jspb.Message.getWrapperField(this, proto.resources.documents.DocumentCategory, 11));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.documents.DocumentCategory|undefined} value
+ * @return {!proto.resources.documents.Document} returns this
+*/
+proto.resources.documents.Document.prototype.setCategory = function(value) {
+  return jspb.Message.setWrapperField(this, 11, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.resources.documents.Document} returns this
  */
-proto.resources.documents.Document.prototype.setCategoryid = function(value) {
-  return jspb.Message.setProto3IntField(this, 11, value);
+proto.resources.documents.Document.prototype.clearCategory = function() {
+  return this.setCategory(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.Document.prototype.hasCategory = function() {
+  return jspb.Message.getField(this, 11) != null;
 };
 
 
@@ -767,7 +788,8 @@ proto.resources.documents.DocumentTemplate.toObject = function(includeInstance, 
     contenttitle: jspb.Message.getFieldWithDefault(msg, 6, ""),
     content: jspb.Message.getFieldWithDefault(msg, 7, ""),
     additionaldata: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    creatorid: jspb.Message.getFieldWithDefault(msg, 9, 0)
+    category: (f = msg.getCategory()) && proto.resources.documents.DocumentCategory.toObject(includeInstance, f),
+    creatorid: jspb.Message.getFieldWithDefault(msg, 10, 0)
   };
 
   if (includeInstance) {
@@ -837,6 +859,11 @@ proto.resources.documents.DocumentTemplate.deserializeBinaryFromReader = functio
       msg.setAdditionaldata(value);
       break;
     case 9:
+      var value = new proto.resources.documents.DocumentCategory;
+      reader.readMessage(value,proto.resources.documents.DocumentCategory.deserializeBinaryFromReader);
+      msg.setCategory(value);
+      break;
+    case 10:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorid(value);
       break;
@@ -925,10 +952,18 @@ proto.resources.documents.DocumentTemplate.serializeBinaryToWriter = function(me
       f
     );
   }
+  f = message.getCategory();
+  if (f != null) {
+    writer.writeMessage(
+      9,
+      f,
+      proto.resources.documents.DocumentCategory.serializeBinaryToWriter
+    );
+  }
   f = message.getCreatorid();
   if (f !== 0) {
     writer.writeInt32(
-      9,
+      10,
       f
     );
   }
@@ -1080,11 +1115,48 @@ proto.resources.documents.DocumentTemplate.prototype.setAdditionaldata = functio
 
 
 /**
- * optional int32 creatorID = 9;
+ * optional DocumentCategory category = 9;
+ * @return {?proto.resources.documents.DocumentCategory}
+ */
+proto.resources.documents.DocumentTemplate.prototype.getCategory = function() {
+  return /** @type{?proto.resources.documents.DocumentCategory} */ (
+    jspb.Message.getWrapperField(this, proto.resources.documents.DocumentCategory, 9));
+};
+
+
+/**
+ * @param {?proto.resources.documents.DocumentCategory|undefined} value
+ * @return {!proto.resources.documents.DocumentTemplate} returns this
+*/
+proto.resources.documents.DocumentTemplate.prototype.setCategory = function(value) {
+  return jspb.Message.setWrapperField(this, 9, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.resources.documents.DocumentTemplate} returns this
+ */
+proto.resources.documents.DocumentTemplate.prototype.clearCategory = function() {
+  return this.setCategory(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.DocumentTemplate.prototype.hasCategory = function() {
+  return jspb.Message.getField(this, 9) != null;
+};
+
+
+/**
+ * optional int32 creatorID = 10;
  * @return {number}
  */
 proto.resources.documents.DocumentTemplate.prototype.getCreatorid = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
 };
 
 
@@ -1093,7 +1165,7 @@ proto.resources.documents.DocumentTemplate.prototype.getCreatorid = function() {
  * @return {!proto.resources.documents.DocumentTemplate} returns this
  */
 proto.resources.documents.DocumentTemplate.prototype.setCreatorid = function(value) {
-  return jspb.Message.setProto3IntField(this, 9, value);
+  return jspb.Message.setProto3IntField(this, 10, value);
 };
 
 
@@ -1134,7 +1206,8 @@ proto.resources.documents.DocumentTemplateShort.toObject = function(includeInsta
     jobgrade: jspb.Message.getFieldWithDefault(msg, 3, 0),
     title: jspb.Message.getFieldWithDefault(msg, 4, ""),
     description: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    creatorid: jspb.Message.getFieldWithDefault(msg, 6, 0)
+    category: (f = msg.getCategory()) && proto.resources.documents.DocumentCategory.toObject(includeInstance, f),
+    creatorid: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
 
   if (includeInstance) {
@@ -1191,7 +1264,12 @@ proto.resources.documents.DocumentTemplateShort.deserializeBinaryFromReader = fu
       var value = /** @type {string} */ (reader.readString());
       msg.setDescription(value);
       break;
-    case 6:
+    case 11:
+      var value = new proto.resources.documents.DocumentCategory;
+      reader.readMessage(value,proto.resources.documents.DocumentCategory.deserializeBinaryFromReader);
+      msg.setCategory(value);
+      break;
+    case 7:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorid(value);
       break;
@@ -1259,10 +1337,18 @@ proto.resources.documents.DocumentTemplateShort.serializeBinaryToWriter = functi
       f
     );
   }
+  f = message.getCategory();
+  if (f != null) {
+    writer.writeMessage(
+      11,
+      f,
+      proto.resources.documents.DocumentCategory.serializeBinaryToWriter
+    );
+  }
   f = message.getCreatorid();
   if (f !== 0) {
     writer.writeInt32(
-      6,
+      7,
       f
     );
   }
@@ -1360,11 +1446,48 @@ proto.resources.documents.DocumentTemplateShort.prototype.setDescription = funct
 
 
 /**
- * optional int32 creatorID = 6;
+ * optional DocumentCategory category = 11;
+ * @return {?proto.resources.documents.DocumentCategory}
+ */
+proto.resources.documents.DocumentTemplateShort.prototype.getCategory = function() {
+  return /** @type{?proto.resources.documents.DocumentCategory} */ (
+    jspb.Message.getWrapperField(this, proto.resources.documents.DocumentCategory, 11));
+};
+
+
+/**
+ * @param {?proto.resources.documents.DocumentCategory|undefined} value
+ * @return {!proto.resources.documents.DocumentTemplateShort} returns this
+*/
+proto.resources.documents.DocumentTemplateShort.prototype.setCategory = function(value) {
+  return jspb.Message.setWrapperField(this, 11, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.resources.documents.DocumentTemplateShort} returns this
+ */
+proto.resources.documents.DocumentTemplateShort.prototype.clearCategory = function() {
+  return this.setCategory(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.DocumentTemplateShort.prototype.hasCategory = function() {
+  return jspb.Message.getField(this, 11) != null;
+};
+
+
+/**
+ * optional int32 creatorID = 7;
  * @return {number}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.getCreatorid = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
@@ -1373,7 +1496,7 @@ proto.resources.documents.DocumentTemplateShort.prototype.getCreatorid = functio
  * @return {!proto.resources.documents.DocumentTemplateShort} returns this
  */
 proto.resources.documents.DocumentTemplateShort.prototype.setCreatorid = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 

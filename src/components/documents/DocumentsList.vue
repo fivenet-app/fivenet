@@ -57,6 +57,7 @@ export default defineComponent({
                     this.loading = false;
                 }).catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
+                    this.loading = false;
                 });
         },
     },
