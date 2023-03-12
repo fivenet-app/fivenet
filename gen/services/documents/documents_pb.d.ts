@@ -137,15 +137,15 @@ export class CreateDocumentRequest extends jspb.Message {
   getTargetdocumentid(): number;
   setTargetdocumentid(value: number): CreateDocumentRequest;
 
-  getJobsList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
-  setJobsList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): CreateDocumentRequest;
-  clearJobsList(): CreateDocumentRequest;
-  addJobs(value?: resources_documents_documents_pb.DocumentJobAccess, index?: number): resources_documents_documents_pb.DocumentJobAccess;
+  getJobsaccessList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
+  setJobsaccessList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): CreateDocumentRequest;
+  clearJobsaccessList(): CreateDocumentRequest;
+  addJobsaccess(value?: resources_documents_documents_pb.DocumentJobAccess, index?: number): resources_documents_documents_pb.DocumentJobAccess;
 
-  getUsersList(): Array<resources_documents_documents_pb.DocumentUserAccess>;
-  setUsersList(value: Array<resources_documents_documents_pb.DocumentUserAccess>): CreateDocumentRequest;
-  clearUsersList(): CreateDocumentRequest;
-  addUsers(value?: resources_documents_documents_pb.DocumentUserAccess, index?: number): resources_documents_documents_pb.DocumentUserAccess;
+  getUsersaccessList(): Array<resources_documents_documents_pb.DocumentUserAccess>;
+  setUsersaccessList(value: Array<resources_documents_documents_pb.DocumentUserAccess>): CreateDocumentRequest;
+  clearUsersaccessList(): CreateDocumentRequest;
+  addUsersaccess(value?: resources_documents_documents_pb.DocumentUserAccess, index?: number): resources_documents_documents_pb.DocumentUserAccess;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CreateDocumentRequest.AsObject;
@@ -165,12 +165,15 @@ export namespace CreateDocumentRequest {
     pb_public: boolean,
     categoryid: number,
     targetdocumentid: number,
-    jobsList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
-    usersList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
+    jobsaccessList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
+    usersaccessList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
   }
 }
 
 export class CreateDocumentResponse extends jspb.Message {
+  getId(): number;
+  setId(value: number): CreateDocumentResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CreateDocumentResponse.AsObject;
   static toObject(includeInstance: boolean, msg: CreateDocumentResponse): CreateDocumentResponse.AsObject;
@@ -181,6 +184,7 @@ export class CreateDocumentResponse extends jspb.Message {
 
 export namespace CreateDocumentResponse {
   export type AsObject = {
+    id: number,
   }
 }
 

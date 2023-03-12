@@ -1310,9 +1310,9 @@ proto.services.documents.CreateDocumentRequest.toObject = function(includeInstan
     pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 6, false),
     categoryid: jspb.Message.getFieldWithDefault(msg, 7, 0),
     targetdocumentid: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    jobsList: jspb.Message.toObjectList(msg.getJobsList(),
+    jobsaccessList: jspb.Message.toObjectList(msg.getJobsaccessList(),
     resources_documents_documents_pb.DocumentJobAccess.toObject, includeInstance),
-    usersList: jspb.Message.toObjectList(msg.getUsersList(),
+    usersaccessList: jspb.Message.toObjectList(msg.getUsersaccessList(),
     resources_documents_documents_pb.DocumentUserAccess.toObject, includeInstance)
   };
 
@@ -1385,12 +1385,12 @@ proto.services.documents.CreateDocumentRequest.deserializeBinaryFromReader = fun
     case 9:
       var value = new resources_documents_documents_pb.DocumentJobAccess;
       reader.readMessage(value,resources_documents_documents_pb.DocumentJobAccess.deserializeBinaryFromReader);
-      msg.addJobs(value);
+      msg.addJobsaccess(value);
       break;
     case 10:
       var value = new resources_documents_documents_pb.DocumentUserAccess;
       reader.readMessage(value,resources_documents_documents_pb.DocumentUserAccess.deserializeBinaryFromReader);
-      msg.addUsers(value);
+      msg.addUsersaccess(value);
       break;
     default:
       reader.skipField();
@@ -1477,7 +1477,7 @@ proto.services.documents.CreateDocumentRequest.serializeBinaryToWriter = functio
       f
     );
   }
-  f = message.getJobsList();
+  f = message.getJobsaccessList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       9,
@@ -1485,7 +1485,7 @@ proto.services.documents.CreateDocumentRequest.serializeBinaryToWriter = functio
       resources_documents_documents_pb.DocumentJobAccess.serializeBinaryToWriter
     );
   }
-  f = message.getUsersList();
+  f = message.getUsersaccessList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       10,
@@ -1641,10 +1641,10 @@ proto.services.documents.CreateDocumentRequest.prototype.setTargetdocumentid = f
 
 
 /**
- * repeated resources.documents.DocumentJobAccess jobs = 9;
+ * repeated resources.documents.DocumentJobAccess jobsAccess = 9;
  * @return {!Array<!proto.resources.documents.DocumentJobAccess>}
  */
-proto.services.documents.CreateDocumentRequest.prototype.getJobsList = function() {
+proto.services.documents.CreateDocumentRequest.prototype.getJobsaccessList = function() {
   return /** @type{!Array<!proto.resources.documents.DocumentJobAccess>} */ (
     jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentJobAccess, 9));
 };
@@ -1654,7 +1654,7 @@ proto.services.documents.CreateDocumentRequest.prototype.getJobsList = function(
  * @param {!Array<!proto.resources.documents.DocumentJobAccess>} value
  * @return {!proto.services.documents.CreateDocumentRequest} returns this
 */
-proto.services.documents.CreateDocumentRequest.prototype.setJobsList = function(value) {
+proto.services.documents.CreateDocumentRequest.prototype.setJobsaccessList = function(value) {
   return jspb.Message.setRepeatedWrapperField(this, 9, value);
 };
 
@@ -1664,7 +1664,7 @@ proto.services.documents.CreateDocumentRequest.prototype.setJobsList = function(
  * @param {number=} opt_index
  * @return {!proto.resources.documents.DocumentJobAccess}
  */
-proto.services.documents.CreateDocumentRequest.prototype.addJobs = function(opt_value, opt_index) {
+proto.services.documents.CreateDocumentRequest.prototype.addJobsaccess = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 9, opt_value, proto.resources.documents.DocumentJobAccess, opt_index);
 };
 
@@ -1673,16 +1673,16 @@ proto.services.documents.CreateDocumentRequest.prototype.addJobs = function(opt_
  * Clears the list making it empty but non-null.
  * @return {!proto.services.documents.CreateDocumentRequest} returns this
  */
-proto.services.documents.CreateDocumentRequest.prototype.clearJobsList = function() {
-  return this.setJobsList([]);
+proto.services.documents.CreateDocumentRequest.prototype.clearJobsaccessList = function() {
+  return this.setJobsaccessList([]);
 };
 
 
 /**
- * repeated resources.documents.DocumentUserAccess users = 10;
+ * repeated resources.documents.DocumentUserAccess usersAccess = 10;
  * @return {!Array<!proto.resources.documents.DocumentUserAccess>}
  */
-proto.services.documents.CreateDocumentRequest.prototype.getUsersList = function() {
+proto.services.documents.CreateDocumentRequest.prototype.getUsersaccessList = function() {
   return /** @type{!Array<!proto.resources.documents.DocumentUserAccess>} */ (
     jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentUserAccess, 10));
 };
@@ -1692,7 +1692,7 @@ proto.services.documents.CreateDocumentRequest.prototype.getUsersList = function
  * @param {!Array<!proto.resources.documents.DocumentUserAccess>} value
  * @return {!proto.services.documents.CreateDocumentRequest} returns this
 */
-proto.services.documents.CreateDocumentRequest.prototype.setUsersList = function(value) {
+proto.services.documents.CreateDocumentRequest.prototype.setUsersaccessList = function(value) {
   return jspb.Message.setRepeatedWrapperField(this, 10, value);
 };
 
@@ -1702,7 +1702,7 @@ proto.services.documents.CreateDocumentRequest.prototype.setUsersList = function
  * @param {number=} opt_index
  * @return {!proto.resources.documents.DocumentUserAccess}
  */
-proto.services.documents.CreateDocumentRequest.prototype.addUsers = function(opt_value, opt_index) {
+proto.services.documents.CreateDocumentRequest.prototype.addUsersaccess = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 10, opt_value, proto.resources.documents.DocumentUserAccess, opt_index);
 };
 
@@ -1711,8 +1711,8 @@ proto.services.documents.CreateDocumentRequest.prototype.addUsers = function(opt
  * Clears the list making it empty but non-null.
  * @return {!proto.services.documents.CreateDocumentRequest} returns this
  */
-proto.services.documents.CreateDocumentRequest.prototype.clearUsersList = function() {
-  return this.setUsersList([]);
+proto.services.documents.CreateDocumentRequest.prototype.clearUsersaccessList = function() {
+  return this.setUsersaccessList([]);
 };
 
 
@@ -1748,7 +1748,7 @@ proto.services.documents.CreateDocumentResponse.prototype.toObject = function(op
  */
 proto.services.documents.CreateDocumentResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -1785,6 +1785,10 @@ proto.services.documents.CreateDocumentResponse.deserializeBinaryFromReader = fu
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setId(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1814,6 +1818,31 @@ proto.services.documents.CreateDocumentResponse.prototype.serializeBinary = func
  */
 proto.services.documents.CreateDocumentResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeUint64(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional uint64 id = 1;
+ * @return {number}
+ */
+proto.services.documents.CreateDocumentResponse.prototype.getId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.documents.CreateDocumentResponse} returns this
+ */
+proto.services.documents.CreateDocumentResponse.prototype.setId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 

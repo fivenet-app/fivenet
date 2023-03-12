@@ -673,7 +673,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 
 	// no validation rules for TargetDocumentID
 
-	for idx, item := range m.GetJobs() {
+	for idx, item := range m.GetJobsAccess() {
 		_, _ = idx, item
 
 		if all {
@@ -681,7 +681,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, CreateDocumentRequestValidationError{
-						field:  fmt.Sprintf("Jobs[%v]", idx),
+						field:  fmt.Sprintf("JobsAccess[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -689,7 +689,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, CreateDocumentRequestValidationError{
-						field:  fmt.Sprintf("Jobs[%v]", idx),
+						field:  fmt.Sprintf("JobsAccess[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -698,7 +698,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return CreateDocumentRequestValidationError{
-					field:  fmt.Sprintf("Jobs[%v]", idx),
+					field:  fmt.Sprintf("JobsAccess[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -707,7 +707,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 
 	}
 
-	for idx, item := range m.GetUsers() {
+	for idx, item := range m.GetUsersAccess() {
 		_, _ = idx, item
 
 		if all {
@@ -715,7 +715,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, CreateDocumentRequestValidationError{
-						field:  fmt.Sprintf("Users[%v]", idx),
+						field:  fmt.Sprintf("UsersAccess[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -723,7 +723,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, CreateDocumentRequestValidationError{
-						field:  fmt.Sprintf("Users[%v]", idx),
+						field:  fmt.Sprintf("UsersAccess[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -732,7 +732,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return CreateDocumentRequestValidationError{
-					field:  fmt.Sprintf("Users[%v]", idx),
+					field:  fmt.Sprintf("UsersAccess[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -842,6 +842,8 @@ func (m *CreateDocumentResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return CreateDocumentResponseMultiError(errors)

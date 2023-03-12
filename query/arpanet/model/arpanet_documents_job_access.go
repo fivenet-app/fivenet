@@ -16,7 +16,7 @@ type ArpanetDocumentsJobAccess struct {
 	CreatedAt    *time.Time `json:"created_at"`
 	UpdatedAt    *time.Time `json:"updated_at"`
 	DocumentID   uint64     `json:"document_id"`
-	Name         string     `json:"name"`
+	Job          string     `json:"job"`
 	MinimumGrade int32      `json:"minimum_grade"`
 	Access       int32      `json:"access"`
 }

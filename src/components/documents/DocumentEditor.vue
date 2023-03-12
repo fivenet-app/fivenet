@@ -4,6 +4,7 @@ import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getDocumentsClient, handleGRPCError } from '../../grpc';
 import { CreateDocumentRequest } from '@arpanet/gen/services/documents/documents_pb';
+import { DOCUMENT_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 
 export default defineComponent({
@@ -14,7 +15,7 @@ export default defineComponent({
         return {
             title: "",
             content: "",
-            contentType: "html",
+            contentType: DOCUMENT_CONTENT_TYPE.HTML,
             categoryID: 0,
             closed: false,
             state: "",
@@ -36,6 +37,7 @@ export default defineComponent({
         'targetDocumentID': {
             required: false,
             type: Number,
+            default: 0,
         },
     },
     methods: {
@@ -47,7 +49,7 @@ export default defineComponent({
             req.setClosed(this.closed);
             req.setState(this.state);
             req.setPublic(this.public);
-            req.setTargetDocumentId(this.targetDocumentID);
+            req.setTargetdocumentid(this.targetDocumentID);
 
             getDocumentsClient().
                 createDocument(req, null).then((resp) => {

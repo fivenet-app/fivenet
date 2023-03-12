@@ -4,7 +4,6 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
@@ -112,7 +111,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 					AND(dua.UserID.EQ(jet.Int32(userID)))).
 				LEFT_JOIN(dja,
 					dja.DocumentID.EQ(d.ID).
-						AND(dja.Name.EQ(jet.String(job))).
+						AND(dja.Job.EQ(jet.String(job))).
 						AND(dja.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				).
 				LEFT_JOIN(u, u.ID.EQ(jet.Int32(userID))),
@@ -215,7 +214,9 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, err
 	}
 
-	// TODO need to create job and user access
+	if err := s.handleDocumentAccess(req.JobsAccess, req.UsersAccess); err != nil {
+		return nil, err
+	}
 
 	return &CreateDocumentResponse{}, nil
 }
@@ -235,7 +236,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 					AND(dua.UserID.EQ(jet.Int32(userID)))).
 				LEFT_JOIN(dja,
 					dja.DocumentID.EQ(d.ID).
-						AND(dja.Name.EQ(jet.String(job))).
+						AND(dja.Job.EQ(jet.String(job))).
 						AND(dja.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				).
 				LEFT_JOIN(u, u.ID.EQ(jet.Int32(userID))),
@@ -268,8 +269,6 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	if err := checkStmt.QueryContext(ctx, query.DB, &dest); err != nil {
 		return nil, err
 	}
-
-	fmt.Println(checkStmt.DebugSql())
 
 	if dest.ID <= 0 {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
@@ -359,14 +358,46 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	resp := &GetDocumentAccessResponse{}
 
-	// TODO return the document access
+	stmt := d.SELECT(
+		dua.AllColumns,
+		dja.AllColumns,
+	).
+		FROM(d).
+		WHERE(
+			jet.AND(
+				d.ID.EQ(jet.Uint64(req.Id)),
+				jet.OR(
+					jet.AND(
+						dua.Access.IS_NOT_NULL(),
+						dua.Access.NOT_EQ(jet.Int32(int32(documents.DOCUMENT_ACCESS_BLOCKED))),
+					),
+					jet.AND(
+						dua.Access.IS_NULL(),
+						dja.Access.IS_NOT_NULL(),
+						dja.Access.NOT_EQ(jet.Int32(int32(documents.DOCUMENT_ACCESS_BLOCKED))),
+					),
+				),
+			),
+		)
+
+	if err := stmt.QueryContext(ctx, query.DB, resp); err != nil {
+		return nil, err
+	}
 
 	return resp, nil
 }
+
 func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
 	resp := &SetDocumentAccessResponse{}
 
 	// TODO add/update/remove for document access is needed
 
 	return resp, nil
+}
+
+func (s *Server) handleDocumentAccess(ja []*documents.DocumentJobAccess, ua []*documents.DocumentUserAccess) error {
+
+	// TODO need to create job and user access
+
+	return nil
 }

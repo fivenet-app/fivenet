@@ -52,7 +52,6 @@ export default defineComponent({
         getDocument(): void {
             const req = new GetDocumentRequest();
             req.setId(this.documentID);
-            req.setResponses(true);
 
             getDocumentsClient().
                 getDocument(req, null).
@@ -66,7 +65,7 @@ export default defineComponent({
         },
         editDocumentTest() {
             const req = new UpdateDocumentRequest();
-            req.setId(1);
+            req.setId(this.document?.getId());
             req.setTitle("SCOTT'S DOKUMENTEN WOCHENDSSPAß");
             req.setContent(this.document?.getContent());
             req.setClosed(this.document?.getClosed());

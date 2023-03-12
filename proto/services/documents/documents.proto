@@ -41,11 +41,13 @@ message CreateDocumentRequest {
     uint64 categoryID = 7; // @gotags: alias:"category_id"
     uint64 targetDocumentID = 8; // @gotags: alias:"response_id"
 
-    repeated resources.documents.DocumentJobAccess jobs = 9;
-    repeated resources.documents.DocumentUserAccess users = 10;
+    repeated resources.documents.DocumentJobAccess jobsAccess = 9;
+    repeated resources.documents.DocumentUserAccess usersAccess = 10;
 }
 
-message CreateDocumentResponse {}
+message CreateDocumentResponse {
+    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+}
 
 message UpdateDocumentRequest {
     uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"

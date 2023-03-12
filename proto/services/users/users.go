@@ -2,7 +2,6 @@ package users
 
 import (
 	context "context"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -131,8 +130,6 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 
 		stmt = stmt.ORDER_BY(orderBys...)
 	}
-
-	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Users); err != nil {
 		return nil, err
