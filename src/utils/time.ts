@@ -26,5 +26,5 @@ export function getDateLocaleString(ts: resources_timestamp_timestamp_pb.Timesta
     if (typeof ts === undefined) {
         return "-";
     }
-    return ts?.getTimestamp()?.toDate().toLocaleString();
+    return ts?.getTimestamp()?.toDate().toLocaleString('de-DE');
 }
