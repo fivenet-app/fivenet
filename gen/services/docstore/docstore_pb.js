@@ -3591,7 +3591,7 @@ proto.services.docstore.SetDocumentAccessRequest.prototype.toObject = function(o
  */
 proto.services.docstore.SetDocumentAccessRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    documentid: jspb.Message.getFieldWithDefault(msg, 1, 0),
     mode: jspb.Message.getFieldWithDefault(msg, 2, 0),
     jobsList: jspb.Message.toObjectList(msg.getJobsList(),
     resources_documents_documents_pb.DocumentJobAccess.toObject, includeInstance),
@@ -3635,7 +3635,7 @@ proto.services.docstore.SetDocumentAccessRequest.deserializeBinaryFromReader = f
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readUint64());
-      msg.setId(value);
+      msg.setDocumentid(value);
       break;
     case 2:
       var value = /** @type {!proto.services.docstore.DOCUMENT_ACCESS_UPDATE_MODE} */ (reader.readEnum());
@@ -3680,7 +3680,7 @@ proto.services.docstore.SetDocumentAccessRequest.prototype.serializeBinary = fun
  */
 proto.services.docstore.SetDocumentAccessRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getId();
+  f = message.getDocumentid();
   if (f !== 0) {
     writer.writeUint64(
       1,
@@ -3714,10 +3714,10 @@ proto.services.docstore.SetDocumentAccessRequest.serializeBinaryToWriter = funct
 
 
 /**
- * optional uint64 id = 1;
+ * optional uint64 documentID = 1;
  * @return {number}
  */
-proto.services.docstore.SetDocumentAccessRequest.prototype.getId = function() {
+proto.services.docstore.SetDocumentAccessRequest.prototype.getDocumentid = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -3726,7 +3726,7 @@ proto.services.docstore.SetDocumentAccessRequest.prototype.getId = function() {
  * @param {number} value
  * @return {!proto.services.docstore.SetDocumentAccessRequest} returns this
  */
-proto.services.docstore.SetDocumentAccessRequest.prototype.setId = function(value) {
+proto.services.docstore.SetDocumentAccessRequest.prototype.setDocumentid = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 

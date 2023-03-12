@@ -131,8 +131,12 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 	if !perms.P.CanID(userID, "documents", "FindDocuments") {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to list documents!")
 	}
+	condition := d.ResponseID.IS_NULL()
+	if req.Search != "" {
+		condition = condition.AND(jet.BoolExp(jet.Raw("MATCH(title) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.Search})))
+	}
 
-	countStmt := s.getDocumentsQuery(d.ResponseID.IS_NULL(), jet.ProjectionList{jet.COUNT(d.ID).AS("total_count")}, nil, userID, job, jobGrade)
+	countStmt := s.getDocumentsQuery(condition, jet.ProjectionList{jet.COUNT(d.ID).AS("total_count")}, nil, userID, job, jobGrade)
 	var count struct{ TotalCount int64 }
 	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
 		return nil, err
@@ -148,7 +152,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		return resp, nil
 	}
 
-	stmt := s.getDocumentsQuery(d.ResponseID.IS_NULL(), nil, nil, userID, job, jobGrade)
+	stmt := s.getDocumentsQuery(condition, nil, nil, userID, job, jobGrade)
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Documents); err != nil {
 		return nil, err
 	}
@@ -170,15 +174,16 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get a document!")
 	}
 
-	resp := &GetDocumentResponse{
-		Document:  &documents.Document{},
-		Responses: []*documents.Document{},
-	}
 	stmt := s.getDocumentsQuery(jet.AND(
 		d.ResponseID.IS_NULL(),
 		d.ID.EQ(jet.Uint64(req.Id)),
 	), nil, nil, userID, job, jobGrade).
 		LIMIT(1)
+
+	resp := &GetDocumentResponse{
+		Document:  &documents.Document{},
+		Responses: []*documents.Document{},
+	}
 	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
@@ -227,15 +232,12 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, err
 	}
 
-	return &CreateDocumentResponse{}, nil
+	return &CreateDocumentResponse{
+		Id: uint64(lastID),
+	}, nil
 }
 
-func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
-	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	if !perms.P.CanID(userID, "documents", "UpdateDocument") {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit documents!")
-	}
-
+func (s *Server) checkIfUserCanEditDocument(ctx context.Context, userID int32, job string, jobGrade int32) (bool, error) {
 	checkStmt := d.SELECT(
 		d.ID,
 	).
@@ -275,14 +277,25 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		ID uint64 `alias:"document.id"`
 	}
 	if err := checkStmt.QueryContext(ctx, query.DB, &dest); err != nil {
+		return false, err
+	}
+
+	return dest.ID > 0, nil
+}
+
+func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
+	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "documents", "UpdateDocument") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit documents!")
+	}
+
+	check, err := s.checkIfUserCanEditDocument(ctx, userID, job, jobGrade)
+	if err != nil {
 		return nil, err
 	}
-
-	if dest.ID <= 0 {
+	if !check {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
 	}
-
-	resp := &UpdateDocumentResponse{}
 
 	stmt := d.UPDATE(
 		d.Title,
@@ -304,7 +317,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, err
 	}
 
-	return resp, nil
+	return &UpdateDocumentResponse{}, nil
 }
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
@@ -313,7 +326,6 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to list/ get document templates!")
 	}
 
-	resp := &ListTemplatesResponse{}
 	stmt := dt.SELECT(
 		dt.ID,
 		dt.Job,
@@ -330,6 +342,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 			),
 		)
 
+	resp := &ListTemplatesResponse{}
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Templates); err != nil {
 		return nil, err
 	}
@@ -343,7 +356,6 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to list/ get document templates!")
 	}
 
-	resp := &GetTemplateResponse{}
 	stmt := dt.SELECT(
 		dt.AllColumns,
 	).
@@ -356,6 +368,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			),
 		)
 
+	resp := &GetTemplateResponse{}
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Template); err != nil {
 		return nil, err
 	}
@@ -364,7 +377,18 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 }
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
-	resp := &GetDocumentAccessResponse{}
+	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	if !perms.P.CanID(userID, "documents", "GetDocument") {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get document access!")
+	}
+
+	check, err := s.checkIfUserCanEditDocument(ctx, userID, job, jobGrade)
+	if err != nil {
+		return nil, err
+	}
+	if !check {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get document access!")
+	}
 
 	stmt := d.SELECT(
 		dua.AllColumns,
@@ -388,6 +412,7 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 			),
 		)
 
+	resp := &GetDocumentAccessResponse{}
 	if err := stmt.QueryContext(ctx, query.DB, resp); err != nil {
 		return nil, err
 	}
@@ -398,7 +423,9 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
 	resp := &SetDocumentAccessResponse{}
 
-	// TODO add/update/remove for document access is needed
+	if err := s.handleDocumentAccess(ctx, req.Mode, req.DocumentID, req.Jobs, req.Users); err != nil {
+		return nil, err
+	}
 
 	return resp, nil
 }
@@ -426,6 +453,8 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOCUMENT_ACCESS_
 	if err := selectStmt.QueryContext(ctx, query.DB, &dest); err != nil && errors.Is(err, sql.ErrNoRows) {
 		return err
 	}
+
+	// TODO add/update/remove for document access based on the current access in the database
 
 	// Create accesses
 	if len(ja) > 0 {

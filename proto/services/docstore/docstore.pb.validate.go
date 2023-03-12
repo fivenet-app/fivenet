@@ -2202,7 +2202,7 @@ func (m *SetDocumentAccessRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	// no validation rules for DocumentID
 
 	// no validation rules for Mode
 

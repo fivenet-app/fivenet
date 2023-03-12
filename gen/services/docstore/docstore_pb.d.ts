@@ -415,8 +415,8 @@ export namespace GetDocumentAccessResponse {
 }
 
 export class SetDocumentAccessRequest extends jspb.Message {
-  getId(): number;
-  setId(value: number): SetDocumentAccessRequest;
+  getDocumentid(): number;
+  setDocumentid(value: number): SetDocumentAccessRequest;
 
   getMode(): DOCUMENT_ACCESS_UPDATE_MODE;
   setMode(value: DOCUMENT_ACCESS_UPDATE_MODE): SetDocumentAccessRequest;
@@ -441,7 +441,7 @@ export class SetDocumentAccessRequest extends jspb.Message {
 
 export namespace SetDocumentAccessRequest {
   export type AsObject = {
-    id: number,
+    documentid: number,
     mode: DOCUMENT_ACCESS_UPDATE_MODE,
     jobsList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
     usersList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
