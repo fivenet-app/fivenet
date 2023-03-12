@@ -9,7 +9,6 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
-	"github.com/galexrt/arpanet/pkg/session"
 	users "github.com/galexrt/arpanet/proto/resources/users"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/model"
@@ -46,7 +45,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (c
 }
 
 func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, activeChar *users.User) (string, error) {
-	claims := &session.CitizenInfoClaims{
+	claims := &auth.CitizenInfoClaims{
 		AccountID: account.ID,
 		Username:  account.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -71,7 +70,7 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 		claims.ActiveCharJobGrade = 0
 	}
 
-	return session.Tokens.NewWithClaims(claims)
+	return auth.Tokens.NewWithClaims(claims)
 }
 
 func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.ArpanetAccounts, error) {
@@ -113,7 +112,7 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 }
 
 func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {
-	claims, err := session.Tokens.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	claims, err := auth.Tokens.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +141,7 @@ func buildCharSearchIdentifier(license string) string {
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
 	resp := &ChooseCharacterResponse{}
 
-	claims, err := session.Tokens.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	claims, err := auth.Tokens.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
 	if err != nil {
 		return nil, err
 	}

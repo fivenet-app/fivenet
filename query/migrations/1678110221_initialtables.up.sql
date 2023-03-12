@@ -47,6 +47,9 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents` (
   KEY `idx_arpanet_documents_creator_id` (`creator_id`),
   KEY `idx_arpanet_documents_creator_job` (`creator_job`),
   KEY `idx_arpanet_documents_response_id` (`response_id`),
+  KEY `idx_arpanet_documents_category_id` (`category_id`),
+  FULLTEXT KEY `idx_arpanet_documents_title` (`title`),
+  FULLTEXT KEY `idx_arpanet_documents_content` (`content`),
   CONSTRAINT `fk_arpanet_documents_responses` FOREIGN KEY (`response_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `fk_arpanet_documents_categories` FOREIGN KEY (`category_id`) REFERENCES `arpanet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -199,4 +202,10 @@ CREATE TABLE IF NOT EXISTS `arpanet_user_props` (
 -- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- # Table: users - Should already exist
+-- Add firstname + lastname fulltext index
+set @x := (select count(*) from information_schema.statistics where table_name = 'users' and index_name = 'users_firstname_IDX' and table_schema = database());
+set @sql := if( @x > 0, 'select ''Index exists.''', 'ALTER TABLE users ADD FULLTEXT KEY `users_firstname_IDX` (`firstname`,`lastname`);');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+
 COMMIT;

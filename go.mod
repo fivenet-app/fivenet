@@ -7,6 +7,7 @@ require (
 	github.com/creasty/defaults v1.6.0
 	github.com/envoyproxy/protoc-gen-validate v0.9.1
 	github.com/getsentry/sentry-go v0.19.0
+	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-contrib/zap v0.1.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-jet/jet/v2 v2.9.0
@@ -44,7 +45,10 @@ require (
 	github.com/goccy/go-json v0.10.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
+	github.com/gorilla/securecookie v1.1.1 // indirect
+	github.com/gorilla/sessions v1.2.1 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect

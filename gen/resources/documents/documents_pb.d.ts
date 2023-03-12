@@ -367,5 +367,6 @@ export enum DOCUMENT_ACCESS {
 export enum DOCUMENT_RELATION { 
   CREATED = 0,
   MENTIONED = 1,
-  CAUSED = 2,
+  TARGETS = 2,
+  CAUSED = 3,
 }

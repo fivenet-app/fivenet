@@ -195,92 +195,92 @@ export default defineComponent({
                         <div class="px-4 sm:flex sm:items-baseline sm:justify-between sm:px-6 lg:px-8">
                             <div class="sm:w-0 sm:flex-1">
                                 <h1 id="message-heading" class="text-lg font-medium text-gray-900">{{ document?.getTitle()
-                                }}
-                                </h1>
-                                <p class="mt-1 truncate text-sm text-gray-500">{{ document?.getCreator()?.getFirstname() }} {{ document?.getCreator()?.getLastname() }}</p>
-                                    </div>
+                                    }}
+                                    </h1>
+                                    <p class="mt-1 truncate text-sm text-gray-500">{{ document?.getCreator()?.getFirstname() }} {{ document?.getCreator()?.getLastname() }}</p>
+                                        </div>
 
-                                                <div
-                                                    class="mt-4 flex items-center justify-between sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:justify-start">
-                                                    <span
-                                                            class="inline-flex items-center rounded-full bg-cyan-100 px-3 py-0.5 text-sm font-medium text-cyan-800">{{
-                                                                document?.getState() }}</span>
-                                                        <Menu as="div" class="relative ml-3 inline-block text-left">
-                                                                    <div>
-                                                                        <MenuButton
-                                                                            class="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600">
-                                                                            <span class="sr-only">Open options</span>
-                                                                            <EllipsisVerticalIcon class="h-5 w-5" aria-hidden="true" />
-                                                                                        </MenuButton>
-                                                                                                </div>
+                                                    <div
+                                                        class="mt-4 flex items-center justify-between sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:justify-start">
+                                                        <span
+                                                                class="inline-flex items-center rounded-full bg-cyan-100 px-3 py-0.5 text-sm font-medium text-cyan-800">{{
+                                                                    document?.getState() }}</span>
+                                                            <Menu as="div" class="relative ml-3 inline-block text-left">
+                                                                        <div>
+                                                                            <MenuButton
+                                                                                class="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                                                                <span class="sr-only">Open options</span>
+                                                                                <EllipsisVerticalIcon class="h-5 w-5" aria-hidden="true" />
+                                                                                            </MenuButton>
+                                                                                                    </div>
 
-                                                                                                <transition enter-active-class="transition ease-out duration-100"
-                                                                                                    enter-from-class="transform opacity-0 scale-95"
-                                                                                                    enter-to-class="transform opacity-100 scale-100"
-                                                                                                    leave-active-class="transition ease-in duration-75"
-                                                                                                    leave-from-class="transform opacity-100 scale-100"
-                                                                                                    leave-to-class="transform opacity-0 scale-95">
-                                                                                                    <MenuItems
-                                                                                                        class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                                                                        <div class="py-1">
-                                                                                                            <MenuItem v-slot="{ active }">
-                                                                                                            <button type="button"
-                                                                                                                :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex w-full justify-between px-4 py-2 text-sm']">
-                                                                                                                <span>Copy email address</span>
-                                                                                                            </button>
-                                                                                                            </MenuItem>
-                                                                                                            <MenuItem v-slot="{ active }">
-                                                                                                            <a href="#"
-                                                                                                                :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
-                                                                                                                <span>Previous conversations</span>
-                                                                                                            </a>
-                                                                                                            </MenuItem>
-                                                                                                            <MenuItem v-slot="{ active }">
-                                                                                                            <a href="#"
-                                                                                                                :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
-                                                                                                                <span>View original</span>
-                                                                                                            </a>
-                                                                                                            </MenuItem>
-                                                                                                        </div>
-                                                                                                    </MenuItems>
-                                                                                                </transition>
-                                                                                            </Menu>
+                                                                                                    <transition enter-active-class="transition ease-out duration-100"
+                                                                                                        enter-from-class="transform opacity-0 scale-95"
+                                                                                                        enter-to-class="transform opacity-100 scale-100"
+                                                                                                        leave-active-class="transition ease-in duration-75"
+                                                                                                        leave-from-class="transform opacity-100 scale-100"
+                                                                                                        leave-to-class="transform opacity-0 scale-95">
+                                                                                                        <MenuItems
+                                                                                                            class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                                                                            <div class="py-1">
+                                                                                                                <MenuItem v-slot="{ active }">
+                                                                                                                <button type="button"
+                                                                                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex w-full justify-between px-4 py-2 text-sm']">
+                                                                                                                    <span>Copy email address</span>
+                                                                                                                </button>
+                                                                                                                </MenuItem>
+                                                                                                                <MenuItem v-slot="{ active }">
+                                                                                                                <a href="#"
+                                                                                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
+                                                                                                                    <span>Previous conversations</span>
+                                                                                                                </a>
+                                                                                                                </MenuItem>
+                                                                                                                <MenuItem v-slot="{ active }">
+                                                                                                                <a href="#"
+                                                                                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex justify-between px-4 py-2 text-sm']">
+                                                                                                                    <span>View original</span>
+                                                                                                                </a>
+                                                                                                                </MenuItem>
+                                                                                                            </div>
+                                                                                                        </MenuItems>
+                                                                                                    </transition>
+                                                                                                </Menu>
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
-                                                                        </section>
+                                                                            </section>
 
-                                                                        <aside class="hidden xl:order-first xl:block xl:flex-shrink-0">
-                                                                            <div class="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
-                                                                                <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto">
-                                                                                    <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">
-                                                                                        <li v-for="response in responses" :key="response.getId()"
-                                                                                            class="relative bg-white py-5 px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50">
-                                                                                            <div class="flex justify-between space-x-3">
-                                                                                                <div class="min-w-0 flex-1">
-                                                                                                    <a href="#" class="block focus:outline-none">
-                                                                                                        <span class="absolute inset-0" aria-hidden="true" />
-                                                                                                        <p class="truncate text-sm font-medium text-gray-900">{{ response.getCreator()
-                                                                                                        }}
-                                                                                                        </p>
-                                                                                                        <p class="truncate text-sm text-gray-500">{{ response.getTitle() }}</p>
-                                                                                                    </a>
+                                                                            <aside class="hidden xl:order-first xl:block xl:flex-shrink-0">
+                                                                                <div class="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
+                                                                                    <nav aria-label="Message list" class="min-h-0 flex-1 overflow-y-auto">
+                                                                                        <ul role="list" class="divide-y divide-gray-200 border-b border-gray-200">
+                                                                                            <li v-for="response in responses" :key="response.getId()"
+                                                                                                class="relative bg-white py-5 px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50">
+                                                                                                <div class="flex justify-between space-x-3">
+                                                                                                    <div class="min-w-0 flex-1">
+                                                                                                        <a href="#" class="block focus:outline-none">
+                                                                                                            <span class="absolute inset-0" aria-hidden="true" />
+                                                                                                            <p class="truncate text-sm font-medium text-gray-900">{{ response.getCreator()
+                                                                                                            }}
+                                                                                                            </p>
+                                                                                                            <p class="truncate text-sm text-gray-500">{{ response.getTitle() }}</p>
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                    <time :datetime="getDateLocaleString(response.getCreatedat())"
+                                                                                                        class="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">{{
+                                                                                                            getDateLocaleString(response.getCreatedat()) }}</time>
                                                                                                 </div>
-                                                                                                <time :datetime="getDateLocaleString(response.getCreatedAt())"
-                                                                                                    class="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">{{
-                                                                                                        getDateLocaleString(response.getCreatedAt()) }}</time>
-                                                                                            </div>
-                                                                                            <div class="mt-1">
-                                                                                                <p class="text-sm text-gray-600 line-clamp-2">{{ response.getContent() }}</p>
-                                                                                            </div>
-                                                                                        </li>
-                                                                                    </ul>
-                                                                                </nav>
-                                                                            </div>
-                                                                        </aside>
-                                                                    </main>
-                                                                </div> -->
+                                                                                                <div class="mt-1">
+                                                                                                    <p class="text-sm text-gray-600 line-clamp-2">{{ response.getContent() }}</p>
+                                                                                                </div>
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                    </nav>
+                                                                                </div>
+                                                                            </aside>
+                                                                        </main>
+                                                                    </div> -->
     <div class="mx-auto w-full max-w-7xl flex-grow lg:flex xl:px-8">
         <!-- Left sidebar & main wrapper -->
         <div class="min-w-0 flex-1 bg-white xl:flex">
@@ -332,8 +332,8 @@ export default defineComponent({
                                     <div class="flex items-center space-x-2">
                                         <CalendarIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                                         <span class="text-sm font-medium text-gray-900"><time
-                                                :datetime="getDate(document?.getCreatedAt())?.toLocaleString('de-DE')">{{
-                                                    getDate(document?.getCreatedAt())?.toLocaleString('de-DE') }}</time></span>
+                                                :datetime="getDate(document?.getCreatedat())?.toLocaleString('de-DE')">{{
+                                                    getDate(document?.getCreatedat())?.toLocaleString('de-DE') }}</time></span>
                                     </div>
                                 </div>
                                 <div class="mt-6 space-y-8 border-t border-b border-gray-200 py-6">
@@ -409,8 +409,8 @@ export default defineComponent({
                         <div class="flex items-center space-x-2">
                             <CalendarIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                             <span class="text-sm font-medium text-gray-900"><time
-                                    :datetime="getDate(document?.getCreatedAt())?.toLocaleString('de-DE')">{{
-                                        getDate(document?.getCreatedAt())?.toLocaleString('de-DE') }}</time></span>
+                                    :datetime="getDate(document?.getCreatedat())?.toLocaleString('de-DE')">{{
+                                        getDate(document?.getCreatedat())?.toLocaleString('de-DE') }}</time></span>
                         </div>
                     </div>
                     <div class="mt-6 space-y-8 border-t border-gray-200 py-6">

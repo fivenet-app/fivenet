@@ -8,6 +8,7 @@ import { RpcError } from 'grpc-web';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import { getDateLocaleString } from '../../utils/time';
+import { watchDebounced } from '@vueuse/shared';
 
 export default defineComponent({
     components: {
@@ -19,16 +20,15 @@ export default defineComponent({
     data() {
         return {
             loading: false,
-            search: "",
+            search: {
+                title: '',
+            },
             orderBys: [] as Array<OrderBy>,
             offset: 0,
             totalCount: 0,
             listEnd: 0,
             documents: [] as Array<Document>,
         };
-    },
-    mounted() {
-        this.findDocuments(0);
     },
     methods: {
         getDateLocaleString,
@@ -43,7 +43,7 @@ export default defineComponent({
 
             const req = new FindDocumentsRequest();
             req.setOffset(offset);
-            req.setSearch(this.search);
+            req.setSearch(this.search.title);
             req.setOrderbyList([]);
 
             getDocStoreClient().
@@ -60,6 +60,10 @@ export default defineComponent({
                 });
         },
     },
+    mounted: function () {
+        watchDebounced(this.search, () => this.findDocuments(0), { debounce: 750, maxWait: 1500 });
+        this.findDocuments(0);
+    },
 });
 </script>
 
@@ -69,12 +73,12 @@ export default defineComponent({
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="findDocuments(0)">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="form-control">
+                        <div class="grid grid-cols-5 gap-4">
+                            <div class="col-span-3 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-white">Search</label>
                                 <div class="relative mt-2 flex items-center">
-                                    <input v-model="search" v-on:keyup.enter="findDocuments(0)" type="text" name="search"
-                                        id="search"
+                                    <input v-model="search.title" v-on:keyup.enter="findDocuments(0)" type="text"
+                                        name="search" id="search"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
@@ -121,8 +125,8 @@ export default defineComponent({
                                         <p>
                                             Created at
                                             {{ ' ' }}
-                                            <time :datetime="doc.getCreatedAt()?.getTimestamp()?.toDate().toDateString()">{{
-                                                doc.getCreatedAt()?.getTimestamp()?.toDate() }}</time>
+                                            <time :datetime="doc.getCreatedat()?.getTimestamp()?.toDate().toDateString()">{{
+                                                doc.getCreatedat()?.getTimestamp()?.toDate() }}</time>
                                         </p>
                                     </div>
                                 </div>

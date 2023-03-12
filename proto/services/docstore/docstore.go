@@ -170,13 +170,16 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get a document!")
 	}
 
-	resp := &GetDocumentResponse{}
+	resp := &GetDocumentResponse{
+		Document:  &documents.Document{},
+		Responses: []*documents.Document{},
+	}
 	stmt := s.getDocumentsQuery(jet.AND(
 		d.ResponseID.IS_NULL(),
 		d.ID.EQ(jet.Uint64(req.Id)),
 	), nil, nil, userID, job, jobGrade).
 		LIMIT(1)
-	if err := stmt.QueryContext(ctx, query.DB, &resp.Document); err != nil && !errors.Is(err, sql.ErrNoRows) {
+	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 

@@ -14,9 +14,10 @@ import (
 	"github.com/galexrt/arpanet/pkg/config"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/pkg/routes"
-	"github.com/galexrt/arpanet/pkg/session"
 	"github.com/galexrt/arpanet/query"
 	"github.com/getsentry/sentry-go"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -65,7 +66,7 @@ var serverCmd = &cobra.Command{
 		}
 
 		// Create JWT Token TokenManager
-		session.Tokens = session.NewTokenManager()
+		auth.Tokens = auth.NewTokenManager()
 
 		// Setup and register Permissions
 		perms.Setup()
@@ -78,6 +79,17 @@ var serverCmd = &cobra.Command{
 		// Add Zap Logger to Gin
 		e.Use(ginzap.Ginzap(logger, time.RFC3339, true))
 		e.Use(ginzap.RecoveryWithZap(logger, true))
+
+		// Sessions
+		sessStore := cookie.NewStore([]byte(config.C.HTTP.Sessions.CookieSecret))
+		sessStore.Options(sessions.Options{
+			Domain:   "localhost",
+			Path:     "/",
+			MaxAge:   int((10 * time.Hour).Seconds()),
+			HttpOnly: true,
+			Secure:   false,
+		})
+		e.Use(sessions.SessionsMany([]string{"arpanet_"}, sessStore))
 
 		// Prometheus Metrics endpoint
 		e.GET("/metrics", gin.WrapH(promhttp.Handler()))

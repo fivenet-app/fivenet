@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 
-	"github.com/galexrt/arpanet/pkg/session"
 	"github.com/galexrt/arpanet/proto/resources/users"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -28,7 +27,7 @@ func GRPCAuthFunc(ctx context.Context) (context.Context, error) {
 		return nil, err
 	}
 
-	tokenInfo, err := session.Tokens.ParseWithClaims(token)
+	tokenInfo, err := Tokens.ParseWithClaims(token)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", err)
 	}

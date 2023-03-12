@@ -2890,7 +2890,8 @@ proto.resources.documents.DOCUMENT_ACCESS = {
 proto.resources.documents.DOCUMENT_RELATION = {
   CREATED: 0,
   MENTIONED: 1,
-  CAUSED: 2
+  TARGETS: 2,
+  CAUSED: 3
 };
 
 goog.object.extend(exports, proto.resources.documents);
