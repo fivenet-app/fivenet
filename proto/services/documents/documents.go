@@ -4,6 +4,7 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
@@ -114,7 +115,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 						AND(dja.Job.EQ(jet.String(job))).
 						AND(dja.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				).
-				LEFT_JOIN(u, u.ID.EQ(jet.Int32(userID))),
+				LEFT_JOIN(u, u.ID.EQ(d.CreatorID)),
 		).WHERE(
 		jet.AND(
 			wheres...,
@@ -151,6 +152,8 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Documents); err != nil {
 		return nil, err
 	}
+
+	fmt.Println(stmt.DebugSql())
 
 	resp.TotalCount = count.TotalCount
 	if req.Offset >= resp.TotalCount {
@@ -238,8 +241,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 					dja.DocumentID.EQ(d.ID).
 						AND(dja.Job.EQ(jet.String(job))).
 						AND(dja.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
-				).
-				LEFT_JOIN(u, u.ID.EQ(jet.Int32(userID))),
+				),
 		).WHERE(
 		jet.OR(
 			d.CreatorID.EQ(jet.Int32(userID)),

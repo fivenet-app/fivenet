@@ -64,9 +64,11 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 	if activeChar != nil {
 		claims.ActiveCharID = activeChar.UserID
 		claims.ActiveCharJob = activeChar.Job
+		claims.ActiveCharJobGrade = activeChar.JobGrade
 	} else {
 		claims.ActiveCharID = 0
 		claims.ActiveCharJob = ""
+		claims.ActiveCharJobGrade = 0
 	}
 
 	return session.Tokens.NewWithClaims(claims)
@@ -150,6 +152,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		u.ID,
 		u.Identifier,
 		u.Job,
+		u.JobGrade,
 	).
 		FROM(u).
 		WHERE(u.ID.EQ(jet.Int32(req.UserID))).
