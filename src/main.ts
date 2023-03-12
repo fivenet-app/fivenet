@@ -38,7 +38,7 @@ router.beforeEach((to, from) => {
                 } else {
                     dispatchNotification({
                         title: "You don't have permission!",
-                        content: "You don't have permission to go to " + to.path + '.',
+                        content: "You don't have permission to go to " + (to.name ? to.name?.toString() : to.path) + '.',
                         type: 'warning',
                     });
 
