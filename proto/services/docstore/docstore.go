@@ -157,7 +157,6 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		TotalCount: count.TotalCount,
 		End:        0,
 	}
-
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
@@ -184,24 +183,56 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get a document!")
 	}
 
-	stmt := s.getDocumentsQuery(jet.OR(
+	condition := jet.OR(
 		d.ID.EQ(jet.Uint64(req.Id)),
 		d.ResponseID.EQ(jet.Uint64(req.Id)),
-	), nil, nil, userID, job, jobGrade).
-		LIMIT(6)
+	)
+
+	countStmt := s.getDocumentsQuery(condition, jet.ProjectionList{jet.COUNT(d.ID).AS("total_count")}, nil, userID, job, jobGrade)
+	var count struct{ TotalCount int64 }
+	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
+		return nil, err
+	}
+
+	resp := &GetDocumentResponse{
+		Offset:     req.Offset,
+		TotalCount: count.TotalCount,
+		End:        0,
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
+	}
+
+	var limit int64
+	if req.Offset == 0 {
+		limit = 6
+	} else {
+		limit = 5
+	}
+
+	stmt := s.getDocumentsQuery(condition, nil, nil, userID, job, jobGrade).
+		LIMIT(limit).
+		OFFSET(req.Offset)
 
 	var dest []*documents.Document
 	if err := stmt.QueryContext(ctx, query.DB, &dest); err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 
-	resp := &GetDocumentResponse{}
 	if len(dest) > 0 {
 		resp.Document = dest[len(dest)-1]
 		if len(dest) > 1 {
 			resp.Responses = dest[:len(dest)-1]
 		}
 	}
+
+	resp.TotalCount = count.TotalCount
+	if req.Offset >= resp.TotalCount {
+		resp.Offset = 0
+	} else {
+		resp.Offset = req.Offset
+	}
+	resp.End = resp.Offset + int64(len(resp.Responses))
 
 	return resp, nil
 }

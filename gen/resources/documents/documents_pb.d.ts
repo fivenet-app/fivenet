@@ -49,6 +49,9 @@ export class Document extends jspb.Message {
   getTargetdocumentid(): number;
   setTargetdocumentid(value: number): Document;
 
+  getResponsecount(): number;
+  setResponsecount(value: number): Document;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Document.AsObject;
   static toObject(includeInstance: boolean, msg: Document): Document.AsObject;
@@ -71,6 +74,7 @@ export namespace Document {
     pb_public: boolean,
     category?: DocumentCategory.AsObject,
     targetdocumentid: number,
+    responsecount: number,
   }
 }
 

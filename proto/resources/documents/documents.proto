@@ -24,6 +24,7 @@ message Document {
     bool public = 10; // @gotags: alias:"public"
     DocumentCategory category = 11;
     uint64 targetDocumentID = 12 [(validate.rules).uint64.gte = 0]; // @gotags: alias:"response_id"
+    int64 responseCount = 13; // @gotags: alias:"response_count"
 }
 
 message DocumentTemplate {

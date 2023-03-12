@@ -247,7 +247,8 @@ proto.resources.documents.Document.toObject = function(includeInstance, msg) {
     creator: (f = msg.getCreator()) && resources_users_users_pb.ShortUser.toObject(includeInstance, f),
     pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 10, false),
     category: (f = msg.getCategory()) && proto.resources.documents.DocumentCategory.toObject(includeInstance, f),
-    targetdocumentid: jspb.Message.getFieldWithDefault(msg, 12, 0)
+    targetdocumentid: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    responsecount: jspb.Message.getFieldWithDefault(msg, 13, 0)
   };
 
   if (includeInstance) {
@@ -335,6 +336,10 @@ proto.resources.documents.Document.deserializeBinaryFromReader = function(msg, r
     case 12:
       var value = /** @type {number} */ (reader.readUint64());
       msg.setTargetdocumentid(value);
+      break;
+    case 13:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setResponsecount(value);
       break;
     default:
       reader.skipField();
@@ -450,6 +455,13 @@ proto.resources.documents.Document.serializeBinaryToWriter = function(message, w
   if (f !== 0) {
     writer.writeUint64(
       12,
+      f
+    );
+  }
+  f = message.getResponsecount();
+  if (f !== 0) {
+    writer.writeInt64(
+      13,
       f
     );
   }
@@ -745,6 +757,24 @@ proto.resources.documents.Document.prototype.getTargetdocumentid = function() {
  */
 proto.resources.documents.Document.prototype.setTargetdocumentid = function(value) {
   return jspb.Message.setProto3IntField(this, 12, value);
+};
+
+
+/**
+ * optional int64 responseCount = 13;
+ * @return {number}
+ */
+proto.resources.documents.Document.prototype.getResponsecount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 13, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.resources.documents.Document} returns this
+ */
+proto.resources.documents.Document.prototype.setResponsecount = function(value) {
+  return jspb.Message.setProto3IntField(this, 13, value);
 };
 
 

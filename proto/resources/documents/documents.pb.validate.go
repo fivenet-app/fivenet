@@ -243,6 +243,8 @@ func (m *Document) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for ResponseCount
+
 	if len(errors) > 0 {
 		return DocumentMultiError(errors)
 	}
