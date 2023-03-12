@@ -292,7 +292,7 @@ export default defineComponent({
                     <div class="flow-root">
                         <h3 class="text-base font-semibold leading-6 text-gray-900 pb-5">Responses</h3>
                         <ul role="list" class="-mb-8">
-                            <li v-for="(response, responseIdx) in responses" :key="response.getId()">
+                            <li v-for="(response, responseIdx) in responses" :key="response.getId()" class="mb-5">
                                 <a :href="'/documents/' + response.getId()">
                                     <div class="relative pb-2 bg-gray-300 rounded-xl">
                                         <span v-if="responseIdx !== responses.length - 1"
