@@ -42,4 +42,5 @@ type Users struct {
 	Armor        *int32     `json:"armor"`
 	CreatedAt    *time.Time `json:"created_at"`
 	LastSeen     *time.Time `json:"last_seen"`
+	Meta         *string    `json:"meta"`
 }
