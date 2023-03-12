@@ -1,4 +1,9 @@
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en';
 import * as resources_timestamp_timestamp_pb from '@arpanet/gen/resources/timestamp/timestamp_pb';
+
+TimeAgo.addDefaultLocale(en);
+const timeAgo = new TimeAgo('en-US');
 
 export function getSecondsFormattedAsDuration(seconds: number): string {
     var w = Math.floor(seconds / (7 * (3600 * 24)));
@@ -24,7 +29,18 @@ export function getDate(ts: resources_timestamp_timestamp_pb.Timestamp | undefin
 
 export function getDateLocaleString(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | string {
     if (typeof ts === undefined) {
-        return "-";
+        return '-';
     }
     return ts?.getTimestamp()?.toDate().toLocaleString('de-DE');
+}
+
+export function getDateRelativeString(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | string {
+    if (typeof ts === undefined) {
+        return '-';
+    }
+
+    const date = ts?.getTimestamp()?.toDate();
+    if (!date) return;
+
+    return timeAgo.format(date, 'round');
 }

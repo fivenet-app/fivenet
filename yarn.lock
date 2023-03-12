@@ -1742,6 +1742,13 @@ isurl@^1.0.0-alpha5:
     has-to-string-tag-x "^1.2.0"
     is-object "^1.0.1"
 
+javascript-time-ago@^2.5.9:
+  version "2.5.9"
+  resolved "https://registry.yarnpkg.com/javascript-time-ago/-/javascript-time-ago-2.5.9.tgz#3c5d8012cd493d764c6b26a0ffe6e8b20afcf1fe"
+  integrity sha512-pQ8mNco/9g9TqWXWWjP0EWl6i/lAQScOyEeXy5AB+f7MfLSdgyV9BJhiOD1zrIac/lrxPYOWNbyl/IW8CW5n0A==
+  dependencies:
+    relative-time-format "^1.1.6"
+
 json-buffer@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/json-buffer/-/json-buffer-3.0.0.tgz#5b1f397afc75d677bde8bcfc0e47e1f9a3d9a898"
@@ -2265,6 +2272,11 @@ regexp.prototype.flags@^1.2.0:
     call-bind "^1.0.2"
     define-properties "^1.1.3"
     functions-have-names "^1.2.2"
+
+relative-time-format@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/relative-time-format/-/relative-time-format-1.1.6.tgz#724a5fbc3794b8e0471b6b61419af2ce699eb9f1"
+  integrity sha512-aCv3juQw4hT1/P/OrVltKWLlp15eW1GRcwP1XdxHrPdZE9MtgqFpegjnTjLhi2m2WI9MT/hQQtE+tjEWG1hgkQ==
 
 resolve@^1.1.7, resolve@^1.22.1:
   version "1.22.1"
