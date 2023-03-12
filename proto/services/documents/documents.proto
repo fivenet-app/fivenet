@@ -9,7 +9,7 @@ import "validate/validate.proto";
 
 message FindDocumentsRequest {
     int64 offset = 1 [(validate.rules).int64.gte = 0];
-    repeated resources.common.database.OrderBy orderBy = 2;
+    repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
     // Search param
     string search = 3;
     string category = 4;

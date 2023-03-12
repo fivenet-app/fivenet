@@ -19,6 +19,12 @@ import (
 	"github.com/getsentry/sentry-go"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/prometheus/common/version"
+	"github.com/spf13/cobra"
+	"go.uber.org/zap"
+
+	// GRPC + GRPC Middlewares
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
@@ -26,12 +32,10 @@ import (
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/prometheus/common/version"
-	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/status"
 
 	// GRPC Services
 	pbauth "github.com/galexrt/arpanet/proto/services/auth"
@@ -100,6 +104,12 @@ var serverCmd = &cobra.Command{
 		if err != nil {
 			logger.Fatal("failed to listen", zap.Error(err))
 		}
+		sentryRecoverFunc := func(p interface{}) (err error) {
+			if e, ok := p.(error); ok {
+				sentry.CaptureException(e)
+			}
+			return status.Errorf(codes.Internal, "%v", p)
+		}
 		grpcServer := grpc.NewServer(
 			grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 				grpc_ctxtags.UnaryServerInterceptor(),
@@ -107,7 +117,9 @@ var serverCmd = &cobra.Command{
 				grpc_zap.UnaryServerInterceptor(logger),
 				grpc_validator.UnaryServerInterceptor(),
 				grpc_auth.UnaryServerInterceptor(auth.GRPCAuthFunc),
-				grpc_recovery.UnaryServerInterceptor(),
+				grpc_recovery.UnaryServerInterceptor(
+					grpc_recovery.WithRecoveryHandler(sentryRecoverFunc),
+				),
 			)),
 			grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
 				grpc_ctxtags.StreamServerInterceptor(),
@@ -115,7 +127,9 @@ var serverCmd = &cobra.Command{
 				grpc_zap.StreamServerInterceptor(logger),
 				grpc_validator.StreamServerInterceptor(),
 				grpc_auth.StreamServerInterceptor(auth.GRPCAuthFunc),
-				grpc_recovery.StreamServerInterceptor(),
+				grpc_recovery.StreamServerInterceptor(
+					grpc_recovery.WithRecoveryHandler(sentryRecoverFunc),
+				),
 			)),
 		)
 		// Only enable grpc server reflection when in debug mode

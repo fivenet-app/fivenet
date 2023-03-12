@@ -9,11 +9,10 @@ import "validate/validate.proto";
 
 message FindUsersRequest {
     int64 offset = 1 [(validate.rules).int64.gte = 0];
-    repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.min_items = 1];
+    repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
     // Search params
-    string firstname = 3 [(validate.rules).string.max_len = 50];
-    string lastname = 4 [(validate.rules).string.max_len = 50];
-    bool wanted = 5;
+    string searchName = 3 [(validate.rules).string.max_len = 50];
+    bool wanted = 4;
 }
 
 message FindUsersResponse {

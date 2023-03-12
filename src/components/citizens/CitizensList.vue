@@ -20,8 +20,7 @@ export default defineComponent({
         return {
             loading: false,
             search: {
-                firstname: '',
-                lastname: '',
+                name: '',
                 wanted: false
             },
             orderBys: [] as Array<OrderBy>,
@@ -43,8 +42,7 @@ export default defineComponent({
 
             const req = new FindUsersRequest();
             req.setOffset(offset);
-            req.setFirstname(this.search.firstname);
-            req.setLastname(this.search.lastname);
+            req.setSearchname(this.search.name);
             req.setWanted(this.search.wanted);
             req.setOrderbyList(this.orderBys);
 
@@ -64,10 +62,6 @@ export default defineComponent({
                 });
         },
         toggleOrderBy: function (column: string): void {
-            // Check if the first one is the default entry, if so, remove if another column has been toggled
-            if (this.orderBys.at(0)?.getColumn() != column) {
-                this.orderBys.pop();
-            }
             const index = this.orderBys.findIndex((o) => {
                 return o.getColumn() == column;
             });
@@ -77,9 +71,6 @@ export default defineComponent({
                 orderBy = this.orderBys.at(index);
                 if (orderBy.getDesc()) {
                     this.orderBys.splice(index);
-                    if (this.orderBys.length == 0) {
-                        this.orderBys.push(this.getDefaultOrderBy());
-                    }
                 }
                 else {
                     orderBy.setDesc(true);
@@ -93,18 +84,9 @@ export default defineComponent({
             }
             this.findUsers(this.offset);
         },
-        getDefaultOrderBy(): OrderBy {
-            const defaultOrderBy = new OrderBy();
-            defaultOrderBy.setColumn("firstname");
-            defaultOrderBy.setDesc(false);
-            return defaultOrderBy;
-        },
     },
     mounted: function () {
-        this.orderBys.push(this.getDefaultOrderBy());
-        this.findUsers(this.offset);
-
-        watchDebounced(this.search, () => this.findUsers(0), { debounce: 500, maxWait: 1000 });
+        watchDebounced(this.search, () => this.findUsers(0), { debounce: 750, maxWait: 1000 });
     },
 });
 </script>
@@ -116,19 +98,10 @@ export default defineComponent({
                 <div class="sm:flex-auto">
                     <form @submit.prevent="findUsers(0)">
                         <div class="grid grid-cols-5 gap-4">
-                            <div class="col-span-2 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-white">First
-                                    Name</label>
+                            <div class="col-span-4 form-control">
+                                <label for="search" class="block text-sm font-medium leading-6 text-white">Name</label>
                                 <div class="relative mt-2 flex items-center">
-                                    <input v-model="search.firstname" v-on:keyup.enter="findUsers(0)" type="text"
-                                        name="search" id="search"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                                </div>
-                            </div>
-                            <div class="col-span-2 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-white">Last Name</label>
-                                <div class="relative mt-2 flex items-center">
-                                    <input v-model="search.lastname" v-on:keyup.enter="findUsers(0)" type="text"
+                                    <input v-model="search.name" v-on:keyup.enter="findUsers(0)" type="text"
                                         name="search" id="search"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                 </div>

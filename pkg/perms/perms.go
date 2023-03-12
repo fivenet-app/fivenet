@@ -50,7 +50,7 @@ func Setup() {
 		canCacheTTL: 2 * time.Minute,
 		canCache:    canCache,
 
-		permsCacheTTL: 30 * time.Minute,
+		permsCacheTTL: 2 * time.Minute,
 		permsCache:    permsCache,
 	}
 }

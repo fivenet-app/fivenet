@@ -243,9 +243,8 @@ proto.users.FindUsersRequest.toObject = function(includeInstance, msg) {
     offset: jspb.Message.getFieldWithDefault(msg, 1, 0),
     orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
     resources_common_database_database_pb.OrderBy.toObject, includeInstance),
-    firstname: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    lastname: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
+    searchname: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 4, false)
   };
 
   if (includeInstance) {
@@ -293,13 +292,9 @@ proto.users.FindUsersRequest.deserializeBinaryFromReader = function(msg, reader)
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setFirstname(value);
+      msg.setSearchname(value);
       break;
     case 4:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setLastname(value);
-      break;
-    case 5:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setWanted(value);
       break;
@@ -347,24 +342,17 @@ proto.users.FindUsersRequest.serializeBinaryToWriter = function(message, writer)
       resources_common_database_database_pb.OrderBy.serializeBinaryToWriter
     );
   }
-  f = message.getFirstname();
+  f = message.getSearchname();
   if (f.length > 0) {
     writer.writeString(
       3,
       f
     );
   }
-  f = message.getLastname();
-  if (f.length > 0) {
-    writer.writeString(
-      4,
-      f
-    );
-  }
   f = message.getWanted();
   if (f) {
     writer.writeBool(
-      5,
+      4,
       f
     );
   }
@@ -428,10 +416,10 @@ proto.users.FindUsersRequest.prototype.clearOrderbyList = function() {
 
 
 /**
- * optional string firstname = 3;
+ * optional string searchName = 3;
  * @return {string}
  */
-proto.users.FindUsersRequest.prototype.getFirstname = function() {
+proto.users.FindUsersRequest.prototype.getSearchname = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -440,35 +428,17 @@ proto.users.FindUsersRequest.prototype.getFirstname = function() {
  * @param {string} value
  * @return {!proto.users.FindUsersRequest} returns this
  */
-proto.users.FindUsersRequest.prototype.setFirstname = function(value) {
+proto.users.FindUsersRequest.prototype.setSearchname = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
 /**
- * optional string lastname = 4;
- * @return {string}
- */
-proto.users.FindUsersRequest.prototype.getLastname = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.users.FindUsersRequest} returns this
- */
-proto.users.FindUsersRequest.prototype.setLastname = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
-};
-
-
-/**
- * optional bool wanted = 5;
+ * optional bool wanted = 4;
  * @return {boolean}
  */
 proto.users.FindUsersRequest.prototype.getWanted = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 4, false));
 };
 
 
@@ -477,7 +447,7 @@ proto.users.FindUsersRequest.prototype.getWanted = function() {
  * @return {!proto.users.FindUsersRequest} returns this
  */
 proto.users.FindUsersRequest.prototype.setWanted = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 5, value);
+  return jspb.Message.setProto3BooleanField(this, 4, value);
 };
 
 

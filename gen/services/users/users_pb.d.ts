@@ -13,11 +13,8 @@ export class FindUsersRequest extends jspb.Message {
   clearOrderbyList(): FindUsersRequest;
   addOrderby(value?: resources_common_database_database_pb.OrderBy, index?: number): resources_common_database_database_pb.OrderBy;
 
-  getFirstname(): string;
-  setFirstname(value: string): FindUsersRequest;
-
-  getLastname(): string;
-  setLastname(value: string): FindUsersRequest;
+  getSearchname(): string;
+  setSearchname(value: string): FindUsersRequest;
 
   getWanted(): boolean;
   setWanted(value: boolean): FindUsersRequest;
@@ -34,8 +31,7 @@ export namespace FindUsersRequest {
   export type AsObject = {
     offset: number,
     orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
-    firstname: string,
-    lastname: string,
+    searchname: string,
     wanted: boolean,
   }
 }

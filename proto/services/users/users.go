@@ -2,6 +2,7 @@ package users
 
 import (
 	context "context"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -65,15 +66,11 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		selectors = append(selectors, aup.Wanted)
 	}
 
-	req.Firstname = strings.ReplaceAll(req.Firstname, "%", "")
-	req.Lastname = strings.ReplaceAll(req.Lastname, "%", "")
+	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
 
 	condition := jet.Bool(true)
-	if req.Firstname != "" {
-		condition = condition.AND(u.Firstname.LIKE(jet.String("%" + req.Firstname + "%")))
-	}
-	if req.Lastname != "" {
-		condition = condition.AND(u.Lastname.LIKE(jet.String("%" + req.Lastname + "%")))
+	if req.SearchName != "" {
+		condition = condition.AND(jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.SearchName})))
 	}
 	if req.Wanted {
 		condition = condition.AND(aup.Wanted.IS_TRUE())
@@ -102,6 +99,17 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		return resp, nil
 	}
 
+	stmt := u.SELECT(
+		selectors[0], selectors[1:]...,
+	).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
+		FROM(
+			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
+		).
+		WHERE(condition).
+		OFFSET(req.Offset).
+		LIMIT(database.DefaultPageLimit)
+
 	// Convert our proto abstracted `common.OrderBy` to actual gorm order by instructions
 	orderBys := []jet.OrderByClause{}
 	if len(req.OrderBy) > 0 {
@@ -120,23 +128,11 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 				orderBys = append(orderBys, column.ASC())
 			}
 		}
+
+		stmt = stmt.ORDER_BY(orderBys...)
 	}
 
-	if len(orderBys) == 0 {
-		orderBys = append(orderBys, u.Firstname.ASC())
-	}
-
-	stmt := u.SELECT(
-		selectors[0], selectors[1:]...,
-	).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
-		FROM(
-			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
-		).
-		WHERE(condition).
-		ORDER_BY(orderBys...).
-		OFFSET(req.Offset).
-		LIMIT(database.DefaultPageLimit)
+	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Users); err != nil {
 		return nil, err

@@ -77,10 +77,11 @@ func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.
 	stmt := a.SELECT(
 		a.AllColumns,
 	).
-		FROM(a).WHERE(
-		a.Enabled.IS_TRUE().
-			AND(a.Username.EQ(jet.String(username))),
-	).LIMIT(1)
+		FROM(a).
+		WHERE(
+			a.Enabled.IS_TRUE().
+				AND(a.Username.EQ(jet.String(username))),
+		).LIMIT(1)
 	if err := stmt.QueryContext(ctx, query.DB, &account); err != nil {
 		return nil, err
 	}

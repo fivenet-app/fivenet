@@ -359,12 +359,14 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	resp := &GetDocumentAccessResponse{}
 
-	// TODO add/update/remove for document access is needed
+	// TODO return the document access
 
 	return resp, nil
 }
 func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
 	resp := &SetDocumentAccessResponse{}
+
+	// TODO add/update/remove for document access is needed
 
 	return resp, nil
 }

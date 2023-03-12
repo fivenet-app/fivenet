@@ -36,7 +36,7 @@ export default defineComponent({
                 { name: 'Citizens', href: '/citizens', permission: 'users-view' },
                 { name: 'Documents', href: '/documents', permission: 'documents-view' },
                 { name: 'Dispatches', href: '/dispatches', permission: 'dispatches-view' },
-                { name: 'Job', href: '/job', permission: 'job-view' },
+                { name: 'Job', href: '/job', permission: 'jobs-view' },
                 { name: 'Livemap', href: '/livemap', permission: 'livemap-stream' },
             ],
             userNavigation: [

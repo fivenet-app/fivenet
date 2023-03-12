@@ -68,10 +68,10 @@ func (m *FindUsersRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if len(m.GetOrderBy()) < 1 {
+	if len(m.GetOrderBy()) > 3 {
 		err := FindUsersRequestValidationError{
 			field:  "OrderBy",
-			reason: "value must contain at least 1 item(s)",
+			reason: "value must contain no more than 3 item(s)",
 		}
 		if !all {
 			return err
@@ -113,20 +113,9 @@ func (m *FindUsersRequest) validate(all bool) error {
 
 	}
 
-	if utf8.RuneCountInString(m.GetFirstname()) > 50 {
+	if utf8.RuneCountInString(m.GetSearchName()) > 50 {
 		err := FindUsersRequestValidationError{
-			field:  "Firstname",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetLastname()) > 50 {
-		err := FindUsersRequestValidationError{
-			field:  "Lastname",
+			field:  "SearchName",
 			reason: "value length must be at most 50 runes",
 		}
 		if !all {

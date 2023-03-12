@@ -68,6 +68,17 @@ func (m *FindDocumentsRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if len(m.GetOrderBy()) > 3 {
+		err := FindDocumentsRequestValidationError{
+			field:  "OrderBy",
+			reason: "value must contain no more than 3 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetOrderBy() {
 		_, _ = idx, item
 
