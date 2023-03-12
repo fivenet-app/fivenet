@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package services.citizenstore;
+option go_package = "github.com/galexrt/arpanet/proto/services/citizenstore;citizenstore";
+
+import "resources/common/database/database.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+message FindUsersRequest {
+    int64 offset = 1 [(validate.rules).int64.gte = 0];
+    repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
+    // Search params
+    string searchName = 3 [(validate.rules).string.max_len = 50];
+    bool wanted = 4;
+}
+
+message FindUsersResponse {
+    int64 totalCount = 1;
+    int64 offset = 2;
+    int64 end = 3;
+    repeated resources.users.User users = 4;
+}
+
+message GetUserRequest {
+    int32 userID = 1 [(validate.rules).int32.gt = 0];
+}
+
+message GetUserResponse {
+    resources.users.User user = 1;
+}
+
+message GetUserActivityRequest {
+    int32 userID = 1 [(validate.rules).int32.gt = 0];
+}
+
+message GetUserActivityResponse {
+    repeated resources.users.UserActivity activity = 1;
+}
+
+message SetUserPropsRequest {
+    int32 userID = 1 [(validate.rules).int32.gt = 0];
+    resources.users.UserProps props = 2;
+}
+
+message SetUserPropsResponse {}
+
+service CitizenStoreService {
+    rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+    rpc GetUserActivity(GetUserActivityRequest) returns (GetUserActivityResponse);
+    rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
+}

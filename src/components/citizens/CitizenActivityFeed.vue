@@ -1,9 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { BoltIcon, ChatBubbleLeftEllipsisIcon, TagIcon, UserCircleIcon } from '@heroicons/vue/20/solid'
-import { getUsersClient, handleGRPCError } from '../../grpc';
+import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
-import { GetUserActivityRequest } from '@arpanet/gen/services/users/users_pb';
+import { GetUserActivityRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@arpanet/gen/resources/users/users_pb';
 
 export default defineComponent({
@@ -24,7 +24,7 @@ export default defineComponent({
             const req = new GetUserActivityRequest();
             req.setUserid(this.userID);
 
-            getUsersClient().
+            getCitizenStoreClient().
                 getUserActivity(req, null).then((resp) => {
                     this.activities = resp.getActivityList();
                 }).catch((err: RpcError) => {

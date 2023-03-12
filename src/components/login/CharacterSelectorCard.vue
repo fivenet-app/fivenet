@@ -1,5 +1,5 @@
 <script lang="ts">
-import { getAccountClient, handleGRPCError } from '../../grpc';
+import { getAuthClient, handleGRPCError } from '../../grpc';
 import { ChooseCharacterRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { defineComponent } from 'vue';
 import { mapActions, mapState } from 'vuex';
@@ -25,7 +25,7 @@ export default defineComponent({
             const req = new ChooseCharacterRequest();
             req.setUserid(this.char.getUserid());
 
-            getAccountClient()
+            getAuthClient()
                 .chooseCharacter(req, null)
                 .then((resp) => {
                     this.updateAccessToken(resp.getToken());

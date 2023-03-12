@@ -39,12 +39,12 @@ import (
 
 	// GRPC Services
 	pbauth "github.com/galexrt/arpanet/proto/services/auth"
-	pbcompletion "github.com/galexrt/arpanet/proto/services/completion"
-	pbdispatches "github.com/galexrt/arpanet/proto/services/dispatches"
-	pbdocuments "github.com/galexrt/arpanet/proto/services/documents"
+	pbcitizenstore "github.com/galexrt/arpanet/proto/services/citizenstore"
+	pbcompletor "github.com/galexrt/arpanet/proto/services/completor"
+	pbdispatcher "github.com/galexrt/arpanet/proto/services/dispatcher"
+	pbdocstore "github.com/galexrt/arpanet/proto/services/docstore"
 	pbjobs "github.com/galexrt/arpanet/proto/services/jobs"
-	pblivemap "github.com/galexrt/arpanet/proto/services/livemap"
-	pbusers "github.com/galexrt/arpanet/proto/services/users"
+	pblivmapper "github.com/galexrt/arpanet/proto/services/livemapper"
 )
 
 var serverCmd = &cobra.Command{
@@ -138,13 +138,13 @@ var serverCmd = &cobra.Command{
 		}
 
 		// Attach our GRPC services
-		pbauth.RegisterAccountServiceServer(grpcServer, pbauth.NewServer())
-		pbcompletion.RegisterCompletionServiceServer(grpcServer, pbcompletion.NewServer())
-		pbdispatches.RegisterDispatchesServiceServer(grpcServer, pbdispatches.NewServer())
-		pbdocuments.RegisterDocumentsServiceServer(grpcServer, pbdocuments.NewServer())
+		pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer())
+		pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer())
+		pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer())
+		pbdispatcher.RegisterDispatcherServiceServer(grpcServer, pbdispatcher.NewServer())
+		pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer())
 		pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
-		pblivemap.RegisterLivemapServiceServer(grpcServer, pblivemap.NewServer(logger.Named("grpc_livemap")))
-		pbusers.RegisterUsersServiceServer(grpcServer, pbusers.NewServer())
+		pblivmapper.RegisterLivemapperServiceServer(grpcServer, pblivmapper.NewServer(logger.Named("grpc_livemap")))
 
 		go func() {
 			if err := grpcServer.Serve(lis); err != nil {

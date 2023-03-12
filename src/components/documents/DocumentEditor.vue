@@ -2,8 +2,8 @@
 import { defineComponent } from 'vue';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { getDocumentsClient, handleGRPCError } from '../../grpc';
-import { CreateDocumentRequest } from '@arpanet/gen/services/documents/documents_pb';
+import { getDocStoreClient, handleGRPCError } from '../../grpc';
+import { CreateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { DOCUMENT_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 
@@ -51,7 +51,7 @@ export default defineComponent({
             req.setPublic(this.public);
             req.setTargetdocumentid(this.targetDocumentID);
 
-            getDocumentsClient().
+            getDocStoreClient().
                 createDocument(req, null).then((resp) => {
                     // TODO
                 }).catch((err: RpcError) => {

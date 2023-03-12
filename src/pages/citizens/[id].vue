@@ -6,10 +6,10 @@ import Footer from '../../components/partials/Footer.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
-import { GetUserRequest } from '@arpanet/gen/services/users/users_pb';
+import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { RpcError } from 'grpc-web';
-import { getUsersClient, handleGRPCError } from '../../grpc';
+import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 
 export default defineComponent({
     components: {
@@ -28,7 +28,7 @@ export default defineComponent({
         const req = new GetUserRequest();
         req.setUserid(this.$route.params.id);
 
-        getUsersClient()
+        getCitizenStoreClient()
             .getUser(req, null)
             .then((resp) => {
                 this.user = resp.getUser();

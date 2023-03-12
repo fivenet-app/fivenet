@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+package services.dispatcher;
+option go_package = "github.com/galexrt/arpanet/proto/services/dispatcher;dispatcher";
+
+service DispatcherService {}

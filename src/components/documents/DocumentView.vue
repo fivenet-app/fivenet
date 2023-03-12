@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/documents/documents_pb';
+import { GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
-import { getDocumentsClient, handleGRPCError } from '../../grpc';
+import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { getDateLocaleString, getDate } from '../../utils/time';
 import {
@@ -53,7 +53,7 @@ export default defineComponent({
             const req = new GetDocumentRequest();
             req.setId(this.documentID);
 
-            getDocumentsClient().
+            getDocStoreClient().
                 getDocument(req, null).
                 then((resp) => {
                     this.document = resp.getDocument();
@@ -72,7 +72,7 @@ export default defineComponent({
             req.setState(this.document?.getState());
             req.setPublic(this.document?.getPublic());
 
-            getDocumentsClient().
+            getDocStoreClient().
                 updateDocument(req, null).then((resp) => {
                     console.log(resp);
                 }).

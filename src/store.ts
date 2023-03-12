@@ -1,10 +1,10 @@
 import { createStore } from 'vuex';
 import { RpcError } from 'grpc-web';
-import { AccountServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
+import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
 import { LoginRequest, LogoutRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { version } from '../package.json';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { getAccountClient } from './grpc';
+import { getAuthClient } from './grpc';
 import config from './config';
 import { dispatchNotification } from './components/notification';
 
@@ -55,7 +55,7 @@ const store = createStore({
         async doLogin({ commit }, loginData: LoginRequest) {
             commit('loginStart');
 
-            const client = new AccountServiceClient(config.apiProtoURL, null, null);
+            const client = new AuthServiceClient(config.apiProtoURL, null, null);
             return client
                 .login(loginData, null)
                 .then((response) => {
@@ -76,7 +76,7 @@ const store = createStore({
             commit('updateActiveChar', null);
             commit('updatePermissions', []);
 
-            return getAccountClient()
+            return getAuthClient()
                 .logout(new LogoutRequest(), null)
                 .then((response) => {
                     commit('loginStop', null);

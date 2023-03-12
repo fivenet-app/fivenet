@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getLivemapClient, handleGRPCError } from '../grpc';
+import { getLivemapperClient, handleGRPCError } from '../grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
-import { Marker, StreamRequest, ServerStreamResponse } from '@arpanet/gen/services/livemap/livemap_pb';
+import { StreamRequest, ServerStreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
+import { Marker } from '@arpanet/gen/resources/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import { Hash } from '../class/Hash';
@@ -117,7 +118,7 @@ export default defineComponent({
             let outer = this;
             const request = new StreamRequest();
 
-            this.stream = getLivemapClient()
+            this.stream = getLivemapperClient()
                 .stream(request)
                 .on('data', function (resp) {
                     outer.usersList = resp.getUsersList();

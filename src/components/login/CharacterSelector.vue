@@ -4,7 +4,7 @@ import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 import { GetCharactersRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { getAccountClient, handleGRPCError } from '../../grpc';
+import { getAuthClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { mapActions } from 'vuex';
 
@@ -23,7 +23,7 @@ export default defineComponent({
             'updateActiveChar',
         ]),
         async fetchCharacters() {
-            return getAccountClient().
+            return getAuthClient().
                 getCharacters(new GetCharactersRequest(), null).
                 then((resp) => {
                     this.chars = resp.getCharsList();

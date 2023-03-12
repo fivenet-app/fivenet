@@ -4,13 +4,13 @@ import { _RouteLocationBase } from 'vue-router/auto';
 import router from './main';
 import config from './config';
 import { dispatchNotification } from './components/notification';
-import { AccountServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
-import { CompletionServiceClient } from '@arpanet/gen/services/completion/CompletionServiceClientPb';
-import { DispatchesServiceClient } from '@arpanet/gen/services/dispatches/DispatchesServiceClientPb';
-import { DocumentsServiceClient } from '@arpanet/gen/services/documents/DocumentsServiceClientPb';
+import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
+import { CitizenStoreServiceClient } from '@arpanet/gen/services/citizenstore/CitizenstoreServiceClientPb';
+import { CompletorServiceClient } from '@arpanet/gen/services/completor/CompletorServiceClientPb';
+import { DispatcherServiceClient } from '@arpanet/gen/services/dispatcher/DispatcherServiceClientPb';
+import { DocStoreServiceClient } from '@arpanet/gen/services/docstore/DocstoreServiceClientPb';
 import { JobsServiceClient } from '@arpanet/gen/services/jobs/JobsServiceClientPb';
-import { LivemapServiceClient } from '@arpanet/gen/services/livemap/LivemapServiceClientPb';
-import { UsersServiceClient } from '@arpanet/gen/services/users/UsersServiceClientPb';
+import { LivemapperServiceClient } from '@arpanet/gen/services/livemapper/LivemapServiceClientPb';
 
 class AuthInterceptor implements StreamInterceptor<any, any>, UnaryInterceptor<any, any> {
     intercept(request: any, invoker: any) {
@@ -60,43 +60,53 @@ export function handleGRPCError(err: RpcError, route: _RouteLocationBase): boole
 
 // GRPC Clients ===============================================================
 // Account / Auth - Only the authorized client is kept here
-let authClient: AccountServiceClient;
-export function getAccountClient(): AccountServiceClient {
+let authClient: AuthServiceClient;
+export function getAuthClient(): AuthServiceClient {
     if (!authClient) {
-        authClient = new AccountServiceClient(config.apiProtoURL, null, clientAuthOptions);
+        authClient = new AuthServiceClient(config.apiProtoURL, null, clientAuthOptions);
     }
 
     return authClient;
 }
 
-// Completion
-let completionClient: CompletionServiceClient;
-export function getCompletionClient(): CompletionServiceClient {
-    if (!completionClient) {
-        completionClient = new CompletionServiceClient(config.apiProtoURL, null, clientAuthOptions);
+// Citizens
+let citizenStoreClient: CitizenStoreServiceClient;
+export function getCitizenStoreClient(): CitizenStoreServiceClient {
+    if (!citizenStoreClient) {
+        citizenStoreClient = new CitizenStoreServiceClient(config.apiProtoURL, null, clientAuthOptions);
     }
 
-    return completionClient;
+    return citizenStoreClient;
+}
+
+// Completion
+let completorClient: CompletorServiceClient;
+export function getCompletorClient(): CompletorServiceClient {
+    if (!completorClient) {
+        completorClient = new CompletorServiceClient(config.apiProtoURL, null, clientAuthOptions);
+    }
+
+    return completorClient;
 }
 
 // Dispatches
-let dispatchesClient: DispatchesServiceClient;
-export function getDispatchesClient(): DispatchesServiceClient {
-    if (!dispatchesClient) {
-        dispatchesClient = new DispatchesServiceClient(config.apiProtoURL, null, clientAuthOptions);
+let dispatcherClient: DispatcherServiceClient;
+export function getDispatcherClient(): DispatcherServiceClient {
+    if (!dispatcherClient) {
+        dispatcherClient = new DispatcherServiceClient(config.apiProtoURL, null, clientAuthOptions);
     }
 
-    return dispatchesClient;
+    return dispatcherClient;
 }
 
 // Documents
-let documentsClient: DocumentsServiceClient;
-export function getDocumentsClient(): DocumentsServiceClient {
-    if (!documentsClient) {
-        documentsClient = new DocumentsServiceClient(config.apiProtoURL, null, clientAuthOptions);
+let docstoreClient: DocStoreServiceClient;
+export function getDocStoreClient(): DocStoreServiceClient {
+    if (!docstoreClient) {
+        docstoreClient = new DocStoreServiceClient(config.apiProtoURL, null, clientAuthOptions);
     }
 
-    return documentsClient;
+    return docstoreClient;
 }
 
 // Job
@@ -110,21 +120,11 @@ export function getJobsClient(): JobsServiceClient {
 }
 
 // Livemap
-let livemapClient: LivemapServiceClient;
-export function getLivemapClient(): LivemapServiceClient {
-    if (!livemapClient) {
-        livemapClient = new LivemapServiceClient(config.apiProtoURL, null, clientAuthOptions);
+let livemapperClient: LivemapperServiceClient;
+export function getLivemapperClient(): LivemapperServiceClient {
+    if (!livemapperClient) {
+        livemapperClient = new LivemapperServiceClient(config.apiProtoURL, null, clientAuthOptions);
     }
 
-    return livemapClient;
-}
-
-// Users
-let usersClient: UsersServiceClient;
-export function getUsersClient(): UsersServiceClient {
-    if (!usersClient) {
-        usersClient = new UsersServiceClient(config.apiProtoURL, null, clientAuthOptions);
-    }
-
-    return usersClient;
+    return livemapperClient;
 }

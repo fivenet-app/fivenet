@@ -28,7 +28,7 @@ var (
 )
 
 type Server struct {
-	AccountServiceServer
+	AuthServiceServer
 }
 
 func NewServer() *Server {
@@ -38,7 +38,7 @@ func NewServer() *Server {
 // AuthFuncOverride is called instead of exampleAuthFunc
 func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	// Skip authentication for the login endpoint
-	if fullMethodName == "/services.auth.AccountService/Login" {
+	if fullMethodName == "/services.auth.AuthService/Login" {
 		return ctx, nil
 	}
 

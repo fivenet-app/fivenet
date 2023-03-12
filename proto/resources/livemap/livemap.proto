@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package resources.livemap;
+option go_package = "github.com/galexrt/arpanet/proto/resources/livemap;livemap";
+
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+message Marker {
+    int32 userID = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"user_id"
+    string job = 2 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+
+    float x = 3; // @gotags: alias:"x"
+    float y = 4; // @gotags: alias:"y"
+
+    resources.timestamp.Timestamp updatedAt = 5; // @gotags: alias:"updated_at"
+
+    string name = 6;
+    string icon = 7;
+    string popup = 8;
+    string link = 9;
+}

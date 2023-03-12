@@ -15,8 +15,8 @@ import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { EllipsisVerticalIcon, KeyIcon } from '@heroicons/vue/20/solid';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { RpcError } from 'grpc-web';
-import { getUsersClient, handleGRPCError } from '../../grpc';
-import { SetUserPropsRequest } from '@arpanet/gen/services/users/users_pb';
+import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
+import { SetUserPropsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { getSecondsFormattedAsDuration } from '../../utils/time';
 import { dispatchNotification } from '../notification';
@@ -65,7 +65,7 @@ export default defineComponent({
             this.user?.getProps()?.setWanted(this.wantedState);
             req.setProps(this.user.getProps());
 
-            getUsersClient().
+            getCitizenStoreClient().
                 setUserProps(req, null)
                 .then((resp) => {
                     dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });

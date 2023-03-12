@@ -1,6 +1,0 @@
-syntax = "proto3";
-
-package services.dispatches;
-option go_package = "github.com/galexrt/arpanet/proto/services/dispatches;dispatches";
-
-service DispatchesService {}

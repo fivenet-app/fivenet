@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
-import { getDocumentsClient, handleGRPCError } from '../../grpc';
-import { FindDocumentsRequest } from '@arpanet/gen/services/documents/documents_pb';
+import { getDocStoreClient, handleGRPCError } from '../../grpc';
+import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
@@ -46,7 +46,7 @@ export default defineComponent({
             req.setSearch(this.search);
             req.setOrderbyList([]);
 
-            getDocumentsClient().
+            getDocStoreClient().
                 findDocuments(req, null).
                 then((resp) => {
                     this.totalCount = resp.getTotalcount();

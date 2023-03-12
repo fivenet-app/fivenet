@@ -36,7 +36,7 @@ message LogoutResponse {
     bool success = 1;
 }
 
-service AccountService {
+service AuthService {
     rpc Login(LoginRequest) returns (LoginResponse);
     rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse);
     rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);

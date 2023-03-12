@@ -3,9 +3,9 @@ import { User } from '@arpanet/gen/resources/users/users_pb';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import { defineComponent } from 'vue';
 import { watchDebounced } from '@vueuse/core'
-import { getUsersClient, handleGRPCError } from '../../grpc';
+import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
-import { FindUsersRequest } from '@arpanet/gen/services/users/users_pb';
+import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';
@@ -46,7 +46,7 @@ export default defineComponent({
             req.setWanted(this.search.wanted);
             req.setOrderbyList(this.orderBys);
 
-            getUsersClient().
+            getCitizenStoreClient().
                 findUsers(req, null).
                 then((resp) => {
                     this.totalCount = resp.getTotalcount();
@@ -86,7 +86,8 @@ export default defineComponent({
         },
     },
     mounted: function () {
-        watchDebounced(this.search, () => this.findUsers(0), { debounce: 750, maxWait: 1000 });
+        watchDebounced(this.search, () => this.findUsers(0), { debounce: 750, maxWait: 1500 });
+        this.findUsers(0);
     },
 });
 </script>

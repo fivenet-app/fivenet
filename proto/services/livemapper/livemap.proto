@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package services.livemapper;
+option go_package = "github.com/galexrt/arpanet/proto/services/livemapper;livemapper";
+
+import "resources/livemap/livemap.proto";
+
+message StreamRequest {}
+
+message ServerStreamResponse {
+    repeated resources.livemap.Marker users = 1;
+    repeated resources.livemap.Marker dispatches = 2;
+}
+
+service LivemapperService {
+    rpc Stream(StreamRequest) returns (stream ServerStreamResponse);
+}

@@ -20,7 +20,7 @@ import * as grpcWeb from 'grpc-web';
 import * as services_auth_auth_pb from '../../services/auth/auth_pb';
 
 
-export class AccountServiceClient {
+export class AuthServiceClient {
   client_: grpcWeb.AbstractClientBase;
   hostname_: string;
   credentials_: null | { [index: string]: string; };
@@ -40,7 +40,7 @@ export class AccountServiceClient {
   }
 
   methodDescriptorLogin = new grpcWeb.MethodDescriptor(
-    '/services.auth.AccountService/Login',
+    '/services.auth.AuthService/Login',
     grpcWeb.MethodType.UNARY,
     services_auth_auth_pb.LoginRequest,
     services_auth_auth_pb.LoginResponse,
@@ -68,7 +68,7 @@ export class AccountServiceClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.auth.AccountService/Login',
+          '/services.auth.AuthService/Login',
         request,
         metadata || {},
         this.methodDescriptorLogin,
@@ -76,14 +76,14 @@ export class AccountServiceClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.auth.AccountService/Login',
+      '/services.auth.AuthService/Login',
     request,
     metadata || {},
     this.methodDescriptorLogin);
   }
 
   methodDescriptorGetCharacters = new grpcWeb.MethodDescriptor(
-    '/services.auth.AccountService/GetCharacters',
+    '/services.auth.AuthService/GetCharacters',
     grpcWeb.MethodType.UNARY,
     services_auth_auth_pb.GetCharactersRequest,
     services_auth_auth_pb.GetCharactersResponse,
@@ -111,7 +111,7 @@ export class AccountServiceClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.auth.AccountService/GetCharacters',
+          '/services.auth.AuthService/GetCharacters',
         request,
         metadata || {},
         this.methodDescriptorGetCharacters,
@@ -119,14 +119,14 @@ export class AccountServiceClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.auth.AccountService/GetCharacters',
+      '/services.auth.AuthService/GetCharacters',
     request,
     metadata || {},
     this.methodDescriptorGetCharacters);
   }
 
   methodDescriptorChooseCharacter = new grpcWeb.MethodDescriptor(
-    '/services.auth.AccountService/ChooseCharacter',
+    '/services.auth.AuthService/ChooseCharacter',
     grpcWeb.MethodType.UNARY,
     services_auth_auth_pb.ChooseCharacterRequest,
     services_auth_auth_pb.ChooseCharacterResponse,
@@ -154,7 +154,7 @@ export class AccountServiceClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.auth.AccountService/ChooseCharacter',
+          '/services.auth.AuthService/ChooseCharacter',
         request,
         metadata || {},
         this.methodDescriptorChooseCharacter,
@@ -162,14 +162,14 @@ export class AccountServiceClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.auth.AccountService/ChooseCharacter',
+      '/services.auth.AuthService/ChooseCharacter',
     request,
     metadata || {},
     this.methodDescriptorChooseCharacter);
   }
 
   methodDescriptorLogout = new grpcWeb.MethodDescriptor(
-    '/services.auth.AccountService/Logout',
+    '/services.auth.AuthService/Logout',
     grpcWeb.MethodType.UNARY,
     services_auth_auth_pb.LogoutRequest,
     services_auth_auth_pb.LogoutResponse,
@@ -197,7 +197,7 @@ export class AccountServiceClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.auth.AccountService/Logout',
+          '/services.auth.AuthService/Logout',
         request,
         metadata || {},
         this.methodDescriptorLogout,
@@ -205,7 +205,7 @@ export class AccountServiceClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.auth.AccountService/Logout',
+      '/services.auth.AuthService/Logout',
     request,
     metadata || {},
     this.methodDescriptorLogout);
