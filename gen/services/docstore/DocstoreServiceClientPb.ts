@@ -211,49 +211,6 @@ export class DocStoreServiceClient {
     this.methodDescriptorUpdateDocument);
   }
 
-  methodDescriptorGetDocumentResponses = new grpcWeb.MethodDescriptor(
-    '/services.docstore.DocStoreService/GetDocumentResponses',
-    grpcWeb.MethodType.UNARY,
-    services_docstore_docstore_pb.GetDocumentResponsesRequest,
-    services_docstore_docstore_pb.GetDocumentResponsesResponse,
-    (request: services_docstore_docstore_pb.GetDocumentResponsesRequest) => {
-      return request.serializeBinary();
-    },
-    services_docstore_docstore_pb.GetDocumentResponsesResponse.deserializeBinary
-  );
-
-  getDocumentResponses(
-    request: services_docstore_docstore_pb.GetDocumentResponsesRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetDocumentResponsesResponse>;
-
-  getDocumentResponses(
-    request: services_docstore_docstore_pb.GetDocumentResponsesRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.GetDocumentResponsesResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetDocumentResponsesResponse>;
-
-  getDocumentResponses(
-    request: services_docstore_docstore_pb.GetDocumentResponsesRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.GetDocumentResponsesResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/services.docstore.DocStoreService/GetDocumentResponses',
-        request,
-        metadata || {},
-        this.methodDescriptorGetDocumentResponses,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/services.docstore.DocStoreService/GetDocumentResponses',
-    request,
-    metadata || {},
-    this.methodDescriptorGetDocumentResponses);
-  }
-
   methodDescriptorListTemplates = new grpcWeb.MethodDescriptor(
     '/services.docstore.DocStoreService/ListTemplates',
     grpcWeb.MethodType.UNARY,

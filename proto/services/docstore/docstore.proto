@@ -24,11 +24,15 @@ message FindDocumentsResponse {
 
 message GetDocumentRequest {
     uint64 id = 1;
+    int64 offset = 2 [(validate.rules).int64.gte = 0];
 }
 
 message GetDocumentResponse {
     resources.documents.Document document = 1;
-    repeated resources.documents.Document responses = 2;
+    int64 totalCount = 2;
+    int64 offset = 3;
+    int64 end = 4;
+    repeated resources.documents.Document responses = 5;
 }
 
 message CreateDocumentRequest {
@@ -61,17 +65,6 @@ message UpdateDocumentRequest {
 }
 
 message UpdateDocumentResponse {}
-
-message GetDocumentResponsesRequest {
-    int64 offset = 1 [(validate.rules).int64.gte = 0];
-}
-
-message GetDocumentResponsesResponse {
-    int64 totalCount = 1;
-    int64 offset = 2;
-    int64 end = 3;
-    repeated resources.documents.Document responses = 4;
-}
 
 message ListTemplatesRequest {}
 
@@ -118,8 +111,6 @@ service DocStoreService {
     rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
     rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
     rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
-
-    rpc GetDocumentResponses(GetDocumentResponsesRequest) returns (GetDocumentResponsesResponse);
 
     rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
     rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);

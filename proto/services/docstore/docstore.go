@@ -190,7 +190,6 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	), nil, nil, userID, job, jobGrade).
 		LIMIT(6)
 
-	fmt.Println(stmt.DebugSql())
 	var dest []*documents.Document
 	if err := stmt.QueryContext(ctx, query.DB, &dest); err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err

@@ -72,6 +72,9 @@ export class GetDocumentRequest extends jspb.Message {
   getId(): number;
   setId(value: number): GetDocumentRequest;
 
+  getOffset(): number;
+  setOffset(value: number): GetDocumentRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetDocumentRequest): GetDocumentRequest.AsObject;
@@ -83,6 +86,7 @@ export class GetDocumentRequest extends jspb.Message {
 export namespace GetDocumentRequest {
   export type AsObject = {
     id: number,
+    offset: number,
   }
 }
 
@@ -91,6 +95,15 @@ export class GetDocumentResponse extends jspb.Message {
   setDocument(value?: resources_documents_documents_pb.Document): GetDocumentResponse;
   hasDocument(): boolean;
   clearDocument(): GetDocumentResponse;
+
+  getTotalcount(): number;
+  setTotalcount(value: number): GetDocumentResponse;
+
+  getOffset(): number;
+  setOffset(value: number): GetDocumentResponse;
+
+  getEnd(): number;
+  setEnd(value: number): GetDocumentResponse;
 
   getResponsesList(): Array<resources_documents_documents_pb.Document>;
   setResponsesList(value: Array<resources_documents_documents_pb.Document>): GetDocumentResponse;
@@ -108,6 +121,9 @@ export class GetDocumentResponse extends jspb.Message {
 export namespace GetDocumentResponse {
   export type AsObject = {
     document?: resources_documents_documents_pb.Document.AsObject,
+    totalcount: number,
+    offset: number,
+    end: number,
     responsesList: Array<resources_documents_documents_pb.Document.AsObject>,
   }
 }
@@ -245,56 +261,6 @@ export class UpdateDocumentResponse extends jspb.Message {
 
 export namespace UpdateDocumentResponse {
   export type AsObject = {
-  }
-}
-
-export class GetDocumentResponsesRequest extends jspb.Message {
-  getOffset(): number;
-  setOffset(value: number): GetDocumentResponsesRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetDocumentResponsesRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: GetDocumentResponsesRequest): GetDocumentResponsesRequest.AsObject;
-  static serializeBinaryToWriter(message: GetDocumentResponsesRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetDocumentResponsesRequest;
-  static deserializeBinaryFromReader(message: GetDocumentResponsesRequest, reader: jspb.BinaryReader): GetDocumentResponsesRequest;
-}
-
-export namespace GetDocumentResponsesRequest {
-  export type AsObject = {
-    offset: number,
-  }
-}
-
-export class GetDocumentResponsesResponse extends jspb.Message {
-  getTotalcount(): number;
-  setTotalcount(value: number): GetDocumentResponsesResponse;
-
-  getOffset(): number;
-  setOffset(value: number): GetDocumentResponsesResponse;
-
-  getEnd(): number;
-  setEnd(value: number): GetDocumentResponsesResponse;
-
-  getResponsesList(): Array<resources_documents_documents_pb.Document>;
-  setResponsesList(value: Array<resources_documents_documents_pb.Document>): GetDocumentResponsesResponse;
-  clearResponsesList(): GetDocumentResponsesResponse;
-  addResponses(value?: resources_documents_documents_pb.Document, index?: number): resources_documents_documents_pb.Document;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetDocumentResponsesResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: GetDocumentResponsesResponse): GetDocumentResponsesResponse.AsObject;
-  static serializeBinaryToWriter(message: GetDocumentResponsesResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetDocumentResponsesResponse;
-  static deserializeBinaryFromReader(message: GetDocumentResponsesResponse, reader: jspb.BinaryReader): GetDocumentResponsesResponse;
-}
-
-export namespace GetDocumentResponsesResponse {
-  export type AsObject = {
-    totalcount: number,
-    offset: number,
-    end: number,
-    responsesList: Array<resources_documents_documents_pb.Document.AsObject>,
   }
 }
 
