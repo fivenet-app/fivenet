@@ -22,7 +22,7 @@ type arpanetDocumentsRelationsTable struct {
 	UpdatedAt    mysql.ColumnTimestamp
 	DocumentID   mysql.ColumnInteger
 	TargetUserID mysql.ColumnInteger
-	Relation     mysql.ColumnString
+	Relation     mysql.ColumnInteger
 	CauseUserID  mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
@@ -69,7 +69,7 @@ func newArpanetDocumentsRelationsTableImpl(schemaName, tableName, alias string) 
 		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
 		DocumentIDColumn   = mysql.IntegerColumn("document_id")
 		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
-		RelationColumn     = mysql.StringColumn("relation")
+		RelationColumn     = mysql.IntegerColumn("relation")
 		CauseUserIDColumn  = mysql.IntegerColumn("cause_user_id")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, TargetUserIDColumn, RelationColumn, CauseUserIDColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, TargetUserIDColumn, RelationColumn, CauseUserIDColumn}

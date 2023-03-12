@@ -4,6 +4,7 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
@@ -169,15 +170,13 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get a document!")
 	}
 
-	resp := &GetDocumentResponse{
-		Document: &documents.Document{},
-	}
+	resp := &GetDocumentResponse{}
 	stmt := s.getDocumentsQuery(jet.AND(
 		d.ResponseID.IS_NULL(),
 		d.ID.EQ(jet.Uint64(req.Id)),
 	), nil, nil, userID, job, jobGrade).
 		LIMIT(1)
-	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil && !errors.Is(err, sql.ErrNoRows) {
+	if err := stmt.QueryContext(ctx, query.DB, &resp.Document); err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 
@@ -190,6 +189,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to create documents!")
 	}
 
+	d := table.ArpanetDocuments
 	stmt := d.INSERT(
 		d.Title,
 		d.Content,
@@ -202,7 +202,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	).VALUES(
 		req.Title,
 		s.p.Sanitize(req.Content),
-		documents.DOCUMENT_CONTENT_TYPE_HTML.String(),
+		documents.DOCUMENT_CONTENT_TYPE_HTML,
 		req.Closed,
 		req.State,
 		req.Public,
@@ -210,11 +210,17 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		job,
 	)
 
-	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+	result, err := stmt.ExecContext(ctx, query.DB)
+	if err != nil {
 		return nil, err
 	}
 
-	if err := s.handleDocumentAccess(DOCUMENT_ACCESS_UPDATE_MODE_REPLACE, req.JobsAccess, req.UsersAccess); err != nil {
+	lastID, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.handleDocumentAccess(ctx, DOCUMENT_ACCESS_UPDATE_MODE_REPLACE, uint64(lastID), req.JobsAccess, req.UsersAccess); err != nil {
 		return nil, err
 	}
 
@@ -394,9 +400,65 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 	return resp, nil
 }
 
-func (s *Server) handleDocumentAccess(mode DOCUMENT_ACCESS_UPDATE_MODE, ja []*documents.DocumentJobAccess, ua []*documents.DocumentUserAccess) error {
+func (s *Server) handleDocumentAccess(ctx context.Context, mode DOCUMENT_ACCESS_UPDATE_MODE, documentID uint64, ja []*documents.DocumentJobAccess, ua []*documents.DocumentUserAccess) error {
+	// Select existing job and user accesses
+	var dest struct {
+		jobs  []*documents.DocumentJobAccess
+		users []*documents.DocumentUserAccess
+	}
+	selectStmt := jet.SELECT(
+		dja.AllColumns,
+		dua.AllColumns,
+	).
+		FROM(
+			dja,
+			dua,
+		).
+		WHERE(
+			dja.DocumentID.EQ(jet.Uint64(documentID)),
+		)
 
-	// TODO need to create job and user access
+	fmt.Println(selectStmt.DebugSql())
+
+	if err := selectStmt.QueryContext(ctx, query.DB, &dest); err != nil && errors.Is(err, sql.ErrNoRows) {
+		return err
+	}
+
+	// Create accesses
+	if len(ja) > 0 {
+		for k := 0; k < len(ja); k++ {
+			ja[k].DocumentID = documentID
+		}
+
+		// Create document job access
+		stmt := dja.INSERT(
+			dja.DocumentID,
+			dja.Job,
+			dja.MinimumGrade,
+			dja.Access,
+		).
+			MODELS(ja)
+		fmt.Println(stmt.DebugSql())
+		if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+			return err
+		}
+	}
+
+	if len(ua) > 0 {
+		for k := 0; k < len(ua); k++ {
+			ua[k].DocumentID = documentID
+		}
+		// Create document user access
+		stmt := dua.INSERT(
+			dua.DocumentID,
+			dua.UserID,
+			dua.Access,
+		).
+			MODELS(ua)
+		if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }

@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_relations` (
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `document_id` bigint(20) unsigned NOT NULL,
   `target_user_id` int(11) NOT NULL,
-  `relation` varchar(32) NOT NULL,
+  `relation` int(3) NOT NULL,
   `cause_user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_arpanet_documents_relations_document_id` (`document_id`),

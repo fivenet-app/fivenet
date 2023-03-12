@@ -7,5 +7,5 @@ import "validate/validate.proto";
 
 message OrderBy {
     string column = 1 [(validate.rules).string = {min_len: 1, max_len: 64}];
-    bool desc = 2 ;
+    bool desc = 2;
 }

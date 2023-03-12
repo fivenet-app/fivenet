@@ -17,6 +17,6 @@ type ArpanetDocumentsRelations struct {
 	UpdatedAt    *time.Time `json:"updated_at"`
 	DocumentID   uint64     `json:"document_id"`
 	TargetUserID int32      `json:"target_user_id"`
-	Relation     string     `json:"relation"`
+	Relation     int32      `json:"relation"`
 	CauseUserID  int32      `json:"cause_user_id"`
 }

@@ -8,15 +8,15 @@ export class Document extends jspb.Message {
   getId(): number;
   setId(value: number): Document;
 
-  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): Document;
-  hasCreatedAt(): boolean;
-  clearCreatedAt(): Document;
+  getCreatedat(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedat(value?: resources_timestamp_timestamp_pb.Timestamp): Document;
+  hasCreatedat(): boolean;
+  clearCreatedat(): Document;
 
-  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): Document;
-  hasUpdatedAt(): boolean;
-  clearUpdatedAt(): Document;
+  getUpdatedat(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setUpdatedat(value?: resources_timestamp_timestamp_pb.Timestamp): Document;
+  hasUpdatedat(): boolean;
+  clearUpdatedat(): Document;
 
   getTitle(): string;
   setTitle(value: string): Document;
@@ -58,8 +58,8 @@ export class Document extends jspb.Message {
 export namespace Document {
   export type AsObject = {
     id: number,
-    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    createdat?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    updatedat?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     title: string,
     content: string,
     contenttype: DOCUMENT_CONTENT_TYPE,
@@ -88,8 +88,8 @@ export class DocumentTemplate extends jspb.Message {
   getDescription(): string;
   setDescription(value: string): DocumentTemplate;
 
-  getContentTitle(): string;
-  setContentTitle(value: string): DocumentTemplate;
+  getContenttitle(): string;
+  setContenttitle(value: string): DocumentTemplate;
 
   getContent(): string;
   setContent(value: string): DocumentTemplate;
@@ -115,7 +115,7 @@ export namespace DocumentTemplate {
     jobgrade: number,
     title: string,
     description: string,
-    contentTitle: string,
+    contenttitle: string,
     content: string,
     additionaldata: string,
     creatorid: number,
@@ -194,15 +194,15 @@ export class DocumentJobAccess extends jspb.Message {
   getId(): number;
   setId(value: number): DocumentJobAccess;
 
-  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentJobAccess;
-  hasCreatedAt(): boolean;
-  clearCreatedAt(): DocumentJobAccess;
+  getCreatedat(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedat(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentJobAccess;
+  hasCreatedat(): boolean;
+  clearCreatedat(): DocumentJobAccess;
 
-  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentJobAccess;
-  hasUpdatedAt(): boolean;
-  clearUpdatedAt(): DocumentJobAccess;
+  getUpdatedat(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setUpdatedat(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentJobAccess;
+  hasUpdatedat(): boolean;
+  clearUpdatedat(): DocumentJobAccess;
 
   getDocumentid(): number;
   setDocumentid(value: number): DocumentJobAccess;
@@ -227,8 +227,8 @@ export class DocumentJobAccess extends jspb.Message {
 export namespace DocumentJobAccess {
   export type AsObject = {
     id: number,
-    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    createdat?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    updatedat?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     documentid: number,
     job: string,
     minimumgrade: number,
@@ -240,15 +240,15 @@ export class DocumentUserAccess extends jspb.Message {
   getId(): number;
   setId(value: number): DocumentUserAccess;
 
-  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentUserAccess;
-  hasCreatedAt(): boolean;
-  clearCreatedAt(): DocumentUserAccess;
+  getCreatedat(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedat(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentUserAccess;
+  hasCreatedat(): boolean;
+  clearCreatedat(): DocumentUserAccess;
 
-  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentUserAccess;
-  hasUpdatedAt(): boolean;
-  clearUpdatedAt(): DocumentUserAccess;
+  getUpdatedat(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setUpdatedat(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentUserAccess;
+  hasUpdatedat(): boolean;
+  clearUpdatedat(): DocumentUserAccess;
 
   getDocumentid(): number;
   setDocumentid(value: number): DocumentUserAccess;
@@ -270,8 +270,8 @@ export class DocumentUserAccess extends jspb.Message {
 export namespace DocumentUserAccess {
   export type AsObject = {
     id: number,
-    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    createdat?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    updatedat?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     documentid: number,
     userid: number,
     access: DOCUMENT_ACCESS,
@@ -308,6 +308,52 @@ export namespace DocumentCategory {
   }
 }
 
+export class DocumentRelation extends jspb.Message {
+  getId(): number;
+  setId(value: number): DocumentRelation;
+
+  getCreatedat(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedat(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentRelation;
+  hasCreatedat(): boolean;
+  clearCreatedat(): DocumentRelation;
+
+  getUpdatedat(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setUpdatedat(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentRelation;
+  hasUpdatedat(): boolean;
+  clearUpdatedat(): DocumentRelation;
+
+  getDocumentid(): number;
+  setDocumentid(value: number): DocumentRelation;
+
+  getTargetuserid(): number;
+  setTargetuserid(value: number): DocumentRelation;
+
+  getRelation(): DOCUMENT_RELATION;
+  setRelation(value: DOCUMENT_RELATION): DocumentRelation;
+
+  getCauseuserid(): number;
+  setCauseuserid(value: number): DocumentRelation;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DocumentRelation.AsObject;
+  static toObject(includeInstance: boolean, msg: DocumentRelation): DocumentRelation.AsObject;
+  static serializeBinaryToWriter(message: DocumentRelation, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DocumentRelation;
+  static deserializeBinaryFromReader(message: DocumentRelation, reader: jspb.BinaryReader): DocumentRelation;
+}
+
+export namespace DocumentRelation {
+  export type AsObject = {
+    id: number,
+    createdat?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    updatedat?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    documentid: number,
+    targetuserid: number,
+    relation: DOCUMENT_RELATION,
+    causeuserid: number,
+  }
+}
+
 export enum DOCUMENT_CONTENT_TYPE { 
   HTML = 0,
 }
@@ -317,4 +363,9 @@ export enum DOCUMENT_ACCESS {
   EDIT = 2,
   LEADER = 3,
   ADMIN = 4,
+}
+export enum DOCUMENT_RELATION { 
+  CREATED = 0,
+  MENTIONED = 1,
+  CAUSED = 2,
 }
