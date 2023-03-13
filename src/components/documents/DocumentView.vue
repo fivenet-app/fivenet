@@ -269,9 +269,9 @@ export default defineComponent({
                                                                                                                                                             <p class="truncate text-sm text-gray-500">{{ response.getTitle() }}</p>
                                                                                                                                                         </a>
                                                                                                                                                     </div>
-                                                                                                                                                    <time :datetime="getDateLocaleString(response.getCreatedat())"
+                                                                                                                                                    <time :datetime="getDateLocaleString(response.getCreatedAt())"
                                                                                                                                                         class="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">{{
-                                                                                                                                                            getDateLocaleString(response.getCreatedat()) }}</time>
+                                                                                                                                                            getDateLocaleString(response.getCreatedAt()) }}</time>
                                                                                                                                                 </div>
                                                                                                                                                 <div class="mt-1">
                                                                                                                                                     <p class="text-sm text-gray-600 line-clamp-2">{{ response.getContent() }}</p>
@@ -364,8 +364,8 @@ export default defineComponent({
                                     <div class="flex items-center space-x-2">
                                         <CalendarIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                                         <span class="text-sm font-medium text-gray-900"><time
-                                                :datetime="getDate(document?.getCreatedat())?.toLocaleString('de-DE')">{{
-                                                    getDate(document?.getCreatedat())?.toLocaleString('de-DE') }}</time></span>
+                                                :datetime="getDate(document?.getCreatedAt())?.toLocaleString('de-DE')">{{
+                                                    getDate(document?.getCreatedAt())?.toLocaleString('de-DE') }}</time></span>
                                     </div>
                                 </div>
                                 <div class="mt-6 space-y-8 border-t border-b border-gray-200 py-6">
@@ -441,8 +441,8 @@ export default defineComponent({
                         <div class="flex items-center space-x-2">
                             <CalendarIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                             <span class="text-sm font-medium text-gray-900"><time
-                                    :datetime="getDate(document?.getCreatedat())?.toLocaleString('de-DE')">{{
-                                        getDate(document?.getCreatedat())?.toLocaleString('de-DE') }}</time></span>
+                                    :datetime="getDate(document?.getCreatedAt())?.toLocaleString('de-DE')">{{
+                                        getDate(document?.getCreatedAt())?.toLocaleString('de-DE') }}</time></span>
                         </div>
                     </div>
                     <div class="mt-6 space-y-8 border-t border-gray-200 py-6">

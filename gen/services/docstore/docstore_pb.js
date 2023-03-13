@@ -122,7 +122,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.services.docstore.GetDocumentResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.services.docstore.GetDocumentResponse.repeatedFields_, null);
 };
 goog.inherits(proto.services.docstore.GetDocumentResponse, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -1141,6 +1141,13 @@ proto.services.docstore.GetDocumentRequest.prototype.setDocumentId = function(va
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.services.docstore.GetDocumentResponse.repeatedFields_ = [2,3];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -1172,7 +1179,11 @@ proto.services.docstore.GetDocumentResponse.prototype.toObject = function(opt_in
  */
 proto.services.docstore.GetDocumentResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    document: (f = msg.getDocument()) && resources_documents_documents_pb.Document.toObject(includeInstance, f)
+    document: (f = msg.getDocument()) && resources_documents_documents_pb.Document.toObject(includeInstance, f),
+    jobsaccessList: jspb.Message.toObjectList(msg.getJobsaccessList(),
+    resources_documents_documents_pb.DocumentJobAccess.toObject, includeInstance),
+    usersaccessList: jspb.Message.toObjectList(msg.getUsersaccessList(),
+    resources_documents_documents_pb.DocumentUserAccess.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -1214,6 +1225,16 @@ proto.services.docstore.GetDocumentResponse.deserializeBinaryFromReader = functi
       reader.readMessage(value,resources_documents_documents_pb.Document.deserializeBinaryFromReader);
       msg.setDocument(value);
       break;
+    case 2:
+      var value = new resources_documents_documents_pb.DocumentJobAccess;
+      reader.readMessage(value,resources_documents_documents_pb.DocumentJobAccess.deserializeBinaryFromReader);
+      msg.addJobsaccess(value);
+      break;
+    case 3:
+      var value = new resources_documents_documents_pb.DocumentUserAccess;
+      reader.readMessage(value,resources_documents_documents_pb.DocumentUserAccess.deserializeBinaryFromReader);
+      msg.addUsersaccess(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1249,6 +1270,22 @@ proto.services.docstore.GetDocumentResponse.serializeBinaryToWriter = function(m
       1,
       f,
       resources_documents_documents_pb.Document.serializeBinaryToWriter
+    );
+  }
+  f = message.getJobsaccessList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      2,
+      f,
+      resources_documents_documents_pb.DocumentJobAccess.serializeBinaryToWriter
+    );
+  }
+  f = message.getUsersaccessList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      3,
+      f,
+      resources_documents_documents_pb.DocumentUserAccess.serializeBinaryToWriter
     );
   }
 };
@@ -1288,6 +1325,82 @@ proto.services.docstore.GetDocumentResponse.prototype.clearDocument = function()
  */
 proto.services.docstore.GetDocumentResponse.prototype.hasDocument = function() {
   return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * repeated resources.documents.DocumentJobAccess jobsAccess = 2;
+ * @return {!Array<!proto.resources.documents.DocumentJobAccess>}
+ */
+proto.services.docstore.GetDocumentResponse.prototype.getJobsaccessList = function() {
+  return /** @type{!Array<!proto.resources.documents.DocumentJobAccess>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentJobAccess, 2));
+};
+
+
+/**
+ * @param {!Array<!proto.resources.documents.DocumentJobAccess>} value
+ * @return {!proto.services.docstore.GetDocumentResponse} returns this
+*/
+proto.services.docstore.GetDocumentResponse.prototype.setJobsaccessList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+};
+
+
+/**
+ * @param {!proto.resources.documents.DocumentJobAccess=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.resources.documents.DocumentJobAccess}
+ */
+proto.services.docstore.GetDocumentResponse.prototype.addJobsaccess = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.documents.DocumentJobAccess, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.docstore.GetDocumentResponse} returns this
+ */
+proto.services.docstore.GetDocumentResponse.prototype.clearJobsaccessList = function() {
+  return this.setJobsaccessList([]);
+};
+
+
+/**
+ * repeated resources.documents.DocumentUserAccess usersAccess = 3;
+ * @return {!Array<!proto.resources.documents.DocumentUserAccess>}
+ */
+proto.services.docstore.GetDocumentResponse.prototype.getUsersaccessList = function() {
+  return /** @type{!Array<!proto.resources.documents.DocumentUserAccess>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentUserAccess, 3));
+};
+
+
+/**
+ * @param {!Array<!proto.resources.documents.DocumentUserAccess>} value
+ * @return {!proto.services.docstore.GetDocumentResponse} returns this
+*/
+proto.services.docstore.GetDocumentResponse.prototype.setUsersaccessList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 3, value);
+};
+
+
+/**
+ * @param {!proto.resources.documents.DocumentUserAccess=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.resources.documents.DocumentUserAccess}
+ */
+proto.services.docstore.GetDocumentResponse.prototype.addUsersaccess = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 3, opt_value, proto.resources.documents.DocumentUserAccess, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.docstore.GetDocumentResponse} returns this
+ */
+proto.services.docstore.GetDocumentResponse.prototype.clearUsersaccessList = function() {
+  return this.setUsersaccessList([]);
 };
 
 

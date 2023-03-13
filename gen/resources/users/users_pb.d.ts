@@ -99,8 +99,8 @@ export class User extends jspb.Message {
   getHeight(): string;
   setHeight(value: string): User;
 
-  getPhonenumber(): string;
-  setPhonenumber(value: string): User;
+  getPhoneNumber(): string;
+  setPhoneNumber(value: string): User;
 
   getVisum(): number;
   setVisum(value: number): User;
@@ -137,7 +137,7 @@ export namespace User {
     dateofbirth: string,
     sex: string,
     height: string,
-    phonenumber: string,
+    phoneNumber: string,
     visum: number,
     playtime: number,
     props?: UserProps.AsObject,

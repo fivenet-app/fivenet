@@ -704,7 +704,7 @@ proto.resources.users.User.toObject = function(includeInstance, msg) {
     dateofbirth: jspb.Message.getFieldWithDefault(msg, 7, ""),
     sex: jspb.Message.getFieldWithDefault(msg, 8, ""),
     height: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    phonenumber: jspb.Message.getFieldWithDefault(msg, 10, ""),
+    phoneNumber: jspb.Message.getFieldWithDefault(msg, 10, ""),
     visum: jspb.Message.getFieldWithDefault(msg, 11, 0),
     playtime: jspb.Message.getFieldWithDefault(msg, 12, 0),
     props: (f = msg.getProps()) && proto.resources.users.UserProps.toObject(includeInstance, f),
@@ -784,7 +784,7 @@ proto.resources.users.User.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 10:
       var value = /** @type {string} */ (reader.readString());
-      msg.setPhonenumber(value);
+      msg.setPhoneNumber(value);
       break;
     case 11:
       var value = /** @type {number} */ (reader.readInt32());
@@ -896,7 +896,7 @@ proto.resources.users.User.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getPhonenumber();
+  f = message.getPhoneNumber();
   if (f.length > 0) {
     writer.writeString(
       10,
@@ -1099,10 +1099,10 @@ proto.resources.users.User.prototype.setHeight = function(value) {
 
 
 /**
- * optional string phoneNumber = 10;
+ * optional string phone_number = 10;
  * @return {string}
  */
-proto.resources.users.User.prototype.getPhonenumber = function() {
+proto.resources.users.User.prototype.getPhoneNumber = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
 };
 
@@ -1111,7 +1111,7 @@ proto.resources.users.User.prototype.getPhonenumber = function() {
  * @param {string} value
  * @return {!proto.resources.users.User} returns this
  */
-proto.resources.users.User.prototype.setPhonenumber = function(value) {
+proto.resources.users.User.prototype.setPhoneNumber = function(value) {
   return jspb.Message.setProto3StringField(this, 10, value);
 };
 

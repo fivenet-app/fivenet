@@ -29,6 +29,10 @@ type DocStoreServiceClient interface {
 	// @permission
 	FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error)
 	// @permission
+	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
+	// @permission: name=CreateDocument
+	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
+	// @permission
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
 	// @permission
 	GetDocumentComments(ctx context.Context, in *GetDocumentCommentsRequest, opts ...grpc.CallOption) (*GetDocumentCommentsResponse, error)
@@ -36,10 +40,6 @@ type DocStoreServiceClient interface {
 	PostDocumentComment(ctx context.Context, in *PostDocumentCommentRequest, opts ...grpc.CallOption) (*PostDocumentCommentResponse, error)
 	// @permission: name=PostDocumentComment
 	EditDocumentComment(ctx context.Context, in *EditDocumentCommentRequest, opts ...grpc.CallOption) (*EditDocumentCommentResponse, error)
-	// @permission
-	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
-	// @permission: name=CreateDocument
-	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
 	// @permission
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
 	// @permission
@@ -75,6 +75,24 @@ func (c *docStoreServiceClient) GetTemplate(ctx context.Context, in *GetTemplate
 func (c *docStoreServiceClient) FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error) {
 	out := new(FindDocumentsResponse)
 	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/FindDocuments", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error) {
+	out := new(CreateDocumentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/CreateDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error) {
+	out := new(UpdateDocumentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/UpdateDocument", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -117,24 +135,6 @@ func (c *docStoreServiceClient) EditDocumentComment(ctx context.Context, in *Edi
 	return out, nil
 }
 
-func (c *docStoreServiceClient) CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error) {
-	out := new(CreateDocumentResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/CreateDocument", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *docStoreServiceClient) UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error) {
-	out := new(UpdateDocumentResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/UpdateDocument", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *docStoreServiceClient) GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error) {
 	out := new(GetDocumentAccessResponse)
 	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetDocumentAccess", in, out, opts...)
@@ -164,6 +164,10 @@ type DocStoreServiceServer interface {
 	// @permission
 	FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error)
 	// @permission
+	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
+	// @permission: name=CreateDocument
+	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
+	// @permission
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
 	// @permission
 	GetDocumentComments(context.Context, *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error)
@@ -171,10 +175,6 @@ type DocStoreServiceServer interface {
 	PostDocumentComment(context.Context, *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error)
 	// @permission: name=PostDocumentComment
 	EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error)
-	// @permission
-	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
-	// @permission: name=CreateDocument
-	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
 	// @permission
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
 	// @permission
@@ -195,6 +195,12 @@ func (UnimplementedDocStoreServiceServer) GetTemplate(context.Context, *GetTempl
 func (UnimplementedDocStoreServiceServer) FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindDocuments not implemented")
 }
+func (UnimplementedDocStoreServiceServer) CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDocument not implemented")
+}
+func (UnimplementedDocStoreServiceServer) UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDocument not implemented")
+}
 func (UnimplementedDocStoreServiceServer) GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocument not implemented")
 }
@@ -206,12 +212,6 @@ func (UnimplementedDocStoreServiceServer) PostDocumentComment(context.Context, *
 }
 func (UnimplementedDocStoreServiceServer) EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditDocumentComment not implemented")
-}
-func (UnimplementedDocStoreServiceServer) CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateDocument not implemented")
-}
-func (UnimplementedDocStoreServiceServer) UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateDocument not implemented")
 }
 func (UnimplementedDocStoreServiceServer) GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentAccess not implemented")
@@ -282,6 +282,42 @@ func _DocStoreService_FindDocuments_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DocStoreServiceServer).FindDocuments(ctx, req.(*FindDocumentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_CreateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).CreateDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/CreateDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).CreateDocument(ctx, req.(*CreateDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_UpdateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).UpdateDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/UpdateDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).UpdateDocument(ctx, req.(*UpdateDocumentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -358,42 +394,6 @@ func _DocStoreService_EditDocumentComment_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_CreateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateDocumentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocStoreServiceServer).CreateDocument(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/CreateDocument",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).CreateDocument(ctx, req.(*CreateDocumentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocStoreService_UpdateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateDocumentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocStoreServiceServer).UpdateDocument(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/UpdateDocument",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).UpdateDocument(ctx, req.(*UpdateDocumentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _DocStoreService_GetDocumentAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetDocumentAccessRequest)
 	if err := dec(in); err != nil {
@@ -450,6 +450,14 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocStoreService_FindDocuments_Handler,
 		},
 		{
+			MethodName: "CreateDocument",
+			Handler:    _DocStoreService_CreateDocument_Handler,
+		},
+		{
+			MethodName: "UpdateDocument",
+			Handler:    _DocStoreService_UpdateDocument_Handler,
+		},
+		{
 			MethodName: "GetDocument",
 			Handler:    _DocStoreService_GetDocument_Handler,
 		},
@@ -464,14 +472,6 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EditDocumentComment",
 			Handler:    _DocStoreService_EditDocumentComment_Handler,
-		},
-		{
-			MethodName: "CreateDocument",
-			Handler:    _DocStoreService_CreateDocument_Handler,
-		},
-		{
-			MethodName: "UpdateDocument",
-			Handler:    _DocStoreService_UpdateDocument_Handler,
 		},
 		{
 			MethodName: "GetDocumentAccess",

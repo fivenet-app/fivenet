@@ -28,6 +28,8 @@ message GetDocumentRequest {
 
 message GetDocumentResponse {
   resources.documents.Document document = 1;
+  repeated resources.documents.DocumentJobAccess jobsAccess = 2;
+  repeated resources.documents.DocumentUserAccess usersAccess = 3;
 }
 
 message GetDocumentCommentsRequest {
@@ -135,6 +137,10 @@ service DocStoreService {
 
   // @permission
   rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
+  // @permission
+  rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
+  // @permission: name=CreateDocument
+  rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
 
   // @permission
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
@@ -144,11 +150,6 @@ service DocStoreService {
   rpc PostDocumentComment(PostDocumentCommentRequest) returns (PostDocumentCommentResponse);
   // @permission: name=PostDocumentComment
   rpc EditDocumentComment(EditDocumentCommentRequest) returns (EditDocumentCommentResponse);
-
-  // @permission
-  rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
-  // @permission: name=CreateDocument
-  rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
 
   // @permission
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);

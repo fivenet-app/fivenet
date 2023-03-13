@@ -136,13 +136,25 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 
 	resp := &GetDocumentResponse{
-		Document: &documents.Document{},
+		Document:    &documents.Document{},
+		JobsAccess:  []*documents.DocumentJobAccess{},
+		UsersAccess: []*documents.DocumentUserAccess{},
 	}
 
 	stmt := s.getDocumentsQuery(condition, nil, nil, userID, job, jobGrade)
 	if err := stmt.QueryContext(ctx, query.DB, &resp.Document); err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
+
+	docAccess, err := s.GetDocumentAccess(ctx, &GetDocumentAccessRequest{
+		DocumentId: resp.Document.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	resp.JobsAccess = docAccess.Jobs
+	resp.UsersAccess = docAccess.Users
 
 	return resp, nil
 }
@@ -189,6 +201,39 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	return &CreateDocumentResponse{
 		Id: uint64(lastID),
 	}, nil
+}
+
+func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
+	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	check, err := s.checkIfUserCanEditDocument(ctx, userID, job, jobGrade)
+	if err != nil {
+		return nil, err
+	}
+	if !check {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
+	}
+
+	stmt := ad.UPDATE(
+		ad.Title,
+		ad.Content,
+		ad.Closed,
+		ad.State,
+		ad.Public,
+	).
+		SET(
+			req.Title,
+			req.Content,
+			req.Closed,
+			req.State,
+			req.Public,
+		).
+		WHERE(ad.ID.EQ(jet.Uint64(req.DocumentId)))
+
+	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+		return nil, err
+	}
+
+	return &UpdateDocumentResponse{}, nil
 }
 
 func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {
@@ -250,51 +295,62 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 }
 
 func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error) {
-	resp := &PostDocumentCommentResponse{}
-
-	// TODO
-
-	return resp, nil
-}
-func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
-	resp := &EditDocumentCommentResponse{}
-
-	// TODO
-
-	return resp, nil
-}
-
-func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserCanEditDocument(ctx, userID, job, jobGrade)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
 	if err != nil {
 		return nil, err
 	}
 	if !check {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to post a comment on this document!")
 	}
 
-	stmt := ad.UPDATE(
-		ad.Title,
-		ad.Content,
-		ad.Closed,
-		ad.State,
-		ad.Public,
-	).
-		SET(
-			req.Title,
-			req.Content,
-			req.Closed,
-			req.State,
-			req.Public,
-		).
-		WHERE(ad.ID.EQ(jet.Uint64(req.DocumentId)))
+	// Clean comment from
+	req.Comment = htmlsanitizer.StripTags(req.Comment)
 
+	stmt := adc.INSERT(
+		adc.DocumentID,
+		adc.Comment,
+		adc.CreatorID,
+	).
+		VALUES(
+			req.DocumentId,
+			req.Comment,
+			userID,
+		)
+
+	resp := &PostDocumentCommentResponse{}
 	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
 		return nil, err
 	}
 
-	return &UpdateDocumentResponse{}, nil
+	return resp, nil
+}
+func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
+	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
+	if err != nil {
+		return nil, err
+	}
+	if !check {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this comment!")
+	}
+
+	stmt := adc.UPDATE(
+		adc.Comment,
+	).
+		SET(
+			req.Comment,
+		).
+		WHERE(
+			adc.ID.EQ(jet.Uint64(req.CommentId)),
+		)
+
+	resp := &EditDocumentCommentResponse{}
+	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {

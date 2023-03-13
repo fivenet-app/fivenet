@@ -32,7 +32,7 @@ message User {
   string dateofbirth = 7 [(validate.rules).string.len = 10]; // @gotags: alias:"dateofbirth"
   string sex = 8 [(validate.rules).string = {min_len: 1, max_len: 2}]; // @gotags: alias:"sex"
   string height = 9; // @gotags: alias:"height"
-  string phoneNumber = 10 [(validate.rules).string.max_len = 20]; // @gotags: alias:"phone_number"
+  string phone_number = 10 [(validate.rules).string.max_len = 20]; // @gotags: alias:"phone_number"
   int32 visum = 11 [(validate.rules).int32.gte = 0]; // @gotags: alias:"visum"
   int32 playtime = 12 [(validate.rules).int32.gte = 0]; // @gotags: alias:"playtime"
 

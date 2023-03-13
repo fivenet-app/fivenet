@@ -92,6 +92,16 @@ export class GetDocumentResponse extends jspb.Message {
   hasDocument(): boolean;
   clearDocument(): GetDocumentResponse;
 
+  getJobsaccessList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
+  setJobsaccessList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): GetDocumentResponse;
+  clearJobsaccessList(): GetDocumentResponse;
+  addJobsaccess(value?: resources_documents_documents_pb.DocumentJobAccess, index?: number): resources_documents_documents_pb.DocumentJobAccess;
+
+  getUsersaccessList(): Array<resources_documents_documents_pb.DocumentUserAccess>;
+  setUsersaccessList(value: Array<resources_documents_documents_pb.DocumentUserAccess>): GetDocumentResponse;
+  clearUsersaccessList(): GetDocumentResponse;
+  addUsersaccess(value?: resources_documents_documents_pb.DocumentUserAccess, index?: number): resources_documents_documents_pb.DocumentUserAccess;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetDocumentResponse): GetDocumentResponse.AsObject;
@@ -103,6 +113,8 @@ export class GetDocumentResponse extends jspb.Message {
 export namespace GetDocumentResponse {
   export type AsObject = {
     document?: resources_documents_documents_pb.Document.AsObject,
+    jobsaccessList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
+    usersaccessList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
   }
 }
 
