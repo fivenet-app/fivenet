@@ -5,7 +5,7 @@ import Footer from '../components/partials/Footer.vue';
 import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
-import './index.css';
+import './herofull-pattern.css';
 import HeroFull from '../components/partials/HeroFull.vue';
 
 export default defineComponent({
