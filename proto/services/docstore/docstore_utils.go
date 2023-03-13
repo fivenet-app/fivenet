@@ -91,7 +91,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		),
 	).
 		ORDER_BY(ad.CreatedAt.DESC()).
-		LIMIT(database.DefaultPageLimit)
+		LIMIT(database.PaginationLimit)
 }
 
 func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, userID int32, job string, jobGrade int32, access documents.DOC_ACCESS) (bool, error) {

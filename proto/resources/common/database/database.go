@@ -1,5 +1,5 @@
 package database
 
 const (
-	DefaultPageLimit = 25
+	PaginationLimit = 20
 )

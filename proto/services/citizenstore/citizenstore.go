@@ -96,7 +96,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		).
 		WHERE(condition).
 		OFFSET(req.Offset).
-		LIMIT(database.DefaultPageLimit)
+		LIMIT(database.PaginationLimit)
 
 	// Convert our proto abstracted `common.OrderBy` to actual gorm order by instructions
 	orderBys := []jet.OrderByClause{}
