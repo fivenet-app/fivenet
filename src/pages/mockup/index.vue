@@ -86,10 +86,10 @@ export default defineComponent({
                 </div>
                 <div class="mt-6 w-full flex-1 space-y-1 px-2">
                     <a v-for="item in sidebarNavigation" :key="item.name" :href="item.href"
-                        :class="[item.current ? 'bg-indigo-800 text-base-100' : 'text-indigo-100 hover:bg-indigo-800 hover:text-base-100', 'group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium']"
+                        :class="[item.current ? 'bg-indigo-800 text-neutral' : 'text-indigo-100 hover:bg-indigo-800 hover:text-neutral', 'group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium']"
                         :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"
-                            :class="[item.current ? 'text-base-100' : 'text-indigo-300 group-hover:text-base-100', 'h-6 w-6']"
+                            :class="[item.current ? 'text-neutral' : 'text-indigo-300 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true" />
                         <span class="mt-2">{{ item.name }}</span>
                     </a>
@@ -156,7 +156,7 @@ export default defineComponent({
             <header class="w-full">
                 <div class="relative z-10 flex h-16 flex-shrink-0 bg-base-850 shadow-sm">
                     <button type="button"
-                        class="px-4 text-base-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
+                        class="px-4 text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
                         @click="mobileMenuOpen = true">
                         <span class="sr-only">Open sidebar</span>
                         <Bars3BottomLeftIcon class="h-6 w-6" aria-hidden="true" />
@@ -165,12 +165,12 @@ export default defineComponent({
                         <div class="flex flex-1">
                             <form class="flex w-full md:ml-0 bg-base-800 rounded-full px-5 my-3 max-w-2xl" action="#" method="GET">
                                 <label for="search-field" class="sr-only">Search all files</label>
-                                <div class="relative w-full text-base-300 focus-within:text-base-100">
+                                <div class="relative w-full text-base-300 focus-within:text-neutral">
                                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center">
                                         <MagnifyingGlassIcon class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                     </div>
                                     <input name="search-field" id="search-field"
-                                        class="h-full w-full border-0 py-2 pl-8 pr-3 bg-inherit text-base-300 focus:outline-none focus:ring-0 focus:placeholder:text-base-100 focus:text-base-100 sm:text-sm"
+                                        class="h-full w-full border-0 py-2 pl-8 pr-3 bg-inherit text-base-300 focus:outline-none focus:ring-0 focus:placeholder:text-neutral focus:text-neutral sm:text-sm"
                                         placeholder="Search" type="search" />
                                 </div>
                             </form>
@@ -194,10 +194,10 @@ export default defineComponent({
                                     leave-from-class="transform opacity-100 scale-100"
                                     leave-to-class="transform opacity-0 scale-95">
                                     <MenuItems
-                                        class="absolute border-2 border-base-700 right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-base-850 py-1 shadow-lg ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
+                                        class="absolute shadow-float right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-base-850 py-1 ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
                                         <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
                                         <a :href="item.href"
-                                            :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-base-100']">{{
+                                            :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral']">{{
                                             item.name }}</a>
                                         </MenuItem>
                                     </MenuItems>
@@ -205,7 +205,7 @@ export default defineComponent({
                         </Menu>
 
                         <button type="button"
-                            class="flex items-center justify-center rounded-full bg-indigo-600 p-1 text-base-100 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            class="flex items-center justify-center rounded-full bg-indigo-600 p-1 text-neutral hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                             <PlusIcon class="h-6 w-6" aria-hidden="true" />
                             <span class="sr-only">Add file</span>
                         </button>
