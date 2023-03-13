@@ -351,6 +351,17 @@ func (m *DocumentTemplate) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if len(m.GetContent()) > 12288 {
+		err := DocumentTemplateValidationError{
+			field:  "Content",
+			reason: "value length must be at most 12288 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	// no validation rules for AdditionalData
 
 	if all {
@@ -748,7 +759,16 @@ func (m *DocumentComment) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Comment
+	if len(m.GetComment()) > 4096 {
+		err := DocumentCommentValidationError{
+			field:  "Comment",
+			reason: "value length must be at most 4096 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetCreator()).(type) {
@@ -1003,6 +1023,17 @@ func (m *Document) validate(all bool) error {
 		err := DocumentValidationError{
 			field:  "Content",
 			reason: "value length must be at least 30 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetContent()) > 12288 {
+		err := DocumentValidationError{
+			field:  "Content",
+			reason: "value length must be at most 12288 bytes",
 		}
 		if !all {
 			return err

@@ -305,7 +305,7 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 	}
 
 	// Clean comment from
-	req.Comment = htmlsanitizer.StripTags(req.Comment)
+	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
 
 	stmt := adc.INSERT(
 		adc.DocumentID,
@@ -313,8 +313,8 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 		adc.CreatorID,
 	).
 		VALUES(
-			req.DocumentId,
-			req.Comment,
+			req.Comment.DocumentId,
+			req.Comment.Comment,
 			userID,
 		)
 
@@ -335,14 +335,12 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this comment!")
 	}
 
-	stmt := adc.UPDATE(
-		adc.Comment,
-	).
+	stmt := adc.UPDATE().
 		SET(
-			req.Comment,
+			adc.Comment.SET(jet.String(req.Comment.Comment)),
 		).
 		WHERE(
-			adc.ID.EQ(jet.Uint64(req.CommentId)),
+			adc.ID.EQ(jet.Uint64(req.Comment.Id)),
 		)
 
 	resp := &EditDocumentCommentResponse{}

@@ -173,11 +173,10 @@ export namespace GetDocumentCommentsResponse {
 }
 
 export class PostDocumentCommentRequest extends jspb.Message {
-  getDocumentId(): number;
-  setDocumentId(value: number): PostDocumentCommentRequest;
-
-  getComment(): string;
-  setComment(value: string): PostDocumentCommentRequest;
+  getComment(): resources_documents_documents_pb.DocumentComment | undefined;
+  setComment(value?: resources_documents_documents_pb.DocumentComment): PostDocumentCommentRequest;
+  hasComment(): boolean;
+  clearComment(): PostDocumentCommentRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): PostDocumentCommentRequest.AsObject;
@@ -189,8 +188,7 @@ export class PostDocumentCommentRequest extends jspb.Message {
 
 export namespace PostDocumentCommentRequest {
   export type AsObject = {
-    documentId: number,
-    comment: string,
+    comment?: resources_documents_documents_pb.DocumentComment.AsObject,
   }
 }
 
@@ -209,11 +207,10 @@ export namespace PostDocumentCommentResponse {
 }
 
 export class EditDocumentCommentRequest extends jspb.Message {
-  getCommentId(): number;
-  setCommentId(value: number): EditDocumentCommentRequest;
-
-  getComment(): string;
-  setComment(value: string): EditDocumentCommentRequest;
+  getComment(): resources_documents_documents_pb.DocumentComment | undefined;
+  setComment(value?: resources_documents_documents_pb.DocumentComment): EditDocumentCommentRequest;
+  hasComment(): boolean;
+  clearComment(): EditDocumentCommentRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): EditDocumentCommentRequest.AsObject;
@@ -225,8 +222,7 @@ export class EditDocumentCommentRequest extends jspb.Message {
 
 export namespace EditDocumentCommentRequest {
   export type AsObject = {
-    commentId: number,
-    comment: string,
+    comment?: resources_documents_documents_pb.DocumentComment.AsObject,
   }
 }
 

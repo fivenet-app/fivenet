@@ -24,7 +24,7 @@ message DocumentTemplate {
   string title = 7 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   string description = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
   string content_title = 9 [(validate.rules).string.min_len = 3]; // @gotags: alias:"content_title"
-  string content = 10 [(validate.rules).string.min_len = 12]; // @gotags: alias:"content"
+  string content = 10 [(validate.rules).string = {min_len: 12, max_bytes: 12288}]; // @gotags: alias:"content"
   string additional_data = 11; // @gotags: alias:"additional_data"
   resources.users.UserShort creator = 12;
 }
@@ -43,7 +43,7 @@ message DocumentTemplateShort {
 message DocumentComment {
   uint64 id = 1; // @gotags: alias:"id"
   uint64 document_id = 2 [(validate.rules).uint64.gte = 0]; // @gotags: alias:"document_id"
-  string comment = 3; // @gotags: alias:"comment"
+  string comment = 3 [(validate.rules).string.max_bytes = 4096]; // @gotags: alias:"comment"
   resources.users.UserShort creator = 4;
 }
 
@@ -59,7 +59,7 @@ message Document {
   DocumentCategory category = 4;
   string title = 5 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   DOC_CONTENT_TYPE content_type = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
-  string content = 7 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
+  string content = 7 [(validate.rules).string = {min_len: 30, max_bytes: 12288}]; // @gotags: alias:"content"
   string data = 8; // @gotags: alias:"data"
   resources.users.UserShort creator = 9;
   string state = 10 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"

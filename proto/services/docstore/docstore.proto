@@ -45,15 +45,13 @@ message GetDocumentCommentsResponse {
 }
 
 message PostDocumentCommentRequest {
-  uint64 document_id = 1;
-  string comment = 2;
+  resources.documents.DocumentComment comment = 1;
 }
 
 message PostDocumentCommentResponse {}
 
 message EditDocumentCommentRequest {
-  uint64 comment_id = 1;
-  string comment = 2;
+  resources.documents.DocumentComment comment = 1;
 }
 
 message EditDocumentCommentResponse {}

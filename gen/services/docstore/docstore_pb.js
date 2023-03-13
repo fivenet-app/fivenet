@@ -1846,8 +1846,7 @@ proto.services.docstore.PostDocumentCommentRequest.prototype.toObject = function
  */
 proto.services.docstore.PostDocumentCommentRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    documentId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    comment: jspb.Message.getFieldWithDefault(msg, 2, "")
+    comment: (f = msg.getComment()) && resources_documents_documents_pb.DocumentComment.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1885,11 +1884,8 @@ proto.services.docstore.PostDocumentCommentRequest.deserializeBinaryFromReader =
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
-      msg.setDocumentId(value);
-      break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = new resources_documents_documents_pb.DocumentComment;
+      reader.readMessage(value,resources_documents_documents_pb.DocumentComment.deserializeBinaryFromReader);
       msg.setComment(value);
       break;
     default:
@@ -1921,56 +1917,51 @@ proto.services.docstore.PostDocumentCommentRequest.prototype.serializeBinary = f
  */
 proto.services.docstore.PostDocumentCommentRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getDocumentId();
-  if (f !== 0) {
-    writer.writeUint64(
-      1,
-      f
-    );
-  }
   f = message.getComment();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      resources_documents_documents_pb.DocumentComment.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * optional uint64 document_id = 1;
- * @return {number}
- */
-proto.services.docstore.PostDocumentCommentRequest.prototype.getDocumentId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.services.docstore.PostDocumentCommentRequest} returns this
- */
-proto.services.docstore.PostDocumentCommentRequest.prototype.setDocumentId = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional string comment = 2;
- * @return {string}
+ * optional resources.documents.DocumentComment comment = 1;
+ * @return {?proto.resources.documents.DocumentComment}
  */
 proto.services.docstore.PostDocumentCommentRequest.prototype.getComment = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+  return /** @type{?proto.resources.documents.DocumentComment} */ (
+    jspb.Message.getWrapperField(this, resources_documents_documents_pb.DocumentComment, 1));
 };
 
 
 /**
- * @param {string} value
+ * @param {?proto.resources.documents.DocumentComment|undefined} value
+ * @return {!proto.services.docstore.PostDocumentCommentRequest} returns this
+*/
+proto.services.docstore.PostDocumentCommentRequest.prototype.setComment = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.docstore.PostDocumentCommentRequest} returns this
  */
-proto.services.docstore.PostDocumentCommentRequest.prototype.setComment = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
+proto.services.docstore.PostDocumentCommentRequest.prototype.clearComment = function() {
+  return this.setComment(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.docstore.PostDocumentCommentRequest.prototype.hasComment = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -2107,8 +2098,7 @@ proto.services.docstore.EditDocumentCommentRequest.prototype.toObject = function
  */
 proto.services.docstore.EditDocumentCommentRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    commentId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    comment: jspb.Message.getFieldWithDefault(msg, 2, "")
+    comment: (f = msg.getComment()) && resources_documents_documents_pb.DocumentComment.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -2146,11 +2136,8 @@ proto.services.docstore.EditDocumentCommentRequest.deserializeBinaryFromReader =
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
-      msg.setCommentId(value);
-      break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = new resources_documents_documents_pb.DocumentComment;
+      reader.readMessage(value,resources_documents_documents_pb.DocumentComment.deserializeBinaryFromReader);
       msg.setComment(value);
       break;
     default:
@@ -2182,56 +2169,51 @@ proto.services.docstore.EditDocumentCommentRequest.prototype.serializeBinary = f
  */
 proto.services.docstore.EditDocumentCommentRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getCommentId();
-  if (f !== 0) {
-    writer.writeUint64(
-      1,
-      f
-    );
-  }
   f = message.getComment();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      resources_documents_documents_pb.DocumentComment.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * optional uint64 comment_id = 1;
- * @return {number}
- */
-proto.services.docstore.EditDocumentCommentRequest.prototype.getCommentId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.services.docstore.EditDocumentCommentRequest} returns this
- */
-proto.services.docstore.EditDocumentCommentRequest.prototype.setCommentId = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional string comment = 2;
- * @return {string}
+ * optional resources.documents.DocumentComment comment = 1;
+ * @return {?proto.resources.documents.DocumentComment}
  */
 proto.services.docstore.EditDocumentCommentRequest.prototype.getComment = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+  return /** @type{?proto.resources.documents.DocumentComment} */ (
+    jspb.Message.getWrapperField(this, resources_documents_documents_pb.DocumentComment, 1));
 };
 
 
 /**
- * @param {string} value
+ * @param {?proto.resources.documents.DocumentComment|undefined} value
+ * @return {!proto.services.docstore.EditDocumentCommentRequest} returns this
+*/
+proto.services.docstore.EditDocumentCommentRequest.prototype.setComment = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.docstore.EditDocumentCommentRequest} returns this
  */
-proto.services.docstore.EditDocumentCommentRequest.prototype.setComment = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
+proto.services.docstore.EditDocumentCommentRequest.prototype.clearComment = function() {
+  return this.setComment(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.docstore.EditDocumentCommentRequest.prototype.hasComment = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
