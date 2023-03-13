@@ -1,7 +1,7 @@
 import store from './store';
 import { RpcError, StatusCode, StreamInterceptor, UnaryInterceptor } from 'grpc-web';
 import { _RouteLocationBase } from 'vue-router/auto';
-import router from './main';
+import router from './router';
 import config from './config';
 import { dispatchNotification } from './components/notification';
 import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
