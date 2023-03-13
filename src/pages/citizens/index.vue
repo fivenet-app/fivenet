@@ -23,7 +23,7 @@ export default defineComponent({
     "name": "Citizens",
     "meta": {
         "requiresAuth": true,
-        "permission": "users-findusers",
+        "permission": "citizenstoreservice-findusers",
         "breadCrumbs": [
             { "name": "Citizens", "href": "/citizens" }
         ]

@@ -333,7 +333,7 @@ export default defineComponent({
                                     <p class="mt-2 text-sm text-gray-500">
                                         Created by
                                         {{ ' ' }}
-                                        <router-link :to="'/citizens/' + document?.getCreator()?.getUserid()"
+                                        <router-link :to="'/citizens/' + document?.getCreator()?.getUserId()"
                                             class="font-medium text-gray-900">
                                             {{ document?.getCreator()?.getFirstname() }}
                                             {{ document?.getCreator()?.getLastname() }}
@@ -373,7 +373,7 @@ export default defineComponent({
                                         <h2 class="text-sm font-medium text-gray-500">Creator</h2>
                                         <ul role="list" class="mt-3 space-y-3">
                                             <li class="flex justify-start">
-                                                <router-link :to="'/citizens/' + document?.getCreator()?.getUserid()"
+                                                <router-link :to="'/citizens/' + document?.getCreator()?.getUserId()"
                                                     class="flex items-center space-x-3">
                                                     <div class="text-sm font-medium text-gray-900">{{
                                                         document?.getCreator()?.getFirstname() + ", " +
@@ -450,7 +450,7 @@ export default defineComponent({
                             <h2 class="text-sm font-medium text-gray-500">Creator</h2>
                             <ul role="list" class="mt-3 space-y-3">
                                 <li class="flex justify-start">
-                                    <router-link :to="'/citizens/' + document?.getCreator()?.getUserid()"
+                                    <router-link :to="'/citizens/' + document?.getCreator()?.getUserId()"
                                         class="flex items-center space-x-3">
                                         <div class="text-sm font-medium text-gray-900">
                                             {{ document?.getCreator()?.getFirstname() + ", " +

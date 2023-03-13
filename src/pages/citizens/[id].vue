@@ -26,7 +26,7 @@ export default defineComponent({
     },
     beforeMount() {
         const req = new GetUserRequest();
-        req.setUserid(this.$route.params.id);
+        req.setUserId(this.$route.params.id);
 
         getCitizenStoreClient()
             .getUser(req, null)
@@ -45,7 +45,7 @@ export default defineComponent({
     "name": "Citizens Info",
     "meta": {
         "requiresAuth": true,
-        "permission": "users-findusers",
+        "permission": "citizenstoreservice-findusers",
         "breadCrumbs": [
             { "name": "Citizens", "href": "/citizens" },
             { "name": "Citizen Info: ...", "href": "#" }

@@ -17,6 +17,7 @@ type ArpanetDocumentsTemplates struct {
 	UpdatedAt      *time.Time `json:"updated_at"`
 	Job            string     `json:"job"`
 	JobGrade       int32      `json:"job_grade"`
+	CategoryID     *uint64    `json:"category_id"`
 	Title          string     `json:"title"`
 	Description    string     `json:"description"`
 	ContentTitle   string     `json:"content_title"`

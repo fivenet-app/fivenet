@@ -22,7 +22,7 @@ export default defineComponent({
     methods: {
         getUserActivity() {
             const req = new GetUserActivityRequest();
-            req.setUserid(this.userID);
+            req.setUserId(this.userID);
 
             getCitizenStoreClient().
                 getUserActivity(req, null).then((resp) => {

@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = documents.DOCUMENT_CONTENT_TYPE(0)
+	_ = documents.DOC_CONTENT_TYPE(0)
 )
 
 // Validate checks the field values on FindDocumentsRequest with the rules
@@ -365,18 +365,7 @@ func (m *GetDocumentRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
-
-	if m.GetOffset() < 0 {
-		err := GetDocumentRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for DocumentId
 
 	if len(errors) > 0 {
 		return GetDocumentRequestMultiError(errors)
@@ -509,46 +498,6 @@ func (m *GetDocumentResponse) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for TotalCount
-
-	// no validation rules for Offset
-
-	// no validation rules for End
-
-	for idx, item := range m.GetResponses() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, GetDocumentResponseValidationError{
-						field:  fmt.Sprintf("Responses[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, GetDocumentResponseValidationError{
-						field:  fmt.Sprintf("Responses[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return GetDocumentResponseValidationError{
-					field:  fmt.Sprintf("Responses[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if len(errors) > 0 {
 		return GetDocumentResponseMultiError(errors)
 	}
@@ -629,6 +578,682 @@ var _ interface {
 	ErrorName() string
 } = GetDocumentResponseValidationError{}
 
+// Validate checks the field values on GetDocumentCommentsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetDocumentCommentsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDocumentCommentsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDocumentCommentsRequestMultiError, or nil if none found.
+func (m *GetDocumentCommentsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDocumentCommentsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DocumentID
+
+	if m.GetOffset() < 0 {
+		err := GetDocumentCommentsRequestValidationError{
+			field:  "Offset",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetDocumentCommentsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDocumentCommentsRequestMultiError is an error wrapping multiple
+// validation errors returned by GetDocumentCommentsRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetDocumentCommentsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDocumentCommentsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDocumentCommentsRequestMultiError) AllErrors() []error { return m }
+
+// GetDocumentCommentsRequestValidationError is the validation error returned
+// by GetDocumentCommentsRequest.Validate if the designated constraints aren't met.
+type GetDocumentCommentsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDocumentCommentsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDocumentCommentsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDocumentCommentsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDocumentCommentsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDocumentCommentsRequestValidationError) ErrorName() string {
+	return "GetDocumentCommentsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetDocumentCommentsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDocumentCommentsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDocumentCommentsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDocumentCommentsRequestValidationError{}
+
+// Validate checks the field values on GetDocumentCommentsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetDocumentCommentsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDocumentCommentsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDocumentCommentsResponseMultiError, or nil if none found.
+func (m *GetDocumentCommentsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDocumentCommentsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TotalCount
+
+	// no validation rules for Offset
+
+	// no validation rules for End
+
+	for idx, item := range m.GetComments() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetDocumentCommentsResponseValidationError{
+						field:  fmt.Sprintf("Comments[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetDocumentCommentsResponseValidationError{
+						field:  fmt.Sprintf("Comments[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetDocumentCommentsResponseValidationError{
+					field:  fmt.Sprintf("Comments[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetDocumentCommentsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDocumentCommentsResponseMultiError is an error wrapping multiple
+// validation errors returned by GetDocumentCommentsResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GetDocumentCommentsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDocumentCommentsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDocumentCommentsResponseMultiError) AllErrors() []error { return m }
+
+// GetDocumentCommentsResponseValidationError is the validation error returned
+// by GetDocumentCommentsResponse.Validate if the designated constraints
+// aren't met.
+type GetDocumentCommentsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDocumentCommentsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDocumentCommentsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDocumentCommentsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDocumentCommentsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDocumentCommentsResponseValidationError) ErrorName() string {
+	return "GetDocumentCommentsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetDocumentCommentsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDocumentCommentsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDocumentCommentsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDocumentCommentsResponseValidationError{}
+
+// Validate checks the field values on PostDocumentCommentRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PostDocumentCommentRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PostDocumentCommentRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PostDocumentCommentRequestMultiError, or nil if none found.
+func (m *PostDocumentCommentRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PostDocumentCommentRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DocumentId
+
+	// no validation rules for Comment
+
+	if len(errors) > 0 {
+		return PostDocumentCommentRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PostDocumentCommentRequestMultiError is an error wrapping multiple
+// validation errors returned by PostDocumentCommentRequest.ValidateAll() if
+// the designated constraints aren't met.
+type PostDocumentCommentRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PostDocumentCommentRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PostDocumentCommentRequestMultiError) AllErrors() []error { return m }
+
+// PostDocumentCommentRequestValidationError is the validation error returned
+// by PostDocumentCommentRequest.Validate if the designated constraints aren't met.
+type PostDocumentCommentRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PostDocumentCommentRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PostDocumentCommentRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PostDocumentCommentRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PostDocumentCommentRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PostDocumentCommentRequestValidationError) ErrorName() string {
+	return "PostDocumentCommentRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PostDocumentCommentRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPostDocumentCommentRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PostDocumentCommentRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PostDocumentCommentRequestValidationError{}
+
+// Validate checks the field values on PostDocumentCommentResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PostDocumentCommentResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PostDocumentCommentResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PostDocumentCommentResponseMultiError, or nil if none found.
+func (m *PostDocumentCommentResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PostDocumentCommentResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return PostDocumentCommentResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PostDocumentCommentResponseMultiError is an error wrapping multiple
+// validation errors returned by PostDocumentCommentResponse.ValidateAll() if
+// the designated constraints aren't met.
+type PostDocumentCommentResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PostDocumentCommentResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PostDocumentCommentResponseMultiError) AllErrors() []error { return m }
+
+// PostDocumentCommentResponseValidationError is the validation error returned
+// by PostDocumentCommentResponse.Validate if the designated constraints
+// aren't met.
+type PostDocumentCommentResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PostDocumentCommentResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PostDocumentCommentResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PostDocumentCommentResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PostDocumentCommentResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PostDocumentCommentResponseValidationError) ErrorName() string {
+	return "PostDocumentCommentResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PostDocumentCommentResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPostDocumentCommentResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PostDocumentCommentResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PostDocumentCommentResponseValidationError{}
+
+// Validate checks the field values on EditDocumentCommentRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *EditDocumentCommentRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on EditDocumentCommentRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// EditDocumentCommentRequestMultiError, or nil if none found.
+func (m *EditDocumentCommentRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *EditDocumentCommentRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CommentId
+
+	// no validation rules for Comment
+
+	if len(errors) > 0 {
+		return EditDocumentCommentRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// EditDocumentCommentRequestMultiError is an error wrapping multiple
+// validation errors returned by EditDocumentCommentRequest.ValidateAll() if
+// the designated constraints aren't met.
+type EditDocumentCommentRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m EditDocumentCommentRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m EditDocumentCommentRequestMultiError) AllErrors() []error { return m }
+
+// EditDocumentCommentRequestValidationError is the validation error returned
+// by EditDocumentCommentRequest.Validate if the designated constraints aren't met.
+type EditDocumentCommentRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EditDocumentCommentRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EditDocumentCommentRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EditDocumentCommentRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EditDocumentCommentRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EditDocumentCommentRequestValidationError) ErrorName() string {
+	return "EditDocumentCommentRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e EditDocumentCommentRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEditDocumentCommentRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EditDocumentCommentRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EditDocumentCommentRequestValidationError{}
+
+// Validate checks the field values on EditDocumentCommentResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *EditDocumentCommentResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on EditDocumentCommentResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// EditDocumentCommentResponseMultiError, or nil if none found.
+func (m *EditDocumentCommentResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *EditDocumentCommentResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return EditDocumentCommentResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// EditDocumentCommentResponseMultiError is an error wrapping multiple
+// validation errors returned by EditDocumentCommentResponse.ValidateAll() if
+// the designated constraints aren't met.
+type EditDocumentCommentResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m EditDocumentCommentResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m EditDocumentCommentResponseMultiError) AllErrors() []error { return m }
+
+// EditDocumentCommentResponseValidationError is the validation error returned
+// by EditDocumentCommentResponse.Validate if the designated constraints
+// aren't met.
+type EditDocumentCommentResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EditDocumentCommentResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EditDocumentCommentResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EditDocumentCommentResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EditDocumentCommentResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EditDocumentCommentResponseValidationError) ErrorName() string {
+	return "EditDocumentCommentResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e EditDocumentCommentResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEditDocumentCommentResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EditDocumentCommentResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EditDocumentCommentResponseValidationError{}
+
 // Validate checks the field values on CreateDocumentRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -690,9 +1315,9 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 
 	// no validation rules for Public
 
-	// no validation rules for CategoryID
+	// no validation rules for CategoryId
 
-	// no validation rules for TargetDocumentID
+	// no validation rules for TargetDocumentId
 
 	for idx, item := range m.GetJobsAccess() {
 		_, _ = idx, item
@@ -968,7 +1593,7 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	// no validation rules for DocumentId
 
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
 		err := UpdateDocumentRequestValidationError{
@@ -994,7 +1619,7 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 
 	// no validation rules for ContentType
 
-	// no validation rules for CategoryID
+	// no validation rules for CategoryId
 
 	// no validation rules for Closed
 
@@ -1453,7 +2078,7 @@ func (m *GetTemplateRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	// no validation rules for TemplateId
 
 	if len(errors) > 0 {
 		return GetTemplateRequestMultiError(errors)
@@ -1688,7 +2313,7 @@ func (m *GetDocumentAccessRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	// no validation rules for DocumentId
 
 	if len(errors) > 0 {
 		return GetDocumentAccessRequestMultiError(errors)
@@ -1962,7 +2587,7 @@ func (m *SetDocumentAccessRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for DocumentID
+	// no validation rules for DocumentId
 
 	// no validation rules for Mode
 

@@ -23,7 +23,7 @@ export default defineComponent({
     "name": "Documents",
     "meta": {
         "requiresAuth": true,
-        "permission": "documents-view",
+        "permission": "docstoreservice-finddocuments",
         "breadCrumbs": [
             { "name": "Documents", "href": "/documents" }
         ]

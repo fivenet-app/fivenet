@@ -490,7 +490,7 @@ proto.services.citizenstore.FindUsersResponse.prototype.toObject = function(opt_
  */
 proto.services.citizenstore.FindUsersResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    totalcount: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    totalCount: jspb.Message.getFieldWithDefault(msg, 1, 0),
     offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
     end: jspb.Message.getFieldWithDefault(msg, 3, 0),
     usersList: jspb.Message.toObjectList(msg.getUsersList(),
@@ -533,7 +533,7 @@ proto.services.citizenstore.FindUsersResponse.deserializeBinaryFromReader = func
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setTotalcount(value);
+      msg.setTotalCount(value);
       break;
     case 2:
       var value = /** @type {number} */ (reader.readInt64());
@@ -577,7 +577,7 @@ proto.services.citizenstore.FindUsersResponse.prototype.serializeBinary = functi
  */
 proto.services.citizenstore.FindUsersResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTotalcount();
+  f = message.getTotalCount();
   if (f !== 0) {
     writer.writeInt64(
       1,
@@ -610,10 +610,10 @@ proto.services.citizenstore.FindUsersResponse.serializeBinaryToWriter = function
 
 
 /**
- * optional int64 totalCount = 1;
+ * optional int64 total_count = 1;
  * @return {number}
  */
-proto.services.citizenstore.FindUsersResponse.prototype.getTotalcount = function() {
+proto.services.citizenstore.FindUsersResponse.prototype.getTotalCount = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -622,7 +622,7 @@ proto.services.citizenstore.FindUsersResponse.prototype.getTotalcount = function
  * @param {number} value
  * @return {!proto.services.citizenstore.FindUsersResponse} returns this
  */
-proto.services.citizenstore.FindUsersResponse.prototype.setTotalcount = function(value) {
+proto.services.citizenstore.FindUsersResponse.prototype.setTotalCount = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
@@ -733,7 +733,7 @@ proto.services.citizenstore.GetUserRequest.prototype.toObject = function(opt_inc
  */
 proto.services.citizenstore.GetUserRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userid: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    userId: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -772,7 +772,7 @@ proto.services.citizenstore.GetUserRequest.deserializeBinaryFromReader = functio
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setUserid(value);
+      msg.setUserId(value);
       break;
     default:
       reader.skipField();
@@ -803,7 +803,7 @@ proto.services.citizenstore.GetUserRequest.prototype.serializeBinary = function(
  */
 proto.services.citizenstore.GetUserRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUserid();
+  f = message.getUserId();
   if (f !== 0) {
     writer.writeInt32(
       1,
@@ -814,10 +814,10 @@ proto.services.citizenstore.GetUserRequest.serializeBinaryToWriter = function(me
 
 
 /**
- * optional int32 userID = 1;
+ * optional int32 user_id = 1;
  * @return {number}
  */
-proto.services.citizenstore.GetUserRequest.prototype.getUserid = function() {
+proto.services.citizenstore.GetUserRequest.prototype.getUserId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -826,7 +826,7 @@ proto.services.citizenstore.GetUserRequest.prototype.getUserid = function() {
  * @param {number} value
  * @return {!proto.services.citizenstore.GetUserRequest} returns this
  */
-proto.services.citizenstore.GetUserRequest.prototype.setUserid = function(value) {
+proto.services.citizenstore.GetUserRequest.prototype.setUserId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
@@ -1014,7 +1014,7 @@ proto.services.citizenstore.GetUserActivityRequest.prototype.toObject = function
  */
 proto.services.citizenstore.GetUserActivityRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userid: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    userId: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -1053,7 +1053,7 @@ proto.services.citizenstore.GetUserActivityRequest.deserializeBinaryFromReader =
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setUserid(value);
+      msg.setUserId(value);
       break;
     default:
       reader.skipField();
@@ -1084,7 +1084,7 @@ proto.services.citizenstore.GetUserActivityRequest.prototype.serializeBinary = f
  */
 proto.services.citizenstore.GetUserActivityRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUserid();
+  f = message.getUserId();
   if (f !== 0) {
     writer.writeInt32(
       1,
@@ -1095,10 +1095,10 @@ proto.services.citizenstore.GetUserActivityRequest.serializeBinaryToWriter = fun
 
 
 /**
- * optional int32 userID = 1;
+ * optional int32 user_id = 1;
  * @return {number}
  */
-proto.services.citizenstore.GetUserActivityRequest.prototype.getUserid = function() {
+proto.services.citizenstore.GetUserActivityRequest.prototype.getUserId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -1107,7 +1107,7 @@ proto.services.citizenstore.GetUserActivityRequest.prototype.getUserid = functio
  * @param {number} value
  * @return {!proto.services.citizenstore.GetUserActivityRequest} returns this
  */
-proto.services.citizenstore.GetUserActivityRequest.prototype.setUserid = function(value) {
+proto.services.citizenstore.GetUserActivityRequest.prototype.setUserId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
@@ -1304,7 +1304,7 @@ proto.services.citizenstore.SetUserPropsRequest.prototype.toObject = function(op
  */
 proto.services.citizenstore.SetUserPropsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userid: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    userId: jspb.Message.getFieldWithDefault(msg, 1, 0),
     props: (f = msg.getProps()) && resources_users_users_pb.UserProps.toObject(includeInstance, f)
   };
 
@@ -1344,7 +1344,7 @@ proto.services.citizenstore.SetUserPropsRequest.deserializeBinaryFromReader = fu
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setUserid(value);
+      msg.setUserId(value);
       break;
     case 2:
       var value = new resources_users_users_pb.UserProps;
@@ -1380,7 +1380,7 @@ proto.services.citizenstore.SetUserPropsRequest.prototype.serializeBinary = func
  */
 proto.services.citizenstore.SetUserPropsRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUserid();
+  f = message.getUserId();
   if (f !== 0) {
     writer.writeInt32(
       1,
@@ -1399,10 +1399,10 @@ proto.services.citizenstore.SetUserPropsRequest.serializeBinaryToWriter = functi
 
 
 /**
- * optional int32 userID = 1;
+ * optional int32 user_id = 1;
  * @return {number}
  */
-proto.services.citizenstore.SetUserPropsRequest.prototype.getUserid = function() {
+proto.services.citizenstore.SetUserPropsRequest.prototype.getUserId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -1411,7 +1411,7 @@ proto.services.citizenstore.SetUserPropsRequest.prototype.getUserid = function()
  * @param {number} value
  * @return {!proto.services.citizenstore.SetUserPropsRequest} returns this
  */
-proto.services.citizenstore.SetUserPropsRequest.prototype.setUserid = function(value) {
+proto.services.citizenstore.SetUserPropsRequest.prototype.setUserId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 

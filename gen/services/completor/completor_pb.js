@@ -189,8 +189,7 @@ proto.services.completor.CompleteJobNamesRequest.prototype.toObject = function(o
  */
 proto.services.completor.CompleteJobNamesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    search: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    withgrades: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
+    search: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -231,10 +230,6 @@ proto.services.completor.CompleteJobNamesRequest.deserializeBinaryFromReader = f
       var value = /** @type {string} */ (reader.readString());
       msg.setSearch(value);
       break;
-    case 2:
-      var value = /** @type {boolean} */ (reader.readBool());
-      msg.setWithgrades(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -271,13 +266,6 @@ proto.services.completor.CompleteJobNamesRequest.serializeBinaryToWriter = funct
       f
     );
   }
-  f = message.getWithgrades();
-  if (f) {
-    writer.writeBool(
-      2,
-      f
-    );
-  }
 };
 
 
@@ -296,24 +284,6 @@ proto.services.completor.CompleteJobNamesRequest.prototype.getSearch = function(
  */
 proto.services.completor.CompleteJobNamesRequest.prototype.setSearch = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
-};
-
-
-/**
- * optional bool withGrades = 2;
- * @return {boolean}
- */
-proto.services.completor.CompleteJobNamesRequest.prototype.getWithgrades = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
-};
-
-
-/**
- * @param {boolean} value
- * @return {!proto.services.completor.CompleteJobNamesRequest} returns this
- */
-proto.services.completor.CompleteJobNamesRequest.prototype.setWithgrades = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 

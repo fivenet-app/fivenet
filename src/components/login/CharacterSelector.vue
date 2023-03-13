@@ -57,6 +57,6 @@ export default defineComponent({
         </div>
     </div>
     <ul v-else role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <CharacterSelectorCard v-for="char in chars" :char="char" :key="char.getUserid()" />
+        <CharacterSelectorCard v-for="char in chars" :char="char" :key="char.getUserId()" />
     </ul>
 </template>

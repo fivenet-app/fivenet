@@ -148,7 +148,7 @@ export default defineComponent({
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-800">
-                                <CitizenListEntry v-for="user in users" :key="user.getUserid()" :user="user" />
+                                <CitizenListEntry v-for="user in users" :key="user.getUserId()" :user="user" />
                             </tbody>
                             <thead>
                                 <tr>

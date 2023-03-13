@@ -16,6 +16,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -35,13 +36,18 @@ func NewServer() *Server {
 }
 
 // AuthFuncOverride is called instead of exampleAuthFunc
-func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
 	// Skip authentication for the login endpoint
-	if fullMethodName == "/services.auth.AuthService/Login" {
+	if fullMethod == "/services.auth.AuthService/Login" {
 		return ctx, nil
 	}
 
-	return auth.GRPCAuthFunc(ctx)
+	return auth.GRPCAuthFunc(ctx, fullMethod)
+}
+
+func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+	// Skip permission check for the auth services
+	return ctx, nil
 }
 
 func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, activeChar *users.User) (string, error) {
@@ -61,7 +67,7 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 	}
 
 	if activeChar != nil {
-		claims.ActiveCharID = activeChar.UserID
+		claims.ActiveCharID = activeChar.UserId
 		claims.ActiveCharJob = activeChar.Job
 		claims.ActiveCharJobGrade = activeChar.JobGrade
 	} else {
@@ -154,7 +160,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		u.JobGrade,
 	).
 		FROM(u).
-		WHERE(u.ID.EQ(jet.Int32(req.UserID))).
+		WHERE(u.ID.EQ(jet.Int32(req.UserId))).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, query.DB, &char); err != nil {
@@ -179,7 +185,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	resp.Token = token
 
 	// Load permissions of user
-	perms, err := perms.P.GetAllPermissionsOfUser(char.UserID)
+	perms, err := perms.P.GetAllPermissionsOfUser(char.UserId)
 	if err != nil {
 		return nil, err
 	}

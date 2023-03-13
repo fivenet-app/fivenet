@@ -31,8 +31,12 @@ protoc-gen-validate:
 		git -C validate/ pull --all; \
 	fi
 
+protoc-gen-customizer:
+	go build -o ./cmd/protoc-gen-customizer ./cmd/protoc-gen-customizer
+
 .PHONY: gen-proto
-gen-proto: protoc-gen-validate
+gen-proto: protoc-gen-validate protoc-gen-customizer
+	PATH="$$PATH:cmd/protoc-gen-customizer/" \
 	protoc \
 		--proto_path=./validate \
 		--proto_path=./proto \
@@ -42,6 +46,8 @@ gen-proto: protoc-gen-validate
 		--go-grpc_opt=paths=source_relative \
 		--validate_opt=paths=source_relative \
 		--validate_out="lang=go:./proto" \
+		--customizer_opt=paths=source_relative \
+		--customizer_out="./proto" \
 		$(shell find proto/ -iname "*.proto")
 
 	find proto/ -iname "*.pb.go" \

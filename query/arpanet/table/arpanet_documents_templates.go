@@ -22,6 +22,7 @@ type arpanetDocumentsTemplatesTable struct {
 	UpdatedAt      mysql.ColumnTimestamp
 	Job            mysql.ColumnString
 	JobGrade       mysql.ColumnInteger
+	CategoryID     mysql.ColumnInteger
 	Title          mysql.ColumnString
 	Description    mysql.ColumnString
 	ContentTitle   mysql.ColumnString
@@ -73,14 +74,15 @@ func newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		UpdatedAtColumn      = mysql.TimestampColumn("updated_at")
 		JobColumn            = mysql.StringColumn("job")
 		JobGradeColumn       = mysql.IntegerColumn("job_grade")
+		CategoryIDColumn     = mysql.IntegerColumn("category_id")
 		TitleColumn          = mysql.StringColumn("title")
 		DescriptionColumn    = mysql.StringColumn("description")
 		ContentTitleColumn   = mysql.StringColumn("content_title")
 		ContentColumn        = mysql.StringColumn("content")
 		AdditionalDataColumn = mysql.StringColumn("additional_data")
 		CreatorIDColumn      = mysql.IntegerColumn("creator_id")
-		allColumns           = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, JobGradeColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AdditionalDataColumn, CreatorIDColumn}
-		mutableColumns       = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, JobGradeColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AdditionalDataColumn, CreatorIDColumn}
+		allColumns           = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AdditionalDataColumn, CreatorIDColumn}
+		mutableColumns       = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AdditionalDataColumn, CreatorIDColumn}
 	)
 
 	return arpanetDocumentsTemplatesTable{
@@ -92,6 +94,7 @@ func newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		UpdatedAt:      UpdatedAtColumn,
 		Job:            JobColumn,
 		JobGrade:       JobGradeColumn,
+		CategoryID:     CategoryIDColumn,
 		Title:          TitleColumn,
 		Description:    DescriptionColumn,
 		ContentTitle:   ContentTitleColumn,

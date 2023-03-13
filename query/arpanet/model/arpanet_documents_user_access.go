@@ -17,5 +17,5 @@ type ArpanetDocumentsUserAccess struct {
 	UpdatedAt  *time.Time `json:"updated_at"`
 	DocumentID *uint64    `json:"document_id"`
 	UserID     int32      `json:"user_id"`
-	Access     int32      `json:"access"`
+	Access     int16      `json:"access"`
 }

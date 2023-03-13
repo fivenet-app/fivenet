@@ -3,9 +3,77 @@ import * as jspb from 'google-protobuf'
 import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
 
 
+export class UserJob extends jspb.Message {
+  getJob(): string;
+  setJob(value: string): UserJob;
+
+  getGrade(): number;
+  setGrade(value: number): UserJob;
+
+  getJobLabel(): string;
+  setJobLabel(value: string): UserJob;
+
+  getGradeLabel(): string;
+  setGradeLabel(value: string): UserJob;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserJob.AsObject;
+  static toObject(includeInstance: boolean, msg: UserJob): UserJob.AsObject;
+  static serializeBinaryToWriter(message: UserJob, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserJob;
+  static deserializeBinaryFromReader(message: UserJob, reader: jspb.BinaryReader): UserJob;
+}
+
+export namespace UserJob {
+  export type AsObject = {
+    job: string,
+    grade: number,
+    jobLabel: string,
+    gradeLabel: string,
+  }
+}
+
+export class UserShort extends jspb.Message {
+  getUserId(): number;
+  setUserId(value: number): UserShort;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): UserShort;
+
+  getJob(): string;
+  setJob(value: string): UserShort;
+
+  getJobGrade(): number;
+  setJobGrade(value: number): UserShort;
+
+  getFirstname(): string;
+  setFirstname(value: string): UserShort;
+
+  getLastname(): string;
+  setLastname(value: string): UserShort;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserShort.AsObject;
+  static toObject(includeInstance: boolean, msg: UserShort): UserShort.AsObject;
+  static serializeBinaryToWriter(message: UserShort, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserShort;
+  static deserializeBinaryFromReader(message: UserShort, reader: jspb.BinaryReader): UserShort;
+}
+
+export namespace UserShort {
+  export type AsObject = {
+    userId: number,
+    identifier: string,
+    job: string,
+    jobGrade: number,
+    firstname: string,
+    lastname: string,
+  }
+}
+
 export class User extends jspb.Message {
-  getUserid(): number;
-  setUserid(value: number): User;
+  getUserId(): number;
+  setUserId(value: number): User;
 
   getIdentifier(): string;
   setIdentifier(value: string): User;
@@ -13,8 +81,8 @@ export class User extends jspb.Message {
   getJob(): string;
   setJob(value: string): User;
 
-  getJobgrade(): number;
-  setJobgrade(value: number): User;
+  getJobGrade(): number;
+  setJobGrade(value: number): User;
 
   getFirstname(): string;
   setFirstname(value: string): User;
@@ -60,10 +128,10 @@ export class User extends jspb.Message {
 
 export namespace User {
   export type AsObject = {
-    userid: number,
+    userId: number,
     identifier: string,
     job: string,
-    jobgrade: number,
+    jobGrade: number,
     firstname: string,
     lastname: string,
     dateofbirth: string,
@@ -113,44 +181,6 @@ export namespace UserProps {
   }
 }
 
-export class ShortUser extends jspb.Message {
-  getUserid(): number;
-  setUserid(value: number): ShortUser;
-
-  getIdentifier(): string;
-  setIdentifier(value: string): ShortUser;
-
-  getJob(): string;
-  setJob(value: string): ShortUser;
-
-  getJobgrade(): number;
-  setJobgrade(value: number): ShortUser;
-
-  getFirstname(): string;
-  setFirstname(value: string): ShortUser;
-
-  getLastname(): string;
-  setLastname(value: string): ShortUser;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ShortUser.AsObject;
-  static toObject(includeInstance: boolean, msg: ShortUser): ShortUser.AsObject;
-  static serializeBinaryToWriter(message: ShortUser, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ShortUser;
-  static deserializeBinaryFromReader(message: ShortUser, reader: jspb.BinaryReader): ShortUser;
-}
-
-export namespace ShortUser {
-  export type AsObject = {
-    userid: number,
-    identifier: string,
-    job: string,
-    jobgrade: number,
-    firstname: string,
-    lastname: string,
-  }
-}
-
 export class UserActivity extends jspb.Message {
   getId(): number;
   setId(value: number): UserActivity;
@@ -158,18 +188,18 @@ export class UserActivity extends jspb.Message {
   getType(): USER_ACTIVITY_TYPE;
   setType(value: USER_ACTIVITY_TYPE): UserActivity;
 
-  getCreatedat(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setCreatedat(value?: resources_timestamp_timestamp_pb.Timestamp): UserActivity;
-  hasCreatedat(): boolean;
-  clearCreatedat(): UserActivity;
+  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): UserActivity;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): UserActivity;
 
-  getTargetuser(): ShortUser | undefined;
-  setTargetuser(value?: ShortUser): UserActivity;
+  getTargetuser(): UserShort | undefined;
+  setTargetuser(value?: UserShort): UserActivity;
   hasTargetuser(): boolean;
   clearTargetuser(): UserActivity;
 
-  getCauseuser(): ShortUser | undefined;
-  setCauseuser(value?: ShortUser): UserActivity;
+  getCauseuser(): UserShort | undefined;
+  setCauseuser(value?: UserShort): UserActivity;
   hasCauseuser(): boolean;
   clearCauseuser(): UserActivity;
 
@@ -194,9 +224,9 @@ export namespace UserActivity {
   export type AsObject = {
     id: number,
     type: USER_ACTIVITY_TYPE,
-    createdat?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    targetuser?: ShortUser.AsObject,
-    causeuser?: ShortUser.AsObject,
+    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    targetuser?: UserShort.AsObject,
+    causeuser?: UserShort.AsObject,
     key: string,
     oldvalue: string,
     newvalue: string,

@@ -23,7 +23,7 @@ export default defineComponent({
         ...mapActions(["updateAccessToken", "updateActiveChar", "updatePermissions"]),
         chooseCharacter() {
             const req = new ChooseCharacterRequest();
-            req.setUserid(this.char.getUserid());
+            req.setUserId(this.char.getUserId());
 
             getAuthClient()
                 .chooseCharacter(req, null)
@@ -48,7 +48,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <li :key="char.getUserid()"
+    <li :key="char.getUserId()"
         class="col-span-2 flex flex-col divide-y divide-white rounded-lg bg-gray-800 text-center shadow">
         <div class="flex flex-1 flex-col p-8">
             <h2 class="mt-6 text-2xl font-medium text-white">
@@ -57,7 +57,7 @@ export default defineComponent({
             </h2>
             <dl class="mt-1 flex flex-grow flex-col justify-between">
                 <dd>
-                    <span v-if="lastCharID == char.getUserid()"
+                    <span v-if="lastCharID == char.getUserId()"
                         class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
                         Last Used
                     </span>
@@ -66,7 +66,7 @@ export default defineComponent({
                 <dd class="mt-3">
                     <span
                         class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
-                            char.getJob() }} (Rank: {{ char.getJobgrade() }})</span>
+                            char.getJob() }} (Rank: {{ char.getJobGrade() }})</span>
                 </dd>
                 <dt class="text-sm text-white">Date of Birth</dt>
                 <dd class="text-sm text-gray-300">{{ char.getDateofbirth() }}</dd>

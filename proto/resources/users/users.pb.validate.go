@@ -35,6 +35,314 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on UserJob with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserJob) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserJob with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in UserJobMultiError, or nil if none found.
+func (m *UserJob) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserJob) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
+		err := UserJobValidationError{
+			field:  "Job",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetGrade() <= 0 {
+		err := UserJobValidationError{
+			field:  "Grade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+		err := UserJobValidationError{
+			field:  "JobLabel",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetGradeLabel()) > 50 {
+		err := UserJobValidationError{
+			field:  "GradeLabel",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return UserJobMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserJobMultiError is an error wrapping multiple validation errors returned
+// by UserJob.ValidateAll() if the designated constraints aren't met.
+type UserJobMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserJobMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserJobMultiError) AllErrors() []error { return m }
+
+// UserJobValidationError is the validation error returned by UserJob.Validate
+// if the designated constraints aren't met.
+type UserJobValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserJobValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserJobValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserJobValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserJobValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserJobValidationError) ErrorName() string { return "UserJobValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserJobValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserJob.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserJobValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserJobValidationError{}
+
+// Validate checks the field values on UserShort with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserShort) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserShort with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserShortMultiError, or nil
+// if none found.
+func (m *UserShort) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserShort) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetUserId() <= 0 {
+		err := UserShortValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetIdentifier()) != 46 {
+		err := UserShortValidationError{
+			field:  "Identifier",
+			reason: "value length must be 46 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := UserShortValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetJobGrade() <= 0 {
+		err := UserShortValidationError{
+			field:  "JobGrade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetFirstname()); l < 1 || l > 50 {
+		err := UserShortValidationError{
+			field:  "Firstname",
+			reason: "value length must be between 1 and 50 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetLastname()); l < 1 || l > 50 {
+		err := UserShortValidationError{
+			field:  "Lastname",
+			reason: "value length must be between 1 and 50 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return UserShortMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserShortMultiError is an error wrapping multiple validation errors returned
+// by UserShort.ValidateAll() if the designated constraints aren't met.
+type UserShortMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserShortMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserShortMultiError) AllErrors() []error { return m }
+
+// UserShortValidationError is the validation error returned by
+// UserShort.Validate if the designated constraints aren't met.
+type UserShortValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserShortValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserShortValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserShortValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserShortValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserShortValidationError) ErrorName() string { return "UserShortValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserShortValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserShort.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserShortValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserShortValidationError{}
+
 // Validate checks the field values on User with the rules defined in the proto
 // definition for this message. If any rules are violated, the first error
 // encountered is returned, or nil if there are no violations.
@@ -56,9 +364,9 @@ func (m *User) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetUserID() <= 0 {
+	if m.GetUserId() <= 0 {
 		err := UserValidationError{
-			field:  "UserID",
+			field:  "UserId",
 			reason: "value must be greater than 0",
 		}
 		if !all {
@@ -530,172 +838,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserPropsValidationError{}
-
-// Validate checks the field values on ShortUser with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *ShortUser) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on ShortUser with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in ShortUserMultiError, or nil
-// if none found.
-func (m *ShortUser) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *ShortUser) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if m.GetUserID() <= 0 {
-		err := ShortUserValidationError{
-			field:  "UserID",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetIdentifier()) != 46 {
-		err := ShortUserValidationError{
-			field:  "Identifier",
-			reason: "value length must be 46 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-
-	}
-
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
-		err := ShortUserValidationError{
-			field:  "Job",
-			reason: "value length must be at most 20 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.GetJobGrade() <= 0 {
-		err := ShortUserValidationError{
-			field:  "JobGrade",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if l := utf8.RuneCountInString(m.GetFirstname()); l < 1 || l > 50 {
-		err := ShortUserValidationError{
-			field:  "Firstname",
-			reason: "value length must be between 1 and 50 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if l := utf8.RuneCountInString(m.GetLastname()); l < 1 || l > 50 {
-		err := ShortUserValidationError{
-			field:  "Lastname",
-			reason: "value length must be between 1 and 50 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(errors) > 0 {
-		return ShortUserMultiError(errors)
-	}
-
-	return nil
-}
-
-// ShortUserMultiError is an error wrapping multiple validation errors returned
-// by ShortUser.ValidateAll() if the designated constraints aren't met.
-type ShortUserMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m ShortUserMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m ShortUserMultiError) AllErrors() []error { return m }
-
-// ShortUserValidationError is the validation error returned by
-// ShortUser.Validate if the designated constraints aren't met.
-type ShortUserValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e ShortUserValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e ShortUserValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e ShortUserValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e ShortUserValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e ShortUserValidationError) ErrorName() string { return "ShortUserValidationError" }
-
-// Error satisfies the builtin error interface
-func (e ShortUserValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sShortUser.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = ShortUserValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = ShortUserValidationError{}
 
 // Validate checks the field values on UserActivity with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

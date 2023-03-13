@@ -22,9 +22,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CitizenStoreServiceClient interface {
+	// @permission: fields=Licenses,UserProps
 	FindUsers(ctx context.Context, in *FindUsersRequest, opts ...grpc.CallOption) (*FindUsersResponse, error)
+	// @permission: name=FindUsers
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	// @permission: fields=CauseUser
 	GetUserActivity(ctx context.Context, in *GetUserActivityRequest, opts ...grpc.CallOption) (*GetUserActivityResponse, error)
+	// @permission: fields=Wanted
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 }
 
@@ -76,9 +80,13 @@ func (c *citizenStoreServiceClient) SetUserProps(ctx context.Context, in *SetUse
 // All implementations must embed UnimplementedCitizenStoreServiceServer
 // for forward compatibility
 type CitizenStoreServiceServer interface {
+	// @permission: fields=Licenses,UserProps
 	FindUsers(context.Context, *FindUsersRequest) (*FindUsersResponse, error)
+	// @permission: name=FindUsers
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	// @permission: fields=CauseUser
 	GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error)
+	// @permission: fields=Wanted
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	mustEmbedUnimplementedCitizenStoreServiceServer()
 }
