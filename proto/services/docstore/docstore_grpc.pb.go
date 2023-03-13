@@ -22,13 +22,27 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DocStoreServiceClient interface {
-	FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error)
-	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
-	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
-	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
+	// @permission
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
+	// @permission: name=ListTemplates
 	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
+	// @permission
+	FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error)
+	// @permission
+	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
+	// @permission: name=CreateDocument
+	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
+	// @permission
+	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
+	// @permission
+	GetDocumentComments(ctx context.Context, in *GetDocumentCommentsRequest, opts ...grpc.CallOption) (*GetDocumentCommentsResponse, error)
+	// @permission
+	PostDocumentComment(ctx context.Context, in *PostDocumentCommentRequest, opts ...grpc.CallOption) (*PostDocumentCommentResponse, error)
+	// @permission: name=PostDocumentComment
+	EditDocumentComment(ctx context.Context, in *EditDocumentCommentRequest, opts ...grpc.CallOption) (*EditDocumentCommentResponse, error)
+	// @permission
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
+	// @permission
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
 }
 
@@ -40,18 +54,27 @@ func NewDocStoreServiceClient(cc grpc.ClientConnInterface) DocStoreServiceClient
 	return &docStoreServiceClient{cc}
 }
 
-func (c *docStoreServiceClient) FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error) {
-	out := new(FindDocumentsResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/FindDocuments", in, out, opts...)
+func (c *docStoreServiceClient) ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error) {
+	out := new(ListTemplatesResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/ListTemplates", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error) {
-	out := new(GetDocumentResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetDocument", in, out, opts...)
+func (c *docStoreServiceClient) GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error) {
+	out := new(GetTemplateResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetTemplate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error) {
+	out := new(FindDocumentsResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/FindDocuments", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,18 +99,36 @@ func (c *docStoreServiceClient) UpdateDocument(ctx context.Context, in *UpdateDo
 	return out, nil
 }
 
-func (c *docStoreServiceClient) ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error) {
-	out := new(ListTemplatesResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/ListTemplates", in, out, opts...)
+func (c *docStoreServiceClient) GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error) {
+	out := new(GetDocumentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetDocument", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error) {
-	out := new(GetTemplateResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetTemplate", in, out, opts...)
+func (c *docStoreServiceClient) GetDocumentComments(ctx context.Context, in *GetDocumentCommentsRequest, opts ...grpc.CallOption) (*GetDocumentCommentsResponse, error) {
+	out := new(GetDocumentCommentsResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetDocumentComments", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) PostDocumentComment(ctx context.Context, in *PostDocumentCommentRequest, opts ...grpc.CallOption) (*PostDocumentCommentResponse, error) {
+	out := new(PostDocumentCommentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/PostDocumentComment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) EditDocumentComment(ctx context.Context, in *EditDocumentCommentRequest, opts ...grpc.CallOption) (*EditDocumentCommentResponse, error) {
+	out := new(EditDocumentCommentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/EditDocumentComment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,13 +157,27 @@ func (c *docStoreServiceClient) SetDocumentAccess(ctx context.Context, in *SetDo
 // All implementations must embed UnimplementedDocStoreServiceServer
 // for forward compatibility
 type DocStoreServiceServer interface {
-	FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error)
-	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
-	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
-	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
+	// @permission
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
+	// @permission: name=ListTemplates
 	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
+	// @permission
+	FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error)
+	// @permission
+	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
+	// @permission: name=CreateDocument
+	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
+	// @permission
+	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
+	// @permission
+	GetDocumentComments(context.Context, *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error)
+	// @permission
+	PostDocumentComment(context.Context, *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error)
+	// @permission: name=PostDocumentComment
+	EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error)
+	// @permission
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
+	// @permission
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
 	mustEmbedUnimplementedDocStoreServiceServer()
 }
@@ -131,11 +186,14 @@ type DocStoreServiceServer interface {
 type UnimplementedDocStoreServiceServer struct {
 }
 
+func (UnimplementedDocStoreServiceServer) ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTemplates not implemented")
+}
+func (UnimplementedDocStoreServiceServer) GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTemplate not implemented")
+}
 func (UnimplementedDocStoreServiceServer) FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindDocuments not implemented")
-}
-func (UnimplementedDocStoreServiceServer) GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDocument not implemented")
 }
 func (UnimplementedDocStoreServiceServer) CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDocument not implemented")
@@ -143,11 +201,17 @@ func (UnimplementedDocStoreServiceServer) CreateDocument(context.Context, *Creat
 func (UnimplementedDocStoreServiceServer) UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDocument not implemented")
 }
-func (UnimplementedDocStoreServiceServer) ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTemplates not implemented")
+func (UnimplementedDocStoreServiceServer) GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDocument not implemented")
 }
-func (UnimplementedDocStoreServiceServer) GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTemplate not implemented")
+func (UnimplementedDocStoreServiceServer) GetDocumentComments(context.Context, *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentComments not implemented")
+}
+func (UnimplementedDocStoreServiceServer) PostDocumentComment(context.Context, *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PostDocumentComment not implemented")
+}
+func (UnimplementedDocStoreServiceServer) EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditDocumentComment not implemented")
 }
 func (UnimplementedDocStoreServiceServer) GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentAccess not implemented")
@@ -168,6 +232,42 @@ func RegisterDocStoreServiceServer(s grpc.ServiceRegistrar, srv DocStoreServiceS
 	s.RegisterService(&DocStoreService_ServiceDesc, srv)
 }
 
+func _DocStoreService_ListTemplates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTemplatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).ListTemplates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/ListTemplates",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).ListTemplates(ctx, req.(*ListTemplatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_GetTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).GetTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/GetTemplate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).GetTemplate(ctx, req.(*GetTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DocStoreService_FindDocuments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FindDocumentsRequest)
 	if err := dec(in); err != nil {
@@ -182,24 +282,6 @@ func _DocStoreService_FindDocuments_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DocStoreServiceServer).FindDocuments(ctx, req.(*FindDocumentsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocStoreService_GetDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDocumentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocStoreServiceServer).GetDocument(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/GetDocument",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).GetDocument(ctx, req.(*GetDocumentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -240,38 +322,74 @@ func _DocStoreService_UpdateDocument_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_ListTemplates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListTemplatesRequest)
+func _DocStoreService_GetDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDocumentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).ListTemplates(ctx, in)
+		return srv.(DocStoreServiceServer).GetDocument(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/ListTemplates",
+		FullMethod: "/services.docstore.DocStoreService/GetDocument",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).ListTemplates(ctx, req.(*ListTemplatesRequest))
+		return srv.(DocStoreServiceServer).GetDocument(ctx, req.(*GetDocumentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_GetTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTemplateRequest)
+func _DocStoreService_GetDocumentComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDocumentCommentsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).GetTemplate(ctx, in)
+		return srv.(DocStoreServiceServer).GetDocumentComments(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/GetTemplate",
+		FullMethod: "/services.docstore.DocStoreService/GetDocumentComments",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).GetTemplate(ctx, req.(*GetTemplateRequest))
+		return srv.(DocStoreServiceServer).GetDocumentComments(ctx, req.(*GetDocumentCommentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_PostDocumentComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PostDocumentCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).PostDocumentComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/PostDocumentComment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).PostDocumentComment(ctx, req.(*PostDocumentCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_EditDocumentComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditDocumentCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).EditDocumentComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/EditDocumentComment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).EditDocumentComment(ctx, req.(*EditDocumentCommentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -320,12 +438,16 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*DocStoreServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "FindDocuments",
-			Handler:    _DocStoreService_FindDocuments_Handler,
+			MethodName: "ListTemplates",
+			Handler:    _DocStoreService_ListTemplates_Handler,
 		},
 		{
-			MethodName: "GetDocument",
-			Handler:    _DocStoreService_GetDocument_Handler,
+			MethodName: "GetTemplate",
+			Handler:    _DocStoreService_GetTemplate_Handler,
+		},
+		{
+			MethodName: "FindDocuments",
+			Handler:    _DocStoreService_FindDocuments_Handler,
 		},
 		{
 			MethodName: "CreateDocument",
@@ -336,12 +458,20 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocStoreService_UpdateDocument_Handler,
 		},
 		{
-			MethodName: "ListTemplates",
-			Handler:    _DocStoreService_ListTemplates_Handler,
+			MethodName: "GetDocument",
+			Handler:    _DocStoreService_GetDocument_Handler,
 		},
 		{
-			MethodName: "GetTemplate",
-			Handler:    _DocStoreService_GetTemplate_Handler,
+			MethodName: "GetDocumentComments",
+			Handler:    _DocStoreService_GetDocumentComments_Handler,
+		},
+		{
+			MethodName: "PostDocumentComment",
+			Handler:    _DocStoreService_PostDocumentComment_Handler,
+		},
+		{
+			MethodName: "EditDocumentComment",
+			Handler:    _DocStoreService_EditDocumentComment_Handler,
 		},
 		{
 			MethodName: "GetDocumentAccess",

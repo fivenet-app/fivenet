@@ -8,9 +8,6 @@ export class CompleteJobNamesRequest extends jspb.Message {
   getSearch(): string;
   setSearch(value: string): CompleteJobNamesRequest;
 
-  getWithgrades(): boolean;
-  setWithgrades(value: boolean): CompleteJobNamesRequest;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CompleteJobNamesRequest.AsObject;
   static toObject(includeInstance: boolean, msg: CompleteJobNamesRequest): CompleteJobNamesRequest.AsObject;
@@ -22,7 +19,6 @@ export class CompleteJobNamesRequest extends jspb.Message {
 export namespace CompleteJobNamesRequest {
   export type AsObject = {
     search: string,
-    withgrades: boolean,
   }
 }
 

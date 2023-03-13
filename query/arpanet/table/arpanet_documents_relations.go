@@ -19,11 +19,10 @@ type arpanetDocumentsRelationsTable struct {
 	//Columns
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
-	UpdatedAt    mysql.ColumnTimestamp
 	DocumentID   mysql.ColumnInteger
-	TargetUserID mysql.ColumnInteger
+	SourceUserID mysql.ColumnInteger
 	Relation     mysql.ColumnInteger
-	CauseUserID  mysql.ColumnInteger
+	TargetUserID mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,13 +65,12 @@ func newArpanetDocumentsRelationsTableImpl(schemaName, tableName, alias string) 
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
 		DocumentIDColumn   = mysql.IntegerColumn("document_id")
-		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
+		SourceUserIDColumn = mysql.IntegerColumn("source_user_id")
 		RelationColumn     = mysql.IntegerColumn("relation")
-		CauseUserIDColumn  = mysql.IntegerColumn("cause_user_id")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, TargetUserIDColumn, RelationColumn, CauseUserIDColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, TargetUserIDColumn, RelationColumn, CauseUserIDColumn}
+		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, DocumentIDColumn, SourceUserIDColumn, RelationColumn, TargetUserIDColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, DocumentIDColumn, SourceUserIDColumn, RelationColumn, TargetUserIDColumn}
 	)
 
 	return arpanetDocumentsRelationsTable{
@@ -81,11 +79,10 @@ func newArpanetDocumentsRelationsTableImpl(schemaName, tableName, alias string) 
 		//Columns
 		ID:           IDColumn,
 		CreatedAt:    CreatedAtColumn,
-		UpdatedAt:    UpdatedAtColumn,
 		DocumentID:   DocumentIDColumn,
-		TargetUserID: TargetUserIDColumn,
+		SourceUserID: SourceUserIDColumn,
 		Relation:     RelationColumn,
-		CauseUserID:  CauseUserIDColumn,
+		TargetUserID: TargetUserIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

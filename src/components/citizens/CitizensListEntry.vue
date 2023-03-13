@@ -17,7 +17,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <tr :key="user.getUserid()">
+    <tr :key="user.getUserId()">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
             {{ user.getFirstname() }}, {{ user.getLastname() }}
             <span v-if="user.getProps()?.getWanted()"
@@ -36,8 +36,8 @@ export default defineComponent({
             {{ user.getHeight() }}cm
         </td>
         <td class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-            <div v-can="'users-findusers'">
-                <router-link :to="{ name: 'Citizens Info', params: { id: user.getUserid().toString() } }"
+            <div v-can="'citizenstoreservice-findusers'">
+                <router-link :to="{ name: 'Citizens Info', params: { id: user.getUserId().toString() } }"
                     class="text-indigo-400 hover:text-indigo-300">VIEW</router-link>
             </div>
         </td>

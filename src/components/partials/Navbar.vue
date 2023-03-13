@@ -33,11 +33,11 @@ export default defineComponent({
         return {
             navigation: [
                 { name: 'Overview', href: '/overview', permission: 'overview-view', },
-                { name: 'Citizens', href: '/citizens', permission: 'users-view' },
-                { name: 'Documents', href: '/documents', permission: 'documents-view' },
+                { name: 'Citizens', href: '/citizens', permission: 'citizenstoreservice-findusers' },
+                { name: 'Documents', href: '/documents', permission: 'docstoreservice-finddocuments' },
                 { name: 'Dispatches', href: '/dispatches', permission: 'dispatches-view' },
                 { name: 'Job', href: '/job', permission: 'jobs-view' },
-                { name: 'Livemap', href: '/livemap', permission: 'livemap-stream' },
+                { name: 'Livemap', href: '/livemap', permission: 'livemapperservice-stream' },
             ],
             userNavigation: [
                 { name: 'Change Characters', href: '/login', },
@@ -57,7 +57,7 @@ export default defineComponent({
             <div class="flex h-16 items-center justify-between">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <img class="h-8 w-8" src="/images/logo.png" alt="aRPaNet Logo" />
+                        <img class="h-8 w-8" src="/images/logo.png" alt="CIP Logo" />
                     </div>
                     <div v-if="accessToken" class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">

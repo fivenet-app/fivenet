@@ -50,7 +50,7 @@ export default defineComponent({
         </div>
         <p class="text-sm text-white">
             <span class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
-                user?.getJob() }} (Rank: {{ user?.getJobgrade() }})
+                user?.getJob() }} (Rank: {{ user?.getJobGrade() }})
             </span>
         </p>
     </div>
@@ -83,10 +83,10 @@ export default defineComponent({
             <CitizenInfoProfile :user="user" />
         </div>
         <div v-if="currentTab === 'Activity'">
-            <CitizenActivityFeed :userID="user.getUserid()" />
+            <CitizenActivityFeed :userID="user.getUserId()" />
         </div>
         <div v-if="currentTab === 'Documents'">
-            <CitizenInfoDocuments :userID="user.getUserid()" />
+            <CitizenInfoDocuments :userID="user.getUserId()" />
         </div>
     </div>
 </template>

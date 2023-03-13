@@ -32,12 +32,8 @@ export default defineComponent({
     },
     methods: {
         findUsers: function (offset: number) {
-            if (offset < 0) {
-                return;
-            }
-            if (this.loading) {
-                return;
-            }
+            if (offset < 0) return;
+            if (this.loading) return;
             this.loading = true;
 
             const req = new FindUsersRequest();
@@ -49,16 +45,16 @@ export default defineComponent({
             getCitizenStoreClient().
                 findUsers(req, null).
                 then((resp) => {
-                    this.totalCount = resp.getTotalcount();
+                    this.totalCount = resp.getTotalCount();
                     this.offset = resp.getOffset();
                     this.listEnd = resp.getEnd();
                     this.users = resp.getUsersList();
-
-                    this.loading = false;
                 }).
                 catch((err: RpcError) => {
-                    this.loading = false;
                     handleGRPCError(err, this.$route);
+                }).
+                finally(() => {
+                    this.loading = false;
                 });
         },
         toggleOrderBy: function (column: string): void {
@@ -148,7 +144,7 @@ export default defineComponent({
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-800">
-                                <CitizenListEntry v-for="user in users" :key="user.getUserid()" :user="user" />
+                                <CitizenListEntry v-for="user in users" :key="user.getUserId()" :user="user" />
                             </tbody>
                             <thead>
                                 <tr>

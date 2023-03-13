@@ -39,6 +39,92 @@ export class DocStoreServiceClient {
     this.options_ = options;
   }
 
+  methodDescriptorListTemplates = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/ListTemplates',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.ListTemplatesRequest,
+    services_docstore_docstore_pb.ListTemplatesResponse,
+    (request: services_docstore_docstore_pb.ListTemplatesRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.ListTemplatesResponse.deserializeBinary
+  );
+
+  listTemplates(
+    request: services_docstore_docstore_pb.ListTemplatesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.ListTemplatesResponse>;
+
+  listTemplates(
+    request: services_docstore_docstore_pb.ListTemplatesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.ListTemplatesResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.ListTemplatesResponse>;
+
+  listTemplates(
+    request: services_docstore_docstore_pb.ListTemplatesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.ListTemplatesResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/ListTemplates',
+        request,
+        metadata || {},
+        this.methodDescriptorListTemplates,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/ListTemplates',
+    request,
+    metadata || {},
+    this.methodDescriptorListTemplates);
+  }
+
+  methodDescriptorGetTemplate = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/GetTemplate',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.GetTemplateRequest,
+    services_docstore_docstore_pb.GetTemplateResponse,
+    (request: services_docstore_docstore_pb.GetTemplateRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.GetTemplateResponse.deserializeBinary
+  );
+
+  getTemplate(
+    request: services_docstore_docstore_pb.GetTemplateRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetTemplateResponse>;
+
+  getTemplate(
+    request: services_docstore_docstore_pb.GetTemplateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.GetTemplateResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetTemplateResponse>;
+
+  getTemplate(
+    request: services_docstore_docstore_pb.GetTemplateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.GetTemplateResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/GetTemplate',
+        request,
+        metadata || {},
+        this.methodDescriptorGetTemplate,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/GetTemplate',
+    request,
+    metadata || {},
+    this.methodDescriptorGetTemplate);
+  }
+
   methodDescriptorFindDocuments = new grpcWeb.MethodDescriptor(
     '/services.docstore.DocStoreService/FindDocuments',
     grpcWeb.MethodType.UNARY,
@@ -80,49 +166,6 @@ export class DocStoreServiceClient {
     request,
     metadata || {},
     this.methodDescriptorFindDocuments);
-  }
-
-  methodDescriptorGetDocument = new grpcWeb.MethodDescriptor(
-    '/services.docstore.DocStoreService/GetDocument',
-    grpcWeb.MethodType.UNARY,
-    services_docstore_docstore_pb.GetDocumentRequest,
-    services_docstore_docstore_pb.GetDocumentResponse,
-    (request: services_docstore_docstore_pb.GetDocumentRequest) => {
-      return request.serializeBinary();
-    },
-    services_docstore_docstore_pb.GetDocumentResponse.deserializeBinary
-  );
-
-  getDocument(
-    request: services_docstore_docstore_pb.GetDocumentRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetDocumentResponse>;
-
-  getDocument(
-    request: services_docstore_docstore_pb.GetDocumentRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.GetDocumentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetDocumentResponse>;
-
-  getDocument(
-    request: services_docstore_docstore_pb.GetDocumentRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.GetDocumentResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/services.docstore.DocStoreService/GetDocument',
-        request,
-        metadata || {},
-        this.methodDescriptorGetDocument,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/services.docstore.DocStoreService/GetDocument',
-    request,
-    metadata || {},
-    this.methodDescriptorGetDocument);
   }
 
   methodDescriptorCreateDocument = new grpcWeb.MethodDescriptor(
@@ -211,90 +254,176 @@ export class DocStoreServiceClient {
     this.methodDescriptorUpdateDocument);
   }
 
-  methodDescriptorListTemplates = new grpcWeb.MethodDescriptor(
-    '/services.docstore.DocStoreService/ListTemplates',
+  methodDescriptorGetDocument = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/GetDocument',
     grpcWeb.MethodType.UNARY,
-    services_docstore_docstore_pb.ListTemplatesRequest,
-    services_docstore_docstore_pb.ListTemplatesResponse,
-    (request: services_docstore_docstore_pb.ListTemplatesRequest) => {
+    services_docstore_docstore_pb.GetDocumentRequest,
+    services_docstore_docstore_pb.GetDocumentResponse,
+    (request: services_docstore_docstore_pb.GetDocumentRequest) => {
       return request.serializeBinary();
     },
-    services_docstore_docstore_pb.ListTemplatesResponse.deserializeBinary
+    services_docstore_docstore_pb.GetDocumentResponse.deserializeBinary
   );
 
-  listTemplates(
-    request: services_docstore_docstore_pb.ListTemplatesRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.ListTemplatesResponse>;
+  getDocument(
+    request: services_docstore_docstore_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetDocumentResponse>;
 
-  listTemplates(
-    request: services_docstore_docstore_pb.ListTemplatesRequest,
+  getDocument(
+    request: services_docstore_docstore_pb.GetDocumentRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.ListTemplatesResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.ListTemplatesResponse>;
+               response: services_docstore_docstore_pb.GetDocumentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetDocumentResponse>;
 
-  listTemplates(
-    request: services_docstore_docstore_pb.ListTemplatesRequest,
+  getDocument(
+    request: services_docstore_docstore_pb.GetDocumentRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.ListTemplatesResponse) => void) {
+               response: services_docstore_docstore_pb.GetDocumentResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.docstore.DocStoreService/ListTemplates',
+          '/services.docstore.DocStoreService/GetDocument',
         request,
         metadata || {},
-        this.methodDescriptorListTemplates,
+        this.methodDescriptorGetDocument,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.docstore.DocStoreService/ListTemplates',
+      '/services.docstore.DocStoreService/GetDocument',
     request,
     metadata || {},
-    this.methodDescriptorListTemplates);
+    this.methodDescriptorGetDocument);
   }
 
-  methodDescriptorGetTemplate = new grpcWeb.MethodDescriptor(
-    '/services.docstore.DocStoreService/GetTemplate',
+  methodDescriptorGetDocumentComments = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/GetDocumentComments',
     grpcWeb.MethodType.UNARY,
-    services_docstore_docstore_pb.GetTemplateRequest,
-    services_docstore_docstore_pb.GetTemplateResponse,
-    (request: services_docstore_docstore_pb.GetTemplateRequest) => {
+    services_docstore_docstore_pb.GetDocumentCommentsRequest,
+    services_docstore_docstore_pb.GetDocumentCommentsResponse,
+    (request: services_docstore_docstore_pb.GetDocumentCommentsRequest) => {
       return request.serializeBinary();
     },
-    services_docstore_docstore_pb.GetTemplateResponse.deserializeBinary
+    services_docstore_docstore_pb.GetDocumentCommentsResponse.deserializeBinary
   );
 
-  getTemplate(
-    request: services_docstore_docstore_pb.GetTemplateRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetTemplateResponse>;
+  getDocumentComments(
+    request: services_docstore_docstore_pb.GetDocumentCommentsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetDocumentCommentsResponse>;
 
-  getTemplate(
-    request: services_docstore_docstore_pb.GetTemplateRequest,
+  getDocumentComments(
+    request: services_docstore_docstore_pb.GetDocumentCommentsRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.GetTemplateResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetTemplateResponse>;
+               response: services_docstore_docstore_pb.GetDocumentCommentsResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetDocumentCommentsResponse>;
 
-  getTemplate(
-    request: services_docstore_docstore_pb.GetTemplateRequest,
+  getDocumentComments(
+    request: services_docstore_docstore_pb.GetDocumentCommentsRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.GetTemplateResponse) => void) {
+               response: services_docstore_docstore_pb.GetDocumentCommentsResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.docstore.DocStoreService/GetTemplate',
+          '/services.docstore.DocStoreService/GetDocumentComments',
         request,
         metadata || {},
-        this.methodDescriptorGetTemplate,
+        this.methodDescriptorGetDocumentComments,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.docstore.DocStoreService/GetTemplate',
+      '/services.docstore.DocStoreService/GetDocumentComments',
     request,
     metadata || {},
-    this.methodDescriptorGetTemplate);
+    this.methodDescriptorGetDocumentComments);
+  }
+
+  methodDescriptorPostDocumentComment = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/PostDocumentComment',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.PostDocumentCommentRequest,
+    services_docstore_docstore_pb.PostDocumentCommentResponse,
+    (request: services_docstore_docstore_pb.PostDocumentCommentRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.PostDocumentCommentResponse.deserializeBinary
+  );
+
+  postDocumentComment(
+    request: services_docstore_docstore_pb.PostDocumentCommentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.PostDocumentCommentResponse>;
+
+  postDocumentComment(
+    request: services_docstore_docstore_pb.PostDocumentCommentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.PostDocumentCommentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.PostDocumentCommentResponse>;
+
+  postDocumentComment(
+    request: services_docstore_docstore_pb.PostDocumentCommentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.PostDocumentCommentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/PostDocumentComment',
+        request,
+        metadata || {},
+        this.methodDescriptorPostDocumentComment,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/PostDocumentComment',
+    request,
+    metadata || {},
+    this.methodDescriptorPostDocumentComment);
+  }
+
+  methodDescriptorEditDocumentComment = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/EditDocumentComment',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.EditDocumentCommentRequest,
+    services_docstore_docstore_pb.EditDocumentCommentResponse,
+    (request: services_docstore_docstore_pb.EditDocumentCommentRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.EditDocumentCommentResponse.deserializeBinary
+  );
+
+  editDocumentComment(
+    request: services_docstore_docstore_pb.EditDocumentCommentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.EditDocumentCommentResponse>;
+
+  editDocumentComment(
+    request: services_docstore_docstore_pb.EditDocumentCommentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.EditDocumentCommentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.EditDocumentCommentResponse>;
+
+  editDocumentComment(
+    request: services_docstore_docstore_pb.EditDocumentCommentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.EditDocumentCommentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/EditDocumentComment',
+        request,
+        metadata || {},
+        this.methodDescriptorEditDocumentComment,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/EditDocumentComment',
+    request,
+    metadata || {},
+    this.methodDescriptorEditDocumentComment);
   }
 
   methodDescriptorGetDocumentAccess = new grpcWeb.MethodDescriptor(

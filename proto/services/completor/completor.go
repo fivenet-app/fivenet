@@ -16,12 +16,6 @@ import (
 	"github.com/galexrt/arpanet/query/arpanet/table"
 )
 
-func init() {
-	perms.AddPermsToList([]*perms.Perm{
-		{Key: "dispatches", Name: "View"},
-	})
-}
-
 var (
 	j   = table.Jobs.AS("job")
 	jg  = table.JobGrades.AS("job_grade")
@@ -168,7 +162,7 @@ func (s *Server) CompleteJobGrades(ctx context.Context, req *CompleteJobGradesRe
 func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error) {
 	userID := auth.GetUserIDFromContext(ctx)
 
-	jobs, err := perms.P.GetSuffixOfPermissionsByPrefixOfUser(userID, "documents-completecategories")
+	jobs, err := perms.P.GetSuffixOfPermissionsByPrefixOfUser(userID, CompletorServicePermKey+"-CompleteDocumentCategory")
 	if err != nil {
 		return nil, err
 	}

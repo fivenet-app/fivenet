@@ -18,15 +18,15 @@ export namespace StreamRequest {
 }
 
 export class ServerStreamResponse extends jspb.Message {
-  getUsersList(): Array<resources_livemap_livemap_pb.Marker>;
-  setUsersList(value: Array<resources_livemap_livemap_pb.Marker>): ServerStreamResponse;
+  getUsersList(): Array<resources_livemap_livemap_pb.UserMarker>;
+  setUsersList(value: Array<resources_livemap_livemap_pb.UserMarker>): ServerStreamResponse;
   clearUsersList(): ServerStreamResponse;
-  addUsers(value?: resources_livemap_livemap_pb.Marker, index?: number): resources_livemap_livemap_pb.Marker;
+  addUsers(value?: resources_livemap_livemap_pb.UserMarker, index?: number): resources_livemap_livemap_pb.UserMarker;
 
-  getDispatchesList(): Array<resources_livemap_livemap_pb.Marker>;
-  setDispatchesList(value: Array<resources_livemap_livemap_pb.Marker>): ServerStreamResponse;
+  getDispatchesList(): Array<resources_livemap_livemap_pb.UserMarker>;
+  setDispatchesList(value: Array<resources_livemap_livemap_pb.UserMarker>): ServerStreamResponse;
   clearDispatchesList(): ServerStreamResponse;
-  addDispatches(value?: resources_livemap_livemap_pb.Marker, index?: number): resources_livemap_livemap_pb.Marker;
+  addDispatches(value?: resources_livemap_livemap_pb.UserMarker, index?: number): resources_livemap_livemap_pb.UserMarker;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ServerStreamResponse.AsObject;
@@ -38,8 +38,8 @@ export class ServerStreamResponse extends jspb.Message {
 
 export namespace ServerStreamResponse {
   export type AsObject = {
-    usersList: Array<resources_livemap_livemap_pb.Marker.AsObject>,
-    dispatchesList: Array<resources_livemap_livemap_pb.Marker.AsObject>,
+    usersList: Array<resources_livemap_livemap_pb.UserMarker.AsObject>,
+    dispatchesList: Array<resources_livemap_livemap_pb.UserMarker.AsObject>,
   }
 }
 

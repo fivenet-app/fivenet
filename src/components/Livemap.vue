@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 import { getLivemapperClient, handleGRPCError } from '../grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, ServerStreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
-import { Marker } from '@arpanet/gen/resources/livemap/livemap_pb';
+import { UserMarker } from '@arpanet/gen/resources/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import { Hash } from '../class/Hash';

@@ -17,15 +17,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func init() {
-	perms.AddPermsToList([]*perms.Perm{
-		{Key: "users", Name: "View"},
-		{Key: "users", Name: "FindUsers", Fields: []string{"Licenses", "UserProps"}},
-		{Key: "users", Name: "SetUserProps", Fields: []string{"Wanted"}},
-		{Key: "users", Name: "GetUserActivity", Fields: []string{"CauseUser", ""}},
-	})
-}
-
 var (
 	u   = table.Users.AS("user")
 	aup = table.ArpanetUserProps
@@ -43,9 +34,6 @@ func NewServer() *Server {
 
 func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUsersResponse, error) {
 	userID, _, _ := auth.GetUserInfoFromContext(ctx)
-	if !perms.P.CanID(userID, "users", "FindUsers") {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users")
-	}
 
 	selectors := jet.ProjectionList{
 		u.ID,
@@ -61,7 +49,8 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		u.Visum,
 		u.Playtime,
 	}
-	if perms.P.CanID(userID, "users", "FindUsers", "UserProps") {
+	// Field Permission Check
+	if perms.P.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
 
@@ -148,9 +137,6 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 
 func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
 	userID, _, _ := auth.GetUserInfoFromContext(ctx)
-	if !perms.P.CanID(userID, "users", "FindUsers") {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to find users!")
-	}
 
 	selectors := jet.ProjectionList{
 		u.ID,
@@ -166,10 +152,12 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		u.Visum,
 		u.Playtime,
 	}
-	if perms.P.CanID(userID, "users", "FindUsers", "UserProps") {
+
+	// Field Permission Check
+	if perms.P.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
-	if perms.P.CanID(userID, "users", "FindUsers", "Licenses") {
+	if perms.P.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
 		selectors = append(selectors, ul.Type)
 	}
 
@@ -183,7 +171,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)).
 				LEFT_JOIN(ul, ul.Owner.EQ(u.Identifier)),
 		).
-		WHERE(u.ID.EQ(jet.Int32(req.UserID))).
+		WHERE(u.ID.EQ(jet.Int32(req.UserId))).
 		LIMIT(15)
 
 	if err := stmt.QueryContext(ctx, query.DB, resp.User); err != nil {
@@ -195,19 +183,15 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityRequest) (*GetUserActivityResponse, error) {
 	userID, _, _ := auth.GetUserInfoFromContext(ctx)
-	if !perms.P.CanID(userID, "users", "GetUserActivity") {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to get an user's activity!")
-	}
 
 	resp := &GetUserActivityResponse{}
-
 	// An user can never see their own activity on their own "profile"
-	if userID == req.UserID {
+	if userID == req.UserId {
 		return resp, nil
 	}
 
 	uTarget := u.AS("target_user")
-	uCause := u.AS("cause_user")
+	uSource := u.AS("source_user")
 	stmt := aua.SELECT(
 		aua.AllColumns,
 		uTarget.ID,
@@ -216,23 +200,23 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 		uTarget.JobGrade,
 		uTarget.Firstname,
 		uTarget.Lastname,
-		uCause.ID,
-		uCause.Identifier,
-		uCause.Job,
-		uCause.JobGrade,
-		uCause.Firstname,
-		uCause.Lastname,
+		uSource.ID,
+		uSource.Identifier,
+		uSource.Job,
+		uSource.JobGrade,
+		uSource.Firstname,
+		uSource.Lastname,
 	).
 		FROM(
-			aua.LEFT_JOIN(
-				uTarget, uTarget.ID.EQ(aua.TargetUserID),
+			aua.LEFT_JOIN(uTarget,
+				uTarget.ID.EQ(aua.TargetUserID),
 			).
-				LEFT_JOIN(
-					uCause, uCause.ID.EQ(aua.CauseUserID),
+				LEFT_JOIN(uSource,
+					uSource.ID.EQ(aua.SourceUserID),
 				),
 		).
 		WHERE(
-			aua.TargetUserID.EQ(jet.Int32(req.UserID)),
+			aua.TargetUserID.EQ(jet.Int32(req.UserId)),
 		).
 		LIMIT(12)
 
@@ -246,11 +230,8 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*SetUserPropsResponse, error) {
 	userID := auth.GetUserIDFromContext(ctx)
 
-	// Permission check
-	if !perms.P.CanID(userID, "users.SetUserProps") {
-		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user properties!")
-	}
-	if !perms.P.CanID(userID, "users", "SetUserProps", "Wanted") {
+	// Field Permission Check
+	if !perms.P.CanID(userID, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user wanted status!")
 	}
 
@@ -264,15 +245,14 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	// Create user activity
-	activityType := users.USER_ACTIVITY_TYPE_CHANGED.String()
 	key := "UserProps.Wanted"
 	newValue := strconv.FormatBool(req.Props.Wanted)
 	oldValue := strconv.FormatBool(!req.Props.Wanted)
 	s.addUserAcitvity(ctx, &model.ArpanetUserActivity{
-		TargetUserID: req.UserID,
-		CauseUserID:  userID,
-		Type:         &activityType,
-		Key:          &key,
+		SourceUserID: userID,
+		TargetUserID: req.UserId,
+		Type:         int16(users.USER_ACTIVITY_TYPE_CHANGED),
+		Key:          key,
 		OldValue:     &oldValue,
 		NewValue:     &newValue,
 	})
@@ -282,8 +262,8 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 func (s *Server) addUserAcitvity(ctx context.Context, activity *model.ArpanetUserActivity) error {
 	stmt := aua.INSERT(
+		aua.SourceUserID,
 		aua.TargetUserID,
-		aua.CauseUserID,
 		aua.Type,
 		aua.Key,
 		aua.OldValue,

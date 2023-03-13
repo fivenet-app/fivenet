@@ -7,102 +7,124 @@ import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-enum DOCUMENT_CONTENT_TYPE {
-    HTML = 0;
-}
-
-message Document {
-    uint64 id = 1 [(validate.rules).uint64.gte = 0]; // @gotags: sql:"primary_key" alias:"id"
-    resources.timestamp.Timestamp createdAt = 2; // @gotags: alias:"created_at"
-    resources.timestamp.Timestamp updatedAt = 3; // @gotags: alias:"updated_at"
-    string title = 4 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-    string content = 5 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
-    DOCUMENT_CONTENT_TYPE contentType = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
-    bool closed = 7; // @gotags: alias:"closed"
-    string state = 8 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
-    resources.users.ShortUser creator = 9; // @gotags: alias:"creator"
-    bool public = 10; // @gotags: alias:"public"
-    DocumentCategory category = 11;
-    uint64 targetDocumentID = 12 [(validate.rules).uint64.gte = 0]; // @gotags: alias:"response_id"
-    int64 responseCount = 13; // @gotags: alias:"response_count"
+message DocumentCategory {
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  string name = 2 [(validate.rules).string = {min_len: 3, max_len: 128}]; // @gotags: alias:"name"
+  optional string description = 3 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
+  string job = 4 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
 }
 
 message DocumentTemplate {
-    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-    string job = 2 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
-    int32 jobGrade = 3 [(validate.rules).int32.gte = 0]; // @gotags: alias:"job_grade"
-    string title = 4 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-    string description = 5 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
-    string contentTitle = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"content_title"
-    string content = 7 [(validate.rules).string.min_len = 12]; // @gotags: alias:"content"
-    string additionalData = 8; // @gotags: alias:"additional_data"
-    DocumentCategory category = 9;
-    int32 creatorID = 10; // @gotags: alias:"creator_id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  string job = 4 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  int32 job_grade = 5 [(validate.rules).int32.gte = 0]; // @gotags: alias:"job_grade"
+  DocumentCategory category = 6;
+  string title = 7 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  string description = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
+  string content_title = 9 [(validate.rules).string.min_len = 3]; // @gotags: alias:"content_title"
+  string content = 10 [(validate.rules).string.min_len = 12]; // @gotags: alias:"content"
+  string additional_data = 11; // @gotags: alias:"additional_data"
+  resources.users.UserShort creator = 12;
 }
 
 message DocumentTemplateShort {
-    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-    string job = 2; // @gotags: alias:"job"
-    int32 jobGrade = 3; // @gotags: alias:"job_grade"
-    string title = 4; // @gotags: alias:"title"
-    string description = 5; // @gotags: alias:"description"
-    DocumentCategory category = 11;
-    int32 creatorID = 7; // @gotags: alias:"creator_id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  string job = 4 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  DocumentCategory category = 5;
+  string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  string description = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
+  resources.users.UserShort creator = 8;
 }
 
-enum DOCUMENT_ACCESS {
-    BLOCKED = 0;
-    VIEW = 1;
-    EDIT = 2;
-    LEADER = 3;
-    ADMIN = 4;
+message DocumentComment {
+  uint64 id = 1; // @gotags: alias:"id"
+  uint64 document_id = 2 [(validate.rules).uint64.gte = 0]; // @gotags: alias:"document_id"
+  string comment = 3; // @gotags: alias:"comment"
+  resources.users.UserShort creator = 4;
 }
 
-message DocumentAccess {
-    uint64 documentID = 1; // @gotags: sql:"primary_key" alias:"id"
-    repeated DocumentJobAccess jobAccess = 2;
-    repeated DocumentUserAccess userAccess = 3;
+enum DOC_CONTENT_TYPE {
+  HTML = 0;
+  MARKDOWN = 1;
+}
+
+message Document {
+  uint64 id = 1 [(validate.rules).uint64.gte = 0]; // @gotags: sql:"primary_key" alias:"id"
+  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  DocumentCategory category = 4;
+  string title = 5 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  DOC_CONTENT_TYPE content_type = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  string content = 7 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
+  string data = 8; // @gotags: alias:"data"
+  resources.users.UserShort creator = 9;
+  string state = 10 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  bool closed = 11; // @gotags: alias:"closed"
+  bool public = 12; // @gotags: alias:"public"
+  int64 commentCount = 14; // @gotags: alias:"comment_count"
+}
+
+enum DOC_ACCESS {
+  BLOCKED = 0;
+  VIEW = 1;
+  COMMENT = 2;
+  ACCESS = 3;
+  EDIT = 4;
+  LEADER = 5;
+  ADMIN = 6;
 }
 
 message DocumentJobAccess {
-    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-    resources.timestamp.Timestamp createdAt = 2; // @gotags: alias:"created_at"
-    resources.timestamp.Timestamp updatedAt = 3; // @gotags: alias:"updated_at"
-    uint64 documentID = 4; // @gotags: alias:"document_id"
-    string job = 5 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
-    int32 minimumGrade = 6 [(validate.rules).int32.gte = 0]; // @gotags: alias:"minimum_grade"
-    DOCUMENT_ACCESS access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  uint64 document_id = 4; // @gotags: alias:"document_id"
+  string job = 5 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  int32 minimumGrade = 6 [(validate.rules).int32.gte = 0]; // @gotags: alias:"minimum_grade"
+  DOC_ACCESS access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
 }
 
 message DocumentUserAccess {
-    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-    resources.timestamp.Timestamp createdAt = 2; // @gotags: alias:"created_at"
-    resources.timestamp.Timestamp updatedAt = 3; // @gotags: alias:"updated_at"
-    uint64 documentID = 4; // @gotags: alias:"document_id"
-    int32 userID = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
-    DOCUMENT_ACCESS access = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  uint64 document_id = 4; // @gotags: alias:"document_id"
+  int32 user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
+  DOC_ACCESS access = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
 }
 
-message DocumentCategory {
-    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-    string name = 2 [(validate.rules).string = {min_len: 3, max_len: 128}]; // @gotags: alias:"name"
-    string description = 3 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
-    string job = 4 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+enum DOC_REFERENCE_TYPE {
+  LINKED = 0;
+  SOLVES = 1;
+  CLOSES = 2;
+  DEPRECATES = 3;
 }
 
-enum DOCUMENT_RELATION {
-    CREATED = 0;
-    MENTIONED = 1;
-    TARGETS = 2;
-    CAUSED = 3;
+message DocumentReference {
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  uint64 document_id = 4; // @gotags: alias:"document_id"
+  int32 source_document_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"source_document_id"
+  DOC_REFERENCE_TYPE reference = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"reference"
+  int32 target_document_id = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"target_document_id"
+}
+
+enum DOC_RELATION_TYPE {
+  CREATED = 0;
+  MENTIONED = 1;
+  TARGETS = 2;
+  CAUSED = 3;
 }
 
 message DocumentRelation {
-    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-    resources.timestamp.Timestamp createdAt = 2; // @gotags: alias:"created_at"
-    resources.timestamp.Timestamp updatedAt = 3; // @gotags: alias:"updated_at"
-    uint64 documentID = 4; // @gotags: alias:"document_id"
-    int32 targetUserID = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"target_user_id"
-    DOCUMENT_RELATION relation = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"relation"
-    int32 causeUserID = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"cause_user_id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  uint64 document_id = 4; // @gotags: alias:"document_id"
+  int32 target_user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"target_user_id"
+  DOC_RELATION_TYPE relation = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"relation"
+  int32 cause_user_id = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"cause_user_id"
 }

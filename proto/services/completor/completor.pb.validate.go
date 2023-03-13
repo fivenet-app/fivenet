@@ -68,8 +68,6 @@ func (m *CompleteJobNamesRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for WithGrades
-
 	if len(errors) > 0 {
 		return CompleteJobNamesRequestMultiError(errors)
 	}

@@ -6,54 +6,61 @@ option go_package = "github.com/galexrt/arpanet/proto/resources/users;users";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
-message User {
-    int32 userID = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"id"
-    string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
-    string job = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
-    int32 jobGrade = 4 [(validate.rules).int32.gt = 0]; // @gotags: alias:"job_grade"
-    string firstname = 5 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"firstname"
-    string lastname = 6 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"lastname"
-    string dateofbirth = 7 [(validate.rules).string.len = 10]; // @gotags: alias:"dateofbirth"
-    string sex = 8 [(validate.rules).string = {min_len: 1, max_len: 2}]; // @gotags: alias:"sex"
-    string height = 9; // @gotags: alias:"height"
-    string phoneNumber = 10 [(validate.rules).string.max_len = 20]; // @gotags: alias:"phone_number"
-    int32 visum = 11 [(validate.rules).int32.gte = 0]; // @gotags: alias:"visum"
-    int32 playtime = 12 [(validate.rules).int32.gte = 0]; // @gotags: alias:"playtime"
+message UserJob {
+  string job = 1 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
+  int32 grade = 2 [(validate.rules).int32.gt = 0]; // @gotags: alias:"job_grade"
+  string job_label = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
+  string grade_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"grade_label"
+}
 
-    UserProps props = 13; // @gotags: alias:"arpanet_user_props"
-    repeated License licenses = 14; // @gotags: alias:"user_licenses"
+message UserShort {
+  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"id"
+  string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
+  string job = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  int32 job_grade = 4 [(validate.rules).int32.gt = 0]; // @gotags: alias:"job_grade"
+  string firstname = 5 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"firstname"
+  string lastname = 6 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"lastname"
+}
+
+message User {
+  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"id"
+  string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
+  string job = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  int32 job_grade = 4 [(validate.rules).int32.gt = 0]; // @gotags: alias:"job_grade"
+  string firstname = 5 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"firstname"
+  string lastname = 6 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"lastname"
+  string dateofbirth = 7 [(validate.rules).string.len = 10]; // @gotags: alias:"dateofbirth"
+  string sex = 8 [(validate.rules).string = {min_len: 1, max_len: 2}]; // @gotags: alias:"sex"
+  string height = 9; // @gotags: alias:"height"
+  string phone_number = 10 [(validate.rules).string.max_len = 20]; // @gotags: alias:"phone_number"
+  int32 visum = 11 [(validate.rules).int32.gte = 0]; // @gotags: alias:"visum"
+  int32 playtime = 12 [(validate.rules).int32.gte = 0]; // @gotags: alias:"playtime"
+
+  UserProps props = 13; // @gotags: alias:"arpanet_user_props"
+  repeated License licenses = 14; // @gotags: alias:"user_licenses"
 }
 
 message License {
-    string type = 1 [(validate.rules).string = {min_len: 3, max_len: 60}]; // @gotags: sql:"primary_key" alias:"type"
+  string type = 1 [(validate.rules).string = {min_len: 3, max_len: 60}]; // @gotags: sql:"primary_key" alias:"type"
 }
 
 message UserProps {
-    bool wanted = 1; // @gotags: alias:"wanted"
-}
-
-message ShortUser {
-    int32 userID = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"id"
-    string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
-    string job = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
-    int32 jobGrade = 4 [(validate.rules).int32.gt = 0]; // @gotags: alias:"job_grade"
-    string firstname = 5 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"firstname"
-    string lastname = 6 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"lastname"
+  bool wanted = 1; // @gotags: alias:"wanted"
 }
 
 enum USER_ACTIVITY_TYPE {
-    CHANGED = 0;
-    MENTIONED = 1;
-    CREATED = 2;
+  CHANGED = 0;
+  MENTIONED = 1;
+  CREATED = 2;
 }
 
 message UserActivity {
-    uint64 id = 1; // @gotags: sql:"primary_key" alias:"arpanet_user_activity.id"
-    USER_ACTIVITY_TYPE type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"arpanet_user_activity.type"
-    resources.timestamp.Timestamp createdAt = 3; // @gotags: alias:"arpanet_user_activity.created_at"
-    ShortUser targetUser = 4; // @gotags: alias:"target_user"
-    ShortUser causeUser = 5; // @gotags: alias:"cause_user"
-    string key = 6 [(validate.rules).string = {min_len: 1, max_len: 64}]; // @gotags: alias:"arpanet_user_activity.key"
-    string oldValue = 7 [(validate.rules).string.max_len = 256]; // @gotags: alias:"arpanet_user_activity.old_value"
-    string newValue = 8 [(validate.rules).string.max_len = 256]; // @gotags: alias:"arpanet_user_activity.new_value"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"arpanet_user_activity.id"
+  USER_ACTIVITY_TYPE type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"arpanet_user_activity.type"
+  resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"arpanet_user_activity.created_at"
+  UserShort targetUser = 4; // @gotags: alias:"target_user"
+  UserShort causeUser = 5; // @gotags: alias:"cause_user"
+  string key = 6 [(validate.rules).string = {min_len: 1, max_len: 64}]; // @gotags: alias:"arpanet_user_activity.key"
+  string oldValue = 7 [(validate.rules).string.max_len = 256]; // @gotags: alias:"arpanet_user_activity.old_value"
+  string newValue = 8 [(validate.rules).string.max_len = 256]; // @gotags: alias:"arpanet_user_activity.new_value"
 }

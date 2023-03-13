@@ -33,12 +33,8 @@ export default defineComponent({
     methods: {
         getDateLocaleString,
         findDocuments(offset: number) {
-            if (offset < 0) {
-                return;
-            }
-            if (this.loading) {
-                return;
-            }
+            if (offset < 0) return;
+            if (this.loading) return;
             this.loading = true;
 
             const req = new FindDocumentsRequest();
@@ -49,14 +45,16 @@ export default defineComponent({
             getDocStoreClient().
                 findDocuments(req, null).
                 then((resp) => {
-                    this.totalCount = resp.getTotalcount();
+                    this.totalCount = resp.getTotalCount();
                     this.offset = resp.getOffset();
                     this.listEnd = resp.getEnd();
                     this.documents = resp.getDocumentsList();
 
-                    this.loading = false;
-                }).catch((err: RpcError) => {
+                }).
+                catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
+                }).
+                finally(() => {
                     this.loading = false;
                 });
         },
@@ -104,7 +102,7 @@ export default defineComponent({
                                     <div class="ml-2 flex flex-shrink-0">
                                         <p
                                             class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                            {{ doc.getContenttype() }}</p>
+                                            {{ doc.getContentType() }}</p>
                                     </div>
                                 </div>
                                 <div class="mt-2 sm:flex sm:justify-between">
@@ -126,8 +124,8 @@ export default defineComponent({
                                         <p>
                                             Created at
                                             {{ ' ' }}
-                                            <time :datetime="doc.getCreatedat()?.getTimestamp()?.toDate().toDateString()">{{
-                                                doc.getCreatedat()?.getTimestamp()?.toDate() }}</time>
+                                            <time :datetime="doc.getCreatedAt()?.getTimestamp()?.toDate().toDateString()">{{
+                                                doc.getCreatedAt()?.getTimestamp()?.toDate() }}</time>
                                         </p>
                                     </div>
                                 </div>

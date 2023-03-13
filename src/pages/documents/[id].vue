@@ -30,7 +30,7 @@ export default defineComponent({
     "name": "Documents: Info",
     "meta": {
         "requiresAuth": true,
-        "permission": "documents-createdocument",
+        "permission": "docstoreservice-getdocument",
         "breadCrumbs": [
             { "name": "Documents", "href": "/documents" },
             { "name": "Document Info: ...", "href": "/documents" }

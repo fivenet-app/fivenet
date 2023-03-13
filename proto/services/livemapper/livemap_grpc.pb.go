@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LivemapperServiceClient interface {
+	// @permission: PerJob=true
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (LivemapperService_StreamClient, error)
 }
 
@@ -69,6 +70,7 @@ func (x *livemapperServiceStreamClient) Recv() (*ServerStreamResponse, error) {
 // All implementations must embed UnimplementedLivemapperServiceServer
 // for forward compatibility
 type LivemapperServiceServer interface {
+	// @permission: PerJob=true
 	Stream(*StreamRequest, LivemapperService_StreamServer) error
 	mustEmbedUnimplementedLivemapperServiceServer()
 }

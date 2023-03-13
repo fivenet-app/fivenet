@@ -12,18 +12,21 @@
     - [x] Wanted aka "additional UserProps"
         - [x] Allow certain jobs to set a person as wanted
         - [x] Add toggle to display only wanted people
-- [ ] Documents
+- [ ] Documents ("Akten")
+    - [ ] Each document is independent and has no direct parent or responses
+        - [ ] Users can leave Comments on documents
+    - [ ] Documents can reference each other ("document activity feed"), e.g., DOJ asks for blood test on a patient, LSMD responds by creating the patient blood test result document and referneces the DOJ response
     - [ ] Templates (e.g., Haftbefehl)
         - [ ] Editable templates by the leader of the jobs
     - [ ] Sharing
         - [ ] Sharing with the same job automatically
         - [ ] Sharing with the citizen affected (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ)
         - [ ] People can request access by link
-    - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
     - [ ] Category System (no directories/ paths)
-        - [ ] Sub-categories
+        - [x] ~~Sub-categories~~  - One level of categories that is sorted by names
+    - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
 - [ ] Dispatch System
-    - [ ] Livemap display the dispatches
+    - [ ] Livemap to display dispatches
     - [ ] Tools to coordinate dispatches
         - [ ] Manually by user input
         - [ ] Automatically
@@ -44,7 +47,7 @@
 
 ### Required Tools
 
-* Golang 1.19
+* Golang 1.20
 * `yarn`
 * [`protoc`](https://grpc.io/docs/protoc-installation/)
 * `protoc-gen-go`:

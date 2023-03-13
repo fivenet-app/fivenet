@@ -8,34 +8,35 @@ import "resources/jobs/jobs.proto";
 import "validate/validate.proto";
 
 message CompleteJobNamesRequest {
-    string search = 1 [(validate.rules).string.max_len = 50];
-    bool withGrades = 2;
+  string search = 1 [(validate.rules).string.max_len = 50];
 }
 
 message CompleteJobNamesResponse {
-    repeated resources.jobs.Job jobs = 1;
+  repeated resources.jobs.Job jobs = 1;
 }
 
 message CompleteJobGradesRequest {
-    string job = 1 [(validate.rules).string.max_len = 20];
-    string search = 2 [(validate.rules).string.max_len = 50];
+  string job = 1 [(validate.rules).string.max_len = 20];
+  string search = 2 [(validate.rules).string.max_len = 50];
 }
 
 message CompleteJobGradesResponse {
-    repeated resources.jobs.JobGrade grades = 1;
+  repeated resources.jobs.JobGrade grades = 1;
 }
 
 message CompleteDocumentCategoryRequest {
-    string search = 1 [(validate.rules).string.max_len = 128];
+  string search = 1 [(validate.rules).string.max_len = 128];
 }
 
 message CompleteDocumentCategoryResponse {
-    repeated resources.documents.DocumentCategory categories = 1;
+  repeated resources.documents.DocumentCategory categories = 1;
 }
 
 service CompletorService {
-    rpc CompleteJobNames(CompleteJobNamesRequest) returns (CompleteJobNamesResponse);
-    rpc CompleteJobGrades(CompleteJobGradesRequest) returns (CompleteJobGradesResponse);
-
-    rpc CompleteDocumentCategory(CompleteDocumentCategoryRequest) returns (CompleteDocumentCategoryResponse);
+  // @permission: PerJob=true
+  rpc CompleteJobNames(CompleteJobNamesRequest) returns (CompleteJobNamesResponse);
+  // @permission: PerJob=true
+  rpc CompleteJobGrades(CompleteJobGradesRequest) returns (CompleteJobGradesResponse);
+  // @permission: PerJob=true
+  rpc CompleteDocumentCategory(CompleteDocumentCategoryRequest) returns (CompleteDocumentCategoryResponse);
 }

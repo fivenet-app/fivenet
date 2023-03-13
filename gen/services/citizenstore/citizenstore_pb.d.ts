@@ -37,8 +37,8 @@ export namespace FindUsersRequest {
 }
 
 export class FindUsersResponse extends jspb.Message {
-  getTotalcount(): number;
-  setTotalcount(value: number): FindUsersResponse;
+  getTotalCount(): number;
+  setTotalCount(value: number): FindUsersResponse;
 
   getOffset(): number;
   setOffset(value: number): FindUsersResponse;
@@ -61,7 +61,7 @@ export class FindUsersResponse extends jspb.Message {
 
 export namespace FindUsersResponse {
   export type AsObject = {
-    totalcount: number,
+    totalCount: number,
     offset: number,
     end: number,
     usersList: Array<resources_users_users_pb.User.AsObject>,
@@ -69,8 +69,8 @@ export namespace FindUsersResponse {
 }
 
 export class GetUserRequest extends jspb.Message {
-  getUserid(): number;
-  setUserid(value: number): GetUserRequest;
+  getUserId(): number;
+  setUserId(value: number): GetUserRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetUserRequest.AsObject;
@@ -82,7 +82,7 @@ export class GetUserRequest extends jspb.Message {
 
 export namespace GetUserRequest {
   export type AsObject = {
-    userid: number,
+    userId: number,
   }
 }
 
@@ -107,8 +107,8 @@ export namespace GetUserResponse {
 }
 
 export class GetUserActivityRequest extends jspb.Message {
-  getUserid(): number;
-  setUserid(value: number): GetUserActivityRequest;
+  getUserId(): number;
+  setUserId(value: number): GetUserActivityRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetUserActivityRequest.AsObject;
@@ -120,7 +120,7 @@ export class GetUserActivityRequest extends jspb.Message {
 
 export namespace GetUserActivityRequest {
   export type AsObject = {
-    userid: number,
+    userId: number,
   }
 }
 
@@ -145,8 +145,8 @@ export namespace GetUserActivityResponse {
 }
 
 export class SetUserPropsRequest extends jspb.Message {
-  getUserid(): number;
-  setUserid(value: number): SetUserPropsRequest;
+  getUserId(): number;
+  setUserId(value: number): SetUserPropsRequest;
 
   getProps(): resources_users_users_pb.UserProps | undefined;
   setProps(value?: resources_users_users_pb.UserProps): SetUserPropsRequest;
@@ -163,7 +163,7 @@ export class SetUserPropsRequest extends jspb.Message {
 
 export namespace SetUserPropsRequest {
   export type AsObject = {
-    userid: number,
+    userId: number,
     props?: resources_users_users_pb.UserProps.AsObject,
   }
 }

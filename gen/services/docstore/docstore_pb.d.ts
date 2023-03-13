@@ -37,8 +37,8 @@ export namespace FindDocumentsRequest {
 }
 
 export class FindDocumentsResponse extends jspb.Message {
-  getTotalcount(): number;
-  setTotalcount(value: number): FindDocumentsResponse;
+  getTotalCount(): number;
+  setTotalCount(value: number): FindDocumentsResponse;
 
   getOffset(): number;
   setOffset(value: number): FindDocumentsResponse;
@@ -61,7 +61,7 @@ export class FindDocumentsResponse extends jspb.Message {
 
 export namespace FindDocumentsResponse {
   export type AsObject = {
-    totalcount: number,
+    totalCount: number,
     offset: number,
     end: number,
     documentsList: Array<resources_documents_documents_pb.Document.AsObject>,
@@ -69,11 +69,8 @@ export namespace FindDocumentsResponse {
 }
 
 export class GetDocumentRequest extends jspb.Message {
-  getId(): number;
-  setId(value: number): GetDocumentRequest;
-
-  getOffset(): number;
-  setOffset(value: number): GetDocumentRequest;
+  getDocumentId(): number;
+  setDocumentId(value: number): GetDocumentRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentRequest.AsObject;
@@ -85,8 +82,7 @@ export class GetDocumentRequest extends jspb.Message {
 
 export namespace GetDocumentRequest {
   export type AsObject = {
-    id: number,
-    offset: number,
+    documentId: number,
   }
 }
 
@@ -96,19 +92,15 @@ export class GetDocumentResponse extends jspb.Message {
   hasDocument(): boolean;
   clearDocument(): GetDocumentResponse;
 
-  getTotalcount(): number;
-  setTotalcount(value: number): GetDocumentResponse;
+  getJobsaccessList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
+  setJobsaccessList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): GetDocumentResponse;
+  clearJobsaccessList(): GetDocumentResponse;
+  addJobsaccess(value?: resources_documents_documents_pb.DocumentJobAccess, index?: number): resources_documents_documents_pb.DocumentJobAccess;
 
-  getOffset(): number;
-  setOffset(value: number): GetDocumentResponse;
-
-  getEnd(): number;
-  setEnd(value: number): GetDocumentResponse;
-
-  getResponsesList(): Array<resources_documents_documents_pb.Document>;
-  setResponsesList(value: Array<resources_documents_documents_pb.Document>): GetDocumentResponse;
-  clearResponsesList(): GetDocumentResponse;
-  addResponses(value?: resources_documents_documents_pb.Document, index?: number): resources_documents_documents_pb.Document;
+  getUsersaccessList(): Array<resources_documents_documents_pb.DocumentUserAccess>;
+  setUsersaccessList(value: Array<resources_documents_documents_pb.DocumentUserAccess>): GetDocumentResponse;
+  clearUsersaccessList(): GetDocumentResponse;
+  addUsersaccess(value?: resources_documents_documents_pb.DocumentUserAccess, index?: number): resources_documents_documents_pb.DocumentUserAccess;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentResponse.AsObject;
@@ -121,10 +113,134 @@ export class GetDocumentResponse extends jspb.Message {
 export namespace GetDocumentResponse {
   export type AsObject = {
     document?: resources_documents_documents_pb.Document.AsObject,
-    totalcount: number,
+    jobsaccessList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
+    usersaccessList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
+  }
+}
+
+export class GetDocumentCommentsRequest extends jspb.Message {
+  getDocumentid(): number;
+  setDocumentid(value: number): GetDocumentCommentsRequest;
+
+  getOffset(): number;
+  setOffset(value: number): GetDocumentCommentsRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDocumentCommentsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentCommentsRequest): GetDocumentCommentsRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentCommentsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentCommentsRequest;
+  static deserializeBinaryFromReader(message: GetDocumentCommentsRequest, reader: jspb.BinaryReader): GetDocumentCommentsRequest;
+}
+
+export namespace GetDocumentCommentsRequest {
+  export type AsObject = {
+    documentid: number,
+    offset: number,
+  }
+}
+
+export class GetDocumentCommentsResponse extends jspb.Message {
+  getTotalCount(): number;
+  setTotalCount(value: number): GetDocumentCommentsResponse;
+
+  getOffset(): number;
+  setOffset(value: number): GetDocumentCommentsResponse;
+
+  getEnd(): number;
+  setEnd(value: number): GetDocumentCommentsResponse;
+
+  getCommentsList(): Array<resources_documents_documents_pb.DocumentComment>;
+  setCommentsList(value: Array<resources_documents_documents_pb.DocumentComment>): GetDocumentCommentsResponse;
+  clearCommentsList(): GetDocumentCommentsResponse;
+  addComments(value?: resources_documents_documents_pb.DocumentComment, index?: number): resources_documents_documents_pb.DocumentComment;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDocumentCommentsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentCommentsResponse): GetDocumentCommentsResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentCommentsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentCommentsResponse;
+  static deserializeBinaryFromReader(message: GetDocumentCommentsResponse, reader: jspb.BinaryReader): GetDocumentCommentsResponse;
+}
+
+export namespace GetDocumentCommentsResponse {
+  export type AsObject = {
+    totalCount: number,
     offset: number,
     end: number,
-    responsesList: Array<resources_documents_documents_pb.Document.AsObject>,
+    commentsList: Array<resources_documents_documents_pb.DocumentComment.AsObject>,
+  }
+}
+
+export class PostDocumentCommentRequest extends jspb.Message {
+  getDocumentId(): number;
+  setDocumentId(value: number): PostDocumentCommentRequest;
+
+  getComment(): string;
+  setComment(value: string): PostDocumentCommentRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PostDocumentCommentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: PostDocumentCommentRequest): PostDocumentCommentRequest.AsObject;
+  static serializeBinaryToWriter(message: PostDocumentCommentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PostDocumentCommentRequest;
+  static deserializeBinaryFromReader(message: PostDocumentCommentRequest, reader: jspb.BinaryReader): PostDocumentCommentRequest;
+}
+
+export namespace PostDocumentCommentRequest {
+  export type AsObject = {
+    documentId: number,
+    comment: string,
+  }
+}
+
+export class PostDocumentCommentResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PostDocumentCommentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: PostDocumentCommentResponse): PostDocumentCommentResponse.AsObject;
+  static serializeBinaryToWriter(message: PostDocumentCommentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PostDocumentCommentResponse;
+  static deserializeBinaryFromReader(message: PostDocumentCommentResponse, reader: jspb.BinaryReader): PostDocumentCommentResponse;
+}
+
+export namespace PostDocumentCommentResponse {
+  export type AsObject = {
+  }
+}
+
+export class EditDocumentCommentRequest extends jspb.Message {
+  getCommentId(): number;
+  setCommentId(value: number): EditDocumentCommentRequest;
+
+  getComment(): string;
+  setComment(value: string): EditDocumentCommentRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): EditDocumentCommentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: EditDocumentCommentRequest): EditDocumentCommentRequest.AsObject;
+  static serializeBinaryToWriter(message: EditDocumentCommentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): EditDocumentCommentRequest;
+  static deserializeBinaryFromReader(message: EditDocumentCommentRequest, reader: jspb.BinaryReader): EditDocumentCommentRequest;
+}
+
+export namespace EditDocumentCommentRequest {
+  export type AsObject = {
+    commentId: number,
+    comment: string,
+  }
+}
+
+export class EditDocumentCommentResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): EditDocumentCommentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: EditDocumentCommentResponse): EditDocumentCommentResponse.AsObject;
+  static serializeBinaryToWriter(message: EditDocumentCommentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): EditDocumentCommentResponse;
+  static deserializeBinaryFromReader(message: EditDocumentCommentResponse, reader: jspb.BinaryReader): EditDocumentCommentResponse;
+}
+
+export namespace EditDocumentCommentResponse {
+  export type AsObject = {
   }
 }
 
@@ -135,8 +251,8 @@ export class CreateDocumentRequest extends jspb.Message {
   getContent(): string;
   setContent(value: string): CreateDocumentRequest;
 
-  getContentType(): resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE;
-  setContentType(value: resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE): CreateDocumentRequest;
+  getContentType(): resources_documents_documents_pb.DOC_CONTENT_TYPE;
+  setContentType(value: resources_documents_documents_pb.DOC_CONTENT_TYPE): CreateDocumentRequest;
 
   getClosed(): boolean;
   setClosed(value: boolean): CreateDocumentRequest;
@@ -147,11 +263,11 @@ export class CreateDocumentRequest extends jspb.Message {
   getPublic(): boolean;
   setPublic(value: boolean): CreateDocumentRequest;
 
-  getCategoryid(): number;
-  setCategoryid(value: number): CreateDocumentRequest;
+  getCategoryId(): number;
+  setCategoryId(value: number): CreateDocumentRequest;
 
-  getTargetdocumentid(): number;
-  setTargetdocumentid(value: number): CreateDocumentRequest;
+  getTargetDocumentId(): number;
+  setTargetDocumentId(value: number): CreateDocumentRequest;
 
   getJobsaccessList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
   setJobsaccessList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): CreateDocumentRequest;
@@ -175,12 +291,12 @@ export namespace CreateDocumentRequest {
   export type AsObject = {
     title: string,
     content: string,
-    contentType: resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE,
+    contentType: resources_documents_documents_pb.DOC_CONTENT_TYPE,
     closed: boolean,
     state: string,
     pb_public: boolean,
-    categoryid: number,
-    targetdocumentid: number,
+    categoryId: number,
+    targetDocumentId: number,
     jobsaccessList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
     usersaccessList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
   }
@@ -205,8 +321,8 @@ export namespace CreateDocumentResponse {
 }
 
 export class UpdateDocumentRequest extends jspb.Message {
-  getId(): number;
-  setId(value: number): UpdateDocumentRequest;
+  getDocumentId(): number;
+  setDocumentId(value: number): UpdateDocumentRequest;
 
   getTitle(): string;
   setTitle(value: string): UpdateDocumentRequest;
@@ -214,11 +330,11 @@ export class UpdateDocumentRequest extends jspb.Message {
   getContent(): string;
   setContent(value: string): UpdateDocumentRequest;
 
-  getContentType(): resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE;
-  setContentType(value: resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE): UpdateDocumentRequest;
+  getContentType(): resources_documents_documents_pb.DOC_CONTENT_TYPE;
+  setContentType(value: resources_documents_documents_pb.DOC_CONTENT_TYPE): UpdateDocumentRequest;
 
-  getCategoryid(): number;
-  setCategoryid(value: number): UpdateDocumentRequest;
+  getCategoryId(): number;
+  setCategoryId(value: number): UpdateDocumentRequest;
 
   getClosed(): boolean;
   setClosed(value: boolean): UpdateDocumentRequest;
@@ -239,11 +355,11 @@ export class UpdateDocumentRequest extends jspb.Message {
 
 export namespace UpdateDocumentRequest {
   export type AsObject = {
-    id: number,
+    documentId: number,
     title: string,
     content: string,
-    contentType: resources_documents_documents_pb.DOCUMENT_CONTENT_TYPE,
-    categoryid: number,
+    contentType: resources_documents_documents_pb.DOC_CONTENT_TYPE,
+    categoryId: number,
     closed: boolean,
     state: string,
     pb_public: boolean,
@@ -299,8 +415,8 @@ export namespace ListTemplatesResponse {
 }
 
 export class GetTemplateRequest extends jspb.Message {
-  getId(): number;
-  setId(value: number): GetTemplateRequest;
+  getTemplateId(): number;
+  setTemplateId(value: number): GetTemplateRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetTemplateRequest.AsObject;
@@ -312,7 +428,7 @@ export class GetTemplateRequest extends jspb.Message {
 
 export namespace GetTemplateRequest {
   export type AsObject = {
-    id: number,
+    templateId: number,
   }
 }
 
@@ -337,8 +453,8 @@ export namespace GetTemplateResponse {
 }
 
 export class GetDocumentAccessRequest extends jspb.Message {
-  getId(): number;
-  setId(value: number): GetDocumentAccessRequest;
+  getDocumentId(): number;
+  setDocumentId(value: number): GetDocumentAccessRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentAccessRequest.AsObject;
@@ -350,7 +466,7 @@ export class GetDocumentAccessRequest extends jspb.Message {
 
 export namespace GetDocumentAccessRequest {
   export type AsObject = {
-    id: number,
+    documentId: number,
   }
 }
 
@@ -381,11 +497,11 @@ export namespace GetDocumentAccessResponse {
 }
 
 export class SetDocumentAccessRequest extends jspb.Message {
-  getDocumentid(): number;
-  setDocumentid(value: number): SetDocumentAccessRequest;
+  getDocumentId(): number;
+  setDocumentId(value: number): SetDocumentAccessRequest;
 
-  getMode(): DOCUMENT_ACCESS_UPDATE_MODE;
-  setMode(value: DOCUMENT_ACCESS_UPDATE_MODE): SetDocumentAccessRequest;
+  getMode(): DOC_ACCESS_UPDATE_MODE;
+  setMode(value: DOC_ACCESS_UPDATE_MODE): SetDocumentAccessRequest;
 
   getJobsList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
   setJobsList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): SetDocumentAccessRequest;
@@ -407,8 +523,8 @@ export class SetDocumentAccessRequest extends jspb.Message {
 
 export namespace SetDocumentAccessRequest {
   export type AsObject = {
-    documentid: number,
-    mode: DOCUMENT_ACCESS_UPDATE_MODE,
+    documentId: number,
+    mode: DOC_ACCESS_UPDATE_MODE,
     jobsList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
     usersList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
   }
@@ -428,7 +544,7 @@ export namespace SetDocumentAccessResponse {
   }
 }
 
-export enum DOCUMENT_ACCESS_UPDATE_MODE { 
+export enum DOC_ACCESS_UPDATE_MODE { 
   ADD = 0,
   REPLACE = 1,
   DELETE = 2,

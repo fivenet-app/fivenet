@@ -45,7 +45,7 @@ const store = createStore({
         },
         updateActiveChar: (state, char: null | User) => {
             state.activeChar = char;
-            state.lastCharID = char ? char.getUserid() : state.lastCharID;
+            state.lastCharID = char ? char.getUserId() : state.lastCharID;
         },
         updatePermissions: (state, permissions: string[]) => {
             state.permissions = permissions;

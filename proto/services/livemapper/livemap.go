@@ -14,13 +14,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func init() {
-	perms.AddPermsToList([]*perms.Perm{
-		{Key: "livemap", Name: "View"},
-		{Key: "livemap", Name: "Stream", PerJob: true},
-	})
-}
-
 var (
 	l = table.ArpanetUserLocations
 )
@@ -35,14 +28,14 @@ func NewServer(logger *zap.Logger) *Server {
 	s := &Server{
 		logger: logger,
 	}
-	go s.generateRandomMarker()
+	go s.generateRandomUserMarker()
 	return s
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userID := auth.GetUserIDFromContext(srv.Context())
 
-	jobs, err := perms.P.GetSuffixOfPermissionsByPrefixOfUser(userID, "livemap-stream")
+	jobs, err := perms.P.GetSuffixOfPermissionsByPrefixOfUser(userID, "LivemapperService.Stream")
 	if err != nil {
 		return err
 	}
@@ -75,7 +68,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	for {
 		resp := &ServerStreamResponse{
-			Dispatches: []*livemap.Marker{},
+			Dispatches: []*livemap.UserMarker{},
 		}
 
 		if err := stmt.QueryContext(srv.Context(), query.DB, &resp.Users); err != nil {
@@ -89,7 +82,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 }
 
-func (s *Server) generateRandomMarker() {
+func (s *Server) generateRandomUserMarker() {
 	userIDs := []int32{
 		// ambulance
 		26061,

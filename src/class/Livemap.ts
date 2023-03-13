@@ -100,14 +100,14 @@ export class Livemap extends L.Map {
 
         const previousList = this.prevMarkerLists.get(type);
         if (previousList) {
-            const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getUserid() === entry.userid));
+            const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getUserId() === entry.userid));
             markersToRemove.forEach((marker) => {
                 this.removeMarker(marker.userid);
             });
         }
 
         list.forEach((marker) => {
-            this.addMarker(marker.getUserid(), marker.getY(), marker.getX(), marker.getPopup(), options);
+            this.addMarker(marker.getUserId(), marker.getY(), marker.getX(), marker.getPopup(), options);
         });
 
         this.prevMarkerLists.set(

@@ -20,9 +20,9 @@ type arpanetUserActivityTable struct {
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
 	UpdatedAt    mysql.ColumnTimestamp
+	SourceUserID mysql.ColumnInteger
 	TargetUserID mysql.ColumnInteger
-	CauseUserID  mysql.ColumnInteger
-	Type         mysql.ColumnString
+	Type         mysql.ColumnInteger
 	Key          mysql.ColumnString
 	OldValue     mysql.ColumnString
 	NewValue     mysql.ColumnString
@@ -69,14 +69,14 @@ func newArpanetUserActivityTableImpl(schemaName, tableName, alias string) arpane
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
+		SourceUserIDColumn = mysql.IntegerColumn("source_user_id")
 		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
-		CauseUserIDColumn  = mysql.IntegerColumn("cause_user_id")
-		TypeColumn         = mysql.StringColumn("type")
+		TypeColumn         = mysql.IntegerColumn("type")
 		KeyColumn          = mysql.StringColumn("key")
 		OldValueColumn     = mysql.StringColumn("old_value")
 		NewValueColumn     = mysql.StringColumn("new_value")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, TargetUserIDColumn, CauseUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, TargetUserIDColumn, CauseUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
 	)
 
 	return arpanetUserActivityTable{
@@ -86,8 +86,8 @@ func newArpanetUserActivityTableImpl(schemaName, tableName, alias string) arpane
 		ID:           IDColumn,
 		CreatedAt:    CreatedAtColumn,
 		UpdatedAt:    UpdatedAtColumn,
+		SourceUserID: SourceUserIDColumn,
 		TargetUserID: TargetUserIDColumn,
-		CauseUserID:  CauseUserIDColumn,
 		Type:         TypeColumn,
 		Key:          KeyColumn,
 		OldValue:     OldValueColumn,

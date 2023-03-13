@@ -8,60 +8,83 @@ import "resources/documents/documents.proto";
 import "validate/validate.proto";
 
 message FindDocumentsRequest {
-    int64 offset = 1 [(validate.rules).int64.gte = 0];
-    repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
-    // Search param
-    string search = 3;
-    string category = 4;
+  int64 offset = 1 [(validate.rules).int64.gte = 0];
+  repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
+  // Search param
+  string search = 3;
+  string category = 4;
 }
 
 message FindDocumentsResponse {
-    int64 totalCount = 1;
-    int64 offset = 2;
-    int64 end = 3;
-    repeated resources.documents.Document documents = 4;
+  int64 total_count = 1;
+  int64 offset = 2;
+  int64 end = 3;
+  repeated resources.documents.Document documents = 4;
 }
 
 message GetDocumentRequest {
-    uint64 id = 1;
-    int64 offset = 2 [(validate.rules).int64.gte = 0];
+  uint64 document_id = 1;
 }
 
 message GetDocumentResponse {
-    resources.documents.Document document = 1;
-    int64 totalCount = 2;
-    int64 offset = 3;
-    int64 end = 4;
-    repeated resources.documents.Document responses = 5;
+  resources.documents.Document document = 1;
+  repeated resources.documents.DocumentJobAccess jobsAccess = 2;
+  repeated resources.documents.DocumentUserAccess usersAccess = 3;
 }
 
-message CreateDocumentRequest {
-    string title = 1 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-    string content = 2 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
-    resources.documents.DOCUMENT_CONTENT_TYPE content_type = 3; // @gotags: alias:"content_type"
-    bool closed = 4; // @gotags: alias:"closed"
-    string state = 5 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
-    bool public = 6; // @gotags: alias:"public"
-    uint64 categoryID = 7; // @gotags: alias:"category_id"
-    uint64 targetDocumentID = 8; // @gotags: alias:"response_id"
+message GetDocumentCommentsRequest {
+  uint64 documentID = 1;
+  int64 offset = 2 [(validate.rules).int64.gte = 0];
+}
 
-    repeated resources.documents.DocumentJobAccess jobsAccess = 9;
-    repeated resources.documents.DocumentUserAccess usersAccess = 10;
+message GetDocumentCommentsResponse {
+  int64 total_count = 1;
+  int64 offset = 2;
+  int64 end = 3;
+  repeated resources.documents.DocumentComment comments = 4;
+}
+
+message PostDocumentCommentRequest {
+  uint64 document_id = 1;
+  string comment = 2;
+}
+
+message PostDocumentCommentResponse {}
+
+message EditDocumentCommentRequest {
+  uint64 comment_id = 1;
+  string comment = 2;
+}
+
+message EditDocumentCommentResponse {}
+
+message CreateDocumentRequest {
+  string title = 1 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  string content = 2 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
+  resources.documents.DOC_CONTENT_TYPE content_type = 3; // @gotags: alias:"content_type"
+  bool closed = 4; // @gotags: alias:"closed"
+  string state = 5 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  bool public = 6; // @gotags: alias:"public"
+  uint64 category_id = 7; // @gotags: alias:"category_id"
+  uint64 target_document_id = 8; // @gotags: alias:"response_id"
+
+  repeated resources.documents.DocumentJobAccess jobsAccess = 9;
+  repeated resources.documents.DocumentUserAccess usersAccess = 10;
 }
 
 message CreateDocumentResponse {
-    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
 }
 
 message UpdateDocumentRequest {
-    uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-    string title = 2 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-    string content = 3 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
-    resources.documents.DOCUMENT_CONTENT_TYPE content_type = 4; // @gotags: alias:"content_type"
-    uint64 categoryID = 5; // @gotags: alias:"category_id"
-    bool closed = 6; // @gotags: alias:"closed"
-    string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
-    bool public = 8; // @gotags: alias:"public"
+  uint64 document_id = 1; // @gotags: sql:"primary_key" alias:"id"
+  string title = 2 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  string content = 3 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
+  resources.documents.DOC_CONTENT_TYPE content_type = 4; // @gotags: alias:"content_type"
+  uint64 category_id = 5; // @gotags: alias:"category_id"
+  bool closed = 6; // @gotags: alias:"closed"
+  string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  bool public = 8; // @gotags: alias:"public"
 }
 
 message UpdateDocumentResponse {}
@@ -69,53 +92,67 @@ message UpdateDocumentResponse {}
 message ListTemplatesRequest {}
 
 message ListTemplatesResponse {
-    repeated resources.documents.DocumentTemplateShort templates = 1;
+  repeated resources.documents.DocumentTemplateShort templates = 1;
 }
 
 message GetTemplateRequest {
-    uint64 id = 1;
+  uint64 template_id = 1;
 }
 
 message GetTemplateResponse {
-    resources.documents.DocumentTemplate template = 1;
+  resources.documents.DocumentTemplate template = 1;
 }
 
 message GetDocumentAccessRequest {
-    uint64 id = 1;
+  uint64 document_id = 1;
 }
 
 message GetDocumentAccessResponse {
-    repeated resources.documents.DocumentJobAccess jobs = 1;
-    repeated resources.documents.DocumentUserAccess users = 2;
+  repeated resources.documents.DocumentJobAccess jobs = 1;
+  repeated resources.documents.DocumentUserAccess users = 2;
 }
 
-enum DOCUMENT_ACCESS_UPDATE_MODE {
-    ADD = 0;
-    REPLACE = 1;
-    DELETE = 2;
-    CLEAR = 3;
+enum DOC_ACCESS_UPDATE_MODE {
+  ADD = 0;
+  REPLACE = 1;
+  DELETE = 2;
+  CLEAR = 3;
 }
 
 message SetDocumentAccessRequest {
-    uint64 documentID = 1;
-    DOCUMENT_ACCESS_UPDATE_MODE mode = 2;
-    repeated resources.documents.DocumentJobAccess jobs = 3;
-    repeated resources.documents.DocumentUserAccess users = 4;
+  uint64 document_id = 1;
+  DOC_ACCESS_UPDATE_MODE mode = 2;
+  repeated resources.documents.DocumentJobAccess jobs = 3;
+  repeated resources.documents.DocumentUserAccess users = 4;
 }
 
 message SetDocumentAccessResponse {}
 
 service DocStoreService {
-    rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
+  // @permission
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
+  // @permission: name=ListTemplates
+  rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
+  // TODO add create and update template methods
 
-    rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
-    rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
-    rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
+  // @permission
+  rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
+  // @permission
+  rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
+  // @permission: name=CreateDocument
+  rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
 
-    rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
-    rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
-    // TODO add create and update template methods
+  // @permission
+  rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
+  // @permission
+  rpc GetDocumentComments(GetDocumentCommentsRequest) returns (GetDocumentCommentsResponse);
+  // @permission
+  rpc PostDocumentComment(PostDocumentCommentRequest) returns (PostDocumentCommentResponse);
+  // @permission: name=PostDocumentComment
+  rpc EditDocumentComment(EditDocumentCommentRequest) returns (EditDocumentCommentResponse);
 
-    rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
-    rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
+  // @permission
+  rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
+  // @permission
+  rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
 }

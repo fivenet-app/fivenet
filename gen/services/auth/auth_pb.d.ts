@@ -78,8 +78,8 @@ export namespace GetCharactersResponse {
 }
 
 export class ChooseCharacterRequest extends jspb.Message {
-  getUserid(): number;
-  setUserid(value: number): ChooseCharacterRequest;
+  getUserId(): number;
+  setUserId(value: number): ChooseCharacterRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ChooseCharacterRequest.AsObject;
@@ -91,7 +91,7 @@ export class ChooseCharacterRequest extends jspb.Message {
 
 export namespace ChooseCharacterRequest {
   export type AsObject = {
-    userid: number,
+    userId: number,
   }
 }
 

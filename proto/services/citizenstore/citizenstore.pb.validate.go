@@ -368,9 +368,9 @@ func (m *GetUserRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetUserID() <= 0 {
+	if m.GetUserId() <= 0 {
 		err := GetUserRequestValidationError{
-			field:  "UserID",
+			field:  "UserId",
 			reason: "value must be greater than 0",
 		}
 		if !all {
@@ -608,9 +608,9 @@ func (m *GetUserActivityRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetUserID() <= 0 {
+	if m.GetUserId() <= 0 {
 		err := GetUserActivityRequestValidationError{
-			field:  "UserID",
+			field:  "UserId",
 			reason: "value must be greater than 0",
 		}
 		if !all {
@@ -857,9 +857,9 @@ func (m *SetUserPropsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetUserID() <= 0 {
+	if m.GetUserId() <= 0 {
 		err := SetUserPropsRequestValidationError{
-			field:  "UserID",
+			field:  "UserId",
 			reason: "value must be greater than 0",
 		}
 		if !all {

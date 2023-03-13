@@ -26,8 +26,9 @@ import (
 	"go.uber.org/zap"
 
 	// GRPC + GRPC Middlewares
+	grpc_auth "github.com/galexrt/arpanet/pkg/grpc/auth"
+	grpc_permission "github.com/galexrt/arpanet/pkg/grpc/permission"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
@@ -68,7 +69,7 @@ var serverCmd = &cobra.Command{
 		// Create JWT Token TokenManager
 		auth.Tokens = auth.NewTokenManager()
 
-		// Setup and register Permissions
+		// Setup permissions cache system
 		perms.Setup()
 		perms.Register()
 
@@ -129,6 +130,7 @@ var serverCmd = &cobra.Command{
 				grpc_zap.UnaryServerInterceptor(logger),
 				grpc_validator.UnaryServerInterceptor(),
 				grpc_auth.UnaryServerInterceptor(auth.GRPCAuthFunc),
+				grpc_permission.UnaryServerInterceptor(auth.GRPCPermissionUnaryFunc),
 				grpc_recovery.UnaryServerInterceptor(
 					grpc_recovery.WithRecoveryHandler(sentryRecoverFunc),
 				),
@@ -139,6 +141,7 @@ var serverCmd = &cobra.Command{
 				grpc_zap.StreamServerInterceptor(logger),
 				grpc_validator.StreamServerInterceptor(),
 				grpc_auth.StreamServerInterceptor(auth.GRPCAuthFunc),
+				grpc_permission.StreamServerInterceptor(auth.GRPCPermissionStreamFunc),
 				grpc_recovery.StreamServerInterceptor(
 					grpc_recovery.WithRecoveryHandler(sentryRecoverFunc),
 				),

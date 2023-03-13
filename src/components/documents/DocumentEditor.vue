@@ -5,7 +5,7 @@ import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { CreateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { DocumentJobAccess, DOCUMENT_ACCESS, DOCUMENT_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
+import { DocumentJobAccess, DOC_ACCESS, DOCUMENT_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
 import { User } from '@arpanet/gen/resources/users/users_pb';
@@ -66,7 +66,7 @@ export default defineComponent({
 
             const jobsAccessList = new Array<DocumentJobAccess>();
             const jobAccess = new DocumentJobAccess();
-            jobAccess.setAccess(DOCUMENT_ACCESS.VIEW);
+            jobAccess.setAccess(DOC_ACCESS.VIEW);
             const activeChar = this.activeChar as null | User;
             jobAccess.setJob(activeChar?.getJob());
             jobsAccessList.push(jobAccess);
