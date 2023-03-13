@@ -20,7 +20,8 @@ import {
     BriefcaseIcon,
     MapIcon,
     HomeIcon,
-    Square2StackIcon
+    Square2StackIcon,
+    UserIcon
 } from '@heroicons/vue/24/outline'
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 
@@ -29,6 +30,7 @@ export default defineComponent({
         Bars3BottomLeftIcon,
         XMarkIcon,
         MagnifyingGlassIcon,
+        UserIcon,
         Dialog,
         DialogPanel,
         Menu,
@@ -121,7 +123,7 @@ export default defineComponent({
                 </div>
                 <div class="mt-6 w-full flex-1 space-y-1 px-2">
                     <router-link v-for="item in sidebarNavigation" v-can="item.permission" :key="item.name" :to="item.href"
-                        :class="[item.current ? 'bg-indigo-800 text-neutral' : 'text-indigo-100 hover:bg-indigo-800 hover:text-neutral', 'group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium']"
+                        :class="[item.current ? 'bg-indigo-800 text-neutral' : 'text-indigo-100 hover:bg-indigo-800 hover:text-neutral', 'transition-colors group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium']"
                         :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"
                             :class="[item.current ? 'text-neutral' : 'text-indigo-300 group-hover:text-neutral', 'h-6 w-6']"
@@ -200,12 +202,12 @@ export default defineComponent({
                             <form class="flex w-full md:ml-0 bg-base-800 rounded-full px-5 my-3 max-w-2xl" action="#"
                                 method="GET">
                                 <label for="search-field" class="sr-only">Search all files</label>
-                                <div class="relative w-full text-base-300 focus-within:text-neutral">
+                                <div class="relative w-full text-base-300 focus-within:text-neutral transition-colors">
                                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center">
                                         <MagnifyingGlassIcon class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                     </div>
                                     <input name="search-field" id="search-field"
-                                        class="h-full w-full border-0 py-2 pl-8 pr-3 bg-inherit text-base-300 focus:outline-none focus:ring-0 focus:placeholder:text-neutral focus:text-neutral sm:text-sm"
+                                        class="h-full w-full border-0 py-2 pl-8 pr-3 bg-inherit transition-colors text-base-300 focus:outline-none focus:ring-0 focus:placeholder:text-neutral focus:text-neutral sm:text-sm"
                                         placeholder="Search" type="search" />
                                 </div>
                             </form>
@@ -217,9 +219,7 @@ export default defineComponent({
                                     <MenuButton
                                         class="flex rounded-full bg-base-850 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                         <span class="sr-only">Open user menu</span>
-                                        <img class="h-8 w-8 rounded-full"
-                                            src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
-                                            alt="" />
+                                        <UserIcon class="h-10 w-auto text-base-300 bg-base-800 fill-base-300 hover:text-base-200 hover:fill-base-200 transition-colors rounded-full"  />
                                     </MenuButton>
                                 </div>
                                 <transition enter-active-class="transition ease-out duration-100"
@@ -232,7 +232,7 @@ export default defineComponent({
                                         class="absolute shadow-float right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-base-850 py-1 ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
                                         <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
                                         <a :href="item.href"
-                                            :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral']">{{
+                                            :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral transition-colors']">{{
                                                 item.name }}</a>
                                         </MenuItem>
                                     </MenuItems>
