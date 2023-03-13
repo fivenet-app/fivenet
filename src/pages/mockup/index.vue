@@ -13,27 +13,22 @@ import {
 } from '@headlessui/vue'
 import {
     Bars3BottomLeftIcon,
-    CogIcon,
-    HomeIcon,
-    PhotoIcon,
     PlusIcon,
-    RectangleStackIcon,
-    Squares2X2Icon,
-    UserGroupIcon,
     XMarkIcon,
+    UsersIcon,
+    DocumentTextIcon,
+    BellAlertIcon,
+    BriefcaseIcon,
+    MapIcon,
+    HomeIcon,
+    Square2StackIcon
 } from '@heroicons/vue/24/outline'
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 
 export default defineComponent({
     components: {
         Bars3BottomLeftIcon,
-        CogIcon,
-        HomeIcon,
-        PhotoIcon,
         PlusIcon,
-        RectangleStackIcon,
-        Squares2X2Icon,
-        UserGroupIcon,
         XMarkIcon,
         MagnifyingGlassIcon,
         Dialog,
@@ -48,12 +43,55 @@ export default defineComponent({
     data() {
         return {
             sidebarNavigation: [
-                { name: 'Home', href: '#', icon: HomeIcon, current: false },
-                { name: 'All Files', href: '#', icon: Squares2X2Icon, current: false },
-                { name: 'Photos', href: '#', icon: PhotoIcon, current: true },
-                { name: 'Shared', href: '#', icon: UserGroupIcon, current: false },
-                { name: 'Albums', href: '#', icon: RectangleStackIcon, current: false },
-                { name: 'Settings', href: '#', icon: CogIcon, current: false },
+                {
+                    name: 'Home',
+                    href: '/mockup/',
+                    permission: '',
+                    icon: HomeIcon,
+                    current: true,
+                },
+                {
+                    name: 'Overview',
+                    href: '/mockup/overview',
+                    permission: 'overview-view',
+                    icon: Square2StackIcon,
+                    current: false,
+                },
+                {
+                    name: 'Citizens',
+                    href: '/mockup/citizens',
+                    permission: 'users-findusers',
+                    icon: UsersIcon,
+                    current: false,
+                },
+                {
+                    name: 'Documents',
+                    href: '/mockup/documents',
+                    permission: 'documents-view',
+                    icon: DocumentTextIcon,
+                    current: false,
+                },
+                {
+                    name: 'Dispatches',
+                    href: '/mockup/dispatches',
+                    permission: 'dispatches-view',
+                    icon: BellAlertIcon,
+                    current: false,
+                },
+                {
+                    name: 'Job',
+                    href: '/mockup/job',
+                    permission: 'job-view',
+                    icon: BriefcaseIcon,
+                    current: false,
+                },
+                {
+                    name: 'Livemap',
+                    href: '/mockup/livemap',
+                    permission: 'livemap-stream',
+                    icon: MapIcon,
+                    current: false,
+                },
             ],
             userNavigation: [
                 { name: 'Your Profile', href: '#' },
@@ -81,18 +119,17 @@ export default defineComponent({
         <div class="hidden w-28 overflow-y-auto bg-indigo-700 md:block">
             <div class="flex w-full flex-col items-center py-6">
                 <div class="flex flex-shrink-0 items-center">
-                    <img class="h-12 w-auto" src="/images/logo.png"
-                        alt="aRPaNet" />
+                    <img class="h-12 w-auto" src="/images/logo.png" alt="aRPaNet" />
                 </div>
                 <div class="mt-6 w-full flex-1 space-y-1 px-2">
-                    <a v-for="item in sidebarNavigation" :key="item.name" :href="item.href"
+                    <router-link v-for="item in sidebarNavigation" v-can="item.permission" :key="item.name" :to="item.href"
                         :class="[item.current ? 'bg-indigo-800 text-neutral' : 'text-indigo-100 hover:bg-indigo-800 hover:text-neutral', 'group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium']"
                         :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"
                             :class="[item.current ? 'text-neutral' : 'text-indigo-300 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true" />
                         <span class="mt-2">{{ item.name }}</span>
-                    </a>
+                    </router-link>
                 </div>
             </div>
         </div>
@@ -125,20 +162,19 @@ export default defineComponent({
                                 </div>
                             </TransitionChild>
                             <div class="flex flex-shrink-0 items-center px-4">
-                                <img class="h-12 w-auto" src="/images/logo.png"
-                                    alt="Your Company" />
+                                <img class="h-12 w-auto" src="/images/logo.png" alt="Your Company" />
                             </div>
                             <div class="mt-5 h-0 flex-1 overflow-y-auto px-2">
                                 <nav class="flex h-full flex-col">
                                     <div class="space-y-1">
-                                        <a v-for="item in sidebarNavigation" :key="item.name" :href="item.href"
+                                        <router-link v-for="item in sidebarNavigation" :key="item.name" :to="item.href"
                                             :class="[item.current ? 'bg-indigo-800 text-white' : 'text-indigo-100 hover:bg-indigo-800 hover:text-white', 'group flex items-center rounded-md py-2 px-3 text-sm font-medium']"
                                             :aria-current="item.current ? 'page' : undefined">
                                             <component :is="item.icon"
                                                 :class="[item.current ? 'text-white' : 'text-indigo-300 group-hover:text-white', 'mr-3 h-6 w-6']"
                                                 aria-hidden="true" />
                                             <span>{{ item.name }}</span>
-                                        </a>
+                                        </router-link>
                                     </div>
                                 </nav>
                             </div>
@@ -163,7 +199,8 @@ export default defineComponent({
                     </button>
                     <div class="flex flex-1 justify-between px-4 sm:px-6">
                         <div class="flex flex-1">
-                            <form class="flex w-full md:ml-0 bg-base-800 rounded-full px-5 my-3 max-w-2xl" action="#" method="GET">
+                            <form class="flex w-full md:ml-0 bg-base-800 rounded-full px-5 my-3 max-w-2xl" action="#"
+                                method="GET">
                                 <label for="search-field" class="sr-only">Search all files</label>
                                 <div class="relative w-full text-base-300 focus-within:text-neutral">
                                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center">
@@ -198,36 +235,37 @@ export default defineComponent({
                                         <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
                                         <a :href="item.href"
                                             :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral']">{{
-                                            item.name }}</a>
+                                                item.name }}</a>
                                         </MenuItem>
                                     </MenuItems>
-                            </transition>
-                        </Menu>
+                                </transition>
+                            </Menu>
 
-                        <button type="button"
-                            class="flex items-center justify-center rounded-full bg-indigo-600 p-1 text-neutral hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                            <PlusIcon class="h-6 w-6" aria-hidden="true" />
-                            <span class="sr-only">Add file</span>
-                        </button>
+                            <button type="button"
+                                class="flex items-center justify-center rounded-full bg-indigo-600 p-1 text-neutral hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                <PlusIcon class="h-6 w-6" aria-hidden="true" />
+                                <span class="sr-only">Add file</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </header>
+            </header>
 
-        <!-- Main content -->
-        <div class="flex flex-1 items-stretch overflow-hidden">
-            <main class="flex-1 overflow-y-auto">
-                <!-- Primary column -->
-                <section aria-labelledby="primary-heading" class="flex h-full min-w-0 flex-1 flex-col lg:order-last">
-                    <h1 id="primary-heading" class="sr-only">Photos</h1>
+            <!-- Main content -->
+            <div class="flex flex-1 items-stretch overflow-hidden">
+                <main class="flex-1 overflow-y-auto">
+                    <!-- Primary column -->
+                    <section aria-labelledby="primary-heading" class="flex h-full min-w-0 flex-1 flex-col lg:order-last">
+                        <h1 id="primary-heading" class="sr-only">Photos</h1>
+                        <!-- Your content -->
+                    </section>
+                </main>
+
+                <!-- Secondary column (hidden on smaller screens) -->
+                <aside class="hidden w-96 overflow-y-auto border-l-8 border-base-850 bg-base-900 lg:block">
                     <!-- Your content -->
-                </section>
-            </main>
-
-            <!-- Secondary column (hidden on smaller screens) -->
-            <aside class="hidden w-96 overflow-y-auto border-l-8 border-base-850 bg-base-900 lg:block">
-                <!-- Your content -->
-            </aside>
+                </aside>
+            </div>
         </div>
     </div>
-</div></template>
+</template>
