@@ -13,7 +13,6 @@ import {
 } from '@headlessui/vue'
 import {
     Bars3BottomLeftIcon,
-    PlusIcon,
     XMarkIcon,
     UsersIcon,
     DocumentTextIcon,
@@ -28,7 +27,6 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 export default defineComponent({
     components: {
         Bars3BottomLeftIcon,
-        PlusIcon,
         XMarkIcon,
         MagnifyingGlassIcon,
         Dialog,
@@ -240,12 +238,6 @@ export default defineComponent({
                                     </MenuItems>
                                 </transition>
                             </Menu>
-
-                            <button type="button"
-                                class="flex items-center justify-center rounded-full bg-indigo-600 p-1 text-neutral hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                                <PlusIcon class="h-6 w-6" aria-hidden="true" />
-                                <span class="sr-only">Add file</span>
-                            </button>
                         </div>
                     </div>
                 </div>
