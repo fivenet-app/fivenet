@@ -110,12 +110,17 @@ func (m *DBManager) prepareDBForFirstUse() {
 	}
 }
 
-func (m *DBManager) loadSQLFile(file string) {
+func (m *DBManager) getMultiStatementDB() *sql.DB {
 	// Open db connection with multiStatements param so we can apply sql files
 	initDB, err := sql.Open("mysql", m.getDSN()+"&multiStatements=true")
 	if err != nil {
 		log.Fatalf("Failed to open test database connection for premigrate.sql apply: %s", err)
 	}
+	return initDB
+}
+
+func (m *DBManager) loadSQLFile(file string) {
+	initDB := m.getMultiStatementDB()
 
 	c, ioErr := os.ReadFile(file)
 	if ioErr != nil {
@@ -145,7 +150,9 @@ func (m *DBManager) Stop() {
 
 // Reset truncates all `arpanet_*` tables and loads the base test data
 func (m *DBManager) Reset() {
-	rows, err := m.db.Query("SHOW TABLES LIKE 'arpanet_%';")
+	initDB := m.getMultiStatementDB()
+
+	rows, err := initDB.Query("SHOW TABLES LIKE 'arpanet_%';")
 	if err != nil {
 		log.Fatalf("Failed to list arpanet tables in test database: %s", err)
 	}
@@ -156,8 +163,10 @@ func (m *DBManager) Reset() {
 			log.Fatalf("Failed to scan table name to string: %s", err)
 		}
 
-		if _, err := m.db.Exec("TRUNCATE TABLE ?;", tableName); err != nil {
-			log.Fatalf("Failed to truncate %s table: %s", tableName, err)
+		// Placeholders aren't supported for table names, see
+		// https://github.com/go-sql-driver/mysql/issues/848#issuecomment-414910152`
+		if _, err := initDB.Exec("SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE `" + tableName + "`; SET FOREIGN_KEY_CHECKS = 1;"); err != nil {
+			log.Printf("Failed to truncate %s table: %s", tableName, err)
 		}
 	}
 

@@ -782,7 +782,7 @@ proto.services.auth.ChooseCharacterRequest.prototype.toObject = function(opt_inc
  */
 proto.services.auth.ChooseCharacterRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userId: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    charId: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -821,7 +821,7 @@ proto.services.auth.ChooseCharacterRequest.deserializeBinaryFromReader = functio
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setUserId(value);
+      msg.setCharId(value);
       break;
     default:
       reader.skipField();
@@ -852,7 +852,7 @@ proto.services.auth.ChooseCharacterRequest.prototype.serializeBinary = function(
  */
 proto.services.auth.ChooseCharacterRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUserId();
+  f = message.getCharId();
   if (f !== 0) {
     writer.writeInt32(
       1,
@@ -863,10 +863,10 @@ proto.services.auth.ChooseCharacterRequest.serializeBinaryToWriter = function(me
 
 
 /**
- * optional int32 user_id = 1;
+ * optional int32 char_id = 1;
  * @return {number}
  */
-proto.services.auth.ChooseCharacterRequest.prototype.getUserId = function() {
+proto.services.auth.ChooseCharacterRequest.prototype.getCharId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -875,7 +875,7 @@ proto.services.auth.ChooseCharacterRequest.prototype.getUserId = function() {
  * @param {number} value
  * @return {!proto.services.auth.ChooseCharacterRequest} returns this
  */
-proto.services.auth.ChooseCharacterRequest.prototype.setUserId = function(value) {
+proto.services.auth.ChooseCharacterRequest.prototype.setCharId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 

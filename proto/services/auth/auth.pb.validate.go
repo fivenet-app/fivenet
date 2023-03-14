@@ -518,9 +518,9 @@ func (m *ChooseCharacterRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetUserId() <= 0 {
+	if m.GetCharId() <= 0 {
 		err := ChooseCharacterRequestValidationError{
-			field:  "UserId",
+			field:  "CharId",
 			reason: "value must be greater than 0",
 		}
 		if !all {
