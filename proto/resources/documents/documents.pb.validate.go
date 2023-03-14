@@ -364,6 +364,8 @@ func (m *DocumentTemplate) validate(all bool) error {
 
 	// no validation rules for AdditionalData
 
+	// no validation rules for CreatorId
+
 	if all {
 		switch v := interface{}(m.GetCreator()).(type) {
 		case interface{ ValidateAll() error }:
@@ -615,6 +617,8 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for CreatorId
+
 	if all {
 		switch v := interface{}(m.GetCreator()).(type) {
 		case interface{ ValidateAll() error }:
@@ -769,6 +773,8 @@ func (m *DocumentComment) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
+
+	// no validation rules for CreatorId
 
 	if all {
 		switch v := interface{}(m.GetCreator()).(type) {
@@ -1043,6 +1049,8 @@ func (m *Document) validate(all bool) error {
 
 	// no validation rules for Data
 
+	// no validation rules for CreatorId
+
 	if all {
 		switch v := interface{}(m.GetCreator()).(type) {
 		case interface{ ValidateAll() error }:
@@ -1166,6 +1174,259 @@ var _ interface {
 	ErrorName() string
 } = DocumentValidationError{}
 
+// Validate checks the field values on DocumentShort with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *DocumentShort) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DocumentShort with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in DocumentShortMultiError, or
+// nil if none found.
+func (m *DocumentShort) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DocumentShort) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetId() < 0 {
+		err := DocumentShortValidationError{
+			field:  "Id",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentShortValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentShortValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentShortValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentShortValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentShortValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentShortValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetCategory()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentShortValidationError{
+					field:  "Category",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentShortValidationError{
+					field:  "Category",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentShortValidationError{
+				field:  "Category",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if utf8.RuneCountInString(m.GetTitle()) < 3 {
+		err := DocumentShortValidationError{
+			field:  "Title",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for CreatorId
+
+	if all {
+		switch v := interface{}(m.GetCreator()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentShortValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentShortValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentShortValidationError{
+				field:  "Creator",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if utf8.RuneCountInString(m.GetState()) > 24 {
+		err := DocumentShortValidationError{
+			field:  "State",
+			reason: "value length must be at most 24 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Closed
+
+	if len(errors) > 0 {
+		return DocumentShortMultiError(errors)
+	}
+
+	return nil
+}
+
+// DocumentShortMultiError is an error wrapping multiple validation errors
+// returned by DocumentShort.ValidateAll() if the designated constraints
+// aren't met.
+type DocumentShortMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DocumentShortMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DocumentShortMultiError) AllErrors() []error { return m }
+
+// DocumentShortValidationError is the validation error returned by
+// DocumentShort.Validate if the designated constraints aren't met.
+type DocumentShortValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DocumentShortValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DocumentShortValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DocumentShortValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DocumentShortValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DocumentShortValidationError) ErrorName() string { return "DocumentShortValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DocumentShortValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDocumentShort.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DocumentShortValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DocumentShortValidationError{}
+
 // Validate checks the field values on DocumentJobAccess with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -1281,6 +1542,37 @@ func (m *DocumentJobAccess) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	// no validation rules for CreatorId
+
+	if all {
+		switch v := interface{}(m.GetCreator()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentJobAccessValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentJobAccessValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentJobAccessValidationError{
+				field:  "Creator",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if len(errors) > 0 {
@@ -1469,6 +1761,37 @@ func (m *DocumentUserAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for CreatorId
+
+	if all {
+		switch v := interface{}(m.GetCreator()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentUserAccessValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentUserAccessValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentUserAccessValidationError{
+				field:  "Creator",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return DocumentUserAccessMultiError(errors)
 	}
@@ -1603,6 +1926,35 @@ func (m *DocumentReference) validate(all bool) error {
 	}
 
 	// no validation rules for DocumentId
+
+	if all {
+		switch v := interface{}(m.GetDocument()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentReferenceValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentReferenceValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentReferenceValidationError{
+				field:  "Document",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if m.GetSourceDocumentId() <= 0 {
 		err := DocumentReferenceValidationError{
@@ -1772,6 +2124,35 @@ func (m *DocumentRelation) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
+	if all {
+		switch v := interface{}(m.GetDocument()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentRelationValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentRelationValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentRelationValidationError{
+				field:  "Document",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if m.GetTargetUserId() <= 0 {
 		err := DocumentRelationValidationError{
 			field:  "TargetUserId",
@@ -1781,6 +2162,35 @@ func (m *DocumentRelation) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetTargetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentRelationValidationError{
+					field:  "TargetUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentRelationValidationError{
+					field:  "TargetUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTargetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentRelationValidationError{
+				field:  "TargetUser",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if _, ok := DOC_RELATION_TYPE_name[int32(m.GetRelation())]; !ok {
@@ -1803,6 +2213,35 @@ func (m *DocumentRelation) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetCauseUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentRelationValidationError{
+					field:  "CauseUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentRelationValidationError{
+					field:  "CauseUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCauseUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentRelationValidationError{
+				field:  "CauseUser",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if len(errors) > 0 {

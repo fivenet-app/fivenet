@@ -81,6 +81,9 @@ export class DocumentTemplate extends jspb.Message {
   getAdditionalData(): string;
   setAdditionalData(value: string): DocumentTemplate;
 
+  getCreatorId(): number;
+  setCreatorId(value: number): DocumentTemplate;
+
   getCreator(): resources_users_users_pb.UserShort | undefined;
   setCreator(value?: resources_users_users_pb.UserShort): DocumentTemplate;
   hasCreator(): boolean;
@@ -107,6 +110,7 @@ export namespace DocumentTemplate {
     contentTitle: string,
     content: string,
     additionalData: string,
+    creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
 }
@@ -139,6 +143,9 @@ export class DocumentTemplateShort extends jspb.Message {
   getDescription(): string;
   setDescription(value: string): DocumentTemplateShort;
 
+  getCreatorId(): number;
+  setCreatorId(value: number): DocumentTemplateShort;
+
   getCreator(): resources_users_users_pb.UserShort | undefined;
   setCreator(value?: resources_users_users_pb.UserShort): DocumentTemplateShort;
   hasCreator(): boolean;
@@ -161,6 +168,7 @@ export namespace DocumentTemplateShort {
     category?: DocumentCategory.AsObject,
     title: string,
     description: string,
+    creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
 }
@@ -174,6 +182,9 @@ export class DocumentComment extends jspb.Message {
 
   getComment(): string;
   setComment(value: string): DocumentComment;
+
+  getCreatorId(): number;
+  setCreatorId(value: number): DocumentComment;
 
   getCreator(): resources_users_users_pb.UserShort | undefined;
   setCreator(value?: resources_users_users_pb.UserShort): DocumentComment;
@@ -193,6 +204,7 @@ export namespace DocumentComment {
     id: number,
     documentId: number,
     comment: string,
+    creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
 }
@@ -227,6 +239,9 @@ export class Document extends jspb.Message {
 
   getData(): string;
   setData(value: string): Document;
+
+  getCreatorId(): number;
+  setCreatorId(value: number): Document;
 
   getCreator(): resources_users_users_pb.UserShort | undefined;
   setCreator(value?: resources_users_users_pb.UserShort): Document;
@@ -263,11 +278,70 @@ export namespace Document {
     contentType: DOC_CONTENT_TYPE,
     content: string,
     data: string,
+    creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
     state: string,
     closed: boolean,
     pb_public: boolean,
     commentcount: number,
+  }
+}
+
+export class DocumentShort extends jspb.Message {
+  getId(): number;
+  setId(value: number): DocumentShort;
+
+  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentShort;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): DocumentShort;
+
+  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentShort;
+  hasUpdatedAt(): boolean;
+  clearUpdatedAt(): DocumentShort;
+
+  getCategory(): DocumentCategory | undefined;
+  setCategory(value?: DocumentCategory): DocumentShort;
+  hasCategory(): boolean;
+  clearCategory(): DocumentShort;
+
+  getTitle(): string;
+  setTitle(value: string): DocumentShort;
+
+  getCreatorId(): number;
+  setCreatorId(value: number): DocumentShort;
+
+  getCreator(): resources_users_users_pb.UserShort | undefined;
+  setCreator(value?: resources_users_users_pb.UserShort): DocumentShort;
+  hasCreator(): boolean;
+  clearCreator(): DocumentShort;
+
+  getState(): string;
+  setState(value: string): DocumentShort;
+
+  getClosed(): boolean;
+  setClosed(value: boolean): DocumentShort;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DocumentShort.AsObject;
+  static toObject(includeInstance: boolean, msg: DocumentShort): DocumentShort.AsObject;
+  static serializeBinaryToWriter(message: DocumentShort, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DocumentShort;
+  static deserializeBinaryFromReader(message: DocumentShort, reader: jspb.BinaryReader): DocumentShort;
+}
+
+export namespace DocumentShort {
+  export type AsObject = {
+    id: number,
+    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    category?: DocumentCategory.AsObject,
+    title: string,
+    creatorId: number,
+    creator?: resources_users_users_pb.UserShort.AsObject,
+    state: string,
+    closed: boolean,
   }
 }
 
@@ -297,6 +371,14 @@ export class DocumentJobAccess extends jspb.Message {
   getAccess(): DOC_ACCESS;
   setAccess(value: DOC_ACCESS): DocumentJobAccess;
 
+  getCreatorId(): number;
+  setCreatorId(value: number): DocumentJobAccess;
+
+  getCreator(): resources_users_users_pb.UserShort | undefined;
+  setCreator(value?: resources_users_users_pb.UserShort): DocumentJobAccess;
+  hasCreator(): boolean;
+  clearCreator(): DocumentJobAccess;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DocumentJobAccess.AsObject;
   static toObject(includeInstance: boolean, msg: DocumentJobAccess): DocumentJobAccess.AsObject;
@@ -314,6 +396,8 @@ export namespace DocumentJobAccess {
     job: string,
     minimumgrade: number,
     access: DOC_ACCESS,
+    creatorId: number,
+    creator?: resources_users_users_pb.UserShort.AsObject,
   }
 }
 
@@ -340,6 +424,14 @@ export class DocumentUserAccess extends jspb.Message {
   getAccess(): DOC_ACCESS;
   setAccess(value: DOC_ACCESS): DocumentUserAccess;
 
+  getCreatorId(): number;
+  setCreatorId(value: number): DocumentUserAccess;
+
+  getCreator(): resources_users_users_pb.UserShort | undefined;
+  setCreator(value?: resources_users_users_pb.UserShort): DocumentUserAccess;
+  hasCreator(): boolean;
+  clearCreator(): DocumentUserAccess;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DocumentUserAccess.AsObject;
   static toObject(includeInstance: boolean, msg: DocumentUserAccess): DocumentUserAccess.AsObject;
@@ -356,6 +448,8 @@ export namespace DocumentUserAccess {
     documentId: number,
     userId: number,
     access: DOC_ACCESS,
+    creatorId: number,
+    creator?: resources_users_users_pb.UserShort.AsObject,
   }
 }
 
@@ -370,6 +464,11 @@ export class DocumentReference extends jspb.Message {
 
   getDocumentId(): number;
   setDocumentId(value: number): DocumentReference;
+
+  getDocument(): DocumentShort | undefined;
+  setDocument(value?: DocumentShort): DocumentReference;
+  hasDocument(): boolean;
+  clearDocument(): DocumentReference;
 
   getSourceDocumentId(): number;
   setSourceDocumentId(value: number): DocumentReference;
@@ -393,6 +492,7 @@ export namespace DocumentReference {
     id: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     documentId: number,
+    document?: DocumentShort.AsObject,
     sourceDocumentId: number,
     reference: DOC_REFERENCE_TYPE,
     targetDocumentId: number,
@@ -411,14 +511,29 @@ export class DocumentRelation extends jspb.Message {
   getDocumentId(): number;
   setDocumentId(value: number): DocumentRelation;
 
+  getDocument(): DocumentShort | undefined;
+  setDocument(value?: DocumentShort): DocumentRelation;
+  hasDocument(): boolean;
+  clearDocument(): DocumentRelation;
+
   getTargetUserId(): number;
   setTargetUserId(value: number): DocumentRelation;
+
+  getTargetUser(): resources_users_users_pb.UserShort | undefined;
+  setTargetUser(value?: resources_users_users_pb.UserShort): DocumentRelation;
+  hasTargetUser(): boolean;
+  clearTargetUser(): DocumentRelation;
 
   getRelation(): DOC_RELATION_TYPE;
   setRelation(value: DOC_RELATION_TYPE): DocumentRelation;
 
   getCauseUserId(): number;
   setCauseUserId(value: number): DocumentRelation;
+
+  getCauseUser(): resources_users_users_pb.UserShort | undefined;
+  setCauseUser(value?: resources_users_users_pb.UserShort): DocumentRelation;
+  hasCauseUser(): boolean;
+  clearCauseUser(): DocumentRelation;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DocumentRelation.AsObject;
@@ -433,9 +548,12 @@ export namespace DocumentRelation {
     id: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     documentId: number,
+    document?: DocumentShort.AsObject,
     targetUserId: number,
+    targetUser?: resources_users_users_pb.UserShort.AsObject,
     relation: DOC_RELATION_TYPE,
     causeUserId: number,
+    causeUser?: resources_users_users_pb.UserShort.AsObject,
   }
 }
 

@@ -132,7 +132,3 @@ func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, userID int32, jo
 
 	return dest.ID > 0, nil
 }
-
-func (s *Server) checkIfUserCanEditDocument(ctx context.Context, userID int32, job string, jobGrade int32) (bool, error) {
-	return s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_EDIT)
-}

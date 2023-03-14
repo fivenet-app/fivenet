@@ -2,7 +2,6 @@ package docstore
 
 import (
 	context "context"
-	"database/sql"
 	"errors"
 	"fmt"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -23,7 +23,7 @@ var (
 	adc  = table.ArpanetDocumentsComments
 	adua = table.ArpanetDocumentsUserAccess
 	adja = table.ArpanetDocumentsJobAccess
-	dc   = table.ArpanetDocumentsCategories.AS("document_category")
+	dc   = table.ArpanetDocumentsCategories.AS("category")
 )
 
 type Server struct {
@@ -87,7 +87,13 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (*FindDocumentsResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
-	condition := jet.BoolExp(jet.Raw("MATCH(title) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.Search}))
+	var condition jet.BoolExpression
+	if req.Search != "" {
+		condition = jet.BoolExp(jet.Raw("MATCH(title) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.Search}))
+	} else {
+		condition = jet.Bool(true)
+	}
+
 	countStmt := s.getDocumentsQuery(
 		condition,
 		jet.ProjectionList{jet.COUNT(ad.ID).AS("total_count")},
@@ -142,9 +148,12 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 
 	stmt := s.getDocumentsQuery(condition, nil, nil, userID, job, jobGrade)
-	if err := stmt.QueryContext(ctx, query.DB, &resp.Document); err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, err
+	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
+	fmt.Println(stmt.DebugSql())
 
 	docAccess, err := s.GetDocumentAccess(ctx, &GetDocumentAccessRequest{
 		DocumentId: resp.Document.Id,
@@ -205,7 +214,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 
 func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserCanEditDocument(ctx, userID, job, jobGrade)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +362,7 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserCanEditDocument(ctx, userID, job, jobGrade)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_ACCESS)
 	if err != nil {
 		return nil, err
 	}
@@ -391,7 +400,9 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 
 	resp := &GetDocumentAccessResponse{}
 	if err := stmt.QueryContext(ctx, query.DB, resp); err != nil {
-		return nil, err
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
 	}
 
 	return resp, nil
@@ -408,6 +419,8 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 }
 
 func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDATE_MODE, documentID uint64, ja []*documents.DocumentJobAccess, ua []*documents.DocumentUserAccess) error {
+	userID := auth.GetUserIDFromContext(ctx)
+
 	// Select existing job and user accesses
 	var dest struct {
 		jobs  []*documents.DocumentJobAccess
@@ -427,8 +440,10 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 
 	fmt.Println(selectStmt.DebugSql())
 
-	if err := selectStmt.QueryContext(ctx, query.DB, &dest); err != nil && errors.Is(err, sql.ErrNoRows) {
-		return err
+	if err := selectStmt.QueryContext(ctx, query.DB, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	// TODO add/update/remove for document access based on the current access in the database
@@ -437,6 +452,7 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 	if len(ja) > 0 {
 		for k := 0; k < len(ja); k++ {
 			ja[k].DocumentId = documentID
+			ja[k].CreatorId = userID
 		}
 
 		// Create document job access
@@ -445,6 +461,7 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 			adja.Job,
 			adja.MinimumGrade,
 			adja.Access,
+			adja.CreatorID,
 		).
 			MODELS(ja)
 		fmt.Println(stmt.DebugSql())
@@ -456,12 +473,14 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 	if len(ua) > 0 {
 		for k := 0; k < len(ua); k++ {
 			ua[k].DocumentId = documentID
+			ua[k].CreatorId = userID
 		}
 		// Create document user access
 		stmt := adua.INSERT(
 			adua.DocumentID,
 			adua.UserID,
 			adua.Access,
+			adua.CreatorID,
 		).
 			MODELS(ua)
 		if _, err := stmt.ExecContext(ctx, query.DB); err != nil {

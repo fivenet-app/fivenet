@@ -19,4 +19,5 @@ type ArpanetDocumentsJobAccess struct {
 	Job          string     `json:"job"`
 	MinimumGrade int32      `json:"minimum_grade"`
 	Access       int16      `json:"access"`
+	CreatorID    int32      `json:"creator_id"`
 }

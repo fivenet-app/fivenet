@@ -97,9 +97,11 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_job_access` (
   `job` varchar(20) NOT NULL,
   `minimum_grade` int(11) NOT NULL DEFAULT 0,
   `access` smallint(2) NOT NULL,
+  `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_arpanet_documents_job_access_document_id` (`document_id`),
-  CONSTRAINT `fk_arpanet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`)
+  CONSTRAINT `fk_arpanet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`),
+  CONSTRAINT `fk_arpanet_documents_job_access_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_documents_references
@@ -144,11 +146,13 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_user_access` (
   `document_id` bigint(20) unsigned DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   `access` smallint(2) NOT NULL,
+  `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_arpanet_documents_user_access_document_id` (`document_id`),
   KEY `idx_arpanet_documents_user_access_user_id` (`user_id`),
   CONSTRAINT `fk_arpanet_documents_user_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`),
-  CONSTRAINT `fk_arpanet_documents_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `fk_arpanet_documents_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_arpanet_documents_user_access_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_user_activity

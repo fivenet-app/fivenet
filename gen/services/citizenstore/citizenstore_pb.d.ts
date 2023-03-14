@@ -1,6 +1,7 @@
 import * as jspb from 'google-protobuf'
 
 import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
+import * as resources_documents_documents_pb from '../../resources/documents/documents_pb';
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
 
@@ -141,6 +142,60 @@ export class GetUserActivityResponse extends jspb.Message {
 export namespace GetUserActivityResponse {
   export type AsObject = {
     activityList: Array<resources_users_users_pb.UserActivity.AsObject>,
+  }
+}
+
+export class GetUserDocumentsRequest extends jspb.Message {
+  getOffset(): number;
+  setOffset(value: number): GetUserDocumentsRequest;
+
+  getUserId(): number;
+  setUserId(value: number): GetUserDocumentsRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetUserDocumentsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetUserDocumentsRequest): GetUserDocumentsRequest.AsObject;
+  static serializeBinaryToWriter(message: GetUserDocumentsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetUserDocumentsRequest;
+  static deserializeBinaryFromReader(message: GetUserDocumentsRequest, reader: jspb.BinaryReader): GetUserDocumentsRequest;
+}
+
+export namespace GetUserDocumentsRequest {
+  export type AsObject = {
+    offset: number,
+    userId: number,
+  }
+}
+
+export class GetUserDocumentsResponse extends jspb.Message {
+  getTotalCount(): number;
+  setTotalCount(value: number): GetUserDocumentsResponse;
+
+  getOffset(): number;
+  setOffset(value: number): GetUserDocumentsResponse;
+
+  getEnd(): number;
+  setEnd(value: number): GetUserDocumentsResponse;
+
+  getDocumentsList(): Array<resources_documents_documents_pb.DocumentRelation>;
+  setDocumentsList(value: Array<resources_documents_documents_pb.DocumentRelation>): GetUserDocumentsResponse;
+  clearDocumentsList(): GetUserDocumentsResponse;
+  addDocuments(value?: resources_documents_documents_pb.DocumentRelation, index?: number): resources_documents_documents_pb.DocumentRelation;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetUserDocumentsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetUserDocumentsResponse): GetUserDocumentsResponse.AsObject;
+  static serializeBinaryToWriter(message: GetUserDocumentsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetUserDocumentsResponse;
+  static deserializeBinaryFromReader(message: GetUserDocumentsResponse, reader: jspb.BinaryReader): GetUserDocumentsResponse;
+}
+
+export namespace GetUserDocumentsResponse {
+  export type AsObject = {
+    totalCount: number,
+    offset: number,
+    end: number,
+    documentsList: Array<resources_documents_documents_pb.DocumentRelation.AsObject>,
   }
 }
 

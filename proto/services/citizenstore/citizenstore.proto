@@ -4,6 +4,7 @@ package services.citizenstore;
 option go_package = "github.com/galexrt/arpanet/proto/services/citizenstore;citizenstore";
 
 import "resources/common/database/database.proto";
+import "resources/documents/documents.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
@@ -38,6 +39,18 @@ message GetUserActivityResponse {
   repeated resources.users.UserActivity activity = 1;
 }
 
+message GetUserDocumentsRequest {
+  int64 offset = 1 [(validate.rules).int64.gte = 0];
+  int32 user_id = 2 [(validate.rules).int32.gt = 0];
+}
+
+message GetUserDocumentsResponse {
+  int64 total_count = 1;
+  int64 offset = 2;
+  int64 end = 3;
+  repeated resources.documents.DocumentRelation documents = 4;
+}
+
 message SetUserPropsRequest {
   resources.users.UserProps props = 1;
 }
@@ -51,6 +64,8 @@ service CitizenStoreService {
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // @permission: fields=CauseUser
   rpc GetUserActivity(GetUserActivityRequest) returns (GetUserActivityResponse);
+  // @permission
+  rpc GetUserDocuments(GetUserDocumentsRequest) returns (GetUserDocumentsResponse);
   // @permission: fields=Wanted
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 }

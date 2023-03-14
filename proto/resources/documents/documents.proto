@@ -20,13 +20,14 @@ message DocumentTemplate {
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   string job = 4 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   int32 job_grade = 5 [(validate.rules).int32.gte = 0]; // @gotags: alias:"job_grade"
-  DocumentCategory category = 6;
+  DocumentCategory category = 6; // @gotags: alias:"category"
   string title = 7 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   string description = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
   string content_title = 9 [(validate.rules).string.min_len = 3]; // @gotags: alias:"content_title"
   string content = 10 [(validate.rules).string = {min_len: 12, max_bytes: 12288}]; // @gotags: alias:"content"
   string additional_data = 11; // @gotags: alias:"additional_data"
-  resources.users.UserShort creator = 12;
+  int32 creator_id = 12; // @gotags: alias:"creator_id"
+  resources.users.UserShort creator = 13;
 }
 
 message DocumentTemplateShort {
@@ -34,17 +35,19 @@ message DocumentTemplateShort {
   resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   string job = 4 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
-  DocumentCategory category = 5;
+  DocumentCategory category = 5; // @gotags: alias:"category"
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   string description = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
-  resources.users.UserShort creator = 8;
+  int32 creator_id = 8; // @gotags: alias:"creator_id"
+  resources.users.UserShort creator = 9;
 }
 
 message DocumentComment {
   uint64 id = 1; // @gotags: alias:"id"
   uint64 document_id = 2 [(validate.rules).uint64.gte = 0]; // @gotags: alias:"document_id"
   string comment = 3 [(validate.rules).string.max_bytes = 4096]; // @gotags: alias:"comment"
-  resources.users.UserShort creator = 4;
+  int32 creator_id = 4; // @gotags: alias:"creator_id"
+  resources.users.UserShort creator = 5;  // @gotags: alias:"creator"
 }
 
 enum DOC_CONTENT_TYPE {
@@ -56,16 +59,29 @@ message Document {
   uint64 id = 1 [(validate.rules).uint64.gte = 0]; // @gotags: sql:"primary_key" alias:"id"
   resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  DocumentCategory category = 4;
+  DocumentCategory category = 4; // @gotags: alias:"category"
   string title = 5 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   DOC_CONTENT_TYPE content_type = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   string content = 7 [(validate.rules).string = {min_len: 30, max_bytes: 12288}]; // @gotags: alias:"content"
   string data = 8; // @gotags: alias:"data"
-  resources.users.UserShort creator = 9;
-  string state = 10 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
-  bool closed = 11; // @gotags: alias:"closed"
-  bool public = 12; // @gotags: alias:"public"
+  int32 creator_id = 9; // @gotags: alias:"creator_id"
+  resources.users.UserShort creator = 10; // @gotags: alias:"creator"
+  string state = 11 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  bool closed = 12; // @gotags: alias:"closed"
+  bool public = 13; // @gotags: alias:"public"
   int64 commentCount = 14; // @gotags: alias:"comment_count"
+}
+
+message DocumentShort {
+  uint64 id = 1 [(validate.rules).uint64.gte = 0]; // @gotags: sql:"primary_key" alias:"id"
+  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  DocumentCategory category = 4; // @gotags: alias:"category"
+  string title = 5 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  int32 creator_id = 6; // @gotags: alias:"creator_id"
+  resources.users.UserShort creator = 7; // @gotags: alias:"creator"
+  string state = 8 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  bool closed = 9; // @gotags: alias:"closed"
 }
 
 enum DOC_ACCESS {
@@ -86,6 +102,8 @@ message DocumentJobAccess {
   string job = 5 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   int32 minimumGrade = 6 [(validate.rules).int32.gte = 0]; // @gotags: alias:"minimum_grade"
   DOC_ACCESS access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  int32 creator_id = 8; // @gotags: alias:"creator_id"
+  resources.users.UserShort creator = 9; // @gotags: alias:"creator"
 }
 
 message DocumentUserAccess {
@@ -95,6 +113,8 @@ message DocumentUserAccess {
   uint64 document_id = 4; // @gotags: alias:"document_id"
   int32 user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
   DOC_ACCESS access = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  int32 creator_id = 7; // @gotags: alias:"creator_id"
+  resources.users.UserShort creator = 8; // @gotags: alias:"creator"
 }
 
 enum DOC_REFERENCE_TYPE {
@@ -107,7 +127,8 @@ enum DOC_REFERENCE_TYPE {
 message DocumentReference {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  uint64 document_id = 4; // @gotags: alias:"document_id"
+  uint64 document_id = 3; // @gotags: alias:"document_id"
+  resources.documents.DocumentShort document = 4; // @gotags: alias:"document"
   int32 source_document_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"source_document_id"
   DOC_REFERENCE_TYPE reference = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"reference"
   int32 target_document_id = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"target_document_id"
@@ -123,8 +144,11 @@ enum DOC_RELATION_TYPE {
 message DocumentRelation {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  uint64 document_id = 4; // @gotags: alias:"document_id"
+  uint64 document_id = 3; // @gotags: alias:"document_id"
+  resources.documents.DocumentShort document = 4; // @gotags: alias:"document"
   int32 target_user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"target_user_id"
-  DOC_RELATION_TYPE relation = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"relation"
-  int32 cause_user_id = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"cause_user_id"
+  resources.users.UserShort target_user = 6; // @gotags: alias:"target_user"
+  DOC_RELATION_TYPE relation = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"relation"
+  int32 cause_user_id = 8 [(validate.rules).int32.gt = 0]; // @gotags: alias:"cause_user_id"
+  resources.users.UserShort cause_user = 9; // @gotags: alias:"cause_user"
 }

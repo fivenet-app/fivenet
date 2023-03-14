@@ -36,6 +36,10 @@ func init() {
 			Fields: []string{"CauseUser"},
 		},
 		{
+			Key:  CitizenStoreServicePermKey,
+			Name: "GetUserDocuments",
+		},
+		{
 			Key:    CitizenStoreServicePermKey,
 			Name:   "SetUserProps",
 			Fields: []string{"Wanted"},

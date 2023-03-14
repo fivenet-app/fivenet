@@ -54,13 +54,13 @@ export default defineComponent({
         getDate,
         getDocument(): void {
             const req = new GetDocumentRequest();
-            req.setId(this.documentID);
+            req.setDocumentId(this.documentID);
 
             getDocStoreClient().
                 getDocument(req, null).
                 then((resp) => {
                     this.document = resp.getDocument();
-                    this.responses = resp.getResponsesList();
+                    // TODO Show jobs user access using resp.getJobsAccessList()
                 }).
                 catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
@@ -68,7 +68,7 @@ export default defineComponent({
         },
         editDocumentTest() {
             const req = new UpdateDocumentRequest();
-            req.setId(this.document?.getId());
+            req.setDocumentId(this.document?.getId());
             req.setTitle("SCOTT'S DOKUMENTEN WOCHENDSSPAß");
             req.setContent(this.document?.getContent());
             req.setClosed(this.document?.getClosed());
@@ -228,7 +228,7 @@ export default defineComponent({
                                         <p class="mt-2 text-sm text-gray-500">
                                             Reply by
                                             {{ ' ' }}
-                                            <router-link :to="'/citizens/' + activeResponse?.getCreator()?.getUserid()"
+                                            <router-link :to="'/citizens/' + activeResponse?.getCreator()?.getUserId()"
                                                 class="font-medium text-gray-900">
                                                 {{ activeResponse?.getCreator()?.getFirstname() }}
                                                 {{ activeResponse?.getCreator()?.getLastname() }}

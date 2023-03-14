@@ -28,6 +28,8 @@ type CitizenStoreServiceClient interface {
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// @permission: fields=CauseUser
 	GetUserActivity(ctx context.Context, in *GetUserActivityRequest, opts ...grpc.CallOption) (*GetUserActivityResponse, error)
+	// @permission
+	GetUserDocuments(ctx context.Context, in *GetUserDocumentsRequest, opts ...grpc.CallOption) (*GetUserDocumentsResponse, error)
 	// @permission: fields=Wanted
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 }
@@ -67,6 +69,15 @@ func (c *citizenStoreServiceClient) GetUserActivity(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *citizenStoreServiceClient) GetUserDocuments(ctx context.Context, in *GetUserDocumentsRequest, opts ...grpc.CallOption) (*GetUserDocumentsResponse, error) {
+	out := new(GetUserDocumentsResponse)
+	err := c.cc.Invoke(ctx, "/services.citizenstore.CitizenStoreService/GetUserDocuments", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *citizenStoreServiceClient) SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error) {
 	out := new(SetUserPropsResponse)
 	err := c.cc.Invoke(ctx, "/services.citizenstore.CitizenStoreService/SetUserProps", in, out, opts...)
@@ -86,6 +97,8 @@ type CitizenStoreServiceServer interface {
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// @permission: fields=CauseUser
 	GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error)
+	// @permission
+	GetUserDocuments(context.Context, *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error)
 	// @permission: fields=Wanted
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	mustEmbedUnimplementedCitizenStoreServiceServer()
@@ -103,6 +116,9 @@ func (UnimplementedCitizenStoreServiceServer) GetUser(context.Context, *GetUserR
 }
 func (UnimplementedCitizenStoreServiceServer) GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserActivity not implemented")
+}
+func (UnimplementedCitizenStoreServiceServer) GetUserDocuments(context.Context, *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserDocuments not implemented")
 }
 func (UnimplementedCitizenStoreServiceServer) SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserProps not implemented")
@@ -174,6 +190,24 @@ func _CitizenStoreService_GetUserActivity_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CitizenStoreService_GetUserDocuments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserDocumentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CitizenStoreServiceServer).GetUserDocuments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.citizenstore.CitizenStoreService/GetUserDocuments",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CitizenStoreServiceServer).GetUserDocuments(ctx, req.(*GetUserDocumentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CitizenStoreService_SetUserProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetUserPropsRequest)
 	if err := dec(in); err != nil {
@@ -210,6 +244,10 @@ var CitizenStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserActivity",
 			Handler:    _CitizenStoreService_GetUserActivity_Handler,
+		},
+		{
+			MethodName: "GetUserDocuments",
+			Handler:    _CitizenStoreService_GetUserDocuments_Handler,
 		},
 		{
 			MethodName: "SetUserProps",

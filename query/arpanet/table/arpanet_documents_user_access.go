@@ -23,6 +23,7 @@ type arpanetDocumentsUserAccessTable struct {
 	DocumentID mysql.ColumnInteger
 	UserID     mysql.ColumnInteger
 	Access     mysql.ColumnInteger
+	CreatorID  mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -69,8 +70,9 @@ func newArpanetDocumentsUserAccessTableImpl(schemaName, tableName, alias string)
 		DocumentIDColumn = mysql.IntegerColumn("document_id")
 		UserIDColumn     = mysql.IntegerColumn("user_id")
 		AccessColumn     = mysql.IntegerColumn("access")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn}
+		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn, CreatorIDColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn, CreatorIDColumn}
 	)
 
 	return arpanetDocumentsUserAccessTable{
@@ -83,6 +85,7 @@ func newArpanetDocumentsUserAccessTableImpl(schemaName, tableName, alias string)
 		DocumentID: DocumentIDColumn,
 		UserID:     UserIDColumn,
 		Access:     AccessColumn,
+		CreatorID:  CreatorIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
