@@ -22,20 +22,24 @@ type Server struct {
 	LivemapperServiceServer
 
 	logger *zap.Logger
+	p      perms.Permissions
 }
 
-func NewServer(logger *zap.Logger) *Server {
-	s := &Server{
+func NewServer(logger *zap.Logger, p perms.Permissions) *Server {
+	return &Server{
 		logger: logger,
+		p:      p,
 	}
-	go s.generateRandomUserMarker()
-	return s
+}
+
+func (s *Server) SetLogger(logger *zap.Logger) {
+	s.logger = logger
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userID := auth.GetUserIDFromContext(srv.Context())
 
-	jobs, err := perms.P.GetSuffixOfPermissionsByPrefixOfUser(userID, "LivemapperService.Stream")
+	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userID, "LivemapperService.Stream")
 	if err != nil {
 		return err
 	}
@@ -82,7 +86,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 }
 
-func (s *Server) generateRandomUserMarker() {
+func (s *Server) GenerateRandomUserMarker() {
 	userIDs := []int32{
 		// ambulance
 		26061,

@@ -44,7 +44,7 @@ message DocumentTemplateShort {
 
 message DocumentComment {
   uint64 id = 1; // @gotags: alias:"id"
-  uint64 document_id = 2 [(validate.rules).uint64.gte = 0]; // @gotags: alias:"document_id"
+  uint64 document_id = 2; // @gotags: alias:"document_id"
   string comment = 3 [(validate.rules).string.max_bytes = 4096]; // @gotags: alias:"comment"
   int32 creator_id = 4; // @gotags: alias:"creator_id"
   resources.users.UserShort creator = 5;  // @gotags: alias:"creator"
@@ -56,7 +56,7 @@ enum DOC_CONTENT_TYPE {
 }
 
 message Document {
-  uint64 id = 1 [(validate.rules).uint64.gte = 0]; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   DocumentCategory category = 4; // @gotags: alias:"category"
@@ -73,7 +73,7 @@ message Document {
 }
 
 message DocumentShort {
-  uint64 id = 1 [(validate.rules).uint64.gte = 0]; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   DocumentCategory category = 4; // @gotags: alias:"category"
@@ -151,9 +151,14 @@ message DocumentRelation {
   resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   uint64 document_id = 3; // @gotags: alias:"document_id"
   resources.documents.DocumentShort document = 4; // @gotags: alias:"document"
-  int32 target_user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"target_user_id"
-  resources.users.UserShort target_user = 6; // @gotags: alias:"target_user"
+  int32 source_user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"source_user_id"
+  resources.users.UserShort source_user = 6; // @gotags: alias:"source_user"
   DOC_RELATION_TYPE relation = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"relation"
-  int32 cause_user_id = 8 [(validate.rules).int32.gt = 0]; // @gotags: alias:"cause_user_id"
-  resources.users.UserShort cause_user = 9; // @gotags: alias:"cause_user"
+  int32 target_user_id = 8 [(validate.rules).int32.gt = 0]; // @gotags: alias:"target_user_id"
+  resources.users.UserShort target_user = 9; // @gotags: alias:"target_user"
+}
+
+message DocumentFeed {
+  resources.documents.DocumentReference reference = 1;
+  resources.documents.DocumentRelation relation = 2;
 }

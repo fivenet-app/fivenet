@@ -57,7 +57,7 @@ func Test_TimestampScan(t *testing.T) {
 		ts := Timestamp{}
 		err := ts.Scan(v)
 		assert.True(err != nil)
-		assert.Equal("Not a protobuf Timestamp", err.Error())
+		assert.Equal("not a protobuf Timestamp", err.Error())
 	})
 	t.Run("invalid time", func(t *testing.T) {
 		v := time.Unix(maxValidSeconds, 0)

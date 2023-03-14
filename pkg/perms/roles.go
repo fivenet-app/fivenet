@@ -11,7 +11,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-func (p *perms) CreateRole(name string, description string) error {
+func (p *Perms) CreateRole(name string, description string) error {
 	stmt := ar.INSERT(
 		ar.Name,
 		ar.GuardName,
@@ -23,14 +23,14 @@ func (p *perms) CreateRole(name string, description string) error {
 	return err
 }
 
-func (p *perms) DeleteRole(name string) error {
+func (p *Perms) DeleteRole(name string) error {
 	_, err := ar.DELETE().
 		WHERE(ar.GuardName.EQ(jet.String(helpers.Guard(name)))).
 		ExecContext(context.TODO(), query.DB)
 	return err
 }
 
-func (p *perms) AddPermissionsToRole(name string, perms collections.Permissions) error {
+func (p *Perms) AddPermissionsToRole(name string, perms collections.Permissions) error {
 	var roleIDs []uint
 	if err := ar.SELECT(ar.ID).
 		FROM(ar).

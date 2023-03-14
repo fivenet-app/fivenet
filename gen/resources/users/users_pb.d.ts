@@ -197,15 +197,15 @@ export class UserActivity extends jspb.Message {
   hasCreatedAt(): boolean;
   clearCreatedAt(): UserActivity;
 
-  getTargetuser(): UserShort | undefined;
-  setTargetuser(value?: UserShort): UserActivity;
-  hasTargetuser(): boolean;
-  clearTargetuser(): UserActivity;
+  getSourceUser(): UserShort | undefined;
+  setSourceUser(value?: UserShort): UserActivity;
+  hasSourceUser(): boolean;
+  clearSourceUser(): UserActivity;
 
-  getCauseuser(): UserShort | undefined;
-  setCauseuser(value?: UserShort): UserActivity;
-  hasCauseuser(): boolean;
-  clearCauseuser(): UserActivity;
+  getTargetUser(): UserShort | undefined;
+  setTargetUser(value?: UserShort): UserActivity;
+  hasTargetUser(): boolean;
+  clearTargetUser(): UserActivity;
 
   getKey(): string;
   setKey(value: string): UserActivity;
@@ -229,8 +229,8 @@ export namespace UserActivity {
     id: number,
     type: USER_ACTIVITY_TYPE,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    targetuser?: UserShort.AsObject,
-    causeuser?: UserShort.AsObject,
+    sourceUser?: UserShort.AsObject,
+    targetUser?: UserShort.AsObject,
     key: string,
     oldvalue: string,
     newvalue: string,

@@ -1552,8 +1552,8 @@ proto.resources.users.UserActivity.toObject = function(includeInstance, msg) {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     type: jspb.Message.getFieldWithDefault(msg, 2, 0),
     createdAt: (f = msg.getCreatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
-    targetuser: (f = msg.getTargetuser()) && proto.resources.users.UserShort.toObject(includeInstance, f),
-    causeuser: (f = msg.getCauseuser()) && proto.resources.users.UserShort.toObject(includeInstance, f),
+    sourceUser: (f = msg.getSourceUser()) && proto.resources.users.UserShort.toObject(includeInstance, f),
+    targetUser: (f = msg.getTargetUser()) && proto.resources.users.UserShort.toObject(includeInstance, f),
     key: jspb.Message.getFieldWithDefault(msg, 6, ""),
     oldvalue: jspb.Message.getFieldWithDefault(msg, 7, ""),
     newvalue: jspb.Message.getFieldWithDefault(msg, 8, "")
@@ -1609,12 +1609,12 @@ proto.resources.users.UserActivity.deserializeBinaryFromReader = function(msg, r
     case 4:
       var value = new proto.resources.users.UserShort;
       reader.readMessage(value,proto.resources.users.UserShort.deserializeBinaryFromReader);
-      msg.setTargetuser(value);
+      msg.setSourceUser(value);
       break;
     case 5:
       var value = new proto.resources.users.UserShort;
       reader.readMessage(value,proto.resources.users.UserShort.deserializeBinaryFromReader);
-      msg.setCauseuser(value);
+      msg.setTargetUser(value);
       break;
     case 6:
       var value = /** @type {string} */ (reader.readString());
@@ -1679,7 +1679,7 @@ proto.resources.users.UserActivity.serializeBinaryToWriter = function(message, w
       resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
   }
-  f = message.getTargetuser();
+  f = message.getSourceUser();
   if (f != null) {
     writer.writeMessage(
       4,
@@ -1687,7 +1687,7 @@ proto.resources.users.UserActivity.serializeBinaryToWriter = function(message, w
       proto.resources.users.UserShort.serializeBinaryToWriter
     );
   }
-  f = message.getCauseuser();
+  f = message.getTargetUser();
   if (f != null) {
     writer.writeMessage(
       5,
@@ -1793,10 +1793,10 @@ proto.resources.users.UserActivity.prototype.hasCreatedAt = function() {
 
 
 /**
- * optional UserShort targetUser = 4;
+ * optional UserShort source_user = 4;
  * @return {?proto.resources.users.UserShort}
  */
-proto.resources.users.UserActivity.prototype.getTargetuser = function() {
+proto.resources.users.UserActivity.prototype.getSourceUser = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
     jspb.Message.getWrapperField(this, proto.resources.users.UserShort, 4));
 };
@@ -1806,7 +1806,7 @@ proto.resources.users.UserActivity.prototype.getTargetuser = function() {
  * @param {?proto.resources.users.UserShort|undefined} value
  * @return {!proto.resources.users.UserActivity} returns this
 */
-proto.resources.users.UserActivity.prototype.setTargetuser = function(value) {
+proto.resources.users.UserActivity.prototype.setSourceUser = function(value) {
   return jspb.Message.setWrapperField(this, 4, value);
 };
 
@@ -1815,8 +1815,8 @@ proto.resources.users.UserActivity.prototype.setTargetuser = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.resources.users.UserActivity} returns this
  */
-proto.resources.users.UserActivity.prototype.clearTargetuser = function() {
-  return this.setTargetuser(undefined);
+proto.resources.users.UserActivity.prototype.clearSourceUser = function() {
+  return this.setSourceUser(undefined);
 };
 
 
@@ -1824,16 +1824,16 @@ proto.resources.users.UserActivity.prototype.clearTargetuser = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.resources.users.UserActivity.prototype.hasTargetuser = function() {
+proto.resources.users.UserActivity.prototype.hasSourceUser = function() {
   return jspb.Message.getField(this, 4) != null;
 };
 
 
 /**
- * optional UserShort causeUser = 5;
+ * optional UserShort target_user = 5;
  * @return {?proto.resources.users.UserShort}
  */
-proto.resources.users.UserActivity.prototype.getCauseuser = function() {
+proto.resources.users.UserActivity.prototype.getTargetUser = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
     jspb.Message.getWrapperField(this, proto.resources.users.UserShort, 5));
 };
@@ -1843,7 +1843,7 @@ proto.resources.users.UserActivity.prototype.getCauseuser = function() {
  * @param {?proto.resources.users.UserShort|undefined} value
  * @return {!proto.resources.users.UserActivity} returns this
 */
-proto.resources.users.UserActivity.prototype.setCauseuser = function(value) {
+proto.resources.users.UserActivity.prototype.setTargetUser = function(value) {
   return jspb.Message.setWrapperField(this, 5, value);
 };
 
@@ -1852,8 +1852,8 @@ proto.resources.users.UserActivity.prototype.setCauseuser = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.resources.users.UserActivity} returns this
  */
-proto.resources.users.UserActivity.prototype.clearCauseuser = function() {
-  return this.setCauseuser(undefined);
+proto.resources.users.UserActivity.prototype.clearTargetUser = function() {
+  return this.setTargetUser(undefined);
 };
 
 
@@ -1861,7 +1861,7 @@ proto.resources.users.UserActivity.prototype.clearCauseuser = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.resources.users.UserActivity.prototype.hasCauseuser = function() {
+proto.resources.users.UserActivity.prototype.hasTargetUser = function() {
   return jspb.Message.getField(this, 5) != null;
 };
 

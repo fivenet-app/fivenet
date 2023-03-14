@@ -41,7 +41,7 @@ type DocStoreServiceClient interface {
 	// @permission: name=PostDocumentComment
 	EditDocumentComment(ctx context.Context, in *EditDocumentCommentRequest, opts ...grpc.CallOption) (*EditDocumentCommentResponse, error)
 	// @permission
-	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
+	GetDocumentFeed(ctx context.Context, in *GetDocumentFeedRequest, opts ...grpc.CallOption) (*GetDocumentFeedResponse, error)
 	// @permission
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
 	// @permission
@@ -137,9 +137,9 @@ func (c *docStoreServiceClient) EditDocumentComment(ctx context.Context, in *Edi
 	return out, nil
 }
 
-func (c *docStoreServiceClient) GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error) {
-	out := new(GetDocumentReferencesResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetDocumentReferences", in, out, opts...)
+func (c *docStoreServiceClient) GetDocumentFeed(ctx context.Context, in *GetDocumentFeedRequest, opts ...grpc.CallOption) (*GetDocumentFeedResponse, error) {
+	out := new(GetDocumentFeedResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetDocumentFeed", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +187,7 @@ type DocStoreServiceServer interface {
 	// @permission: name=PostDocumentComment
 	EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error)
 	// @permission
-	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
+	GetDocumentFeed(context.Context, *GetDocumentFeedRequest) (*GetDocumentFeedResponse, error)
 	// @permission
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
 	// @permission
@@ -226,8 +226,8 @@ func (UnimplementedDocStoreServiceServer) PostDocumentComment(context.Context, *
 func (UnimplementedDocStoreServiceServer) EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditDocumentComment not implemented")
 }
-func (UnimplementedDocStoreServiceServer) GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentReferences not implemented")
+func (UnimplementedDocStoreServiceServer) GetDocumentFeed(context.Context, *GetDocumentFeedRequest) (*GetDocumentFeedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentFeed not implemented")
 }
 func (UnimplementedDocStoreServiceServer) GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentAccess not implemented")
@@ -410,20 +410,20 @@ func _DocStoreService_EditDocumentComment_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_GetDocumentReferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDocumentReferencesRequest)
+func _DocStoreService_GetDocumentFeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDocumentFeedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).GetDocumentReferences(ctx, in)
+		return srv.(DocStoreServiceServer).GetDocumentFeed(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/GetDocumentReferences",
+		FullMethod: "/services.docstore.DocStoreService/GetDocumentFeed",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).GetDocumentReferences(ctx, req.(*GetDocumentReferencesRequest))
+		return srv.(DocStoreServiceServer).GetDocumentFeed(ctx, req.(*GetDocumentFeedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -508,8 +508,8 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocStoreService_EditDocumentComment_Handler,
 		},
 		{
-			MethodName: "GetDocumentReferences",
-			Handler:    _DocStoreService_GetDocumentReferences_Handler,
+			MethodName: "GetDocumentFeed",
+			Handler:    _DocStoreService_GetDocumentFeed_Handler,
 		},
 		{
 			MethodName: "GetDocumentAccess",

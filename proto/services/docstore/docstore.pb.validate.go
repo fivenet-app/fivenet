@@ -2331,22 +2331,22 @@ var _ interface {
 	ErrorName() string
 } = UpdateDocumentResponseValidationError{}
 
-// Validate checks the field values on GetDocumentReferencesRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on GetDocumentFeedRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetDocumentReferencesRequest) Validate() error {
+func (m *GetDocumentFeedRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetDocumentReferencesRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on GetDocumentFeedRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetDocumentReferencesRequestMultiError, or nil if none found.
-func (m *GetDocumentReferencesRequest) ValidateAll() error {
+// GetDocumentFeedRequestMultiError, or nil if none found.
+func (m *GetDocumentFeedRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetDocumentReferencesRequest) validate(all bool) error {
+func (m *GetDocumentFeedRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -2356,19 +2356,19 @@ func (m *GetDocumentReferencesRequest) validate(all bool) error {
 	// no validation rules for DocumentId
 
 	if len(errors) > 0 {
-		return GetDocumentReferencesRequestMultiError(errors)
+		return GetDocumentFeedRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetDocumentReferencesRequestMultiError is an error wrapping multiple
-// validation errors returned by GetDocumentReferencesRequest.ValidateAll() if
-// the designated constraints aren't met.
-type GetDocumentReferencesRequestMultiError []error
+// GetDocumentFeedRequestMultiError is an error wrapping multiple validation
+// errors returned by GetDocumentFeedRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetDocumentFeedRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetDocumentReferencesRequestMultiError) Error() string {
+func (m GetDocumentFeedRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -2377,12 +2377,11 @@ func (m GetDocumentReferencesRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetDocumentReferencesRequestMultiError) AllErrors() []error { return m }
+func (m GetDocumentFeedRequestMultiError) AllErrors() []error { return m }
 
-// GetDocumentReferencesRequestValidationError is the validation error returned
-// by GetDocumentReferencesRequest.Validate if the designated constraints
-// aren't met.
-type GetDocumentReferencesRequestValidationError struct {
+// GetDocumentFeedRequestValidationError is the validation error returned by
+// GetDocumentFeedRequest.Validate if the designated constraints aren't met.
+type GetDocumentFeedRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -2390,24 +2389,24 @@ type GetDocumentReferencesRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetDocumentReferencesRequestValidationError) Field() string { return e.field }
+func (e GetDocumentFeedRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetDocumentReferencesRequestValidationError) Reason() string { return e.reason }
+func (e GetDocumentFeedRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetDocumentReferencesRequestValidationError) Cause() error { return e.cause }
+func (e GetDocumentFeedRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetDocumentReferencesRequestValidationError) Key() bool { return e.key }
+func (e GetDocumentFeedRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetDocumentReferencesRequestValidationError) ErrorName() string {
-	return "GetDocumentReferencesRequestValidationError"
+func (e GetDocumentFeedRequestValidationError) ErrorName() string {
+	return "GetDocumentFeedRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetDocumentReferencesRequestValidationError) Error() string {
+func (e GetDocumentFeedRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2419,14 +2418,14 @@ func (e GetDocumentReferencesRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetDocumentReferencesRequest.%s: %s%s",
+		"invalid %sGetDocumentFeedRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetDocumentReferencesRequestValidationError{}
+var _ error = GetDocumentFeedRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -2434,47 +2433,47 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetDocumentReferencesRequestValidationError{}
+} = GetDocumentFeedRequestValidationError{}
 
-// Validate checks the field values on GetDocumentReferencesResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on GetDocumentFeedResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetDocumentReferencesResponse) Validate() error {
+func (m *GetDocumentFeedResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetDocumentReferencesResponse with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// GetDocumentReferencesResponseMultiError, or nil if none found.
-func (m *GetDocumentReferencesResponse) ValidateAll() error {
+// ValidateAll checks the field values on GetDocumentFeedResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDocumentFeedResponseMultiError, or nil if none found.
+func (m *GetDocumentFeedResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetDocumentReferencesResponse) validate(all bool) error {
+func (m *GetDocumentFeedResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	for idx, item := range m.GetReferences() {
+	for idx, item := range m.GetItems() {
 		_, _ = idx, item
 
 		if all {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, GetDocumentReferencesResponseValidationError{
-						field:  fmt.Sprintf("References[%v]", idx),
+					errors = append(errors, GetDocumentFeedResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, GetDocumentReferencesResponseValidationError{
-						field:  fmt.Sprintf("References[%v]", idx),
+					errors = append(errors, GetDocumentFeedResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -2482,8 +2481,8 @@ func (m *GetDocumentReferencesResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return GetDocumentReferencesResponseValidationError{
-					field:  fmt.Sprintf("References[%v]", idx),
+				return GetDocumentFeedResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -2493,19 +2492,19 @@ func (m *GetDocumentReferencesResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return GetDocumentReferencesResponseMultiError(errors)
+		return GetDocumentFeedResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetDocumentReferencesResponseMultiError is an error wrapping multiple
-// validation errors returned by GetDocumentReferencesResponse.ValidateAll()
-// if the designated constraints aren't met.
-type GetDocumentReferencesResponseMultiError []error
+// GetDocumentFeedResponseMultiError is an error wrapping multiple validation
+// errors returned by GetDocumentFeedResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetDocumentFeedResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetDocumentReferencesResponseMultiError) Error() string {
+func (m GetDocumentFeedResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -2514,12 +2513,11 @@ func (m GetDocumentReferencesResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetDocumentReferencesResponseMultiError) AllErrors() []error { return m }
+func (m GetDocumentFeedResponseMultiError) AllErrors() []error { return m }
 
-// GetDocumentReferencesResponseValidationError is the validation error
-// returned by GetDocumentReferencesResponse.Validate if the designated
-// constraints aren't met.
-type GetDocumentReferencesResponseValidationError struct {
+// GetDocumentFeedResponseValidationError is the validation error returned by
+// GetDocumentFeedResponse.Validate if the designated constraints aren't met.
+type GetDocumentFeedResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -2527,24 +2525,24 @@ type GetDocumentReferencesResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetDocumentReferencesResponseValidationError) Field() string { return e.field }
+func (e GetDocumentFeedResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetDocumentReferencesResponseValidationError) Reason() string { return e.reason }
+func (e GetDocumentFeedResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetDocumentReferencesResponseValidationError) Cause() error { return e.cause }
+func (e GetDocumentFeedResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetDocumentReferencesResponseValidationError) Key() bool { return e.key }
+func (e GetDocumentFeedResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetDocumentReferencesResponseValidationError) ErrorName() string {
-	return "GetDocumentReferencesResponseValidationError"
+func (e GetDocumentFeedResponseValidationError) ErrorName() string {
+	return "GetDocumentFeedResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetDocumentReferencesResponseValidationError) Error() string {
+func (e GetDocumentFeedResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2556,14 +2554,14 @@ func (e GetDocumentReferencesResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetDocumentReferencesResponse.%s: %s%s",
+		"invalid %sGetDocumentFeedResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetDocumentReferencesResponseValidationError{}
+var _ error = GetDocumentFeedResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -2571,7 +2569,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetDocumentReferencesResponseValidationError{}
+} = GetDocumentFeedResponseValidationError{}
 
 // Validate checks the field values on GetDocumentAccessRequest with the rules
 // defined in the proto definition for this message. If any rules are

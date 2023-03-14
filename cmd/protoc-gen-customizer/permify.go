@@ -1,9 +1,7 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"reflect"
 	"strconv"
 	"strings"
 	"text/template"
@@ -30,18 +28,9 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 	tpl := template.New("permify").Funcs(map[string]interface{}{
 		"package": p.ctx.PackageName,
 		"name":    p.ctx.Name,
-		"last":    p.last,
 	})
 
 	p.tpl = template.Must(tpl.Parse(permifyTpl))
-}
-
-func (p *PermifyModule) last(v interface{}, i int) (bool, error) {
-	rv := reflect.ValueOf(v)
-	if rv.Kind() != reflect.Slice {
-		return false, errors.New("not a slice")
-	}
-	return rv.Len()-1 == i, nil
 }
 
 // Name satisfies the generator.Plugin interface.

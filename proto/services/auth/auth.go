@@ -29,10 +29,18 @@ var (
 
 type Server struct {
 	AuthServiceServer
+
+	auth *auth.GRPCAuth
+	tm   *auth.TokenManager
+	p    perms.Permissions
 }
 
-func NewServer() *Server {
-	return &Server{}
+func NewServer(auth *auth.GRPCAuth, tm *auth.TokenManager, p perms.Permissions) *Server {
+	return &Server{
+		auth: auth,
+		tm:   tm,
+		p:    p,
+	}
 }
 
 // AuthFuncOverride is called instead of exampleAuthFunc
@@ -42,7 +50,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		return ctx, nil
 	}
 
-	return auth.GRPCAuthFunc(ctx, fullMethod)
+	return s.auth.GRPCAuthFunc(ctx, fullMethod)
 }
 
 func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
@@ -76,7 +84,7 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 		claims.ActiveCharJobGrade = 0
 	}
 
-	return auth.Tokens.NewWithClaims(claims)
+	return s.tm.NewWithClaims(claims)
 }
 
 func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.ArpanetAccounts, error) {
@@ -118,7 +126,7 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 }
 
 func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {
-	claims, err := auth.Tokens.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +155,7 @@ func buildCharSearchIdentifier(license string) string {
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
 	resp := &ChooseCharacterResponse{}
 
-	claims, err := auth.Tokens.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +193,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	resp.Token = token
 
 	// Load permissions of user
-	perms, err := perms.P.GetAllPermissionsOfUser(char.UserId)
+	perms, err := s.p.GetAllPermissionsOfUser(char.UserId)
 	if err != nil {
 		return nil, err
 	}

@@ -436,41 +436,41 @@ export namespace UpdateDocumentResponse {
   }
 }
 
-export class GetDocumentReferencesRequest extends jspb.Message {
+export class GetDocumentFeedRequest extends jspb.Message {
   getDocumentId(): number;
-  setDocumentId(value: number): GetDocumentReferencesRequest;
+  setDocumentId(value: number): GetDocumentFeedRequest;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetDocumentReferencesRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: GetDocumentReferencesRequest): GetDocumentReferencesRequest.AsObject;
-  static serializeBinaryToWriter(message: GetDocumentReferencesRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetDocumentReferencesRequest;
-  static deserializeBinaryFromReader(message: GetDocumentReferencesRequest, reader: jspb.BinaryReader): GetDocumentReferencesRequest;
+  toObject(includeInstance?: boolean): GetDocumentFeedRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentFeedRequest): GetDocumentFeedRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentFeedRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentFeedRequest;
+  static deserializeBinaryFromReader(message: GetDocumentFeedRequest, reader: jspb.BinaryReader): GetDocumentFeedRequest;
 }
 
-export namespace GetDocumentReferencesRequest {
+export namespace GetDocumentFeedRequest {
   export type AsObject = {
     documentId: number,
   }
 }
 
-export class GetDocumentReferencesResponse extends jspb.Message {
-  getReferencesList(): Array<resources_documents_documents_pb.DocumentReference>;
-  setReferencesList(value: Array<resources_documents_documents_pb.DocumentReference>): GetDocumentReferencesResponse;
-  clearReferencesList(): GetDocumentReferencesResponse;
-  addReferences(value?: resources_documents_documents_pb.DocumentReference, index?: number): resources_documents_documents_pb.DocumentReference;
+export class GetDocumentFeedResponse extends jspb.Message {
+  getItemsList(): Array<resources_documents_documents_pb.DocumentFeed>;
+  setItemsList(value: Array<resources_documents_documents_pb.DocumentFeed>): GetDocumentFeedResponse;
+  clearItemsList(): GetDocumentFeedResponse;
+  addItems(value?: resources_documents_documents_pb.DocumentFeed, index?: number): resources_documents_documents_pb.DocumentFeed;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetDocumentReferencesResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: GetDocumentReferencesResponse): GetDocumentReferencesResponse.AsObject;
-  static serializeBinaryToWriter(message: GetDocumentReferencesResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetDocumentReferencesResponse;
-  static deserializeBinaryFromReader(message: GetDocumentReferencesResponse, reader: jspb.BinaryReader): GetDocumentReferencesResponse;
+  toObject(includeInstance?: boolean): GetDocumentFeedResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentFeedResponse): GetDocumentFeedResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentFeedResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentFeedResponse;
+  static deserializeBinaryFromReader(message: GetDocumentFeedResponse, reader: jspb.BinaryReader): GetDocumentFeedResponse;
 }
 
-export namespace GetDocumentReferencesResponse {
+export namespace GetDocumentFeedResponse {
   export type AsObject = {
-    referencesList: Array<resources_documents_documents_pb.DocumentReference.AsObject>,
+    itemsList: Array<resources_documents_documents_pb.DocumentFeed.AsObject>,
   }
 }
 

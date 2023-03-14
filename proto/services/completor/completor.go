@@ -25,13 +25,15 @@ var (
 type Server struct {
 	CompletorServiceServer
 
+	p perms.Permissions
+
 	cancel context.CancelFunc
 
 	jobsCache           *cache.Cache[string, *jobs.Job]
 	docsCategoriesCache *cache.Cache[string, []*documents.DocumentCategory]
 }
 
-func NewServer() *Server {
+func NewServer(p perms.Permissions) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	jobsCache := cache.NewContext(
@@ -46,6 +48,7 @@ func NewServer() *Server {
 	)
 
 	s := &Server{
+		p:                   p,
 		cancel:              cancel,
 		jobsCache:           jobsCache,
 		docsCategoriesCache: docsCategoriesCache,
@@ -162,7 +165,7 @@ func (s *Server) CompleteJobGrades(ctx context.Context, req *CompleteJobGradesRe
 func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error) {
 	userID := auth.GetUserIDFromContext(ctx)
 
-	jobs, err := perms.P.GetSuffixOfPermissionsByPrefixOfUser(userID, CompletorServicePermKey+"-CompleteDocumentCategory")
+	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userID, CompletorServicePermKey+"-CompleteDocumentCategory")
 	if err != nil {
 		return nil, err
 	}

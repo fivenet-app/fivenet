@@ -99,12 +99,12 @@ message UpdateDocumentRequest {
 
 message UpdateDocumentResponse {}
 
-message GetDocumentReferencesRequest {
+message GetDocumentFeedRequest {
   uint64 document_id = 1;
 }
 
-message GetDocumentReferencesResponse {
-  repeated resources.documents.DocumentReference references = 1;
+message GetDocumentFeedResponse {
+  repeated resources.documents.DocumentFeed items = 1;
 }
 
 message GetDocumentAccessRequest {
@@ -152,7 +152,7 @@ service DocStoreService {
   // @permission: name=PostDocumentComment
   rpc EditDocumentComment(EditDocumentCommentRequest) returns (EditDocumentCommentResponse);
   // @permission
-  rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse);
+  rpc GetDocumentFeed(GetDocumentFeedRequest) returns (GetDocumentFeedResponse);
 
   // @permission
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);

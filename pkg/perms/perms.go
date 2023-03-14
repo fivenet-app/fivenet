@@ -2,6 +2,7 @@ package perms
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	cache "github.com/Code-Hex/go-generics-cache"
@@ -18,9 +19,9 @@ var (
 	aur = table.ArpanetUserRoles
 )
 
-var P *perms
+type Perms struct {
+	db *sql.DB
 
-type perms struct {
 	cancel context.CancelFunc
 
 	canCacheTTL time.Duration
@@ -30,7 +31,7 @@ type perms struct {
 	permsCache    *cache.Cache[int32, collections.Permissions]
 }
 
-func Setup() {
+func New(db *sql.DB) *Perms {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	canCache := cache.NewContext(
@@ -44,7 +45,9 @@ func Setup() {
 		cache.WithJanitorInterval[int32, collections.Permissions](15*time.Second),
 	)
 
-	P = &perms{
+	return &Perms{
+		db: db,
+
 		cancel: cancel,
 
 		canCacheTTL: 2 * time.Minute,
@@ -55,8 +58,16 @@ func Setup() {
 	}
 }
 
-func Stop() {
-	if P.cancel != nil {
-		P.cancel()
+func (p *Perms) Stop() {
+	if p.cancel != nil {
+		p.cancel()
 	}
+}
+
+type Permissions interface {
+	GetAllPermissionsOfUser(userID int32) (collections.Permissions, error)
+	GetAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error)
+	GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string) ([]string, error)
+
+	CanID(userID int32, perm ...string) bool
 }

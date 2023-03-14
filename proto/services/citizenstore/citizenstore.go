@@ -2,6 +2,7 @@ package citizenstore
 
 import (
 	context "context"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -22,14 +23,20 @@ var (
 	aup = table.ArpanetUserProps
 	ul  = table.UserLicenses
 	aua = table.ArpanetUserActivity
+	adr = table.ArpanetDocumentsRelations.AS("document_relation")
+	ad  = table.ArpanetDocuments.AS("document")
 )
 
 type Server struct {
 	CitizenStoreServiceServer
+
+	p perms.Permissions
 }
 
-func NewServer() *Server {
-	return &Server{}
+func NewServer(p perms.Permissions) *Server {
+	return &Server{
+		p: p,
+	}
 }
 
 func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUsersResponse, error) {
@@ -51,7 +58,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		aup.UserID,
 	}
 	// Field Permission Check
-	if perms.P.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
+	if s.p.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
 
@@ -156,10 +163,10 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	// Field Permission Check
-	if perms.P.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
+	if s.p.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
-	if perms.P.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
+	if s.p.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
 		selectors = append(selectors, ul.Type)
 	}
 
@@ -233,7 +240,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	userID := auth.GetUserIDFromContext(ctx)
 
 	// Field Permission Check
-	if !perms.P.CanID(userID, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
+	if !s.p.CanID(userID, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user wanted status!")
 	}
 
@@ -282,4 +289,66 @@ func (s *Server) addUserAcitvity(ctx context.Context, activity *model.ArpanetUse
 	}
 
 	return nil
+}
+
+func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error) {
+	resp := &GetUserDocumentsResponse{}
+
+	uTarget := u.AS("target_user")
+	uSource := u.AS("source_user")
+	uCreator := u.AS("creator")
+	stmt := adr.SELECT(
+		adr.AllColumns,
+		ad.ID,
+		ad.CreatedAt,
+		ad.UpdatedAt,
+		ad.CategoryID,
+		ad.CreatorID,
+		ad.State,
+		ad.Closed,
+		ad.Title,
+		uTarget.ID,
+		uTarget.Identifier,
+		uTarget.Job,
+		uTarget.JobGrade,
+		uTarget.Firstname,
+		uTarget.Lastname,
+		uSource.ID,
+		uSource.Identifier,
+		uSource.Job,
+		uSource.JobGrade,
+		uSource.Firstname,
+		uSource.Lastname,
+		uCreator.ID,
+		uCreator.Identifier,
+		uCreator.Job,
+		uCreator.JobGrade,
+		uCreator.Firstname,
+		uCreator.Lastname,
+	).
+		FROM(
+			adr.
+				LEFT_JOIN(ad,
+					adr.DocumentID.EQ(ad.ID),
+				).
+				LEFT_JOIN(uTarget,
+					uTarget.ID.EQ(adr.TargetUserID),
+				).
+				LEFT_JOIN(uSource,
+					uSource.ID.EQ(adr.SourceUserID),
+				).
+				LEFT_JOIN(uCreator,
+					ad.CreatorID.EQ(uCreator.ID),
+				),
+		).
+		WHERE(
+			adr.TargetUserID.EQ(jet.Int32(req.UserId)),
+		)
+	fmt.Println(stmt.DebugSql())
+
+	if err := stmt.QueryContext(ctx, query.DB, &resp.Relations); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/htmlsanitizer"
+	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/documents"
 	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -17,21 +18,27 @@ import (
 )
 
 var (
-	u    = table.Users
-	adt  = table.ArpanetDocumentsTemplates
-	ad   = table.ArpanetDocuments.AS("document")
-	adc  = table.ArpanetDocumentsComments
-	adua = table.ArpanetDocumentsUserAccess.AS("user_access")
-	adja = table.ArpanetDocumentsJobAccess.AS("job_access")
-	dc   = table.ArpanetDocumentsCategories.AS("category")
+	u     = table.Users
+	adt   = table.ArpanetDocumentsTemplates
+	ad    = table.ArpanetDocuments.AS("document")
+	adc   = table.ArpanetDocumentsComments
+	adua  = table.ArpanetDocumentsUserAccess.AS("user_access")
+	adja  = table.ArpanetDocumentsJobAccess.AS("job_access")
+	dc    = table.ArpanetDocumentsCategories.AS("category")
+	adref = table.ArpanetDocumentsReferences
+	adrel = table.ArpanetDocumentsRelations
 )
 
 type Server struct {
 	DocStoreServiceServer
+
+	p perms.Permissions
 }
 
-func NewServer() *Server {
-	return &Server{}
+func NewServer(p perms.Permissions) *Server {
+	return &Server{
+		p: p,
+	}
 }
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
@@ -350,6 +357,31 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 
 	resp := &EditDocumentCommentResponse{}
 	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (s *Server) GetDocumentFeed(ctx context.Context, req *GetDocumentFeedRequest) (*GetDocumentFeedResponse, error) {
+	resp := &GetDocumentFeedResponse{}
+
+	stmt := ad.SELECT(
+		ad.AllColumns,
+		// TODO
+	).
+		FROM(
+			ad.LEFT_JOIN(adref,
+				ad.ID.EQ(adref.TargetDocumentID),
+			),
+		).
+		WHERE(
+			ad.ID.EQ(jet.Int32(int32(req.DocumentId))),
+		)
+
+	fmt.Println(stmt.DebugSql())
+
+	if err := stmt.QueryContext(ctx, query.DB, &resp.Items); err != nil {
 		return nil, err
 	}
 

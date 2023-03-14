@@ -33,7 +33,7 @@ func init() {
 		{
 			Key:    CitizenStoreServicePermKey,
 			Name:   "GetUserActivity",
-			Fields: []string{"CauseUser"},
+			Fields: []string{"SourceUser"},
 		},
 		{
 			Key:  CitizenStoreServicePermKey,

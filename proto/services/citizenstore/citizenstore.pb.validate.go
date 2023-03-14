@@ -987,7 +987,7 @@ func (m *GetUserDocumentsResponse) validate(all bool) error {
 
 	// no validation rules for End
 
-	for idx, item := range m.GetDocuments() {
+	for idx, item := range m.GetRelations() {
 		_, _ = idx, item
 
 		if all {
@@ -995,7 +995,7 @@ func (m *GetUserDocumentsResponse) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, GetUserDocumentsResponseValidationError{
-						field:  fmt.Sprintf("Documents[%v]", idx),
+						field:  fmt.Sprintf("Relations[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1003,7 +1003,7 @@ func (m *GetUserDocumentsResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, GetUserDocumentsResponseValidationError{
-						field:  fmt.Sprintf("Documents[%v]", idx),
+						field:  fmt.Sprintf("Relations[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1012,7 +1012,7 @@ func (m *GetUserDocumentsResponse) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return GetUserDocumentsResponseValidationError{
-					field:  fmt.Sprintf("Documents[%v]", idx),
+					field:  fmt.Sprintf("Relations[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

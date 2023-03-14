@@ -49,7 +49,7 @@ func init() {
 		},
 		{
 			Key:  DocStoreServicePermKey,
-			Name: "GetDocumentReferences",
+			Name: "GetDocumentFeed",
 		},
 		{
 			Key:  DocStoreServicePermKey,

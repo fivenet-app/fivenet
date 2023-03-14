@@ -8,7 +8,7 @@ import (
 	"github.com/galexrt/arpanet/query"
 )
 
-func (p *perms) CreatePermission(name string, description string) error {
+func (p *Perms) CreatePermission(name string, description string) error {
 	stmt := ap.INSERT(
 		ap.Name,
 		ap.GuardName,
@@ -24,7 +24,7 @@ func (p *perms) CreatePermission(name string, description string) error {
 	return err
 }
 
-func (p *perms) GetAllPermissions() (collections.Permissions, error) {
+func (p *Perms) GetAllPermissions() (collections.Permissions, error) {
 	stmt := ap.SELECT(
 		ap.AllColumns,
 	).FROM(ap)

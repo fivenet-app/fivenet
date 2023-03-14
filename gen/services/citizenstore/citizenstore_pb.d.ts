@@ -177,10 +177,10 @@ export class GetUserDocumentsResponse extends jspb.Message {
   getEnd(): number;
   setEnd(value: number): GetUserDocumentsResponse;
 
-  getDocumentsList(): Array<resources_documents_documents_pb.DocumentRelation>;
-  setDocumentsList(value: Array<resources_documents_documents_pb.DocumentRelation>): GetUserDocumentsResponse;
-  clearDocumentsList(): GetUserDocumentsResponse;
-  addDocuments(value?: resources_documents_documents_pb.DocumentRelation, index?: number): resources_documents_documents_pb.DocumentRelation;
+  getRelationsList(): Array<resources_documents_documents_pb.DocumentRelation>;
+  setRelationsList(value: Array<resources_documents_documents_pb.DocumentRelation>): GetUserDocumentsResponse;
+  clearRelationsList(): GetUserDocumentsResponse;
+  addRelations(value?: resources_documents_documents_pb.DocumentRelation, index?: number): resources_documents_documents_pb.DocumentRelation;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetUserDocumentsResponse.AsObject;
@@ -195,7 +195,7 @@ export namespace GetUserDocumentsResponse {
     totalCount: number,
     offset: number,
     end: number,
-    documentsList: Array<resources_documents_documents_pb.DocumentRelation.AsObject>,
+    relationsList: Array<resources_documents_documents_pb.DocumentRelation.AsObject>,
   }
 }
 

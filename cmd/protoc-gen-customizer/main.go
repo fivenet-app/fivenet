@@ -13,6 +13,7 @@ func main() {
 		pgs.SupportedFeatures(&optional),
 	).RegisterModule(
 		Permify(),
+		Tester(),
 	).RegisterPostProcessor(
 		pgsgo.GoFmt(),
 	).Render()

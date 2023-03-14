@@ -7,12 +7,11 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/galexrt/arpanet/pkg/perms/collections"
 	"github.com/galexrt/arpanet/pkg/perms/helpers"
-	"github.com/galexrt/arpanet/proto/resources/users"
 	"github.com/galexrt/arpanet/query"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func (p *perms) GetAllPermissionsOfUser(userID int32) (collections.Permissions, error) {
+func (p *Perms) GetAllPermissionsOfUser(userID int32) (collections.Permissions, error) {
 	if cached, ok := p.permsCache.Get(userID); ok {
 		return cached, nil
 	}
@@ -50,13 +49,13 @@ func (p *perms) GetAllPermissionsOfUser(userID int32) (collections.Permissions, 
 	return perms, nil
 }
 
-func (p *perms) GetAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error) {
+func (p *Perms) GetAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error) {
 	prefix = helpers.Guard(prefix)
 
 	return p.getAllPermissionsByPrefixOfUser(userID, prefix)
 }
 
-func (p *perms) getAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error) {
+func (p *Perms) getAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error) {
 	if cached, ok := p.permsCache.Get(userID); ok {
 		return cached.HasPrefix(prefix), nil
 	}
@@ -95,7 +94,7 @@ func (p *perms) getAllPermissionsByPrefixOfUser(userID int32, prefix string) (co
 	return perms, nil
 }
 
-func (p *perms) GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string) ([]string, error) {
+func (p *Perms) GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string) ([]string, error) {
 	prefix = helpers.Guard(prefix) + "-"
 
 	perms, err := p.getAllPermissionsByPrefixOfUser(userID, prefix)
@@ -111,15 +110,11 @@ func (p *perms) GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string
 	return suffixes, nil
 }
 
-func (p *perms) Can(user users.IGetUserID, perm ...string) bool {
-	return p.CanID(user.GetUserID(), perm...)
-}
-
-func (p *perms) CanID(userID int32, perm ...string) bool {
+func (p *Perms) CanID(userID int32, perm ...string) bool {
 	return p.canID(userID, helpers.Guard(strings.Join(perm, ".")))
 }
 
-func (p *perms) canID(userID int32, guardName string) bool {
+func (p *Perms) canID(userID int32, guardName string) bool {
 	cacheKey := buildCanCacheKey(userID, guardName)
 	if cached, ok := p.canCache.Get(cacheKey); ok {
 		return cached

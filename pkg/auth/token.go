@@ -4,7 +4,6 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/galexrt/arpanet/pkg/config"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -18,15 +17,13 @@ type CitizenInfoClaims struct {
 	jwt.RegisteredClaims
 }
 
-var Tokens *TokenManager
-
 type TokenManager struct {
 	jwtSigningKey []byte
 }
 
-func NewTokenManager() *TokenManager {
+func NewTokenManager(jwtSecret string) *TokenManager {
 	return &TokenManager{
-		jwtSigningKey: []byte(strings.TrimSpace(config.C.JWT.Secret)),
+		jwtSigningKey: []byte(strings.TrimSpace(jwtSecret)),
 	}
 }
 

@@ -1520,7 +1520,7 @@ proto.services.citizenstore.GetUserDocumentsResponse.toObject = function(include
     totalCount: jspb.Message.getFieldWithDefault(msg, 1, 0),
     offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
     end: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    documentsList: jspb.Message.toObjectList(msg.getDocumentsList(),
+    relationsList: jspb.Message.toObjectList(msg.getRelationsList(),
     resources_documents_documents_pb.DocumentRelation.toObject, includeInstance)
   };
 
@@ -1573,7 +1573,7 @@ proto.services.citizenstore.GetUserDocumentsResponse.deserializeBinaryFromReader
     case 4:
       var value = new resources_documents_documents_pb.DocumentRelation;
       reader.readMessage(value,resources_documents_documents_pb.DocumentRelation.deserializeBinaryFromReader);
-      msg.addDocuments(value);
+      msg.addRelations(value);
       break;
     default:
       reader.skipField();
@@ -1625,7 +1625,7 @@ proto.services.citizenstore.GetUserDocumentsResponse.serializeBinaryToWriter = f
       f
     );
   }
-  f = message.getDocumentsList();
+  f = message.getRelationsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       4,
@@ -1691,10 +1691,10 @@ proto.services.citizenstore.GetUserDocumentsResponse.prototype.setEnd = function
 
 
 /**
- * repeated resources.documents.DocumentRelation documents = 4;
+ * repeated resources.documents.DocumentRelation relations = 4;
  * @return {!Array<!proto.resources.documents.DocumentRelation>}
  */
-proto.services.citizenstore.GetUserDocumentsResponse.prototype.getDocumentsList = function() {
+proto.services.citizenstore.GetUserDocumentsResponse.prototype.getRelationsList = function() {
   return /** @type{!Array<!proto.resources.documents.DocumentRelation>} */ (
     jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentRelation, 4));
 };
@@ -1704,7 +1704,7 @@ proto.services.citizenstore.GetUserDocumentsResponse.prototype.getDocumentsList 
  * @param {!Array<!proto.resources.documents.DocumentRelation>} value
  * @return {!proto.services.citizenstore.GetUserDocumentsResponse} returns this
 */
-proto.services.citizenstore.GetUserDocumentsResponse.prototype.setDocumentsList = function(value) {
+proto.services.citizenstore.GetUserDocumentsResponse.prototype.setRelationsList = function(value) {
   return jspb.Message.setRepeatedWrapperField(this, 4, value);
 };
 
@@ -1714,7 +1714,7 @@ proto.services.citizenstore.GetUserDocumentsResponse.prototype.setDocumentsList 
  * @param {number=} opt_index
  * @return {!proto.resources.documents.DocumentRelation}
  */
-proto.services.citizenstore.GetUserDocumentsResponse.prototype.addDocuments = function(opt_value, opt_index) {
+proto.services.citizenstore.GetUserDocumentsResponse.prototype.addRelations = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.resources.documents.DocumentRelation, opt_index);
 };
 
@@ -1723,8 +1723,8 @@ proto.services.citizenstore.GetUserDocumentsResponse.prototype.addDocuments = fu
  * Clears the list making it empty but non-null.
  * @return {!proto.services.citizenstore.GetUserDocumentsResponse} returns this
  */
-proto.services.citizenstore.GetUserDocumentsResponse.prototype.clearDocumentsList = function() {
-  return this.setDocumentsList([]);
+proto.services.citizenstore.GetUserDocumentsResponse.prototype.clearRelationsList = function() {
+  return this.setRelationsList([]);
 };
 
 

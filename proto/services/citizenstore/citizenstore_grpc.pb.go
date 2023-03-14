@@ -26,7 +26,7 @@ type CitizenStoreServiceClient interface {
 	FindUsers(ctx context.Context, in *FindUsersRequest, opts ...grpc.CallOption) (*FindUsersResponse, error)
 	// @permission: name=FindUsers
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
-	// @permission: fields=CauseUser
+	// @permission: fields=SourceUser
 	GetUserActivity(ctx context.Context, in *GetUserActivityRequest, opts ...grpc.CallOption) (*GetUserActivityResponse, error)
 	// @permission
 	GetUserDocuments(ctx context.Context, in *GetUserDocumentsRequest, opts ...grpc.CallOption) (*GetUserDocumentsResponse, error)
@@ -95,7 +95,7 @@ type CitizenStoreServiceServer interface {
 	FindUsers(context.Context, *FindUsersRequest) (*FindUsersResponse, error)
 	// @permission: name=FindUsers
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
-	// @permission: fields=CauseUser
+	// @permission: fields=SourceUser
 	GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error)
 	// @permission
 	GetUserDocuments(context.Context, *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error)

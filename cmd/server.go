@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"errors"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -14,6 +13,7 @@ import (
 	"github.com/galexrt/arpanet/pkg/config"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/pkg/routes"
+	"github.com/galexrt/arpanet/proto"
 	"github.com/galexrt/arpanet/query"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-contrib/sessions"
@@ -24,29 +24,6 @@ import (
 	"github.com/prometheus/common/version"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
-
-	// GRPC + GRPC Middlewares
-	grpc_auth "github.com/galexrt/arpanet/pkg/grpc/auth"
-	grpc_permission "github.com/galexrt/arpanet/pkg/grpc/permission"
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
-	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
-	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/reflection"
-	"google.golang.org/grpc/status"
-
-	// GRPC Services
-	pbauth "github.com/galexrt/arpanet/proto/services/auth"
-	pbcitizenstore "github.com/galexrt/arpanet/proto/services/citizenstore"
-	pbcompletor "github.com/galexrt/arpanet/proto/services/completor"
-	pbdispatcher "github.com/galexrt/arpanet/proto/services/dispatcher"
-	pbdocstore "github.com/galexrt/arpanet/proto/services/docstore"
-	pbjobs "github.com/galexrt/arpanet/proto/services/jobs"
-	pblivmapper "github.com/galexrt/arpanet/proto/services/livemapper"
 )
 
 var serverCmd = &cobra.Command{
@@ -66,103 +43,18 @@ var serverCmd = &cobra.Command{
 			defer sentry.Flush(5 * time.Second)
 		}
 
+		// Setup permissions system
+		p := perms.New(query.DB)
+		defer p.Stop()
+		p.Register()
+
 		// Create JWT Token TokenManager
-		auth.Tokens = auth.NewTokenManager()
+		tm := auth.NewTokenManager(config.C.JWT.Secret)
 
-		// Setup permissions cache system
-		perms.Setup()
-		perms.Register()
-
-		// Gin HTTP Server
-		gin.SetMode(config.C.Mode)
-		e := gin.New()
-
-		// Add Zap Logger to Gin
-		e.Use(ginzap.Ginzap(logger, time.RFC3339, true))
-		e.Use(ginzap.RecoveryWithZap(logger, true))
-
-		// Sessions
-		sessStore := cookie.NewStore([]byte(config.C.HTTP.Sessions.CookieSecret))
-		sessStore.Options(sessions.Options{
-			Domain:   "localhost",
-			Path:     "/",
-			MaxAge:   int((10 * time.Hour).Seconds()),
-			HttpOnly: true,
-			Secure:   false,
-		})
-		e.Use(sessions.SessionsMany([]string{"arpanet_"}, sessStore))
-
-		// Prometheus Metrics endpoint
-		e.GET("/metrics", gin.WrapH(promhttp.Handler()))
-		// Register app routes
-		rs := routes.New(logger)
-		rs.Register(e)
-		// Register embed FS for assets and other static files
-		if gin.Mode() == gin.DebugMode {
-			e.StaticFS("/public", gin.Dir(".", false))
-		} else {
-			e.StaticFS("/public", http.FS(assets))
-		}
-		e.GET("favicon.ico", func(c *gin.Context) {
-			file, _ := assets.ReadFile("assets/favicon.ico")
-			c.Data(
-				http.StatusOK,
-				"image/x-icon",
-				file,
-			)
-		})
-
-		// Create GRPC Server
-		lis, err := net.Listen("tcp", config.C.GRPC.Listen)
-		if err != nil {
-			logger.Fatal("failed to listen", zap.Error(err))
-		}
-		sentryRecoverFunc := func(p interface{}) (err error) {
-			if e, ok := p.(error); ok {
-				sentry.CaptureException(e)
-			}
-			return status.Errorf(codes.Internal, "%v", p)
-		}
-		grpcServer := grpc.NewServer(
-			grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-				grpc_ctxtags.UnaryServerInterceptor(),
-				grpc_prometheus.UnaryServerInterceptor,
-				grpc_zap.UnaryServerInterceptor(logger),
-				grpc_validator.UnaryServerInterceptor(),
-				grpc_auth.UnaryServerInterceptor(auth.GRPCAuthFunc),
-				grpc_permission.UnaryServerInterceptor(auth.GRPCPermissionUnaryFunc),
-				grpc_recovery.UnaryServerInterceptor(
-					grpc_recovery.WithRecoveryHandler(sentryRecoverFunc),
-				),
-			)),
-			grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
-				grpc_ctxtags.StreamServerInterceptor(),
-				grpc_prometheus.StreamServerInterceptor,
-				grpc_zap.StreamServerInterceptor(logger),
-				grpc_validator.StreamServerInterceptor(),
-				grpc_auth.StreamServerInterceptor(auth.GRPCAuthFunc),
-				grpc_permission.StreamServerInterceptor(auth.GRPCPermissionStreamFunc),
-				grpc_recovery.StreamServerInterceptor(
-					grpc_recovery.WithRecoveryHandler(sentryRecoverFunc),
-				),
-			)),
-		)
-		// Only enable grpc server reflection when in debug mode
-		if gin.Mode() == gin.DebugMode {
-			reflection.Register(grpcServer)
-		}
-
-		// Attach our GRPC services
-		pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer())
-		pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer())
-		pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer())
-		pbdispatcher.RegisterDispatcherServiceServer(grpcServer, pbdispatcher.NewServer())
-		pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer())
-		pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
-		pblivmapper.RegisterLivemapperServiceServer(grpcServer, pblivmapper.NewServer(logger.Named("grpc_livemap")))
+		grpcServer, grpcLis := proto.NewGRPCServer(logger, tm, p)
 
 		go func() {
-			if err := grpcServer.Serve(lis); err != nil {
+			if err := grpcServer.Serve(grpcLis); err != nil {
 				logger.Error("failed to serve grpc server", zap.Error(err))
 			} else {
 				logger.Info("grpc server started successfully")
@@ -173,7 +65,7 @@ var serverCmd = &cobra.Command{
 		// Create HTTP Server for graceful shutdown handling
 		srv := &http.Server{
 			Addr:    config.C.HTTP.Listen,
-			Handler: e,
+			Handler: setupHTTPServer(),
 		}
 		// Initializing the server in a goroutine so that
 		// it won't block the graceful shutdown handling below
@@ -209,8 +101,6 @@ var serverCmd = &cobra.Command{
 
 		grpcServer.Stop()
 
-		perms.Stop()
-
 		logger.Info("http server exiting")
 		return nil
 	},
@@ -221,4 +111,47 @@ var serverCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serverCmd)
+}
+
+func setupHTTPServer() *gin.Engine {
+	// Gin HTTP Server
+	gin.SetMode(config.C.Mode)
+	e := gin.New()
+
+	// Add Zap Logger to Gin
+	e.Use(ginzap.Ginzap(logger, time.RFC3339, true))
+	e.Use(ginzap.RecoveryWithZap(logger, true))
+
+	// Sessions
+	sessStore := cookie.NewStore([]byte(config.C.HTTP.Sessions.CookieSecret))
+	sessStore.Options(sessions.Options{
+		Domain:   "localhost",
+		Path:     "/",
+		MaxAge:   int((10 * time.Hour).Seconds()),
+		HttpOnly: true,
+		Secure:   false,
+	})
+	e.Use(sessions.SessionsMany([]string{"arpanet_"}, sessStore))
+
+	// Prometheus Metrics endpoint
+	e.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	// Register app routes
+	rs := routes.New(logger)
+	rs.Register(e)
+	// Register embed FS for assets and other static files
+	if gin.Mode() == gin.DebugMode {
+		e.StaticFS("/public", gin.Dir(".", false))
+	} else {
+		e.StaticFS("/public", http.FS(assets))
+	}
+	e.GET("favicon.ico", func(c *gin.Context) {
+		file, _ := assets.ReadFile("assets/favicon.ico")
+		c.Data(
+			http.StatusOK,
+			"image/x-icon",
+			file,
+		)
+	})
+
+	return e
 }

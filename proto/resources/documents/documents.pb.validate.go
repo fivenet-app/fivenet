@@ -752,16 +752,7 @@ func (m *DocumentComment) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if m.GetDocumentId() < 0 {
-		err := DocumentCommentValidationError{
-			field:  "DocumentId",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for DocumentId
 
 	if len(m.GetComment()) > 4096 {
 		err := DocumentCommentValidationError{
@@ -905,16 +896,7 @@ func (m *Document) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetId() < 0 {
-		err := DocumentValidationError{
-			field:  "Id",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Id
 
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
@@ -1196,16 +1178,7 @@ func (m *DocumentShort) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetId() < 0 {
-		err := DocumentShortValidationError{
-			field:  "Id",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Id
 
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
@@ -2321,6 +2294,57 @@ func (m *DocumentRelation) validate(all bool) error {
 		}
 	}
 
+	if m.GetSourceUserId() <= 0 {
+		err := DocumentRelationValidationError{
+			field:  "SourceUserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetSourceUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentRelationValidationError{
+					field:  "SourceUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentRelationValidationError{
+					field:  "SourceUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSourceUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentRelationValidationError{
+				field:  "SourceUser",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if _, ok := DOC_RELATION_TYPE_name[int32(m.GetRelation())]; !ok {
+		err := DocumentRelationValidationError{
+			field:  "Relation",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.GetTargetUserId() <= 0 {
 		err := DocumentRelationValidationError{
 			field:  "TargetUserId",
@@ -2355,57 +2379,6 @@ func (m *DocumentRelation) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return DocumentRelationValidationError{
 				field:  "TargetUser",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if _, ok := DOC_RELATION_TYPE_name[int32(m.GetRelation())]; !ok {
-		err := DocumentRelationValidationError{
-			field:  "Relation",
-			reason: "value must be one of the defined enum values",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.GetCauseUserId() <= 0 {
-		err := DocumentRelationValidationError{
-			field:  "CauseUserId",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetCauseUser()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentRelationValidationError{
-					field:  "CauseUser",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentRelationValidationError{
-					field:  "CauseUser",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCauseUser()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentRelationValidationError{
-				field:  "CauseUser",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -2489,3 +2462,160 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DocumentRelationValidationError{}
+
+// Validate checks the field values on DocumentFeed with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *DocumentFeed) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DocumentFeed with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in DocumentFeedMultiError, or
+// nil if none found.
+func (m *DocumentFeed) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DocumentFeed) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetReference()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentFeedValidationError{
+					field:  "Reference",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentFeedValidationError{
+					field:  "Reference",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetReference()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentFeedValidationError{
+				field:  "Reference",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetRelation()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentFeedValidationError{
+					field:  "Relation",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentFeedValidationError{
+					field:  "Relation",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRelation()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentFeedValidationError{
+				field:  "Relation",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return DocumentFeedMultiError(errors)
+	}
+
+	return nil
+}
+
+// DocumentFeedMultiError is an error wrapping multiple validation errors
+// returned by DocumentFeed.ValidateAll() if the designated constraints aren't met.
+type DocumentFeedMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DocumentFeedMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DocumentFeedMultiError) AllErrors() []error { return m }
+
+// DocumentFeedValidationError is the validation error returned by
+// DocumentFeed.Validate if the designated constraints aren't met.
+type DocumentFeedValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DocumentFeedValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DocumentFeedValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DocumentFeedValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DocumentFeedValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DocumentFeedValidationError) ErrorName() string { return "DocumentFeedValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DocumentFeedValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDocumentFeed.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DocumentFeedValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DocumentFeedValidationError{}

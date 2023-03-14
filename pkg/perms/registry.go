@@ -30,31 +30,31 @@ func AddPermsToList(perms []*Perm) {
 	list = append(list, perms...)
 }
 
-func Register() {
+func (p *Perms) Register() {
 	for _, perm := range list {
 		baseKey := fmt.Sprintf("%s.%s", perm.Key, perm.Name)
-		P.CreatePermission(baseKey, perm.Description)
+		p.CreatePermission(baseKey, perm.Description)
 
 		if perm.PerJob {
 			for _, job := range config.C.FiveM.PermissionRoleJobs {
 				jobKey := fmt.Sprintf("%s.%s", baseKey, job)
-				P.CreatePermission(jobKey, perm.Description)
+				p.CreatePermission(jobKey, perm.Description)
 			}
 			continue
 		}
 
 		for _, field := range perm.Fields {
 			fieldKey := fmt.Sprintf("%s.%s", baseKey, field)
-			P.CreatePermission(fieldKey, perm.Description)
+			p.CreatePermission(fieldKey, perm.Description)
 		}
 	}
 
-	setupRoles()
+	p.setupRoles()
 }
 
-func setupRoles() {
-	P.CreateRole("masterofdisaster", "")
-	perms, _ := P.GetAllPermissions()
+func (p *Perms) setupRoles() {
+	p.CreateRole("masterofdisaster", "")
+	perms, _ := p.GetAllPermissions()
 	// Ensure the "masterofdisaster" role always has all permissions
-	P.AddPermissionsToRole("masterofdisaster", perms)
+	p.AddPermissionsToRole("masterofdisaster", perms)
 }

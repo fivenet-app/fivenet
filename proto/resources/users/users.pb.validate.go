@@ -915,6 +915,35 @@ func (m *UserActivity) validate(all bool) error {
 	}
 
 	if all {
+		switch v := interface{}(m.GetSourceUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserActivityValidationError{
+					field:  "SourceUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserActivityValidationError{
+					field:  "SourceUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSourceUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserActivityValidationError{
+				field:  "SourceUser",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
 		switch v := interface{}(m.GetTargetUser()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -937,35 +966,6 @@ func (m *UserActivity) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return UserActivityValidationError{
 				field:  "TargetUser",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetCauseUser()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UserActivityValidationError{
-					field:  "CauseUser",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UserActivityValidationError{
-					field:  "CauseUser",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCauseUser()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UserActivityValidationError{
-				field:  "CauseUser",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}

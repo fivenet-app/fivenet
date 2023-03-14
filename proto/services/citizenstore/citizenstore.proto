@@ -48,7 +48,7 @@ message GetUserDocumentsResponse {
   int64 total_count = 1;
   int64 offset = 2;
   int64 end = 3;
-  repeated resources.documents.DocumentRelation documents = 4;
+  repeated resources.documents.DocumentRelation relations = 4;
 }
 
 message SetUserPropsRequest {
@@ -62,7 +62,7 @@ service CitizenStoreService {
   rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
   // @permission: name=FindUsers
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  // @permission: fields=CauseUser
+  // @permission: fields=SourceUser
   rpc GetUserActivity(GetUserActivityRequest) returns (GetUserActivityResponse);
   // @permission
   rpc GetUserDocuments(GetUserDocumentsRequest) returns (GetUserDocumentsResponse);
