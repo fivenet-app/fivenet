@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetRoles = newArpanetRolesTable("arpanet", "arpanet_roles", "")
+var ArpanetRoles = newArpanetRolesTable("", "arpanet_roles", "")
 
 type arpanetRolesTable struct {
 	mysql.Table

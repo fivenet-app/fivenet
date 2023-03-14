@@ -24,6 +24,9 @@ gen: gen-sql gen-proto
 gen-sql:
 	go run ./query/gen/
 
+	# Remove schema/database name from the generated table code, so it uses the currently selected database
+	find ./query/arpanet/table -type f -iname '*.go' -exec sed -i 's~("arpanet", ~("", ~g' {} \;
+
 protoc-gen-validate:
 	if test ! -d validate/; then \
 		git clone https://github.com/bufbuild/protoc-gen-validate.git validate; \

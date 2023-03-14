@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetUserLocations = newArpanetUserLocationsTable("arpanet", "arpanet_user_locations", "")
+var ArpanetUserLocations = newArpanetUserLocationsTable("", "arpanet_user_locations", "")
 
 type arpanetUserLocationsTable struct {
 	mysql.Table

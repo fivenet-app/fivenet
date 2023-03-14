@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetAccounts = newArpanetAccountsTable("arpanet", "arpanet_accounts", "")
+var ArpanetAccounts = newArpanetAccountsTable("", "arpanet_accounts", "")
 
 type arpanetAccountsTable struct {
 	mysql.Table

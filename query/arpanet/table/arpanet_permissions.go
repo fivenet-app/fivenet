@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetPermissions = newArpanetPermissionsTable("arpanet", "arpanet_permissions", "")
+var ArpanetPermissions = newArpanetPermissionsTable("", "arpanet_permissions", "")
 
 type arpanetPermissionsTable struct {
 	mysql.Table

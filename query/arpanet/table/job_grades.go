@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var JobGrades = newJobGradesTable("arpanet", "job_grades", "")
+var JobGrades = newJobGradesTable("", "job_grades", "")
 
 type jobGradesTable struct {
 	mysql.Table

@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetUserActivity = newArpanetUserActivityTable("arpanet", "arpanet_user_activity", "")
+var ArpanetUserActivity = newArpanetUserActivityTable("", "arpanet_user_activity", "")
 
 type arpanetUserActivityTable struct {
 	mysql.Table

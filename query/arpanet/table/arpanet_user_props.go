@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetUserProps = newArpanetUserPropsTable("arpanet", "arpanet_user_props", "")
+var ArpanetUserProps = newArpanetUserPropsTable("", "arpanet_user_props", "")
 
 type arpanetUserPropsTable struct {
 	mysql.Table

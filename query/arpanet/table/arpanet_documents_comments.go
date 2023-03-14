@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetDocumentsComments = newArpanetDocumentsCommentsTable("arpanet", "arpanet_documents_comments", "")
+var ArpanetDocumentsComments = newArpanetDocumentsCommentsTable("", "arpanet_documents_comments", "")
 
 type arpanetDocumentsCommentsTable struct {
 	mysql.Table

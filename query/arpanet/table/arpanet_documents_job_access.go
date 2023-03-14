@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetDocumentsJobAccess = newArpanetDocumentsJobAccessTable("arpanet", "arpanet_documents_job_access", "")
+var ArpanetDocumentsJobAccess = newArpanetDocumentsJobAccessTable("", "arpanet_documents_job_access", "")
 
 type arpanetDocumentsJobAccessTable struct {
 	mysql.Table

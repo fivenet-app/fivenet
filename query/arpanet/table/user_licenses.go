@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var UserLicenses = newUserLicensesTable("arpanet", "user_licenses", "")
+var UserLicenses = newUserLicensesTable("", "user_licenses", "")
 
 type userLicensesTable struct {
 	mysql.Table

@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var VpcLS = newVpcLSTable("arpanet", "vpcLS", "")
+var VpcLS = newVpcLSTable("", "vpcLS", "")
 
 type vpcLSTable struct {
 	mysql.Table
