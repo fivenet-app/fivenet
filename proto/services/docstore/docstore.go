@@ -21,8 +21,8 @@ var (
 	adt  = table.ArpanetDocumentsTemplates
 	ad   = table.ArpanetDocuments.AS("document")
 	adc  = table.ArpanetDocumentsComments
-	adua = table.ArpanetDocumentsUserAccess
-	adja = table.ArpanetDocumentsJobAccess
+	adua = table.ArpanetDocumentsUserAccess.AS("user_access")
+	adja = table.ArpanetDocumentsJobAccess.AS("job_access")
 	dc   = table.ArpanetDocumentsCategories.AS("category")
 )
 
@@ -142,9 +142,8 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 
 	resp := &GetDocumentResponse{
-		Document:    &documents.Document{},
-		JobsAccess:  []*documents.DocumentJobAccess{},
-		UsersAccess: []*documents.DocumentUserAccess{},
+		Document: &documents.Document{},
+		Access:   &documents.DocumentAccess{},
 	}
 
 	stmt := s.getDocumentsQuery(condition, nil, nil, userID, job, jobGrade)
@@ -153,7 +152,6 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 			return nil, err
 		}
 	}
-	fmt.Println(stmt.DebugSql())
 
 	docAccess, err := s.GetDocumentAccess(ctx, &GetDocumentAccessRequest{
 		DocumentId: resp.Document.Id,
@@ -161,9 +159,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	if err != nil {
 		return nil, err
 	}
-
-	resp.JobsAccess = docAccess.Jobs
-	resp.UsersAccess = docAccess.Users
+	resp.Access = docAccess.Access
 
 	return resp, nil
 }
@@ -203,7 +199,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, err
 	}
 
-	if err := s.handleDocumentAccess(ctx, DOC_ACCESS_UPDATE_MODE_REPLACE, uint64(lastID), req.JobsAccess, req.UsersAccess); err != nil {
+	if err := s.handleDocumentAccess(ctx, DOC_ACCESS_UPDATE_MODE_REPLACE, uint64(lastID), req.Access); err != nil {
 		return nil, err
 	}
 
@@ -379,7 +375,7 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 				LEFT_JOIN(adua,
 					ad.ID.EQ(adua.DocumentID)).
 				LEFT_JOIN(adja,
-					ad.ID.EQ(adua.DocumentID)),
+					ad.ID.EQ(adja.DocumentID)),
 		).
 		WHERE(
 			jet.AND(
@@ -398,8 +394,10 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 			),
 		)
 
-	resp := &GetDocumentAccessResponse{}
-	if err := stmt.QueryContext(ctx, query.DB, resp); err != nil {
+	resp := &GetDocumentAccessResponse{
+		Access: &documents.DocumentAccess{},
+	}
+	if err := stmt.QueryContext(ctx, query.DB, resp.Access); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
@@ -411,14 +409,14 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
 	resp := &SetDocumentAccessResponse{}
 
-	if err := s.handleDocumentAccess(ctx, req.Mode, req.DocumentId, req.Jobs, req.Users); err != nil {
+	if err := s.handleDocumentAccess(ctx, req.Mode, req.DocumentId, req.Access); err != nil {
 		return nil, err
 	}
 
 	return resp, nil
 }
 
-func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDATE_MODE, documentID uint64, ja []*documents.DocumentJobAccess, ua []*documents.DocumentUserAccess) error {
+func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDATE_MODE, documentID uint64, access *documents.DocumentAccess) error {
 	userID := auth.GetUserIDFromContext(ctx)
 
 	// Select existing job and user accesses
@@ -448,6 +446,7 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 
 	// TODO add/update/remove for document access based on the current access in the database
 
+	ja := access.Jobs
 	// Create accesses
 	if len(ja) > 0 {
 		for k := 0; k < len(ja); k++ {
@@ -470,6 +469,7 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 		}
 	}
 
+	ua := access.Users
 	if len(ua) > 0 {
 		for k := 0; k < len(ua); k++ {
 			ua[k].DocumentId = documentID

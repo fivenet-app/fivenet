@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { Document } from '@arpanet/gen/resources/documents/documents_pb';
+import { Document, DocumentAccess } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { getDateLocaleString, getDate } from '../../utils/time';
@@ -36,7 +36,8 @@ export default defineComponent({
     data() {
         return {
             document: undefined as undefined | Document,
-            responses: [] as Array<Document>,
+            access: undefined as undefined | DocumentAccess,
+            comments: [] as Array<Document>,
             activeResponse: undefined as undefined | Document,
         };
     },
@@ -60,7 +61,7 @@ export default defineComponent({
                 getDocument(req, null).
                 then((resp) => {
                     this.document = resp.getDocument();
-                    // TODO Show jobs user access using resp.getJobsAccessList()
+                    this.access = resp.getAccess();
                 }).
                 catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
@@ -97,12 +98,12 @@ export default defineComponent({
                     <div class="flow-root">
                         <h3 class="text-base font-semibold leading-6 text-gray-900 pb-5">Responses</h3>
                         <ul role="list" class="-mb-8">
-                            <li v-for="(response, responseIdx) in responses" :key="response.getId()" class="mb-5">
+                            <li v-for="(comment, commentIdx) in comments" :key="comment.getId()" class="mb-5">
                                 <div class="relative pb-2 bg-gray-300 rounded-xl">
-                                    <span v-if="responseIdx !== responses.length - 1"
+                                    <span v-if="commentIdx !== comments.length - 1"
                                         class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
                                     <div class="relative flex space-x-3 cursor-pointer select-none"
-                                        @click="$event => activeResponse = response">
+                                        @click="$event => activeResponse = comment">
                                         <div>
                                             <span
                                                 class="h-8 w-8 rounded-full flex items-center justify-center ring-4 ring-white bg-gray-300">
@@ -111,10 +112,10 @@ export default defineComponent({
                                         </div>
                                         <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
                                             <div>
-                                                <p class="font-medium text-gray-900">{{ response.getTitle() }}</p>
+                                                <p class="font-medium text-gray-900">{{ comment.getTitle() }}</p>
                                                 <p class="text-sm text-gray-500">
-                                                    by {{ response.getCreator()?.getFirstname() }} {{
-                                                        response.getCreator()?.getLastname() }}
+                                                    by {{ comment.getCreator()?.getFirstname() }} {{
+                                                        comment.getCreator()?.getLastname() }}
                                                 </p>
                                             </div>
                                         </div>
@@ -161,7 +162,7 @@ export default defineComponent({
                                     </div>
                                     <div class="flex items-center space-x-2">
                                         <ChatBubbleLeftEllipsisIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                        <span class="text-sm font-medium text-gray-900">{{ responses.length }}
+                                        <span class="text-sm font-medium text-gray-900">{{ comments.length }}
                                             replies</span>
                                     </div>
                                     <div class="flex items-center space-x-2">
@@ -260,7 +261,7 @@ export default defineComponent({
                         </div>
                         <div class="flex items-center space-x-2">
                             <ChatBubbleLeftEllipsisIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                            <span class="text-sm font-medium text-gray-900">{{ responses.length }}
+                            <span class="text-sm font-medium text-gray-900">{{ comments.length }}
                                 replies</span>
                         </div>
                         <div class="flex items-center space-x-2">
@@ -288,13 +289,25 @@ export default defineComponent({
                         <div>
                             <h2 class="text-sm font-medium text-gray-500">Access</h2>
                             <ul role="list" class="mt-2 leading-8">
-                                <li class="inline">
+                                <li v-for="ac in access?.getJobsList()" class="inline">
                                     <a href="#"
                                         class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                                         <div class="absolute flex flex-shrink-0 items-center justify-center">
                                             <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
                                         </div>
-                                        <div class="ml-3 text-xs font-semibold text-gray-900">LSMD (Rank: 15)</div>
+                                        <div class="ml-3 text-xs font-semibold text-gray-900">
+                                            {{ ac.getJob() }}<span v-if="ac.getMinimumgrade() > 0">(Rank: {{ ac.getMinimumgrade() }})</span> - {{ ac.getAccess() }}
+                                        </div>
+                                    </a>
+                                    {{ ' ' }}
+                                </li>
+                                <li v-for="ac in access?.getUsersList()" class="inline">
+                                    <a href="#"
+                                        class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                        <div class="absolute flex flex-shrink-0 items-center justify-center">
+                                            <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
+                                        </div>
+                                        <div class="ml-3 text-xs font-semibold text-gray-900">{{ ac.getUserId() }} - {{ ac.getAccess().valueOf() }}</div>
                                     </a>
                                     {{ ' ' }}
                                 </li>

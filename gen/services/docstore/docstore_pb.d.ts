@@ -4,6 +4,78 @@ import * as resources_common_database_database_pb from '../../resources/common/d
 import * as resources_documents_documents_pb from '../../resources/documents/documents_pb';
 
 
+export class ListTemplatesRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListTemplatesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ListTemplatesRequest): ListTemplatesRequest.AsObject;
+  static serializeBinaryToWriter(message: ListTemplatesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListTemplatesRequest;
+  static deserializeBinaryFromReader(message: ListTemplatesRequest, reader: jspb.BinaryReader): ListTemplatesRequest;
+}
+
+export namespace ListTemplatesRequest {
+  export type AsObject = {
+  }
+}
+
+export class ListTemplatesResponse extends jspb.Message {
+  getTemplatesList(): Array<resources_documents_documents_pb.DocumentTemplateShort>;
+  setTemplatesList(value: Array<resources_documents_documents_pb.DocumentTemplateShort>): ListTemplatesResponse;
+  clearTemplatesList(): ListTemplatesResponse;
+  addTemplates(value?: resources_documents_documents_pb.DocumentTemplateShort, index?: number): resources_documents_documents_pb.DocumentTemplateShort;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListTemplatesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ListTemplatesResponse): ListTemplatesResponse.AsObject;
+  static serializeBinaryToWriter(message: ListTemplatesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListTemplatesResponse;
+  static deserializeBinaryFromReader(message: ListTemplatesResponse, reader: jspb.BinaryReader): ListTemplatesResponse;
+}
+
+export namespace ListTemplatesResponse {
+  export type AsObject = {
+    templatesList: Array<resources_documents_documents_pb.DocumentTemplateShort.AsObject>,
+  }
+}
+
+export class GetTemplateRequest extends jspb.Message {
+  getTemplateId(): number;
+  setTemplateId(value: number): GetTemplateRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetTemplateRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetTemplateRequest): GetTemplateRequest.AsObject;
+  static serializeBinaryToWriter(message: GetTemplateRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetTemplateRequest;
+  static deserializeBinaryFromReader(message: GetTemplateRequest, reader: jspb.BinaryReader): GetTemplateRequest;
+}
+
+export namespace GetTemplateRequest {
+  export type AsObject = {
+    templateId: number,
+  }
+}
+
+export class GetTemplateResponse extends jspb.Message {
+  getTemplate(): resources_documents_documents_pb.DocumentTemplate | undefined;
+  setTemplate(value?: resources_documents_documents_pb.DocumentTemplate): GetTemplateResponse;
+  hasTemplate(): boolean;
+  clearTemplate(): GetTemplateResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetTemplateResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetTemplateResponse): GetTemplateResponse.AsObject;
+  static serializeBinaryToWriter(message: GetTemplateResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetTemplateResponse;
+  static deserializeBinaryFromReader(message: GetTemplateResponse, reader: jspb.BinaryReader): GetTemplateResponse;
+}
+
+export namespace GetTemplateResponse {
+  export type AsObject = {
+    template?: resources_documents_documents_pb.DocumentTemplate.AsObject,
+  }
+}
+
 export class FindDocumentsRequest extends jspb.Message {
   getOffset(): number;
   setOffset(value: number): FindDocumentsRequest;
@@ -92,15 +164,10 @@ export class GetDocumentResponse extends jspb.Message {
   hasDocument(): boolean;
   clearDocument(): GetDocumentResponse;
 
-  getJobsaccessList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
-  setJobsaccessList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): GetDocumentResponse;
-  clearJobsaccessList(): GetDocumentResponse;
-  addJobsaccess(value?: resources_documents_documents_pb.DocumentJobAccess, index?: number): resources_documents_documents_pb.DocumentJobAccess;
-
-  getUsersaccessList(): Array<resources_documents_documents_pb.DocumentUserAccess>;
-  setUsersaccessList(value: Array<resources_documents_documents_pb.DocumentUserAccess>): GetDocumentResponse;
-  clearUsersaccessList(): GetDocumentResponse;
-  addUsersaccess(value?: resources_documents_documents_pb.DocumentUserAccess, index?: number): resources_documents_documents_pb.DocumentUserAccess;
+  getAccess(): resources_documents_documents_pb.DocumentAccess | undefined;
+  setAccess(value?: resources_documents_documents_pb.DocumentAccess): GetDocumentResponse;
+  hasAccess(): boolean;
+  clearAccess(): GetDocumentResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentResponse.AsObject;
@@ -113,8 +180,7 @@ export class GetDocumentResponse extends jspb.Message {
 export namespace GetDocumentResponse {
   export type AsObject = {
     document?: resources_documents_documents_pb.Document.AsObject,
-    jobsaccessList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
-    usersaccessList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
+    access?: resources_documents_documents_pb.DocumentAccess.AsObject,
   }
 }
 
@@ -265,15 +331,10 @@ export class CreateDocumentRequest extends jspb.Message {
   getTargetDocumentId(): number;
   setTargetDocumentId(value: number): CreateDocumentRequest;
 
-  getJobsaccessList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
-  setJobsaccessList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): CreateDocumentRequest;
-  clearJobsaccessList(): CreateDocumentRequest;
-  addJobsaccess(value?: resources_documents_documents_pb.DocumentJobAccess, index?: number): resources_documents_documents_pb.DocumentJobAccess;
-
-  getUsersaccessList(): Array<resources_documents_documents_pb.DocumentUserAccess>;
-  setUsersaccessList(value: Array<resources_documents_documents_pb.DocumentUserAccess>): CreateDocumentRequest;
-  clearUsersaccessList(): CreateDocumentRequest;
-  addUsersaccess(value?: resources_documents_documents_pb.DocumentUserAccess, index?: number): resources_documents_documents_pb.DocumentUserAccess;
+  getAccess(): resources_documents_documents_pb.DocumentAccess | undefined;
+  setAccess(value?: resources_documents_documents_pb.DocumentAccess): CreateDocumentRequest;
+  hasAccess(): boolean;
+  clearAccess(): CreateDocumentRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CreateDocumentRequest.AsObject;
@@ -293,8 +354,7 @@ export namespace CreateDocumentRequest {
     pb_public: boolean,
     categoryId: number,
     targetDocumentId: number,
-    jobsaccessList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
-    usersaccessList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
+    access?: resources_documents_documents_pb.DocumentAccess.AsObject,
   }
 }
 
@@ -376,75 +436,41 @@ export namespace UpdateDocumentResponse {
   }
 }
 
-export class ListTemplatesRequest extends jspb.Message {
+export class GetDocumentReferencesRequest extends jspb.Message {
+  getDocumentId(): number;
+  setDocumentId(value: number): GetDocumentReferencesRequest;
+
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ListTemplatesRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: ListTemplatesRequest): ListTemplatesRequest.AsObject;
-  static serializeBinaryToWriter(message: ListTemplatesRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ListTemplatesRequest;
-  static deserializeBinaryFromReader(message: ListTemplatesRequest, reader: jspb.BinaryReader): ListTemplatesRequest;
+  toObject(includeInstance?: boolean): GetDocumentReferencesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentReferencesRequest): GetDocumentReferencesRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentReferencesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentReferencesRequest;
+  static deserializeBinaryFromReader(message: GetDocumentReferencesRequest, reader: jspb.BinaryReader): GetDocumentReferencesRequest;
 }
 
-export namespace ListTemplatesRequest {
+export namespace GetDocumentReferencesRequest {
   export type AsObject = {
+    documentId: number,
   }
 }
 
-export class ListTemplatesResponse extends jspb.Message {
-  getTemplatesList(): Array<resources_documents_documents_pb.DocumentTemplateShort>;
-  setTemplatesList(value: Array<resources_documents_documents_pb.DocumentTemplateShort>): ListTemplatesResponse;
-  clearTemplatesList(): ListTemplatesResponse;
-  addTemplates(value?: resources_documents_documents_pb.DocumentTemplateShort, index?: number): resources_documents_documents_pb.DocumentTemplateShort;
+export class GetDocumentReferencesResponse extends jspb.Message {
+  getReferencesList(): Array<resources_documents_documents_pb.DocumentReference>;
+  setReferencesList(value: Array<resources_documents_documents_pb.DocumentReference>): GetDocumentReferencesResponse;
+  clearReferencesList(): GetDocumentReferencesResponse;
+  addReferences(value?: resources_documents_documents_pb.DocumentReference, index?: number): resources_documents_documents_pb.DocumentReference;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ListTemplatesResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: ListTemplatesResponse): ListTemplatesResponse.AsObject;
-  static serializeBinaryToWriter(message: ListTemplatesResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ListTemplatesResponse;
-  static deserializeBinaryFromReader(message: ListTemplatesResponse, reader: jspb.BinaryReader): ListTemplatesResponse;
+  toObject(includeInstance?: boolean): GetDocumentReferencesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentReferencesResponse): GetDocumentReferencesResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentReferencesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentReferencesResponse;
+  static deserializeBinaryFromReader(message: GetDocumentReferencesResponse, reader: jspb.BinaryReader): GetDocumentReferencesResponse;
 }
 
-export namespace ListTemplatesResponse {
+export namespace GetDocumentReferencesResponse {
   export type AsObject = {
-    templatesList: Array<resources_documents_documents_pb.DocumentTemplateShort.AsObject>,
-  }
-}
-
-export class GetTemplateRequest extends jspb.Message {
-  getTemplateId(): number;
-  setTemplateId(value: number): GetTemplateRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetTemplateRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: GetTemplateRequest): GetTemplateRequest.AsObject;
-  static serializeBinaryToWriter(message: GetTemplateRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetTemplateRequest;
-  static deserializeBinaryFromReader(message: GetTemplateRequest, reader: jspb.BinaryReader): GetTemplateRequest;
-}
-
-export namespace GetTemplateRequest {
-  export type AsObject = {
-    templateId: number,
-  }
-}
-
-export class GetTemplateResponse extends jspb.Message {
-  getTemplate(): resources_documents_documents_pb.DocumentTemplate | undefined;
-  setTemplate(value?: resources_documents_documents_pb.DocumentTemplate): GetTemplateResponse;
-  hasTemplate(): boolean;
-  clearTemplate(): GetTemplateResponse;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetTemplateResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: GetTemplateResponse): GetTemplateResponse.AsObject;
-  static serializeBinaryToWriter(message: GetTemplateResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetTemplateResponse;
-  static deserializeBinaryFromReader(message: GetTemplateResponse, reader: jspb.BinaryReader): GetTemplateResponse;
-}
-
-export namespace GetTemplateResponse {
-  export type AsObject = {
-    template?: resources_documents_documents_pb.DocumentTemplate.AsObject,
+    referencesList: Array<resources_documents_documents_pb.DocumentReference.AsObject>,
   }
 }
 
@@ -467,15 +493,10 @@ export namespace GetDocumentAccessRequest {
 }
 
 export class GetDocumentAccessResponse extends jspb.Message {
-  getJobsList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
-  setJobsList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): GetDocumentAccessResponse;
-  clearJobsList(): GetDocumentAccessResponse;
-  addJobs(value?: resources_documents_documents_pb.DocumentJobAccess, index?: number): resources_documents_documents_pb.DocumentJobAccess;
-
-  getUsersList(): Array<resources_documents_documents_pb.DocumentUserAccess>;
-  setUsersList(value: Array<resources_documents_documents_pb.DocumentUserAccess>): GetDocumentAccessResponse;
-  clearUsersList(): GetDocumentAccessResponse;
-  addUsers(value?: resources_documents_documents_pb.DocumentUserAccess, index?: number): resources_documents_documents_pb.DocumentUserAccess;
+  getAccess(): resources_documents_documents_pb.DocumentAccess | undefined;
+  setAccess(value?: resources_documents_documents_pb.DocumentAccess): GetDocumentAccessResponse;
+  hasAccess(): boolean;
+  clearAccess(): GetDocumentAccessResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentAccessResponse.AsObject;
@@ -487,8 +508,7 @@ export class GetDocumentAccessResponse extends jspb.Message {
 
 export namespace GetDocumentAccessResponse {
   export type AsObject = {
-    jobsList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
-    usersList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
+    access?: resources_documents_documents_pb.DocumentAccess.AsObject,
   }
 }
 
@@ -499,15 +519,10 @@ export class SetDocumentAccessRequest extends jspb.Message {
   getMode(): DOC_ACCESS_UPDATE_MODE;
   setMode(value: DOC_ACCESS_UPDATE_MODE): SetDocumentAccessRequest;
 
-  getJobsList(): Array<resources_documents_documents_pb.DocumentJobAccess>;
-  setJobsList(value: Array<resources_documents_documents_pb.DocumentJobAccess>): SetDocumentAccessRequest;
-  clearJobsList(): SetDocumentAccessRequest;
-  addJobs(value?: resources_documents_documents_pb.DocumentJobAccess, index?: number): resources_documents_documents_pb.DocumentJobAccess;
-
-  getUsersList(): Array<resources_documents_documents_pb.DocumentUserAccess>;
-  setUsersList(value: Array<resources_documents_documents_pb.DocumentUserAccess>): SetDocumentAccessRequest;
-  clearUsersList(): SetDocumentAccessRequest;
-  addUsers(value?: resources_documents_documents_pb.DocumentUserAccess, index?: number): resources_documents_documents_pb.DocumentUserAccess;
+  getAccess(): resources_documents_documents_pb.DocumentAccess | undefined;
+  setAccess(value?: resources_documents_documents_pb.DocumentAccess): SetDocumentAccessRequest;
+  hasAccess(): boolean;
+  clearAccess(): SetDocumentAccessRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SetDocumentAccessRequest.AsObject;
@@ -521,8 +536,7 @@ export namespace SetDocumentAccessRequest {
   export type AsObject = {
     documentId: number,
     mode: DOC_ACCESS_UPDATE_MODE,
-    jobsList: Array<resources_documents_documents_pb.DocumentJobAccess.AsObject>,
-    usersList: Array<resources_documents_documents_pb.DocumentUserAccess.AsObject>,
+    access?: resources_documents_documents_pb.DocumentAccess.AsObject,
   }
 }
 

@@ -345,6 +345,32 @@ export namespace DocumentShort {
   }
 }
 
+export class DocumentAccess extends jspb.Message {
+  getJobsList(): Array<DocumentJobAccess>;
+  setJobsList(value: Array<DocumentJobAccess>): DocumentAccess;
+  clearJobsList(): DocumentAccess;
+  addJobs(value?: DocumentJobAccess, index?: number): DocumentJobAccess;
+
+  getUsersList(): Array<DocumentUserAccess>;
+  setUsersList(value: Array<DocumentUserAccess>): DocumentAccess;
+  clearUsersList(): DocumentAccess;
+  addUsers(value?: DocumentUserAccess, index?: number): DocumentUserAccess;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DocumentAccess.AsObject;
+  static toObject(includeInstance: boolean, msg: DocumentAccess): DocumentAccess.AsObject;
+  static serializeBinaryToWriter(message: DocumentAccess, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DocumentAccess;
+  static deserializeBinaryFromReader(message: DocumentAccess, reader: jspb.BinaryReader): DocumentAccess;
+}
+
+export namespace DocumentAccess {
+  export type AsObject = {
+    jobsList: Array<DocumentJobAccess.AsObject>,
+    usersList: Array<DocumentUserAccess.AsObject>,
+  }
+}
+
 export class DocumentJobAccess extends jspb.Message {
   getId(): number;
   setId(value: number): DocumentJobAccess;

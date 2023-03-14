@@ -7,6 +7,20 @@ import "resources/common/database/database.proto";
 import "resources/documents/documents.proto";
 import "validate/validate.proto";
 
+message ListTemplatesRequest {}
+
+message ListTemplatesResponse {
+  repeated resources.documents.DocumentTemplateShort templates = 1;
+}
+
+message GetTemplateRequest {
+  uint64 template_id = 1;
+}
+
+message GetTemplateResponse {
+  resources.documents.DocumentTemplate template = 1;
+}
+
 message FindDocumentsRequest {
   int64 offset = 1 [(validate.rules).int64.gte = 0];
   repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
@@ -28,8 +42,7 @@ message GetDocumentRequest {
 
 message GetDocumentResponse {
   resources.documents.Document document = 1;
-  repeated resources.documents.DocumentJobAccess jobsAccess = 2;
-  repeated resources.documents.DocumentUserAccess usersAccess = 3;
+  resources.documents.DocumentAccess access = 2;
 }
 
 message GetDocumentCommentsRequest {
@@ -66,8 +79,7 @@ message CreateDocumentRequest {
   uint64 category_id = 7; // @gotags: alias:"category_id"
   uint64 target_document_id = 8; // @gotags: alias:"response_id"
 
-  repeated resources.documents.DocumentJobAccess jobsAccess = 9;
-  repeated resources.documents.DocumentUserAccess usersAccess = 10;
+  resources.documents.DocumentAccess access = 9;
 }
 
 message CreateDocumentResponse {
@@ -87,18 +99,12 @@ message UpdateDocumentRequest {
 
 message UpdateDocumentResponse {}
 
-message ListTemplatesRequest {}
-
-message ListTemplatesResponse {
-  repeated resources.documents.DocumentTemplateShort templates = 1;
+message GetDocumentReferencesRequest {
+  uint64 document_id = 1;
 }
 
-message GetTemplateRequest {
-  uint64 template_id = 1;
-}
-
-message GetTemplateResponse {
-  resources.documents.DocumentTemplate template = 1;
+message GetDocumentReferencesResponse {
+  repeated resources.documents.DocumentReference references = 1;
 }
 
 message GetDocumentAccessRequest {
@@ -106,8 +112,7 @@ message GetDocumentAccessRequest {
 }
 
 message GetDocumentAccessResponse {
-  repeated resources.documents.DocumentJobAccess jobs = 1;
-  repeated resources.documents.DocumentUserAccess users = 2;
+  resources.documents.DocumentAccess access = 1;
 }
 
 enum DOC_ACCESS_UPDATE_MODE {
@@ -120,8 +125,7 @@ enum DOC_ACCESS_UPDATE_MODE {
 message SetDocumentAccessRequest {
   uint64 document_id = 1;
   DOC_ACCESS_UPDATE_MODE mode = 2;
-  repeated resources.documents.DocumentJobAccess jobs = 3;
-  repeated resources.documents.DocumentUserAccess users = 4;
+  resources.documents.DocumentAccess access = 3;
 }
 
 message SetDocumentAccessResponse {}
@@ -131,7 +135,6 @@ service DocStoreService {
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
   // @permission: name=ListTemplates
   rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
-  // TODO add create and update template methods
 
   // @permission
   rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
@@ -148,6 +151,8 @@ service DocStoreService {
   rpc PostDocumentComment(PostDocumentCommentRequest) returns (PostDocumentCommentResponse);
   // @permission: name=PostDocumentComment
   rpc EditDocumentComment(EditDocumentCommentRequest) returns (EditDocumentCommentResponse);
+  // @permission
+  rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse);
 
   // @permission
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);

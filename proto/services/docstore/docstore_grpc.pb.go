@@ -41,6 +41,8 @@ type DocStoreServiceClient interface {
 	// @permission: name=PostDocumentComment
 	EditDocumentComment(ctx context.Context, in *EditDocumentCommentRequest, opts ...grpc.CallOption) (*EditDocumentCommentResponse, error)
 	// @permission
+	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
+	// @permission
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
 	// @permission
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
@@ -135,6 +137,15 @@ func (c *docStoreServiceClient) EditDocumentComment(ctx context.Context, in *Edi
 	return out, nil
 }
 
+func (c *docStoreServiceClient) GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error) {
+	out := new(GetDocumentReferencesResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetDocumentReferences", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *docStoreServiceClient) GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error) {
 	out := new(GetDocumentAccessResponse)
 	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetDocumentAccess", in, out, opts...)
@@ -176,6 +187,8 @@ type DocStoreServiceServer interface {
 	// @permission: name=PostDocumentComment
 	EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error)
 	// @permission
+	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
+	// @permission
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
 	// @permission
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
@@ -212,6 +225,9 @@ func (UnimplementedDocStoreServiceServer) PostDocumentComment(context.Context, *
 }
 func (UnimplementedDocStoreServiceServer) EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditDocumentComment not implemented")
+}
+func (UnimplementedDocStoreServiceServer) GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentReferences not implemented")
 }
 func (UnimplementedDocStoreServiceServer) GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentAccess not implemented")
@@ -394,6 +410,24 @@ func _DocStoreService_EditDocumentComment_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DocStoreService_GetDocumentReferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDocumentReferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).GetDocumentReferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/GetDocumentReferences",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).GetDocumentReferences(ctx, req.(*GetDocumentReferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DocStoreService_GetDocumentAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetDocumentAccessRequest)
 	if err := dec(in); err != nil {
@@ -472,6 +506,10 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EditDocumentComment",
 			Handler:    _DocStoreService_EditDocumentComment_Handler,
+		},
+		{
+			MethodName: "GetDocumentReferences",
+			Handler:    _DocStoreService_GetDocumentReferences_Handler,
 		},
 		{
 			MethodName: "GetDocumentAccess",

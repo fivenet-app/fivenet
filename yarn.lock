@@ -3,7 +3,7 @@
 
 
 "@arpanet/gen@file:./gen":
-  version "0.0.5"
+  version "0.0.6"
 
 "@babel/helper-string-parser@^7.19.4":
   version "7.19.4"
