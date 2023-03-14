@@ -2,6 +2,7 @@ package citizenstore
 
 import (
 	context "context"
+	"database/sql"
 	"fmt"
 	"strconv"
 	"strings"
@@ -10,7 +11,6 @@ import (
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/common/database"
 	users "github.com/galexrt/arpanet/proto/resources/users"
-	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -30,12 +30,14 @@ var (
 type Server struct {
 	CitizenStoreServiceServer
 
-	p perms.Permissions
+	db *sql.DB
+	p  perms.Permissions
 }
 
-func NewServer(p perms.Permissions) *Server {
+func NewServer(db *sql.DB, p perms.Permissions) *Server {
 	return &Server{
-		p: p,
+		db: db,
+		p:  p,
 	}
 }
 
@@ -82,7 +84,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		WHERE(condition)
 
 	var count struct{ TotalCount int64 }
-	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}
 
@@ -128,7 +130,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		stmt = stmt.ORDER_BY(orderBys...)
 	}
 
-	if err := stmt.QueryContext(ctx, query.DB, &resp.Users); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
 		return nil, err
 	}
 
@@ -183,7 +185,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		WHERE(u.ID.EQ(jet.Int32(req.UserId))).
 		LIMIT(15)
 
-	if err := stmt.QueryContext(ctx, query.DB, resp.User); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, resp.User); err != nil {
 		return nil, err
 	}
 
@@ -229,7 +231,7 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 		).
 		LIMIT(12)
 
-	if err := stmt.QueryContext(ctx, query.DB, &resp.Activity); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		return nil, err
 	}
 
@@ -254,7 +256,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		ON_DUPLICATE_KEY_UPDATE(
 			aup.Wanted.SET(jet.Bool(req.Props.Wanted)),
 		)
-	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
 
@@ -284,7 +286,7 @@ func (s *Server) addUserAcitvity(ctx context.Context, activity *model.ArpanetUse
 		aua.NewValue,
 	).MODEL(activity)
 
-	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return err
 	}
 
@@ -346,7 +348,7 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 		)
 	fmt.Println(stmt.DebugSql())
 
-	if err := stmt.QueryContext(ctx, query.DB, &resp.Relations); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
 		return nil, err
 	}
 

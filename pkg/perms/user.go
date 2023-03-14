@@ -7,7 +7,6 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/galexrt/arpanet/pkg/perms/collections"
 	"github.com/galexrt/arpanet/pkg/perms/helpers"
-	"github.com/galexrt/arpanet/query"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
@@ -40,7 +39,7 @@ func (p *Perms) GetAllPermissionsOfUser(userID int32) (collections.Permissions, 
 		)
 
 	var perms collections.Permissions
-	if err := stmt.Query(query.DB, &perms); err != nil {
+	if err := stmt.Query(p.db, &perms); err != nil {
 		return nil, err
 	}
 
@@ -87,7 +86,7 @@ func (p *Perms) getAllPermissionsByPrefixOfUser(userID int32, prefix string) (co
 		)
 
 	var perms collections.Permissions
-	if err := stmt.Query(query.DB, &perms); err != nil {
+	if err := stmt.Query(p.db, &perms); err != nil {
 		return nil, err
 	}
 
@@ -144,7 +143,7 @@ func (p *Perms) canID(userID int32, guardName string) bool {
 	var dest struct {
 		ID int32
 	}
-	if err := stmt.Query(query.DB, &dest); err != nil {
+	if err := stmt.Query(p.db, &dest); err != nil {
 		return false
 	}
 

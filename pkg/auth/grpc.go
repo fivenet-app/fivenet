@@ -22,7 +22,13 @@ const (
 )
 
 type GRPCAuth struct {
-	TM *TokenManager
+	tm *TokenManager
+}
+
+func NewGRPCAuth(tm *TokenManager) *GRPCAuth {
+	return &GRPCAuth{
+		tm: tm,
+	}
 }
 
 func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context.Context, error) {
@@ -36,7 +42,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 	}
 
 	// Parse token only returns the token info when the token is still valid
-	tokenInfo, err := g.TM.ParseWithClaims(token)
+	tokenInfo, err := g.tm.ParseWithClaims(token)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", err)
 	}
@@ -51,7 +57,13 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 }
 
 type GRPCPerm struct {
-	P *perms.Perms
+	p perms.Permissions
+}
+
+func NewGRPCPerms(p perms.Permissions) *GRPCPerm {
+	return &GRPCPerm{
+		p: p,
+	}
 }
 
 func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
@@ -69,7 +81,7 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 				}
 			}
 
-			if g.P.CanID(activeCharID, perm) {
+			if g.p.CanID(activeCharID, perm) {
 				return ctx, nil
 			}
 		}
@@ -93,7 +105,7 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}
 				}
 			}
 
-			if g.P.CanID(activeCharID, perm) {
+			if g.p.CanID(activeCharID, perm) {
 				return ctx, nil
 			}
 		}

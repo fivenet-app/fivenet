@@ -2,6 +2,7 @@ package docstore
 
 import (
 	context "context"
+	"database/sql"
 	"errors"
 	"fmt"
 
@@ -9,7 +10,6 @@ import (
 	"github.com/galexrt/arpanet/pkg/htmlsanitizer"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/documents"
-	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -32,12 +32,14 @@ var (
 type Server struct {
 	DocStoreServiceServer
 
-	p perms.Permissions
+	db *sql.DB
+	p  perms.Permissions
 }
 
-func NewServer(p perms.Permissions) *Server {
+func NewServer(db *sql.DB, p perms.Permissions) *Server {
 	return &Server{
-		p: p,
+		db: db,
+		p:  p,
 	}
 }
 
@@ -61,7 +63,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 		)
 
 	resp := &ListTemplatesResponse{}
-	if err := stmt.QueryContext(ctx, query.DB, &resp.Templates); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
 		return nil, err
 	}
 
@@ -84,7 +86,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		)
 
 	resp := &GetTemplateResponse{}
-	if err := stmt.QueryContext(ctx, query.DB, &resp.Template); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Template); err != nil {
 		return nil, err
 	}
 
@@ -106,7 +108,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		jet.ProjectionList{jet.COUNT(ad.ID).AS("total_count")},
 		nil, userID, job, jobGrade)
 	var count struct{ TotalCount int64 }
-	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}
 
@@ -120,7 +122,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 	}
 
 	stmt := s.getDocumentsQuery(condition, nil, nil, userID, job, jobGrade)
-	if err := stmt.QueryContext(ctx, query.DB, &resp.Documents); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
 		return nil, err
 	}
 
@@ -144,7 +146,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	countStmt := s.getDocumentsQuery(condition, jet.ProjectionList{jet.COUNT(ad.ID).AS("total_count")}, nil, userID, job, jobGrade)
 	var count struct{ TotalCount int64 }
-	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}
 
@@ -154,7 +156,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 
 	stmt := s.getDocumentsQuery(condition, nil, nil, userID, job, jobGrade)
-	if err := stmt.QueryContext(ctx, query.DB, resp.Document); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, resp.Document); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -196,7 +198,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		req.CategoryId,
 	)
 
-	result, err := stmt.ExecContext(ctx, query.DB)
+	result, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
 		return nil, err
 	}
@@ -241,7 +243,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		).
 		WHERE(ad.ID.EQ(jet.Uint64(req.DocumentId)))
 
-	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
 
@@ -267,7 +269,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		).
 		WHERE(condition)
 	var count struct{ TotalCount int64 }
-	if err := countStmt.QueryContext(ctx, query.DB, &count); err != nil {
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}
 
@@ -291,7 +293,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		WHERE(condition)
 
 	resp := &GetDocumentCommentsResponse{}
-	if err := stmt.QueryContext(ctx, query.DB, resp.Comments); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, resp.Comments); err != nil {
 		return nil, err
 	}
 
@@ -331,7 +333,7 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 		)
 
 	resp := &PostDocumentCommentResponse{}
-	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
 
@@ -356,7 +358,7 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 		)
 
 	resp := &EditDocumentCommentResponse{}
-	if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
 
@@ -381,7 +383,7 @@ func (s *Server) GetDocumentFeed(ctx context.Context, req *GetDocumentFeedReques
 
 	fmt.Println(stmt.DebugSql())
 
-	if err := stmt.QueryContext(ctx, query.DB, &resp.Items); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Items); err != nil {
 		return nil, err
 	}
 
@@ -429,7 +431,7 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 	resp := &GetDocumentAccessResponse{
 		Access: &documents.DocumentAccess{},
 	}
-	if err := stmt.QueryContext(ctx, query.DB, resp.Access); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, resp.Access); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
@@ -470,7 +472,7 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 
 	fmt.Println(selectStmt.DebugSql())
 
-	if err := selectStmt.QueryContext(ctx, query.DB, &dest); err != nil {
+	if err := selectStmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
@@ -496,7 +498,7 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 		).
 			MODELS(ja)
 		fmt.Println(stmt.DebugSql())
-		if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return err
 		}
 	}
@@ -515,7 +517,7 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 			adua.CreatorID,
 		).
 			MODELS(ua)
-		if _, err := stmt.ExecContext(ctx, query.DB); err != nil {
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return err
 		}
 	}

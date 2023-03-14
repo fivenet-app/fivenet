@@ -5,7 +5,6 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/perms/collections"
 	"github.com/galexrt/arpanet/pkg/perms/helpers"
-	"github.com/galexrt/arpanet/query"
 )
 
 func (p *Perms) CreatePermission(name string, description string) error {
@@ -20,7 +19,7 @@ func (p *Perms) CreatePermission(name string, description string) error {
 			description,
 		)
 
-	_, err := stmt.ExecContext(context.TODO(), query.DB)
+	_, err := stmt.ExecContext(context.TODO(), p.db)
 	return err
 }
 
@@ -30,7 +29,7 @@ func (p *Perms) GetAllPermissions() (collections.Permissions, error) {
 	).FROM(ap)
 
 	var dest collections.Permissions
-	err := stmt.QueryContext(context.TODO(), query.DB, &dest)
+	err := stmt.QueryContext(context.TODO(), p.db, &dest)
 	if err != nil {
 		return nil, err
 	}

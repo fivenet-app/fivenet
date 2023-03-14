@@ -1,6 +1,7 @@
 package proto
 
 import (
+	"database/sql"
 	"net"
 
 	"github.com/galexrt/arpanet/pkg/auth"
@@ -32,7 +33,7 @@ import (
 
 type RegisterFunc func() error
 
-func NewGRPCServer(logger *zap.Logger, tm *auth.TokenManager, p *perms.Perms) (*grpc.Server, net.Listener) {
+func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *perms.Perms) (*grpc.Server, net.Listener) {
 	// Create GRPC Server
 	lis, err := net.Listen("tcp", config.C.GRPC.Listen)
 	if err != nil {
@@ -44,12 +45,8 @@ func NewGRPCServer(logger *zap.Logger, tm *auth.TokenManager, p *perms.Perms) (*
 		}
 		return status.Errorf(codes.Internal, "%v", p)
 	}
-	grpcAuth := &auth.GRPCAuth{
-		TM: tm,
-	}
-	grpcPerm := &auth.GRPCPerm{
-		P: p,
-	}
+	grpcAuth := auth.NewGRPCAuth(tm)
+	grpcPerm := auth.NewGRPCPerms(p)
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_ctxtags.UnaryServerInterceptor(),
@@ -76,13 +73,13 @@ func NewGRPCServer(logger *zap.Logger, tm *auth.TokenManager, p *perms.Perms) (*
 	)
 
 	// Attach our GRPC services
-	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(grpcAuth, tm, p))
-	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(p))
-	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(p))
+	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p))
+	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p))
+	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p))
 	pbdispatcher.RegisterDispatcherServiceServer(grpcServer, pbdispatcher.NewServer())
-	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(p))
+	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
-	pblivemapper.RegisterLivemapperServiceServer(grpcServer, pblivemapper.NewServer(logger.Named("grpc_livemap"), p))
+	pblivemapper.RegisterLivemapperServiceServer(grpcServer, pblivemapper.NewServer(logger.Named("grpc_livemap"), db, p))
 
 	return grpcServer, lis
 }

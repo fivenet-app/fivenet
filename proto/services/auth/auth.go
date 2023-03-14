@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"strconv"
 	"strings"
@@ -10,7 +11,6 @@ import (
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
 	users "github.com/galexrt/arpanet/proto/resources/users"
-	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -30,13 +30,15 @@ var (
 type Server struct {
 	AuthServiceServer
 
+	db   *sql.DB
 	auth *auth.GRPCAuth
 	tm   *auth.TokenManager
 	p    perms.Permissions
 }
 
-func NewServer(auth *auth.GRPCAuth, tm *auth.TokenManager, p perms.Permissions) *Server {
+func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenManager, p perms.Permissions) *Server {
 	return &Server{
+		db:   db,
 		auth: auth,
 		tm:   tm,
 		p:    p,
@@ -88,7 +90,6 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 }
 
 func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.ArpanetAccounts, error) {
-	var account model.ArpanetAccounts
 	stmt := a.SELECT(
 		a.AllColumns,
 	).
@@ -97,7 +98,9 @@ func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.
 			a.Enabled.IS_TRUE().
 				AND(a.Username.EQ(jet.String(username))),
 		).LIMIT(1)
-	if err := stmt.QueryContext(ctx, query.DB, &account); err != nil {
+
+	var account model.ArpanetAccounts
+	if err := stmt.QueryContext(ctx, s.db, &account); err != nil {
 		return nil, err
 	}
 
@@ -105,7 +108,6 @@ func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.
 }
 
 func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error) {
-	resp := &LoginResponse{}
 	account, err := s.getAccountFromDB(ctx, req.Username)
 	if err != nil {
 		return nil, err
@@ -113,16 +115,17 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 
 	// Password check logic
 	if err := bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(req.Password)); err != nil {
-		return &LoginResponse{}, errors.New("wrong username or password")
+		return nil, errors.New("wrong username or password")
 	}
 
 	token, err := s.createTokenFromAccountAndChar(account, nil)
 	if err != nil {
 		return nil, err
 	}
-	resp.Token = token
 
-	return resp, nil
+	return &LoginResponse{
+		Token: token,
+	}, nil
 }
 
 func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {
@@ -131,7 +134,6 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 		return nil, err
 	}
 
-	resp := &GetCharactersResponse{}
 	// Load chars from database
 	stmt := u.SELECT(
 		u.AllColumns,
@@ -141,7 +143,8 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 		ORDER_BY(u.ID).
 		LIMIT(10)
 
-	if err := stmt.QueryContext(ctx, query.DB, &resp.Chars); err != nil {
+	resp := &GetCharactersResponse{}
+	if err := stmt.QueryContext(ctx, s.db, &resp.Chars); err != nil {
 		return nil, err
 	}
 
@@ -153,14 +156,11 @@ func buildCharSearchIdentifier(license string) string {
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
-	resp := &ChooseCharacterResponse{}
-
 	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
 	if err != nil {
 		return nil, err
 	}
 
-	var char users.User
 	stmt := u.SELECT(
 		u.ID,
 		u.Identifier,
@@ -171,7 +171,8 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		WHERE(u.ID.EQ(jet.Int32(req.UserId))).
 		LIMIT(1)
 
-	if err := stmt.QueryContext(ctx, query.DB, &char); err != nil {
+	var char users.User
+	if err := stmt.QueryContext(ctx, s.db, &char); err != nil {
 		return nil, err
 	}
 
@@ -190,7 +191,6 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	if err != nil {
 		return nil, err
 	}
-	resp.Token = token
 
 	// Load permissions of user
 	perms, err := s.p.GetAllPermissionsOfUser(char.UserId)
@@ -202,16 +202,16 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to select this character!")
 	}
 
-	resp.Permissions = perms.GuardNames()
-
-	return resp, nil
+	return &ChooseCharacterResponse{
+		Token:       token,
+		Permissions: perms.GuardNames(),
+	}, nil
 }
 
 func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutResponse, error) {
 	// TODO till we have a JWT token manager "blocking" users when they logout, nothing todo here
-	resp := &LogoutResponse{
-		Success: true,
-	}
 
-	return resp, nil
+	return &LogoutResponse{
+		Success: true,
+	}, nil
 }

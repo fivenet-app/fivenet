@@ -14,13 +14,11 @@ import (
 // Inspired by https://github.com/grpc-ecosystem/go-grpc-middleware/blob/da1b13ec28bbdd492bdc876045791b69c4be5b81/auth/metadata_test.go
 func TestGRPCAuthFunc(t *testing.T) {
 	// Valid JWT token
-	tm := GetTokenManager()
+	tm := NewTokenManager(jwtTokenTestSecret)
 	assert.NotNil(t, tm)
 	token, err := tm.NewWithClaims(basicCitizenInfoClaim)
 	assert.NoError(t, err)
-	grpcAuth := &GRPCAuth{
-		TM: tm,
-	}
+	grpcAuth := NewGRPCAuth(tm)
 
 	for _, run := range []struct {
 		md        metadata.MD

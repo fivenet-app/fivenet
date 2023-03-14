@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"net/http"
 	"os"
@@ -26,6 +27,8 @@ import (
 	"go.uber.org/zap"
 )
 
+var db *sql.DB
+
 var serverCmd = &cobra.Command{
 	Use: "server",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -44,14 +47,14 @@ var serverCmd = &cobra.Command{
 		}
 
 		// Setup permissions system
-		p := perms.New(query.DB)
+		p := perms.New(db)
 		defer p.Stop()
 		p.Register()
 
 		// Create JWT Token TokenManager
 		tm := auth.NewTokenManager(config.C.JWT.Secret)
 
-		grpcServer, grpcLis := proto.NewGRPCServer(logger, tm, p)
+		grpcServer, grpcLis := proto.NewGRPCServer(logger, db, tm, p)
 
 		go func() {
 			if err := grpcServer.Serve(grpcLis); err != nil {
@@ -104,8 +107,9 @@ var serverCmd = &cobra.Command{
 		logger.Info("http server exiting")
 		return nil
 	},
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return query.SetupDB(logger)
+	PreRunE: func(cmd *cobra.Command, args []string) (err error) {
+		db, err = query.SetupDB(logger)
+		return err
 	},
 }
 

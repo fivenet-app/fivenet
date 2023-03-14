@@ -2,6 +2,7 @@ package completor
 
 import (
 	context "context"
+	"database/sql"
 	"strings"
 	"time"
 
@@ -12,7 +13,6 @@ import (
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/documents"
 	"github.com/galexrt/arpanet/proto/resources/jobs"
-	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 )
 
@@ -25,15 +25,16 @@ var (
 type Server struct {
 	CompletorServiceServer
 
-	p perms.Permissions
+	db *sql.DB
+	p  perms.Permissions
 
-	cancel context.CancelFunc
-
+	// Cache related
+	cancel              context.CancelFunc
 	jobsCache           *cache.Cache[string, *jobs.Job]
 	docsCategoriesCache *cache.Cache[string, []*documents.DocumentCategory]
 }
 
-func NewServer(p perms.Permissions) *Server {
+func NewServer(db *sql.DB, p perms.Permissions) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	jobsCache := cache.NewContext(
@@ -48,7 +49,9 @@ func NewServer(p perms.Permissions) *Server {
 	)
 
 	s := &Server{
-		p:                   p,
+		db: db,
+		p:  p,
+
 		cancel:              cancel,
 		jobsCache:           jobsCache,
 		docsCategoriesCache: docsCategoriesCache,
@@ -87,7 +90,7 @@ func (s *Server) refreshJobsCache() error {
 			j.Name.ASC(),
 			jg.Grade.ASC(),
 		)
-	if err := stmt.Query(query.DB, &dest); err != nil {
+	if err := stmt.Query(s.db, &dest); err != nil {
 		return err
 	}
 
@@ -108,7 +111,7 @@ func (s *Server) refreshDocumentCategories() error {
 		FROM(adc).
 		GROUP_BY(adc.Job).
 		ORDER_BY(adc.Name.ASC())
-	if err := stmt.Query(query.DB, &dest); err != nil {
+	if err := stmt.Query(s.db, &dest); err != nil {
 		return err
 	}
 

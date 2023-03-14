@@ -5,7 +5,6 @@ import (
 
 	database "github.com/galexrt/arpanet/proto/resources/common/database"
 	"github.com/galexrt/arpanet/proto/resources/documents"
-	"github.com/galexrt/arpanet/query"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
@@ -126,7 +125,7 @@ func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, userID int32, jo
 	var dest struct {
 		ID uint64 `alias:"document.id"`
 	}
-	if err := checkStmt.QueryContext(ctx, query.DB, &dest); err != nil {
+	if err := checkStmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return false, err
 	}
 

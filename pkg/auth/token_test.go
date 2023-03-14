@@ -7,11 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const JWTTokenTestSecret = "secret-jwt-token-secret-for-testing"
-
-func GetTokenManager() *TokenManager {
-	return NewTokenManager(JWTTokenTestSecret)
-}
+const jwtTokenTestSecret = "secret-jwt-token-secret-for-testing"
 
 var basicCitizenInfoClaim = &CitizenInfoClaims{
 	AccountID:          123456,
@@ -27,7 +23,7 @@ var basicCitizenInfoClaim = &CitizenInfoClaims{
 // Even though is kinda a duplicate of go JWT lib, I want to make sure we don't have
 // issues parsing our custom claims structure
 func TestToken(t *testing.T) {
-	tm := GetTokenManager()
+	tm := NewTokenManager(jwtTokenTestSecret)
 	assert.NotNil(t, tm)
 	claims := basicCitizenInfoClaim
 	token, err := tm.NewWithClaims(claims)

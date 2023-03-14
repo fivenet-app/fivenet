@@ -1,13 +1,13 @@
 package livemapper
 
 import (
+	"database/sql"
 	"math/rand"
 	"time"
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/livemap"
-	"github.com/galexrt/arpanet/query"
 	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -22,12 +22,14 @@ type Server struct {
 	LivemapperServiceServer
 
 	logger *zap.Logger
+	db     *sql.DB
 	p      perms.Permissions
 }
 
-func NewServer(logger *zap.Logger, p perms.Permissions) *Server {
+func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions) *Server {
 	return &Server{
 		logger: logger,
+		db:     db,
 		p:      p,
 	}
 }
@@ -75,7 +77,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			Dispatches: []*livemap.UserMarker{},
 		}
 
-		if err := stmt.QueryContext(srv.Context(), query.DB, &resp.Users); err != nil {
+		if err := stmt.QueryContext(srv.Context(), s.db, &resp.Users); err != nil {
 			return err
 		}
 
@@ -140,7 +142,7 @@ func (s *Server) GenerateRandomUserMarker() {
 				l.Y.SET(jet.RawFloat("VALUES(y)")),
 			)
 
-		_, err := stmt.Exec(query.DB)
+		_, err := stmt.Exec(s.db)
 		if err != nil {
 			s.logger.Error("failed to insert/ update random location to locations table", zap.Error(err))
 		}

@@ -3,6 +3,7 @@ package query
 import (
 	"database/sql"
 	"embed"
+	"errors"
 
 	"github.com/galexrt/arpanet/pkg/config"
 	_ "github.com/go-sql-driver/mysql"
@@ -15,31 +16,28 @@ import (
 var (
 	//go:embed migrations/*.sql
 	migrationsFS embed.FS
-
-	DB *sql.DB
+	db           *sql.DB
 )
 
-func SetupDB(logger *zap.Logger) error {
-	if err := migrateDB(logger); err != nil {
-		return err
+func SetupDB(logger *zap.Logger) (*sql.DB, error) {
+	if err := MigrateDB(logger, config.C.Database.DSN); err != nil {
+		return nil, err
 	}
 
 	// Connect to database
-	db, err := sql.Open("mysql", config.C.Database.DSN)
+	var err error
+	db, err = sql.Open("mysql", config.C.Database.DSN)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// Set the DB var and default for the query package
-	DB = db
-
-	return nil
+	return db, nil
 }
 
-func migrateDB(logger *zap.Logger) error {
+func MigrateDB(logger *zap.Logger, dsn string) error {
 	logger.Info("starting database migrations")
 	// Connect to database
-	db, err := sql.Open("mysql", config.C.Database.DSN+"&multiStatements=true")
+	db, err := sql.Open("mysql", dsn+"&multiStatements=true")
 	if err != nil {
 		return err
 	}
@@ -63,11 +61,13 @@ func migrateDB(logger *zap.Logger) error {
 	}
 	// Run migrations
 	if err := m.Up(); err != nil {
-		if err != migrate.ErrNoChange {
+		if !errors.Is(migrate.ErrNoChange, err) {
 			return err
 		} else {
 			logger.Info("database migration have caused no changes")
 		}
+	} else {
+		logger.Info("completed database migrations changes have been made")
 	}
 
 	return db.Close()
