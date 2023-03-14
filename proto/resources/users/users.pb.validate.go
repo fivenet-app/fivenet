@@ -760,6 +760,17 @@ func (m *UserProps) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetUserId() <= 0 {
+		err := UserPropsValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	// no validation rules for Wanted
 
 	if len(errors) > 0 {

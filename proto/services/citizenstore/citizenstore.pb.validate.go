@@ -857,17 +857,6 @@ func (m *SetUserPropsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetUserId() <= 0 {
-		err := SetUserPropsRequestValidationError{
-			field:  "UserId",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if all {
 		switch v := interface{}(m.GetProps()).(type) {
 		case interface{ ValidateAll() error }:

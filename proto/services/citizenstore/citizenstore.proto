@@ -39,8 +39,7 @@ message GetUserActivityResponse {
 }
 
 message SetUserPropsRequest {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0];
-  resources.users.UserProps props = 2;
+  resources.users.UserProps props = 1;
 }
 
 message SetUserPropsResponse {}

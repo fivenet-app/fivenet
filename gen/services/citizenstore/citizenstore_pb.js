@@ -1304,7 +1304,6 @@ proto.services.citizenstore.SetUserPropsRequest.prototype.toObject = function(op
  */
 proto.services.citizenstore.SetUserPropsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userId: jspb.Message.getFieldWithDefault(msg, 1, 0),
     props: (f = msg.getProps()) && resources_users_users_pb.UserProps.toObject(includeInstance, f)
   };
 
@@ -1343,10 +1342,6 @@ proto.services.citizenstore.SetUserPropsRequest.deserializeBinaryFromReader = fu
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setUserId(value);
-      break;
-    case 2:
       var value = new resources_users_users_pb.UserProps;
       reader.readMessage(value,resources_users_users_pb.UserProps.deserializeBinaryFromReader);
       msg.setProps(value);
@@ -1380,17 +1375,10 @@ proto.services.citizenstore.SetUserPropsRequest.prototype.serializeBinary = func
  */
 proto.services.citizenstore.SetUserPropsRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUserId();
-  if (f !== 0) {
-    writer.writeInt32(
-      1,
-      f
-    );
-  }
   f = message.getProps();
   if (f != null) {
     writer.writeMessage(
-      2,
+      1,
       f,
       resources_users_users_pb.UserProps.serializeBinaryToWriter
     );
@@ -1399,30 +1387,12 @@ proto.services.citizenstore.SetUserPropsRequest.serializeBinaryToWriter = functi
 
 
 /**
- * optional int32 user_id = 1;
- * @return {number}
- */
-proto.services.citizenstore.SetUserPropsRequest.prototype.getUserId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.services.citizenstore.SetUserPropsRequest} returns this
- */
-proto.services.citizenstore.SetUserPropsRequest.prototype.setUserId = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional resources.users.UserProps props = 2;
+ * optional resources.users.UserProps props = 1;
  * @return {?proto.resources.users.UserProps}
  */
 proto.services.citizenstore.SetUserPropsRequest.prototype.getProps = function() {
   return /** @type{?proto.resources.users.UserProps} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserProps, 2));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserProps, 1));
 };
 
 
@@ -1431,7 +1401,7 @@ proto.services.citizenstore.SetUserPropsRequest.prototype.getProps = function() 
  * @return {!proto.services.citizenstore.SetUserPropsRequest} returns this
 */
 proto.services.citizenstore.SetUserPropsRequest.prototype.setProps = function(value) {
-  return jspb.Message.setWrapperField(this, 2, value);
+  return jspb.Message.setWrapperField(this, 1, value);
 };
 
 
@@ -1449,7 +1419,7 @@ proto.services.citizenstore.SetUserPropsRequest.prototype.clearProps = function(
  * @return {boolean}
  */
 proto.services.citizenstore.SetUserPropsRequest.prototype.hasProps = function() {
-  return jspb.Message.getField(this, 2) != null;
+  return jspb.Message.getField(this, 1) != null;
 };
 
 

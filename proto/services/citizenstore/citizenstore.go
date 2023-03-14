@@ -48,6 +48,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		u.PhoneNumber,
 		u.Visum,
 		u.Playtime,
+		aup.UserID,
 	}
 	// Field Permission Check
 	if perms.P.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
@@ -151,6 +152,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		u.PhoneNumber,
 		u.Visum,
 		u.Playtime,
+		aup.UserID,
 	}
 
 	// Field Permission Check
@@ -235,8 +237,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user wanted status!")
 	}
 
-	stmt := aup.INSERT(aup.AllColumns).
-		MODEL(req).
+	stmt := aup.INSERT(
+		aup.AllColumns,
+	).
+		VALUES(
+			req.Props.UserId,
+			req.Props.Wanted,
+		).
 		ON_DUPLICATE_KEY_UPDATE(
 			aup.Wanted.SET(jet.Bool(req.Props.Wanted)),
 		)
@@ -250,7 +257,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	oldValue := strconv.FormatBool(!req.Props.Wanted)
 	s.addUserAcitvity(ctx, &model.ArpanetUserActivity{
 		SourceUserID: userID,
-		TargetUserID: req.UserId,
+		TargetUserID: req.Props.UserId,
 		Type:         int16(users.USER_ACTIVITY_TYPE_CHANGED),
 		Key:          key,
 		OldValue:     &oldValue,

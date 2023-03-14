@@ -45,7 +45,8 @@ message License {
 }
 
 message UserProps {
-  bool wanted = 1; // @gotags: alias:"wanted"
+  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"user_id"
+  bool wanted = 2; // @gotags: alias:"wanted"
 }
 
 enum USER_ACTIVITY_TYPE {

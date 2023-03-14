@@ -145,9 +145,6 @@ export namespace GetUserActivityResponse {
 }
 
 export class SetUserPropsRequest extends jspb.Message {
-  getUserId(): number;
-  setUserId(value: number): SetUserPropsRequest;
-
   getProps(): resources_users_users_pb.UserProps | undefined;
   setProps(value?: resources_users_users_pb.UserProps): SetUserPropsRequest;
   hasProps(): boolean;
@@ -163,7 +160,6 @@ export class SetUserPropsRequest extends jspb.Message {
 
 export namespace SetUserPropsRequest {
   export type AsObject = {
-    userId: number,
     props?: resources_users_users_pb.UserProps.AsObject,
   }
 }

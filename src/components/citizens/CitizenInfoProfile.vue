@@ -13,7 +13,7 @@ import {
 } from '@headlessui/vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { EllipsisVerticalIcon, KeyIcon } from '@heroicons/vue/20/solid';
-import { User } from '@arpanet/gen/resources/users/users_pb';
+import { User, UserProps } from '@arpanet/gen/resources/users/users_pb';
 import { RpcError } from 'grpc-web';
 import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 import { SetUserPropsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
@@ -64,9 +64,16 @@ export default defineComponent({
             this.wantedState = !this.user.getProps()?.getWanted();
 
             const req = new SetUserPropsRequest();
-            req.setUserId(this.user?.getUserId());
-            this.user?.getProps()?.setWanted(this.wantedState);
-            req.setProps(this.user.getProps());
+            let userProps = this.user?.getProps();
+            if (!userProps) {
+                userProps = new UserProps();
+                userProps.setUserId(this.user.getUserId());
+
+                this.user.setProps(userProps);
+            }
+
+            userProps?.setWanted(this.wantedState);
+            req.setProps(userProps);
 
             getCitizenStoreClient().
                 setUserProps(req, null)

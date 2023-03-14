@@ -1389,7 +1389,8 @@ proto.resources.users.UserProps.prototype.toObject = function(opt_includeInstanc
  */
 proto.resources.users.UserProps.toObject = function(includeInstance, msg) {
   var f, obj = {
-    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 1, false)
+    userId: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {
@@ -1427,6 +1428,10 @@ proto.resources.users.UserProps.deserializeBinaryFromReader = function(msg, read
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setUserId(value);
+      break;
+    case 2:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setWanted(value);
       break;
@@ -1459,10 +1464,17 @@ proto.resources.users.UserProps.prototype.serializeBinary = function() {
  */
 proto.resources.users.UserProps.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getUserId();
+  if (f !== 0) {
+    writer.writeInt32(
+      1,
+      f
+    );
+  }
   f = message.getWanted();
   if (f) {
     writer.writeBool(
-      1,
+      2,
       f
     );
   }
@@ -1470,11 +1482,29 @@ proto.resources.users.UserProps.serializeBinaryToWriter = function(message, writ
 
 
 /**
- * optional bool wanted = 1;
+ * optional int32 user_id = 1;
+ * @return {number}
+ */
+proto.resources.users.UserProps.prototype.getUserId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.resources.users.UserProps} returns this
+ */
+proto.resources.users.UserProps.prototype.setUserId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional bool wanted = 2;
  * @return {boolean}
  */
 proto.resources.users.UserProps.prototype.getWanted = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 1, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
 };
 
 
@@ -1483,7 +1513,7 @@ proto.resources.users.UserProps.prototype.getWanted = function() {
  * @return {!proto.resources.users.UserProps} returns this
  */
 proto.resources.users.UserProps.prototype.setWanted = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 1, value);
+  return jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 

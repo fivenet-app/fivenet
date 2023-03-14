@@ -164,6 +164,9 @@ export namespace License {
 }
 
 export class UserProps extends jspb.Message {
+  getUserId(): number;
+  setUserId(value: number): UserProps;
+
   getWanted(): boolean;
   setWanted(value: boolean): UserProps;
 
@@ -177,6 +180,7 @@ export class UserProps extends jspb.Message {
 
 export namespace UserProps {
   export type AsObject = {
+    userId: number,
     wanted: boolean,
   }
 }
