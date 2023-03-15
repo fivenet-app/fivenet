@@ -60,7 +60,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		aup.UserID,
 	}
 	// Field Permission Check
-	if s.p.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
+	if s.p.Can(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
 
@@ -165,10 +165,10 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	// Field Permission Check
-	if s.p.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
+	if s.p.Can(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
-	if s.p.CanID(userID, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
+	if s.p.Can(userID, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
 		selectors = append(selectors, ul.Type)
 	}
 
@@ -242,7 +242,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	userID := auth.GetUserIDFromContext(ctx)
 
 	// Field Permission Check
-	if !s.p.CanID(userID, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
+	if !s.p.Can(userID, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user wanted status!")
 	}
 

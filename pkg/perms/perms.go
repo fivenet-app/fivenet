@@ -19,9 +19,21 @@ var (
 	aur = table.ArpanetUserRoles
 )
 
+type Permissions interface {
+	GetAllPermissions() (collections.Permissions, error)
+	CreatePermission(name string, description string) error
+
+	GetAllPermissionsOfUser(userID int32) (collections.Permissions, error)
+	GetAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error)
+	GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string) ([]string, error)
+
+	Can(userID int32, perm ...string) bool
+}
+
 type Perms struct {
 	db *sql.DB
 
+	ctx    context.Context
 	cancel context.CancelFunc
 
 	canCacheTTL time.Duration
@@ -48,6 +60,7 @@ func New(db *sql.DB) *Perms {
 	return &Perms{
 		db: db,
 
+		ctx:    ctx,
 		cancel: cancel,
 
 		canCacheTTL: 2 * time.Minute,
@@ -62,12 +75,4 @@ func (p *Perms) Stop() {
 	if p.cancel != nil {
 		p.cancel()
 	}
-}
-
-type Permissions interface {
-	GetAllPermissionsOfUser(userID int32) (collections.Permissions, error)
-	GetAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error)
-	GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string) ([]string, error)
-
-	CanID(userID int32, perm ...string) bool
 }

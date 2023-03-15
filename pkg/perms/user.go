@@ -109,11 +109,11 @@ func (p *Perms) GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string
 	return suffixes, nil
 }
 
-func (p *Perms) CanID(userID int32, perm ...string) bool {
-	return p.canID(userID, helpers.Guard(strings.Join(perm, ".")))
+func (p *Perms) Can(userID int32, perm ...string) bool {
+	return p.can(userID, helpers.Guard(strings.Join(perm, ".")))
 }
 
-func (p *Perms) canID(userID int32, guardName string) bool {
+func (p *Perms) can(userID int32, guardName string) bool {
 	cacheKey := buildCanCacheKey(userID, guardName)
 	if cached, ok := p.canCache.Get(cacheKey); ok {
 		return cached
@@ -154,5 +154,5 @@ func (p *Perms) canID(userID int32, guardName string) bool {
 }
 
 func buildCanCacheKey(userID int32, guardName string) string {
-	return strconv.Itoa(int(userID)) + "-" + guardName
+	return strconv.Itoa(int(userID)) + guardName
 }

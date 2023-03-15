@@ -1,8 +1,6 @@
 package perms
 
 import (
-	"context"
-
 	"github.com/galexrt/arpanet/pkg/perms/collections"
 	"github.com/galexrt/arpanet/pkg/perms/helpers"
 )
@@ -19,7 +17,7 @@ func (p *Perms) CreatePermission(name string, description string) error {
 			description,
 		)
 
-	_, err := stmt.ExecContext(context.TODO(), p.db)
+	_, err := stmt.ExecContext(p.ctx, p.db)
 	return err
 }
 
@@ -29,7 +27,7 @@ func (p *Perms) GetAllPermissions() (collections.Permissions, error) {
 	).FROM(ap)
 
 	var dest collections.Permissions
-	err := stmt.QueryContext(context.TODO(), p.db, &dest)
+	err := stmt.QueryContext(p.ctx, p.db, &dest)
 	if err != nil {
 		return nil, err
 	}

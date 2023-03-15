@@ -81,7 +81,7 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 				}
 			}
 
-			if g.p.CanID(activeCharID, perm) {
+			if g.p.Can(activeCharID, perm) {
 				return ctx, nil
 			}
 		}
@@ -105,7 +105,7 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}
 				}
 			}
 
-			if g.p.CanID(activeCharID, perm) {
+			if g.p.Can(activeCharID, perm) {
 				return ctx, nil
 			}
 		}

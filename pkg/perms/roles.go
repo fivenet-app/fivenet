@@ -1,7 +1,6 @@
 package perms
 
 import (
-	"context"
 	"errors"
 
 	"github.com/galexrt/arpanet/pkg/perms/collections"
@@ -18,14 +17,14 @@ func (p *Perms) CreateRole(name string, description string) error {
 	).
 		VALUES(name, helpers.Guard(name), description)
 
-	_, err := stmt.ExecContext(context.TODO(), p.db)
+	_, err := stmt.ExecContext(p.ctx, p.db)
 	return err
 }
 
 func (p *Perms) DeleteRole(name string) error {
 	_, err := ar.DELETE().
 		WHERE(ar.GuardName.EQ(jet.String(helpers.Guard(name)))).
-		ExecContext(context.TODO(), p.db)
+		ExecContext(p.ctx, p.db)
 	return err
 }
 
@@ -35,7 +34,7 @@ func (p *Perms) AddPermissionsToRole(name string, perms collections.Permissions)
 		FROM(ar).
 		WHERE(ar.GuardName.EQ(jet.String(helpers.Guard(name)))).
 		LIMIT(1).
-		QueryContext(context.TODO(), p.db, &roleIDs); err != nil {
+		QueryContext(p.ctx, p.db, &roleIDs); err != nil {
 		return err
 	}
 
@@ -58,7 +57,7 @@ func (p *Perms) AddPermissionsToRole(name string, perms collections.Permissions)
 		arp.RoleID,
 	).
 		MODELS(rolePerms).
-		ExecContext(context.TODO(), p.db)
+		ExecContext(p.ctx, p.db)
 
 	var mysqlErr *mysql.MySQLError
 	if errors.As(err, &mysqlErr) && mysqlErr.Number != 1062 {

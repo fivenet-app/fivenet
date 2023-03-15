@@ -7,7 +7,7 @@ import (
 )
 
 // Permissions provides methods for you to manage array data more easily.
-type Permissions []model.ArpanetPermissions
+type Permissions []*model.ArpanetPermissions
 
 // Len returns the number of elements of the array.
 // @return int64

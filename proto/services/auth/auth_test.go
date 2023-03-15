@@ -113,4 +113,12 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, chooseCharRes)
 	proto.CompareGRPCError(t, UnableToChooseCharErr, err)
+
+	// user-2: Choose valid character, now we add a permssion
+	p.AddUserPerm(1, "test123-perm")
+	chooseCharReq.CharId = 2
+	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
+	assert.Error(t, err)
+	assert.Nil(t, chooseCharRes)
+	proto.CompareGRPCError(t, UnableToChooseCharErr, err)
 }
