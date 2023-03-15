@@ -21,9 +21,9 @@ import {
     MapIcon,
     HomeIcon,
     Square2StackIcon,
-    UserIcon
+    UserIcon,
 } from '@heroicons/vue/24/outline'
-import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
+import { MagnifyingGlassIcon, ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid'
 
 export default defineComponent({
     components: {
@@ -31,6 +31,8 @@ export default defineComponent({
         XMarkIcon,
         MagnifyingGlassIcon,
         UserIcon,
+        ChevronRightIcon,
+        HomeIconSolid,
         Dialog,
         DialogPanel,
         Menu,
@@ -45,7 +47,7 @@ export default defineComponent({
             sidebarNavigation: [
                 {
                     name: 'Home',
-                    href: '/mockup/',
+                    href: '/mockup',
                     permission: '',
                     icon: HomeIcon,
                     current: true,
@@ -97,6 +99,10 @@ export default defineComponent({
                 { name: 'Your Profile', href: '#' },
                 { name: 'Sign out', href: '#' },
             ],
+            breadcrumbs: [
+                { name: 'Example', href: '#', current: false },
+                { name: 'Example 2', href: '#', current: false }
+            ],
             mobileMenuOpen: ref(false)
         }
     }
@@ -115,7 +121,7 @@ export default defineComponent({
 
 <template>
     <div class="flex h-screen">
-        <!-- Narrow sidebar -->
+        <!-- Sidebar -->
         <div class="hidden overflow-y-auto bg-accent-600 w-28 md:block">
             <div class="flex flex-col items-center w-full py-6">
                 <div class="flex items-center flex-shrink-0">
@@ -123,7 +129,7 @@ export default defineComponent({
                 </div>
                 <div class="flex-1 w-full px-2 mt-6 space-y-1">
                     <router-link v-for="item in sidebarNavigation" v-can="item.permission" :key="item.name" :to="item.href"
-                        :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'ransition-colors group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
+                        :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"
                             :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
@@ -134,7 +140,7 @@ export default defineComponent({
             </div>
         </div>
 
-        <!-- Mobile menu -->
+        <!-- Mobile Sidebar -->
         <TransitionRoot as="template" :show="mobileMenuOpen">
             <Dialog as="div" class="relative z-20 md:hidden" @close="mobileMenuOpen = false">
                 <TransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0"
@@ -197,18 +203,29 @@ export default defineComponent({
                     </button>
                     <div class="flex justify-between flex-1 px-4 sm:px-6">
                         <div class="flex flex-1">
-                            <form class="flex w-full max-w-2xl px-5 my-3 rounded-full md:ml-0 bg-base-800" action="#"
-                                method="GET">
-                                <label for="search-field" class="sr-only">Search all files</label>
-                                <div class="relative w-full transition-colors text-base-300 focus-within:text-neutral">
-                                    <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-                                        <MagnifyingGlassIcon class="flex-shrink-0 w-5 h-5" aria-hidden="true" />
-                                    </div>
-                                    <input name="search-field" id="search-field"
-                                        class="w-full h-full py-2 pl-8 pr-3 transition-colors border-0 bg-inherit text-base-300 focus:outline-none focus:ring-0 focus:placeholder:text-neutral focus:text-neutral sm:text-sm"
-                                        placeholder="Search" type="search" />
-                                </div>
-                            </form>
+                            <nav class="flex" aria-label="Breadcrumb">
+                                <ol role="list" class="flex items-center space-x-4">
+                                    <li>
+                                        <div>
+                                            <router-link to="/mockup"
+                                                class="text-base-400 hover:text-neutral hover:transition-colors">
+                                                <HomeIconSolid class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                                <span class="sr-only">Home</span>
+                                            </router-link>
+                                        </div>
+                                    </li>
+                                    <li v-for="page in breadcrumbs" :key="page.name">
+                                        <div class="flex items-center">
+                                            <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-base-400"
+                                                aria-hidden="true" />
+                                            <router-link :to="page.href"
+                                                class="ml-4 text-sm font-medium text-base-400 hover:text-neutral hover:transition-colors"
+                                                :aria-current="page.current ? 'page' : undefined">{{ page.name
+                                                }}</router-link>
+                                        </div>
+                                    </li>
+                                </ol>
+                            </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
                             <!-- Profile dropdown -->
@@ -218,7 +235,7 @@ export default defineComponent({
                                         class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                         <span class="sr-only">Open user menu</span>
                                         <UserIcon
-                                            class="w-auto h-10 transition-colors rounded-full text-base-300 bg-base-800 fill-base-300 hover:text-base-200 hover:fill-base-200" />
+                                            class="w-auto h-10 hover:transition-colors rounded-full text-base-300 bg-base-800 fill-base-300 hover:text-base-200 hover:fill-base-200" />
                                     </MenuButton>
                                 </div>
                                 <transition enter-active-class="transition duration-100 ease-out"
@@ -231,7 +248,7 @@ export default defineComponent({
                                         class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
                                         <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
                                         <a :href="item.href"
-                                            :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral transition-colors']">{{
+                                            :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral hover:transition-colors']">{{
                                                 item.name }}</a>
                                         </MenuItem>
                                     </MenuItems>
@@ -247,7 +264,6 @@ export default defineComponent({
                 <main class="flex-1 overflow-y-auto">
                     <!-- Primary column -->
                     <section aria-labelledby="primary-heading" class="flex flex-col flex-1 h-full min-w-0 lg:order-last">
-                        <h1 id="primary-heading" class="sr-only">Photos</h1>
                         <!-- Your content -->
                     </section>
                 </main>
