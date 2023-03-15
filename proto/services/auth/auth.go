@@ -196,7 +196,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 
 	// Make sure the user isn't sending us a different char ID than their own
 	if !strings.Contains(char.Identifier, claims.Subject) {
-		return nil, status.Error(codes.OutOfRange, "That's not your character!")
+		return nil, UnableToChooseCharErr
 	}
 
 	// Load account data for token creation

@@ -8,11 +8,10 @@ import (
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms/mock"
 	"github.com/galexrt/arpanet/tests/dbmanager"
+	"github.com/galexrt/arpanet/tests/proto"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
 )
 
 func TestMain(m *testing.M) {
@@ -44,9 +43,7 @@ func TestFullAuthFlow(t *testing.T) {
 	res, err := client.Login(ctx, loginReq)
 	assert.Error(t, err)
 	assert.Nil(t, res)
-	s := status.FromContextError(err)
-	assert.Equal(t, codes.Unauthenticated, s.Code())
-	assert.Equal(t, InvalidLoginErr, err)
+	proto.CompareGRPCError(t, InvalidLoginErr, err)
 
 	// Login with invalid credentials
 	loginReq.Username = "non-existant-username"
@@ -54,9 +51,7 @@ func TestFullAuthFlow(t *testing.T) {
 	res, err = client.Login(ctx, loginReq)
 	assert.Error(t, err)
 	assert.Nil(t, res)
-	s = status.FromContextError(err)
-	assert.Equal(t, codes.Unauthenticated, s.Code())
-	assert.Equal(t, InvalidLoginErr, err)
+	proto.CompareGRPCError(t, InvalidLoginErr, err)
 
 	// user-1: Login with valid account that has one char
 	loginReq.Username = "user-1"
@@ -106,20 +101,16 @@ func TestFullAuthFlow(t *testing.T) {
 
 	// user-2: Choose an invalid character
 	chooseCharReq := &ChooseCharacterRequest{}
-	chooseCharReq.CharId = 1 // Not user-2's char
+	chooseCharReq.CharId = 1 // Char id 1 is not `user-2`'s char
 	chooseCharRes, err := client.ChooseCharacter(ctx, chooseCharReq)
-	assert.NoError(t, err)
+	assert.Error(t, err)
 	assert.Nil(t, chooseCharRes)
-	s = status.FromContextError(err)
-	assert.Equal(t, codes.OutOfRange, s.Code())
-	assert.Equal(t, "user-2: That's not your character!", s.Message())
+	proto.CompareGRPCError(t, UnableToChooseCharErr, err)
 
 	// user-2: Choose valid character but we don't have permissions
 	chooseCharReq.CharId = 2
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
 	assert.Error(t, err)
 	assert.Nil(t, chooseCharRes)
-	s = status.FromContextError(err)
-	assert.Equal(t, codes.OutOfRange, s.Code())
-	assert.Equal(t, UnableToChooseCharErr, err)
+	proto.CompareGRPCError(t, UnableToChooseCharErr, err)
 }

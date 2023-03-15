@@ -30,6 +30,7 @@ require (
 	golang.org/x/oauth2 v0.5.0
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.29.0
+	gotest.tools v2.2.0+incompatible
 )
 
 require (
@@ -58,6 +59,7 @@ require (
 	github.com/goccy/go-json v0.10.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
