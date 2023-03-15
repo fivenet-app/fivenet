@@ -140,7 +140,7 @@ export default defineComponent({
                 <TransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0"
                     enter-to="opacity-100" leave="transition-opacity ease-linear duration-300" leave-from="opacity-100"
                     leave-to="opacity-0">
-                    <div class="fixed inset-0 bg-gray-600 bg-opacity-75" />
+                    <div class="fixed inset-0 bg-opacity-75 bg-base-900" />
                 </TransitionChild>
 
                 <div class="fixed inset-0 z-40 flex">
@@ -148,30 +148,30 @@ export default defineComponent({
                         enter-from="-translate-x-full" enter-to="translate-x-0"
                         leave="transition ease-in-out duration-300 transform" leave-from="translate-x-0"
                         leave-to="-translate-x-full">
-                        <DialogPanel class="relative flex flex-col flex-1 w-full max-w-xs pt-5 pb-4 bg-indigo-700">
+                        <DialogPanel class="relative flex flex-col flex-1 w-full max-w-xs pt-5 pb-4 bg-accent-600">
                             <TransitionChild as="template" enter="ease-in-out duration-300" enter-from="opacity-0"
                                 enter-to="opacity-100" leave="ease-in-out duration-300" leave-from="opacity-100"
                                 leave-to="opacity-0">
-                                <div class="absolute right-0 p-1 top-1 -mr-14">
+                                <div class="absolute p-1 -right-3 top-1 -mr-14">
                                     <button type="button"
-                                        class="flex items-center justify-center w-12 h-12 rounded-full focus:outline-none focus:ring-2 focus:ring-white"
+                                        class="flex items-center justify-center w-12 h-12 rounded-full focus:outline-none ring-2 ring-neutral"
                                         @click="mobileMenuOpen = false">
-                                        <XMarkIcon class="w-6 h-6 text-white" aria-hidden="true" />
+                                        <XMarkIcon class="w-6 h-6 text-neutral" aria-hidden="true" />
                                         <span class="sr-only">Close sidebar</span>
                                     </button>
                                 </div>
                             </TransitionChild>
                             <div class="flex items-center flex-shrink-0 px-4">
-                                <img class="w-auto h-12" src="/images/logo.png" alt="Your Company" />
+                                <img class="w-auto h-12" src="/images/logo.png" alt="aRPaNet" />
                             </div>
                             <div class="flex-1 h-0 px-2 mt-5 overflow-y-auto">
                                 <nav class="flex flex-col h-full">
                                     <div class="space-y-1">
                                         <router-link v-for="item in sidebarNavigation" :key="item.name" :to="item.href"
-                                            :class="[item.current ? 'bg-indigo-800 text-white' : 'text-indigo-100 hover:bg-indigo-800 hover:text-white', 'group flex items-center rounded-md py-2 px-3 text-sm font-medium']"
+                                            :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
                                             :aria-current="item.current ? 'page' : undefined">
                                             <component :is="item.icon"
-                                                :class="[item.current ? 'text-white' : 'text-indigo-300 group-hover:text-white', 'mr-3 h-6 w-6']"
+                                                :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'mr-3 h-6 w-6']"
                                                 aria-hidden="true" />
                                             <span>{{ item.name }}</span>
                                         </router-link>
@@ -180,9 +180,7 @@ export default defineComponent({
                             </div>
                         </DialogPanel>
                     </TransitionChild>
-                    <div class="flex-shrink-0 w-14" aria-hidden="true">
-                        <!-- Dummy element to force sidebar to shrink to fit close icon -->
-                    </div>
+                    <div class="flex-shrink-0 w-14" aria-hidden="true"></div>
                 </div>
             </Dialog>
         </TransitionRoot>
@@ -219,7 +217,8 @@ export default defineComponent({
                                     <MenuButton
                                         class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                         <span class="sr-only">Open user menu</span>
-                                        <UserIcon class="w-auto h-10 transition-colors rounded-full text-base-300 bg-base-800 fill-base-300 hover:text-base-200 hover:fill-base-200"  />
+                                        <UserIcon
+                                            class="w-auto h-10 transition-colors rounded-full text-base-300 bg-base-800 fill-base-300 hover:text-base-200 hover:fill-base-200" />
                                     </MenuButton>
                                 </div>
                                 <transition enter-active-class="transition duration-100 ease-out"
