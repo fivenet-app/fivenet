@@ -116,17 +116,17 @@ export default defineComponent({
 <template>
     <div class="flex h-screen">
         <!-- Narrow sidebar -->
-        <div class="hidden overflow-y-auto bg-indigo-700 w-28 md:block">
+        <div class="hidden overflow-y-auto bg-accent-600 w-28 md:block">
             <div class="flex flex-col items-center w-full py-6">
                 <div class="flex items-center flex-shrink-0">
                     <img class="w-auto h-12" src="/images/logo.png" alt="aRPaNet" />
                 </div>
                 <div class="flex-1 w-full px-2 mt-6 space-y-1">
                     <router-link v-for="item in sidebarNavigation" v-can="item.permission" :key="item.name" :to="item.href"
-                        :class="[item.current ? 'bg-indigo-800 text-neutral' : 'text-indigo-100 hover:bg-indigo-800 hover:text-neutral', 'transition-colors group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium']"
+                        :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'ransition-colors group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"
-                            :class="[item.current ? 'text-neutral' : 'text-indigo-300 group-hover:text-neutral', 'h-6 w-6']"
+                            :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true" />
                         <span class="mt-2">{{ item.name }}</span>
                     </router-link>
