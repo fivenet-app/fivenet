@@ -8,8 +8,8 @@ import "resources/livemap/livemap.proto";
 message StreamRequest {}
 
 message ServerStreamResponse {
-  repeated resources.livemap.UserMarker users = 1;
-  repeated resources.livemap.UserMarker dispatches = 2;
+  repeated resources.livemap.DispatchMarker dispatches = 1;
+  repeated resources.livemap.UserMarker users = 2;
 }
 
 service LivemapperService {

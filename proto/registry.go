@@ -79,7 +79,9 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 	pbdispatcher.RegisterDispatcherServiceServer(grpcServer, pbdispatcher.NewServer())
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
-	pblivemapper.RegisterLivemapperServiceServer(grpcServer, pblivemapper.NewServer(logger.Named("grpc_livemap"), db, p))
+	livemapper := pblivemapper.NewServer(logger.Named("grpc_livemap"), db, p)
+	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
+	go livemapper.GenerateRandomUserMarker()
 
 	return grpcServer, lis
 }

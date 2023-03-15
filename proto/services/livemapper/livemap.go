@@ -16,6 +16,7 @@ import (
 
 var (
 	l = table.ArpanetUserLocations
+	u = table.Users.AS("user")
 )
 
 type Server struct {
@@ -55,26 +56,39 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		sqlJobs[k] = jet.String(jobs[k])
 	}
 
-	l := l.AS("marker")
+	l := l.AS("usermarker")
 	stmt := l.SELECT(
 		l.UserID,
 		l.Job,
 		l.X,
 		l.Y,
 		l.UpdatedAt,
+		u.ID,
+		u.Identifier,
+		u.Job,
+		u.JobGrade,
+		u.Firstname,
+		u.Lastname,
 	).
-		FROM(l).
+		FROM(
+			l.
+				LEFT_JOIN(u,
+					l.UserID.EQ(u.ID),
+				),
+		).
 		WHERE(
 			l.Job.IN(sqlJobs...).
 				AND(
 					l.Hidden.IS_FALSE(),
-					// TODO Ignore all columns where `updated_at` older than 5 minutes
+				).
+				AND(
+					l.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE))),
 				),
 		)
 
 	for {
 		resp := &ServerStreamResponse{
-			Dispatches: []*livemap.UserMarker{},
+			Dispatches: []*livemap.DispatchMarker{},
 		}
 
 		if err := stmt.QueryContext(srv.Context(), s.db, &resp.Users); err != nil {

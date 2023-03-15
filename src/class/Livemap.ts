@@ -1,4 +1,4 @@
-import { Marker } from '@arpanet/gen/resources/livemap/livemap_pb';
+import { UserMarker } from '@arpanet/gen/resources/livemap/livemap_pb';
 import L from 'leaflet';
 
 import { AnimatedMarker } from './AnimatedMarker';
@@ -15,7 +15,7 @@ export class Livemap extends L.Map {
 
     public markers: Map<number, AnimatedMarker> = new Map();
     public popups: Map<number, L.Popup> = new Map();
-    private prevMarkerLists: Map<MarkerType, Array<Marker.AsObject>> = new Map();
+    private prevMarkerLists: Map<MarkerType, Array<UserMarker.AsObject>> = new Map();
 
     private element: HTMLElement;
 
@@ -86,7 +86,7 @@ export class Livemap extends L.Map {
         return this.markers.delete(id);
     }
 
-    public parseMarkerlist(type: MarkerType, list: Array<Marker>): void {
+    public parseMarkerlist(type: MarkerType, list: Array<UserMarker>): void {
         let options: L.MarkerOptions = {};
         switch (type) {
             case MarkerType.player: {
@@ -100,9 +100,9 @@ export class Livemap extends L.Map {
 
         const previousList = this.prevMarkerLists.get(type);
         if (previousList) {
-            const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getUserId() === entry.userid));
+            const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getUserId() === entry.userId));
             markersToRemove.forEach((marker) => {
-                this.removeMarker(marker.userid);
+                this.removeMarker(marker.userId);
             });
         }
 

@@ -23,7 +23,7 @@ export default defineComponent({
         ...mapActions(["updateAccessToken", "updateActiveChar", "updatePermissions"]),
         chooseCharacter() {
             const req = new ChooseCharacterRequest();
-            req.setUserId(this.char.getUserId());
+            req.setCharId(this.char.getUserId());
 
             getAuthClient()
                 .chooseCharacter(req, null)
