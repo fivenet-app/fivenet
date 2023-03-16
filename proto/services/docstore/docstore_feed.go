@@ -5,14 +5,20 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/proto/resources/documents"
+	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
+var (
+	docRef = table.ArpanetDocumentsReferences.AS("documentreference")
+	docRel = table.ArpanetDocumentsRelations.AS("documentrelation")
+)
+
 func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +38,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +58,7 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 
 func (s *Server) AddDocumentReferences(ctx context.Context, req *AddDocumentReferencesRequest) (*AddDocumentReferencesResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +74,7 @@ func (s *Server) AddDocumentReferences(ctx context.Context, req *AddDocumentRefe
 }
 func (s *Server) RemoveDocumentReferences(ctx context.Context, req *RemoveDocumentReferencesRequest) (*RemoveDocumentReferencesResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -76,15 +82,28 @@ func (s *Server) RemoveDocumentReferences(ctx context.Context, req *RemoveDocume
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
 	}
 
-	resp := &RemoveDocumentReferencesResponse{}
+	ids := make([]jet.Expression, len(req.RefIds))
+	for i := 0; i < len(req.RefIds); i++ {
+		ids[i] = jet.Uint64(req.RefIds[i])
+	}
 
-	// TODO
+	stmt := docRef.DELETE().
+		WHERE(
+			docRef.ID.IN(ids...),
+		).
+		LIMIT(5)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
+
+	resp := &RemoveDocumentReferencesResponse{}
 
 	return resp, nil
 }
 func (s *Server) AddDocumentRelations(ctx context.Context, req *AddDocumentRelationsRequest) (*AddDocumentRelationsResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +119,7 @@ func (s *Server) AddDocumentRelations(ctx context.Context, req *AddDocumentRelat
 }
 func (s *Server) RemoveDocumentRelations(ctx context.Context, req *RemoveDocumentRelationsRequest) (*RemoveDocumentRelationsResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -108,23 +127,36 @@ func (s *Server) RemoveDocumentRelations(ctx context.Context, req *RemoveDocumen
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to remove relations from this document!")
 	}
 
-	resp := &RemoveDocumentRelationsResponse{}
+	ids := make([]jet.Expression, len(req.RelIds))
+	for i := 0; i < len(req.RelIds); i++ {
+		ids[i] = jet.Uint64(req.RelIds[i])
+	}
 
-	// TODO
+	stmt := docRel.DELETE().
+		WHERE(
+			docRel.ID.IN(ids...),
+		).
+		LIMIT(5)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
+
+	resp := &RemoveDocumentRelationsResponse{}
 
 	return resp, nil
 }
 
 func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) ([]*documents.DocumentReference, error) {
-	sourceDoc := ad.AS("source_document")
+	sourceDoc := docs.AS("source_document")
 	uCreator := u.AS("ref_creator")
-	stmt := adref.SELECT(
-		adref.ID,
-		adref.CreatedAt,
-		adref.SourceDocumentID,
-		adref.Reference,
-		adref.TargetDocumentID,
-		adref.CreatorID,
+	stmt := docRef.SELECT(
+		docRef.ID,
+		docRef.CreatedAt,
+		docRef.SourceDocumentID,
+		docRef.Reference,
+		docRef.TargetDocumentID,
+		docRef.CreatorID,
 		sourceDoc.ID,
 		sourceDoc.CreatedAt,
 		sourceDoc.UpdatedAt,
@@ -144,19 +176,19 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 		uCreator.Lastname,
 	).
 		FROM(
-			adref.
+			docRef.
 				LEFT_JOIN(sourceDoc,
-					adref.SourceDocumentID.EQ(sourceDoc.ID),
+					docRef.SourceDocumentID.EQ(sourceDoc.ID),
 				).
 				LEFT_JOIN(dCategory,
 					dCategory.ID.EQ(sourceDoc.CategoryID),
 				).
 				LEFT_JOIN(uCreator,
-					adref.CreatorID.EQ(uCreator.ID),
+					docRef.CreatorID.EQ(uCreator.ID),
 				),
 		).
 		WHERE(
-			adref.TargetDocumentID.EQ(jet.Uint64(documentID)),
+			docRef.TargetDocumentID.EQ(jet.Uint64(documentID)),
 		)
 
 	var dest struct {
@@ -172,13 +204,13 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([]*documents.DocumentRelation, error) {
 	uSource := u.AS("source_user")
 	uTarget := u.AS("target_user")
-	stmt := adrel.SELECT(
-		adrel.ID,
-		adrel.CreatedAt,
-		adrel.DocumentID,
-		adrel.SourceUserID,
-		adrel.Relation,
-		adrel.TargetUserID,
+	stmt := docRel.SELECT(
+		docRel.ID,
+		docRel.CreatedAt,
+		docRel.DocumentID,
+		docRel.SourceUserID,
+		docRel.Relation,
+		docRel.TargetUserID,
 		dCategory.ID,
 		dCategory.Name,
 		dCategory.Description,
@@ -196,22 +228,22 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([
 		uTarget.Lastname,
 	).
 		FROM(
-			adrel.
-				LEFT_JOIN(ad,
-					adrel.DocumentID.EQ(ad.ID),
+			docRel.
+				LEFT_JOIN(docs,
+					docRel.DocumentID.EQ(docs.ID),
 				).
 				LEFT_JOIN(uSource,
-					adrel.SourceUserID.EQ(uSource.ID),
+					docRel.SourceUserID.EQ(uSource.ID),
 				).
 				LEFT_JOIN(dCategory,
-					dCategory.ID.EQ(ad.CategoryID),
+					dCategory.ID.EQ(docs.CategoryID),
 				).
 				LEFT_JOIN(uTarget,
-					adrel.TargetUserID.EQ(uTarget.ID),
+					docRel.TargetUserID.EQ(uTarget.ID),
 				),
 		).
 		WHERE(
-			adrel.DocumentID.EQ(jet.Uint64(documentID)),
+			docRel.DocumentID.EQ(jet.Uint64(documentID)),
 		)
 
 	var dest struct {

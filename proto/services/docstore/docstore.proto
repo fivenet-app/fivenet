@@ -70,7 +70,7 @@ message AddDocumentReferencesResponse {}
 
 message RemoveDocumentReferencesRequest {
   uint64 document_id = 1;
-  repeated uint64 ref_ids = 2;
+  repeated uint64 ref_ids = 2 [(validate.rules).repeated = {min_items: 1, max_items: 5}];
 }
 
 message RemoveDocumentReferencesResponse {}
@@ -84,13 +84,13 @@ message AddDocumentRelationsResponse {}
 
 message RemoveDocumentRelationsRequest {
   uint64 document_id = 1;
-  repeated uint64 ref_ids = 2;
+  repeated uint64 rel_ids = 2 [(validate.rules).repeated = {min_items: 1, max_items: 5}];
 }
 
 message RemoveDocumentRelationsResponse {}
 
 message GetDocumentCommentsRequest {
-  uint64 documentID = 1;
+  uint64 document_id = 1;
   int64 offset = 2 [(validate.rules).int64.gte = 0];
 }
 

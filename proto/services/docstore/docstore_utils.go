@@ -11,18 +11,18 @@ import (
 func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, additionalColumns jet.ProjectionList, userID int32, job string, jobGrade int32) jet.SelectStatement {
 	wheres := []jet.BoolExpression{jet.OR(
 		jet.OR(
-			ad.Public.IS_TRUE(),
-			ad.CreatorID.EQ(jet.Int32(userID)),
+			docs.Public.IS_TRUE(),
+			docs.CreatorID.EQ(jet.Int32(userID)),
 		),
 		jet.OR(
 			jet.AND(
-				adua.Access.IS_NOT_NULL(),
-				adua.Access.NOT_EQ(jet.Int32(int32(documents.DOC_ACCESS_BLOCKED))),
+				dUserAccess.Access.IS_NOT_NULL(),
+				dUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.DOC_ACCESS_BLOCKED))),
 			),
 			jet.AND(
-				adua.Access.IS_NULL(),
-				adja.Access.IS_NOT_NULL(),
-				adja.Access.NOT_EQ(jet.Int32(int32(documents.DOC_ACCESS_BLOCKED))),
+				dUserAccess.Access.IS_NULL(),
+				dJobAccess.Access.IS_NOT_NULL(),
+				dJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.DOC_ACCESS_BLOCKED))),
 			),
 		),
 	)}
@@ -34,13 +34,13 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 	u := u.AS("creator")
 	var q jet.SelectStatement
 	if onlyColumns != nil {
-		q = ad.SELECT(
+		q = docs.SELECT(
 			onlyColumns,
 		)
 	} else {
 		if additionalColumns == nil {
-			q = ad.SELECT(
-				ad.AllColumns,
+			q = docs.SELECT(
+				docs.AllColumns,
 				dCategory.ID,
 				dCategory.Name,
 				u.ID,
@@ -61,8 +61,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 				u.Firstname,
 				u.Lastname,
 			}, additionalColumns)
-			q = ad.SELECT(
-				ad.AllColumns,
+			q = docs.SELECT(
+				docs.AllColumns,
 				additionalColumns...,
 			)
 		}
@@ -70,53 +70,56 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 
 	return q.
 		FROM(
-			ad.LEFT_JOIN(adua,
-				adua.DocumentID.EQ(ad.ID).
-					AND(adua.UserID.EQ(jet.Int32(userID)))).
-				LEFT_JOIN(adja,
-					adja.DocumentID.EQ(ad.ID).
-						AND(adja.Job.EQ(jet.String(job))).
-						AND(adja.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
+			docs.LEFT_JOIN(dUserAccess,
+				dUserAccess.DocumentID.EQ(docs.ID).
+					AND(dUserAccess.UserID.EQ(jet.Int32(userID)))).
+				LEFT_JOIN(dJobAccess,
+					dJobAccess.DocumentID.EQ(docs.ID).
+						AND(dJobAccess.Job.EQ(jet.String(job))).
+						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				).
 				LEFT_JOIN(u,
-					ad.CreatorID.EQ(u.ID),
+					docs.CreatorID.EQ(u.ID),
 				).
 				LEFT_JOIN(dCategory,
-					ad.CategoryID.EQ(dCategory.ID),
+					docs.CategoryID.EQ(dCategory.ID),
 				),
 		).WHERE(
 		jet.AND(
 			wheres...,
 		),
 	).
-		ORDER_BY(ad.CreatedAt.DESC()).
+		ORDER_BY(docs.CreatedAt.DESC()).
 		LIMIT(database.PaginationLimit)
 }
 
-func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, userID int32, job string, jobGrade int32, access documents.DOC_ACCESS) (bool, error) {
-	checkStmt := ad.SELECT(
-		ad.ID,
+func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentID uint64, userID int32, job string, jobGrade int32, access documents.DOC_ACCESS) (bool, error) {
+	stmt := docs.SELECT(
+		docs.ID,
 	).
 		FROM(
-			ad.LEFT_JOIN(adua,
-				adua.DocumentID.EQ(ad.ID).
-					AND(adua.UserID.EQ(jet.Int32(userID)))).
-				LEFT_JOIN(adja,
-					adja.DocumentID.EQ(ad.ID).
-						AND(adja.Job.EQ(jet.String(job))).
-						AND(adja.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
+			docs.LEFT_JOIN(dUserAccess,
+				dUserAccess.DocumentID.EQ(docs.ID).
+					AND(dUserAccess.UserID.EQ(jet.Int32(userID)))).
+				LEFT_JOIN(dJobAccess,
+					dJobAccess.DocumentID.EQ(docs.ID).
+						AND(dJobAccess.Job.EQ(jet.String(job))).
+						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				),
 		).WHERE(
-		jet.OR(
-			ad.CreatorID.EQ(jet.Int32(userID)),
-			jet.AND(
-				adua.Access.IS_NOT_NULL(),
-				adua.Access.GT_EQ(jet.Int32(int32(access))),
-			),
-			jet.AND(
-				adua.Access.IS_NULL(),
-				adja.Access.IS_NOT_NULL(),
-				adja.Access.GT_EQ(jet.Int32(int32(access))),
+		jet.AND(
+			docs.ID.EQ(jet.Uint64(documentID)),
+			jet.OR(
+				docs.CreatorID.EQ(jet.Int32(userID)),
+				jet.AND(
+					dUserAccess.Access.IS_NOT_NULL(),
+					dUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
+				),
+				jet.AND(
+					dUserAccess.Access.IS_NULL(),
+					dJobAccess.Access.IS_NOT_NULL(),
+					dJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
+				),
 			),
 		),
 	).
@@ -125,7 +128,7 @@ func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, userID int32, jo
 	var dest struct {
 		ID uint64 `alias:"document.id"`
 	}
-	if err := checkStmt.QueryContext(ctx, s.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return false, err
 	}
 

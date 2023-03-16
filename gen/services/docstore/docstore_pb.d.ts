@@ -378,10 +378,10 @@ export class RemoveDocumentRelationsRequest extends jspb.Message {
   getDocumentId(): number;
   setDocumentId(value: number): RemoveDocumentRelationsRequest;
 
-  getRefIdsList(): Array<number>;
-  setRefIdsList(value: Array<number>): RemoveDocumentRelationsRequest;
-  clearRefIdsList(): RemoveDocumentRelationsRequest;
-  addRefIds(value: number, index?: number): RemoveDocumentRelationsRequest;
+  getRelIdsList(): Array<number>;
+  setRelIdsList(value: Array<number>): RemoveDocumentRelationsRequest;
+  clearRelIdsList(): RemoveDocumentRelationsRequest;
+  addRelIds(value: number, index?: number): RemoveDocumentRelationsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RemoveDocumentRelationsRequest.AsObject;
@@ -394,7 +394,7 @@ export class RemoveDocumentRelationsRequest extends jspb.Message {
 export namespace RemoveDocumentRelationsRequest {
   export type AsObject = {
     documentId: number,
-    refIdsList: Array<number>,
+    relIdsList: Array<number>,
   }
 }
 
@@ -413,8 +413,8 @@ export namespace RemoveDocumentRelationsResponse {
 }
 
 export class GetDocumentCommentsRequest extends jspb.Message {
-  getDocumentid(): number;
-  setDocumentid(value: number): GetDocumentCommentsRequest;
+  getDocumentId(): number;
+  setDocumentId(value: number): GetDocumentCommentsRequest;
 
   getOffset(): number;
   setOffset(value: number): GetDocumentCommentsRequest;
@@ -429,7 +429,7 @@ export class GetDocumentCommentsRequest extends jspb.Message {
 
 export namespace GetDocumentCommentsRequest {
   export type AsObject = {
-    documentid: number,
+    documentId: number,
     offset: number,
   }
 }

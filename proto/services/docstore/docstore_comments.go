@@ -13,7 +13,7 @@ import (
 
 func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -21,12 +21,12 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view document comments!")
 	}
 
-	condition := adc.DocumentID.EQ(jet.Uint64(req.DocumentID))
-	countStmt := adc.SELECT(
-		jet.COUNT(ad.ID).AS("total_count"),
+	condition := dComments.DocumentID.EQ(jet.Uint64(req.DocumentId))
+	countStmt := dComments.SELECT(
+		jet.COUNT(docs.ID).AS("total_count"),
 	).
 		FROM(
-			adc,
+			dComments,
 		).
 		WHERE(condition)
 	var count struct{ TotalCount int64 }
@@ -34,10 +34,10 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		return nil, err
 	}
 
-	stmt := adc.SELECT(
-		adc.ID,
-		adc.Comment,
-		adc.CreatorID,
+	stmt := dComments.SELECT(
+		dComments.ID,
+		dComments.Comment,
+		dComments.CreatorID,
 		u.ID,
 		u.Identifier,
 		u.Job,
@@ -46,9 +46,9 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		u.Lastname,
 	).
 		FROM(
-			adc.
+			dComments.
 				LEFT_JOIN(u,
-					adc.CreatorID.EQ(u.ID),
+					dComments.CreatorID.EQ(u.ID),
 				),
 		).
 		WHERE(condition)
@@ -71,7 +71,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 
 func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -82,10 +82,10 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 	// Clean comment from
 	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
 
-	stmt := adc.INSERT(
-		adc.DocumentID,
-		adc.Comment,
-		adc.CreatorID,
+	stmt := dComments.INSERT(
+		dComments.DocumentID,
+		dComments.Comment,
+		dComments.CreatorID,
 	).
 		VALUES(
 			req.Comment.DocumentId,
@@ -102,7 +102,7 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 }
 func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -110,12 +110,12 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this comment!")
 	}
 
-	stmt := adc.UPDATE().
+	stmt := dComments.UPDATE().
 		SET(
-			adc.Comment.SET(jet.String(req.Comment.Comment)),
+			dComments.Comment.SET(jet.String(req.Comment.Comment)),
 		).
 		WHERE(
-			adc.ID.EQ(jet.Uint64(req.Comment.Id)),
+			dComments.ID.EQ(jet.Uint64(req.Comment.Id)),
 		)
 
 	resp := &EditDocumentCommentResponse{}

@@ -3639,7 +3639,7 @@ proto.services.docstore.RemoveDocumentRelationsRequest.prototype.toObject = func
 proto.services.docstore.RemoveDocumentRelationsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     documentId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    refIdsList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f
+    relIdsList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -3683,7 +3683,7 @@ proto.services.docstore.RemoveDocumentRelationsRequest.deserializeBinaryFromRead
     case 2:
       var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedUint64() : [reader.readUint64()]);
       for (var i = 0; i < values.length; i++) {
-        msg.addRefIds(values[i]);
+        msg.addRelIds(values[i]);
       }
       break;
     default:
@@ -3722,7 +3722,7 @@ proto.services.docstore.RemoveDocumentRelationsRequest.serializeBinaryToWriter =
       f
     );
   }
-  f = message.getRefIdsList();
+  f = message.getRelIdsList();
   if (f.length > 0) {
     writer.writePackedUint64(
       2,
@@ -3751,10 +3751,10 @@ proto.services.docstore.RemoveDocumentRelationsRequest.prototype.setDocumentId =
 
 
 /**
- * repeated uint64 ref_ids = 2;
+ * repeated uint64 rel_ids = 2;
  * @return {!Array<number>}
  */
-proto.services.docstore.RemoveDocumentRelationsRequest.prototype.getRefIdsList = function() {
+proto.services.docstore.RemoveDocumentRelationsRequest.prototype.getRelIdsList = function() {
   return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 2));
 };
 
@@ -3763,7 +3763,7 @@ proto.services.docstore.RemoveDocumentRelationsRequest.prototype.getRefIdsList =
  * @param {!Array<number>} value
  * @return {!proto.services.docstore.RemoveDocumentRelationsRequest} returns this
  */
-proto.services.docstore.RemoveDocumentRelationsRequest.prototype.setRefIdsList = function(value) {
+proto.services.docstore.RemoveDocumentRelationsRequest.prototype.setRelIdsList = function(value) {
   return jspb.Message.setField(this, 2, value || []);
 };
 
@@ -3773,7 +3773,7 @@ proto.services.docstore.RemoveDocumentRelationsRequest.prototype.setRefIdsList =
  * @param {number=} opt_index
  * @return {!proto.services.docstore.RemoveDocumentRelationsRequest} returns this
  */
-proto.services.docstore.RemoveDocumentRelationsRequest.prototype.addRefIds = function(value, opt_index) {
+proto.services.docstore.RemoveDocumentRelationsRequest.prototype.addRelIds = function(value, opt_index) {
   return jspb.Message.addToRepeatedField(this, 2, value, opt_index);
 };
 
@@ -3782,8 +3782,8 @@ proto.services.docstore.RemoveDocumentRelationsRequest.prototype.addRefIds = fun
  * Clears the list making it empty but non-null.
  * @return {!proto.services.docstore.RemoveDocumentRelationsRequest} returns this
  */
-proto.services.docstore.RemoveDocumentRelationsRequest.prototype.clearRefIdsList = function() {
-  return this.setRefIdsList([]);
+proto.services.docstore.RemoveDocumentRelationsRequest.prototype.clearRelIdsList = function() {
+  return this.setRelIdsList([]);
 };
 
 
@@ -3920,7 +3920,7 @@ proto.services.docstore.GetDocumentCommentsRequest.prototype.toObject = function
  */
 proto.services.docstore.GetDocumentCommentsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    documentid: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    documentId: jspb.Message.getFieldWithDefault(msg, 1, 0),
     offset: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
@@ -3960,7 +3960,7 @@ proto.services.docstore.GetDocumentCommentsRequest.deserializeBinaryFromReader =
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readUint64());
-      msg.setDocumentid(value);
+      msg.setDocumentId(value);
       break;
     case 2:
       var value = /** @type {number} */ (reader.readInt64());
@@ -3995,7 +3995,7 @@ proto.services.docstore.GetDocumentCommentsRequest.prototype.serializeBinary = f
  */
 proto.services.docstore.GetDocumentCommentsRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getDocumentid();
+  f = message.getDocumentId();
   if (f !== 0) {
     writer.writeUint64(
       1,
@@ -4013,10 +4013,10 @@ proto.services.docstore.GetDocumentCommentsRequest.serializeBinaryToWriter = fun
 
 
 /**
- * optional uint64 documentID = 1;
+ * optional uint64 document_id = 1;
  * @return {number}
  */
-proto.services.docstore.GetDocumentCommentsRequest.prototype.getDocumentid = function() {
+proto.services.docstore.GetDocumentCommentsRequest.prototype.getDocumentId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -4025,7 +4025,7 @@ proto.services.docstore.GetDocumentCommentsRequest.prototype.getDocumentid = fun
  * @param {number} value
  * @return {!proto.services.docstore.GetDocumentCommentsRequest} returns this
  */
-proto.services.docstore.GetDocumentCommentsRequest.prototype.setDocumentid = function(value) {
+proto.services.docstore.GetDocumentCommentsRequest.prototype.setDocumentId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 

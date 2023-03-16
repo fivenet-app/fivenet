@@ -1830,6 +1830,17 @@ func (m *RemoveDocumentReferencesRequest) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
+	if l := len(m.GetRefIds()); l < 1 || l > 5 {
+		err := RemoveDocumentReferencesRequestValidationError{
+			field:  "RefIds",
+			reason: "value must contain between 1 and 5 items, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return RemoveDocumentReferencesRequestMultiError(errors)
 	}
@@ -2282,6 +2293,17 @@ func (m *RemoveDocumentRelationsRequest) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
+	if l := len(m.GetRelIds()); l < 1 || l > 5 {
+		err := RemoveDocumentRelationsRequestValidationError{
+			field:  "RelIds",
+			reason: "value must contain between 1 and 5 items, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return RemoveDocumentRelationsRequestMultiError(errors)
 	}
@@ -2488,7 +2510,7 @@ func (m *GetDocumentCommentsRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for DocumentID
+	// no validation rules for DocumentId
 
 	if m.GetOffset() < 0 {
 		err := GetDocumentCommentsRequestValidationError{

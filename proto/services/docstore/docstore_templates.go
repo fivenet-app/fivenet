@@ -10,19 +10,19 @@ import (
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
 	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
-	stmt := adt.SELECT(
-		adt.ID,
-		adt.Job,
-		adt.JobGrade,
-		adt.Title,
-		adt.Description,
-		adt.CreatorID,
+	stmt := dTemplates.SELECT(
+		dTemplates.ID,
+		dTemplates.Job,
+		dTemplates.JobGrade,
+		dTemplates.Title,
+		dTemplates.Description,
+		dTemplates.CreatorID,
 	).
-		FROM(adt).
+		FROM(dTemplates).
 		WHERE(
 			jet.AND(
-				adt.Job.EQ(jet.String(job)),
-				adt.JobGrade.LT_EQ(jet.Int32(jobGrade)),
+				dTemplates.Job.EQ(jet.String(job)),
+				dTemplates.JobGrade.LT_EQ(jet.Int32(jobGrade)),
 			),
 		)
 
@@ -37,15 +37,15 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*GetTemplateResponse, error) {
 	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
-	stmt := adt.SELECT(
-		adt.AllColumns,
+	stmt := dTemplates.SELECT(
+		dTemplates.AllColumns,
 	).
-		FROM(adt).
+		FROM(dTemplates).
 		WHERE(
 			jet.AND(
-				adt.ID.EQ(jet.Uint64(req.TemplateId)),
-				adt.Job.EQ(jet.String(job)),
-				adt.JobGrade.LT_EQ(jet.Int32(jobGrade)),
+				dTemplates.ID.EQ(jet.Uint64(req.TemplateId)),
+				dTemplates.Job.EQ(jet.String(job)),
+				dTemplates.JobGrade.LT_EQ(jet.Int32(jobGrade)),
 			),
 		)
 
