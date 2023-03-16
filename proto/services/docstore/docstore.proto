@@ -61,33 +61,29 @@ message GetDocumentRelationsResponse {
   repeated resources.documents.DocumentRelation relations = 1; // @gotags: alias:"relation"
 }
 
-message AddDocumentReferencesRequest {
-  uint64 document_id = 1;
-  repeated resources.documents.DocumentReference references = 2;
+message AddDocumentReferenceRequest {
+  resources.documents.DocumentReference reference = 1;
 }
 
-message AddDocumentReferencesResponse {}
+message AddDocumentReferenceResponse {}
 
-message RemoveDocumentReferencesRequest {
-  uint64 document_id = 1;
-  repeated uint64 ref_ids = 2 [(validate.rules).repeated = {min_items: 1, max_items: 5}];
+message RemoveDcoumentReferenceRequest {
+  uint64 id = 1;
 }
 
-message RemoveDocumentReferencesResponse {}
+message RemoveDcoumentReferenceResponse {}
 
-message AddDocumentRelationsRequest {
-  uint64 document_id = 1;
-  repeated resources.documents.DocumentRelation relations = 2;
+message AddDocumentRelationRequest {
+  resources.documents.DocumentRelation relation = 1;
 }
 
-message AddDocumentRelationsResponse {}
+message AddDocumentRelationResponse {}
 
-message RemoveDocumentRelationsRequest {
-  uint64 document_id = 1;
-  repeated uint64 rel_ids = 2 [(validate.rules).repeated = {min_items: 1, max_items: 5}];
+message RemoveDcoumentRelationRequest {
+  uint64 id = 1;
 }
 
-message RemoveDocumentRelationsResponse {}
+message RemoveDcoumentRelationResponse {}
 
 message GetDocumentCommentsRequest {
   uint64 document_id = 1;
@@ -187,13 +183,13 @@ service DocStoreService {
   // @permission: name=GetDocument
   rpc GetDocumentRelations(GetDocumentRelationsRequest) returns (GetDocumentRelationsResponse);
   // @permission
-  rpc AddDocumentReferences(AddDocumentReferencesRequest) returns (AddDocumentReferencesResponse);
-  // @permission: name=AddDocumentReferences
-  rpc RemoveDocumentReferences(RemoveDocumentReferencesRequest) returns (RemoveDocumentReferencesResponse);
+  rpc AddDocumentReference(AddDocumentReferenceRequest) returns (AddDocumentReferenceResponse);
+  // @permission: name=AddDocumentReference
+  rpc RemoveDcoumentReference(RemoveDcoumentReferenceRequest) returns (RemoveDcoumentReferenceResponse);
   // @permission
-  rpc AddDocumentRelations(AddDocumentRelationsRequest) returns (AddDocumentRelationsResponse);
-  // @permission: name=AddDocumentRelations
-  rpc RemoveDocumentRelations(RemoveDocumentRelationsRequest) returns (RemoveDocumentRelationsResponse);
+  rpc AddDocumentRelation(AddDocumentRelationRequest) returns (AddDocumentRelationResponse);
+  // @permission: name=AddDocumentRelation
+  rpc RemoveDcoumentRelation(RemoveDcoumentRelationRequest) returns (RemoveDcoumentRelationResponse);
 
   // @permission
   rpc GetDocumentComments(GetDocumentCommentsRequest) returns (GetDocumentCommentsResponse);

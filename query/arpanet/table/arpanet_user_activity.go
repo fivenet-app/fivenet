@@ -19,7 +19,6 @@ type arpanetUserActivityTable struct {
 	//Columns
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
-	UpdatedAt    mysql.ColumnTimestamp
 	SourceUserID mysql.ColumnInteger
 	TargetUserID mysql.ColumnInteger
 	Type         mysql.ColumnInteger
@@ -68,15 +67,14 @@ func newArpanetUserActivityTableImpl(schemaName, tableName, alias string) arpane
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
 		SourceUserIDColumn = mysql.IntegerColumn("source_user_id")
 		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
 		TypeColumn         = mysql.IntegerColumn("type")
 		KeyColumn          = mysql.StringColumn("key")
 		OldValueColumn     = mysql.StringColumn("old_value")
 		NewValueColumn     = mysql.StringColumn("new_value")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
 	)
 
 	return arpanetUserActivityTable{
@@ -85,7 +83,6 @@ func newArpanetUserActivityTableImpl(schemaName, tableName, alias string) arpane
 		//Columns
 		ID:           IDColumn,
 		CreatedAt:    CreatedAtColumn,
-		UpdatedAt:    UpdatedAtColumn,
 		SourceUserID: SourceUserIDColumn,
 		TargetUserID: TargetUserIDColumn,
 		Type:         TypeColumn,

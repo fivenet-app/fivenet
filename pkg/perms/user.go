@@ -10,8 +10,8 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func (p *Perms) GetAllPermissionsOfUser(userID int32) (collections.Permissions, error) {
-	if cached, ok := p.permsCache.Get(userID); ok {
+func (p *Perms) GetAllPermissionsOfUser(userId int32) (collections.Permissions, error) {
+	if cached, ok := p.permsCache.Get(userId); ok {
 		return cached, nil
 	}
 
@@ -27,12 +27,12 @@ func (p *Perms) GetAllPermissionsOfUser(userID int32) (collections.Permissions, 
 					).
 					FROM(
 						aup,
-					).WHERE(aup.UserID.EQ(jet.Int32(userID))).
+					).WHERE(aup.UserID.EQ(jet.Int32(userId))).
 					UNION(
 						aur.SELECT(arp.PermissionID).
 							FROM(aur.INNER_JOIN(arp, arp.RoleID.EQ(aur.RoleID))).
 							WHERE(
-								aur.UserID.EQ(jet.Int32(userID)),
+								aur.UserID.EQ(jet.Int32(userId)),
 							),
 					),
 			),
@@ -43,19 +43,19 @@ func (p *Perms) GetAllPermissionsOfUser(userID int32) (collections.Permissions, 
 		return nil, err
 	}
 
-	p.permsCache.Set(userID, perms)
+	p.permsCache.Set(userId, perms)
 
 	return perms, nil
 }
 
-func (p *Perms) GetAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error) {
+func (p *Perms) GetAllPermissionsByPrefixOfUser(userId int32, prefix string) (collections.Permissions, error) {
 	prefix = helpers.Guard(prefix)
 
-	return p.getAllPermissionsByPrefixOfUser(userID, prefix)
+	return p.getAllPermissionsByPrefixOfUser(userId, prefix)
 }
 
-func (p *Perms) getAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error) {
-	if cached, ok := p.permsCache.Get(userID); ok {
+func (p *Perms) getAllPermissionsByPrefixOfUser(userId int32, prefix string) (collections.Permissions, error) {
+	if cached, ok := p.permsCache.Get(userId); ok {
 		return cached.HasPrefix(prefix), nil
 	}
 
@@ -73,12 +73,12 @@ func (p *Perms) getAllPermissionsByPrefixOfUser(userID int32, prefix string) (co
 						).
 						FROM(
 							aup,
-						).WHERE(aup.UserID.EQ(jet.Int32(userID))).
+						).WHERE(aup.UserID.EQ(jet.Int32(userId))).
 						UNION(
 							aur.SELECT(arp.PermissionID).
 								FROM(aur.INNER_JOIN(arp, arp.RoleID.EQ(aur.RoleID))).
 								WHERE(
-									aur.UserID.EQ(jet.Int32(userID)),
+									aur.UserID.EQ(jet.Int32(userId)),
 								),
 						),
 				),
@@ -93,10 +93,10 @@ func (p *Perms) getAllPermissionsByPrefixOfUser(userID int32, prefix string) (co
 	return perms, nil
 }
 
-func (p *Perms) GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string) ([]string, error) {
+func (p *Perms) GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix string) ([]string, error) {
 	prefix = helpers.Guard(prefix) + "-"
 
-	perms, err := p.getAllPermissionsByPrefixOfUser(userID, prefix)
+	perms, err := p.getAllPermissionsByPrefixOfUser(userId, prefix)
 	if err != nil {
 		return nil, err
 	}
@@ -109,12 +109,12 @@ func (p *Perms) GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string
 	return suffixes, nil
 }
 
-func (p *Perms) Can(userID int32, perm ...string) bool {
-	return p.can(userID, helpers.Guard(strings.Join(perm, ".")))
+func (p *Perms) Can(userId int32, perm ...string) bool {
+	return p.can(userId, helpers.Guard(strings.Join(perm, ".")))
 }
 
-func (p *Perms) can(userID int32, guardName string) bool {
-	cacheKey := buildCanCacheKey(userID, guardName)
+func (p *Perms) can(userId int32, guardName string) bool {
+	cacheKey := buildCanCacheKey(userId, guardName)
 	if cached, ok := p.canCache.Get(cacheKey); ok {
 		return cached
 	}
@@ -128,7 +128,7 @@ func (p *Perms) can(userID int32, guardName string) bool {
 				aup.PermissionID.EQ(ap.ID),
 			).
 				LEFT_JOIN(aur,
-					aur.UserID.EQ(jet.Int32(userID)),
+					aur.UserID.EQ(jet.Int32(userId)),
 				).
 				LEFT_JOIN(arp,
 					arp.PermissionID.EQ(ap.ID).
@@ -153,6 +153,6 @@ func (p *Perms) can(userID int32, guardName string) bool {
 	return result
 }
 
-func buildCanCacheKey(userID int32, guardName string) string {
-	return strconv.Itoa(int(userID)) + guardName
+func buildCanCacheKey(userId int32, guardName string) string {
+	return strconv.Itoa(int(userId)) + guardName
 }

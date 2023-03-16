@@ -42,7 +42,7 @@ func NewServer(db *sql.DB, p perms.Permissions) *Server {
 }
 
 func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (*FindDocumentsResponse, error) {
-	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	var condition jet.BoolExpression
 	if req.Search != "" {
@@ -54,7 +54,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 	countStmt := s.getDocumentsQuery(
 		condition,
 		jet.ProjectionList{jet.COUNT(docs.ID).AS("total_count")},
-		nil, userID, job, jobGrade)
+		nil, userId, job, jobGrade)
 	var count struct{ TotalCount int64 }
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		return resp, nil
 	}
 
-	stmt := s.getDocumentsQuery(condition, nil, nil, userID, job, jobGrade)
+	stmt := s.getDocumentsQuery(condition, nil, nil, userId, job, jobGrade)
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
 		return nil, err
 	}
@@ -86,13 +86,13 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 }
 
 func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*GetDocumentResponse, error) {
-	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	condition := jet.OR(
 		docs.ID.EQ(jet.Uint64(req.DocumentId)),
 	)
 
-	countStmt := s.getDocumentsQuery(condition, jet.ProjectionList{jet.COUNT(docs.ID).AS("total_count")}, nil, userID, job, jobGrade)
+	countStmt := s.getDocumentsQuery(condition, jet.ProjectionList{jet.COUNT(docs.ID).AS("total_count")}, nil, userId, job, jobGrade)
 	var count struct{ TotalCount int64 }
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		Access:   &documents.DocumentAccess{},
 	}
 
-	stmt := s.getDocumentsQuery(condition, nil, nil, userID, job, jobGrade)
+	stmt := s.getDocumentsQuery(condition, nil, nil, userId, job, jobGrade)
 	if err := stmt.QueryContext(ctx, s.db, resp.Document); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -122,7 +122,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 }
 
 func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest) (*CreateDocumentResponse, error) {
-	userID, job, _ := auth.GetUserInfoFromContext(ctx)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	docs := table.ArpanetDocuments
 	stmt := docs.INSERT(
@@ -141,7 +141,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		req.Closed,
 		req.State,
 		req.Public,
-		userID,
+		userId,
 		job,
 		req.CategoryId,
 	)
@@ -166,8 +166,8 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 }
 
 func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
-	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_EDIT)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -199,8 +199,8 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 }
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
-	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userID, job, jobGrade, documents.DOC_ACCESS_ACCESS)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, documents.DOC_ACCESS_ACCESS)
 	if err != nil {
 		return nil, err
 	}
@@ -259,7 +259,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 }
 
 func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDATE_MODE, documentID uint64, access *documents.DocumentAccess) error {
-	userID := auth.GetUserIDFromContext(ctx)
+	userId := auth.GetUserIDFromContext(ctx)
 
 	// Select existing job and user accesses
 	var dest struct {
@@ -293,7 +293,7 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 	if len(ja) > 0 {
 		for k := 0; k < len(ja); k++ {
 			ja[k].DocumentId = documentID
-			ja[k].CreatorId = userID
+			ja[k].CreatorId = userId
 		}
 
 		// Create document job access
@@ -317,7 +317,7 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 	if len(ua) > 0 {
 		for k := 0; k < len(ua); k++ {
 			ua[k].DocumentId = documentID
-			ua[k].CreatorId = userID
+			ua[k].CreatorId = userId
 		}
 		// Create document user access
 		stmt := dUserAccess.INSERT(

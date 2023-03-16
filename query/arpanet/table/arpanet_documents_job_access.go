@@ -20,6 +20,7 @@ type arpanetDocumentsJobAccessTable struct {
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
 	UpdatedAt    mysql.ColumnTimestamp
+	DeletedAt    mysql.ColumnTimestamp
 	DocumentID   mysql.ColumnInteger
 	Job          mysql.ColumnString
 	MinimumGrade mysql.ColumnInteger
@@ -68,13 +69,14 @@ func newArpanetDocumentsJobAccessTableImpl(schemaName, tableName, alias string) 
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
 		DocumentIDColumn   = mysql.IntegerColumn("document_id")
 		JobColumn          = mysql.StringColumn("job")
 		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
 		AccessColumn       = mysql.IntegerColumn("access")
 		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, JobColumn, MinimumGradeColumn, AccessColumn, CreatorIDColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, JobColumn, MinimumGradeColumn, AccessColumn, CreatorIDColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, JobColumn, MinimumGradeColumn, AccessColumn, CreatorIDColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, JobColumn, MinimumGradeColumn, AccessColumn, CreatorIDColumn}
 	)
 
 	return arpanetDocumentsJobAccessTable{
@@ -84,6 +86,7 @@ func newArpanetDocumentsJobAccessTableImpl(schemaName, tableName, alias string) 
 		ID:           IDColumn,
 		CreatedAt:    CreatedAtColumn,
 		UpdatedAt:    UpdatedAtColumn,
+		DeletedAt:    DeletedAtColumn,
 		DocumentID:   DocumentIDColumn,
 		Job:          JobColumn,
 		MinimumGrade: MinimumGradeColumn,

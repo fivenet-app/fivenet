@@ -19,7 +19,7 @@ type arpanetDocumentsUserAccessTable struct {
 	//Columns
 	ID         mysql.ColumnInteger
 	CreatedAt  mysql.ColumnTimestamp
-	UpdatedAt  mysql.ColumnTimestamp
+	DeletedAt  mysql.ColumnTimestamp
 	DocumentID mysql.ColumnInteger
 	UserID     mysql.ColumnInteger
 	Access     mysql.ColumnInteger
@@ -66,13 +66,13 @@ func newArpanetDocumentsUserAccessTableImpl(schemaName, tableName, alias string)
 	var (
 		IDColumn         = mysql.IntegerColumn("id")
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn  = mysql.TimestampColumn("deleted_at")
 		DocumentIDColumn = mysql.IntegerColumn("document_id")
 		UserIDColumn     = mysql.IntegerColumn("user_id")
 		AccessColumn     = mysql.IntegerColumn("access")
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn, CreatorIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn, CreatorIDColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn, CreatorIDColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn, CreatorIDColumn}
 	)
 
 	return arpanetDocumentsUserAccessTable{
@@ -81,7 +81,7 @@ func newArpanetDocumentsUserAccessTableImpl(schemaName, tableName, alias string)
 		//Columns
 		ID:         IDColumn,
 		CreatedAt:  CreatedAtColumn,
-		UpdatedAt:  UpdatedAtColumn,
+		DeletedAt:  DeletedAtColumn,
 		DocumentID: DocumentIDColumn,
 		UserID:     UserIDColumn,
 		Access:     AccessColumn,

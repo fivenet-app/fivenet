@@ -23,11 +23,11 @@ type Permissions interface {
 	GetAllPermissions() (collections.Permissions, error)
 	CreatePermission(name string, description string) error
 
-	GetAllPermissionsOfUser(userID int32) (collections.Permissions, error)
-	GetAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error)
-	GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string) ([]string, error)
+	GetAllPermissionsOfUser(userId int32) (collections.Permissions, error)
+	GetAllPermissionsByPrefixOfUser(userId int32, prefix string) (collections.Permissions, error)
+	GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix string) ([]string, error)
 
-	Can(userID int32, perm ...string) bool
+	Can(userId int32, perm ...string) bool
 }
 
 type Perms struct {

@@ -40,9 +40,9 @@ func (s *Server) SetLogger(logger *zap.Logger) {
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
-	userID := auth.GetUserIDFromContext(srv.Context())
+	userId := auth.GetUserIDFromContext(srv.Context())
 
-	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userID, "LivemapperService.Stream")
+	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, "LivemapperService.Stream")
 	if err != nil {
 		return err
 	}
@@ -103,7 +103,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 }
 
 func (s *Server) GenerateRandomUserMarker() {
-	userIDs := []int32{
+	userIds := []int32{
 		// ambulance
 		26061,
 		4650,
@@ -121,8 +121,8 @@ func (s *Server) GenerateRandomUserMarker() {
 	}
 
 	for {
-		markers := make([]*model.ArpanetUserLocations, len(userIDs))
-		for i := 0; i < len(userIDs); i++ {
+		markers := make([]*model.ArpanetUserLocations, len(userIds))
+		for i := 0; i < len(userIds); i++ {
 			xMin := -3500
 			xMax := 4300
 			x := float64(rand.Intn(xMax-xMin+1) + xMin)
@@ -134,7 +134,7 @@ func (s *Server) GenerateRandomUserMarker() {
 			job := "ambulance"
 			hidden := false
 			markers[i] = &model.ArpanetUserLocations{
-				UserID: userIDs[i],
+				UserID: userIds[i],
 				Job:    &job,
 				Hidden: &hidden,
 

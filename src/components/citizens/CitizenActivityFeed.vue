@@ -22,7 +22,7 @@ export default defineComponent({
     methods: {
         getUserActivity() {
             const req = new GetUserActivityRequest();
-            req.setUserId(this.userID);
+            req.setUserId(this.userId);
 
             getCitizenStoreClient().
                 getUserActivity(req, null).then((resp) => {
@@ -33,7 +33,7 @@ export default defineComponent({
         },
     },
     props: {
-        userID: {
+        userId: {
             required: true,
             type: Number,
         },

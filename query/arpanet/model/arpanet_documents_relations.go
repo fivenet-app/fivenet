@@ -14,6 +14,7 @@ import (
 type ArpanetDocumentsRelations struct {
 	ID           uint64     `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
+	DeletedAt    *time.Time `json:"deleted_at"`
 	DocumentID   uint64     `json:"document_id"`
 	SourceUserID int32      `json:"source_user_id"`
 	Relation     int16      `json:"relation"`

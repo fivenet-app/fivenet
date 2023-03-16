@@ -39,13 +39,13 @@ type DocStoreServiceClient interface {
 	// @permission: name=GetDocument
 	GetDocumentRelations(ctx context.Context, in *GetDocumentRelationsRequest, opts ...grpc.CallOption) (*GetDocumentRelationsResponse, error)
 	// @permission
-	AddDocumentReferences(ctx context.Context, in *AddDocumentReferencesRequest, opts ...grpc.CallOption) (*AddDocumentReferencesResponse, error)
-	// @permission: name=AddDocumentReferences
-	RemoveDocumentReferences(ctx context.Context, in *RemoveDocumentReferencesRequest, opts ...grpc.CallOption) (*RemoveDocumentReferencesResponse, error)
+	AddDocumentReference(ctx context.Context, in *AddDocumentReferenceRequest, opts ...grpc.CallOption) (*AddDocumentReferenceResponse, error)
+	// @permission: name=AddDocumentReference
+	RemoveDcoumentReference(ctx context.Context, in *RemoveDcoumentReferenceRequest, opts ...grpc.CallOption) (*RemoveDcoumentReferenceResponse, error)
 	// @permission
-	AddDocumentRelations(ctx context.Context, in *AddDocumentRelationsRequest, opts ...grpc.CallOption) (*AddDocumentRelationsResponse, error)
-	// @permission: name=AddDocumentRelations
-	RemoveDocumentRelations(ctx context.Context, in *RemoveDocumentRelationsRequest, opts ...grpc.CallOption) (*RemoveDocumentRelationsResponse, error)
+	AddDocumentRelation(ctx context.Context, in *AddDocumentRelationRequest, opts ...grpc.CallOption) (*AddDocumentRelationResponse, error)
+	// @permission: name=AddDocumentRelation
+	RemoveDcoumentRelation(ctx context.Context, in *RemoveDcoumentRelationRequest, opts ...grpc.CallOption) (*RemoveDcoumentRelationResponse, error)
 	// @permission
 	GetDocumentComments(ctx context.Context, in *GetDocumentCommentsRequest, opts ...grpc.CallOption) (*GetDocumentCommentsResponse, error)
 	// @permission
@@ -138,36 +138,36 @@ func (c *docStoreServiceClient) GetDocumentRelations(ctx context.Context, in *Ge
 	return out, nil
 }
 
-func (c *docStoreServiceClient) AddDocumentReferences(ctx context.Context, in *AddDocumentReferencesRequest, opts ...grpc.CallOption) (*AddDocumentReferencesResponse, error) {
-	out := new(AddDocumentReferencesResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/AddDocumentReferences", in, out, opts...)
+func (c *docStoreServiceClient) AddDocumentReference(ctx context.Context, in *AddDocumentReferenceRequest, opts ...grpc.CallOption) (*AddDocumentReferenceResponse, error) {
+	out := new(AddDocumentReferenceResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/AddDocumentReference", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) RemoveDocumentReferences(ctx context.Context, in *RemoveDocumentReferencesRequest, opts ...grpc.CallOption) (*RemoveDocumentReferencesResponse, error) {
-	out := new(RemoveDocumentReferencesResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/RemoveDocumentReferences", in, out, opts...)
+func (c *docStoreServiceClient) RemoveDcoumentReference(ctx context.Context, in *RemoveDcoumentReferenceRequest, opts ...grpc.CallOption) (*RemoveDcoumentReferenceResponse, error) {
+	out := new(RemoveDcoumentReferenceResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/RemoveDcoumentReference", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) AddDocumentRelations(ctx context.Context, in *AddDocumentRelationsRequest, opts ...grpc.CallOption) (*AddDocumentRelationsResponse, error) {
-	out := new(AddDocumentRelationsResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/AddDocumentRelations", in, out, opts...)
+func (c *docStoreServiceClient) AddDocumentRelation(ctx context.Context, in *AddDocumentRelationRequest, opts ...grpc.CallOption) (*AddDocumentRelationResponse, error) {
+	out := new(AddDocumentRelationResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/AddDocumentRelation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) RemoveDocumentRelations(ctx context.Context, in *RemoveDocumentRelationsRequest, opts ...grpc.CallOption) (*RemoveDocumentRelationsResponse, error) {
-	out := new(RemoveDocumentRelationsResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/RemoveDocumentRelations", in, out, opts...)
+func (c *docStoreServiceClient) RemoveDcoumentRelation(ctx context.Context, in *RemoveDcoumentRelationRequest, opts ...grpc.CallOption) (*RemoveDcoumentRelationResponse, error) {
+	out := new(RemoveDcoumentRelationResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/RemoveDcoumentRelation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -240,13 +240,13 @@ type DocStoreServiceServer interface {
 	// @permission: name=GetDocument
 	GetDocumentRelations(context.Context, *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error)
 	// @permission
-	AddDocumentReferences(context.Context, *AddDocumentReferencesRequest) (*AddDocumentReferencesResponse, error)
-	// @permission: name=AddDocumentReferences
-	RemoveDocumentReferences(context.Context, *RemoveDocumentReferencesRequest) (*RemoveDocumentReferencesResponse, error)
+	AddDocumentReference(context.Context, *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error)
+	// @permission: name=AddDocumentReference
+	RemoveDcoumentReference(context.Context, *RemoveDcoumentReferenceRequest) (*RemoveDcoumentReferenceResponse, error)
 	// @permission
-	AddDocumentRelations(context.Context, *AddDocumentRelationsRequest) (*AddDocumentRelationsResponse, error)
-	// @permission: name=AddDocumentRelations
-	RemoveDocumentRelations(context.Context, *RemoveDocumentRelationsRequest) (*RemoveDocumentRelationsResponse, error)
+	AddDocumentRelation(context.Context, *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error)
+	// @permission: name=AddDocumentRelation
+	RemoveDcoumentRelation(context.Context, *RemoveDcoumentRelationRequest) (*RemoveDcoumentRelationResponse, error)
 	// @permission
 	GetDocumentComments(context.Context, *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error)
 	// @permission
@@ -288,17 +288,17 @@ func (UnimplementedDocStoreServiceServer) GetDocumentReferences(context.Context,
 func (UnimplementedDocStoreServiceServer) GetDocumentRelations(context.Context, *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentRelations not implemented")
 }
-func (UnimplementedDocStoreServiceServer) AddDocumentReferences(context.Context, *AddDocumentReferencesRequest) (*AddDocumentReferencesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddDocumentReferences not implemented")
+func (UnimplementedDocStoreServiceServer) AddDocumentReference(context.Context, *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddDocumentReference not implemented")
 }
-func (UnimplementedDocStoreServiceServer) RemoveDocumentReferences(context.Context, *RemoveDocumentReferencesRequest) (*RemoveDocumentReferencesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveDocumentReferences not implemented")
+func (UnimplementedDocStoreServiceServer) RemoveDcoumentReference(context.Context, *RemoveDcoumentReferenceRequest) (*RemoveDcoumentReferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveDcoumentReference not implemented")
 }
-func (UnimplementedDocStoreServiceServer) AddDocumentRelations(context.Context, *AddDocumentRelationsRequest) (*AddDocumentRelationsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddDocumentRelations not implemented")
+func (UnimplementedDocStoreServiceServer) AddDocumentRelation(context.Context, *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddDocumentRelation not implemented")
 }
-func (UnimplementedDocStoreServiceServer) RemoveDocumentRelations(context.Context, *RemoveDocumentRelationsRequest) (*RemoveDocumentRelationsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveDocumentRelations not implemented")
+func (UnimplementedDocStoreServiceServer) RemoveDcoumentRelation(context.Context, *RemoveDcoumentRelationRequest) (*RemoveDcoumentRelationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveDcoumentRelation not implemented")
 }
 func (UnimplementedDocStoreServiceServer) GetDocumentComments(context.Context, *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentComments not implemented")
@@ -472,74 +472,74 @@ func _DocStoreService_GetDocumentRelations_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_AddDocumentReferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddDocumentReferencesRequest)
+func _DocStoreService_AddDocumentReference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddDocumentReferenceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).AddDocumentReferences(ctx, in)
+		return srv.(DocStoreServiceServer).AddDocumentReference(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/AddDocumentReferences",
+		FullMethod: "/services.docstore.DocStoreService/AddDocumentReference",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).AddDocumentReferences(ctx, req.(*AddDocumentReferencesRequest))
+		return srv.(DocStoreServiceServer).AddDocumentReference(ctx, req.(*AddDocumentReferenceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_RemoveDocumentReferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RemoveDocumentReferencesRequest)
+func _DocStoreService_RemoveDcoumentReference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveDcoumentReferenceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).RemoveDocumentReferences(ctx, in)
+		return srv.(DocStoreServiceServer).RemoveDcoumentReference(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/RemoveDocumentReferences",
+		FullMethod: "/services.docstore.DocStoreService/RemoveDcoumentReference",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).RemoveDocumentReferences(ctx, req.(*RemoveDocumentReferencesRequest))
+		return srv.(DocStoreServiceServer).RemoveDcoumentReference(ctx, req.(*RemoveDcoumentReferenceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_AddDocumentRelations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddDocumentRelationsRequest)
+func _DocStoreService_AddDocumentRelation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddDocumentRelationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).AddDocumentRelations(ctx, in)
+		return srv.(DocStoreServiceServer).AddDocumentRelation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/AddDocumentRelations",
+		FullMethod: "/services.docstore.DocStoreService/AddDocumentRelation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).AddDocumentRelations(ctx, req.(*AddDocumentRelationsRequest))
+		return srv.(DocStoreServiceServer).AddDocumentRelation(ctx, req.(*AddDocumentRelationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_RemoveDocumentRelations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RemoveDocumentRelationsRequest)
+func _DocStoreService_RemoveDcoumentRelation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveDcoumentRelationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).RemoveDocumentRelations(ctx, in)
+		return srv.(DocStoreServiceServer).RemoveDcoumentRelation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/RemoveDocumentRelations",
+		FullMethod: "/services.docstore.DocStoreService/RemoveDcoumentRelation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).RemoveDocumentRelations(ctx, req.(*RemoveDocumentRelationsRequest))
+		return srv.(DocStoreServiceServer).RemoveDcoumentRelation(ctx, req.(*RemoveDcoumentRelationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -674,20 +674,20 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocStoreService_GetDocumentRelations_Handler,
 		},
 		{
-			MethodName: "AddDocumentReferences",
-			Handler:    _DocStoreService_AddDocumentReferences_Handler,
+			MethodName: "AddDocumentReference",
+			Handler:    _DocStoreService_AddDocumentReference_Handler,
 		},
 		{
-			MethodName: "RemoveDocumentReferences",
-			Handler:    _DocStoreService_RemoveDocumentReferences_Handler,
+			MethodName: "RemoveDcoumentReference",
+			Handler:    _DocStoreService_RemoveDcoumentReference_Handler,
 		},
 		{
-			MethodName: "AddDocumentRelations",
-			Handler:    _DocStoreService_AddDocumentRelations_Handler,
+			MethodName: "AddDocumentRelation",
+			Handler:    _DocStoreService_AddDocumentRelation_Handler,
 		},
 		{
-			MethodName: "RemoveDocumentRelations",
-			Handler:    _DocStoreService_RemoveDocumentRelations_Handler,
+			MethodName: "RemoveDcoumentRelation",
+			Handler:    _DocStoreService_RemoveDcoumentRelation_Handler,
 		},
 		{
 			MethodName: "GetDocumentComments",

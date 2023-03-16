@@ -19,6 +19,7 @@ type arpanetDocumentsRelationsTable struct {
 	//Columns
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
+	DeletedAt    mysql.ColumnTimestamp
 	DocumentID   mysql.ColumnInteger
 	SourceUserID mysql.ColumnInteger
 	Relation     mysql.ColumnInteger
@@ -65,12 +66,13 @@ func newArpanetDocumentsRelationsTableImpl(schemaName, tableName, alias string) 
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
 		DocumentIDColumn   = mysql.IntegerColumn("document_id")
 		SourceUserIDColumn = mysql.IntegerColumn("source_user_id")
 		RelationColumn     = mysql.IntegerColumn("relation")
 		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, DocumentIDColumn, SourceUserIDColumn, RelationColumn, TargetUserIDColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, DocumentIDColumn, SourceUserIDColumn, RelationColumn, TargetUserIDColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, SourceUserIDColumn, RelationColumn, TargetUserIDColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, SourceUserIDColumn, RelationColumn, TargetUserIDColumn}
 	)
 
 	return arpanetDocumentsRelationsTable{
@@ -79,6 +81,7 @@ func newArpanetDocumentsRelationsTableImpl(schemaName, tableName, alias string) 
 		//Columns
 		ID:           IDColumn,
 		CreatedAt:    CreatedAtColumn,
+		DeletedAt:    DeletedAtColumn,
 		DocumentID:   DocumentIDColumn,
 		SourceUserID: SourceUserIDColumn,
 		Relation:     RelationColumn,

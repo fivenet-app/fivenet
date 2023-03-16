@@ -83,10 +83,10 @@ export default defineComponent({
             <CitizenInfoProfile :user="user" />
         </div>
         <div v-if="currentTab === 'Activity'">
-            <CitizenActivityFeed :userID="user.getUserId()" />
+            <CitizenActivityFeed :userId="user.getUserId()" />
         </div>
         <div v-if="currentTab === 'Documents'">
-            <CitizenInfoDocuments :userID="user.getUserId()" />
+            <CitizenInfoDocuments :userId="user.getUserId()" />
         </div>
     </div>
 </template>

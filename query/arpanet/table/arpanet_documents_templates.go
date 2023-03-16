@@ -20,6 +20,7 @@ type arpanetDocumentsTemplatesTable struct {
 	ID             mysql.ColumnInteger
 	CreatedAt      mysql.ColumnTimestamp
 	UpdatedAt      mysql.ColumnTimestamp
+	DeletedAt      mysql.ColumnTimestamp
 	Job            mysql.ColumnString
 	JobGrade       mysql.ColumnInteger
 	CategoryID     mysql.ColumnInteger
@@ -72,6 +73,7 @@ func newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		IDColumn             = mysql.IntegerColumn("id")
 		CreatedAtColumn      = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn      = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn      = mysql.TimestampColumn("deleted_at")
 		JobColumn            = mysql.StringColumn("job")
 		JobGradeColumn       = mysql.IntegerColumn("job_grade")
 		CategoryIDColumn     = mysql.IntegerColumn("category_id")
@@ -81,8 +83,8 @@ func newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		ContentColumn        = mysql.StringColumn("content")
 		AdditionalDataColumn = mysql.StringColumn("additional_data")
 		CreatorIDColumn      = mysql.IntegerColumn("creator_id")
-		allColumns           = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AdditionalDataColumn, CreatorIDColumn}
-		mutableColumns       = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AdditionalDataColumn, CreatorIDColumn}
+		allColumns           = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AdditionalDataColumn, CreatorIDColumn}
+		mutableColumns       = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AdditionalDataColumn, CreatorIDColumn}
 	)
 
 	return arpanetDocumentsTemplatesTable{
@@ -92,6 +94,7 @@ func newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		ID:             IDColumn,
 		CreatedAt:      CreatedAtColumn,
 		UpdatedAt:      UpdatedAtColumn,
+		DeletedAt:      DeletedAtColumn,
 		Job:            JobColumn,
 		JobGrade:       JobGradeColumn,
 		CategoryID:     CategoryIDColumn,

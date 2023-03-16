@@ -19,6 +19,7 @@ type arpanetDocumentsReferencesTable struct {
 	//Columns
 	ID               mysql.ColumnInteger
 	CreatedAt        mysql.ColumnTimestamp
+	DeletedAt        mysql.ColumnTimestamp
 	SourceDocumentID mysql.ColumnInteger
 	Reference        mysql.ColumnInteger
 	TargetDocumentID mysql.ColumnInteger
@@ -65,12 +66,13 @@ func newArpanetDocumentsReferencesTableImpl(schemaName, tableName, alias string)
 	var (
 		IDColumn               = mysql.IntegerColumn("id")
 		CreatedAtColumn        = mysql.TimestampColumn("created_at")
+		DeletedAtColumn        = mysql.TimestampColumn("deleted_at")
 		SourceDocumentIDColumn = mysql.IntegerColumn("source_document_id")
 		ReferenceColumn        = mysql.IntegerColumn("reference")
 		TargetDocumentIDColumn = mysql.IntegerColumn("target_document_id")
 		CreatorIDColumn        = mysql.IntegerColumn("creator_id")
-		allColumns             = mysql.ColumnList{IDColumn, CreatedAtColumn, SourceDocumentIDColumn, ReferenceColumn, TargetDocumentIDColumn, CreatorIDColumn}
-		mutableColumns         = mysql.ColumnList{CreatedAtColumn, SourceDocumentIDColumn, ReferenceColumn, TargetDocumentIDColumn, CreatorIDColumn}
+		allColumns             = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, SourceDocumentIDColumn, ReferenceColumn, TargetDocumentIDColumn, CreatorIDColumn}
+		mutableColumns         = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, SourceDocumentIDColumn, ReferenceColumn, TargetDocumentIDColumn, CreatorIDColumn}
 	)
 
 	return arpanetDocumentsReferencesTable{
@@ -79,6 +81,7 @@ func newArpanetDocumentsReferencesTableImpl(schemaName, tableName, alias string)
 		//Columns
 		ID:               IDColumn,
 		CreatedAt:        CreatedAtColumn,
+		DeletedAt:        DeletedAtColumn,
 		SourceDocumentID: SourceDocumentIDColumn,
 		Reference:        ReferenceColumn,
 		TargetDocumentID: TargetDocumentIDColumn,

@@ -260,154 +260,134 @@ export namespace GetDocumentRelationsResponse {
   }
 }
 
-export class AddDocumentReferencesRequest extends jspb.Message {
-  getDocumentId(): number;
-  setDocumentId(value: number): AddDocumentReferencesRequest;
-
-  getReferencesList(): Array<resources_documents_documents_pb.DocumentReference>;
-  setReferencesList(value: Array<resources_documents_documents_pb.DocumentReference>): AddDocumentReferencesRequest;
-  clearReferencesList(): AddDocumentReferencesRequest;
-  addReferences(value?: resources_documents_documents_pb.DocumentReference, index?: number): resources_documents_documents_pb.DocumentReference;
+export class AddDocumentReferenceRequest extends jspb.Message {
+  getReference(): resources_documents_documents_pb.DocumentReference | undefined;
+  setReference(value?: resources_documents_documents_pb.DocumentReference): AddDocumentReferenceRequest;
+  hasReference(): boolean;
+  clearReference(): AddDocumentReferenceRequest;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): AddDocumentReferencesRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: AddDocumentReferencesRequest): AddDocumentReferencesRequest.AsObject;
-  static serializeBinaryToWriter(message: AddDocumentReferencesRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): AddDocumentReferencesRequest;
-  static deserializeBinaryFromReader(message: AddDocumentReferencesRequest, reader: jspb.BinaryReader): AddDocumentReferencesRequest;
+  toObject(includeInstance?: boolean): AddDocumentReferenceRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: AddDocumentReferenceRequest): AddDocumentReferenceRequest.AsObject;
+  static serializeBinaryToWriter(message: AddDocumentReferenceRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AddDocumentReferenceRequest;
+  static deserializeBinaryFromReader(message: AddDocumentReferenceRequest, reader: jspb.BinaryReader): AddDocumentReferenceRequest;
 }
 
-export namespace AddDocumentReferencesRequest {
+export namespace AddDocumentReferenceRequest {
   export type AsObject = {
-    documentId: number,
-    referencesList: Array<resources_documents_documents_pb.DocumentReference.AsObject>,
+    reference?: resources_documents_documents_pb.DocumentReference.AsObject,
   }
 }
 
-export class AddDocumentReferencesResponse extends jspb.Message {
+export class AddDocumentReferenceResponse extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): AddDocumentReferencesResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: AddDocumentReferencesResponse): AddDocumentReferencesResponse.AsObject;
-  static serializeBinaryToWriter(message: AddDocumentReferencesResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): AddDocumentReferencesResponse;
-  static deserializeBinaryFromReader(message: AddDocumentReferencesResponse, reader: jspb.BinaryReader): AddDocumentReferencesResponse;
+  toObject(includeInstance?: boolean): AddDocumentReferenceResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: AddDocumentReferenceResponse): AddDocumentReferenceResponse.AsObject;
+  static serializeBinaryToWriter(message: AddDocumentReferenceResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AddDocumentReferenceResponse;
+  static deserializeBinaryFromReader(message: AddDocumentReferenceResponse, reader: jspb.BinaryReader): AddDocumentReferenceResponse;
 }
 
-export namespace AddDocumentReferencesResponse {
+export namespace AddDocumentReferenceResponse {
   export type AsObject = {
   }
 }
 
-export class RemoveDocumentReferencesRequest extends jspb.Message {
-  getDocumentId(): number;
-  setDocumentId(value: number): RemoveDocumentReferencesRequest;
-
-  getRefIdsList(): Array<number>;
-  setRefIdsList(value: Array<number>): RemoveDocumentReferencesRequest;
-  clearRefIdsList(): RemoveDocumentReferencesRequest;
-  addRefIds(value: number, index?: number): RemoveDocumentReferencesRequest;
+export class RemoveDcoumentReferenceRequest extends jspb.Message {
+  getId(): number;
+  setId(value: number): RemoveDcoumentReferenceRequest;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RemoveDocumentReferencesRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: RemoveDocumentReferencesRequest): RemoveDocumentReferencesRequest.AsObject;
-  static serializeBinaryToWriter(message: RemoveDocumentReferencesRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RemoveDocumentReferencesRequest;
-  static deserializeBinaryFromReader(message: RemoveDocumentReferencesRequest, reader: jspb.BinaryReader): RemoveDocumentReferencesRequest;
+  toObject(includeInstance?: boolean): RemoveDcoumentReferenceRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: RemoveDcoumentReferenceRequest): RemoveDcoumentReferenceRequest.AsObject;
+  static serializeBinaryToWriter(message: RemoveDcoumentReferenceRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RemoveDcoumentReferenceRequest;
+  static deserializeBinaryFromReader(message: RemoveDcoumentReferenceRequest, reader: jspb.BinaryReader): RemoveDcoumentReferenceRequest;
 }
 
-export namespace RemoveDocumentReferencesRequest {
+export namespace RemoveDcoumentReferenceRequest {
   export type AsObject = {
-    documentId: number,
-    refIdsList: Array<number>,
+    id: number,
   }
 }
 
-export class RemoveDocumentReferencesResponse extends jspb.Message {
+export class RemoveDcoumentReferenceResponse extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RemoveDocumentReferencesResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: RemoveDocumentReferencesResponse): RemoveDocumentReferencesResponse.AsObject;
-  static serializeBinaryToWriter(message: RemoveDocumentReferencesResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RemoveDocumentReferencesResponse;
-  static deserializeBinaryFromReader(message: RemoveDocumentReferencesResponse, reader: jspb.BinaryReader): RemoveDocumentReferencesResponse;
+  toObject(includeInstance?: boolean): RemoveDcoumentReferenceResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: RemoveDcoumentReferenceResponse): RemoveDcoumentReferenceResponse.AsObject;
+  static serializeBinaryToWriter(message: RemoveDcoumentReferenceResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RemoveDcoumentReferenceResponse;
+  static deserializeBinaryFromReader(message: RemoveDcoumentReferenceResponse, reader: jspb.BinaryReader): RemoveDcoumentReferenceResponse;
 }
 
-export namespace RemoveDocumentReferencesResponse {
+export namespace RemoveDcoumentReferenceResponse {
   export type AsObject = {
   }
 }
 
-export class AddDocumentRelationsRequest extends jspb.Message {
-  getDocumentId(): number;
-  setDocumentId(value: number): AddDocumentRelationsRequest;
-
-  getRelationsList(): Array<resources_documents_documents_pb.DocumentRelation>;
-  setRelationsList(value: Array<resources_documents_documents_pb.DocumentRelation>): AddDocumentRelationsRequest;
-  clearRelationsList(): AddDocumentRelationsRequest;
-  addRelations(value?: resources_documents_documents_pb.DocumentRelation, index?: number): resources_documents_documents_pb.DocumentRelation;
+export class AddDocumentRelationRequest extends jspb.Message {
+  getRelation(): resources_documents_documents_pb.DocumentRelation | undefined;
+  setRelation(value?: resources_documents_documents_pb.DocumentRelation): AddDocumentRelationRequest;
+  hasRelation(): boolean;
+  clearRelation(): AddDocumentRelationRequest;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): AddDocumentRelationsRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: AddDocumentRelationsRequest): AddDocumentRelationsRequest.AsObject;
-  static serializeBinaryToWriter(message: AddDocumentRelationsRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): AddDocumentRelationsRequest;
-  static deserializeBinaryFromReader(message: AddDocumentRelationsRequest, reader: jspb.BinaryReader): AddDocumentRelationsRequest;
+  toObject(includeInstance?: boolean): AddDocumentRelationRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: AddDocumentRelationRequest): AddDocumentRelationRequest.AsObject;
+  static serializeBinaryToWriter(message: AddDocumentRelationRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AddDocumentRelationRequest;
+  static deserializeBinaryFromReader(message: AddDocumentRelationRequest, reader: jspb.BinaryReader): AddDocumentRelationRequest;
 }
 
-export namespace AddDocumentRelationsRequest {
+export namespace AddDocumentRelationRequest {
   export type AsObject = {
-    documentId: number,
-    relationsList: Array<resources_documents_documents_pb.DocumentRelation.AsObject>,
+    relation?: resources_documents_documents_pb.DocumentRelation.AsObject,
   }
 }
 
-export class AddDocumentRelationsResponse extends jspb.Message {
+export class AddDocumentRelationResponse extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): AddDocumentRelationsResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: AddDocumentRelationsResponse): AddDocumentRelationsResponse.AsObject;
-  static serializeBinaryToWriter(message: AddDocumentRelationsResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): AddDocumentRelationsResponse;
-  static deserializeBinaryFromReader(message: AddDocumentRelationsResponse, reader: jspb.BinaryReader): AddDocumentRelationsResponse;
+  toObject(includeInstance?: boolean): AddDocumentRelationResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: AddDocumentRelationResponse): AddDocumentRelationResponse.AsObject;
+  static serializeBinaryToWriter(message: AddDocumentRelationResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AddDocumentRelationResponse;
+  static deserializeBinaryFromReader(message: AddDocumentRelationResponse, reader: jspb.BinaryReader): AddDocumentRelationResponse;
 }
 
-export namespace AddDocumentRelationsResponse {
+export namespace AddDocumentRelationResponse {
   export type AsObject = {
   }
 }
 
-export class RemoveDocumentRelationsRequest extends jspb.Message {
-  getDocumentId(): number;
-  setDocumentId(value: number): RemoveDocumentRelationsRequest;
-
-  getRelIdsList(): Array<number>;
-  setRelIdsList(value: Array<number>): RemoveDocumentRelationsRequest;
-  clearRelIdsList(): RemoveDocumentRelationsRequest;
-  addRelIds(value: number, index?: number): RemoveDocumentRelationsRequest;
+export class RemoveDcoumentRelationRequest extends jspb.Message {
+  getId(): number;
+  setId(value: number): RemoveDcoumentRelationRequest;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RemoveDocumentRelationsRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: RemoveDocumentRelationsRequest): RemoveDocumentRelationsRequest.AsObject;
-  static serializeBinaryToWriter(message: RemoveDocumentRelationsRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RemoveDocumentRelationsRequest;
-  static deserializeBinaryFromReader(message: RemoveDocumentRelationsRequest, reader: jspb.BinaryReader): RemoveDocumentRelationsRequest;
+  toObject(includeInstance?: boolean): RemoveDcoumentRelationRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: RemoveDcoumentRelationRequest): RemoveDcoumentRelationRequest.AsObject;
+  static serializeBinaryToWriter(message: RemoveDcoumentRelationRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RemoveDcoumentRelationRequest;
+  static deserializeBinaryFromReader(message: RemoveDcoumentRelationRequest, reader: jspb.BinaryReader): RemoveDcoumentRelationRequest;
 }
 
-export namespace RemoveDocumentRelationsRequest {
+export namespace RemoveDcoumentRelationRequest {
   export type AsObject = {
-    documentId: number,
-    relIdsList: Array<number>,
+    id: number,
   }
 }
 
-export class RemoveDocumentRelationsResponse extends jspb.Message {
+export class RemoveDcoumentRelationResponse extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RemoveDocumentRelationsResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: RemoveDocumentRelationsResponse): RemoveDocumentRelationsResponse.AsObject;
-  static serializeBinaryToWriter(message: RemoveDocumentRelationsResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RemoveDocumentRelationsResponse;
-  static deserializeBinaryFromReader(message: RemoveDocumentRelationsResponse, reader: jspb.BinaryReader): RemoveDocumentRelationsResponse;
+  toObject(includeInstance?: boolean): RemoveDcoumentRelationResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: RemoveDcoumentRelationResponse): RemoveDcoumentRelationResponse.AsObject;
+  static serializeBinaryToWriter(message: RemoveDcoumentRelationResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RemoveDcoumentRelationResponse;
+  static deserializeBinaryFromReader(message: RemoveDcoumentRelationResponse, reader: jspb.BinaryReader): RemoveDcoumentRelationResponse;
 }
 
-export namespace RemoveDocumentRelationsResponse {
+export namespace RemoveDcoumentRelationResponse {
   export type AsObject = {
   }
 }

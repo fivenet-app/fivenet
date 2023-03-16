@@ -7,13 +7,13 @@ import "github.com/galexrt/arpanet/pkg/perms"
 
 var PermsRemap = map[string]string{
 	// Service: DocStoreService
-	"DocStoreService/EditDocumentComment":      "DocStoreService/PostDocumentComment",
-	"DocStoreService/GetDocumentReferences":    "DocStoreService/GetDocument",
-	"DocStoreService/GetDocumentRelations":     "DocStoreService/GetDocument",
-	"DocStoreService/GetTemplate":              "DocStoreService/ListTemplates",
-	"DocStoreService/RemoveDocumentReferences": "DocStoreService/AddDocumentReferences",
-	"DocStoreService/RemoveDocumentRelations":  "DocStoreService/AddDocumentRelations",
-	"DocStoreService/UpdateDocument":           "DocStoreService/CreateDocument",
+	"DocStoreService/EditDocumentComment":     "DocStoreService/PostDocumentComment",
+	"DocStoreService/GetDocumentReferences":   "DocStoreService/GetDocument",
+	"DocStoreService/GetDocumentRelations":    "DocStoreService/GetDocument",
+	"DocStoreService/GetTemplate":             "DocStoreService/ListTemplates",
+	"DocStoreService/RemoveDcoumentReference": "DocStoreService/AddDocumentReference",
+	"DocStoreService/RemoveDcoumentRelation":  "DocStoreService/AddDocumentRelation",
+	"DocStoreService/UpdateDocument":          "DocStoreService/CreateDocument",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -29,11 +29,11 @@ func init() {
 		// Service: DocStoreService
 		{
 			Key:  DocStoreServicePermKey,
-			Name: "AddDocumentReferences",
+			Name: "AddDocumentReference",
 		},
 		{
 			Key:  DocStoreServicePermKey,
-			Name: "AddDocumentRelations",
+			Name: "AddDocumentRelation",
 		},
 		{
 			Key:  DocStoreServicePermKey,
@@ -81,11 +81,11 @@ func init() {
 		},
 		{
 			Key:  DocStoreServicePermKey,
-			Name: "AddDocumentReferences",
+			Name: "AddDocumentReference",
 		},
 		{
 			Key:  DocStoreServicePermKey,
-			Name: "AddDocumentRelations",
+			Name: "AddDocumentRelation",
 		},
 		{
 			Key:  DocStoreServicePermKey,

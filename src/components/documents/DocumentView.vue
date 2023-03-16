@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentReference, DocumentRelation, DOC_REFERENCE_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
@@ -71,15 +71,25 @@ export default defineComponent({
                 catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
                 });
+
+            // Document References
             getDocStoreClient().
-                getDocumentFeed(req, null).
+                getDocumentReferences(req, null).
                 then((resp) => {
                     this.feedReferences = resp.getReferencesList();
+                }).
+                catch((err: RpcError) => {
+                    handleGRPCError(err, this.$route);
+                });
+            // Document Relations
+            getDocStoreClient().
+                getDocumentRelations(req, null).
+                then((resp) => {
                     this.feedRelations = resp.getRelationsList();
                 }).
                 catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
-                })
+                });
         },
         editDocumentTest() {
             const req = new UpdateDocumentRequest();
@@ -95,8 +105,19 @@ export default defineComponent({
                     console.log(resp);
                 }).
                 catch((err: RpcError) => {
-                    console.log(err);
+                    handleGRPCError(err, this.$route);
                 });
+        },
+        removeDocRefTest() {
+            const req = new RemoveDcoumentReferenceRequest();
+            req.setId(1);
+
+            getDocStoreClient().
+            removeDcoumentReference(req, null).then((resp) => {
+                console.log(typeof resp);
+            }).catch((err: RpcError) => {
+                handleGRPCError(err, this.$route);
+            });
         },
     },
 });
@@ -165,6 +186,7 @@ export default defineComponent({
                                         Edit
                                     </router-link>
                                     <button @click="editDocumentTest()">TEST</button>
+                                    <button @click="removeDocRefTest()">DELETE REF</button>
                                 </div>
                             </div>
                             <aside class="mt-8 xl:hidden">
@@ -310,7 +332,8 @@ export default defineComponent({
                                             <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
                                         </div>
                                         <div class="ml-3 text-xs font-semibold text-gray-900">
-                                            {{ ac.getJob() }}<span v-if="ac.getMinimumgrade() > 0">(Rank: {{ ac.getMinimumgrade() }})</span> - {{ ac.getAccess() }}
+                                            {{ ac.getJob() }}<span v-if="ac.getMinimumgrade() > 0">(Rank: {{
+                                                ac.getMinimumgrade() }})</span> - {{ ac.getAccess() }}
                                         </div>
                                     </a>
                                     {{ ' ' }}
@@ -321,7 +344,8 @@ export default defineComponent({
                                         <div class="absolute flex flex-shrink-0 items-center justify-center">
                                             <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
                                         </div>
-                                        <div class="ml-3 text-xs font-semibold text-gray-900">{{ ac.getUserId() }} - {{ ac.getAccess().valueOf() }}</div>
+                                        <div class="ml-3 text-xs font-semibold text-gray-900">{{ ac.getUserId() }} - {{
+                                            ac.getAccess().valueOf() }}</div>
                                     </a>
                                     {{ ' ' }}
                                 </li>
@@ -334,11 +358,13 @@ export default defineComponent({
     </div>
     <div class="bg-white">
         <p v-for="item in feedReferences" class="text-2xl">
-            REFERENCE: {{ item.getSourceDocumentId() }} &RightArrow; {{ DOC_REFERENCE_TYPE_Util.toEnumKey(item.getReference()) }} &RightArrow; {{ item.getTargetDocumentId() }}
+            REFERENCE: {{ item.getSourceDocumentId() }} &RightArrow; {{
+                DOC_REFERENCE_TYPE_Util.toEnumKey(item.getReference()) }} &RightArrow; {{ item.getTargetDocumentId() }}
             <hr />
         </p>
         <p v-for="item in feedRelations" class="text-2xl">
-            RELATION: {{ item.getSourceUserId() }} &RightArrow; {{ DOC_RELATION_TYPE_Util.toEnumKey(item.getRelation()) }} &RightArrow; {{ item.getTargetUserId() }}
+            RELATION: {{ item.getSourceUserId() }} &RightArrow; {{ DOC_RELATION_TYPE_Util.toEnumKey(item.getRelation()) }}
+            &RightArrow; {{ item.getTargetUserId() }}
         </p>
     </div>
 </template>

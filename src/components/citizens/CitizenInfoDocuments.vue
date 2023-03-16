@@ -13,7 +13,7 @@ export default defineComponent({
         };
     },
     props: {
-        userID: {
+        userId: {
             required: true,
             type: Number,
         },
@@ -23,10 +23,10 @@ export default defineComponent({
     },
     methods: {
         getUserDocuments(offset: number) {
-            if (!this.userID) return;
+            if (!this.userId) return;
             if (this.loading) return;
             const req = new GetUserDocumentsRequest();
-            req.setUserId(this.userID);
+            req.setUserId(this.userId);
 
             getCitizenStoreClient().
                 getUserDocuments(req, null).

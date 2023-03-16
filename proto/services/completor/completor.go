@@ -166,9 +166,9 @@ func (s *Server) CompleteJobGrades(ctx context.Context, req *CompleteJobGradesRe
 }
 
 func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error) {
-	userID := auth.GetUserIDFromContext(ctx)
+	userId := auth.GetUserIDFromContext(ctx)
 
-	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userID, CompletorServicePermKey+"-CompleteDocumentCategory")
+	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, CompletorServicePermKey+"-CompleteDocumentCategory")
 	if err != nil {
 		return nil, err
 	}

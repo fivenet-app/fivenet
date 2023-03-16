@@ -42,7 +42,7 @@ func NewServer(db *sql.DB, p perms.Permissions) *Server {
 }
 
 func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUsersResponse, error) {
-	userID, _, _ := auth.GetUserInfoFromContext(ctx)
+	userId, _, _ := auth.GetUserInfoFromContext(ctx)
 
 	selectors := jet.ProjectionList{
 		u.ID,
@@ -60,7 +60,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		aup.UserID,
 	}
 	// Field Permission Check
-	if s.p.Can(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
+	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
 
@@ -146,7 +146,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 }
 
 func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
-	userID, _, _ := auth.GetUserInfoFromContext(ctx)
+	userId, _, _ := auth.GetUserInfoFromContext(ctx)
 
 	selectors := jet.ProjectionList{
 		u.ID,
@@ -165,10 +165,10 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	// Field Permission Check
-	if s.p.Can(userID, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
+	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
-	if s.p.Can(userID, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
+	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
 		selectors = append(selectors, ul.Type)
 	}
 
@@ -193,11 +193,11 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 }
 
 func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityRequest) (*GetUserActivityResponse, error) {
-	userID, _, _ := auth.GetUserInfoFromContext(ctx)
+	userId, _, _ := auth.GetUserInfoFromContext(ctx)
 
 	resp := &GetUserActivityResponse{}
 	// An user can never see their own activity on their own "profile"
-	if userID == req.UserId {
+	if userId == req.UserId {
 		return resp, nil
 	}
 
@@ -239,10 +239,10 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 }
 
 func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*SetUserPropsResponse, error) {
-	userID := auth.GetUserIDFromContext(ctx)
+	userId := auth.GetUserIDFromContext(ctx)
 
 	// Field Permission Check
-	if !s.p.Can(userID, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
+	if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user wanted status!")
 	}
 
@@ -265,7 +265,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	newValue := strconv.FormatBool(req.Props.Wanted)
 	oldValue := strconv.FormatBool(!req.Props.Wanted)
 	s.addUserAcitvity(ctx, &model.ArpanetUserActivity{
-		SourceUserID: userID,
+		SourceUserID: userId,
 		TargetUserID: req.Props.UserId,
 		Type:         int16(users.USER_ACTIVITY_TYPE_CHANGED),
 		Key:          key,

@@ -19,23 +19,23 @@ func NewPermCounter() *PermCounter {
 	}
 }
 
-func (p *PermCounter) GetUser(userID int32) map[string]int {
-	if _, ok := p.UserPerms[userID]; !ok {
-		p.UserPerms[userID] = map[string]int{}
+func (p *PermCounter) GetUser(userId int32) map[string]int {
+	if _, ok := p.UserPerms[userId]; !ok {
+		p.UserPerms[userId] = map[string]int{}
 	}
 
-	return p.UserPerms[userID]
+	return p.UserPerms[userId]
 }
 
-func (p *PermCounter) IncUser(userID int32, name string) {
-	if _, ok := p.UserPerms[userID]; !ok {
-		p.UserPerms[userID] = map[string]int{}
+func (p *PermCounter) IncUser(userId int32, name string) {
+	if _, ok := p.UserPerms[userId]; !ok {
+		p.UserPerms[userId] = map[string]int{}
 	}
 
-	if _, ok := p.UserPerms[userID][name]; !ok {
-		p.UserPerms[userID][name] = 1
+	if _, ok := p.UserPerms[userId][name]; !ok {
+		p.UserPerms[userId][name] = 1
 	} else {
-		p.UserPerms[userID][name]++
+		p.UserPerms[userId][name]++
 	}
 }
 
@@ -54,20 +54,20 @@ func NewMock() *PermsMock {
 	}
 }
 
-func (p *PermsMock) AddUserPerm(userID int32, perm string) {
-	if _, ok := p.UserPerms[userID]; !ok {
-		p.UserPerms[userID] = map[string]interface{}{}
+func (p *PermsMock) AddUserPerm(userId int32, perm string) {
+	if _, ok := p.UserPerms[userId]; !ok {
+		p.UserPerms[userId] = map[string]interface{}{}
 	}
 
-	p.UserPerms[userID][perm] = nil
+	p.UserPerms[userId][perm] = nil
 }
 
-func (p *PermsMock) RemoveUserPerm(userID int32, perm string) {
-	if _, ok := p.UserPerms[userID]; !ok {
+func (p *PermsMock) RemoveUserPerm(userId int32, perm string) {
+	if _, ok := p.UserPerms[userId]; !ok {
 		return
 	}
 
-	delete(p.UserPerms[userID], perm)
+	delete(p.UserPerms[userId], perm)
 }
 
 func (p *PermsMock) GetAllPermissions() (collections.Permissions, error) {
@@ -97,16 +97,16 @@ func (p *PermsMock) CreatePermission(name string, description string) error {
 	return nil
 }
 
-func (p *PermsMock) GetAllPermissionsOfUser(userID int32) (collections.Permissions, error) {
+func (p *PermsMock) GetAllPermissionsOfUser(userId int32) (collections.Permissions, error) {
 	ps := collections.Permissions{}
 
-	if _, ok := p.UserPerms[userID]; !ok {
+	if _, ok := p.UserPerms[userId]; !ok {
 		return nil, nil
 	}
 
 	track := map[string]interface{}{}
 	i := 0
-	for k := range p.UserPerms[userID] {
+	for k := range p.UserPerms[userId] {
 		if _, ok := track[k]; !ok {
 			ps = append(ps, &model.ArpanetPermissions{
 				ID:        uint64(i),
@@ -121,16 +121,16 @@ func (p *PermsMock) GetAllPermissionsOfUser(userID int32) (collections.Permissio
 	return ps, nil
 }
 
-func (p *PermsMock) GetAllPermissionsByPrefixOfUser(userID int32, prefix string) (collections.Permissions, error) {
-	ps, nil := p.GetAllPermissionsOfUser(userID)
+func (p *PermsMock) GetAllPermissionsByPrefixOfUser(userId int32, prefix string) (collections.Permissions, error) {
+	ps, nil := p.GetAllPermissionsOfUser(userId)
 
 	name := helpers.Guard(prefix) + "-"
 
 	return ps.HasPrefix(name), nil
 }
 
-func (p *PermsMock) GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix string) ([]string, error) {
-	ps, _ := p.GetAllPermissionsByPrefixOfUser(userID, prefix)
+func (p *PermsMock) GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix string) ([]string, error) {
+	ps, _ := p.GetAllPermissionsByPrefixOfUser(userId, prefix)
 
 	prefix = helpers.Guard(prefix) + "-"
 
@@ -142,14 +142,14 @@ func (p *PermsMock) GetSuffixOfPermissionsByPrefixOfUser(userID int32, prefix st
 	return list, nil
 }
 
-func (p *PermsMock) Can(userID int32, perm ...string) bool {
+func (p *PermsMock) Can(userId int32, perm ...string) bool {
 	guard := helpers.Guard(strings.Join(perm, "."))
-	p.Counter.IncUser(userID, guard)
+	p.Counter.IncUser(userId, guard)
 
-	if _, ok := p.UserPerms[userID]; !ok {
+	if _, ok := p.UserPerms[userId]; !ok {
 		return false
 	}
 
-	_, ok := p.UserPerms[userID][guard]
+	_, ok := p.UserPerms[userId][guard]
 	return ok
 }
