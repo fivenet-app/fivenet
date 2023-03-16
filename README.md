@@ -6,23 +6,25 @@
     - [x] Separate "accounts" table that allows users to login to the network
     - [ ] Create in-game "register" command to set username and password
 - [x] User Database - 1. Prio
-    - [x] Search by name (`firstname`, `lastname`)
+    - [x] Search by
+        - [x] Name
+        - [x] Wanted State
     - [x] Display a single user's info
         - [x] Show a feed of activity of the user (e.g., documents created, documents mentioned in)
     - [x] Wanted aka "additional UserProps"
         - [x] Allow certain jobs to set a person as wanted
         - [x] Add toggle to display only wanted people
 - [ ] Documents ("Akten")
-    - [ ] Each document is independent and has no direct parent or responses
-        - [ ] Users can leave Comments on documents
-    - [ ] Documents can reference each other ("document activity feed"), e.g., DOJ asks for blood test on a patient, LSMD responds by creating the patient blood test result document and referneces the DOJ response
+    - [x] Each document is independent and has no direct parent or responses
+        - [x] Users can leave Comments on documents
+    - [x] Documents can reference each other ("document activity feed"), e.g., DOJ asks for blood test on a patient, LSMD responds by creating the patient blood test result document and references the DOJ response
     - [ ] Templates (e.g., Haftbefehl)
         - [ ] Editable templates by the leader of the jobs
     - [ ] Sharing
         - [ ] Sharing with the same job automatically
-        - [ ] Sharing with the citizen affected (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ)
+        - [x] Sharing with users/ citizens (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ
         - [ ] People can request access by link
-    - [ ] Category System (no directories/ paths)
+    - [x] Category System (no directories/ paths)
         - [x] ~~Sub-categories~~  - One level of categories that is sorted by names
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
 - [ ] Dispatch System
@@ -37,7 +39,7 @@
     - [x] Multiple different designs
     - [ ] Future: See other jobs' positions and/ or dispatches
 - [ ] Employee Management
-    - [ ] Warn Employees ("Führungsregister")
+    - [ ] Create Notes and Warns for Employees ("Führungsregister")
     - [ ] Promote and Demote Employees
     - [ ] Fire employees
 - [ ] Permissions System
