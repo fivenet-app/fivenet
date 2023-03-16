@@ -41,8 +41,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		if additionalColumns == nil {
 			q = ad.SELECT(
 				ad.AllColumns,
-				dc.ID,
-				dc.Name,
+				dCategory.ID,
+				dCategory.Name,
 				u.ID,
 				u.Identifier,
 				u.Job,
@@ -52,8 +52,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			)
 		} else {
 			additionalColumns = append(jet.ProjectionList{
-				dc.Name,
-				dc.ID,
+				dCategory.Name,
+				dCategory.ID,
 				u.ID,
 				u.Identifier,
 				u.Job,
@@ -81,8 +81,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 				LEFT_JOIN(u,
 					ad.CreatorID.EQ(u.ID),
 				).
-				LEFT_JOIN(dc,
-					ad.CategoryID.EQ(dc.ID),
+				LEFT_JOIN(dCategory,
+					ad.CategoryID.EQ(dCategory.ID),
 				),
 		).WHERE(
 		jet.AND(

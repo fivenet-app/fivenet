@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { Document, DocumentAccess } from '@arpanet/gen/resources/documents/documents_pb';
+import { Document, DocumentAccess, DocumentReference, DocumentRelation, DOC_REFERENCE_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { getDateLocaleString, getDate } from '../../utils/time';
+import { DOC_REFERENCE_TYPE_Util, DOC_RELATION_TYPE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import {
     Menu,
     MenuButton,
@@ -35,10 +36,14 @@ export default defineComponent({
     },
     data() {
         return {
+            DOC_REFERENCE_TYPE_Util: DOC_REFERENCE_TYPE_Util,
+            DOC_RELATION_TYPE_Util: DOC_RELATION_TYPE_Util,
             document: undefined as undefined | Document,
             access: undefined as undefined | DocumentAccess,
             comments: [] as Array<Document>,
             activeResponse: undefined as undefined | Document,
+            feedReferences: [] as Array<DocumentReference>,
+            feedRelations: [] as Array<DocumentRelation>,
         };
     },
     props: {
@@ -66,6 +71,15 @@ export default defineComponent({
                 catch((err: RpcError) => {
                     handleGRPCError(err, this.$route);
                 });
+            getDocStoreClient().
+                getDocumentFeed(req, null).
+                then((resp) => {
+                    this.feedReferences = resp.getReferencesList();
+                    this.feedRelations = resp.getRelationsList();
+                }).
+                catch((err: RpcError) => {
+                    handleGRPCError(err, this.$route);
+                })
         },
         editDocumentTest() {
             const req = new UpdateDocumentRequest();
@@ -317,5 +331,14 @@ export default defineComponent({
                 </aside>
             </div>
         </div>
+    </div>
+    <div class="bg-white">
+        <p v-for="item in feedReferences" class="text-2xl">
+            REFERENCE: {{ item.getSourceDocumentId() }} &RightArrow; {{ DOC_REFERENCE_TYPE_Util.toEnumKey(item.getReference()) }} &RightArrow; {{ item.getTargetDocumentId() }}
+            <hr />
+        </p>
+        <p v-for="item in feedRelations" class="text-2xl">
+            RELATION: {{ item.getSourceUserId() }} &RightArrow; {{ DOC_RELATION_TYPE_Util.toEnumKey(item.getRelation()) }} &RightArrow; {{ item.getTargetUserId() }}
+        </p>
     </div>
 </template>

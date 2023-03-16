@@ -37,8 +37,11 @@ protoc-gen-validate:
 protoc-gen-customizer:
 	go build -o ./cmd/protoc-gen-customizer ./cmd/protoc-gen-customizer
 
+protoc-gen-customizerweb:
+	go build -o ./cmd/protoc-gen-customizerweb ./cmd/protoc-gen-customizerweb
+
 .PHONY: gen-proto
-gen-proto: protoc-gen-validate protoc-gen-customizer
+gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-customizerweb
 	PATH="$$PATH:cmd/protoc-gen-customizer/" \
 	protoc \
 		--proto_path=./validate \
@@ -57,12 +60,14 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 		-exec protoc-go-inject-tag \
 			-input={} \;
 
-	PATH="$$PATH:node_modules/protoc-gen-js/bin/" \
+	PATH="$$PATH:cmd/protoc-gen-customizerweb/:node_modules/protoc-gen-js/bin/" \
 	protoc \
 		--proto_path=./validate \
 		--proto_path=./proto \
 		--js_out=import_style=commonjs,binary:./gen \
 		--grpc-web_out=import_style=typescript,mode=grpcwebtext:./gen \
+		--customizerweb_opt=paths=source_relative \
+		--customizerweb_out="./gen" \
 		$(shell find proto/ -iname "*.proto")
 
 	# Remove validate_pb imports from JS files

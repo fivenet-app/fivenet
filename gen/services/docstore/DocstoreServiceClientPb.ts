@@ -168,6 +168,49 @@ export class DocStoreServiceClient {
     this.methodDescriptorFindDocuments);
   }
 
+  methodDescriptorGetDocument = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/GetDocument',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.GetDocumentRequest,
+    services_docstore_docstore_pb.GetDocumentResponse,
+    (request: services_docstore_docstore_pb.GetDocumentRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.GetDocumentResponse.deserializeBinary
+  );
+
+  getDocument(
+    request: services_docstore_docstore_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetDocumentResponse>;
+
+  getDocument(
+    request: services_docstore_docstore_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.GetDocumentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetDocumentResponse>;
+
+  getDocument(
+    request: services_docstore_docstore_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.GetDocumentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/GetDocument',
+        request,
+        metadata || {},
+        this.methodDescriptorGetDocument,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/GetDocument',
+    request,
+    metadata || {},
+    this.methodDescriptorGetDocument);
+  }
+
   methodDescriptorCreateDocument = new grpcWeb.MethodDescriptor(
     '/services.docstore.DocStoreService/CreateDocument',
     grpcWeb.MethodType.UNARY,
@@ -254,47 +297,262 @@ export class DocStoreServiceClient {
     this.methodDescriptorUpdateDocument);
   }
 
-  methodDescriptorGetDocument = new grpcWeb.MethodDescriptor(
-    '/services.docstore.DocStoreService/GetDocument',
+  methodDescriptorGetDocumentReferences = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/GetDocumentReferences',
     grpcWeb.MethodType.UNARY,
-    services_docstore_docstore_pb.GetDocumentRequest,
-    services_docstore_docstore_pb.GetDocumentResponse,
-    (request: services_docstore_docstore_pb.GetDocumentRequest) => {
+    services_docstore_docstore_pb.GetDocumentReferencesRequest,
+    services_docstore_docstore_pb.GetDocumentReferencesResponse,
+    (request: services_docstore_docstore_pb.GetDocumentReferencesRequest) => {
       return request.serializeBinary();
     },
-    services_docstore_docstore_pb.GetDocumentResponse.deserializeBinary
+    services_docstore_docstore_pb.GetDocumentReferencesResponse.deserializeBinary
   );
 
-  getDocument(
-    request: services_docstore_docstore_pb.GetDocumentRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetDocumentResponse>;
+  getDocumentReferences(
+    request: services_docstore_docstore_pb.GetDocumentReferencesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetDocumentReferencesResponse>;
 
-  getDocument(
-    request: services_docstore_docstore_pb.GetDocumentRequest,
+  getDocumentReferences(
+    request: services_docstore_docstore_pb.GetDocumentReferencesRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.GetDocumentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetDocumentResponse>;
+               response: services_docstore_docstore_pb.GetDocumentReferencesResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetDocumentReferencesResponse>;
 
-  getDocument(
-    request: services_docstore_docstore_pb.GetDocumentRequest,
+  getDocumentReferences(
+    request: services_docstore_docstore_pb.GetDocumentReferencesRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.GetDocumentResponse) => void) {
+               response: services_docstore_docstore_pb.GetDocumentReferencesResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.docstore.DocStoreService/GetDocument',
+          '/services.docstore.DocStoreService/GetDocumentReferences',
         request,
         metadata || {},
-        this.methodDescriptorGetDocument,
+        this.methodDescriptorGetDocumentReferences,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.docstore.DocStoreService/GetDocument',
+      '/services.docstore.DocStoreService/GetDocumentReferences',
     request,
     metadata || {},
-    this.methodDescriptorGetDocument);
+    this.methodDescriptorGetDocumentReferences);
+  }
+
+  methodDescriptorGetDocumentRelations = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/GetDocumentRelations',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.GetDocumentRelationsRequest,
+    services_docstore_docstore_pb.GetDocumentRelationsResponse,
+    (request: services_docstore_docstore_pb.GetDocumentRelationsRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.GetDocumentRelationsResponse.deserializeBinary
+  );
+
+  getDocumentRelations(
+    request: services_docstore_docstore_pb.GetDocumentRelationsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetDocumentRelationsResponse>;
+
+  getDocumentRelations(
+    request: services_docstore_docstore_pb.GetDocumentRelationsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.GetDocumentRelationsResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetDocumentRelationsResponse>;
+
+  getDocumentRelations(
+    request: services_docstore_docstore_pb.GetDocumentRelationsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.GetDocumentRelationsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/GetDocumentRelations',
+        request,
+        metadata || {},
+        this.methodDescriptorGetDocumentRelations,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/GetDocumentRelations',
+    request,
+    metadata || {},
+    this.methodDescriptorGetDocumentRelations);
+  }
+
+  methodDescriptorAddDocumentReferences = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/AddDocumentReferences',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.AddDocumentReferencesRequest,
+    services_docstore_docstore_pb.AddDocumentReferencesResponse,
+    (request: services_docstore_docstore_pb.AddDocumentReferencesRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.AddDocumentReferencesResponse.deserializeBinary
+  );
+
+  addDocumentReferences(
+    request: services_docstore_docstore_pb.AddDocumentReferencesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.AddDocumentReferencesResponse>;
+
+  addDocumentReferences(
+    request: services_docstore_docstore_pb.AddDocumentReferencesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.AddDocumentReferencesResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.AddDocumentReferencesResponse>;
+
+  addDocumentReferences(
+    request: services_docstore_docstore_pb.AddDocumentReferencesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.AddDocumentReferencesResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/AddDocumentReferences',
+        request,
+        metadata || {},
+        this.methodDescriptorAddDocumentReferences,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/AddDocumentReferences',
+    request,
+    metadata || {},
+    this.methodDescriptorAddDocumentReferences);
+  }
+
+  methodDescriptorRemoveDocumentReferences = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/RemoveDocumentReferences',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.RemoveDocumentReferencesRequest,
+    services_docstore_docstore_pb.RemoveDocumentReferencesResponse,
+    (request: services_docstore_docstore_pb.RemoveDocumentReferencesRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.RemoveDocumentReferencesResponse.deserializeBinary
+  );
+
+  removeDocumentReferences(
+    request: services_docstore_docstore_pb.RemoveDocumentReferencesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.RemoveDocumentReferencesResponse>;
+
+  removeDocumentReferences(
+    request: services_docstore_docstore_pb.RemoveDocumentReferencesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.RemoveDocumentReferencesResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.RemoveDocumentReferencesResponse>;
+
+  removeDocumentReferences(
+    request: services_docstore_docstore_pb.RemoveDocumentReferencesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.RemoveDocumentReferencesResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/RemoveDocumentReferences',
+        request,
+        metadata || {},
+        this.methodDescriptorRemoveDocumentReferences,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/RemoveDocumentReferences',
+    request,
+    metadata || {},
+    this.methodDescriptorRemoveDocumentReferences);
+  }
+
+  methodDescriptorAddDocumentRelations = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/AddDocumentRelations',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.AddDocumentRelationsRequest,
+    services_docstore_docstore_pb.AddDocumentRelationsResponse,
+    (request: services_docstore_docstore_pb.AddDocumentRelationsRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.AddDocumentRelationsResponse.deserializeBinary
+  );
+
+  addDocumentRelations(
+    request: services_docstore_docstore_pb.AddDocumentRelationsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.AddDocumentRelationsResponse>;
+
+  addDocumentRelations(
+    request: services_docstore_docstore_pb.AddDocumentRelationsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.AddDocumentRelationsResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.AddDocumentRelationsResponse>;
+
+  addDocumentRelations(
+    request: services_docstore_docstore_pb.AddDocumentRelationsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.AddDocumentRelationsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/AddDocumentRelations',
+        request,
+        metadata || {},
+        this.methodDescriptorAddDocumentRelations,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/AddDocumentRelations',
+    request,
+    metadata || {},
+    this.methodDescriptorAddDocumentRelations);
+  }
+
+  methodDescriptorRemoveDocumentRelations = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/RemoveDocumentRelations',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.RemoveDocumentRelationsRequest,
+    services_docstore_docstore_pb.RemoveDocumentRelationsResponse,
+    (request: services_docstore_docstore_pb.RemoveDocumentRelationsRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.RemoveDocumentRelationsResponse.deserializeBinary
+  );
+
+  removeDocumentRelations(
+    request: services_docstore_docstore_pb.RemoveDocumentRelationsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.RemoveDocumentRelationsResponse>;
+
+  removeDocumentRelations(
+    request: services_docstore_docstore_pb.RemoveDocumentRelationsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.RemoveDocumentRelationsResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.RemoveDocumentRelationsResponse>;
+
+  removeDocumentRelations(
+    request: services_docstore_docstore_pb.RemoveDocumentRelationsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.RemoveDocumentRelationsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/RemoveDocumentRelations',
+        request,
+        metadata || {},
+        this.methodDescriptorRemoveDocumentRelations,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/RemoveDocumentRelations',
+    request,
+    metadata || {},
+    this.methodDescriptorRemoveDocumentRelations);
   }
 
   methodDescriptorGetDocumentComments = new grpcWeb.MethodDescriptor(
@@ -424,49 +682,6 @@ export class DocStoreServiceClient {
     request,
     metadata || {},
     this.methodDescriptorEditDocumentComment);
-  }
-
-  methodDescriptorGetDocumentFeed = new grpcWeb.MethodDescriptor(
-    '/services.docstore.DocStoreService/GetDocumentFeed',
-    grpcWeb.MethodType.UNARY,
-    services_docstore_docstore_pb.GetDocumentFeedRequest,
-    services_docstore_docstore_pb.GetDocumentFeedResponse,
-    (request: services_docstore_docstore_pb.GetDocumentFeedRequest) => {
-      return request.serializeBinary();
-    },
-    services_docstore_docstore_pb.GetDocumentFeedResponse.deserializeBinary
-  );
-
-  getDocumentFeed(
-    request: services_docstore_docstore_pb.GetDocumentFeedRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetDocumentFeedResponse>;
-
-  getDocumentFeed(
-    request: services_docstore_docstore_pb.GetDocumentFeedRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.GetDocumentFeedResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetDocumentFeedResponse>;
-
-  getDocumentFeed(
-    request: services_docstore_docstore_pb.GetDocumentFeedRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.GetDocumentFeedResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/services.docstore.DocStoreService/GetDocumentFeed',
-        request,
-        metadata || {},
-        this.methodDescriptorGetDocumentFeed,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/services.docstore.DocStoreService/GetDocumentFeed',
-    request,
-    metadata || {},
-    this.methodDescriptorGetDocumentFeed);
   }
 
   methodDescriptorGetDocumentAccess = new grpcWeb.MethodDescriptor(

@@ -18,15 +18,15 @@ import (
 )
 
 var (
-	u     = table.Users
-	adt   = table.ArpanetDocumentsTemplates
-	ad    = table.ArpanetDocuments.AS("document")
-	adc   = table.ArpanetDocumentsComments
-	adua  = table.ArpanetDocumentsUserAccess.AS("user_access")
-	adja  = table.ArpanetDocumentsJobAccess.AS("job_access")
-	dc    = table.ArpanetDocumentsCategories.AS("category")
-	adref = table.ArpanetDocumentsReferences
-	adrel = table.ArpanetDocumentsRelations
+	u         = table.Users
+	adt       = table.ArpanetDocumentsTemplates
+	ad        = table.ArpanetDocuments.AS("document")
+	adc       = table.ArpanetDocumentsComments
+	adua      = table.ArpanetDocumentsUserAccess.AS("user_access")
+	adja      = table.ArpanetDocumentsJobAccess.AS("job_access")
+	dCategory = table.ArpanetDocumentsCategories.AS("category")
+	adref     = table.ArpanetDocumentsReferences.AS("documentreference")
+	adrel     = table.ArpanetDocumentsRelations.AS("documentrelation")
 )
 
 type Server struct {
@@ -41,56 +41,6 @@ func NewServer(db *sql.DB, p perms.Permissions) *Server {
 		db: db,
 		p:  p,
 	}
-}
-
-func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
-	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-
-	stmt := adt.SELECT(
-		adt.ID,
-		adt.Job,
-		adt.JobGrade,
-		adt.Title,
-		adt.Description,
-		adt.CreatorID,
-	).
-		FROM(adt).
-		WHERE(
-			jet.AND(
-				adt.Job.EQ(jet.String(job)),
-				adt.JobGrade.LT_EQ(jet.Int32(jobGrade)),
-			),
-		)
-
-	resp := &ListTemplatesResponse{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*GetTemplateResponse, error) {
-	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-
-	stmt := adt.SELECT(
-		adt.AllColumns,
-	).
-		FROM(adt).
-		WHERE(
-			jet.AND(
-				adt.ID.EQ(jet.Uint64(req.TemplateId)),
-				adt.Job.EQ(jet.String(job)),
-				adt.JobGrade.LT_EQ(jet.Int32(jobGrade)),
-			),
-		)
-
-	resp := &GetTemplateResponse{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Template); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
 }
 
 func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (*FindDocumentsResponse, error) {
@@ -250,146 +200,6 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	return &UpdateDocumentResponse{}, nil
 }
 
-func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {
-	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view document comments!")
-	}
-
-	condition := adc.DocumentID.EQ(jet.Uint64(req.DocumentID))
-	countStmt := adc.SELECT(
-		jet.COUNT(ad.ID).AS("total_count"),
-	).
-		FROM(
-			adc,
-		).
-		WHERE(condition)
-	var count struct{ TotalCount int64 }
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
-	}
-
-	stmt := adc.SELECT(
-		adc.ID,
-		adc.Comment,
-		adc.CreatorID,
-		u.ID,
-		u.Identifier,
-		u.Job,
-		u.JobGrade,
-		u.Firstname,
-		u.Lastname,
-	).
-		FROM(
-			adc.
-				LEFT_JOIN(u,
-					adc.CreatorID.EQ(u.ID),
-				),
-		).
-		WHERE(condition)
-
-	resp := &GetDocumentCommentsResponse{}
-	if err := stmt.QueryContext(ctx, s.db, resp.Comments); err != nil {
-		return nil, err
-	}
-
-	resp.TotalCount = count.TotalCount
-	if req.Offset >= resp.TotalCount {
-		resp.Offset = 0
-	} else {
-		resp.Offset = req.Offset
-	}
-	resp.End = resp.Offset + int64(len(resp.Comments))
-
-	return resp, nil
-}
-
-func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error) {
-	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
-	if err != nil {
-		return nil, err
-	}
-	if !check {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to post a comment on this document!")
-	}
-
-	// Clean comment from
-	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
-
-	stmt := adc.INSERT(
-		adc.DocumentID,
-		adc.Comment,
-		adc.CreatorID,
-	).
-		VALUES(
-			req.Comment.DocumentId,
-			req.Comment.Comment,
-			userID,
-		)
-
-	resp := &PostDocumentCommentResponse{}
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
-	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_VIEW)
-	if err != nil {
-		return nil, err
-	}
-	if !check {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this comment!")
-	}
-
-	stmt := adc.UPDATE().
-		SET(
-			adc.Comment.SET(jet.String(req.Comment.Comment)),
-		).
-		WHERE(
-			adc.ID.EQ(jet.Uint64(req.Comment.Id)),
-		)
-
-	resp := &EditDocumentCommentResponse{}
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (s *Server) GetDocumentFeed(ctx context.Context, req *GetDocumentFeedRequest) (*GetDocumentFeedResponse, error) {
-	resp := &GetDocumentFeedResponse{}
-
-	stmt := ad.SELECT(
-		ad.AllColumns,
-		// TODO
-	).
-		FROM(
-			ad.LEFT_JOIN(adref,
-				ad.ID.EQ(adref.TargetDocumentID),
-			),
-		).
-		WHERE(
-			ad.ID.EQ(jet.Int32(int32(req.DocumentId))),
-		)
-
-	fmt.Println(stmt.DebugSql())
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Items); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	userID, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, userID, job, jobGrade, documents.DOC_ACCESS_ACCESS)
@@ -497,7 +307,9 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 			adja.CreatorID,
 		).
 			MODELS(ja)
+
 		fmt.Println(stmt.DebugSql())
+
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return err
 		}
@@ -517,6 +329,9 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 			adua.CreatorID,
 		).
 			MODELS(ua)
+
+		fmt.Println(stmt.DebugSql())
+
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return err
 		}

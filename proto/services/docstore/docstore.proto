@@ -45,6 +45,50 @@ message GetDocumentResponse {
   resources.documents.DocumentAccess access = 2;
 }
 
+message GetDocumentReferencesRequest {
+  uint64 document_id = 1;
+}
+
+message GetDocumentReferencesResponse {
+  repeated resources.documents.DocumentReference references = 1; // @gotags: alias:"reference"
+}
+
+message GetDocumentRelationsRequest {
+  uint64 document_id = 1;
+}
+
+message GetDocumentRelationsResponse {
+  repeated resources.documents.DocumentRelation relations = 1; // @gotags: alias:"relation"
+}
+
+message AddDocumentReferencesRequest {
+  uint64 document_id = 1;
+  repeated resources.documents.DocumentReference references = 2;
+}
+
+message AddDocumentReferencesResponse {}
+
+message RemoveDocumentReferencesRequest {
+  uint64 document_id = 1;
+  repeated uint64 ref_ids = 2;
+}
+
+message RemoveDocumentReferencesResponse {}
+
+message AddDocumentRelationsRequest {
+  uint64 document_id = 1;
+  repeated resources.documents.DocumentRelation relations = 2;
+}
+
+message AddDocumentRelationsResponse {}
+
+message RemoveDocumentRelationsRequest {
+  uint64 document_id = 1;
+  repeated uint64 ref_ids = 2;
+}
+
+message RemoveDocumentRelationsResponse {}
+
 message GetDocumentCommentsRequest {
   uint64 documentID = 1;
   int64 offset = 2 [(validate.rules).int64.gte = 0];
@@ -99,13 +143,6 @@ message UpdateDocumentRequest {
 
 message UpdateDocumentResponse {}
 
-message GetDocumentFeedRequest {
-  uint64 document_id = 1;
-}
-
-message GetDocumentFeedResponse {
-  repeated resources.documents.DocumentFeed items = 1;
-}
 
 message GetDocumentAccessRequest {
   uint64 document_id = 1;
@@ -139,20 +176,31 @@ service DocStoreService {
   // @permission
   rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
   // @permission
+  rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
+  // @permission
   rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
   // @permission: name=CreateDocument
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
 
+  // @permission: name=GetDocument
+  rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse);
+  // @permission: name=GetDocument
+  rpc GetDocumentRelations(GetDocumentRelationsRequest) returns (GetDocumentRelationsResponse);
   // @permission
-  rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
+  rpc AddDocumentReferences(AddDocumentReferencesRequest) returns (AddDocumentReferencesResponse);
+  // @permission: name=AddDocumentReferences
+  rpc RemoveDocumentReferences(RemoveDocumentReferencesRequest) returns (RemoveDocumentReferencesResponse);
+  // @permission
+  rpc AddDocumentRelations(AddDocumentRelationsRequest) returns (AddDocumentRelationsResponse);
+  // @permission: name=AddDocumentRelations
+  rpc RemoveDocumentRelations(RemoveDocumentRelationsRequest) returns (RemoveDocumentRelationsResponse);
+
   // @permission
   rpc GetDocumentComments(GetDocumentCommentsRequest) returns (GetDocumentCommentsResponse);
   // @permission
   rpc PostDocumentComment(PostDocumentCommentRequest) returns (PostDocumentCommentResponse);
   // @permission: name=PostDocumentComment
   rpc EditDocumentComment(EditDocumentCommentRequest) returns (EditDocumentCommentResponse);
-  // @permission
-  rpc GetDocumentFeed(GetDocumentFeedRequest) returns (GetDocumentFeedResponse);
 
   // @permission
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);

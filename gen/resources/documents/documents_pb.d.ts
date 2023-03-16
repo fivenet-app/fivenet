@@ -488,22 +488,27 @@ export class DocumentReference extends jspb.Message {
   hasCreatedAt(): boolean;
   clearCreatedAt(): DocumentReference;
 
-  getDocumentId(): number;
-  setDocumentId(value: number): DocumentReference;
-
-  getDocument(): DocumentShort | undefined;
-  setDocument(value?: DocumentShort): DocumentReference;
-  hasDocument(): boolean;
-  clearDocument(): DocumentReference;
-
   getSourceDocumentId(): number;
   setSourceDocumentId(value: number): DocumentReference;
+
+  getSourceDocument(): DocumentShort | undefined;
+  setSourceDocument(value?: DocumentShort): DocumentReference;
+  hasSourceDocument(): boolean;
+  clearSourceDocument(): DocumentReference;
 
   getReference(): DOC_REFERENCE_TYPE;
   setReference(value: DOC_REFERENCE_TYPE): DocumentReference;
 
   getTargetDocumentId(): number;
   setTargetDocumentId(value: number): DocumentReference;
+
+  getCreatorId(): number;
+  setCreatorId(value: number): DocumentReference;
+
+  getCreator(): resources_users_users_pb.UserShort | undefined;
+  setCreator(value?: resources_users_users_pb.UserShort): DocumentReference;
+  hasCreator(): boolean;
+  clearCreator(): DocumentReference;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DocumentReference.AsObject;
@@ -517,11 +522,12 @@ export namespace DocumentReference {
   export type AsObject = {
     id: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    documentId: number,
-    document?: DocumentShort.AsObject,
     sourceDocumentId: number,
+    sourceDocument?: DocumentShort.AsObject,
     reference: DOC_REFERENCE_TYPE,
     targetDocumentId: number,
+    creatorId: number,
+    creator?: resources_users_users_pb.UserShort.AsObject,
   }
 }
 
@@ -580,32 +586,6 @@ export namespace DocumentRelation {
     relation: DOC_RELATION_TYPE,
     targetUserId: number,
     targetUser?: resources_users_users_pb.UserShort.AsObject,
-  }
-}
-
-export class DocumentFeed extends jspb.Message {
-  getReference(): DocumentReference | undefined;
-  setReference(value?: DocumentReference): DocumentFeed;
-  hasReference(): boolean;
-  clearReference(): DocumentFeed;
-
-  getRelation(): DocumentRelation | undefined;
-  setRelation(value?: DocumentRelation): DocumentFeed;
-  hasRelation(): boolean;
-  clearRelation(): DocumentFeed;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): DocumentFeed.AsObject;
-  static toObject(includeInstance: boolean, msg: DocumentFeed): DocumentFeed.AsObject;
-  static serializeBinaryToWriter(message: DocumentFeed, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): DocumentFeed;
-  static deserializeBinaryFromReader(message: DocumentFeed, reader: jspb.BinaryReader): DocumentFeed;
-}
-
-export namespace DocumentFeed {
-  export type AsObject = {
-    reference?: DocumentReference.AsObject,
-    relation?: DocumentRelation.AsObject,
   }
 }
 
