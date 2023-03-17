@@ -52,7 +52,6 @@ export default defineComponent({
     },
     props: {
         child: {
-            type: Object,
             required: true
         }
     },
