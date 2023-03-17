@@ -1,6 +1,7 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { ref } from 'vue'
+import { defineComponent, ref } from 'vue';
+import { mapState } from 'vuex';
+import { toTitleCase } from '../../utils/strings';
 import {
     Dialog,
     DialogPanel,
@@ -42,82 +43,107 @@ export default defineComponent({
         TransitionChild,
         TransitionRoot,
     },
+    computed: {
+        ...mapState({
+            accessToken: 'accessToken',
+            activeChar: 'activeChar',
+            lastCharID: 'lastCharID',
+        }),
+    },
+    props: {
+        child: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
             sidebarNavigation: [
                 {
                     name: 'Home',
-                    href: '/mockup',
+                    href: '/',
                     permission: '',
                     icon: HomeIcon,
-                    current: true,
+                    current: false,
                 },
                 {
                     name: 'Overview',
-                    href: '/mockup/overview',
+                    href: '/overview',
                     permission: 'overview-view',
                     icon: Square2StackIcon,
                     current: false,
                 },
                 {
                     name: 'Citizens',
-                    href: '/mockup/citizens',
-                    permission: 'users-findusers',
+                    href: '/citizens',
+                    permission: 'citizenstoreservice-findusers',
                     icon: UsersIcon,
                     current: false,
                 },
                 {
                     name: 'Documents',
-                    href: '/mockup/documents',
-                    permission: 'documents-view',
+                    href: '/documents',
+                    permission: 'docstoreservice-finddocuments',
                     icon: DocumentTextIcon,
                     current: false,
                 },
                 {
                     name: 'Dispatches',
-                    href: '/mockup/dispatches',
+                    href: '/dispatches',
                     permission: 'dispatches-view',
                     icon: BellAlertIcon,
                     current: false,
                 },
                 {
                     name: 'Job',
-                    href: '/mockup/job',
-                    permission: 'job-view',
+                    href: '/job',
+                    permission: 'jobs-view',
                     icon: BriefcaseIcon,
                     current: false,
                 },
                 {
                     name: 'Livemap',
-                    href: '/mockup/livemap',
-                    permission: 'livemap-stream',
+                    href: '/livemap',
+                    permission: 'livemapperservice-stream',
                     icon: MapIcon,
                     current: false,
                 },
             ],
             userNavigation: [
-                { name: 'Your Profile', href: '#' },
-                { name: 'Sign out', href: '#' },
-            ],
-            breadcrumbs: [
-                { name: 'Example', href: '#', current: false },
-                { name: 'Example 2', href: '#', current: false }
-            ],
+                { name: 'Login', href: '/login' }
+            ] as { name: string, href: string }[],
+            breadcrumbs: [] as { name: string, href: string, current: boolean }[],
             mobileMenuOpen: ref(false)
         }
+    },
+    mounted() {
+        const sidebarElement = this.sidebarNavigation.find(e => e.name.toLowerCase() === this.$route.name.toLowerCase());
+        if (sidebarElement) {
+            const sidebarIndex = this.sidebarNavigation.indexOf(sidebarElement);
+            this.sidebarNavigation[sidebarIndex].current = true;
+        } else {
+            this.sidebarNavigation[0].current = true;
+        }
+
+        if (this.accessToken)
+            this.userNavigation = [
+                { name: 'Change Character', href: '/login' },
+                { name: 'Sign out', href: '/logout' }
+            ];
+
+        const breadcrumbs = this.$route.path.split('/').filter(e => e !== '');
+        breadcrumbs.forEach(breadcrumb => {
+            const route = this.$router.getRoutes().find(r => r.name?.toString().toLowerCase() === breadcrumb.toLowerCase());
+
+            this.breadcrumbs.push({
+                name: toTitleCase(breadcrumb),
+                href: route ? route.path : '/',
+                current: this.$route.name.toLowerCase() === breadcrumb.toLowerCase()
+            })
+        })
     }
 });
 </script>
-
-<route lang="json">
-{
-    "name": "mockup",
-    "meta": {
-        "requiresAuth": false,
-        "breadCrumbs": []
-    }
-}
-</route>
 
 <template>
     <div class="flex h-screen">
@@ -128,7 +154,7 @@ export default defineComponent({
                     <img class="w-auto h-12" src="/images/logo.png" alt="aRPaNet" />
                 </div>
                 <div class="flex-1 w-full px-2 mt-6 space-y-1">
-                    <router-link v-for="item in sidebarNavigation" v-can="item.permission" :key="item.name" :to="item.href"
+                    <router-link v-for="item in sidebarNavigation" :key="item.name" :to="item.href" v-can="item.permission"
                         :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"
@@ -207,7 +233,7 @@ export default defineComponent({
                                 <ol role="list" class="flex items-center space-x-4">
                                     <li>
                                         <div>
-                                            <router-link to="/mockup"
+                                            <router-link to="/"
                                                 class="text-base-400 hover:text-neutral hover:transition-colors">
                                                 <HomeIconSolid class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                                 <span class="sr-only">Home</span>
@@ -264,14 +290,11 @@ export default defineComponent({
                 <main class="flex-1 overflow-y-auto">
                     <!-- Primary column -->
                     <section aria-labelledby="primary-heading" class="flex flex-col flex-1 h-full min-w-0 lg:order-last">
-                        <!-- Your content -->
+                        <component :is="child" />
                     </section>
                 </main>
 
-                <!-- Secondary column (hidden on smaller screens) -->
-                <aside class="hidden overflow-y-auto border-l-8 w-96 border-base-850 bg-base-900 lg:block">
-                    <!-- Your content -->
-                </aside>
+                <!-- <aside class="hidden overflow-y-auto border-l-8 w-96 border-base-850 bg-base-900 lg:block"></aside> -->
             </div>
         </div>
     </div>

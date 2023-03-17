@@ -1,6 +1,5 @@
 <script lang="ts">
-import Navbar from './components/partials/Navbar.vue';
-import Footer from './components/partials/Footer.vue';
+import Sidebar from './components/partials/Sidebar.vue';
 
 import { defineComponent } from 'vue';
 import store from './store';
@@ -8,8 +7,7 @@ import { NotificationProvider } from './components/notification';
 
 export default defineComponent({
     components: {
-        Navbar,
-        Footer,
+        Sidebar,
         NotificationProvider,
     },
     beforeCreate() {
@@ -23,7 +21,7 @@ export default defineComponent({
         <RouterView v-slot="{ Component, route }">
             <transition name="fade" mode="out-in">
                 <div :key="route.path">
-                    <component :is="Component" />
+                    <Sidebar :child="Component" />
                 </div>
             </transition>
         </RouterView>

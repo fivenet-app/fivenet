@@ -48,7 +48,6 @@ declare module 'vue-router/auto/routes' {
     'Livemap': RouteRecordInfo<'Livemap', '/livemap', Record<never, never>, Record<never, never>>,
     'Login': RouteRecordInfo<'Login', '/login', Record<never, never>, Record<never, never>>,
     'logout': RouteRecordInfo<'logout', '/logout', Record<never, never>, Record<never, never>>,
-    'mockup': RouteRecordInfo<'mockup', '/mockup', Record<never, never>, Record<never, never>>,
     'overview': RouteRecordInfo<'overview', '/overview', Record<never, never>, Record<never, never>>,
   }
 }
