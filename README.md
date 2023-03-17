@@ -44,6 +44,9 @@
     - [ ] Fire employees
 - [ ] Permissions System
     - [ ] Based on Job + Job Rank/ Grade
+- [ ] Breadcrumbs
+  - [ ] Use Document title instead of path
+  - [ ] Correctly make href based on breadcrumb
 
 ## Development
 
