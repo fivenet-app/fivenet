@@ -33,7 +33,7 @@ app.use(store);
 // Add `v-can` directive for easy permission checking
 app.directive('can', (el, binding, vnode) => {
     var permissions = store.state.permissions;
-    if (permissions.includes(binding.value)) {
+    if (permissions.includes(binding.value) || binding.value === '') {
         return (vnode.el.hidden = false);
     } else {
         return (vnode.el.hidden = true);

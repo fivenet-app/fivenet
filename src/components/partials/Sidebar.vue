@@ -111,10 +111,14 @@ export default defineComponent({
         }
     },
     mounted() {
-        const sidebarElement = this.sidebarNavigation.find(e => e.name.toLowerCase() === this.$route.name.toLowerCase());
-        if (sidebarElement) {
-            const sidebarIndex = this.sidebarNavigation.indexOf(sidebarElement);
-            this.sidebarNavigation[sidebarIndex].current = true;
+        if (this.$route.name) {
+            const sidebarElement = this.sidebarNavigation.find(e => e.name.toLowerCase() === this.$route.name.toLowerCase());
+            if (sidebarElement) {
+                const sidebarIndex = this.sidebarNavigation.indexOf(sidebarElement);
+                this.sidebarNavigation[sidebarIndex].current = true;
+            } else {
+                this.sidebarNavigation[0].current = true;
+            }
         } else {
             this.sidebarNavigation[0].current = true;
         }
