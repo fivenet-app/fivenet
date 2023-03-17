@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 
 	"github.com/galexrt/arpanet/query"
 	_ "github.com/go-sql-driver/mysql"
@@ -85,7 +86,7 @@ func (m *DBManager) Setup() {
 
 	m.prepareDBForFirstUse()
 
-	m.LoadTestData()
+	m.LoadBaseData()
 }
 
 func (m *DBManager) DB() *sql.DB {
@@ -102,7 +103,7 @@ func (m *DBManager) getDSN() string {
 
 func (m *DBManager) prepareDBForFirstUse() {
 	// Load and apply premigrate.sql file
-	m.loadSQLFile(filepath.Join("../../../", "tests", "testdata", "premigrate.sql"))
+	m.loadSQLFile(filepath.Join("../../../", "tests", "testdata", "initial_esx.sql"))
 
 	// Use DB migrations to handle the rest
 	if err := query.MigrateDB(zap.NewNop(), m.getDSN()); err != nil {
@@ -114,7 +115,7 @@ func (m *DBManager) getMultiStatementDB() *sql.DB {
 	// Open db connection with multiStatements param so we can apply sql files
 	initDB, err := sql.Open("mysql", m.getDSN()+"&multiStatements=true")
 	if err != nil {
-		log.Fatalf("Failed to open test database connection for premigrate.sql apply: %s", err)
+		log.Fatalf("Failed to open test database connection for multi statement exec: %s", err)
 	}
 	return initDB
 }
@@ -124,16 +125,27 @@ func (m *DBManager) loadSQLFile(file string) {
 
 	c, ioErr := os.ReadFile(file)
 	if ioErr != nil {
-		log.Fatalf("Failed to read premigrate.sql for tests: %s", ioErr)
+		log.Fatalf("Failed to read %s for tests: %s", file, ioErr)
 	}
 	sqlBase := string(c)
 	if _, err := initDB.Exec(sqlBase); err != nil {
-		log.Fatalf("Failed to apply premigrate.sql for tests: %s", err)
+		log.Fatalf("Failed to apply %s for tests: %s", file, err)
 	}
 }
 
-func (m *DBManager) LoadTestData() {
-	m.loadSQLFile(filepath.Join("../../../", "tests", "testdata", "base.sql"))
+func (m *DBManager) LoadBaseData() {
+	path := filepath.Join("../../../", "tests", "testdata", "base_*.sql")
+	files, err := filepath.Glob(path)
+	if err != nil {
+		log.Fatalf("failed to find base data sql files (%s): %s", path, err)
+	}
+	// Sort the found files as they might not be in lexical order which we
+	// need for this case https://github.com/golang/go/issues/17153
+	sort.Strings(files)
+
+	for _, file := range files {
+		m.loadSQLFile(file)
+	}
 }
 
 func (m *DBManager) Stop() {
@@ -144,7 +156,7 @@ func (m *DBManager) Stop() {
 
 	// You can't defer this because os.Exit doesn't care for defer
 	if err := m.pool.Purge(m.resource); err != nil {
-		log.Fatalf("Could not purge resource: %s", err)
+		log.Fatalf("Could not purge container resource: %s", err)
 	}
 }
 
@@ -170,5 +182,6 @@ func (m *DBManager) Reset() {
 		}
 	}
 
-	m.LoadTestData()
+	// Load base test data after every reset
+	m.LoadBaseData()
 }
