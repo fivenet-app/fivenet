@@ -104,20 +104,11 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 func (s *Server) GenerateRandomUserMarker() {
 	userIds := []int32{
-		// ambulance
-		26061,
-		4650,
-		29225,
-		29205,
-		931,
-		16235,
-		6173,
-		20232,
-		1634,
-		17800,
-		27434,
-		15706,
-		3046,
+		1,
+		2,
+		3,
+		4,
+		5,
 	}
 
 	for {

@@ -1,5 +1,5 @@
 # Local test database run through `docker-compose`
-mysqlDSN: "arpanet:changeme@tcp(127.0.0.1:3306)/arpanet?charset=utf8mb4&parseTime=True&loc=Local"
+mysqlDSN: "arpanet:changeme@tcp(localhost:3306)/arpanet?charset=utf8mb4&parseTime=True&loc=Local"
 excludeTables:
   - "arpanet_zschema_migrations"
 includeTables:

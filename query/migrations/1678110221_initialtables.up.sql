@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_templates` (
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE current_timestamp(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `job` varchar(20) NOT NULL,
-  `job_grade` int(11) NOT NULL DEFAULT 1,
+  `job_grade` int(11) NOT NULL DEFAULT 0,
   `category_id` bigint(20) unsigned DEFAULT NULL,
   `title` longtext NOT NULL,
   `description` longtext NOT NULL,

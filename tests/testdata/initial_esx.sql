@@ -1,5 +1,5 @@
 -- Table: users
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `identifier` varchar(64) NOT NULL,
   `license` varchar(50) DEFAULT NULL,
@@ -200,9 +200,42 @@ VALUES (
     '2023-01-26 09:01:51.000',
     '2023-03-11 21:06:27.000',
     NULL
+  ),
+  (
+    5,
+    'char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4',
+    NULL,
+    'user',
+    '{}',
+    'unemployed',
+    1,
+    '{}',
+    '{"x":981.96,"y":45.73,"z":80.99,"heading":342.99}',
+    'Peter',
+    'Hans',
+    '10.02.1991',
+    'm',
+    '178',
+    0,
+    NULL,
+    0,
+    '{}',
+    '1550044',
+    '',
+    '',
+    0,
+    209,
+    2244596,
+    '',
+    0,
+    200,
+    0,
+    '2023-01-26 09:01:51.000',
+    '2023-03-11 21:06:27.000',
+    NULL
   );
 -- Table: jobs
-CREATE TABLE `jobs` (
+CREATE TABLE IF NOT EXISTS `jobs` (
   `name` varchar(50) NOT NULL,
   `label` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`name`)
@@ -211,9 +244,10 @@ CREATE TABLE `jobs` (
 INSERT INTO jobs (name, label)
 VALUES ('ambulance', 'LSMD'),
   ('doj', 'DOJ'),
-  ('police', 'LSPD');
+  ('police', 'LSPD'),
+  ('unemployed', 'Unemployed');
 -- Table: job_grades
-CREATE TABLE `job_grades` (
+CREATE TABLE IF NOT EXISTS `job_grades` (
   `job_name` varchar(50) NOT NULL,
   `grade` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,

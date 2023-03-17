@@ -101,21 +101,39 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		LIMIT(database.PaginationLimit)
 }
 
-func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentID uint64, userId int32, job string, jobGrade int32, access documents.DOC_ACCESS) (bool, error) {
-	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, access, documentID)
+func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentID uint64, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS) (bool, error) {
+	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, publicOk, access, documentID)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userId int32, job string, jobGrade int32, access documents.DOC_ACCESS, documentIDs ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, access, documentIDs...)
+func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS, documentIDs ...uint64) (bool, error) {
+	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, publicOk, access, documentIDs...)
 	return len(out) == len(documentIDs), err
 }
 
-func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32, job string, jobGrade int32, access documents.DOC_ACCESS, documentIDs ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS, documentIDs ...uint64) ([]uint64, error) {
 	ids := make([]jet.Expression, len(documentIDs))
 	for i := 0; i < len(documentIDs); i++ {
 		ids[i] = jet.Uint64(documentIDs[i])
 	}
+
+	condition := jet.AND(
+		docs.ID.IN(ids...),
+		docs.DeletedAt.IS_NULL(),
+		jet.OR(
+			docs.Public.IS_TRUE(),
+			docs.CreatorID.EQ(jet.Int32(userId)),
+			jet.AND(
+				dUserAccess.Access.IS_NOT_NULL(),
+				dUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
+			),
+			jet.AND(
+				dUserAccess.Access.IS_NULL(),
+				dJobAccess.Access.IS_NOT_NULL(),
+				dJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
+			),
+		),
+	)
 
 	stmt := docs.SELECT(
 		docs.ID,
@@ -129,24 +147,7 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32,
 						AND(dJobAccess.Job.EQ(jet.String(job))).
 						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				),
-		).WHERE(
-		jet.AND(
-			docs.ID.IN(ids...),
-			docs.DeletedAt.IS_NULL(),
-			jet.OR(
-				docs.CreatorID.EQ(jet.Int32(userId)),
-				jet.AND(
-					dUserAccess.Access.IS_NOT_NULL(),
-					dUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
-				),
-				jet.AND(
-					dUserAccess.Access.IS_NULL(),
-					dJobAccess.Access.IS_NOT_NULL(),
-					dJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
-				),
-			),
-		),
-	)
+		).WHERE(condition)
 
 	fmt.Println(stmt.DebugSql())
 
