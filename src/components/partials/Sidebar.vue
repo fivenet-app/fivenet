@@ -50,11 +50,6 @@ export default defineComponent({
             lastCharID: 'lastCharID',
         }),
     },
-    props: {
-        child: {
-            required: true
-        }
-    },
     data() {
         return {
             sidebarNavigation: [
@@ -289,7 +284,7 @@ export default defineComponent({
                 <main class="flex-1 overflow-y-auto">
                     <!-- Primary column -->
                     <section aria-labelledby="primary-heading" class="flex flex-col flex-1 h-full min-w-0 lg:order-last">
-                        <component :is="child" />
+                        <slot></slot>
                     </section>
                 </main>
 

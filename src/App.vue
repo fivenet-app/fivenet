@@ -21,7 +21,9 @@ export default defineComponent({
         <RouterView v-slot="{ Component, route }">
             <transition name="fade" mode="out-in">
                 <div :key="route.path">
-                    <Sidebar :child="Component" />
+                    <Sidebar>
+                        <component :is="Component"></component>
+                    </Sidebar>
                 </div>
             </transition>
         </RouterView>
