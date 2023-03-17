@@ -1,12 +1,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Navbar from '../../components/partials/Navbar.vue';
 import Footer from '../../components/partials/Footer.vue';
 import Livemap from '../../components/Livemap.vue';
 
 export default defineComponent({
     components: {
-        Navbar,
         Footer,
         Livemap,
     },
@@ -25,7 +23,6 @@ export default defineComponent({
 </route>
 
 <template>
-    <Navbar />
     <div class="w-full">
         <Livemap />
     </div>

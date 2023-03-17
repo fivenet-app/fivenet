@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapActions } from 'vuex';
-import Navbar from '../components/partials/Navbar.vue';
 import Footer from '../components/partials/Footer.vue';
 import HeroFull from '../components/partials/HeroFull.vue';
 
@@ -9,7 +8,6 @@ import './herofull-pattern.css';
 
 export default defineComponent({
     components: {
-        Navbar,
         Footer,
         HeroFull
     },
@@ -38,7 +36,6 @@ export default defineComponent({
 </route>
 
 <template>
-    <Navbar />
     <HeroFull>
         <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
             Signed out

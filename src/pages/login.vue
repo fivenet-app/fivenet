@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
-import Navbar from '../components/partials/Navbar.vue';
 import Footer from '../components/partials/Footer.vue';
 import Login from '../components/Login.vue';
 import ContentWrapper from '../components/partials/ContentWrapper.vue';
@@ -10,7 +9,6 @@ import CharacterSelector from '../components/login/CharacterSelector.vue';
 
 export default defineComponent({
     components: {
-        Navbar,
         Footer,
         Login,
         NavPageHeader,
@@ -36,7 +34,6 @@ export default defineComponent({
 </route>
 
 <template>
-    <Navbar />
     <NavPageHeader v-if="!accessToken" title="Login" />
     <NavPageHeader v-else title="Character Selector" />
     <ContentWrapper>

@@ -1,5 +1,4 @@
 <script lang="ts">
-import Navbar from '../../components/partials/Navbar.vue';
 import Footer from '../../components/partials/Footer.vue';
 
 import { defineComponent } from 'vue';
@@ -8,11 +7,10 @@ import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 
 export default defineComponent({
     components: {
-    Navbar,
-    Footer,
-    ContentWrapper,
-    NavPageHeader
-},
+        Footer,
+        ContentWrapper,
+        NavPageHeader
+    },
 });
 </script>
 
@@ -30,7 +28,6 @@ export default defineComponent({
 </route>
 
 <template>
-    <Navbar />
     <NavPageHeader title="Job" />
     <ContentWrapper>
         <h1 class="text-lg font-semibold leading-6 text-white">EMPLOYEE INFO AND MANAGEMENT SYSTEM</h1>

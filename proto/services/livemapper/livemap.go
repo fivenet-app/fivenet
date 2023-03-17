@@ -136,10 +136,10 @@ func (s *Server) GenerateRandomUserMarker() {
 	}
 
 	moveMarkers := func() {
-		xMin := -25
-		xMax := 25
-		yMin := -25
-		yMax := 25
+		xMin := -100
+		xMax := 100
+		yMin := -100
+		yMax := 100
 
 		for i := 0; i < len(markers); i++ {
 			curX := *markers[i].X

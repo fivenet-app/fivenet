@@ -1,6 +1,5 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Navbar from '../../components/partials/Navbar.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import Footer from '../../components/partials/Footer.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
@@ -8,7 +7,6 @@ import DocumentView from '../../components/documents/DocumentView.vue';
 
 export default defineComponent({
     components: {
-        Navbar,
         Footer,
         ContentWrapper,
         NavPageHeader,
@@ -40,7 +38,6 @@ export default defineComponent({
 </route>
 
 <template>
-    <Navbar />
     <NavPageHeader title="Document" />
     <ContentWrapper>
         <DocumentView v-if="documentID > 0" :documentID="documentID" />

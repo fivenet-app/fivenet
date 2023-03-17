@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Navbar from '../../components/partials/Navbar.vue';
 import Footer from '../../components/partials/Footer.vue';
 import CitizensList from '../../components/citizens/CitizensList.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
@@ -9,12 +8,11 @@ import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 
 export default defineComponent({
     components: {
-    Navbar,
-    Footer,
-    CitizensList,
-    ContentWrapper,
-    NavPageHeader
-},
+        Footer,
+        CitizensList,
+        ContentWrapper,
+        NavPageHeader
+    },
 });
 </script>
 
@@ -32,7 +30,6 @@ export default defineComponent({
 </route>
 
 <template>
-    <Navbar />
     <NavPageHeader title="Citizens" />
     <ContentWrapper>
         <CitizensList />

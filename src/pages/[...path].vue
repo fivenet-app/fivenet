@@ -1,5 +1,4 @@
 <script lang="ts">
-import Navbar from '../components/partials/Navbar.vue';
 import Footer from '../components/partials/Footer.vue';
 
 import { defineComponent } from 'vue';
@@ -10,7 +9,6 @@ import HeroFull from '../components/partials/HeroFull.vue';
 
 export default defineComponent({
     components: {
-        Navbar,
         Footer,
         HeroFull,
     },
@@ -31,7 +29,6 @@ export default defineComponent({
 </route>
 
 <template>
-    <Navbar />
     <HeroFull>
         <h1 class="text-5xl font-bold text-white">Page Not Found</h1>
         <h2 class="text-4xl text-white">4😵‍💫4 Error</h2>

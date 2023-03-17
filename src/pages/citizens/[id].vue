@@ -55,7 +55,6 @@ export default defineComponent({
 </route>
 
 <template>
-    <Navbar />
     <NavPageHeader title="Citizens" />
     <ContentWrapper>
         <div v-if="user">
