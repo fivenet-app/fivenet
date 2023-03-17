@@ -111,15 +111,15 @@ func (s *Server) GenerateRandomUserMarker() {
 		5,
 	}
 
-	for {
-		markers := make([]*model.ArpanetUserLocations, len(userIds))
-		for i := 0; i < len(userIds); i++ {
-			xMin := -3500
-			xMax := 4300
-			x := float64(rand.Intn(xMax-xMin+1) + xMin)
+	markers := make([]*model.ArpanetUserLocations, len(userIds))
 
-			yMin := -3600
-			yMax := 7800
+	resetMarkers := func() {
+		xMin := -3300
+		xMax := 4300
+		yMin := -3300
+		yMax := 5000
+		for i := 0; i < len(markers); i++ {
+			x := float64(rand.Intn(xMax-xMin+1) + xMin)
 			y := float64(rand.Intn(yMax-yMin+1) + yMin)
 
 			job := "ambulance"
@@ -132,6 +132,36 @@ func (s *Server) GenerateRandomUserMarker() {
 				X: &x,
 				Y: &y,
 			}
+		}
+	}
+
+	moveMarkers := func() {
+		xMin := -25
+		xMax := 25
+		yMin := -25
+		yMax := 25
+
+		for i := 0; i < len(markers); i++ {
+			curX := *markers[i].X
+			curY := *markers[i].Y
+
+			newX := curX + float64(rand.Intn(xMax-xMin+1)+xMin)
+			newY := curY + float64(rand.Intn(yMax-yMin+1)+yMin)
+
+			markers[i].X = &newX
+			markers[i].Y = &newY
+		}
+	}
+
+	resetMarkers()
+
+	counter := 0
+	for {
+		if counter >= 15 {
+			resetMarkers()
+			counter = 0
+		} else {
+			moveMarkers()
 		}
 
 		stmt := l.INSERT(
@@ -152,6 +182,7 @@ func (s *Server) GenerateRandomUserMarker() {
 			s.logger.Error("failed to insert/ update random location to locations table", zap.Error(err))
 		}
 
+		counter++
 		time.Sleep(2 * time.Second)
 	}
 }
