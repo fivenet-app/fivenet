@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	l = table.ArpanetUserLocations
-	u = table.Users.AS("user")
+	locs  = table.ArpanetUserLocations
+	users = table.Users.AS("user")
 )
 
 type Server struct {
@@ -56,38 +56,38 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		sqlJobs[k] = jet.String(jobs[k])
 	}
 
-	l := l.AS("usermarker")
-	stmt := l.SELECT(
-		l.UserID,
-		l.Job,
-		l.X,
-		l.Y,
-		l.UpdatedAt,
-		u.ID,
-		u.Identifier,
-		u.Job,
-		u.JobGrade,
-		u.Firstname,
-		u.Lastname,
+	locs := locs.AS("usermarker")
+	stmt := locs.SELECT(
+		locs.UserID,
+		locs.Job,
+		locs.X,
+		locs.Y,
+		locs.UpdatedAt,
+		users.ID,
+		users.Identifier,
+		users.Job,
+		users.JobGrade,
+		users.Firstname,
+		users.Lastname,
 	).
 		FROM(
-			l.
-				LEFT_JOIN(u,
-					l.UserID.EQ(u.ID),
+			locs.
+				LEFT_JOIN(users,
+					locs.UserID.EQ(users.ID),
 				),
 		).
 		WHERE(
-			l.Job.IN(sqlJobs...).
+			locs.Job.IN(sqlJobs...).
 				AND(
-					l.Hidden.IS_FALSE(),
+					locs.Hidden.IS_FALSE(),
 				).
 				AND(
-					l.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE))),
+					locs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE))),
 				),
 		)
 
 	for {
-		resp := &ServerStreamResponse{
+		resp := &StreamResponse{
 			Dispatches: []*livemap.DispatchMarker{},
 		}
 
@@ -164,17 +164,17 @@ func (s *Server) GenerateRandomUserMarker() {
 			moveMarkers()
 		}
 
-		stmt := l.INSERT(
-			l.UserID,
-			l.Job,
-			l.X,
-			l.Y,
-			l.Hidden,
+		stmt := locs.INSERT(
+			locs.UserID,
+			locs.Job,
+			locs.X,
+			locs.Y,
+			locs.Hidden,
 		).
 			MODELS(markers).
 			ON_DUPLICATE_KEY_UPDATE(
-				l.X.SET(jet.RawFloat("VALUES(x)")),
-				l.Y.SET(jet.RawFloat("VALUES(y)")),
+				locs.X.SET(jet.RawFloat("VALUES(x)")),
+				locs.Y.SET(jet.RawFloat("VALUES(y)")),
 			)
 
 		_, err := stmt.Exec(s.db)

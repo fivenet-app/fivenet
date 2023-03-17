@@ -29,6 +29,7 @@ import (
 	pbdocstore "github.com/galexrt/arpanet/proto/services/docstore"
 	pbjobs "github.com/galexrt/arpanet/proto/services/jobs"
 	pblivemapper "github.com/galexrt/arpanet/proto/services/livemapper"
+	pbnotificator "github.com/galexrt/arpanet/proto/services/notificator"
 )
 
 type RegisterFunc func() error
@@ -82,6 +83,7 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 	livemapper := pblivemapper.NewServer(logger.Named("grpc_livemap"), db, p)
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
 	go livemapper.GenerateRandomUserMarker()
+	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p))
 
 	return grpcServer, lis
 }

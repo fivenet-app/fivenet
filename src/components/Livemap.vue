@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue';
 import { getLivemapperClient, handleGRPCError } from '../grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
-import { StreamRequest, ServerStreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
+import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
 import { DispatchMarker, UserMarker } from '@arpanet/gen/resources/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
@@ -31,7 +31,7 @@ const position = new Position();
 export default defineComponent({
     data() {
         return {
-            stream: null as null | ClientReadableStream<ServerStreamResponse>,
+            stream: null as null | ClientReadableStream<StreamResponse>,
             map: {} as undefined | Livemap,
             hash: {} as Hash,
             zoom: 1,

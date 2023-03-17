@@ -131,7 +131,6 @@ func (s *Server) refreshDocumentCategories() error {
 	return nil
 }
 
-// TODO use Bleve search in the future
 func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error) {
 	resp := &CompleteJobNamesResponse{}
 	keys := s.jobsCache.Keys()

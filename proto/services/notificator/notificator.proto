@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package services.notificator;
+option go_package = "github.com/galexrt/arpanet/proto/services/notificator;notificator";
+
+import "resources/notifications/notifications.proto";
+import "validate/validate.proto";
+
+message StreamRequest {
+  uint64 last_id = 1;
+}
+
+message StreamResponse {
+  uint64 last_id = 1;
+  repeated resources.notifications.Notification notifications = 2;
+}
+
+message GetNotificationsRequest {
+  int64 offset = 1 [(validate.rules).int64.gte = 0];
+}
+
+message GetNotificationsResponse {
+  int64 total_count = 1;
+  int64 offset = 2;
+  int64 end = 3;
+  repeated resources.notifications.Notification notifications = 4;
+}
+
+message ReadNotificationsRequest {
+  repeated uint64 ids = 1;
+}
+
+message ReadNotificationsResponse {}
+
+service NotificatorService {
+  // @permission
+  rpc Stream(StreamRequest) returns (stream StreamResponse);
+
+  // @permission
+  rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse);
+
+  // @permission
+  rpc ReadNotifications(ReadNotificationsRequest) returns (ReadNotificationsResponse);
+}

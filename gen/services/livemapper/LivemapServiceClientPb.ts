@@ -43,16 +43,16 @@ export class LivemapperServiceClient {
     '/services.livemapper.LivemapperService/Stream',
     grpcWeb.MethodType.SERVER_STREAMING,
     services_livemapper_livemap_pb.StreamRequest,
-    services_livemapper_livemap_pb.ServerStreamResponse,
+    services_livemapper_livemap_pb.StreamResponse,
     (request: services_livemapper_livemap_pb.StreamRequest) => {
       return request.serializeBinary();
     },
-    services_livemapper_livemap_pb.ServerStreamResponse.deserializeBinary
+    services_livemapper_livemap_pb.StreamResponse.deserializeBinary
   );
 
   stream(
     request: services_livemapper_livemap_pb.StreamRequest,
-    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<services_livemapper_livemap_pb.ServerStreamResponse> {
+    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<services_livemapper_livemap_pb.StreamResponse> {
     return this.client_.serverStreaming(
       this.hostname_ +
         '/services.livemapper.LivemapperService/Stream',

@@ -17,26 +17,26 @@ export namespace StreamRequest {
   }
 }
 
-export class ServerStreamResponse extends jspb.Message {
+export class StreamResponse extends jspb.Message {
   getDispatchesList(): Array<resources_livemap_livemap_pb.DispatchMarker>;
-  setDispatchesList(value: Array<resources_livemap_livemap_pb.DispatchMarker>): ServerStreamResponse;
-  clearDispatchesList(): ServerStreamResponse;
+  setDispatchesList(value: Array<resources_livemap_livemap_pb.DispatchMarker>): StreamResponse;
+  clearDispatchesList(): StreamResponse;
   addDispatches(value?: resources_livemap_livemap_pb.DispatchMarker, index?: number): resources_livemap_livemap_pb.DispatchMarker;
 
   getUsersList(): Array<resources_livemap_livemap_pb.UserMarker>;
-  setUsersList(value: Array<resources_livemap_livemap_pb.UserMarker>): ServerStreamResponse;
-  clearUsersList(): ServerStreamResponse;
+  setUsersList(value: Array<resources_livemap_livemap_pb.UserMarker>): StreamResponse;
+  clearUsersList(): StreamResponse;
   addUsers(value?: resources_livemap_livemap_pb.UserMarker, index?: number): resources_livemap_livemap_pb.UserMarker;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ServerStreamResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: ServerStreamResponse): ServerStreamResponse.AsObject;
-  static serializeBinaryToWriter(message: ServerStreamResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ServerStreamResponse;
-  static deserializeBinaryFromReader(message: ServerStreamResponse, reader: jspb.BinaryReader): ServerStreamResponse;
+  toObject(includeInstance?: boolean): StreamResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: StreamResponse): StreamResponse.AsObject;
+  static serializeBinaryToWriter(message: StreamResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StreamResponse;
+  static deserializeBinaryFromReader(message: StreamResponse, reader: jspb.BinaryReader): StreamResponse;
 }
 
-export namespace ServerStreamResponse {
+export namespace StreamResponse {
   export type AsObject = {
     dispatchesList: Array<resources_livemap_livemap_pb.DispatchMarker.AsObject>,
     usersList: Array<resources_livemap_livemap_pb.UserMarker.AsObject>,

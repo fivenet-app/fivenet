@@ -45,8 +45,13 @@
 - [ ] Permissions System
     - [ ] Based on Job + Job Rank/ Grade
 - [ ] Breadcrumbs
-  - [ ] Use Document title instead of path
+  - [ ] Use "page title" (e.g., when viewing an user or editing a document) it should be reflected in the breadcrumbs, instead of just relying on the path
   - [ ] Correctly make href based on breadcrumb
+
+### Future Ideas
+
+- [ ] Completor Service
+    - [ ] Use [Bleve search](https://blevesearch.com/)
 
 ## Development
 

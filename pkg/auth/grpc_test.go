@@ -45,7 +45,7 @@ func TestGRPCAuthFunc(t *testing.T) {
 			msg:       "valid token",
 		},
 	} {
-		ctx := metautils.NiceMD(run.md).ToIncoming(context.TODO())
+		ctx := metautils.NiceMD(run.md).ToIncoming(context.Background())
 		out, err := grpcAuth.GRPCAuthFunc(ctx, "/services.Example/GetExample")
 		if run.errCode != codes.OK {
 			assert.Equal(t, run.errCode, status.Code(err), run.msg)

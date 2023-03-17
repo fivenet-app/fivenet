@@ -157,7 +157,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, err
 	}
 
-	if err := s.handleDocumentAccess(ctx, DOC_ACCESS_UPDATE_MODE_REPLACE, uint64(lastId), req.Access); err != nil {
+	if err := s.handleDocumentAccessChanges(ctx, DOC_ACCESS_UPDATE_MODE_REPLACE, uint64(lastId), req.Access); err != nil {
 		return nil, err
 	}
 
@@ -252,14 +252,14 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
 	resp := &SetDocumentAccessResponse{}
 
-	if err := s.handleDocumentAccess(ctx, req.Mode, req.DocumentId, req.Access); err != nil {
+	if err := s.handleDocumentAccessChanges(ctx, req.Mode, req.DocumentId, req.Access); err != nil {
 		return nil, err
 	}
 
 	return resp, nil
 }
 
-func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDATE_MODE, documentID uint64, access *documents.DocumentAccess) error {
+func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCESS_UPDATE_MODE, documentID uint64, access *documents.DocumentAccess) error {
 	userId := auth.GetUserIDFromContext(ctx)
 
 	// Select existing job and user accesses
@@ -279,8 +279,6 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 			dJobAccess.DocumentID.EQ(jet.Uint64(documentID)),
 		)
 
-	fmt.Println(selectStmt.DebugSql())
-
 	if err := selectStmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
@@ -288,50 +286,76 @@ func (s *Server) handleDocumentAccess(ctx context.Context, mode DOC_ACCESS_UPDAT
 	}
 
 	// TODO add/update/remove for document access based on the current access in the database
+	_ = dest.jobs
+	_ = dest.users
 
-	ja := access.Jobs
-	// Create accesses
-	if len(ja) > 0 {
-		for k := 0; k < len(ja); k++ {
-			ja[k].DocumentId = documentID
-			ja[k].CreatorId = userId
+	switch mode {
+	case DOC_ACCESS_UPDATE_MODE_ADD:
+		ja := access.Jobs
+		// Create accesses
+		if len(ja) > 0 {
+			for k := 0; k < len(ja); k++ {
+				ja[k].DocumentId = documentID
+				ja[k].CreatorId = userId
+			}
+
+			// Create document job access
+			stmt := dJobAccess.INSERT(
+				dJobAccess.DocumentID,
+				dJobAccess.Job,
+				dJobAccess.MinimumGrade,
+				dJobAccess.Access,
+				dJobAccess.CreatorID,
+			).
+				MODELS(ja)
+
+			fmt.Println(stmt.DebugSql())
+
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				return err
+			}
 		}
 
-		// Create document job access
-		stmt := dJobAccess.INSERT(
-			dJobAccess.DocumentID,
-			dJobAccess.Job,
-			dJobAccess.MinimumGrade,
-			dJobAccess.Access,
-			dJobAccess.CreatorID,
-		).
-			MODELS(ja)
+		ua := access.Users
+		if len(ua) > 0 {
+			for k := 0; k < len(ua); k++ {
+				ua[k].DocumentId = documentID
+				ua[k].CreatorId = userId
+			}
+			// Create document user access
+			stmt := dUserAccess.INSERT(
+				dUserAccess.DocumentID,
+				dUserAccess.UserID,
+				dUserAccess.Access,
+				dUserAccess.CreatorID,
+			).
+				MODELS(ua)
 
-		fmt.Println(stmt.DebugSql())
+			fmt.Println(stmt.DebugSql())
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				return err
+			}
+		}
+
+	case DOC_ACCESS_UPDATE_MODE_REPLACE:
+		// TODO
+
+	case DOC_ACCESS_UPDATE_MODE_DELETE:
+		// TODO
+
+	case DOC_ACCESS_UPDATE_MODE_CLEAR:
+		jobAccessStmt := dJobAccess.DELETE().
+			WHERE(dJobAccess.DocumentID.EQ(jet.Uint64(documentID)))
+
+		if _, err := jobAccessStmt.ExecContext(ctx, s.db); err != nil {
 			return err
 		}
-	}
 
-	ua := access.Users
-	if len(ua) > 0 {
-		for k := 0; k < len(ua); k++ {
-			ua[k].DocumentId = documentID
-			ua[k].CreatorId = userId
-		}
-		// Create document user access
-		stmt := dUserAccess.INSERT(
-			dUserAccess.DocumentID,
-			dUserAccess.UserID,
-			dUserAccess.Access,
-			dUserAccess.CreatorID,
-		).
-			MODELS(ua)
+		userAccessStmt := dUserAccess.DELETE().
+			WHERE(dUserAccess.DocumentID.EQ(jet.Uint64(documentID)))
 
-		fmt.Println(stmt.DebugSql())
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := userAccessStmt.ExecContext(ctx, s.db); err != nil {
 			return err
 		}
 	}

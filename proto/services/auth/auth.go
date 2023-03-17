@@ -227,7 +227,6 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 }
 
 func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutResponse, error) {
-	// TODO till we have a JWT token manager "blocking" users when they logout, nothing todo here
 	return &LogoutResponse{
 		Success: true,
 	}, nil

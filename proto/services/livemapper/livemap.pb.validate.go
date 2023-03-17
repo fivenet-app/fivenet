@@ -135,22 +135,22 @@ var _ interface {
 	ErrorName() string
 } = StreamRequestValidationError{}
 
-// Validate checks the field values on ServerStreamResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ServerStreamResponse) Validate() error {
+// Validate checks the field values on StreamResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *StreamResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ServerStreamResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// ServerStreamResponseMultiError, or nil if none found.
-func (m *ServerStreamResponse) ValidateAll() error {
+// ValidateAll checks the field values on StreamResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in StreamResponseMultiError,
+// or nil if none found.
+func (m *StreamResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ServerStreamResponse) validate(all bool) error {
+func (m *StreamResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -164,7 +164,7 @@ func (m *ServerStreamResponse) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ServerStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  fmt.Sprintf("Dispatches[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -172,7 +172,7 @@ func (m *ServerStreamResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ServerStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  fmt.Sprintf("Dispatches[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -181,7 +181,7 @@ func (m *ServerStreamResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ServerStreamResponseValidationError{
+				return StreamResponseValidationError{
 					field:  fmt.Sprintf("Dispatches[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -198,7 +198,7 @@ func (m *ServerStreamResponse) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ServerStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  fmt.Sprintf("Users[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -206,7 +206,7 @@ func (m *ServerStreamResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ServerStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  fmt.Sprintf("Users[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -215,7 +215,7 @@ func (m *ServerStreamResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ServerStreamResponseValidationError{
+				return StreamResponseValidationError{
 					field:  fmt.Sprintf("Users[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -226,19 +226,19 @@ func (m *ServerStreamResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ServerStreamResponseMultiError(errors)
+		return StreamResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// ServerStreamResponseMultiError is an error wrapping multiple validation
-// errors returned by ServerStreamResponse.ValidateAll() if the designated
-// constraints aren't met.
-type ServerStreamResponseMultiError []error
+// StreamResponseMultiError is an error wrapping multiple validation errors
+// returned by StreamResponse.ValidateAll() if the designated constraints
+// aren't met.
+type StreamResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ServerStreamResponseMultiError) Error() string {
+func (m StreamResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -247,11 +247,11 @@ func (m ServerStreamResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ServerStreamResponseMultiError) AllErrors() []error { return m }
+func (m StreamResponseMultiError) AllErrors() []error { return m }
 
-// ServerStreamResponseValidationError is the validation error returned by
-// ServerStreamResponse.Validate if the designated constraints aren't met.
-type ServerStreamResponseValidationError struct {
+// StreamResponseValidationError is the validation error returned by
+// StreamResponse.Validate if the designated constraints aren't met.
+type StreamResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -259,24 +259,22 @@ type ServerStreamResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e ServerStreamResponseValidationError) Field() string { return e.field }
+func (e StreamResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ServerStreamResponseValidationError) Reason() string { return e.reason }
+func (e StreamResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ServerStreamResponseValidationError) Cause() error { return e.cause }
+func (e StreamResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ServerStreamResponseValidationError) Key() bool { return e.key }
+func (e StreamResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ServerStreamResponseValidationError) ErrorName() string {
-	return "ServerStreamResponseValidationError"
-}
+func (e StreamResponseValidationError) ErrorName() string { return "StreamResponseValidationError" }
 
 // Error satisfies the builtin error interface
-func (e ServerStreamResponseValidationError) Error() string {
+func (e StreamResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -288,14 +286,14 @@ func (e ServerStreamResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sServerStreamResponse.%s: %s%s",
+		"invalid %sStreamResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ServerStreamResponseValidationError{}
+var _ error = StreamResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -303,4 +301,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ServerStreamResponseValidationError{}
+} = StreamResponseValidationError{}

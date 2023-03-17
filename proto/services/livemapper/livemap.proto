@@ -7,12 +7,12 @@ import "resources/livemap/livemap.proto";
 
 message StreamRequest {}
 
-message ServerStreamResponse {
+message StreamResponse {
   repeated resources.livemap.DispatchMarker dispatches = 1;
   repeated resources.livemap.UserMarker users = 2;
 }
 
 service LivemapperService {
   // @permission: PerJob=true
-  rpc Stream(StreamRequest) returns (stream ServerStreamResponse);
+  rpc Stream(StreamRequest) returns (stream StreamResponse);
 }

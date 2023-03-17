@@ -50,7 +50,7 @@ func (c *livemapperServiceClient) Stream(ctx context.Context, in *StreamRequest,
 }
 
 type LivemapperService_StreamClient interface {
-	Recv() (*ServerStreamResponse, error)
+	Recv() (*StreamResponse, error)
 	grpc.ClientStream
 }
 
@@ -58,8 +58,8 @@ type livemapperServiceStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *livemapperServiceStreamClient) Recv() (*ServerStreamResponse, error) {
-	m := new(ServerStreamResponse)
+func (x *livemapperServiceStreamClient) Recv() (*StreamResponse, error) {
+	m := new(StreamResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func _LivemapperService_Stream_Handler(srv interface{}, stream grpc.ServerStream
 }
 
 type LivemapperService_StreamServer interface {
-	Send(*ServerStreamResponse) error
+	Send(*StreamResponse) error
 	grpc.ServerStream
 }
 
@@ -112,7 +112,7 @@ type livemapperServiceStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *livemapperServiceStreamServer) Send(m *ServerStreamResponse) error {
+func (x *livemapperServiceStreamServer) Send(m *StreamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
