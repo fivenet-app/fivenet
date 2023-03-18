@@ -23,10 +23,6 @@ func init() {
 		},
 		{
 			Key:  CompletorServicePermKey,
-			Name: "CompleteJobGrades",
-		},
-		{
-			Key:  CompletorServicePermKey,
 			Name: "CompleteJobNames",
 		},
 	})

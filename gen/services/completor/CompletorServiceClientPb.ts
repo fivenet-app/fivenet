@@ -125,49 +125,6 @@ export class CompletorServiceClient {
     this.methodDescriptorCompleteJobNames);
   }
 
-  methodDescriptorCompleteJobGrades = new grpcWeb.MethodDescriptor(
-    '/services.completor.CompletorService/CompleteJobGrades',
-    grpcWeb.MethodType.UNARY,
-    services_completor_completor_pb.CompleteJobGradesRequest,
-    services_completor_completor_pb.CompleteJobGradesResponse,
-    (request: services_completor_completor_pb.CompleteJobGradesRequest) => {
-      return request.serializeBinary();
-    },
-    services_completor_completor_pb.CompleteJobGradesResponse.deserializeBinary
-  );
-
-  completeJobGrades(
-    request: services_completor_completor_pb.CompleteJobGradesRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_completor_completor_pb.CompleteJobGradesResponse>;
-
-  completeJobGrades(
-    request: services_completor_completor_pb.CompleteJobGradesRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: services_completor_completor_pb.CompleteJobGradesResponse) => void): grpcWeb.ClientReadableStream<services_completor_completor_pb.CompleteJobGradesResponse>;
-
-  completeJobGrades(
-    request: services_completor_completor_pb.CompleteJobGradesRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: services_completor_completor_pb.CompleteJobGradesResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/services.completor.CompletorService/CompleteJobGrades',
-        request,
-        metadata || {},
-        this.methodDescriptorCompleteJobGrades,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/services.completor.CompletorService/CompleteJobGrades',
-    request,
-    metadata || {},
-    this.methodDescriptorCompleteJobGrades);
-  }
-
   methodDescriptorCompleteDocumentCategory = new grpcWeb.MethodDescriptor(
     '/services.completor.CompletorService/CompleteDocumentCategory',
     grpcWeb.MethodType.UNARY,

@@ -24,15 +24,6 @@ message CompleteJobNamesResponse {
   repeated resources.jobs.Job jobs = 1;
 }
 
-message CompleteJobGradesRequest {
-  string job = 1 [(validate.rules).string.max_len = 50];
-  string search = 2 [(validate.rules).string.max_len = 50];
-}
-
-message CompleteJobGradesResponse {
-  repeated resources.jobs.JobGrade grades = 1;
-}
-
 message CompleteDocumentCategoryRequest {
   string search = 1 [(validate.rules).string.max_len = 128];
 }
@@ -46,8 +37,6 @@ service CompletorService {
   rpc CompleteCharNames(CompleteCharNamesRequest) returns (CompleteCharNamesRespoonse);
   // @permission
   rpc CompleteJobNames(CompleteJobNamesRequest) returns (CompleteJobNamesResponse);
-  // @permission
-  rpc CompleteJobGrades(CompleteJobGradesRequest) returns (CompleteJobGradesResponse);
   // @permission: PerJob=true
   rpc CompleteDocumentCategory(CompleteDocumentCategoryRequest) returns (CompleteDocumentCategoryResponse);
 }

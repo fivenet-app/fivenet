@@ -193,26 +193,6 @@ func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequ
 	return resp, nil
 }
 
-func (s *Server) CompleteJobGrades(ctx context.Context, req *CompleteJobGradesRequest) (*CompleteJobGradesResponse, error) {
-	resp := &CompleteJobGradesResponse{}
-	job, ok := s.jobsCache.Get(strings.ToLower(req.Job))
-	if !ok {
-		return resp, nil
-	}
-
-	for k, g := range job.Grades {
-		if strings.HasPrefix(g.Label, req.Search) || strings.Contains(g.Label, req.Search) {
-			resp.Grades = append(resp.Grades, g)
-		}
-
-		if k > 15 {
-			break
-		}
-	}
-
-	return resp, nil
-}
-
 func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error) {
 	userId := auth.GetUserIDFromContext(ctx)
 

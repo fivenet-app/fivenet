@@ -26,8 +26,6 @@ type CompletorServiceClient interface {
 	CompleteCharNames(ctx context.Context, in *CompleteCharNamesRequest, opts ...grpc.CallOption) (*CompleteCharNamesRespoonse, error)
 	// @permission
 	CompleteJobNames(ctx context.Context, in *CompleteJobNamesRequest, opts ...grpc.CallOption) (*CompleteJobNamesResponse, error)
-	// @permission
-	CompleteJobGrades(ctx context.Context, in *CompleteJobGradesRequest, opts ...grpc.CallOption) (*CompleteJobGradesResponse, error)
 	// @permission: PerJob=true
 	CompleteDocumentCategory(ctx context.Context, in *CompleteDocumentCategoryRequest, opts ...grpc.CallOption) (*CompleteDocumentCategoryResponse, error)
 }
@@ -58,15 +56,6 @@ func (c *completorServiceClient) CompleteJobNames(ctx context.Context, in *Compl
 	return out, nil
 }
 
-func (c *completorServiceClient) CompleteJobGrades(ctx context.Context, in *CompleteJobGradesRequest, opts ...grpc.CallOption) (*CompleteJobGradesResponse, error) {
-	out := new(CompleteJobGradesResponse)
-	err := c.cc.Invoke(ctx, "/services.completor.CompletorService/CompleteJobGrades", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *completorServiceClient) CompleteDocumentCategory(ctx context.Context, in *CompleteDocumentCategoryRequest, opts ...grpc.CallOption) (*CompleteDocumentCategoryResponse, error) {
 	out := new(CompleteDocumentCategoryResponse)
 	err := c.cc.Invoke(ctx, "/services.completor.CompletorService/CompleteDocumentCategory", in, out, opts...)
@@ -84,8 +73,6 @@ type CompletorServiceServer interface {
 	CompleteCharNames(context.Context, *CompleteCharNamesRequest) (*CompleteCharNamesRespoonse, error)
 	// @permission
 	CompleteJobNames(context.Context, *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error)
-	// @permission
-	CompleteJobGrades(context.Context, *CompleteJobGradesRequest) (*CompleteJobGradesResponse, error)
 	// @permission: PerJob=true
 	CompleteDocumentCategory(context.Context, *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error)
 	mustEmbedUnimplementedCompletorServiceServer()
@@ -100,9 +87,6 @@ func (UnimplementedCompletorServiceServer) CompleteCharNames(context.Context, *C
 }
 func (UnimplementedCompletorServiceServer) CompleteJobNames(context.Context, *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteJobNames not implemented")
-}
-func (UnimplementedCompletorServiceServer) CompleteJobGrades(context.Context, *CompleteJobGradesRequest) (*CompleteJobGradesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CompleteJobGrades not implemented")
 }
 func (UnimplementedCompletorServiceServer) CompleteDocumentCategory(context.Context, *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteDocumentCategory not implemented")
@@ -156,24 +140,6 @@ func _CompletorService_CompleteJobNames_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CompletorService_CompleteJobGrades_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CompleteJobGradesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CompletorServiceServer).CompleteJobGrades(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.completor.CompletorService/CompleteJobGrades",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CompletorServiceServer).CompleteJobGrades(ctx, req.(*CompleteJobGradesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _CompletorService_CompleteDocumentCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CompleteDocumentCategoryRequest)
 	if err := dec(in); err != nil {
@@ -206,10 +172,6 @@ var CompletorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CompleteJobNames",
 			Handler:    _CompletorService_CompleteJobNames_Handler,
-		},
-		{
-			MethodName: "CompleteJobGrades",
-			Handler:    _CompletorService_CompleteJobGrades_Handler,
 		},
 		{
 			MethodName: "CompleteDocumentCategory",

@@ -81,48 +81,6 @@ export namespace CompleteJobNamesResponse {
   }
 }
 
-export class CompleteJobGradesRequest extends jspb.Message {
-  getJob(): string;
-  setJob(value: string): CompleteJobGradesRequest;
-
-  getSearch(): string;
-  setSearch(value: string): CompleteJobGradesRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CompleteJobGradesRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: CompleteJobGradesRequest): CompleteJobGradesRequest.AsObject;
-  static serializeBinaryToWriter(message: CompleteJobGradesRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CompleteJobGradesRequest;
-  static deserializeBinaryFromReader(message: CompleteJobGradesRequest, reader: jspb.BinaryReader): CompleteJobGradesRequest;
-}
-
-export namespace CompleteJobGradesRequest {
-  export type AsObject = {
-    job: string,
-    search: string,
-  }
-}
-
-export class CompleteJobGradesResponse extends jspb.Message {
-  getGradesList(): Array<resources_jobs_jobs_pb.JobGrade>;
-  setGradesList(value: Array<resources_jobs_jobs_pb.JobGrade>): CompleteJobGradesResponse;
-  clearGradesList(): CompleteJobGradesResponse;
-  addGrades(value?: resources_jobs_jobs_pb.JobGrade, index?: number): resources_jobs_jobs_pb.JobGrade;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CompleteJobGradesResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: CompleteJobGradesResponse): CompleteJobGradesResponse.AsObject;
-  static serializeBinaryToWriter(message: CompleteJobGradesResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CompleteJobGradesResponse;
-  static deserializeBinaryFromReader(message: CompleteJobGradesResponse, reader: jspb.BinaryReader): CompleteJobGradesResponse;
-}
-
-export namespace CompleteJobGradesResponse {
-  export type AsObject = {
-    gradesList: Array<resources_jobs_jobs_pb.JobGrade.AsObject>,
-  }
-}
-
 export class CompleteDocumentCategoryRequest extends jspb.Message {
   getSearch(): string;
   setSearch(value: string): CompleteDocumentCategoryRequest;
