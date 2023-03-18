@@ -1,6 +1,6 @@
 -- MariaDB dump 10.19  Distrib 10.10.3-MariaDB, for Linux (x86_64)
 --
--- Host: localhost    Database: arpanet
+-- Host: 127.0.0.1    Database: arpanet
 -- ------------------------------------------------------
 -- Server version	10.11.2-MariaDB-1:10.11.2+maria~ubu2204
 
@@ -85,7 +85,8 @@ UNLOCK TABLES;
 LOCK TABLES `arpanet_documents_references` WRITE;
 /*!40000 ALTER TABLE `arpanet_documents_references` DISABLE KEYS */;
 INSERT INTO `arpanet_documents_references` VALUES
-(1,'2023-03-17 18:59:57.652',NULL,5,1,7,1);
+(1,'2023-03-17 18:59:57.652',NULL,5,1,7,1),
+(2,'2023-03-18 17:34:35.564',NULL,5,0,5,1);
 /*!40000 ALTER TABLE `arpanet_documents_references` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,4 +132,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-17 20:36:52
+-- Dump completed on 2023-03-18 19:03:04

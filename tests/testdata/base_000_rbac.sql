@@ -53,7 +53,8 @@ INSERT INTO `arpanet_permissions` VALUES
 (39,'2023-03-18 16:37:43.568',NULL,'LivemapperService.Stream.fib','livemapperservice-stream-fib',''),
 (40,'2023-03-18 16:37:43.576',NULL,'LivemapperService.Stream.police','livemapperservice-stream-police',''),
 (41,'2023-03-18 16:37:43.585',NULL,'NotificatorService.GetNotifications','notificatorservice-getnotifications',''),
-(44,'2023-03-18 16:37:43.594',NULL,'Overview.View','overview-view','');
+(44,'2023-03-18 16:37:43.594',NULL,'Overview.View','overview-view',''),
+(45,'2023-03-18 18:00:58.866',NULL,'CompletorService.CompleteCharNames','completorservice-completecharnames','');
 /*!40000 ALTER TABLE `arpanet_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,6 +119,7 @@ INSERT INTO `arpanet_role_permissions` VALUES
 (2,37),
 (2,41),
 (2,44),
+(2,45),
 (3,1),
 (3,3),
 (3,4),
@@ -145,6 +147,7 @@ INSERT INTO `arpanet_role_permissions` VALUES
 (3,37),
 (3,41),
 (3,44),
+(3,45),
 (4,1),
 (4,3),
 (4,4),
@@ -172,6 +175,7 @@ INSERT INTO `arpanet_role_permissions` VALUES
 (4,37),
 (4,41),
 (4,44),
+(4,45),
 (5,1),
 (5,22),
 (5,24),
@@ -212,7 +216,8 @@ UNLOCK TABLES;
 LOCK TABLES `arpanet_user_roles` WRITE;
 /*!40000 ALTER TABLE `arpanet_user_roles` DISABLE KEYS */;
 INSERT INTO `arpanet_user_roles` VALUES
-(1,2);
+(1,2),
+(2,2);
 /*!40000 ALTER TABLE `arpanet_user_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -224,4 +229,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-18 17:48:07
+-- Dump completed on 2023-03-18 19:02:19
