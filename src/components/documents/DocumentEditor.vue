@@ -5,7 +5,7 @@ import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { CreateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { DocumentJobAccess, DOC_ACCESS, DOCUMENT_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
+import { DocumentAccess, DocumentJobAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
 import { User } from '@arpanet/gen/resources/users/users_pb';
@@ -19,7 +19,6 @@ export default defineComponent({
             saving: false,
             title: "",
             content: "",
-            contentType: DOCUMENT_CONTENT_TYPE.HTML,
             categoryID: 0,
             closed: false,
             state: "",
@@ -58,19 +57,23 @@ export default defineComponent({
             const req = new CreateDocumentRequest();
             req.setTitle(this.title);
             req.setContent(this.content);
-            req.setContentType(this.contentType);
+            req.setContentType(DOC_CONTENT_TYPE.HTML);
             req.setClosed(this.closed);
             req.setState(this.state);
             req.setPublic(this.public);
-            req.setTargetdocumentid(this.targetDocumentID);
+            req.setTargetDocumentId(this.targetDocumentID);
 
+            const access = new DocumentAccess();
             const jobsAccessList = new Array<DocumentJobAccess>();
             const jobAccess = new DocumentJobAccess();
             jobAccess.setAccess(DOC_ACCESS.VIEW);
             const activeChar = this.activeChar as null | User;
             jobAccess.setJob(activeChar?.getJob());
             jobsAccessList.push(jobAccess);
-            req.setJobsaccessList(jobsAccessList);
+
+            access.setJobsList(jobsAccessList);
+
+            req.setAccess(access);
 
             getDocStoreClient().
                 createDocument(req, null).then((resp) => {

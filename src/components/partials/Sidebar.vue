@@ -231,7 +231,7 @@ export default defineComponent({
                                 <ol role="list" class="flex items-center space-x-4">
                                     <li>
                                         <div>
-                                            <router-link to="/"
+                                            <router-link :to="accessToken ? '/overview' : '/'"
                                                 class="text-base-400 hover:text-neutral hover:transition-colors">
                                                 <HomeIconSolid class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                                 <span class="sr-only">Home</span>
@@ -252,6 +252,7 @@ export default defineComponent({
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
+                            <span v-if="activeChar" class="text-xl text-base-100">{{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}</span>
                             <!-- Profile dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">
                                 <div>

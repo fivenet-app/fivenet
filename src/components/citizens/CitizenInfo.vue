@@ -19,9 +19,9 @@ export default defineComponent({
         return {
             currentTab: 'Profile' as string,
             tabs: [
-                { name: 'Profile', icon: UserIcon },
-                { name: 'Activity', icon: RectangleGroupIcon },
-                { name: 'Documents', icon: DocumentIcon },
+                { name: 'Profile', icon: UserIcon, permission: 'CitizenStoreService.FindUsers' },
+                { name: 'Activity', icon: RectangleGroupIcon, permission: 'CitizenStoreService.GetUserActivity' },
+                { name: 'Documents', icon: DocumentIcon, permission: 'CitizenStoreService.GetUserDocuments' },
             ],
         };
     },
@@ -60,7 +60,7 @@ export default defineComponent({
             <select id="tabs" name="tabs"
                 class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
                 v-model="currentTab">
-                <option v-for="tab in tabs" :key="tab.name" :selected="tab.name === currentTab">{{ tab.name }}</option>
+                <option v-for="tab in tabs" :key="tab.name" :selected="tab.name === currentTab" v-can="tab.permission">{{ tab.name }}</option>
             </select>
         </div>
         <div class="hidden sm:block">
@@ -79,13 +79,13 @@ export default defineComponent({
         </div>
     </div>
     <div class="p-3 mt-6">
-        <div v-if="currentTab === 'Profile'">
+        <div v-if="currentTab === 'Profile'" v-can="'CitizenStoreService.FindUsers'">
             <CitizenInfoProfile :user="user" />
         </div>
-        <div v-if="currentTab === 'Activity'">
+        <div v-if="currentTab === 'Activity'" v-can="'CitizenStoreService.GetUserActivity'">
             <CitizenActivityFeed :userId="user.getUserId()" />
         </div>
-        <div v-if="currentTab === 'Documents'">
+        <div v-if="currentTab === 'Documents'" v-can="'CitizenStoreService.GetUserDocuments'">
             <CitizenInfoDocuments :userId="user.getUserId()" />
         </div>
     </div>
