@@ -30,6 +30,7 @@
     "jwt-decode": "^3.1.2",
     "leaflet": "^1.9.3",
     "postcss-nesting": "^11.2.1",
+    "slugify": "^1.6.5",
     "theme-change": "^2.3.0",
     "uuid": "^9.0.0",
     "vue": "^3.2.45",

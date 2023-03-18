@@ -18,7 +18,7 @@ export default defineComponent({
     "name": "dispatches",
     "meta": {
         "requiresAuth": true,
-        "permission": "dispatches-view",
+        "permission": "Dispatches.View",
         "breadCrumbs": [
             { "name": "Dispatches", "href": "/dispatches" }
         ]

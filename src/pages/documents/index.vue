@@ -21,7 +21,7 @@ export default defineComponent({
     "name": "Documents",
     "meta": {
         "requiresAuth": true,
-        "permission": "docstoreservice-finddocuments",
+        "permission": "DocStoreService.FindDocuments",
         "breadCrumbs": [
             { "name": "Documents", "href": "/documents" }
         ]

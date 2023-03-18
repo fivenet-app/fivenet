@@ -43,7 +43,7 @@ export default defineComponent({
     "name": "Citizens Info",
     "meta": {
         "requiresAuth": true,
-        "permission": "citizenstoreservice-findusers",
+        "permission": "CitizenStoreService.FindUsers",
         "breadCrumbs": [
             { "name": "Citizens", "href": "/citizens" },
             { "name": "Citizen Info: ...", "href": "#" }

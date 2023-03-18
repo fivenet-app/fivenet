@@ -28,7 +28,7 @@ export default defineComponent({
     "name": "Documents: Info",
     "meta": {
         "requiresAuth": true,
-        "permission": "docstoreservice-getdocument",
+        "permission": "DocStoreService.GetDocument",
         "breadCrumbs": [
             { "name": "Documents", "href": "/documents" },
             { "name": "Document Info: ...", "href": "/documents" }

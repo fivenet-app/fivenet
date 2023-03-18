@@ -21,7 +21,7 @@ export default defineComponent({
     "name": "Documents: Create",
     "meta": {
         "requiresAuth": true,
-        "permission": "docstoreservice-createdocument",
+        "permission": "DocStoreService.CreateDocument",
         "breadCrumbs": [
             { "name": "Documents", "href": "/documents" },
             { "name": "Create Document", "href": "#" }

@@ -98,7 +98,7 @@ export default defineComponent({
             <div class="lg:-mt-15 -mt-12 flow-root px-4 sm:-mt-8 sm:flex sm:items-end sm:px-6">
                 <div class="mt-6 sm:ml-6 sm:flex-1">
                     <div class="mt-5 flex flex-wrap space-y-3 sm:space-y-0 sm:space-x-3">
-                        <button v-can="'citizenstoreservice-setuserprops-wanted'" type="button"
+                        <button v-can="'CitizenStoreService.SetUserProps.Wanted'" type="button"
                             class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:flex-1"
                             @click="toggleWantedStatus()">{{ wantedState ?
                                 'Revoke Wanted Status' : 'Set Person Wanted' }}
@@ -181,7 +181,7 @@ export default defineComponent({
                         {{ getSecondsFormattedAsDuration(user?.getPlaytime()) }}
                     </dd>
                 </div>
-                <div v-can="'citizenstoreservice-findusers-licenses'" class="sm:flex sm:px-6 sm:py-5">
+                <div v-can="'CitizenStoreService.FindUsers-licenses'" class="sm:flex sm:px-6 sm:py-5">
                     <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
                         Licenses</dt>
                     <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">

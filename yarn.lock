@@ -2340,6 +2340,11 @@ semver@^5.6.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
   integrity sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==
 
+slugify@^1.6.5:
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/slugify/-/slugify-1.6.5.tgz#c8f5c072bf2135b80703589b39a3d41451fbe8c8"
+  integrity sha512-8mo9bslnBO3tr5PEVFzMPIWwWnipGS0xVbYf65zxDqfNwmzYn1LpiKNrR6DlClusuvo+hDHd1zKpmfAe83NQSQ==
+
 sort-keys-length@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/sort-keys-length/-/sort-keys-length-1.0.1.tgz#9cb6f4f4e9e48155a6aa0671edd336ff1479a188"

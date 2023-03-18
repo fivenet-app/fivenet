@@ -19,7 +19,7 @@ export default defineComponent({
     "name": "Job",
     "meta": {
         "requiresAuth": true,
-        "permission": "jobs-view",
+        "permission": "Jobs.View",
         "breadCrumbs": [
             { "name": "Job", "href": "/job" }
         ]

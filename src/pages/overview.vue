@@ -20,7 +20,7 @@ export default defineComponent({
     "name": "overview",
     "meta": {
         "requiresAuth": true,
-        "permission": "overview-view",
+        "permission": "Overview.View",
         "breadCrumbs": [ ]
     }
 }

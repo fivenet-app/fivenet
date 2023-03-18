@@ -16,7 +16,7 @@ export default defineComponent({
     "name": "Livemap",
     "meta": {
         "requiresAuth": true,
-        "permission": "livemapperservice-stream",
+        "permission": "LivemapperService.Stream",
         "breadCrumbs": null
     }
 }

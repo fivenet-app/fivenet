@@ -68,7 +68,8 @@ export default defineComponent({
                 <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                     <button v-for="tab in tabs" :key="tab.name" href="#" @click="setTab(tab.name)"
                         :class="[tab.name === currentTab ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700', 'group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium']"
-                        :aria-current="tab.name === currentTab ? 'page' : undefined">
+                        :aria-current="tab.name === currentTab ? 'page' : undefined"
+                        v-can="tab.permission">
                         <component :is="tab.icon"
                             :class="[tab.name === currentTab ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500', '-ml-0.5 mr-2 h-5 w-5']"
                             aria-hidden="true" />

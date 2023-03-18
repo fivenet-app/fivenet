@@ -1,3 +1,4 @@
+import slugify from 'slugify';
 import { createWebHistory, createRouter, setupDataFetchingGuard, RouteRecordRaw } from 'vue-router/auto';
 import { dispatchNotification } from './components/notification';
 import store from './store';
@@ -18,7 +19,8 @@ router.beforeEach((to, from) => {
         if (store.state.accessToken && store.state.activeChar) {
             // Route has permission attached to it, check if user has required permission
             if (to.meta.permission) {
-                if (store.state.permissions.includes(to.meta.permission)) {
+                const perm = slugify(to.meta.permission as string);
+                if (store.state.permissions.includes(perm)) {
                     // User has permission
                     return;
                 } else {
@@ -28,9 +30,11 @@ router.beforeEach((to, from) => {
                         type: 'warning',
                     });
 
-                    return {
-                        path: '/overview',
-                    };
+                    if (store.state.accessToken) {
+                        return {
+                            path: '/overview',
+                        };
+                    }
                 }
             } else {
                 // No route permission check, so we can go ahead and return
