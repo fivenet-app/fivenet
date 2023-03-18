@@ -3,36 +3,6 @@ import * as jspb from 'google-protobuf'
 import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
 
 
-export class UserJob extends jspb.Message {
-  getJob(): string;
-  setJob(value: string): UserJob;
-
-  getGrade(): number;
-  setGrade(value: number): UserJob;
-
-  getJobLabel(): string;
-  setJobLabel(value: string): UserJob;
-
-  getGradeLabel(): string;
-  setGradeLabel(value: string): UserJob;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): UserJob.AsObject;
-  static toObject(includeInstance: boolean, msg: UserJob): UserJob.AsObject;
-  static serializeBinaryToWriter(message: UserJob, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): UserJob;
-  static deserializeBinaryFromReader(message: UserJob, reader: jspb.BinaryReader): UserJob;
-}
-
-export namespace UserJob {
-  export type AsObject = {
-    job: string,
-    grade: number,
-    jobLabel: string,
-    gradeLabel: string,
-  }
-}
-
 export class UserShort extends jspb.Message {
   getUserId(): number;
   setUserId(value: number): UserShort;
@@ -43,8 +13,14 @@ export class UserShort extends jspb.Message {
   getJob(): string;
   setJob(value: string): UserShort;
 
+  getJobLabel(): string;
+  setJobLabel(value: string): UserShort;
+
   getJobGrade(): number;
   setJobGrade(value: number): UserShort;
+
+  getJobGradeLabel(): string;
+  setJobGradeLabel(value: string): UserShort;
 
   getFirstname(): string;
   setFirstname(value: string): UserShort;
@@ -65,7 +41,9 @@ export namespace UserShort {
     userId: number,
     identifier: string,
     job: string,
+    jobLabel: string,
     jobGrade: number,
+    jobGradeLabel: string,
     firstname: string,
     lastname: string,
   }
@@ -81,8 +59,14 @@ export class User extends jspb.Message {
   getJob(): string;
   setJob(value: string): User;
 
+  getJobLabel(): string;
+  setJobLabel(value: string): User;
+
   getJobGrade(): number;
   setJobGrade(value: number): User;
+
+  getJobGradeLabel(): string;
+  setJobGradeLabel(value: string): User;
 
   getFirstname(): string;
   setFirstname(value: string): User;
@@ -131,7 +115,9 @@ export namespace User {
     userId: number,
     identifier: string,
     job: string,
+    jobLabel: string,
     jobGrade: number,
+    jobGradeLabel: string,
     firstname: string,
     lastname: string,
     dateofbirth: string,

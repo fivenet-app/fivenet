@@ -66,7 +66,7 @@ export default defineComponent({
                 <dd class="mt-3">
                     <span
                         class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
-                            char.getJob() }} (Rank: {{ char.getJobGrade() }})</span>
+                            char.getJobLabel() }} (Rank: {{ char.getJobGradeLabel() }})</span>
                 </dd>
                 <dt class="text-sm text-white">Date of Birth</dt>
                 <dd class="text-sm text-gray-300">{{ char.getDateofbirth() }}</dd>

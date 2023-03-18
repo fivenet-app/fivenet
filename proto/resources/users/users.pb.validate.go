@@ -35,148 +35,6 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on UserJob with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *UserJob) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UserJob with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in UserJobMultiError, or nil if none found.
-func (m *UserJob) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UserJob) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
-		err := UserJobValidationError{
-			field:  "Job",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.GetGrade() <= 0 {
-		err := UserJobValidationError{
-			field:  "Grade",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
-		err := UserJobValidationError{
-			field:  "JobLabel",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetGradeLabel()) > 50 {
-		err := UserJobValidationError{
-			field:  "GradeLabel",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(errors) > 0 {
-		return UserJobMultiError(errors)
-	}
-
-	return nil
-}
-
-// UserJobMultiError is an error wrapping multiple validation errors returned
-// by UserJob.ValidateAll() if the designated constraints aren't met.
-type UserJobMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UserJobMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UserJobMultiError) AllErrors() []error { return m }
-
-// UserJobValidationError is the validation error returned by UserJob.Validate
-// if the designated constraints aren't met.
-type UserJobValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UserJobValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UserJobValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UserJobValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UserJobValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UserJobValidationError) ErrorName() string { return "UserJobValidationError" }
-
-// Error satisfies the builtin error interface
-func (e UserJobValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUserJob.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UserJobValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UserJobValidationError{}
-
 // Validate checks the field values on UserShort with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -233,10 +91,32 @@ func (m *UserShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+		err := UserShortValidationError{
+			field:  "JobLabel",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.GetJobGrade() <= 0 {
 		err := UserShortValidationError{
 			field:  "JobGrade",
 			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
+		err := UserShortValidationError{
+			field:  "JobGradeLabel",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -398,10 +278,32 @@ func (m *User) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+		err := UserValidationError{
+			field:  "JobLabel",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.GetJobGrade() <= 0 {
 		err := UserValidationError{
 			field:  "JobGrade",
 			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
+		err := UserValidationError{
+			field:  "JobGradeLabel",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err

@@ -31,9 +31,6 @@ export namespace Job {
 }
 
 export class JobGrade extends jspb.Message {
-  getJob(): string;
-  setJob(value: string): JobGrade;
-
   getGrade(): number;
   setGrade(value: number): JobGrade;
 
@@ -50,7 +47,6 @@ export class JobGrade extends jspb.Message {
 
 export namespace JobGrade {
   export type AsObject = {
-    job: string,
     grade: number,
     label: string,
   }

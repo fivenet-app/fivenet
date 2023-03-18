@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/auth"
+	"github.com/galexrt/arpanet/pkg/complhelper"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/common/database"
 	users "github.com/galexrt/arpanet/proto/resources/users"
@@ -18,9 +19,10 @@ import (
 )
 
 var (
-	u   = table.Users.AS("user")
+	u  = table.Users.AS("user")
+	ul = table.UserLicenses
+
 	aup = table.ArpanetUserProps
-	ul  = table.UserLicenses
 	aua = table.ArpanetUserActivity
 	adr = table.ArpanetDocumentsRelations.AS("document_relation")
 	ad  = table.ArpanetDocuments.AS("document")
@@ -31,12 +33,14 @@ type Server struct {
 
 	db *sql.DB
 	p  perms.Permissions
+	c  *complhelper.Completor
 }
 
-func NewServer(db *sql.DB, p perms.Permissions) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *complhelper.Completor) *Server {
 	return &Server{
 		db: db,
 		p:  p,
+		c:  c,
 	}
 }
 
@@ -102,8 +106,8 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 			selectors[0], selectors[1:]...,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
-		FROM(
-			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
+		FROM(u.
+			LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
 		).
 		WHERE(condition).
 		OFFSET(req.Offset).
@@ -143,11 +147,15 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	}
 	resp.End = resp.Offset + int64(len(resp.Users))
 
+	for i := 0; i < len(resp.Users); i++ {
+		s.c.ResolveJob(resp.Users[i])
+	}
+
 	return resp, nil
 }
 
 func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
-	userId, _, _ := auth.GetUserInfoFromContext(ctx)
+	userId := auth.GetUserIDFromContext(ctx)
 
 	selectors := jet.ProjectionList{
 		u.ID,
@@ -181,8 +189,13 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			selectors[0], selectors[1:]...,
 		).
 		FROM(
-			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)).
-				LEFT_JOIN(ul, ul.Owner.EQ(u.Identifier)),
+			u.
+				LEFT_JOIN(aup,
+					aup.UserID.EQ(u.ID),
+				).
+				LEFT_JOIN(ul,
+					ul.Owner.EQ(u.Identifier),
+				),
 		).
 		WHERE(u.ID.EQ(jet.Int32(req.UserId))).
 		LIMIT(15)
@@ -190,6 +203,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	if err := stmt.QueryContext(ctx, s.db, resp.User); err != nil {
 		return nil, err
 	}
+
+	s.c.ResolveJob(resp.User)
 
 	return resp, nil
 }
@@ -222,9 +237,10 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 			uSource.Lastname,
 		).
 		FROM(
-			aua.LEFT_JOIN(uTarget,
-				uTarget.ID.EQ(aua.TargetUserID),
-			).
+			aua.
+				LEFT_JOIN(uTarget,
+					uTarget.ID.EQ(aua.TargetUserID),
+				).
 				LEFT_JOIN(uSource,
 					uSource.ID.EQ(aua.SourceUserID),
 				),
@@ -236,6 +252,11 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		return nil, err
+	}
+
+	for i := 0; i < len(resp.Activity); i++ {
+		s.c.ResolveJob(resp.Activity[i].SourceUser)
+		s.c.ResolveJob(resp.Activity[i].TargetUser)
 	}
 
 	return resp, nil
@@ -302,9 +323,9 @@ func (s *Server) addUserAcitvity(ctx context.Context, activity *model.ArpanetUse
 func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error) {
 	resp := &GetUserDocumentsResponse{}
 
-	uTarget := u.AS("target_user")
-	uSource := u.AS("source_user")
 	uCreator := u.AS("creator")
+	uSource := u.AS("source_user")
+	uTarget := u.AS("target_user")
 	stmt := adr.
 		SELECT(
 			adr.AllColumns,
@@ -356,6 +377,11 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
 		return nil, err
+	}
+
+	for i := 0; i < len(resp.Relations); i++ {
+		s.c.ResolveJob(resp.Relations[i].SourceUser)
+		s.c.ResolveJob(resp.Relations[i].TargetUser)
 	}
 
 	return resp, nil

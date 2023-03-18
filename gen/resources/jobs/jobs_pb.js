@@ -317,9 +317,8 @@ proto.resources.jobs.JobGrade.prototype.toObject = function(opt_includeInstance)
  */
 proto.resources.jobs.JobGrade.toObject = function(includeInstance, msg) {
   var f, obj = {
-    job: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    grade: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    label: jspb.Message.getFieldWithDefault(msg, 3, "")
+    grade: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    label: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -357,14 +356,10 @@ proto.resources.jobs.JobGrade.deserializeBinaryFromReader = function(msg, reader
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setJob(value);
-      break;
-    case 2:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGrade(value);
       break;
-    case 3:
+    case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setLabel(value);
       break;
@@ -397,24 +392,17 @@ proto.resources.jobs.JobGrade.prototype.serializeBinary = function() {
  */
 proto.resources.jobs.JobGrade.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getJob();
-  if (f.length > 0) {
-    writer.writeString(
-      1,
-      f
-    );
-  }
   f = message.getGrade();
   if (f !== 0) {
     writer.writeInt32(
-      2,
+      1,
       f
     );
   }
   f = message.getLabel();
   if (f.length > 0) {
     writer.writeString(
-      3,
+      2,
       f
     );
   }
@@ -422,29 +410,11 @@ proto.resources.jobs.JobGrade.serializeBinaryToWriter = function(message, writer
 
 
 /**
- * optional string job = 1;
- * @return {string}
- */
-proto.resources.jobs.JobGrade.prototype.getJob = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.resources.jobs.JobGrade} returns this
- */
-proto.resources.jobs.JobGrade.prototype.setJob = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
-};
-
-
-/**
- * optional int32 grade = 2;
+ * optional int32 grade = 1;
  * @return {number}
  */
 proto.resources.jobs.JobGrade.prototype.getGrade = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
@@ -453,16 +423,16 @@ proto.resources.jobs.JobGrade.prototype.getGrade = function() {
  * @return {!proto.resources.jobs.JobGrade} returns this
  */
 proto.resources.jobs.JobGrade.prototype.setGrade = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional string label = 3;
+ * optional string label = 2;
  * @return {string}
  */
 proto.resources.jobs.JobGrade.prototype.getLabel = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
@@ -471,7 +441,7 @@ proto.resources.jobs.JobGrade.prototype.getLabel = function() {
  * @return {!proto.resources.jobs.JobGrade} returns this
  */
 proto.resources.jobs.JobGrade.prototype.setLabel = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

@@ -5,6 +5,7 @@ import (
 	"net"
 
 	"github.com/galexrt/arpanet/pkg/auth"
+	"github.com/galexrt/arpanet/pkg/complhelper"
 	"github.com/galexrt/arpanet/pkg/config"
 	grpc_auth "github.com/galexrt/arpanet/pkg/grpc/auth"
 	grpc_permission "github.com/galexrt/arpanet/pkg/grpc/permission"
@@ -79,10 +80,13 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 		)),
 	)
 
+	// Completor helper
+	complhelp := complhelper.New(db)
+
 	// Attach our GRPC services
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p))
-	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p))
-	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p))
+	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, complhelp))
+	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, complhelp))
 	pbdispatcher.RegisterDispatcherServiceServer(grpcServer, pbdispatcher.NewServer())
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())

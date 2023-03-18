@@ -12,7 +12,6 @@ message Job {
 }
 
 message JobGrade {
-  string job = 1 [(validate.rules).string.max_len = 20]; // @gotags: sql:"primary_key" alias:"job_name"
-  int32 grade = 2 [(validate.rules).int32.gt = 0]; // @gotags: alias:"grade"
-  string label = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"label"
+  int32 grade = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"grade"
+  string label = 2 [(validate.rules).string.max_len = 50]; // @gotags: alias:"label"
 }

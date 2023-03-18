@@ -24,7 +24,7 @@ export default defineComponent({
                 class="inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">WANTED</span>
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
-            {{ toTitleCase(user.getJob()) }}
+            {{ user.getJobLabel() }}
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
             {{ user.getSex().toUpperCase() }}

@@ -25,9 +25,10 @@ import (
 )
 
 var (
-	a   = table.ArpanetAccounts
-	u   = table.Users.AS("user")
-	aup = table.ArpanetUserProps
+	a  = table.ArpanetAccounts
+	u  = table.Users.AS("user")
+	js = table.Jobs
+	jg = table.JobGrades
 )
 
 var (
@@ -149,11 +150,37 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	}
 
 	// Load chars from database
-	stmt := u.SELECT(
-		u.AllColumns,
-	).
-		FROM(u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID))).
-		WHERE(u.Identifier.LIKE(jet.String(buildCharSearchIdentifier(claims.Subject)))).
+	stmt := u.
+		SELECT(
+			u.ID,
+			u.Identifier,
+			u.Job,
+			js.Label.AS("user.job_label"),
+			u.JobGrade,
+			jg.Label.AS("user.job_grade_label"),
+			u.Firstname,
+			u.Lastname,
+			u.Dateofbirth,
+			u.Sex,
+			u.Height,
+			u.PhoneNumber,
+			u.Visum,
+			u.Playtime,
+		).
+		FROM(u.
+			LEFT_JOIN(js,
+				js.Name.EQ(u.Job),
+			).
+			LEFT_JOIN(jg,
+				jet.AND(
+					jg.Grade.EQ(u.JobGrade),
+					jg.JobName.EQ(u.Job),
+				),
+			),
+		).
+		WHERE(
+			u.Identifier.LIKE(jet.String(buildCharSearchIdentifier(claims.Subject))),
+		).
 		ORDER_BY(u.ID).
 		LIMIT(10)
 
@@ -178,14 +205,29 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	stmt := u.SELECT(
-		u.ID,
-		u.Identifier,
-		u.Job,
-		u.JobGrade,
-	).
-		FROM(u).
-		WHERE(u.ID.EQ(jet.Int32(req.CharId))).
+	stmt := u.
+		SELECT(
+			u.ID,
+			u.Identifier,
+			u.Job,
+			u.JobGrade,
+			js.Label.AS("user.job_label"),
+			jg.Label.AS("user.job_grade_label"),
+		).
+		FROM(u.
+			LEFT_JOIN(js,
+				js.Name.EQ(u.Job),
+			).
+			LEFT_JOIN(jg,
+				jet.AND(
+					jg.Grade.EQ(u.JobGrade),
+					jg.JobName.EQ(u.Job),
+				),
+			),
+		).
+		WHERE(
+			u.ID.EQ(jet.Int32(req.CharId)),
+		).
 		LIMIT(1)
 
 	var char users.User

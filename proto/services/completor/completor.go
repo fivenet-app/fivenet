@@ -5,15 +5,10 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
-	"time"
 
-	cache "github.com/Code-Hex/go-generics-cache"
-	"github.com/Code-Hex/go-generics-cache/policy/lfu"
-	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/arpanet/pkg/auth"
+	"github.com/galexrt/arpanet/pkg/complhelper"
 	"github.com/galexrt/arpanet/pkg/perms"
-	"github.com/galexrt/arpanet/proto/resources/documents"
-	"github.com/galexrt/arpanet/proto/resources/jobs"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -31,108 +26,15 @@ type Server struct {
 
 	db *sql.DB
 	p  perms.Permissions
-
-	// Cache related
-	cancel              context.CancelFunc
-	jobsCache           *cache.Cache[string, *jobs.Job]
-	docsCategoriesCache *cache.Cache[string, []*documents.DocumentCategory]
+	c  *complhelper.Completor
 }
 
-func NewServer(db *sql.DB, p perms.Permissions) *Server {
-	ctx, cancel := context.WithCancel(context.Background())
-
-	jobsCache := cache.NewContext(
-		ctx,
-		cache.AsLFU[string, *jobs.Job](lfu.WithCapacity(32)),
-		cache.WithJanitorInterval[string, *jobs.Job](120*time.Second),
-	)
-
-	docsCategoriesCache := cache.NewContext(
-		ctx,
-		cache.AsLRU[string, []*documents.DocumentCategory](lru.WithCapacity(32)),
-	)
-
-	s := &Server{
+func NewServer(db *sql.DB, p perms.Permissions, c *complhelper.Completor) *Server {
+	return &Server{
 		db: db,
 		p:  p,
-
-		cancel:              cancel,
-		jobsCache:           jobsCache,
-		docsCategoriesCache: docsCategoriesCache,
+		c:  c,
 	}
-
-	s.refreshCache()
-
-	return s
-}
-
-func (s *Server) refreshCache() error {
-	if err := s.refreshJobsCache(); err != nil {
-		return err
-	}
-
-	if err := s.refreshDocumentCategories(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *Server) refreshJobsCache() error {
-	var dest []*jobs.Job
-
-	stmt := j.SELECT(
-		j.Name,
-		j.Label,
-		jg.JobName.AS("job_name"),
-		jg.Grade,
-		jg.Label,
-	).FROM(
-		j.LEFT_JOIN(jg, jg.JobName.EQ(j.Name)),
-	).
-		ORDER_BY(
-			j.Name.ASC(),
-			jg.Grade.ASC(),
-		)
-	if err := stmt.Query(s.db, &dest); err != nil {
-		return err
-	}
-
-	// Update cache
-	for _, job := range dest {
-		s.jobsCache.Set(strings.ToLower(job.Name), job)
-	}
-
-	return nil
-}
-
-func (s *Server) refreshDocumentCategories() error {
-	var dest []*documents.DocumentCategory
-
-	stmt := adc.SELECT(
-		adc.AllColumns,
-	).
-		FROM(adc).
-		GROUP_BY(adc.Job).
-		ORDER_BY(adc.Name.ASC())
-	if err := stmt.Query(s.db, &dest); err != nil {
-		return err
-	}
-
-	categoriesPerJob := map[string][]*documents.DocumentCategory{}
-	for _, c := range dest {
-		if _, ok := categoriesPerJob[c.Job]; !ok {
-			categoriesPerJob[c.Job] = []*documents.DocumentCategory{}
-		}
-		categoriesPerJob[c.Job] = append(categoriesPerJob[c.Job], c)
-	}
-
-	// Update cache
-	for job, cs := range categoriesPerJob {
-		s.docsCategoriesCache.Set(job, cs)
-	}
-
-	return nil
 }
 
 func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRequest) (*CompleteCharNamesRespoonse, error) {
@@ -172,9 +74,9 @@ func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequ
 
 	req.Search = strings.ToLower(req.Search)
 
-	keys := s.jobsCache.Keys()
+	keys := s.c.Jobs.Keys()
 	for i := 0; i < len(keys); i++ {
-		job, ok := s.jobsCache.Get(keys[i])
+		job, ok := s.c.Jobs.Get(keys[i])
 		if !ok {
 			continue
 		}
@@ -207,7 +109,7 @@ func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocu
 	}
 
 	for _, j := range jobs {
-		c, ok := s.docsCategoriesCache.Get(j)
+		c, ok := s.c.DocCategories.Get(j)
 		if !ok {
 			continue
 		}

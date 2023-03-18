@@ -50,7 +50,7 @@ export default defineComponent({
         </div>
         <p class="text-sm text-white">
             <span class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
-                user?.getJob() }} (Rank: {{ user?.getJobGrade() }})
+                user.getJobLabel() }} (Rank: {{ user.getJobGradeLabel() }})
             </span>
         </p>
     </div>
