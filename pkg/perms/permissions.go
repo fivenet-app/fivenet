@@ -1,6 +1,7 @@
 package perms
 
 import (
+	"github.com/galexrt/arpanet/pkg/dbutils"
 	"github.com/galexrt/arpanet/pkg/perms/collections"
 	"github.com/galexrt/arpanet/pkg/perms/helpers"
 )
@@ -18,7 +19,12 @@ func (p *Perms) CreatePermission(name string, description string) error {
 		)
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
-	return err
+
+	if !dbutils.IsDuplicateError(err) {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Perms) GetAllPermissions() (collections.Permissions, error) {

@@ -39,7 +39,7 @@ func (p *Perms) GetAllPermissionsOfUser(userId int32) (collections.Permissions, 
 		)
 
 	var perms collections.Permissions
-	if err := stmt.Query(p.db, &perms); err != nil {
+	if err := stmt.QueryContext(p.ctx, p.db, &perms); err != nil {
 		return nil, err
 	}
 
@@ -86,7 +86,7 @@ func (p *Perms) getAllPermissionsByPrefixOfUser(userId int32, prefix string) (co
 		)
 
 	var perms collections.Permissions
-	if err := stmt.Query(p.db, &perms); err != nil {
+	if err := stmt.QueryContext(p.ctx, p.db, &perms); err != nil {
 		return nil, err
 	}
 
@@ -143,7 +143,7 @@ func (p *Perms) can(userId int32, guardName string) bool {
 	var dest struct {
 		ID int32
 	}
-	if err := stmt.Query(p.db, &dest); err != nil {
+	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		return false
 	}
 

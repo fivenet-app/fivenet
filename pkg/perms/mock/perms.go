@@ -45,12 +45,14 @@ type PermsMock struct {
 	Counter *PermCounter
 
 	UserPerms map[int32]map[string]interface{}
+	UserRoles map[int32]map[string]interface{}
 }
 
 func NewMock() *PermsMock {
 	return &PermsMock{
 		Counter:   NewPermCounter(),
 		UserPerms: map[int32]map[string]interface{}{},
+		UserRoles: map[int32]map[string]interface{}{},
 	}
 }
 
@@ -140,6 +142,51 @@ func (p *PermsMock) GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix st
 	}
 
 	return list, nil
+}
+
+func (p *PermsMock) GetUserRoles(userId int32) (collections.Roles, error) {
+	r := collections.Roles{}
+
+	uRoles, ok := p.UserRoles[userId]
+	if !ok {
+		return r, nil
+	}
+
+	i := 0
+	for k := range uRoles {
+		r = append(r, &model.ArpanetRoles{
+			ID:        uint64(i),
+			Name:      k,
+			GuardName: k,
+		})
+		i++
+	}
+
+	return nil, nil
+}
+
+func (p *PermsMock) AddUserRoles(userId int32, roles ...string) error {
+	if _, ok := p.UserRoles[userId]; !ok {
+		p.UserRoles[userId] = map[string]interface{}{}
+	}
+
+	for _, role := range roles {
+		p.UserRoles[userId][role] = role
+	}
+
+	return nil
+}
+
+func (p *PermsMock) RemoveUserRoles(userId int32, roles ...string) error {
+	if _, ok := p.UserRoles[userId]; !ok {
+		return nil
+	}
+
+	for _, role := range roles {
+		delete(p.UserRoles[userId], role)
+	}
+
+	return nil
 }
 
 func (p *PermsMock) Can(userId int32, perm ...string) bool {

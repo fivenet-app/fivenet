@@ -210,6 +210,18 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
+	_, _ = char.Job, char.JobGrade
+	ps, err := s.p.GetUserRoles(char.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = ps
+	roleKey := perms.GetRoleName(char.Job, char.JobGrade)
+	if err := s.p.AddUserRoles(char.UserId, roleKey); err != nil {
+		return nil, err
+	}
+
 	// Load permissions of user
 	perms, err := s.p.GetAllPermissionsOfUser(char.UserId)
 	if err != nil {
