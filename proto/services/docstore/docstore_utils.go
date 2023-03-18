@@ -3,7 +3,6 @@ package docstore
 import (
 	context "context"
 	"errors"
-	"fmt"
 
 	database "github.com/galexrt/arpanet/proto/resources/common/database"
 	"github.com/galexrt/arpanet/proto/resources/documents"
@@ -147,9 +146,8 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32,
 						AND(dJobAccess.Job.EQ(jet.String(job))).
 						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				),
-		).WHERE(condition)
-
-	fmt.Println(stmt.DebugSql())
+		).
+		WHERE(condition)
 
 	var dest struct {
 		IDs []uint64 `alias:"document.id"`

@@ -3,7 +3,6 @@ package citizenstore
 import (
 	context "context"
 	"database/sql"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -346,7 +345,6 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 		WHERE(
 			adr.TargetUserID.EQ(jet.Int32(req.UserId)),
 		)
-	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
 		return nil, err

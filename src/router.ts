@@ -20,7 +20,6 @@ router.beforeEach((to, from) => {
             // Route has permission attached to it, check if user has required permission
             if (to.meta.permission) {
                 const perm = slug(to.meta.permission as string);
-                console.log(perm);
                 if (store.state.permissions.includes(perm)) {
                     // User has permission
                     return;
@@ -30,8 +29,6 @@ router.beforeEach((to, from) => {
                         content: "You don't have permission to go to " + (to.name ? to.name?.toString() : to.path) + '.',
                         type: 'warning',
                     });
-
-                    console.log(store.state.permissions);
 
                     if (store.state.accessToken) {
                         return {

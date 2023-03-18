@@ -4,7 +4,6 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/htmlsanitizer"
@@ -304,8 +303,6 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 				dJobAccess.CreatorID,
 			).
 				MODELS(ja)
-
-			fmt.Println(stmt.DebugSql())
 
 			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 				return err
