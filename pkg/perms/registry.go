@@ -12,9 +12,7 @@ import (
 )
 
 var (
-	list = []*Perm{
-		{Key: "overview", Name: "View"},
-	}
+	list = []*Perm{}
 
 	mu sync.Mutex
 )
@@ -37,12 +35,16 @@ func AddPermsToList(perms []*Perm) {
 func (p *Perms) Register() error {
 	for _, perm := range list {
 		baseKey := fmt.Sprintf("%s.%s", perm.Key, perm.Name)
-		p.CreatePermission(baseKey, perm.Description)
+		if err := p.CreatePermission(baseKey, perm.Description); err != nil {
+			return err
+		}
 
 		if perm.PerJob {
 			for _, job := range config.C.FiveM.PermissionRoleJobs {
 				jobKey := fmt.Sprintf("%s.%s", baseKey, job)
-				p.CreatePermission(jobKey, perm.Description)
+				if err := p.CreatePermission(jobKey, perm.Description); err != nil {
+					return err
+				}
 			}
 			continue
 		}
@@ -105,8 +107,6 @@ func (p *Perms) setupRoles() error {
 			if index >= 0 {
 				existingRoles = append(existingRoles[:index], existingRoles[index+1:]...)
 			}
-
-			fmt.Println(roleName)
 		}
 	}
 

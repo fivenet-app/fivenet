@@ -32,6 +32,12 @@ import (
 	pbnotificator "github.com/galexrt/arpanet/proto/services/notificator"
 )
 
+func init() {
+	perms.AddPermsToList([]*perms.Perm{
+		{Key: "Overview", Name: "View"},
+	})
+}
+
 type RegisterFunc func() error
 
 func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *perms.Perms) (*grpc.Server, net.Listener) {

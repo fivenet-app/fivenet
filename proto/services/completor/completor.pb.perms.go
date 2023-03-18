@@ -18,14 +18,12 @@ func init() {
 			PerJob: true,
 		},
 		{
-			Key:    CompletorServicePermKey,
-			Name:   "CompleteJobGrades",
-			PerJob: true,
+			Key:  CompletorServicePermKey,
+			Name: "CompleteJobGrades",
 		},
 		{
-			Key:    CompletorServicePermKey,
-			Name:   "CompleteJobNames",
-			PerJob: true,
+			Key:  CompletorServicePermKey,
+			Name: "CompleteJobNames",
 		},
 	})
 }

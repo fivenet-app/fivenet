@@ -33,9 +33,9 @@ message CompleteDocumentCategoryResponse {
 }
 
 service CompletorService {
-  // @permission: PerJob=true
+  // @permission
   rpc CompleteJobNames(CompleteJobNamesRequest) returns (CompleteJobNamesResponse);
-  // @permission: PerJob=true
+  // @permission
   rpc CompleteJobGrades(CompleteJobGradesRequest) returns (CompleteJobGradesResponse);
   // @permission: PerJob=true
   rpc CompleteDocumentCategory(CompleteDocumentCategoryRequest) returns (CompleteDocumentCategoryResponse);

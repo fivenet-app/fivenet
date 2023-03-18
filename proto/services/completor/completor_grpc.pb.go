@@ -22,9 +22,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CompletorServiceClient interface {
-	// @permission: PerJob=true
+	// @permission
 	CompleteJobNames(ctx context.Context, in *CompleteJobNamesRequest, opts ...grpc.CallOption) (*CompleteJobNamesResponse, error)
-	// @permission: PerJob=true
+	// @permission
 	CompleteJobGrades(ctx context.Context, in *CompleteJobGradesRequest, opts ...grpc.CallOption) (*CompleteJobGradesResponse, error)
 	// @permission: PerJob=true
 	CompleteDocumentCategory(ctx context.Context, in *CompleteDocumentCategoryRequest, opts ...grpc.CallOption) (*CompleteDocumentCategoryResponse, error)
@@ -69,9 +69,9 @@ func (c *completorServiceClient) CompleteDocumentCategory(ctx context.Context, i
 // All implementations must embed UnimplementedCompletorServiceServer
 // for forward compatibility
 type CompletorServiceServer interface {
-	// @permission: PerJob=true
+	// @permission
 	CompleteJobNames(context.Context, *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error)
-	// @permission: PerJob=true
+	// @permission
 	CompleteJobGrades(context.Context, *CompleteJobGradesRequest) (*CompleteJobGradesResponse, error)
 	// @permission: PerJob=true
 	CompleteDocumentCategory(context.Context, *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error)
