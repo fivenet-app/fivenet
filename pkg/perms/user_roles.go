@@ -2,7 +2,6 @@ package perms
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/dbutils"
 	"github.com/galexrt/arpanet/pkg/perms/collections"
@@ -68,20 +67,21 @@ func (p *Perms) RemoveUserRoles(userId int32, roles ...string) error {
 		return nil
 	}
 
-	roleGuards := []jet.Expression{}
+	roleGuards := make([]jet.Expression, len(roles))
 	for i := 0; i < len(roles); i++ {
 		roleGuards[i] = jet.String(helpers.Guard(roles[i]))
 	}
 
 	stmt := aur.DELETE().
-		USING(ar).
+		USING(aur.
+			INNER_JOIN(ar,
+				ar.GuardName.IN(roleGuards...),
+			),
+		).
 		WHERE(jet.AND(
 			aur.UserID.EQ(jet.Int32(userId)),
-			ar.GuardName.IN(roleGuards...),
 			aur.RoleID.EQ(ar.ID),
 		))
-
-	fmt.Println(stmt.DebugSql())
 
 	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
 		return err

@@ -217,7 +217,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	rolesToRemove := []string{"test"}
+	rolesToRemove := []string{}
 	roleKey := perms.GetRoleName(char.Job, char.JobGrade)
 	for _, name := range ps.GuardNames() {
 		if !strings.HasPrefix(name, "job-") {
