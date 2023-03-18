@@ -22,6 +22,8 @@ import { watchDebounced } from '@vueuse/core';
 import { CompleteCharNamesRequest, CompleteJobNamesRequest } from '@arpanet/gen/services/completor/completor_pb';
 import { getCompletorClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
+import { Job } from '@arpanet/gen/resources/jobs/jobs_pb';
+import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 
 export default defineComponent({
     components: {
@@ -46,9 +48,12 @@ export default defineComponent({
                 { id: 1, name: 'Jobs' },
             ],
             selectedAccessType: ref<null | { id: number, name: string }>(null),
-            entriesName: [] as { id: string | number, label: string }[],
-            queryName: { value: '' },
-            selectedName: ref(null),
+            entriesChars: [] as UserShort[],
+            queryChar: { value: '' },
+            selectedChar: ref<null | UserShort>(null),
+            entriesJobs: [] as Job[],
+            queryJob: { value: '' },
+            selectedJob: ref<null | Job>(null),
             entriesAccessRole: [] as { id: string | number, label: string }[],
             queryAccessRole: { value: '' },
             selectedAccessRole: ref(null),
@@ -60,7 +65,7 @@ export default defineComponent({
     mounted() {
         this.selectedAccessType = this.accessTypes[1];
 
-        watchDebounced(this.queryName, () => {
+        watchDebounced(this.queryJob, () => {
             if (this.selectedAccessType?.id === 0) {
                 this.findChars();
             } else {
@@ -71,26 +76,20 @@ export default defineComponent({
     methods: {
         findJobs(): void {
             const req = new CompleteJobNamesRequest();
-            req.setSearch(this.queryName.value);
+            req.setSearch(this.queryJob.value);
 
             getCompletorClient().completeJobNames(req, null).then((resp) => {
-                this.entriesName = [];
-                resp.getJobsList().forEach((job) => {
-                    this.entriesName.push({ id: job.getName(), label: job.getLabel() })
-                })
+                this.entriesJobs = resp.getJobsList();
             }).catch((err: RpcError) => {
                 handleGRPCError(err, this.$route);
             })
         },
         findChars(): void {
             const req = new CompleteCharNamesRequest();
-            req.setSearch(this.queryName.value);
+            req.setSearch(this.queryJob.value);
 
             getCompletorClient().completeCharNames(req, null).then((resp) => {
-                this.entriesName = [];
-                resp.getUsersList().forEach((user) => {
-                    this.entriesName.push({ id: user.getUserId(), label: `${user.getFirstname()} ${user.getLastname()}` })
-                })
+                this.entriesChars = resp.getUsersList();
             }).catch((err: RpcError) => {
                 handleGRPCError(err, this.$route);
             })
@@ -136,99 +135,134 @@ export default defineComponent({
                 </div>
             </Listbox>
         </div>
-        <div class="flex-1 mr-2">
-            <Combobox as="div" v-model="selectedName">
-                <div class="relative mt-2">
-                    <ComboboxButton as="div">
-                        <ComboboxInput
-                            class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            @change="queryName.value = $event.target.value"
-                            @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
-                            :display-value="(entry: any) => entry?.label" />
-                    </ComboboxButton>
+        <div v-if="selectedAccessType?.id === 0" class="flex flex-grow">
+            <div class="flex-1 mr-2">
+                <Combobox as="div" v-model="selectedJob">
+                    <div class="relative mt-2">
+                        <ComboboxButton as="div">
+                            <ComboboxInput
+                                class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                @change="queryJob.value = $event.target.value"
+                                @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
+                                :display-value="(entry: any) => entry?.getLabel()" />
+                        </ComboboxButton>
 
-                    <ComboboxOptions v-if="entriesName.length > 0"
-                        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        <ComboboxOption v-for="entry in entriesName" :key="entry.id" :value="entry" as="template"
-                            v-slot="{ active, selected }">
-                            <li
-                                :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
-                                <span :class="['block truncate', selected && 'font-semibold']">
-                                    {{ entry.label }}
-                                </span>
+                        <ComboboxOptions v-if="entriesJobs.length > 0"
+                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            <ComboboxOption v-for="entry in entriesJobs" :key="entry.getName()" :value="entry" as="job"
+                                v-slot="{ active, selected }">
+                                <li
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                        {{ entry.getLabel() }}
+                                    </span>
 
-                                <span v-if="selected"
-                                    :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
-                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                </span>
-                            </li>
-                        </ComboboxOption>
-                    </ComboboxOptions>
-                </div>
-            </Combobox>
+                                    <span v-if="selected"
+                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                    </span>
+                                </li>
+                            </ComboboxOption>
+                        </ComboboxOptions>
+                    </div>
+                </Combobox>
+            </div>
         </div>
-        <div class="flex-1 mr-2" :hidden="selectedAccessType?.id === 0">
-            <Combobox as="div" v-model="selectedMinimumRank">
-                <div class="relative mt-2">
-                    <ComboboxButton as="div">
-                        <ComboboxInput
-                            class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            @change="queryMinimumRank.value = $event.target.value"
-                            @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
-                            :display-value="(person: any) => person?.label" />
-                    </ComboboxButton>
+        <div v-else class="flex flex-grow">
+            <div class="flex-1 mr-2">
+                <Combobox as="div" v-model="selectedJob">
+                    <div class="relative mt-2">
+                        <ComboboxButton as="div">
+                            <ComboboxInput
+                                class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                @change="queryJob.value = $event.target.value"
+                                @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
+                                :display-value="(entry: any) => entry?.getLabel()" />
+                        </ComboboxButton>
 
-                    <ComboboxOptions v-if="entriesMinimumRank.length > 0"
-                        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        <ComboboxOption v-for="entry in entriesMinimumRank" :key="entry.id" :value="entry" as="template"
-                            v-slot="{ active, selected }">
-                            <li
-                                :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
-                                <span :class="['block truncate', selected && 'font-semibold']">
-                                    {{ entry.label }}
-                                </span>
+                        <ComboboxOptions v-if="entriesJobs.length > 0"
+                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            <ComboboxOption v-for="entry in entriesJobs" :key="entry.getName()" :value="entry" as="job"
+                                v-slot="{ active, selected }">
+                                <li
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                        {{ entry.getLabel() }}
+                                    </span>
 
-                                <span v-if="selected"
-                                    :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
-                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                </span>
-                            </li>
-                        </ComboboxOption>
-                    </ComboboxOptions>
-                </div>
-            </Combobox>
+                                    <span v-if="selected"
+                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                    </span>
+                                </li>
+                            </ComboboxOption>
+                        </ComboboxOptions>
+                    </div>
+                </Combobox>
+            </div>
+            <div class="flex-1 mr-2" :hidden="selectedAccessType?.id === 0">
+                <Combobox as="div" v-model="selectedMinimumRank">
+                    <div class="relative mt-2">
+                        <ComboboxButton as="div">
+                            <ComboboxInput
+                                class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                @change="queryMinimumRank.value = $event.target.value"
+                                @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
+                                :display-value="(person: any) => person?.label" />
+                        </ComboboxButton>
+
+                        <ComboboxOptions v-if="entriesMinimumRank.length > 0"
+                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            <ComboboxOption v-for="entry in entriesMinimumRank" :key="entry.id" :value="entry" as="minimumrank"
+                                v-slot="{ active, selected }">
+                                <li
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                        {{ entry.label }}
+                                    </span>
+
+                                    <span v-if="selected"
+                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                    </span>
+                                </li>
+                            </ComboboxOption>
+                        </ComboboxOptions>
+                    </div>
+                </Combobox>
+            </div>
         </div>
-        <div class="flex-1">
-            <Combobox as="div" v-model="selectedAccessRole">
-                <div class="relative mt-2">
-                    <ComboboxButton as="div">
-                        <ComboboxInput
-                            class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            @change="queryName.value = $event.target.value"
-                            @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
-                            :display-value="(entry: any) => entry?.label" />
-                    </ComboboxButton>
+        <div class="flex-inital w-60">
+                <Combobox as="div" v-model="selectedAccessRole">
+                    <div class="relative mt-2">
+                        <ComboboxButton as="div">
+                            <ComboboxInput
+                                class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                @change="queryJob.value = $event.target.value"
+                                @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
+                                :display-value="(entry: any) => entry?.label" />
+                        </ComboboxButton>
 
-                    <ComboboxOptions v-if="entriesAccessRole.length > 0"
-                        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        <ComboboxOption v-for="entry in entriesAccessRole" :key="entry.id" :value="entry" as="template"
-                            v-slot="{ active, selected }">
-                            <li
-                                :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
-                                <span :class="['block truncate', selected && 'font-semibold']">
-                                    {{ entry.label }}
-                                </span>
+                        <ComboboxOptions v-if="entriesAccessRole.length > 0"
+                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            <ComboboxOption v-for="entry in entriesAccessRole" :key="entry.id" :value="entry" as="accessrole"
+                                v-slot="{ active, selected }">
+                                <li
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                        {{ entry.label }}
+                                    </span>
 
-                                <span v-if="selected"
-                                    :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
-                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                </span>
-                            </li>
-                        </ComboboxOption>
-                    </ComboboxOptions>
-                </div>
-            </Combobox>
-        </div>
+                                    <span v-if="selected"
+                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                    </span>
+                                </li>
+                            </ComboboxOption>
+                        </ComboboxOptions>
+                    </div>
+                </Combobox>
+            </div>
     </div>
     <button type="button"
         class="rounded-full bg-indigo-600 p-2 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
