@@ -136,7 +136,12 @@ func (s *Server) refreshDocumentCategories() error {
 }
 
 func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRequest) (*CompleteCharNamesRespoonse, error) {
-	condition := jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.Search}))
+	var condition jet.BoolExpression
+	if req.Search != "" {
+		condition = jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.Search}))
+	} else {
+		condition = jet.Bool(true)
+	}
 
 	stmt := us.
 		SELECT(
@@ -174,6 +179,9 @@ func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequ
 		if strings.HasPrefix(job.Name, req.Search) || strings.Contains(job.Name, req.Search) {
 			resp.Jobs = append(resp.Jobs, job)
 		}
+		if i > 10 {
+			break
+		}
 	}
 
 	return resp, nil
@@ -186,9 +194,13 @@ func (s *Server) CompleteJobGrades(ctx context.Context, req *CompleteJobGradesRe
 		return resp, nil
 	}
 
-	for _, g := range job.Grades {
+	for k, g := range job.Grades {
 		if strings.HasPrefix(g.Label, req.Search) || strings.Contains(g.Label, req.Search) {
 			resp.Grades = append(resp.Grades, g)
+		}
+
+		if k > 15 {
+			break
 		}
 	}
 
