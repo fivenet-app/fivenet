@@ -5,6 +5,16 @@ package notificator
 
 import "github.com/galexrt/arpanet/pkg/perms"
 
+var PermsRemap = map[string]string{
+	// Service: NotificatorService
+	"NotificatorService/ReadNotifications": "NotificatorService/GetNotifications",
+	"NotificatorService/Stream":            "NotificatorService/GetNotifications",
+}
+
+func (s *Server) GetPermsRemap() map[string]string {
+	return PermsRemap
+}
+
 const (
 	NotificatorServicePermKey = "NotificatorService"
 )
@@ -18,11 +28,11 @@ func init() {
 		},
 		{
 			Key:  NotificatorServicePermKey,
-			Name: "ReadNotifications",
+			Name: "GetNotifications",
 		},
 		{
 			Key:  NotificatorServicePermKey,
-			Name: "Stream",
+			Name: "GetNotifications",
 		},
 	})
 }

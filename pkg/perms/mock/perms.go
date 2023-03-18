@@ -144,6 +144,28 @@ func (p *PermsMock) GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix st
 	return list, nil
 }
 
+func (p *PermsMock) GetRoles(prefix string) (collections.Roles, error) {
+	r := collections.Roles{}
+
+	track := map[string]interface{}{}
+	i := 0
+	for _, v := range p.UserRoles {
+		for k := range v {
+			if _, ok := track[k]; !ok {
+				r = append(r, &model.ArpanetRoles{
+					ID:        uint64(i),
+					Name:      k,
+					GuardName: k,
+				})
+				i++
+				track[k] = nil
+			}
+		}
+	}
+
+	return r, nil
+}
+
 func (p *PermsMock) GetUserRoles(userId int32) (collections.Roles, error) {
 	r := collections.Roles{}
 

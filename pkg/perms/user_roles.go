@@ -14,11 +14,19 @@ func (p *Perms) GetUserRoles(userId int32) (collections.Roles, error) {
 	var dest collections.Roles
 
 	stmt := aur.SELECT(
-		aur.RoleID,
+		ar.ID,
+		ar.CreatedAt,
+		ar.UpdatedAt,
+		ar.Name,
+		ar.GuardName,
+		ar.Description,
 	).
 		FROM(aur.
 			INNER_JOIN(ar,
 				ar.ID.EQ(aur.RoleID)),
+		).
+		WHERE(
+			aur.UserID.EQ(jet.Int32(userId)),
 		)
 
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {

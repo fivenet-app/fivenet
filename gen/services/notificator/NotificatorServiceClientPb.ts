@@ -39,28 +39,6 @@ export class NotificatorServiceClient {
     this.options_ = options;
   }
 
-  methodDescriptorStream = new grpcWeb.MethodDescriptor(
-    '/services.notificator.NotificatorService/Stream',
-    grpcWeb.MethodType.SERVER_STREAMING,
-    services_notificator_notificator_pb.StreamRequest,
-    services_notificator_notificator_pb.StreamResponse,
-    (request: services_notificator_notificator_pb.StreamRequest) => {
-      return request.serializeBinary();
-    },
-    services_notificator_notificator_pb.StreamResponse.deserializeBinary
-  );
-
-  stream(
-    request: services_notificator_notificator_pb.StreamRequest,
-    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<services_notificator_notificator_pb.StreamResponse> {
-    return this.client_.serverStreaming(
-      this.hostname_ +
-        '/services.notificator.NotificatorService/Stream',
-      request,
-      metadata || {},
-      this.methodDescriptorStream);
-  }
-
   methodDescriptorGetNotifications = new grpcWeb.MethodDescriptor(
     '/services.notificator.NotificatorService/GetNotifications',
     grpcWeb.MethodType.UNARY,
@@ -145,6 +123,28 @@ export class NotificatorServiceClient {
     request,
     metadata || {},
     this.methodDescriptorReadNotifications);
+  }
+
+  methodDescriptorStream = new grpcWeb.MethodDescriptor(
+    '/services.notificator.NotificatorService/Stream',
+    grpcWeb.MethodType.SERVER_STREAMING,
+    services_notificator_notificator_pb.StreamRequest,
+    services_notificator_notificator_pb.StreamResponse,
+    (request: services_notificator_notificator_pb.StreamRequest) => {
+      return request.serializeBinary();
+    },
+    services_notificator_notificator_pb.StreamResponse.deserializeBinary
+  );
+
+  stream(
+    request: services_notificator_notificator_pb.StreamRequest,
+    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<services_notificator_notificator_pb.StreamResponse> {
+    return this.client_.serverStreaming(
+      this.hostname_ +
+        '/services.notificator.NotificatorService/Stream',
+      request,
+      metadata || {},
+      this.methodDescriptorStream);
   }
 
 }

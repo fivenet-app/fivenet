@@ -23,11 +23,11 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotificatorServiceClient interface {
 	// @permission
-	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (NotificatorService_StreamClient, error)
-	// @permission
 	GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error)
-	// @permission
+	// @permission: name=GetNotifications
 	ReadNotifications(ctx context.Context, in *ReadNotificationsRequest, opts ...grpc.CallOption) (*ReadNotificationsResponse, error)
+	// @permission: name=GetNotifications
+	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (NotificatorService_StreamClient, error)
 }
 
 type notificatorServiceClient struct {
@@ -36,6 +36,24 @@ type notificatorServiceClient struct {
 
 func NewNotificatorServiceClient(cc grpc.ClientConnInterface) NotificatorServiceClient {
 	return &notificatorServiceClient{cc}
+}
+
+func (c *notificatorServiceClient) GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error) {
+	out := new(GetNotificationsResponse)
+	err := c.cc.Invoke(ctx, "/services.notificator.NotificatorService/GetNotifications", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificatorServiceClient) ReadNotifications(ctx context.Context, in *ReadNotificationsRequest, opts ...grpc.CallOption) (*ReadNotificationsResponse, error) {
+	out := new(ReadNotificationsResponse)
+	err := c.cc.Invoke(ctx, "/services.notificator.NotificatorService/ReadNotifications", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *notificatorServiceClient) Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (NotificatorService_StreamClient, error) {
@@ -70,34 +88,16 @@ func (x *notificatorServiceStreamClient) Recv() (*StreamResponse, error) {
 	return m, nil
 }
 
-func (c *notificatorServiceClient) GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error) {
-	out := new(GetNotificationsResponse)
-	err := c.cc.Invoke(ctx, "/services.notificator.NotificatorService/GetNotifications", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *notificatorServiceClient) ReadNotifications(ctx context.Context, in *ReadNotificationsRequest, opts ...grpc.CallOption) (*ReadNotificationsResponse, error) {
-	out := new(ReadNotificationsResponse)
-	err := c.cc.Invoke(ctx, "/services.notificator.NotificatorService/ReadNotifications", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // NotificatorServiceServer is the server API for NotificatorService service.
 // All implementations must embed UnimplementedNotificatorServiceServer
 // for forward compatibility
 type NotificatorServiceServer interface {
 	// @permission
-	Stream(*StreamRequest, NotificatorService_StreamServer) error
-	// @permission
 	GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error)
-	// @permission
+	// @permission: name=GetNotifications
 	ReadNotifications(context.Context, *ReadNotificationsRequest) (*ReadNotificationsResponse, error)
+	// @permission: name=GetNotifications
+	Stream(*StreamRequest, NotificatorService_StreamServer) error
 	mustEmbedUnimplementedNotificatorServiceServer()
 }
 
@@ -105,14 +105,14 @@ type NotificatorServiceServer interface {
 type UnimplementedNotificatorServiceServer struct {
 }
 
-func (UnimplementedNotificatorServiceServer) Stream(*StreamRequest, NotificatorService_StreamServer) error {
-	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
-}
 func (UnimplementedNotificatorServiceServer) GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNotifications not implemented")
 }
 func (UnimplementedNotificatorServiceServer) ReadNotifications(context.Context, *ReadNotificationsRequest) (*ReadNotificationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadNotifications not implemented")
+}
+func (UnimplementedNotificatorServiceServer) Stream(*StreamRequest, NotificatorService_StreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
 }
 func (UnimplementedNotificatorServiceServer) mustEmbedUnimplementedNotificatorServiceServer() {}
 
@@ -125,27 +125,6 @@ type UnsafeNotificatorServiceServer interface {
 
 func RegisterNotificatorServiceServer(s grpc.ServiceRegistrar, srv NotificatorServiceServer) {
 	s.RegisterService(&NotificatorService_ServiceDesc, srv)
-}
-
-func _NotificatorService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(StreamRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(NotificatorServiceServer).Stream(m, &notificatorServiceStreamServer{stream})
-}
-
-type NotificatorService_StreamServer interface {
-	Send(*StreamResponse) error
-	grpc.ServerStream
-}
-
-type notificatorServiceStreamServer struct {
-	grpc.ServerStream
-}
-
-func (x *notificatorServiceStreamServer) Send(m *StreamResponse) error {
-	return x.ServerStream.SendMsg(m)
 }
 
 func _NotificatorService_GetNotifications_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -182,6 +161,27 @@ func _NotificatorService_ReadNotifications_Handler(srv interface{}, ctx context.
 		return srv.(NotificatorServiceServer).ReadNotifications(ctx, req.(*ReadNotificationsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificatorService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(StreamRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(NotificatorServiceServer).Stream(m, &notificatorServiceStreamServer{stream})
+}
+
+type NotificatorService_StreamServer interface {
+	Send(*StreamResponse) error
+	grpc.ServerStream
+}
+
+type notificatorServiceStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *notificatorServiceStreamServer) Send(m *StreamResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // NotificatorService_ServiceDesc is the grpc.ServiceDesc for NotificatorService service.

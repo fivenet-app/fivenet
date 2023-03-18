@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -17,6 +18,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/exp/slices"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -210,30 +212,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	// Make sure the user is only in their current job role
-	_, _ = char.Job, char.JobGrade
-	ps, err := s.p.GetUserRoles(char.UserId)
-	if err != nil {
-		return nil, err
-	}
-
-	rolesToRemove := []string{}
-	roleKey := perms.GetRoleName(char.Job, char.JobGrade)
-	for _, name := range ps.GuardNames() {
-		if !strings.HasPrefix(name, "job-") {
-			continue
-		}
-
-		if name != roleKey {
-			rolesToRemove = append(rolesToRemove, name)
-		}
-	}
-
-	if err := s.p.RemoveUserRoles(char.UserId, rolesToRemove...); err != nil {
-		return nil, err
-	}
-
-	if err := s.p.AddUserRoles(char.UserId, roleKey); err != nil {
+	if err := s.ensureUserHasRole(char.UserId, char.Job, char.JobGrade); err != nil {
 		return nil, err
 	}
 
@@ -251,6 +230,78 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		Token:       token,
 		Permissions: perms.GuardNames(),
 	}, nil
+}
+
+// Make sure the user is only in their current job role
+func (s *Server) ensureUserHasRole(userId int32, job string, jobGrade int32) error {
+	jobRoleKey := fmt.Sprintf("job-%s-", job)
+	jobRolesModels, err := s.p.GetRoles(jobRoleKey)
+	if err != nil {
+		return err
+	}
+
+	if len(jobRolesModels) == 0 {
+		return nil
+	}
+
+	jobRoles := jobRolesModels.GuardNames()
+
+	var jobRole string
+	// Try to see if there is an exact role match for the job and grade of the user
+	index := slices.Index(jobRoles, perms.GetRoleName(job, jobGrade))
+	if index < 0 {
+		for i := len(jobRoles) - 1; i >= 0; i-- {
+			_, gradeString, _ := strings.Cut(jobRoles[i], jobRoleKey)
+			grade, err := strconv.Atoi(gradeString)
+			if err != nil {
+				continue
+			}
+
+			// Never upgrade an user's role
+			if grade > int(jobGrade) {
+				continue
+			}
+
+			index = i
+
+			if grade <= int(jobGrade) {
+				break
+			}
+		}
+	}
+
+	if index < 0 {
+		return nil
+	}
+
+	jobRole = jobRoles[index]
+
+	ps, err := s.p.GetUserRoles(userId)
+	if err != nil {
+		return err
+	}
+
+	rolesToRemove := []string{}
+	for _, name := range ps.GuardNames() {
+		// Ignore roles that don't start with the `job-` prefix
+		if !strings.HasPrefix(name, "job-") {
+			continue
+		}
+
+		if name != jobRole {
+			rolesToRemove = append(rolesToRemove, name)
+		}
+	}
+
+	if err := s.p.RemoveUserRoles(userId, rolesToRemove...); err != nil {
+		return err
+	}
+
+	if err := s.p.AddUserRoles(userId, jobRole); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutResponse, error) {

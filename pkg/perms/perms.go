@@ -27,6 +27,8 @@ type Permissions interface {
 	GetAllPermissionsByPrefixOfUser(userId int32, prefix string) (collections.Permissions, error)
 	GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix string) ([]string, error)
 
+	GetRoles(prefix string) (collections.Roles, error)
+
 	GetUserRoles(userId int32) (collections.Roles, error)
 	AddUserRoles(userId int32, roles ...string) error
 	RemoveUserRoles(userId int32, roles ...string) error

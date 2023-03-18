@@ -34,11 +34,10 @@ message ReadNotificationsResponse {}
 
 service NotificatorService {
   // @permission
-  rpc Stream(StreamRequest) returns (stream StreamResponse);
-
-  // @permission
   rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse);
-
-  // @permission
+  // @permission: name=GetNotifications
   rpc ReadNotifications(ReadNotificationsRequest) returns (ReadNotificationsResponse);
+
+  // @permission: name=GetNotifications
+  rpc Stream(StreamRequest) returns (stream StreamResponse);
 }

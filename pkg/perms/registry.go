@@ -96,6 +96,7 @@ func (p *Perms) setupRoles() error {
 	}
 	existingRoles := existingRolesList.GuardNames()
 
+	// Iterate over current job and job grades to find any non-existant roles in our database
 	for i := 0; i < len(dest); i++ {
 		for _, grade := range dest[i].Grades {
 			roleName := strings.ToLower(GetRoleName(dest[i].Name, grade.Grade))
@@ -105,10 +106,7 @@ func (p *Perms) setupRoles() error {
 				existingRoles = append(existingRoles[:index], existingRoles[index+1:]...)
 			}
 
-			err := p.CreateRole(roleName, fmt.Sprintf("Role for %s Job (Rank: %d)", dest[i].Name, grade.Grade))
-			if err != nil {
-				return err
-			}
+			fmt.Println(roleName)
 		}
 	}
 
