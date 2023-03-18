@@ -74,9 +74,10 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	}
 
 	// Get total count of values
-	countStmt := u.SELECT(
-		jet.COUNT(u.ID).AS("total_count"),
-	).
+	countStmt := u.
+		SELECT(
+			jet.COUNT(u.ID).AS("total_count"),
+		).
 		FROM(
 			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
 		).
@@ -96,9 +97,10 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		return resp, nil
 	}
 
-	stmt := u.SELECT(
-		selectors[0], selectors[1:]...,
-	).
+	stmt := u.
+		SELECT(
+			selectors[0], selectors[1:]...,
+		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
 		FROM(
 			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
@@ -174,9 +176,10 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	resp := &GetUserResponse{
 		User: &users.User{},
 	}
-	stmt := u.SELECT(
-		selectors[0], selectors[1:]...,
-	).
+	stmt := u.
+		SELECT(
+			selectors[0], selectors[1:]...,
+		).
 		FROM(
 			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)).
 				LEFT_JOIN(ul, ul.Owner.EQ(u.Identifier)),
@@ -202,21 +205,22 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 
 	uTarget := u.AS("target_user")
 	uSource := u.AS("source_user")
-	stmt := aua.SELECT(
-		aua.AllColumns,
-		uTarget.ID,
-		uTarget.Identifier,
-		uTarget.Job,
-		uTarget.JobGrade,
-		uTarget.Firstname,
-		uTarget.Lastname,
-		uSource.ID,
-		uSource.Identifier,
-		uSource.Job,
-		uSource.JobGrade,
-		uSource.Firstname,
-		uSource.Lastname,
-	).
+	stmt := aua.
+		SELECT(
+			aua.AllColumns,
+			uTarget.ID,
+			uTarget.Identifier,
+			uTarget.Job,
+			uTarget.JobGrade,
+			uTarget.Firstname,
+			uTarget.Lastname,
+			uSource.ID,
+			uSource.Identifier,
+			uSource.Job,
+			uSource.JobGrade,
+			uSource.Firstname,
+			uSource.Lastname,
+		).
 		FROM(
 			aua.LEFT_JOIN(uTarget,
 				uTarget.ID.EQ(aua.TargetUserID),
@@ -245,9 +249,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user wanted status!")
 	}
 
-	stmt := aup.INSERT(
-		aup.AllColumns,
-	).
+	stmt := aup.
+		INSERT(
+			aup.AllColumns,
+		).
 		VALUES(
 			req.Props.UserId,
 			req.Props.Wanted,
@@ -276,14 +281,16 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 }
 
 func (s *Server) addUserAcitvity(ctx context.Context, activity *model.ArpanetUserActivity) error {
-	stmt := aua.INSERT(
-		aua.SourceUserID,
-		aua.TargetUserID,
-		aua.Type,
-		aua.Key,
-		aua.OldValue,
-		aua.NewValue,
-	).MODEL(activity)
+	stmt := aua.
+		INSERT(
+			aua.SourceUserID,
+			aua.TargetUserID,
+			aua.Type,
+			aua.Key,
+			aua.OldValue,
+			aua.NewValue,
+		).
+		MODEL(activity)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return err
@@ -298,35 +305,36 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 	uTarget := u.AS("target_user")
 	uSource := u.AS("source_user")
 	uCreator := u.AS("creator")
-	stmt := adr.SELECT(
-		adr.AllColumns,
-		ad.ID,
-		ad.CreatedAt,
-		ad.UpdatedAt,
-		ad.CategoryID,
-		ad.CreatorID,
-		ad.State,
-		ad.Closed,
-		ad.Title,
-		uCreator.ID,
-		uCreator.Identifier,
-		uCreator.Job,
-		uCreator.JobGrade,
-		uCreator.Firstname,
-		uCreator.Lastname,
-		uSource.ID,
-		uSource.Identifier,
-		uSource.Job,
-		uSource.JobGrade,
-		uSource.Firstname,
-		uSource.Lastname,
-		uTarget.ID,
-		uTarget.Identifier,
-		uTarget.Job,
-		uTarget.JobGrade,
-		uTarget.Firstname,
-		uTarget.Lastname,
-	).
+	stmt := adr.
+		SELECT(
+			adr.AllColumns,
+			ad.ID,
+			ad.CreatedAt,
+			ad.UpdatedAt,
+			ad.CategoryID,
+			ad.CreatorID,
+			ad.State,
+			ad.Closed,
+			ad.Title,
+			uCreator.ID,
+			uCreator.Identifier,
+			uCreator.Job,
+			uCreator.JobGrade,
+			uCreator.Firstname,
+			uCreator.Lastname,
+			uSource.ID,
+			uSource.Identifier,
+			uSource.Job,
+			uSource.JobGrade,
+			uSource.Firstname,
+			uSource.Lastname,
+			uTarget.ID,
+			uTarget.Identifier,
+			uTarget.Job,
+			uTarget.JobGrade,
+			uTarget.Firstname,
+			uTarget.Lastname,
+		).
 		FROM(
 			adr.
 				LEFT_JOIN(ad,

@@ -2,7 +2,46 @@ import * as jspb from 'google-protobuf'
 
 import * as resources_documents_documents_pb from '../../resources/documents/documents_pb';
 import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
+import * as resources_users_users_pb from '../../resources/users/users_pb';
 
+
+export class CompleteCharNamesRequest extends jspb.Message {
+  getSearch(): string;
+  setSearch(value: string): CompleteCharNamesRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CompleteCharNamesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: CompleteCharNamesRequest): CompleteCharNamesRequest.AsObject;
+  static serializeBinaryToWriter(message: CompleteCharNamesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CompleteCharNamesRequest;
+  static deserializeBinaryFromReader(message: CompleteCharNamesRequest, reader: jspb.BinaryReader): CompleteCharNamesRequest;
+}
+
+export namespace CompleteCharNamesRequest {
+  export type AsObject = {
+    search: string,
+  }
+}
+
+export class CompleteCharNamesRespoonse extends jspb.Message {
+  getUsersList(): Array<resources_users_users_pb.UserShort>;
+  setUsersList(value: Array<resources_users_users_pb.UserShort>): CompleteCharNamesRespoonse;
+  clearUsersList(): CompleteCharNamesRespoonse;
+  addUsers(value?: resources_users_users_pb.UserShort, index?: number): resources_users_users_pb.UserShort;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CompleteCharNamesRespoonse.AsObject;
+  static toObject(includeInstance: boolean, msg: CompleteCharNamesRespoonse): CompleteCharNamesRespoonse.AsObject;
+  static serializeBinaryToWriter(message: CompleteCharNamesRespoonse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CompleteCharNamesRespoonse;
+  static deserializeBinaryFromReader(message: CompleteCharNamesRespoonse, reader: jspb.BinaryReader): CompleteCharNamesRespoonse;
+}
+
+export namespace CompleteCharNamesRespoonse {
+  export type AsObject = {
+    usersList: Array<resources_users_users_pb.UserShort.AsObject>,
+  }
+}
 
 export class CompleteJobNamesRequest extends jspb.Message {
   getSearch(): string;

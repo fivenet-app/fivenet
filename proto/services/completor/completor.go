@@ -3,6 +3,7 @@ package completor
 import (
 	context "context"
 	"database/sql"
+	"errors"
 	"strings"
 	"time"
 
@@ -14,9 +15,12 @@ import (
 	"github.com/galexrt/arpanet/proto/resources/documents"
 	"github.com/galexrt/arpanet/proto/resources/jobs"
 	"github.com/galexrt/arpanet/query/arpanet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 var (
+	us  = table.Users.AS("user")
 	j   = table.Jobs.AS("job")
 	jg  = table.JobGrades.AS("job_grade")
 	adc = table.ArpanetDocumentsCategories
@@ -129,6 +133,33 @@ func (s *Server) refreshDocumentCategories() error {
 	}
 
 	return nil
+}
+
+func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRequest) (*CompleteCharNamesRespoonse, error) {
+	condition := jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.Search}))
+
+	stmt := us.
+		SELECT(
+			us.ID,
+			us.Identifier,
+			us.Firstname,
+			us.Lastname,
+			us.Job,
+			us.JobGrade,
+		).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
+		FROM(us).
+		WHERE(condition).
+		LIMIT(15)
+
+	resp := &CompleteCharNamesRespoonse{}
+	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	return resp, nil
 }
 
 func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error) {

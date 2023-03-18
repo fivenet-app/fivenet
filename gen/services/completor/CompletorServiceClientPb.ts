@@ -39,6 +39,49 @@ export class CompletorServiceClient {
     this.options_ = options;
   }
 
+  methodDescriptorCompleteCharNames = new grpcWeb.MethodDescriptor(
+    '/services.completor.CompletorService/CompleteCharNames',
+    grpcWeb.MethodType.UNARY,
+    services_completor_completor_pb.CompleteCharNamesRequest,
+    services_completor_completor_pb.CompleteCharNamesRespoonse,
+    (request: services_completor_completor_pb.CompleteCharNamesRequest) => {
+      return request.serializeBinary();
+    },
+    services_completor_completor_pb.CompleteCharNamesRespoonse.deserializeBinary
+  );
+
+  completeCharNames(
+    request: services_completor_completor_pb.CompleteCharNamesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_completor_completor_pb.CompleteCharNamesRespoonse>;
+
+  completeCharNames(
+    request: services_completor_completor_pb.CompleteCharNamesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_completor_completor_pb.CompleteCharNamesRespoonse) => void): grpcWeb.ClientReadableStream<services_completor_completor_pb.CompleteCharNamesRespoonse>;
+
+  completeCharNames(
+    request: services_completor_completor_pb.CompleteCharNamesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_completor_completor_pb.CompleteCharNamesRespoonse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.completor.CompletorService/CompleteCharNames',
+        request,
+        metadata || {},
+        this.methodDescriptorCompleteCharNames,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.completor.CompletorService/CompleteCharNames',
+    request,
+    metadata || {},
+    this.methodDescriptorCompleteCharNames);
+  }
+
   methodDescriptorCompleteJobNames = new grpcWeb.MethodDescriptor(
     '/services.completor.CompletorService/CompleteJobNames',
     grpcWeb.MethodType.UNARY,

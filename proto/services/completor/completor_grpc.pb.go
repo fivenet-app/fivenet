@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CompletorServiceClient interface {
 	// @permission
+	CompleteCharNames(ctx context.Context, in *CompleteCharNamesRequest, opts ...grpc.CallOption) (*CompleteCharNamesRespoonse, error)
+	// @permission
 	CompleteJobNames(ctx context.Context, in *CompleteJobNamesRequest, opts ...grpc.CallOption) (*CompleteJobNamesResponse, error)
 	// @permission
 	CompleteJobGrades(ctx context.Context, in *CompleteJobGradesRequest, opts ...grpc.CallOption) (*CompleteJobGradesResponse, error)
@@ -36,6 +38,15 @@ type completorServiceClient struct {
 
 func NewCompletorServiceClient(cc grpc.ClientConnInterface) CompletorServiceClient {
 	return &completorServiceClient{cc}
+}
+
+func (c *completorServiceClient) CompleteCharNames(ctx context.Context, in *CompleteCharNamesRequest, opts ...grpc.CallOption) (*CompleteCharNamesRespoonse, error) {
+	out := new(CompleteCharNamesRespoonse)
+	err := c.cc.Invoke(ctx, "/services.completor.CompletorService/CompleteCharNames", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *completorServiceClient) CompleteJobNames(ctx context.Context, in *CompleteJobNamesRequest, opts ...grpc.CallOption) (*CompleteJobNamesResponse, error) {
@@ -70,6 +81,8 @@ func (c *completorServiceClient) CompleteDocumentCategory(ctx context.Context, i
 // for forward compatibility
 type CompletorServiceServer interface {
 	// @permission
+	CompleteCharNames(context.Context, *CompleteCharNamesRequest) (*CompleteCharNamesRespoonse, error)
+	// @permission
 	CompleteJobNames(context.Context, *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error)
 	// @permission
 	CompleteJobGrades(context.Context, *CompleteJobGradesRequest) (*CompleteJobGradesResponse, error)
@@ -82,6 +95,9 @@ type CompletorServiceServer interface {
 type UnimplementedCompletorServiceServer struct {
 }
 
+func (UnimplementedCompletorServiceServer) CompleteCharNames(context.Context, *CompleteCharNamesRequest) (*CompleteCharNamesRespoonse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CompleteCharNames not implemented")
+}
 func (UnimplementedCompletorServiceServer) CompleteJobNames(context.Context, *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteJobNames not implemented")
 }
@@ -102,6 +118,24 @@ type UnsafeCompletorServiceServer interface {
 
 func RegisterCompletorServiceServer(s grpc.ServiceRegistrar, srv CompletorServiceServer) {
 	s.RegisterService(&CompletorService_ServiceDesc, srv)
+}
+
+func _CompletorService_CompleteCharNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompleteCharNamesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompletorServiceServer).CompleteCharNames(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.completor.CompletorService/CompleteCharNames",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompletorServiceServer).CompleteCharNames(ctx, req.(*CompleteCharNamesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _CompletorService_CompleteJobNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -165,6 +199,10 @@ var CompletorService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.completor.CompletorService",
 	HandlerType: (*CompletorServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CompleteCharNames",
+			Handler:    _CompletorService_CompleteCharNames_Handler,
+		},
 		{
 			MethodName: "CompleteJobNames",
 			Handler:    _CompletorService_CompleteJobNames_Handler,

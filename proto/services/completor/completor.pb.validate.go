@@ -35,6 +35,255 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on CompleteCharNamesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CompleteCharNamesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CompleteCharNamesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CompleteCharNamesRequestMultiError, or nil if none found.
+func (m *CompleteCharNamesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CompleteCharNamesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetSearch()) > 50 {
+		err := CompleteCharNamesRequestValidationError{
+			field:  "Search",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CompleteCharNamesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CompleteCharNamesRequestMultiError is an error wrapping multiple validation
+// errors returned by CompleteCharNamesRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CompleteCharNamesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CompleteCharNamesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CompleteCharNamesRequestMultiError) AllErrors() []error { return m }
+
+// CompleteCharNamesRequestValidationError is the validation error returned by
+// CompleteCharNamesRequest.Validate if the designated constraints aren't met.
+type CompleteCharNamesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CompleteCharNamesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CompleteCharNamesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CompleteCharNamesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CompleteCharNamesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CompleteCharNamesRequestValidationError) ErrorName() string {
+	return "CompleteCharNamesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CompleteCharNamesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCompleteCharNamesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CompleteCharNamesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CompleteCharNamesRequestValidationError{}
+
+// Validate checks the field values on CompleteCharNamesRespoonse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CompleteCharNamesRespoonse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CompleteCharNamesRespoonse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CompleteCharNamesRespoonseMultiError, or nil if none found.
+func (m *CompleteCharNamesRespoonse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CompleteCharNamesRespoonse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetUsers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CompleteCharNamesRespoonseValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CompleteCharNamesRespoonseValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CompleteCharNamesRespoonseValidationError{
+					field:  fmt.Sprintf("Users[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return CompleteCharNamesRespoonseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CompleteCharNamesRespoonseMultiError is an error wrapping multiple
+// validation errors returned by CompleteCharNamesRespoonse.ValidateAll() if
+// the designated constraints aren't met.
+type CompleteCharNamesRespoonseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CompleteCharNamesRespoonseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CompleteCharNamesRespoonseMultiError) AllErrors() []error { return m }
+
+// CompleteCharNamesRespoonseValidationError is the validation error returned
+// by CompleteCharNamesRespoonse.Validate if the designated constraints aren't met.
+type CompleteCharNamesRespoonseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CompleteCharNamesRespoonseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CompleteCharNamesRespoonseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CompleteCharNamesRespoonseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CompleteCharNamesRespoonseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CompleteCharNamesRespoonseValidationError) ErrorName() string {
+	return "CompleteCharNamesRespoonseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CompleteCharNamesRespoonseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCompleteCharNamesRespoonse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CompleteCharNamesRespoonseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CompleteCharNamesRespoonseValidationError{}
+
 // Validate checks the field values on CompleteJobNamesRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -306,10 +555,10 @@ func (m *CompleteJobGradesRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
 		err := CompleteJobGradesRequestValidationError{
 			field:  "Job",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
