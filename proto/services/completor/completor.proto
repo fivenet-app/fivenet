@@ -13,7 +13,7 @@ message CompleteCharNamesRequest {
 }
 
 message CompleteCharNamesRespoonse {
-  repeated resources.users.UserShort users = 1;
+  repeated resources.users.UserShort users = 1; // @gotags: alias:"user"
 }
 
 message CompleteJobNamesRequest {

@@ -76,7 +76,7 @@ type CompleteCharNamesRespoonse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Users []*users.UserShort `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	Users []*users.UserShort `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty" alias:"user"` // @gotags: alias:"user"
 }
 
 func (x *CompleteCharNamesRespoonse) Reset() {
