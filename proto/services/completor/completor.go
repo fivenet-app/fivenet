@@ -179,10 +179,9 @@ func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequ
 			continue
 		}
 
-		if strings.HasPrefix(job.Name, req.Search) || strings.Contains(job.Name, req.Search) {
-			resp.Jobs = append(resp.Jobs, job)
-		}
 		if strings.HasPrefix(strings.ToLower(job.Label), req.Search) || strings.Contains(strings.ToLower(job.Label), req.Search) {
+			resp.Jobs = append(resp.Jobs, job)
+		} else if strings.HasPrefix(job.Name, req.Search) || strings.Contains(job.Name, req.Search) {
 			resp.Jobs = append(resp.Jobs, job)
 		}
 
