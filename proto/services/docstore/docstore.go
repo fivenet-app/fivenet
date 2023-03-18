@@ -157,7 +157,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, err
 	}
 
-	if err := s.handleDocumentAccessChanges(ctx, DOC_ACCESS_UPDATE_MODE_REPLACE, uint64(lastId), req.Access); err != nil {
+	if err := s.handleDocumentAccessChanges(ctx, DOC_ACCESS_UPDATE_MODE_ADD, uint64(lastId), req.Access); err != nil {
 		return nil, err
 	}
 
@@ -285,10 +285,6 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 		}
 	}
 
-	// TODO add/update/remove for document access based on the current access in the database
-	_ = dest.jobs
-	_ = dest.users
-
 	switch mode {
 	case DOC_ACCESS_UPDATE_MODE_ADD:
 		ja := access.Jobs
@@ -331,18 +327,47 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 			).
 				MODELS(ua)
 
-			fmt.Println(stmt.DebugSql())
-
 			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 				return err
 			}
 		}
 
-	case DOC_ACCESS_UPDATE_MODE_REPLACE:
-		// TODO
-
 	case DOC_ACCESS_UPDATE_MODE_DELETE:
-		// TODO
+		jobIds := []jet.Expression{}
+		for i := 0; i < len(access.Jobs); i++ {
+			if access.Jobs[i].Id == 0 {
+				continue
+			}
+			jobIds = append(jobIds, jet.Uint64(access.Jobs[i].Id))
+		}
+
+		jobAccessStmt := dJobAccess.DELETE().
+			WHERE(jet.AND(
+				dJobAccess.ID.IN(jobIds...),
+				dJobAccess.DocumentID.EQ(jet.Uint64(documentID)),
+			))
+
+		if _, err := jobAccessStmt.ExecContext(ctx, s.db); err != nil {
+			return err
+		}
+
+		uaIds := []jet.Expression{}
+		for i := 0; i < len(access.Users); i++ {
+			if access.Users[i].Id == 0 {
+				continue
+			}
+			jobIds = append(jobIds, jet.Uint64(access.Users[i].Id))
+		}
+
+		userAccessStmt := dUserAccess.DELETE().
+			WHERE(jet.AND(
+				dUserAccess.ID.IN(uaIds...),
+				dUserAccess.DocumentID.EQ(jet.Uint64(documentID)),
+			))
+
+		if _, err := userAccessStmt.ExecContext(ctx, s.db); err != nil {
+			return err
+		}
 
 	case DOC_ACCESS_UPDATE_MODE_CLEAR:
 		jobAccessStmt := dJobAccess.DELETE().

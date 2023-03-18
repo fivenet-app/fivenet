@@ -4777,7 +4777,7 @@ proto.resources.documents.DocumentRelation.prototype.hasTargetUser = function() 
  */
 proto.resources.documents.DOC_CONTENT_TYPE = {
   HTML: 0,
-  MARKDOWN: 1
+  PLAIN: 1
 };
 
 /**

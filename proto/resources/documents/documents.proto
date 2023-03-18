@@ -52,7 +52,7 @@ message DocumentComment {
 
 enum DOC_CONTENT_TYPE {
   HTML = 0;
-  MARKDOWN = 1;
+  PLAIN = 1;
 }
 
 message Document {

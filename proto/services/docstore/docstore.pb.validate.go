@@ -3219,7 +3219,16 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for ContentType
+	if _, ok := documents.DOC_CONTENT_TYPE_name[int32(m.GetContentType())]; !ok {
+		err := CreateDocumentRequestValidationError{
+			field:  "ContentType",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Closed
 
@@ -3499,7 +3508,16 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for ContentType
+	if _, ok := documents.DOC_CONTENT_TYPE_name[int32(m.GetContentType())]; !ok {
+		err := UpdateDocumentRequestValidationError{
+			field:  "ContentType",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for CategoryId
 

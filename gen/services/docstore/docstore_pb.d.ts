@@ -726,7 +726,6 @@ export namespace SetDocumentAccessResponse {
 
 export enum DOC_ACCESS_UPDATE_MODE { 
   ADD = 0,
-  REPLACE = 1,
-  DELETE = 2,
-  CLEAR = 3,
+  DELETE = 1,
+  CLEAR = 2,
 }

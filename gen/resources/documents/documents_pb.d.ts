@@ -591,7 +591,7 @@ export namespace DocumentRelation {
 
 export enum DOC_CONTENT_TYPE { 
   HTML = 0,
-  MARKDOWN = 1,
+  PLAIN = 1,
 }
 export enum DOC_ACCESS { 
   BLOCKED = 0,

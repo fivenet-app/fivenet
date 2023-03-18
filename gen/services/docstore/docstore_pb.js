@@ -6168,9 +6168,8 @@ proto.services.docstore.SetDocumentAccessResponse.serializeBinaryToWriter = func
  */
 proto.services.docstore.DOC_ACCESS_UPDATE_MODE = {
   ADD: 0,
-  REPLACE: 1,
-  DELETE: 2,
-  CLEAR: 3
+  DELETE: 1,
+  CLEAR: 2
 };
 
 goog.object.extend(exports, proto.services.docstore);
