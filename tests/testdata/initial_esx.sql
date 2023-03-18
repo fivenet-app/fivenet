@@ -48,7 +48,7 @@ VALUES(4, 'char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', NULL, 'user', '{}', 
 INSERT INTO users (id, identifier, license, `group`, skin, job, job_grade, loadout, `position`, firstname, lastname, dateofbirth, sex, height, is_dead, last_property, jail, inventory, phone_number, accounts, tattoos, disabled, visum, playtime, levelData, onDuty, health, armor, created_at, last_seen, meta)
 VALUES(5, 'char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', NULL, 'user', '{}', 'unemployed', 1, '{}', '{"x":981.96,"y":45.73,"z":80.99,"heading":342.99}', 'Peter', 'Hans', '10.02.1991', 'm', '178', 0, NULL, 0, '{}', '1550044', NULL, NULL, 0, 209, 2244596, NULL, 0, 200, 0, '2023-01-26 09:01:51.000', '2023-03-11 21:06:27.000', '2023-03-11 21:06:27.000');
 -- Table: user_licenses
-CREATE TABLE `user_licenses` (
+CREATE TABLE IF NOT EXISTS `user_licenses` (
   `type` varchar(60) NOT NULL,
   `owner` varchar(64) NOT NULL,
   PRIMARY KEY (`type`,`owner`),
@@ -163,7 +163,7 @@ INSERT INTO job_grades (job_name, grade, name, label, salary, skin_male, skin_fe
 INSERT INTO job_grades (job_name, grade, name, label, salary, skin_male, skin_female) VALUES('police', 27, 'chief_of_police', 'Chief of Police', 0, '{}', '{}');
 INSERT INTO job_grades (job_name, grade, name, label, salary, skin_male, skin_female) VALUES('unemployed', 1, 'arbeitslos', 'Arbeitslos', 0, '{}', '{}');
 -- Table: owned_vehicles
-CREATE TABLE `owned_vehicles` (
+CREATE TABLE IF NOT EXISTS `owned_vehicles` (
   `owner` varchar(64) DEFAULT NULL,
   `plate` varchar(12) NOT NULL,
   `model` varchar(60) NOT NULL,
