@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/vue';
 import config from './config';
 import router from './router';
 import store from './store';
-import slugify from 'slugify';
+import slug from './utils/slugify';
 
 // Load styles and Inter font (all weights)
 import './style.css';
@@ -34,7 +34,7 @@ app.use(store);
 // Add `v-can` directive for easy permission checking
 app.directive('can', (el, binding, vnode) => {
     const permissions = store.state.permissions;
-    const val = slugify(binding.value as string);
+    const val = slug(binding.value as string);
     if (permissions.includes(val) || val === '') {
         return (vnode.el.hidden = false);
     } else {

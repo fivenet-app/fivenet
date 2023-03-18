@@ -1,7 +1,7 @@
-import slugify from 'slugify';
 import { createWebHistory, createRouter, setupDataFetchingGuard, RouteRecordRaw } from 'vue-router/auto';
 import { dispatchNotification } from './components/notification';
 import store from './store';
+import slug from './utils/slugify';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -19,7 +19,8 @@ router.beforeEach((to, from) => {
         if (store.state.accessToken && store.state.activeChar) {
             // Route has permission attached to it, check if user has required permission
             if (to.meta.permission) {
-                const perm = slugify(to.meta.permission as string);
+                const perm = slug(to.meta.permission as string);
+                console.log(perm);
                 if (store.state.permissions.includes(perm)) {
                     // User has permission
                     return;
@@ -29,6 +30,8 @@ router.beforeEach((to, from) => {
                         content: "You don't have permission to go to " + (to.name ? to.name?.toString() : to.path) + '.',
                         type: 'warning',
                     });
+
+                    console.log(store.state.permissions);
 
                     if (store.state.accessToken) {
                         return {
