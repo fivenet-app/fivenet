@@ -2,9 +2,13 @@ package perms
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/galexrt/arpanet/pkg/config"
+	"github.com/galexrt/arpanet/proto/resources/jobs"
+	"github.com/galexrt/arpanet/query/arpanet/table"
+	"golang.org/x/exp/slices"
 )
 
 var (
@@ -30,7 +34,7 @@ func AddPermsToList(perms []*Perm) {
 	list = append(list, perms...)
 }
 
-func (p *Perms) Register() {
+func (p *Perms) Register() error {
 	for _, perm := range list {
 		baseKey := fmt.Sprintf("%s.%s", perm.Key, perm.Name)
 		p.CreatePermission(baseKey, perm.Description)
@@ -45,16 +49,79 @@ func (p *Perms) Register() {
 
 		for _, field := range perm.Fields {
 			fieldKey := fmt.Sprintf("%s.%s", baseKey, field)
-			p.CreatePermission(fieldKey, perm.Description)
+			if err := p.CreatePermission(fieldKey, perm.Description); err != nil {
+				return err
+			}
 		}
 	}
 
-	p.setupRoles()
+	return p.setupRoles()
 }
 
-func (p *Perms) setupRoles() {
-	p.CreateRole("masterofdisaster", "")
+func (p *Perms) setupRoles() error {
+	if err := p.CreateRole("masterofdisaster", ""); err != nil {
+		return err
+	}
+
 	perms, _ := p.GetAllPermissions()
 	// Ensure the "masterofdisaster" role always has all permissions
-	p.AddPermissionsToRole("masterofdisaster", perms)
+	if err := p.AddPermissionsToRole("masterofdisaster", perms); err != nil {
+		return err
+	}
+
+	j := table.Jobs.AS("job")
+	jg := table.JobGrades.AS("jobgrade")
+	stmt := j.
+		SELECT(
+			j.Name,
+			j.Label,
+			jg.JobName.AS("job_name"),
+			jg.Grade,
+			jg.Name,
+			jg.Label,
+		).
+		FROM(j.
+			INNER_JOIN(jg,
+				jg.JobName.EQ(j.Name),
+			))
+
+	var dest []jobs.Job
+	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+		return err
+	}
+
+	existingRolesList, err := p.GetRoles("job-")
+	if err != nil {
+		return err
+	}
+	existingRoles := existingRolesList.GuardNames()
+
+	for i := 0; i < len(dest); i++ {
+		for _, grade := range dest[i].Grades {
+			roleName := strings.ToLower(GetRoleName(dest[i].Name, grade.Grade))
+
+			index := slices.Index(existingRoles, roleName)
+			if index >= 0 {
+				existingRoles = append(existingRoles[:index], existingRoles[index+1:]...)
+			}
+
+			err := p.CreateRole(roleName, fmt.Sprintf("Role for %s Job (Rank: %d)", dest[i].Name, grade.Grade))
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// Remove all roles that shouldn't exist anymore
+	for i := 0; i < len(existingRoles); i++ {
+		if err := p.DeleteRole(existingRoles[i]); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func GetRoleName(job string, grade int32) string {
+	return fmt.Sprintf("job-%s-%d", job, grade)
 }

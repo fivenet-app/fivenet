@@ -210,6 +210,33 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
+	// Make sure the user is only in their current job role
+	_, _ = char.Job, char.JobGrade
+	ps, err := s.p.GetUserRoles(char.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	rolesToRemove := []string{}
+	roleKey := perms.GetRoleName(char.Job, char.JobGrade)
+	for _, name := range ps.GuardNames() {
+		if !strings.HasPrefix(name, "job-") {
+			continue
+		}
+
+		if name != roleKey {
+			rolesToRemove = append(rolesToRemove, name)
+		}
+	}
+
+	if err := s.p.RemoveUserRoles(char.UserId, rolesToRemove...); err != nil {
+		return nil, err
+	}
+
+	if err := s.p.AddUserRoles(char.UserId, roleKey); err != nil {
+		return nil, err
+	}
+
 	// Load permissions of user
 	perms, err := s.p.GetAllPermissionsOfUser(char.UserId)
 	if err != nil {

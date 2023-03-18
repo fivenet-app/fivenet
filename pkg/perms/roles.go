@@ -3,11 +3,31 @@ package perms
 import (
 	"errors"
 
+	"github.com/galexrt/arpanet/pkg/dbutils"
 	"github.com/galexrt/arpanet/pkg/perms/collections"
 	"github.com/galexrt/arpanet/pkg/perms/helpers"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-sql-driver/mysql"
 )
+
+func (p *Perms) GetRoles(prefix string) (collections.Roles, error) {
+	prefix = helpers.Guard(prefix)
+
+	stmt := ar.SELECT(
+		ar.AllColumns,
+	).
+		FROM(ar).
+		WHERE(
+			ar.GuardName.LIKE(jet.String(prefix + "%")),
+		)
+
+	var dest collections.Roles
+	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+		return nil, err
+	}
+
+	return dest, nil
+}
 
 func (p *Perms) CreateRole(name string, description string) error {
 	stmt := ar.INSERT(
@@ -18,7 +38,12 @@ func (p *Perms) CreateRole(name string, description string) error {
 		VALUES(name, helpers.Guard(name), description)
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
-	return err
+
+	if !dbutils.IsDuplicateError(err) {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Perms) DeleteRole(name string) error {
@@ -29,12 +54,17 @@ func (p *Perms) DeleteRole(name string) error {
 }
 
 func (p *Perms) AddPermissionsToRole(name string, perms collections.Permissions) error {
-	var roleIDs []uint
-	if err := ar.SELECT(ar.ID).
+	// Make sure the role exists
+	rolesStmt := ar.
+		SELECT(ar.ID).
 		FROM(ar).
-		WHERE(ar.GuardName.EQ(jet.String(helpers.Guard(name)))).
-		LIMIT(1).
-		QueryContext(p.ctx, p.db, &roleIDs); err != nil {
+		WHERE(
+			ar.GuardName.EQ(jet.String(helpers.Guard(name))),
+		).
+		LIMIT(1)
+
+	var roleIDs []uint
+	if err := rolesStmt.QueryContext(p.ctx, p.db, &roleIDs); err != nil {
 		return err
 	}
 
