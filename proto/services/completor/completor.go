@@ -169,6 +169,9 @@ func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRe
 
 func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error) {
 	resp := &CompleteJobNamesResponse{}
+
+	req.Search = strings.ToLower(req.Search)
+
 	keys := s.jobsCache.Keys()
 	for i := 0; i < len(keys); i++ {
 		job, ok := s.jobsCache.Get(keys[i])
@@ -179,6 +182,10 @@ func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequ
 		if strings.HasPrefix(job.Name, req.Search) || strings.Contains(job.Name, req.Search) {
 			resp.Jobs = append(resp.Jobs, job)
 		}
+		if strings.HasPrefix(strings.ToLower(job.Label), req.Search) || strings.Contains(strings.ToLower(job.Label), req.Search) {
+			resp.Jobs = append(resp.Jobs, job)
+		}
+
 		if i > 10 {
 			break
 		}
