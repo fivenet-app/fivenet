@@ -121,51 +121,51 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	return resp, nil
 }
 
-func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest) (*CreateDocumentResponse, error) {
+func (s *Server) CreateDocument(ctx context.Context, req *CreateOrUpdateDocumentRequest) (*CreateOrUpdateDocumentResponse, error) {
 	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	docs := table.ArpanetDocuments
-	stmt := docs.INSERT(
-		docs.Title,
-		docs.Content,
-		docs.ContentType,
-		docs.Closed,
-		docs.State,
-		docs.Public,
-		docs.CreatorID,
-		docs.CategoryID,
-	).VALUES(
-		req.Title,
-		htmlsanitizer.Sanitize(req.Content),
-		documents.DOC_CONTENT_TYPE_HTML,
-		req.Closed,
-		req.State,
-		req.Public,
-		userId,
-		job,
-		req.CategoryId,
-	)
+	if req.DocumentId == 0 {
+		docs := table.ArpanetDocuments
+		stmt := docs.INSERT(
+			docs.Title,
+			docs.Content,
+			docs.ContentType,
+			docs.Closed,
+			docs.State,
+			docs.Public,
+			docs.CreatorID,
+			docs.CategoryID,
+		).VALUES(
+			req.Title,
+			htmlsanitizer.Sanitize(req.Content),
+			documents.DOC_CONTENT_TYPE_HTML,
+			req.Closed,
+			req.State,
+			req.Public,
+			userId,
+			job,
+			req.CategoryId,
+		)
 
-	result, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return nil, err
+		result, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return nil, err
+		}
+
+		lastId, err := result.LastInsertId()
+		if err != nil {
+			return nil, err
+		}
+
+		if err := s.handleDocumentAccessChanges(ctx, DOC_ACCESS_UPDATE_MODE_ADD, uint64(lastId), req.Access); err != nil {
+			return nil, err
+		}
+
+		return &CreateOrUpdateDocumentResponse{
+			Id: uint64(lastId),
+		}, nil
 	}
 
-	lastId, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.handleDocumentAccessChanges(ctx, DOC_ACCESS_UPDATE_MODE_ADD, uint64(lastId), req.Access); err != nil {
-		return nil, err
-	}
-
-	return &CreateDocumentResponse{
-		Id: uint64(lastId),
-	}, nil
-}
-
-func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
 	if err != nil {
@@ -195,7 +195,9 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, err
 	}
 
-	return &UpdateDocumentResponse{}, nil
+	return &CreateOrUpdateDocumentResponse{
+		Id: req.DocumentId,
+	}, nil
 }
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {

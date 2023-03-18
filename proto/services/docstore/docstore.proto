@@ -109,24 +109,7 @@ message EditDocumentCommentRequest {
 
 message EditDocumentCommentResponse {}
 
-message CreateDocumentRequest {
-  string title = 1 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-  string content = 2 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
-  resources.documents.DOC_CONTENT_TYPE content_type = 3 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
-  bool closed = 4; // @gotags: alias:"closed"
-  string state = 5 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
-  bool public = 6; // @gotags: alias:"public"
-  uint64 category_id = 7; // @gotags: alias:"category_id"
-  uint64 target_document_id = 8; // @gotags: alias:"response_id"
-
-  resources.documents.DocumentAccess access = 9;
-}
-
-message CreateDocumentResponse {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-}
-
-message UpdateDocumentRequest {
+message CreateOrUpdateDocumentRequest {
   uint64 document_id = 1; // @gotags: sql:"primary_key" alias:"id"
   string title = 2 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   string content = 3 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
@@ -135,10 +118,13 @@ message UpdateDocumentRequest {
   bool closed = 6; // @gotags: alias:"closed"
   string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool public = 8; // @gotags: alias:"public"
+
+  resources.documents.DocumentAccess access = 9;
 }
 
-message UpdateDocumentResponse {}
-
+message CreateOrUpdateDocumentResponse {
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+}
 
 message GetDocumentAccessRequest {
   uint64 document_id = 1;
@@ -173,9 +159,7 @@ service DocStoreService {
   // @permission
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
   // @permission
-  rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
-  // @permission: name=CreateDocument
-  rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
+  rpc CreateOrUpdateDocument(CreateOrUpdateDocumentRequest) returns (CreateOrUpdateDocumentResponse);
 
   // @permission: name=GetDocument
   rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse);

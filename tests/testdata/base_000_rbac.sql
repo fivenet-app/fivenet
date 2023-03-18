@@ -38,7 +38,7 @@ INSERT INTO `arpanet_permissions` VALUES
 (17,'2023-03-18 16:37:43.401',NULL,'CompletorService.CompleteJobGrades','completorservice-completejobgrades',''),
 (19,'2023-03-18 16:37:43.418',NULL,'DocStoreService.AddDocumentReference','docstoreservice-adddocumentreference',''),
 (20,'2023-03-18 16:37:43.426',NULL,'DocStoreService.AddDocumentRelation','docstoreservice-adddocumentrelation',''),
-(21,'2023-03-18 16:37:43.435',NULL,'DocStoreService.CreateDocument','docstoreservice-createdocument',''),
+(21,'2023-03-18 16:37:43.435',NULL,'DocStoreService.CreateOrUpdateDocument','docstoreservice-createorupdatedocument',''),
 (22,'2023-03-18 16:37:43.443',NULL,'DocStoreService.PostDocumentComment','docstoreservice-postdocumentcomment',''),
 (23,'2023-03-18 16:37:43.460',NULL,'DocStoreService.FindDocuments','docstoreservice-finddocuments',''),
 (24,'2023-03-18 16:37:43.478',NULL,'DocStoreService.GetDocument','docstoreservice-getdocument',''),

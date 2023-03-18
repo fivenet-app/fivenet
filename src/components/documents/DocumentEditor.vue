@@ -4,7 +4,7 @@ import { mapState } from 'vuex';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
-import { CreateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { CreateOrUpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentJobAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
@@ -43,13 +43,6 @@ export default defineComponent({
             modules,
         };
     },
-    props: {
-        'targetDocumentID': {
-            required: false,
-            type: Number,
-            default: 0,
-        },
-    },
     methods: {
         submitForm(): void {
             if (this.saving) {
@@ -57,14 +50,13 @@ export default defineComponent({
             }
 
             this.saving = true;
-            const req = new CreateDocumentRequest();
+            const req = new CreateOrUpdateDocumentRequest();
             req.setTitle(this.title);
             req.setContent(this.content);
             req.setContentType(DOC_CONTENT_TYPE.HTML);
             req.setClosed(this.closed);
             req.setState(this.state);
             req.setPublic(this.public);
-            req.setTargetDocumentId(this.targetDocumentID);
 
             const access = new DocumentAccess();
             const jobsAccessList = new Array<DocumentJobAccess>();
@@ -79,7 +71,7 @@ export default defineComponent({
             req.setAccess(access);
 
             getDocStoreClient().
-                createDocument(req, null).then((resp) => {
+                createOrUpdateDocument(req, null).then((resp) => {
                     dispatchNotification({ title: "Document created!", content: "Document has been created." });
                     this.saving = false;
                     this.$router.push('/documents/' + resp.getId());

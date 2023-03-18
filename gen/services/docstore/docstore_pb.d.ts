@@ -514,110 +514,45 @@ export namespace EditDocumentCommentResponse {
   }
 }
 
-export class CreateDocumentRequest extends jspb.Message {
+export class CreateOrUpdateDocumentRequest extends jspb.Message {
+  getDocumentId(): number;
+  setDocumentId(value: number): CreateOrUpdateDocumentRequest;
+
   getTitle(): string;
-  setTitle(value: string): CreateDocumentRequest;
+  setTitle(value: string): CreateOrUpdateDocumentRequest;
 
   getContent(): string;
-  setContent(value: string): CreateDocumentRequest;
+  setContent(value: string): CreateOrUpdateDocumentRequest;
 
   getContentType(): resources_documents_documents_pb.DOC_CONTENT_TYPE;
-  setContentType(value: resources_documents_documents_pb.DOC_CONTENT_TYPE): CreateDocumentRequest;
-
-  getClosed(): boolean;
-  setClosed(value: boolean): CreateDocumentRequest;
-
-  getState(): string;
-  setState(value: string): CreateDocumentRequest;
-
-  getPublic(): boolean;
-  setPublic(value: boolean): CreateDocumentRequest;
+  setContentType(value: resources_documents_documents_pb.DOC_CONTENT_TYPE): CreateOrUpdateDocumentRequest;
 
   getCategoryId(): number;
-  setCategoryId(value: number): CreateDocumentRequest;
+  setCategoryId(value: number): CreateOrUpdateDocumentRequest;
 
-  getTargetDocumentId(): number;
-  setTargetDocumentId(value: number): CreateDocumentRequest;
+  getClosed(): boolean;
+  setClosed(value: boolean): CreateOrUpdateDocumentRequest;
+
+  getState(): string;
+  setState(value: string): CreateOrUpdateDocumentRequest;
+
+  getPublic(): boolean;
+  setPublic(value: boolean): CreateOrUpdateDocumentRequest;
 
   getAccess(): resources_documents_documents_pb.DocumentAccess | undefined;
-  setAccess(value?: resources_documents_documents_pb.DocumentAccess): CreateDocumentRequest;
+  setAccess(value?: resources_documents_documents_pb.DocumentAccess): CreateOrUpdateDocumentRequest;
   hasAccess(): boolean;
-  clearAccess(): CreateDocumentRequest;
+  clearAccess(): CreateOrUpdateDocumentRequest;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CreateDocumentRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: CreateDocumentRequest): CreateDocumentRequest.AsObject;
-  static serializeBinaryToWriter(message: CreateDocumentRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CreateDocumentRequest;
-  static deserializeBinaryFromReader(message: CreateDocumentRequest, reader: jspb.BinaryReader): CreateDocumentRequest;
+  toObject(includeInstance?: boolean): CreateOrUpdateDocumentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateOrUpdateDocumentRequest): CreateOrUpdateDocumentRequest.AsObject;
+  static serializeBinaryToWriter(message: CreateOrUpdateDocumentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateOrUpdateDocumentRequest;
+  static deserializeBinaryFromReader(message: CreateOrUpdateDocumentRequest, reader: jspb.BinaryReader): CreateOrUpdateDocumentRequest;
 }
 
-export namespace CreateDocumentRequest {
-  export type AsObject = {
-    title: string,
-    content: string,
-    contentType: resources_documents_documents_pb.DOC_CONTENT_TYPE,
-    closed: boolean,
-    state: string,
-    pb_public: boolean,
-    categoryId: number,
-    targetDocumentId: number,
-    access?: resources_documents_documents_pb.DocumentAccess.AsObject,
-  }
-}
-
-export class CreateDocumentResponse extends jspb.Message {
-  getId(): number;
-  setId(value: number): CreateDocumentResponse;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CreateDocumentResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: CreateDocumentResponse): CreateDocumentResponse.AsObject;
-  static serializeBinaryToWriter(message: CreateDocumentResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CreateDocumentResponse;
-  static deserializeBinaryFromReader(message: CreateDocumentResponse, reader: jspb.BinaryReader): CreateDocumentResponse;
-}
-
-export namespace CreateDocumentResponse {
-  export type AsObject = {
-    id: number,
-  }
-}
-
-export class UpdateDocumentRequest extends jspb.Message {
-  getDocumentId(): number;
-  setDocumentId(value: number): UpdateDocumentRequest;
-
-  getTitle(): string;
-  setTitle(value: string): UpdateDocumentRequest;
-
-  getContent(): string;
-  setContent(value: string): UpdateDocumentRequest;
-
-  getContentType(): resources_documents_documents_pb.DOC_CONTENT_TYPE;
-  setContentType(value: resources_documents_documents_pb.DOC_CONTENT_TYPE): UpdateDocumentRequest;
-
-  getCategoryId(): number;
-  setCategoryId(value: number): UpdateDocumentRequest;
-
-  getClosed(): boolean;
-  setClosed(value: boolean): UpdateDocumentRequest;
-
-  getState(): string;
-  setState(value: string): UpdateDocumentRequest;
-
-  getPublic(): boolean;
-  setPublic(value: boolean): UpdateDocumentRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): UpdateDocumentRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: UpdateDocumentRequest): UpdateDocumentRequest.AsObject;
-  static serializeBinaryToWriter(message: UpdateDocumentRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): UpdateDocumentRequest;
-  static deserializeBinaryFromReader(message: UpdateDocumentRequest, reader: jspb.BinaryReader): UpdateDocumentRequest;
-}
-
-export namespace UpdateDocumentRequest {
+export namespace CreateOrUpdateDocumentRequest {
   export type AsObject = {
     documentId: number,
     title: string,
@@ -627,20 +562,25 @@ export namespace UpdateDocumentRequest {
     closed: boolean,
     state: string,
     pb_public: boolean,
+    access?: resources_documents_documents_pb.DocumentAccess.AsObject,
   }
 }
 
-export class UpdateDocumentResponse extends jspb.Message {
+export class CreateOrUpdateDocumentResponse extends jspb.Message {
+  getId(): number;
+  setId(value: number): CreateOrUpdateDocumentResponse;
+
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): UpdateDocumentResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: UpdateDocumentResponse): UpdateDocumentResponse.AsObject;
-  static serializeBinaryToWriter(message: UpdateDocumentResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): UpdateDocumentResponse;
-  static deserializeBinaryFromReader(message: UpdateDocumentResponse, reader: jspb.BinaryReader): UpdateDocumentResponse;
+  toObject(includeInstance?: boolean): CreateOrUpdateDocumentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateOrUpdateDocumentResponse): CreateOrUpdateDocumentResponse.AsObject;
+  static serializeBinaryToWriter(message: CreateOrUpdateDocumentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateOrUpdateDocumentResponse;
+  static deserializeBinaryFromReader(message: CreateOrUpdateDocumentResponse, reader: jspb.BinaryReader): CreateOrUpdateDocumentResponse;
 }
 
-export namespace UpdateDocumentResponse {
+export namespace CreateOrUpdateDocumentResponse {
   export type AsObject = {
+    id: number,
   }
 }
 
