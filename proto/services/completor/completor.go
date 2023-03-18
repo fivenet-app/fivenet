@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	us  = table.Users.AS("user")
+	us  = table.Users.AS("usershort")
 	j   = table.Jobs.AS("job")
 	jg  = table.JobGrades.AS("job_grade")
 	adc = table.ArpanetDocumentsCategories
