@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Navbar from '../../components/partials/Navbar.vue';
 import Footer from '../../components/partials/Footer.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
@@ -13,7 +12,6 @@ import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 
 export default defineComponent({
     components: {
-        Navbar,
         Footer,
         ContentWrapper,
         NavPageHeader,

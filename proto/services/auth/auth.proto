@@ -38,7 +38,9 @@ message LogoutResponse {
 
 service AuthService {
   rpc Login(LoginRequest) returns (LoginResponse);
+  // @permission
   rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse);
+  // @permission: name=GetCharacters
   rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
 }

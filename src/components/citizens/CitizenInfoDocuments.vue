@@ -43,7 +43,12 @@ export default defineComponent({
 </script>
 
 <template>
-    <ul class="bg-white">
+    <span v-if="relations.length === 0">
+            <p class="text-sm font-medium text-white">
+                No Citizen Activities found.
+            </p>
+        </span>
+    <ul v-else class="bg-white">
         <li v-for="relation in relations" :key="relation.getId()">
             {{ relation.getDocument()?.getTitle() }}
         </li>

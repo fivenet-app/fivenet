@@ -59,8 +59,8 @@ export default defineComponent({
                     </div>
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-medium text-white">{{ activity.getCauseuser()?.getFirstname() }} {{
-                                activity.getCauseuser()?.getLastname() }}</h3>
+                            <h3 class="text-sm font-medium text-white">{{ activity.getSourceUser()?.getFirstname() }} {{
+                                activity.getSourceUser()?.getLastname() }}</h3>
                             <p class="text-sm text-gray-400">{{ activity.getCreatedAt() }}</p>
                         </div>
                         <p class="text-sm text-gray-300">{{ activity.getType() }} {{ activity.getKey() }}: {{
