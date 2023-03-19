@@ -17,6 +17,7 @@ type ArpanetNotifications struct {
 	ReadAt    *time.Time `json:"read_at"`
 	UserID    int32      `json:"user_id"`
 	Title     string     `json:"title"`
+	Type      string     `json:"type"`
 	Content   string     `json:"content"`
 	Data      string     `json:"data"`
 }

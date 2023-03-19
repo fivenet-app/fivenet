@@ -4,7 +4,7 @@ import { useStore } from 'vuex';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
-import { CreateOrUpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { CreateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentJobAccess, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
@@ -103,7 +103,7 @@ function updateAccessEntryAccess(event: {
 }
 
 function submitForm(): void {
-    const req = new CreateOrUpdateDocumentRequest();
+    const req = new CreateDocumentRequest();
     req.setTitle(title.value);
     req.setContent(content.value);
     req.setContentType(DOC_CONTENT_TYPE.HTML);
@@ -127,11 +127,17 @@ function submitForm(): void {
             if (!entry.values.job) return;
 
             const job = new DocumentJobAccess();
-            job.setAccess(entry.values.accessrole);
+            job.setId(0);
+            job.setCreatedAt(undefined);
+            job.setUpdatedAt(undefined);
+            job.setDocumentId(0);
             job.setJob(entry.values.job.getName());
             job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank.getGrade() : 0);
+            job.setAccess(entry.values.accessrole);
+            job.setCreatorId(1);
+            job.setCreator(undefined);
 
-            reqAccess.addJobs(job);
+            reqAccess.addJobs( );
         }
     });
     req.setAccess(reqAccess);
@@ -145,10 +151,12 @@ function submitForm(): void {
     // access.setJobsList(jobsAccessList);
 
     getDocStoreClient().
-        createOrUpdateDocument(req, null).then((resp) => {
+        createDocument(req, null).
+        then((resp) => {
             dispatchNotification({ title: "Document created!", content: "Document has been created." });
-            router.push('/documents/' + resp.getId());
+            router.push('/documents/' + resp.getDocumentId());
         }).catch((err: RpcError) => {
+            console.log(err);
             handleGRPCError(err, route);
         });
 }

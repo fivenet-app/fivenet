@@ -22,6 +22,7 @@ type arpanetNotificationsTable struct {
 	ReadAt    mysql.ColumnTimestamp
 	UserID    mysql.ColumnInteger
 	Title     mysql.ColumnString
+	Type      mysql.ColumnString
 	Content   mysql.ColumnString
 	Data      mysql.ColumnString
 
@@ -69,10 +70,11 @@ func newArpanetNotificationsTableImpl(schemaName, tableName, alias string) arpan
 		ReadAtColumn    = mysql.TimestampColumn("read_at")
 		UserIDColumn    = mysql.IntegerColumn("user_id")
 		TitleColumn     = mysql.StringColumn("title")
+		TypeColumn      = mysql.StringColumn("type")
 		ContentColumn   = mysql.StringColumn("content")
 		DataColumn      = mysql.StringColumn("data")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, ContentColumn, DataColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, ContentColumn, DataColumn}
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, TypeColumn, ContentColumn, DataColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, TypeColumn, ContentColumn, DataColumn}
 	)
 
 	return arpanetNotificationsTable{
@@ -84,6 +86,7 @@ func newArpanetNotificationsTableImpl(schemaName, tableName, alias string) arpan
 		ReadAt:    ReadAtColumn,
 		UserID:    UserIDColumn,
 		Title:     TitleColumn,
+		Type:      TypeColumn,
 		Content:   ContentColumn,
 		Data:      DataColumn,
 

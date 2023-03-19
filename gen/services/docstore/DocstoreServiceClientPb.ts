@@ -211,47 +211,90 @@ export class DocStoreServiceClient {
     this.methodDescriptorGetDocument);
   }
 
-  methodDescriptorCreateOrUpdateDocument = new grpcWeb.MethodDescriptor(
-    '/services.docstore.DocStoreService/CreateOrUpdateDocument',
+  methodDescriptorCreateDocument = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/CreateDocument',
     grpcWeb.MethodType.UNARY,
-    services_docstore_docstore_pb.CreateOrUpdateDocumentRequest,
-    services_docstore_docstore_pb.CreateOrUpdateDocumentResponse,
-    (request: services_docstore_docstore_pb.CreateOrUpdateDocumentRequest) => {
+    services_docstore_docstore_pb.CreateDocumentRequest,
+    services_docstore_docstore_pb.CreateDocumentResponse,
+    (request: services_docstore_docstore_pb.CreateDocumentRequest) => {
       return request.serializeBinary();
     },
-    services_docstore_docstore_pb.CreateOrUpdateDocumentResponse.deserializeBinary
+    services_docstore_docstore_pb.CreateDocumentResponse.deserializeBinary
   );
 
-  createOrUpdateDocument(
-    request: services_docstore_docstore_pb.CreateOrUpdateDocumentRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.CreateOrUpdateDocumentResponse>;
+  createDocument(
+    request: services_docstore_docstore_pb.CreateDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.CreateDocumentResponse>;
 
-  createOrUpdateDocument(
-    request: services_docstore_docstore_pb.CreateOrUpdateDocumentRequest,
+  createDocument(
+    request: services_docstore_docstore_pb.CreateDocumentRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.CreateOrUpdateDocumentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.CreateOrUpdateDocumentResponse>;
+               response: services_docstore_docstore_pb.CreateDocumentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.CreateDocumentResponse>;
 
-  createOrUpdateDocument(
-    request: services_docstore_docstore_pb.CreateOrUpdateDocumentRequest,
+  createDocument(
+    request: services_docstore_docstore_pb.CreateDocumentRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.CreateOrUpdateDocumentResponse) => void) {
+               response: services_docstore_docstore_pb.CreateDocumentResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.docstore.DocStoreService/CreateOrUpdateDocument',
+          '/services.docstore.DocStoreService/CreateDocument',
         request,
         metadata || {},
-        this.methodDescriptorCreateOrUpdateDocument,
+        this.methodDescriptorCreateDocument,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.docstore.DocStoreService/CreateOrUpdateDocument',
+      '/services.docstore.DocStoreService/CreateDocument',
     request,
     metadata || {},
-    this.methodDescriptorCreateOrUpdateDocument);
+    this.methodDescriptorCreateDocument);
+  }
+
+  methodDescriptorUpdateDocument = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/UpdateDocument',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.UpdateDocumentRequest,
+    services_docstore_docstore_pb.UpdateDocumentResponse,
+    (request: services_docstore_docstore_pb.UpdateDocumentRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.UpdateDocumentResponse.deserializeBinary
+  );
+
+  updateDocument(
+    request: services_docstore_docstore_pb.UpdateDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.UpdateDocumentResponse>;
+
+  updateDocument(
+    request: services_docstore_docstore_pb.UpdateDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.UpdateDocumentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.UpdateDocumentResponse>;
+
+  updateDocument(
+    request: services_docstore_docstore_pb.UpdateDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.UpdateDocumentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/UpdateDocument',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateDocument,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/UpdateDocument',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateDocument);
   }
 
   methodDescriptorGetDocumentReferences = new grpcWeb.MethodDescriptor(

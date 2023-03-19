@@ -22,6 +22,7 @@ type ArpanetDocuments struct {
 	Content     string     `json:"content"`
 	Data        *string    `json:"data"`
 	CreatorID   int32      `json:"creator_id"`
+	CreatorJob  string     `json:"creator_job"`
 	State       string     `json:"state"`
 	Closed      *bool      `json:"closed"`
 	Public      bool       `json:"public"`

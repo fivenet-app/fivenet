@@ -31,7 +31,9 @@ type DocStoreServiceClient interface {
 	// @permission
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
 	// @permission
-	CreateOrUpdateDocument(ctx context.Context, in *CreateOrUpdateDocumentRequest, opts ...grpc.CallOption) (*CreateOrUpdateDocumentResponse, error)
+	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
+	// @permission: name=UpdateDocument
+	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
 	// @permission: name=GetDocument
 	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
 	// @permission: name=GetDocument
@@ -100,9 +102,18 @@ func (c *docStoreServiceClient) GetDocument(ctx context.Context, in *GetDocument
 	return out, nil
 }
 
-func (c *docStoreServiceClient) CreateOrUpdateDocument(ctx context.Context, in *CreateOrUpdateDocumentRequest, opts ...grpc.CallOption) (*CreateOrUpdateDocumentResponse, error) {
-	out := new(CreateOrUpdateDocumentResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/CreateOrUpdateDocument", in, out, opts...)
+func (c *docStoreServiceClient) CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error) {
+	out := new(CreateDocumentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/CreateDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error) {
+	out := new(UpdateDocumentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/UpdateDocument", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -221,7 +232,9 @@ type DocStoreServiceServer interface {
 	// @permission
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
 	// @permission
-	CreateOrUpdateDocument(context.Context, *CreateOrUpdateDocumentRequest) (*CreateOrUpdateDocumentResponse, error)
+	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
+	// @permission: name=UpdateDocument
+	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
 	// @permission: name=GetDocument
 	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
 	// @permission: name=GetDocument
@@ -263,8 +276,11 @@ func (UnimplementedDocStoreServiceServer) FindDocuments(context.Context, *FindDo
 func (UnimplementedDocStoreServiceServer) GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocument not implemented")
 }
-func (UnimplementedDocStoreServiceServer) CreateOrUpdateDocument(context.Context, *CreateOrUpdateDocumentRequest) (*CreateOrUpdateDocumentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateDocument not implemented")
+func (UnimplementedDocStoreServiceServer) CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDocument not implemented")
+}
+func (UnimplementedDocStoreServiceServer) UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDocument not implemented")
 }
 func (UnimplementedDocStoreServiceServer) GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentReferences not implemented")
@@ -384,20 +400,38 @@ func _DocStoreService_GetDocument_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_CreateOrUpdateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrUpdateDocumentRequest)
+func _DocStoreService_CreateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDocumentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).CreateOrUpdateDocument(ctx, in)
+		return srv.(DocStoreServiceServer).CreateDocument(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/CreateOrUpdateDocument",
+		FullMethod: "/services.docstore.DocStoreService/CreateDocument",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).CreateOrUpdateDocument(ctx, req.(*CreateOrUpdateDocumentRequest))
+		return srv.(DocStoreServiceServer).CreateDocument(ctx, req.(*CreateDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_UpdateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).UpdateDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/UpdateDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).UpdateDocument(ctx, req.(*UpdateDocumentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -624,8 +658,12 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocStoreService_GetDocument_Handler,
 		},
 		{
-			MethodName: "CreateOrUpdateDocument",
-			Handler:    _DocStoreService_CreateOrUpdateDocument_Handler,
+			MethodName: "CreateDocument",
+			Handler:    _DocStoreService_CreateDocument_Handler,
+		},
+		{
+			MethodName: "UpdateDocument",
+			Handler:    _DocStoreService_UpdateDocument_Handler,
 		},
 		{
 			MethodName: "GetDocumentReferences",

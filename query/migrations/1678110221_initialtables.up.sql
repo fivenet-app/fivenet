@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents` (
   `content` longtext NOT NULL,
   `data` longtext DEFAULT NULL,
   `creator_id` int(11) NOT NULL,
+  `creator_job` varchar(50) NOT NULL,
   `state` varchar(24) NOT NULL,
   `closed` tinyint(1) DEFAULT 0,
   `public` tinyint(1) NOT NULL DEFAULT 0,

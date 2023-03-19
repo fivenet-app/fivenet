@@ -36,7 +36,7 @@ func init() {
 		},
 		{
 			Key:  DocStoreServicePermKey,
-			Name: "CreateOrUpdateDocument",
+			Name: "CreateDocument",
 		},
 		{
 			Key:  DocStoreServicePermKey,
@@ -89,6 +89,10 @@ func init() {
 		{
 			Key:  DocStoreServicePermKey,
 			Name: "SetDocumentAccess",
+		},
+		{
+			Key:  DocStoreServicePermKey,
+			Name: "UpdateDocument",
 		},
 	})
 }

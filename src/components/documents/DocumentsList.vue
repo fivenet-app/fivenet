@@ -12,9 +12,8 @@ import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
 
 const route = useRoute();
 
-const search = {
-    title: '',
-};
+const search = ref({ title: '', });
+// TODO Implement order by for documents
 const orderBys = ref<Array<OrderBy>>([]);
 const offset = ref(0);
 const totalCount = ref(0);
@@ -26,7 +25,7 @@ function findDocuments(pos: number) {
 
     const req = new FindDocumentsRequest();
     req.setOffset(pos);
-    req.setSearch(search.title);
+    req.setSearch(search.value.title);
     req.setOrderbyList([]);
 
     getDocStoreClient().

@@ -6,6 +6,7 @@ import { LoadingPlugin } from 'vue-loading-overlay';
 import router from './router';
 import store from './store';
 import slug from './utils/slugify';
+import { showLoader } from './loading';
 
 // Load styles and Inter font (all weights)
 import './style.css';
@@ -33,6 +34,14 @@ Sentry.init({
 app.use(LoadingPlugin);
 app.use(router);
 app.use(store);
+
+router.beforeResolve((to, from, next) => {
+    // If this isn't an initial page load.
+    if (to.name) {
+        //showLoader();
+    }
+    next();
+});
 
 // Add `v-can` directive for easy permission checking
 app.directive('can', (el, binding, vnode) => {

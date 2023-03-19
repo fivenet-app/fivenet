@@ -27,6 +27,7 @@ type arpanetDocumentsTable struct {
 	Content     mysql.ColumnString
 	Data        mysql.ColumnString
 	CreatorID   mysql.ColumnInteger
+	CreatorJob  mysql.ColumnString
 	State       mysql.ColumnString
 	Closed      mysql.ColumnBool
 	Public      mysql.ColumnBool
@@ -80,11 +81,12 @@ func newArpanetDocumentsTableImpl(schemaName, tableName, alias string) arpanetDo
 		ContentColumn     = mysql.StringColumn("content")
 		DataColumn        = mysql.StringColumn("data")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn  = mysql.StringColumn("creator_job")
 		StateColumn       = mysql.StringColumn("state")
 		ClosedColumn      = mysql.BoolColumn("closed")
 		PublicColumn      = mysql.BoolColumn("public")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, StateColumn, ClosedColumn, PublicColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, StateColumn, ClosedColumn, PublicColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn}
 	)
 
 	return arpanetDocumentsTable{
@@ -101,6 +103,7 @@ func newArpanetDocumentsTableImpl(schemaName, tableName, alias string) arpanetDo
 		Content:     ContentColumn,
 		Data:        DataColumn,
 		CreatorID:   CreatorIDColumn,
+		CreatorJob:  CreatorJobColumn,
 		State:       StateColumn,
 		Closed:      ClosedColumn,
 		Public:      PublicColumn,

@@ -110,21 +110,37 @@ message EditDocumentCommentRequest {
 
 message EditDocumentCommentResponse {}
 
-message CreateOrUpdateDocumentRequest {
-  uint64 document_id = 1; // @gotags: sql:"primary_key" alias:"id"
+message CreateDocumentRequest {
+  uint64 category_id = 1; // @gotags: alias:"category_id"
   string title = 2 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   string content = 3 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
-  uint64 category_id = 5; // @gotags: alias:"category_id"
-  bool closed = 6; // @gotags: alias:"closed"
-  string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  string data = 5; // @gotags: alias:"data"
+  string state = 6 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  bool closed = 7; // @gotags: alias:"closed"
   bool public = 8; // @gotags: alias:"public"
 
-  resources.documents.DocumentAccess access = 9;
+  optional resources.documents.DocumentAccess access = 9;
 }
 
-message CreateOrUpdateDocumentResponse {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+message CreateDocumentResponse {
+  uint64 document_id = 1; // @gotags: sql:"primary_key" alias:"id"
+}
+
+message UpdateDocumentRequest {
+  uint64 document_id = 1; // @gotags: sql:"primary_key" alias:"id"
+  optional uint64 category_id = 2; // @gotags: alias:"category_id"
+  optional string title = 3 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  optional string content = 4 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
+  optional resources.documents.DOC_CONTENT_TYPE content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  optional string data = 6; // @gotags: alias:"data"
+  optional string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  optional bool closed = 8; // @gotags: alias:"closed"
+  optional bool public = 9; // @gotags: alias:"public"
+}
+
+message UpdateDocumentResponse {
+  uint64 document_id = 1; // @gotags: sql:"primary_key" alias:"id"
 }
 
 message GetDocumentAccessRequest {
@@ -160,7 +176,9 @@ service DocStoreService {
   // @permission
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
   // @permission
-  rpc CreateOrUpdateDocument(CreateOrUpdateDocumentRequest) returns (CreateOrUpdateDocumentResponse);
+  rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
+  // @permission: name=UpdateDocument
+  rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
 
   // @permission: name=GetDocument
   rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse);
