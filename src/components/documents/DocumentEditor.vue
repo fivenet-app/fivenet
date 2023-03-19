@@ -5,7 +5,7 @@ import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { CreateOrUpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { DocumentAccess, DocumentJobAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
+import { DocumentAccess, DocumentJobAccess, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
 import AccessEntry from '../partials/AccessEntry.vue';
@@ -47,7 +47,7 @@ function addAccessEntry(): void {
 function removeAccessEntry(event: {
     id: number
 }): void {
-    access.value.delete(event.id);
+    // access.value.delete(event.id);
 }
 
 function updateAccessEntryType(event: {
@@ -110,18 +110,39 @@ function submitForm(): void {
     req.setClosed(closed.value);
     req.setState(state.value);
     req.setPublic(isPublic.value);
-    // req.setAccess(access);
 
-    const access = new DocumentAccess();
-    const jobsAccessList = new Array<DocumentJobAccess>();
-    const jobAccess = new DocumentJobAccess();
-    jobAccess.setAccess(DOC_ACCESS.VIEW);
-    jobAccess.setJob(activeChar.getJob());
-    jobsAccessList.push(jobAccess);
+    const reqAccess = new DocumentAccess();
+    access.value.forEach(entry => {
+        if (entry.values.accessrole === undefined) return;
 
-    access.setJobsList(jobsAccessList);
+        if (entry.type === 0) {
+            if (!entry.values.char) return;
 
-    req.setAccess(access);
+            const user = new DocumentUserAccess();
+            user.setAccess(entry.values.accessrole);
+            user.setUserId(entry.values.char.getUserId());
+
+            reqAccess.addUsers(user);
+        } else if (entry.type === 1) {
+            if (!entry.values.job) return;
+
+            const job = new DocumentJobAccess();
+            job.setAccess(entry.values.accessrole);
+            job.setJob(entry.values.job.getName());
+            job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank.getGrade() : 0);
+
+            reqAccess.addJobs(job);
+        }
+    });
+    req.setAccess(reqAccess);
+
+    // const access = new DocumentAccess();
+    // const jobsAccessList = new Array<DocumentJobAccess>();
+    // const jobAccess = new DocumentJobAccess();
+    // jobAccess.setAccess(DOC_ACCESS.VIEW);
+    // jobAccess.setJob(activeChar.getJob());
+    // jobsAccessList.push(jobAccess);
+    // access.setJobsList(jobsAccessList);
 
     getDocStoreClient().
         createOrUpdateDocument(req, null).then((resp) => {
