@@ -1,15 +1,7 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-    data() {
-        return {
-            'navigation': {
-                logo: '/images/logo.png',
-            },
-        };
-    },
-});
+<script setup lang="ts">
+const navigation = {
+    logo: '/images/logo.png',
+};
 </script>
 
 <template>

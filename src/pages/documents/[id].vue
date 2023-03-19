@@ -1,25 +1,17 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { useRoute } from 'vue-router/auto';
+import { ref, onBeforeUnmount } from 'vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
-import Footer from '../../components/partials/Footer.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import DocumentView from '../../components/documents/DocumentView.vue';
+import Footer from '../../components/partials/Footer.vue';
 
-export default defineComponent({
-    components: {
-        Footer,
-        ContentWrapper,
-        NavPageHeader,
-        DocumentView
-    },
-    data() {
-        return {
-            documentID: 0 as number,
-        };
-    },
-    beforeMount() {
-        this.documentID = +this.$route.params.id;
-    },
+const route = useRoute();
+const documentID = ref(0);
+
+onBeforeUnmount(() => {
+    //@ts-ignore it is defined but the router gen isn't correctly typping it
+    documentID.value = +route.params.id;
 });
 </script>
 

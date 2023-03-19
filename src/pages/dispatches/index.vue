@@ -1,16 +1,7 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import Footer from '../../components/partials/Footer.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-
-export default defineComponent({
-    components: {
-        Footer,
-        ContentWrapper,
-        NavPageHeader
-    },
-});
 </script>
 
 <route lang="json">

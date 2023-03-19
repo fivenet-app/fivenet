@@ -1,6 +1,4 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script setup lang="ts">
 import Footer from '../../components/partials/Footer.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
@@ -9,32 +7,25 @@ import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { RpcError } from 'grpc-web';
 import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
+import { ref, Ref, onBeforeUnmount } from 'vue';
+import { useRoute } from 'vue-router/auto';
 
-export default defineComponent({
-    components: {
-        Footer,
-        ContentWrapper,
-        NavPageHeader,
-        CitizenInfo,
-    },
-    data() {
-        return {
-            user: undefined as undefined | User,
-        };
-    },
-    beforeMount() {
-        const req = new GetUserRequest();
-        req.setUserId(this.$route.params.id);
+const user = ref() as Ref<undefined | User>;
 
-        getCitizenStoreClient()
-            .getUser(req, null)
-            .then((resp) => {
-                this.user = resp.getUser();
-            })
-            .catch((err: RpcError) => {
-                handleGRPCError(err, this.$route);
-            });
-    },
+const route = useRoute();
+
+onBeforeUnmount(() => {
+    const req = new GetUserRequest();
+    req.setUserId(route.params.id);
+
+    getCitizenStoreClient()
+        .getUser(req, null)
+        .then((resp) => {
+            user.value = resp.getUser();
+        })
+        .catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
 });
 </script>
 

@@ -1,19 +1,10 @@
-<script lang="ts">
+<script setup lang="ts">
+import { useStore } from 'vuex';
+import { NotificationProvider } from './components/notification';
 import Sidebar from './components/partials/Sidebar.vue';
 
-import { defineComponent } from 'vue';
-import store from './store';
-import { NotificationProvider } from './components/notification';
-
-export default defineComponent({
-    components: {
-        Sidebar,
-        NotificationProvider,
-    },
-    beforeCreate() {
-        store.commit('initialiseStore');
-    },
-});
+const store = useStore();
+store.commit('initialiseStore');
 </script>
 
 <template>
