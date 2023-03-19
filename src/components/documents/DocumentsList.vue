@@ -1,68 +1,51 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
+<script setup lang="ts">
+import { ref, onBeforeMount } from 'vue';
+import { useRoute } from 'vue-router/auto';
+import { watchDebounced } from '@vueuse/shared';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
-import { getDateLocaleString } from '../../utils/time';
-import { watchDebounced } from '@vueuse/shared';
+import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
 
-export default defineComponent({
-    components: {
-        TablePagination,
-        CalendarIcon,
-        MapPinIcon,
-        UsersIcon,
-    },
-    data() {
-        return {
-            loading: false,
-            search: {
-                title: '',
-            },
-            orderBys: [] as Array<OrderBy>,
-            offset: 0,
-            totalCount: 0,
-            listEnd: 0,
-            documents: [] as Array<Document>,
-        };
-    },
-    methods: {
-        getDateLocaleString,
-        findDocuments(offset: number) {
-            if (offset < 0) return;
-            if (this.loading) return;
-            this.loading = true;
+const route = useRoute();
 
-            const req = new FindDocumentsRequest();
-            req.setOffset(offset);
-            req.setSearch(this.search.title);
-            req.setOrderbyList([]);
+const search = {
+    title: '',
+};
+const orderBys = ref<Array<OrderBy>>([]);
+const offset = ref(0);
+const totalCount = ref(0);
+const listEnd = ref(0);
+const documents = ref<Array<Document>>([]);
 
-            getDocStoreClient().
-                findDocuments(req, null).
-                then((resp) => {
-                    this.totalCount = resp.getTotalCount();
-                    this.offset = resp.getOffset();
-                    this.listEnd = resp.getEnd();
-                    this.documents = resp.getDocumentsList();
+function findDocuments(pos: number) {
+    if (pos < 0) return;
 
-                }).
-                catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                }).
-                finally(() => {
-                    this.loading = false;
-                });
-        },
-    },
-    mounted: function () {
-        watchDebounced(this.search, () => this.findDocuments(0), { debounce: 750, maxWait: 1500 });
-        this.findDocuments(0);
-    },
+    const req = new FindDocumentsRequest();
+    req.setOffset(pos);
+    req.setSearch(search.title);
+    req.setOrderbyList([]);
+
+    getDocStoreClient().
+        findDocuments(req, null).
+        then((resp) => {
+            totalCount.value = resp.getTotalCount();
+            offset.value = resp.getOffset();
+            listEnd.value = resp.getEnd();
+            documents.value = resp.getDocumentsList();
+        }).
+        catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
+
+watchDebounced(search, () => findDocuments(0), { debounce: 750, maxWait: 1500 });
+
+onBeforeMount(() => {
+    findDocuments(0);
 });
 </script>
 

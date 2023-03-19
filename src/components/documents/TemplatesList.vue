@@ -1,45 +1,42 @@
-<script lang="ts">
+<script setup lang="ts">
 import { DocumentTemplate, DocumentTemplateShort } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetTemplateRequest, ListTemplatesRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { RpcError } from 'grpc-web';
-import { defineComponent } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
+import { useRoute } from 'vue-router/auto';
 
-export default defineComponent({
-    data() {
-        return {
-            'templates': [] as Array<DocumentTemplateShort>,
-            'templateObj': undefined as undefined | DocumentTemplate,
-        };
-    },
-    methods: {
-        findTemplates(): void {
-            const req = new ListTemplatesRequest();
+const route = useRoute();
 
-            getDocStoreClient().
-                listTemplates(req, null).then((resp) => {
-                    this.templates = resp.getTemplatesList();
-                }).
-                catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                });
-        },
-        getTemplate(id: number): void {
-            const req = new GetTemplateRequest();
-            req.setTemplateId(id);
+const templates = ref<Array<DocumentTemplateShort>>([]);
+const templateObj = ref<undefined | DocumentTemplate>(undefined);
 
-            getDocStoreClient().
-                getTemplate(req, null).then((resp) => {
-                    this.templateObj = resp.getTemplate();
-                }).
-                catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                });
-        }
-    },
-    mounted() {
-        this.findTemplates();
-    },
+function findTemplates(): void {
+    const req = new ListTemplatesRequest();
+
+    getDocStoreClient().
+        listTemplates(req, null).then((resp) => {
+            templates.value = resp.getTemplatesList();
+        }).
+        catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
+function getTemplate(id: number): void {
+    const req = new GetTemplateRequest();
+    req.setTemplateId(id);
+
+    getDocStoreClient().
+        getTemplate(req, null).then((resp) => {
+            templateObj.value = resp.getTemplate();
+        }).
+        catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
+
+onBeforeMount(() => {
+    findTemplates();
 });
 </script>
 

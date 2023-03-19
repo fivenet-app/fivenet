@@ -1,5 +1,6 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { useRoute } from 'vue-router/auto';
+import { ref, Component, defineProps, onBeforeMount } from 'vue';
 import { CreateOrUpdateDocumentRequest, GetDocumentRequest, RemoveDcoumentReferenceRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
@@ -7,10 +8,6 @@ import { RpcError } from 'grpc-web';
 import { getDateLocaleString, getDate } from '../../utils/time';
 import { DOC_ACCESS_Util, DOC_REFERENCE_TYPE_Util, DOC_RELATION_TYPE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import {
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
     TabGroup,
     TabList,
     Tab,
@@ -19,7 +16,6 @@ import {
 } from '@headlessui/vue';
 import {
     LockOpenIcon,
-    BellIcon,
     PencilIcon,
     ChatBubbleLeftEllipsisIcon,
     CalendarIcon,
@@ -29,118 +25,92 @@ import {
     ArrowLongRightIcon,
 } from '@heroicons/vue/20/solid';
 
-export default defineComponent({
-    components: {
-        Menu,
-        MenuButton,
-        MenuItem,
-        MenuItems,
-        LockOpenIcon,
-        BellIcon,
-        PencilIcon,
-        ChatBubbleLeftEllipsisIcon,
-        CalendarIcon,
-        UserIcon,
-        DocumentMagnifyingGlassIcon,
-        TabGroup,
-        TabList,
-        Tab,
-        TabPanels,
-        TabPanel,
-        TagIcon,
-        ArrowLongRightIcon
-    },
-    data() {
-        return {
-            DOC_ACCESS_Util: DOC_ACCESS_Util,
-            DOC_REFERENCE_TYPE_Util: DOC_REFERENCE_TYPE_Util,
-            DOC_RELATION_TYPE_Util: DOC_RELATION_TYPE_Util,
-            document: undefined as undefined | Document,
-            access: undefined as undefined | DocumentAccess,
-            comments: [] as Array<Document>,
-            activeResponse: undefined as undefined | Document,
-            feedReferences: [] as Array<DocumentReference>,
-            feedRelations: [] as Array<DocumentRelation>,
-            tabs: [
-                { name: 'References', href: '#', icon: DocumentMagnifyingGlassIcon },
-                { name: 'Relations', href: '#', icon: UserIcon },
-            ],
-        };
-    },
-    props: {
-        documentID: {
-            required: true,
-            type: Number,
-        },
-    },
-    mounted() {
-        this.getDocument();
-    },
-    methods: {
-        getDateLocaleString,
-        getDate,
-        getDocument(): void {
-            const req = new GetDocumentRequest();
-            req.setDocumentId(this.documentID);
+const route = useRoute();
 
-            getDocStoreClient().
-                getDocument(req, null).
-                then((resp) => {
-                    this.document = resp.getDocument();
-                    this.access = resp.getAccess();
-                }).
-                catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                });
+const document = ref<undefined | Document>(undefined)
+const access = ref<undefined | DocumentAccess>(undefined)
+const comments = ref<Array<Document>>([])
+const activeResponse = ref<undefined | Document>(undefined)
+const feedReferences = ref<Array<DocumentReference>>([])
+const feedRelations = ref<Array<DocumentRelation>>([])
+const tabs = ref<{ name: string, href: string, icon: Component }[]>([
+    { name: 'References', href: '#', icon: DocumentMagnifyingGlassIcon },
+    { name: 'Relations', href: '#', icon: UserIcon },
+]);
 
-            // Document References
-            getDocStoreClient().
-                getDocumentReferences(req, null).
-                then((resp) => {
-                    this.feedReferences = resp.getReferencesList();
-                }).
-                catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                });
-            // Document Relations
-            getDocStoreClient().
-                getDocumentRelations(req, null).
-                then((resp) => {
-                    this.feedRelations = resp.getRelationsList();
-                }).
-                catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                });
-        },
-        editDocumentTest() {
-            const req = new CreateOrUpdateDocumentRequest();
-            req.setDocumentId(this.document?.getId());
-            req.setTitle("SCOTT'S DOKUMENTEN WOCHENDSSPAß");
-            req.setContent(this.document?.getContent());
-            req.setClosed(this.document?.getClosed());
-            req.setState(this.document?.getState());
-            req.setPublic(this.document?.getPublic());
-
-            getDocStoreClient().
-                createOrUpdateDocument(req, null).then((resp) => {
-                    console.log(resp);
-                }).
-                catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                });
-        },
-        removeDocRefTest() {
-            const req = new RemoveDcoumentReferenceRequest();
-            req.setId(1);
-
-            getDocStoreClient().
-                removeDcoumentReference(req, null).then((resp) => {
-                    console.log(typeof resp);
-                }).catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                });
-        },
+const $props = defineProps({
+    documentID: {
+        required: true,
+        type: Number,
     },
+});
+
+function getDocument(): void {
+    const req = new GetDocumentRequest();
+    req.setDocumentId($props.documentID);
+
+    getDocStoreClient().
+        getDocument(req, null).
+        then((resp) => {
+            document.value = resp.getDocument();
+            access.value = resp.getAccess();
+        }).
+        catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+
+    // Document References
+    getDocStoreClient().
+        getDocumentReferences(req, null).
+        then((resp) => {
+            feedReferences.value = resp.getReferencesList();
+        }).
+        catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+    // Document Relations
+    getDocStoreClient().
+        getDocumentRelations(req, null).
+        then((resp) => {
+            feedRelations.value = resp.getRelationsList();
+        }).
+        catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
+
+function editDocumentTest() {
+    const req = new CreateOrUpdateDocumentRequest();
+    req.setDocumentId(document?.value?.getId());
+    req.setTitle("SCOTT'S DOKUMENTEN WOCHENDSSPAß");
+    req.setContent(document?.value?.getContent());
+    req.setClosed(document?.value?.getClosed());
+    req.setState(document?.value?.getState());
+    req.setPublic(document?.value?.getPublic());
+
+    getDocStoreClient().
+        createOrUpdateDocument(req, null).then((resp) => {
+            console.log(resp);
+        }).
+        catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
+
+function removeDocRefTest() {
+    const req = new RemoveDcoumentReferenceRequest();
+    req.setId(1);
+
+    getDocStoreClient().
+        removeDcoumentReference(req, null).then((resp) => {
+            console.log(typeof resp);
+        }).catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
+
+onBeforeMount(() => {
+    getDocument();
 });
 </script>
 
@@ -465,7 +435,8 @@ export default defineComponent({
                             </li>
                         </ul>
                     </div>
-            </TabPanel>
-        </TabPanels>
-    </TabGroup>
-</div></template>
+                </TabPanel>
+            </TabPanels>
+        </TabGroup>
+    </div>
+</template>
