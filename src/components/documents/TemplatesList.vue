@@ -44,7 +44,6 @@ export default defineComponent({
 </script>
 
 <template>
-    <h2 class="text-xl text-white">TEMPLATES</h2>
     <div
         class="divide-y divide-gray-200 overflow-hidden rounded-lg bg-gray-200 shadow sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0">
         <div v-for="(template, templateIdx) in templates" :key="template.getId()"

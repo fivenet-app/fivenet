@@ -5,16 +5,14 @@ import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import Footer from '../../components/partials/Footer.vue';
 import DocumentsList from '../../components/documents/DocumentsList.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-import TemplatesList from '../../components/documents/TemplatesList.vue';
 
 export default defineComponent({
     components: {
-    Footer,
-    DocumentsList,
-    ContentWrapper,
-    NavPageHeader,
-    TemplatesList
-},
+        Footer,
+        DocumentsList,
+        ContentWrapper,
+        NavPageHeader,
+    },
 });
 </script>
 
@@ -34,7 +32,6 @@ export default defineComponent({
 <template>
     <NavPageHeader title="Documents" />
     <ContentWrapper>
-        <TemplatesList />
         <DocumentsList />
     </ContentWrapper>
     <Footer />
