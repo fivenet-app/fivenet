@@ -425,6 +425,21 @@ export namespace DocumentJobAccess {
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum UpdatedAtCase { 
+    _UPDATED_AT_NOT_SET = 0,
+    UPDATED_AT = 3,
+  }
+
+  export enum CreatorCase { 
+    _CREATOR_NOT_SET = 0,
+    CREATOR = 9,
+  }
 }
 
 export class DocumentUserAccess extends jspb.Message {
@@ -476,6 +491,21 @@ export namespace DocumentUserAccess {
     access: DOC_ACCESS,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
+  }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum UpdatedAtCase { 
+    _UPDATED_AT_NOT_SET = 0,
+    UPDATED_AT = 3,
+  }
+
+  export enum CreatorCase { 
+    _CREATOR_NOT_SET = 0,
+    CREATOR = 8,
   }
 }
 

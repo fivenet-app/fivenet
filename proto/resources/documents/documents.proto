@@ -99,25 +99,25 @@ message DocumentAccess {
 
 message DocumentJobAccess {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   uint64 document_id = 4; // @gotags: alias:"document_id"
   string job = 5 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   int32 minimumGrade = 6 [(validate.rules).int32.gte = 0]; // @gotags: alias:"minimum_grade"
   DOC_ACCESS access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
   int32 creator_id = 8; // @gotags: alias:"creator_id"
-  resources.users.UserShort creator = 9; // @gotags: alias:"creator"
+  optional resources.users.UserShort creator = 9; // @gotags: alias:"creator"
 }
 
 message DocumentUserAccess {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   uint64 document_id = 4; // @gotags: alias:"document_id"
   int32 user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
   DOC_ACCESS access = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
   int32 creator_id = 7; // @gotags: alias:"creator_id"
-  resources.users.UserShort creator = 8; // @gotags: alias:"creator"
+  optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"
 }
 
 enum DOC_REFERENCE_TYPE {

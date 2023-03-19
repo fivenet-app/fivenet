@@ -4781,8 +4781,8 @@ proto.services.docstore.CreateDocumentRequest.prototype.serializeBinary = functi
  */
 proto.services.docstore.CreateDocumentRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getCategoryId();
-  if (f !== 0) {
+  f = /** @type {number} */ (jspb.Message.getField(message, 1));
+  if (f != null) {
     writer.writeUint64(
       1,
       f
@@ -4809,8 +4809,8 @@ proto.services.docstore.CreateDocumentRequest.serializeBinaryToWriter = function
       f
     );
   }
-  f = message.getData();
-  if (f.length > 0) {
+  f = /** @type {string} */ (jspb.Message.getField(message, 5));
+  if (f != null) {
     writer.writeString(
       5,
       f
@@ -4862,7 +4862,25 @@ proto.services.docstore.CreateDocumentRequest.prototype.getCategoryId = function
  * @return {!proto.services.docstore.CreateDocumentRequest} returns this
  */
 proto.services.docstore.CreateDocumentRequest.prototype.setCategoryId = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.services.docstore.CreateDocumentRequest} returns this
+ */
+proto.services.docstore.CreateDocumentRequest.prototype.clearCategoryId = function() {
+  return jspb.Message.setField(this, 1, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.docstore.CreateDocumentRequest.prototype.hasCategoryId = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -4934,7 +4952,25 @@ proto.services.docstore.CreateDocumentRequest.prototype.getData = function() {
  * @return {!proto.services.docstore.CreateDocumentRequest} returns this
  */
 proto.services.docstore.CreateDocumentRequest.prototype.setData = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setField(this, 5, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.services.docstore.CreateDocumentRequest} returns this
+ */
+proto.services.docstore.CreateDocumentRequest.prototype.clearData = function() {
+  return jspb.Message.setField(this, 5, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.docstore.CreateDocumentRequest.prototype.hasData = function() {
+  return jspb.Message.getField(this, 5) != null;
 };
 
 

@@ -3208,8 +3208,6 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for CategoryId
-
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
 		err := CreateDocumentRequestValidationError{
 			field:  "Title",
@@ -3243,8 +3241,6 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Data
-
 	if utf8.RuneCountInString(m.GetState()) > 24 {
 		err := CreateDocumentRequestValidationError{
 			field:  "State",
@@ -3259,6 +3255,14 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 	// no validation rules for Closed
 
 	// no validation rules for Public
+
+	if m.CategoryId != nil {
+		// no validation rules for CategoryId
+	}
+
+	if m.Data != nil {
+		// no validation rules for Data
+	}
 
 	if m.Access != nil {
 

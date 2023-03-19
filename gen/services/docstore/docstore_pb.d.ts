@@ -521,6 +521,8 @@ export namespace EditDocumentCommentResponse {
 export class CreateDocumentRequest extends jspb.Message {
   getCategoryId(): number;
   setCategoryId(value: number): CreateDocumentRequest;
+  hasCategoryId(): boolean;
+  clearCategoryId(): CreateDocumentRequest;
 
   getTitle(): string;
   setTitle(value: string): CreateDocumentRequest;
@@ -533,6 +535,8 @@ export class CreateDocumentRequest extends jspb.Message {
 
   getData(): string;
   setData(value: string): CreateDocumentRequest;
+  hasData(): boolean;
+  clearData(): CreateDocumentRequest;
 
   getState(): string;
   setState(value: string): CreateDocumentRequest;
@@ -558,15 +562,25 @@ export class CreateDocumentRequest extends jspb.Message {
 
 export namespace CreateDocumentRequest {
   export type AsObject = {
-    categoryId: number,
+    categoryId?: number,
     title: string,
     content: string,
     contentType: resources_documents_documents_pb.DOC_CONTENT_TYPE,
-    data: string,
+    data?: string,
     state: string,
     closed: boolean,
     pb_public: boolean,
     access?: resources_documents_documents_pb.DocumentAccess.AsObject,
+  }
+
+  export enum CategoryIdCase { 
+    _CATEGORY_ID_NOT_SET = 0,
+    CATEGORY_ID = 1,
+  }
+
+  export enum DataCase { 
+    _DATA_NOT_SET = 0,
+    DATA = 5,
   }
 
   export enum AccessCase { 

@@ -4,6 +4,7 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/htmlsanitizer"
@@ -128,26 +129,28 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	docs := table.ArpanetDocuments
 	stmt := docs.
 		INSERT(
+			docs.CategoryID,
 			docs.Title,
 			docs.Content,
 			docs.ContentType,
-			docs.Closed,
-			docs.State,
-			docs.Public,
+			docs.Data,
 			docs.CreatorID,
 			docs.CreatorJob,
-			docs.CategoryID,
+			docs.State,
+			docs.Closed,
+			docs.Public,
 		).
 		VALUES(
+			req.CategoryId,
 			req.Title,
 			htmlsanitizer.Sanitize(req.Content),
 			documents.DOC_CONTENT_TYPE_HTML,
-			req.Closed,
-			req.State,
-			req.Public,
+			req.Data,
 			userId,
 			job,
-			req.CategoryId,
+			req.State,
+			req.Closed,
+			req.Public,
 		)
 
 	result, err := stmt.ExecContext(ctx, s.db)
@@ -295,48 +298,56 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 
 	switch mode {
 	case DOC_ACCESS_UPDATE_MODE_ADD:
-		ja := access.Jobs
 		// Create accesses
-		if len(ja) > 0 {
-			for k := 0; k < len(ja); k++ {
-				ja[k].DocumentId = documentID
-				ja[k].CreatorId = userId
-			}
+		if len(access.Jobs) > 0 {
+			for k := 0; k < len(access.Jobs); k++ {
+				// Create document job access
+				dJobAccess := table.ArpanetDocumentsJobAccess
+				stmt := dJobAccess.
+					INSERT(
+						dJobAccess.DocumentID,
+						dJobAccess.Job,
+						dJobAccess.MinimumGrade,
+						dJobAccess.Access,
+						dJobAccess.CreatorID,
+					).
+					VALUES(
+						documentID,
+						access.Jobs[k].Job,
+						access.Jobs[k].MinimumGrade,
+						access.Jobs[k].Access,
+						userId,
+					)
 
-			// Create document job access
-			stmt := dJobAccess.
-				INSERT(
-					dJobAccess.DocumentID,
-					dJobAccess.Job,
-					dJobAccess.MinimumGrade,
-					dJobAccess.Access,
-					dJobAccess.CreatorID,
-				).
-				MODELS(ja)
+				fmt.Println(stmt.DebugSql())
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				return err
+				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+					return err
+				}
 			}
 		}
 
-		ua := access.Users
-		if len(ua) > 0 {
-			for k := 0; k < len(ua); k++ {
-				ua[k].DocumentId = documentID
-				ua[k].CreatorId = userId
-			}
-			// Create document user access
-			stmt := dUserAccess.
-				INSERT(
-					dUserAccess.DocumentID,
-					dUserAccess.UserID,
-					dUserAccess.Access,
-					dUserAccess.CreatorID,
-				).
-				MODELS(ua)
+		if len(access.Users) > 0 {
+			for k := 0; k < len(access.Users); k++ {
+				// Create document user access
+				dUserAccess := table.ArpanetDocumentsUserAccess
+				stmt := dUserAccess.
+					INSERT(
+						dUserAccess.DocumentID,
+						dUserAccess.UserID,
+						dUserAccess.Access,
+						dUserAccess.CreatorID,
+					).
+					VALUES(
+						documentID,
+						access.Users[k].UserId,
+						access.Users[k].Access,
+						userId,
+					)
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				return err
+				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+					return err
+				}
 			}
 		}
 

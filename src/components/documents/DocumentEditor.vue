@@ -119,7 +119,7 @@ function submitForm(): void {
             if (!entry.values.char) return;
 
             const user = new DocumentUserAccess();
-            user.setAccess(entry.values.accessrole);
+            user.setAccess(DOC_ACCESS[entry.values.accessrole]);
             user.setUserId(entry.values.char.getUserId());
 
             reqAccess.addUsers(user);
@@ -127,17 +127,12 @@ function submitForm(): void {
             if (!entry.values.job) return;
 
             const job = new DocumentJobAccess();
-            job.setId(0);
-            job.setCreatedAt(undefined);
-            job.setUpdatedAt(undefined);
-            job.setDocumentId(0);
             job.setJob(entry.values.job.getName());
             job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank.getGrade() : 0);
-            job.setAccess(entry.values.accessrole);
-            job.setCreatorId(1);
-            job.setCreator(undefined);
+            job.setAccess(DOC_ACCESS[entry.values.accessrole]);
+            job.setCreatorId(activeChar.value.getUserId());
 
-            reqAccess.addJobs( );
+            reqAccess.addJobs(job);
         }
     });
     req.setAccess(reqAccess);
