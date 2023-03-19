@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue';
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch, watchEffect } from 'vue';
 import {
     Listbox,
     ListboxButton,
@@ -21,7 +21,7 @@ import { watchDebounced } from '@vueuse/core';
 import { CompleteCharNamesRequest, CompleteJobNamesRequest } from '@arpanet/gen/services/completor/completor_pb';
 import { getCompletorClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
-import { Job } from '@arpanet/gen/resources/jobs/jobs_pb';
+import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
 import { toTitleCase } from '../../utils/strings';
@@ -64,8 +64,8 @@ export default defineComponent({
             selectedChar: ref<undefined | UserShort>(undefined),
             entriesJobs: [] as Job[],
             queryJob: { value: '' },
-            selectedJob: ref<undefined | Job>(undefined),
-            entriesMinimumRank: [] as { id: string | number, label: string }[],
+            selectedJob: ref<Job>(new Job()),
+            entriesMinimumRank: [] as JobGrade[],
             queryMinimumRank: { value: '' },
             selectedMinimumRank: ref(undefined),
             entriesAccessRole: Object.keys(DOC_ACCESS),
@@ -84,6 +84,12 @@ export default defineComponent({
 
         watchDebounced(this.queryJob, () => this.findJobs(), { debounce: 750, maxWait: 2000 });
         watchDebounced(this.queryChar, () => this.findChars(), { debounce: 750, maxWait: 2000 });
+        watch(this.selectedJob, () => this.entriesMinimumRank = this.selectedJob.getGradesList())
+        watch(this.selectedAccessType, () => {
+            this.selectedChar = undefined;
+            this.selectedJob = new Job();
+            this.selectedMinimumRank = undefined;
+        })
     },
     methods: {
         toTitleCase(input: string): string { return toTitleCase(input) },
@@ -211,25 +217,24 @@ export default defineComponent({
                     </div>
                 </Combobox>
             </div>
-            <div class="flex-1 mr-2" :hidden="selectedAccessType?.id === 0">
+            <div class="flex-1 mr-2">
                 <Combobox as="div" v-model="selectedMinimumRank">
                     <div class="relative mt-2">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 @change="queryMinimumRank.value = $event.target.value"
-                                @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
                                 :display-value="(rank: any) => rank?.label" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesMinimumRank.length > 0"
                             class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.id" :value="rank" as="minimumrank"
+                            <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.getGrade()" :value="rank" as="minimumrank"
                                 v-slot="{ active, selected }">
                                 <li
                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ rank.label }}
+                                        {{ rank.getLabel() }}
                                     </span>
 
                                     <span v-if="selected"
