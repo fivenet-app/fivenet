@@ -14,7 +14,8 @@ import {
 } from '@headlessui/vue';
 import {
     CheckIcon,
-    ChevronDownIcon
+    ChevronDownIcon,
+    XMarkIcon,
 } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/core';
 import { CompleteCharNamesRequest, CompleteJobNamesRequest } from '@arpanet/gen/services/completor/completor_pb';
@@ -38,23 +39,34 @@ const $props = defineProps({
     }
 });
 
+const emit = defineEmits<{
+    (e: 'typeChange', id: number, type: number): void,
+    (e: 'nameChange', id: number, job: Job | undefined, char: UserShort | undefined): void,
+    (e: 'rankChange', id: number, rank: JobGrade): void,
+    (e: 'accessChange', id: number, access: DOC_ACCESS): void,
+    (e: 'deleteRequest', id: number): void,
+}>()
+
 const accessTypes = [
     { id: 0, name: 'Citizen' },
     { id: 1, name: 'Jobs' },
 ];
-let selectedAccessType = ref<{ id: number, name: string }>({ id: -1, name: '' });
+const selectedAccessType = ref<{ id: number, name: string }>({ id: -1, name: '' });
 let entriesChars = [] as UserShort[];
 const queryChar = ref('');
-let selectedChar = ref<undefined | UserShort>(undefined);
+
+const selectedChar = ref<undefined | UserShort>(undefined);
 let entriesJobs = [] as Job[];
 const queryJob = ref('');
-let selectedJob = ref<Job>();
+
+const selectedJob = ref<Job>();
 let entriesMinimumRank = [] as JobGrade[];
-const queryMinimumRank = '';
-let selectedMinimumRank = ref(undefined);
-const entriesAccessRole = Object.keys(DOC_ACCESS);
+const queryMinimumRank = ref('');
+
+const selectedMinimumRank = ref(undefined);
+let entriesAccessRole = Object.keys(DOC_ACCESS);
 const queryAccessRole = ref('');
-let selectedAccessRole = ref();
+const selectedAccessRole = ref();
 
 function findJobs(): void {
     const req = new CompleteJobNamesRequest();
@@ -66,6 +78,7 @@ function findJobs(): void {
         handleGRPCError(err, $route);
     })
 }
+
 function findChars(): void {
     const req = new CompleteCharNamesRequest();
     req.setSearch(queryJob.value);
@@ -77,17 +90,17 @@ function findChars(): void {
     })
 }
 
-const emit = defineEmits(['typeChange'])
+onMounted(() => {
+    const passedType = accessTypes.find(e => e.name.toLowerCase() === $props.type);
+    if (passedType) selectedAccessType.value = passedType;
+});
 
 watchDebounced(queryJob, () => findJobs(), { debounce: 750, maxWait: 2000 });
 watchDebounced(queryChar, () => findChars(), { debounce: 750, maxWait: 2000 });
 
-watch(selectedJob, () => {
-    console.log(selectedJob.value);
-    entriesMinimumRank = selectedJob.value?.getGradesList()
-});
-
 watch(selectedAccessType, () => {
+    emit('typeChange', $props.id, selectedAccessType.value.id);
+
     selectedChar.value = undefined;
     selectedJob.value = undefined;
     selectedMinimumRank.value = undefined;
@@ -99,17 +112,34 @@ watch(selectedAccessType, () => {
     }
 });
 
-onMounted(() => {
-    const passedType = accessTypes.find(e => e.name.toLowerCase() === $props.type);
-    if (passedType) selectedAccessType.value = passedType;
+watch(selectedJob, () => {
+    if (!selectedJob.value) return;
+    emit('nameChange', $props.id, selectedJob.value, undefined);
+
+    entriesMinimumRank = selectedJob.value.getGradesList()
+});
+
+watch(selectedChar, () => {
+    if (!selectedChar.value) return;
+    emit('nameChange', $props.id, undefined, selectedChar.value);
+});
+
+watch(selectedMinimumRank, () => {
+    if (!selectedMinimumRank.value) return;
+    emit('rankChange', $props.id, selectedMinimumRank.value);
+});
+
+watch(selectedAccessRole, () => {
+    if (!selectedAccessRole.value) return;
+    emit('accessChange', $props.id, selectedAccessRole.value);
 });
 </script>
 
 <template>
-    <div class="flex flex-row">
+    <div class="flex flex-row items-center my-2">
         <div class="flex-initial w-60 mr-2">
             <Listbox as="div" v-model="selectedAccessType">
-                <div class="relative mt-2">
+                <div class="relative">
                     <ListboxButton
                         class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         <span class="block truncate">{{ selectedAccessType?.name }}</span>
@@ -144,11 +174,11 @@ onMounted(() => {
         <div v-if="selectedAccessType?.id === 0" class="flex flex-grow">
             <div class="flex-1 mr-2">
                 <Combobox as="div" v-model="selectedChar">
-                    <div class="relative mt-2">
+                    <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                @change="queryChar = $event.target.value" @click="findChars()"
+                                @change="queryChar = $event.target.value"
                                 :display-value="(char: any) => `${char?.getFirstname()} ${char?.getLastname()}`" />
                         </ComboboxButton>
 
@@ -176,12 +206,11 @@ onMounted(() => {
         <div v-else class="flex flex-grow">
             <div class="flex-1 mr-2">
                 <Combobox as="div" v-model="selectedJob">
-                    <div class="relative mt-2">
+                    <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                @change="queryJob = $event.target.value" @click="findJobs()"
-                                :display-value="(job: any) => job?.getLabel()" />
+                                @change="queryJob = $event.target.value" :display-value="(job: any) => job?.getLabel()" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesJobs.length > 0"
@@ -206,7 +235,7 @@ onMounted(() => {
             </div>
             <div class="flex-1 mr-2">
                 <Combobox as="div" v-model="selectedMinimumRank">
-                    <div class="relative mt-2">
+                    <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -235,14 +264,13 @@ onMounted(() => {
                 </Combobox>
             </div>
         </div>
-        <div class="flex-inital w-60">
+        <div class="flex-inital w-60 mr-2">
             <Combobox as="div" v-model="selectedAccessRole">
-                <div class="relative mt-2">
+                <div class="relative">
                     <ComboboxButton as="div">
                         <ComboboxInput
                             class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             @change="queryAccessRole = $event.target.value"
-                            @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
                             :display-value="(role: any) => toTitleCase(role.toLowerCase())" />
                     </ComboboxButton>
 
@@ -265,6 +293,12 @@ onMounted(() => {
                     </ComboboxOptions>
                 </div>
             </Combobox>
+        </div>
+        <div class="flex-initial">
+            <button type="button"
+                class="rounded-full bg-indigo-600 p-1.5 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest')" aria-hidden="true" />
+            </button>
         </div>
     </div>
 </template>
