@@ -31,25 +31,25 @@ import {
 
 export default defineComponent({
     components: {
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-    LockOpenIcon,
-    BellIcon,
-    PencilIcon,
-    ChatBubbleLeftEllipsisIcon,
-    CalendarIcon,
-    UserIcon,
-    DocumentMagnifyingGlassIcon,
-    TabGroup,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
-    TagIcon,
-    ArrowLongRightIcon
-},
+        Menu,
+        MenuButton,
+        MenuItem,
+        MenuItems,
+        LockOpenIcon,
+        BellIcon,
+        PencilIcon,
+        ChatBubbleLeftEllipsisIcon,
+        CalendarIcon,
+        UserIcon,
+        DocumentMagnifyingGlassIcon,
+        TabGroup,
+        TabList,
+        Tab,
+        TabPanels,
+        TabPanel,
+        TagIcon,
+        ArrowLongRightIcon
+    },
     data() {
         return {
             DOC_ACCESS_Util: DOC_ACCESS_Util,
@@ -396,7 +396,8 @@ export default defineComponent({
                                 <a href="#" class="block hover:bg-gray-50">
                                     <div class="px-4 py-4 sm:px-6">
                                         <div class="flex items-center justify-between">
-                                            <p class="truncate text-sm font-medium text-indigo-600">{{ item.getSourceDocument()?.getTitle() }}</p>
+                                            <p class="truncate text-sm font-medium text-indigo-600">{{
+                                                item.getSourceDocument()?.getTitle() }}</p>
                                             <div class="ml-2 flex flex-shrink-0">
                                                 <p
                                                     class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
@@ -417,7 +418,8 @@ export default defineComponent({
                                                 <p>
                                                     Created on
                                                     {{ ' ' }}
-                                                    <time :datetime="getDateLocaleString(item.getCreatedAt())">{{ getDateLocaleString(item.getCreatedAt()) }}</time>
+                                                    <time :datetime="getDateLocaleString(item.getCreatedAt())">{{
+                                                        getDateLocaleString(item.getCreatedAt()) }}</time>
                                                 </p>
                                             </div>
                                         </div>
@@ -435,7 +437,10 @@ export default defineComponent({
                                     <div class="px-4 py-4 sm:px-6">
                                         <div class="flex items-center justify-between">
                                             <p class="truncate text-sm font-medium text-indigo-600">
-                                                {{ item.getSourceUser()?.getFirstname() }}, {{ item.getSourceUser()?.getLastname() }} <ArrowLongRightIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" /> {{ item.getSourceUser()?.getLastname() }}
+                                                {{ item.getSourceUser()?.getFirstname() }}, {{
+                                                    item.getSourceUser()?.getLastname() }}
+                                                <ArrowLongRightIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                                                    aria-hidden="true" /> {{ item.getSourceUser()?.getLastname() }}
                                             </p>
                                             <div class="ml-2 flex flex-shrink-0">
                                                 <p
@@ -450,7 +455,8 @@ export default defineComponent({
                                                 <p>
                                                     Created on
                                                     {{ ' ' }}
-                                                    <time :datetime="getDateLocaleString(item.getCreatedAt())">{{ getDateLocaleString(item.getCreatedAt()) }}</time>
+                                                    <time :datetime="getDateLocaleString(item.getCreatedAt())">{{
+                                                        getDateLocaleString(item.getCreatedAt()) }}</time>
                                                 </p>
                                             </div>
                                         </div>

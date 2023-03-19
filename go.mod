@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/Code-Hex/go-generics-cache v1.2.1
 	github.com/creasty/defaults v1.7.0
+	github.com/dlmiddlecote/sqlstats v1.0.2
 	github.com/envoyproxy/protoc-gen-validate v0.9.1
 	github.com/getsentry/sentry-go v0.19.0
 	github.com/gin-contrib/sessions v0.0.5

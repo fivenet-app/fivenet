@@ -14,6 +14,7 @@ database:
   dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local"
   # For the local test database using `docker-compose`
   #dsn: "arpanet:changeme@tcp(localhost:3306)/arpanet?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local"
+  dbName: arpanet
 jwt:
   secret: "your_generated_jwt_secret"
 fivem:

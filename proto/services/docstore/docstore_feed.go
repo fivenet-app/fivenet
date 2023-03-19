@@ -268,6 +268,14 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([
 			docRel.SourceUserID,
 			docRel.Relation,
 			docRel.TargetUserID,
+			docs.ID,
+			docs.CreatedAt,
+			docs.UpdatedAt,
+			docs.CategoryID,
+			docs.Title,
+			docs.CreatorID,
+			docs.State,
+			docs.Closed,
 			dCategory.ID,
 			dCategory.Name,
 			dCategory.Description,
@@ -287,16 +295,16 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([
 		FROM(
 			docRel.
 				LEFT_JOIN(docs,
-					docRel.DocumentID.EQ(docs.ID),
-				).
-				LEFT_JOIN(uSource,
-					docRel.SourceUserID.EQ(uSource.ID),
+					docs.ID.EQ(docRel.DocumentID),
 				).
 				LEFT_JOIN(dCategory,
-					dCategory.ID.EQ(docs.CategoryID),
+					docs.CategoryID.EQ(dCategory.ID),
+				).
+				LEFT_JOIN(uSource,
+					uSource.ID.EQ(docRel.SourceUserID),
 				).
 				LEFT_JOIN(uTarget,
-					docRel.TargetUserID.EQ(uTarget.ID),
+					uTarget.ID.EQ(docRel.TargetUserID),
 				),
 		).
 		WHERE(
