@@ -15,6 +15,7 @@ message ListTemplatesResponse {
 
 message GetTemplateRequest {
   uint64 template_id = 1;
+  string data = 2 [(validate.rules).string.max_bytes = 1024];
 }
 
 message GetTemplateResponse {

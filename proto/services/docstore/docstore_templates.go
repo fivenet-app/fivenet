@@ -2,7 +2,6 @@ package docstore
 
 import (
 	context "context"
-	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -10,7 +9,7 @@ import (
 )
 
 var (
-	dTemplates = table.ArpanetDocumentsTemplates.AS("template")
+	dTemplates = table.ArpanetDocumentsTemplates.AS("documenttemplateshort")
 )
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
@@ -21,20 +20,26 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 			dTemplates.ID,
 			dTemplates.Job,
 			dTemplates.JobGrade,
-			dTemplates.CategoryID,
+			dCategory.ID,
+			dCategory.Name,
+			dCategory.Description,
+			dCategory.Job,
 			dTemplates.Title,
 			dTemplates.Description,
 			dTemplates.CreatorID,
 		).
-		FROM(dTemplates).
+		FROM(
+			dTemplates.
+				LEFT_JOIN(dCategory,
+					dCategory.ID.EQ(dTemplates.CategoryID),
+				),
+		).
 		WHERE(
 			jet.AND(
 				dTemplates.Job.EQ(jet.String(job)),
 				dTemplates.JobGrade.LT_EQ(jet.Int32(jobGrade)),
 			),
 		)
-
-	fmt.Println(stmt.DebugSql())
 
 	resp := &ListTemplatesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
@@ -47,11 +52,31 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*GetTemplateResponse, error) {
 	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
+	dTemplates := dTemplates.AS("documenttemplate")
 	stmt := dTemplates.
 		SELECT(
-			dTemplates.AllColumns,
+			dTemplates.ID,
+			dTemplates.CreatedAt,
+			dTemplates.UpdatedAt,
+			dTemplates.Job,
+			dTemplates.JobGrade,
+			dCategory.ID,
+			dCategory.Name,
+			dCategory.Description,
+			dCategory.Job,
+			dTemplates.Title,
+			dTemplates.Description,
+			dTemplates.ContentTitle,
+			dTemplates.Content,
+			dTemplates.AdditionalData,
+			dTemplates.CreatorID,
 		).
-		FROM(dTemplates).
+		FROM(
+			dTemplates.
+				LEFT_JOIN(dCategory,
+					dCategory.ID.EQ(dTemplates.CategoryID),
+				),
+		).
 		WHERE(
 			jet.AND(
 				dTemplates.ID.EQ(jet.Uint64(req.TemplateId)),
@@ -61,7 +86,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		)
 
 	resp := &GetTemplateResponse{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Template); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, resp); err != nil {
 		return nil, err
 	}
 

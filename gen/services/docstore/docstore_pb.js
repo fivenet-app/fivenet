@@ -1023,7 +1023,8 @@ proto.services.docstore.GetTemplateRequest.prototype.toObject = function(opt_inc
  */
 proto.services.docstore.GetTemplateRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    templateId: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    templateId: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    data: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -1064,6 +1065,10 @@ proto.services.docstore.GetTemplateRequest.deserializeBinaryFromReader = functio
       var value = /** @type {number} */ (reader.readUint64());
       msg.setTemplateId(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setData(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1100,6 +1105,13 @@ proto.services.docstore.GetTemplateRequest.serializeBinaryToWriter = function(me
       f
     );
   }
+  f = message.getData();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -1118,6 +1130,24 @@ proto.services.docstore.GetTemplateRequest.prototype.getTemplateId = function() 
  */
 proto.services.docstore.GetTemplateRequest.prototype.setTemplateId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional string data = 2;
+ * @return {string}
+ */
+proto.services.docstore.GetTemplateRequest.prototype.getData = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.services.docstore.GetTemplateRequest} returns this
+ */
+proto.services.docstore.GetTemplateRequest.prototype.setData = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

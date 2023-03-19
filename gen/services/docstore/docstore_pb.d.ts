@@ -42,6 +42,9 @@ export class GetTemplateRequest extends jspb.Message {
   getTemplateId(): number;
   setTemplateId(value: number): GetTemplateRequest;
 
+  getData(): string;
+  setData(value: string): GetTemplateRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetTemplateRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetTemplateRequest): GetTemplateRequest.AsObject;
@@ -53,6 +56,7 @@ export class GetTemplateRequest extends jspb.Message {
 export namespace GetTemplateRequest {
   export type AsObject = {
     templateId: number,
+    data: string,
   }
 }
 
