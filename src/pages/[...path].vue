@@ -1,23 +1,12 @@
-<script lang="ts">
-import Footer from '../components/partials/Footer.vue';
-
-import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
-
-import './herofull-pattern.css';
+<script setup lang="ts">
+import { useStore } from 'vuex';
 import HeroFull from '../components/partials/HeroFull.vue';
+import Footer from '../components/partials/Footer.vue';
+import './herofull-pattern.css';
+import { computed } from 'vue';
 
-export default defineComponent({
-    components: {
-        Footer,
-        HeroFull,
-    },
-    computed: {
-        ...mapState({
-            accessToken: 'accessToken',
-        }),
-    },
-});
+const store = useStore();
+const accessToken = computed(() => store.state.accessToken);
 </script>
 
 <route lang="json">

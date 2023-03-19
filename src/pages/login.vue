@@ -1,26 +1,14 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
+<script setup lang="ts">
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 import Footer from '../components/partials/Footer.vue';
 import Login from '../components/Login.vue';
 import ContentWrapper from '../components/partials/ContentWrapper.vue';
 import NavPageHeader from '../components/partials/NavPageHeader.vue';
 import CharacterSelector from '../components/login/CharacterSelector.vue';
 
-export default defineComponent({
-    components: {
-        Footer,
-        Login,
-        NavPageHeader,
-        ContentWrapper,
-        CharacterSelector,
-    },
-    computed: {
-        ...mapState({
-            accessToken: 'accessToken',
-        }),
-    },
-});
+const store = useStore();
+const accessToken = computed(() => store.state.accessToken);
 </script>
 
 <route lang="json">

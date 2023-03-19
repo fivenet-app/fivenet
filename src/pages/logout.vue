@@ -1,28 +1,22 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { mapActions } from 'vuex';
+<script setup lang="ts">
+import { onBeforeMount } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router/auto';
 import Footer from '../components/partials/Footer.vue';
 import HeroFull from '../components/partials/HeroFull.vue';
 
 import './herofull-pattern.css';
 
-export default defineComponent({
-    components: {
-        Footer,
-        HeroFull
-    },
-    methods: {
-        ...mapActions([
-            'doLogout',
-        ]),
-    },
-    beforeMount: function () {
-        this.doLogout().then(() => {
+const store = useStore();
+const router = useRouter();
+
+onBeforeMount(() => {
+    store.dispatch('doLogout').
+        then(() => {
             setTimeout(() => {
-                this.$router.push('/');
+                router.push('/');
             }, 2000);
         });
-    },
 });
 </script>
 

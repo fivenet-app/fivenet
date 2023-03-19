@@ -2,12 +2,14 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import * as Sentry from '@sentry/vue';
 import config from './config';
+import { LoadingPlugin } from 'vue-loading-overlay';
 import router from './router';
 import store from './store';
 import slug from './utils/slugify';
 
 // Load styles and Inter font (all weights)
 import './style.css';
+import 'vue-loading-overlay/dist/css/index.css';
 import '@fontsource/inter/100.css';
 import '@fontsource/inter/200.css';
 import '@fontsource/inter/300.css';
@@ -28,6 +30,7 @@ Sentry.init({
     trackComponents: false,
 });
 
+app.use(LoadingPlugin);
 app.use(router);
 app.use(store);
 
