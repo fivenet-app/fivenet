@@ -77,18 +77,13 @@ export default defineComponent({
         const passedType = this.accessTypes.find(e => e.name.toLowerCase() === this.$props.type);
         if (passedType) this.selectedAccessType = passedType;
 
-        watch(this.selectedAccessType, () => {
-            console.log(1);
-            this.$emit('typeChange', { id: this.$props.id, data: this.$data })
-        })
+        // watch(this.selectedAccessType, () => {
+        //     console.log(1);
+        //     this.$emit('typeChange', { id: this.$props.id, data: this.$data })
+        // })
 
-        watchDebounced(this.queryJob, () => {
-            if (this.selectedAccessType?.id === 0) {
-                this.findChars();
-            } else {
-                this.findJobs();
-            }
-        }, { debounce: 750, maxWait: 2000 });
+        watchDebounced(this.queryJob, () => this.findJobs(), { debounce: 750, maxWait: 2000 });
+        watchDebounced(this.queryChar, () => this.findChars(), { debounce: 750, maxWait: 2000 });
     },
     methods: {
         toTitleCase(input: string): string { return toTitleCase(input) },
@@ -155,13 +150,12 @@ export default defineComponent({
         </div>
         <div v-if="selectedAccessType?.id === 0" class="flex flex-grow">
             <div class="flex-1 mr-2">
-                <Combobox as="div" v-model="selectedJob">
+                <Combobox as="div" v-model="selectedChar">
                     <div class="relative mt-2">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                @change=" queryChar.value = $event.target.value"
-                                @click="findChars()"
+                                @change="queryChar.value = $event.target.value" @click="findChars()"
                                 :display-value="(char: any) => `${char?.getFirstname()} ${char?.getLastname()}`" />
                         </ComboboxButton>
 
@@ -193,8 +187,7 @@ export default defineComponent({
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                @change="queryJob.value = $event.target.value"
-                                @click="findJobs()"
+                                @change="queryJob.value = $event.target.value" @click="findJobs()"
                                 :display-value="(job: any) => job?.getLabel()" />
                         </ComboboxButton>
 
@@ -231,8 +224,8 @@ export default defineComponent({
 
                         <ComboboxOptions v-if="entriesMinimumRank.length > 0"
                             class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.id" :value="rank"
-                                as="minimumrank" v-slot="{ active, selected }">
+                            <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.id" :value="rank" as="minimumrank"
+                                v-slot="{ active, selected }">
                                 <li
                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
@@ -256,7 +249,7 @@ export default defineComponent({
                     <ComboboxButton as="div">
                         <ComboboxInput
                             class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            @change=" queryAccessRole.value = $event.target.value"
+                            @change="queryAccessRole.value = $event.target.value"
                             @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
                             :display-value="(role: any) => toTitleCase(role.toLowerCase())" />
                     </ComboboxButton>
