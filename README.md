@@ -27,6 +27,14 @@
     - [x] Category System (no directories/ paths)
         - [x] ~~Sub-categories~~  - One level of categories that is sorted by names
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
+    - [ ] Functionality
+        - [ ] Create Documents
+        - [ ] Edit Documents
+            - [ ] Set/ Update document category
+            - [ ] Set Access for Jobs and Users
+        - [ ] View Document Comments
+        - [ ] Post Document Comments
+        - [ ] Edit Document Comments
 - [ ] Dispatch System
     - [ ] Livemap to display dispatches
     - [ ] Tools to coordinate dispatches
@@ -58,9 +66,11 @@
 ### Required Tools
 
 * Golang 1.20
+    * Assumption is that your `$GOPATH/bin` is part of your `$PATH`.
 * `yarn`
 * [`protoc`](https://grpc.io/docs/protoc-installation/)
-* `protoc-gen-go`:
+    * Depending on your OS, Deb-based `libprotobuf-dev`, Fedora: `protobuf-dev`
+* `protoc-gen-go` (might be available via your OSes package manager):
     * `go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28`
     * `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2`
 * `protoc-gen-js`: Run `yarn` (without any args)
