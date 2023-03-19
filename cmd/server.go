@@ -10,7 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/dlmiddlecote/sqlstats"
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/config"
 	"github.com/galexrt/arpanet/pkg/perms"
@@ -23,6 +22,7 @@ import (
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/version"
 	"github.com/spf13/cobra"
@@ -48,9 +48,8 @@ var serverCmd = &cobra.Command{
 			defer sentry.Flush(5 * time.Second)
 		}
 
-		// Create sql collector for Prometheus metrics
-		collector := sqlstats.NewStatsCollector(config.C.Database.DBName, db)
-		prometheus.MustRegister(collector)
+		// Setup SQL Prometheus metrics
+		prometheus.MustRegister(collectors.NewDBStatsCollector(db, config.C.Database.DBName))
 
 		// Setup permissions system
 		p := perms.New(db)
