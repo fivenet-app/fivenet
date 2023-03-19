@@ -3,7 +3,6 @@ package complhelper
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -114,8 +113,6 @@ func (c *Completor) refreshJobsCache() error {
 			j.Name.ASC(),
 			jg.Grade.ASC(),
 		)
-
-	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.Query(c.db, &dest); err != nil {
 		return err

@@ -4788,9 +4788,7 @@ proto.resources.documents.DOC_ACCESS = {
   VIEW: 1,
   COMMENT: 2,
   ACCESS: 3,
-  EDIT: 4,
-  LEADER: 5,
-  ADMIN: 6
+  EDIT: 4
 };
 
 /**

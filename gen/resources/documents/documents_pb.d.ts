@@ -599,8 +599,6 @@ export enum DOC_ACCESS {
   COMMENT = 2,
   ACCESS = 3,
   EDIT = 4,
-  LEADER = 5,
-  ADMIN = 6,
 }
 export enum DOC_REFERENCE_TYPE { 
   LINKED = 0,

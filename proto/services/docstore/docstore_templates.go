@@ -2,9 +2,15 @@ package docstore
 
 import (
 	context "context"
+	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
+	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+)
+
+var (
+	dTemplates = table.ArpanetDocumentsTemplates.AS("template")
 )
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
@@ -15,6 +21,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 			dTemplates.ID,
 			dTemplates.Job,
 			dTemplates.JobGrade,
+			dTemplates.CategoryID,
 			dTemplates.Title,
 			dTemplates.Description,
 			dTemplates.CreatorID,
@@ -26,6 +33,8 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 				dTemplates.JobGrade.LT_EQ(jet.Int32(jobGrade)),
 			),
 		)
+
+	fmt.Println(stmt.DebugSql())
 
 	resp := &ListTemplatesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {

@@ -18,7 +18,6 @@ import (
 
 var (
 	u           = table.Users
-	dTemplates  = table.ArpanetDocumentsTemplates
 	docs        = table.ArpanetDocuments.AS("document")
 	dComments   = table.ArpanetDocumentsComments
 	dUserAccess = table.ArpanetDocumentsUserAccess.AS("user_access")
