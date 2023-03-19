@@ -1,7 +1,8 @@
-<script lang="ts">
+<script setup lang="ts">
+import { useRoute } from 'vue-router/auto';
+import { ref, onMounted } from 'vue';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
-import { defineComponent } from 'vue';
 import { watchDebounced } from '@vueuse/core'
 import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
@@ -10,81 +11,66 @@ import TablePagination from '../partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';
 
-export default defineComponent({
-    components: {
-        TablePagination,
-        CitizenListEntry,
-        Switch,
-    },
-    data() {
-        return {
-            loading: false,
-            search: {
-                name: '',
-                wanted: false
-            },
-            orderBys: [] as Array<OrderBy>,
-            offset: 0,
-            totalCount: 0,
-            listEnd: 0,
-            users: [] as Array<User>,
-        };
-    },
-    methods: {
-        findUsers: function (offset: number) {
-            if (offset < 0) return;
-            if (this.loading) return;
-            this.loading = true;
+const route = useRoute();
 
-            const req = new FindUsersRequest();
-            req.setOffset(offset);
-            req.setSearchname(this.search.name);
-            req.setWanted(this.search.wanted);
-            req.setOrderbyList(this.orderBys);
+const search = ref<{ name: string, wanted: boolean }>({ name: '', wanted: false });
+const orderBys = ref<Array<OrderBy>>([]);
+const offset = ref(0);
+const totalCount = ref(0);
+const listEnd = ref(0);
+const users = ref<Array<User>>([]);
 
-            getCitizenStoreClient().
-                findUsers(req, null).
-                then((resp) => {
-                    this.totalCount = resp.getTotalCount();
-                    this.offset = resp.getOffset();
-                    this.listEnd = resp.getEnd();
-                    this.users = resp.getUsersList();
-                }).
-                catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                }).
-                finally(() => {
-                    this.loading = false;
-                });
-        },
-        toggleOrderBy: function (column: string): void {
-            const index = this.orderBys.findIndex((o) => {
-                return o.getColumn() == column;
-            });
-            let orderBy: OrderBy;
-            if (index > -1) {
-                //@ts-ignore I just checked if it exists, so it should exist
-                orderBy = this.orderBys.at(index);
-                if (orderBy.getDesc()) {
-                    this.orderBys.splice(index);
-                }
-                else {
-                    orderBy.setDesc(true);
-                }
-            }
-            else {
-                orderBy = new OrderBy();
-                orderBy.setColumn(column);
-                orderBy.setDesc(false);
-                this.orderBys.push(orderBy);
-            }
-            this.findUsers(this.offset);
-        },
-    },
-    mounted: function () {
-        watchDebounced(this.search, () => this.findUsers(0), { debounce: 750, maxWait: 1500 });
-        this.findUsers(0);
-    },
+
+function findUsers(pos: number) {
+    if (pos < 0) return;
+
+    const req = new FindUsersRequest();
+    req.setOffset(pos);
+    req.setSearchname(search.value.name);
+    req.setWanted(search.value.wanted);
+    req.setOrderbyList(orderBys.value);
+
+    getCitizenStoreClient().
+        findUsers(req, null).
+        then((resp) => {
+            totalCount.value = resp.getTotalCount();
+            offset.value = resp.getOffset();
+            listEnd.value = resp.getEnd();
+            users.value = resp.getUsersList();
+        }).
+        catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
+
+function toggleOrderBy(column: string): void {
+    const index = orderBys.value.findIndex((o) => {
+        return o.getColumn() == column;
+    });
+    let orderBy: OrderBy;
+    if (index > -1) {
+        //@ts-ignore I just checked if it exists, so it should exist
+        orderBy = orderBys.at(index);
+        if (orderBy.getDesc()) {
+            orderBys.value.splice(index);
+        }
+        else {
+            orderBy.setDesc(true);
+        }
+    }
+    else {
+        orderBy = new OrderBy();
+        orderBy.setColumn(column);
+        orderBy.setDesc(false);
+        orderBys.value.push(orderBy);
+    }
+    findUsers(offset.value);
+}
+
+watchDebounced(search, () => findUsers(0), { debounce: 750, maxWait: 1500 });
+
+onMounted(() => {
+    findUsers(0);
 });
 </script>
 
@@ -98,8 +84,8 @@ export default defineComponent({
                             <div class="col-span-4 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-white">Name</label>
                                 <div class="relative mt-2 flex items-center">
-                                    <input v-model="search.name" v-on:keyup.enter="findUsers(0)" type="text"
-                                        name="search" id="search"
+                                    <input v-model="search.name" v-on:keyup.enter="findUsers(0)" type="text" name="search"
+                                        id="search"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>

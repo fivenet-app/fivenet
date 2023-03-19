@@ -1,45 +1,35 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref, onBeforeMount } from 'vue';
 import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 import { GetCharactersRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { getAuthClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
-import { mapActions } from 'vuex';
+import { useRoute } from 'vue-router/auto';
+import { useStore } from 'vuex';
 
-export default defineComponent({
-    components: {
-        CharacterSelectorCard,
-        XCircleIcon,
-    },
-    data() {
-        return {
-            'chars': [] as Array<User>,
-        };
-    },
-    methods: {
-        ...mapActions([
-            'updateActiveChar',
-        ]),
-        async fetchCharacters() {
-            return getAuthClient().
-                getCharacters(new GetCharactersRequest(), null).
-                then((resp) => {
-                    this.chars = resp.getCharsList();
-                }).catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                });
-        },
-    },
-    beforeMount() {
-        this.updateActiveChar(null);
+const route = useRoute();
+const store = useStore();
 
-        // Fetch user's characters
-        this.fetchCharacters();
-    },
+const chars = ref<Array<User>>([]);
+
+async function fetchCharacters() {
+    return getAuthClient().
+        getCharacters(new GetCharactersRequest(), null).
+        then((resp) => {
+            chars.value = resp.getCharsList();
+        }).catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
+
+onBeforeMount(() => {
+    store.dispatch('updateActiveChar', null);
+
+    // Fetch user's characters
+    fetchCharacters();
 });
-
 </script>
 
 <template>

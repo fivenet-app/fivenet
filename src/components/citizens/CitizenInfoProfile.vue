@@ -1,95 +1,65 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
-import {
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-    TransitionChild,
-    TransitionRoot,
-} from '@headlessui/vue';
-import { XMarkIcon } from '@heroicons/vue/24/outline';
-import { EllipsisVerticalIcon, KeyIcon } from '@heroicons/vue/20/solid';
+<script setup lang="ts">
+import { ref, defineProps, onMounted } from 'vue'
+import { useRoute } from 'vue-router/auto';
 import { User, UserProps } from '@arpanet/gen/resources/users/users_pb';
 import { RpcError } from 'grpc-web';
 import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 import { SetUserPropsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
-import CharSexBadge from '../misc/CharSexBadge.vue';
 import { getSecondsFormattedAsDuration } from '../../utils/time';
 import { dispatchNotification } from '../notification';
+import CharSexBadge from '../misc/CharSexBadge.vue';
+import { EllipsisVerticalIcon, KeyIcon } from '@heroicons/vue/20/solid';
+import {
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems,
+} from '@headlessui/vue';
 
-export default defineComponent({
-    components: {
-        Dialog,
-        DialogPanel,
-        DialogTitle,
-        Menu,
-        MenuButton,
-        MenuItem,
-        MenuItems,
-        TransitionChild,
-        TransitionRoot,
-        XMarkIcon,
-        EllipsisVerticalIcon,
-        KeyIcon,
-        CharSexBadge,
-    },
-    data() {
-        return {
-            loading: false,
-            wantedState: false as boolean,
-        };
-    },
-    props: {
-        user: {
-            required: true,
-            type: User,
-        },
-    },
-    mounted() {
-        const userProps = this.user.getProps();
-        if (!userProps) return;
+const route = useRoute();
 
-        this.wantedState = userProps.getWanted();
-    },
-    methods: {
-        toggleWantedStatus() {
-            if (!this.user) return;
-            if (this.loading) return;
-            this.loading = true;
+const wantedState = ref(false);
 
-            this.wantedState = !this.user.getProps()?.getWanted();
-
-            const req = new SetUserPropsRequest();
-            let userProps = this.user?.getProps();
-            if (!userProps) {
-                userProps = new UserProps();
-                userProps.setUserId(this.user.getUserId());
-
-                this.user.setProps(userProps);
-            }
-
-            userProps?.setWanted(this.wantedState);
-            req.setProps(userProps);
-
-            getCitizenStoreClient().
-                setUserProps(req, null)
-                .then((resp) => {
-                    dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
-                }).
-                catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                }).
-                finally(() => {
-                    this.loading = false;
-                });
-        },
-        getSecondsFormattedAsDuration,
+const $props = defineProps({
+    user: {
+        required: true,
+        type: User,
     },
 });
+
+onMounted(() => {
+    const userProps = $props.user.getProps();
+    if (!userProps) return;
+
+    wantedState.value = userProps.getWanted();
+});
+
+function toggleWantedStatus() {
+    if (!$props.user) return;
+
+    wantedState.value = !$props.user.getProps()?.getWanted();
+
+    const req = new SetUserPropsRequest();
+    let userProps = $props.user?.getProps();
+    if (!userProps) {
+        userProps = new UserProps();
+        userProps.setUserId($props.user.getUserId());
+
+        $props.user.setProps(userProps);
+    }
+
+    userProps?.setWanted(wantedState.value);
+    req.setProps(userProps);
+
+    getCitizenStoreClient().
+        setUserProps(req, null)
+        .then((resp) => {
+            dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
+        }).
+        catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
 </script>
 
 <template>
@@ -181,7 +151,7 @@ export default defineComponent({
                         {{ getSecondsFormattedAsDuration(user?.getPlaytime()) }}
                     </dd>
                 </div>
-                <div v-can="'CitizenStoreService.FindUsers-licenses'" class="sm:flex sm:px-6 sm:py-5">
+                <div v-can="'CitizenStoreService.FindUsers.Licenses'" class="sm:flex sm:px-6 sm:py-5">
                     <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
                         Licenses</dt>
                     <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">

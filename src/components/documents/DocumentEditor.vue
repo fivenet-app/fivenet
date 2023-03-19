@@ -1,6 +1,6 @@
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { mapState } from 'vuex';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { useStore } from 'vuex';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
@@ -8,111 +8,81 @@ import { CreateOrUpdateDocumentRequest } from '@arpanet/gen/services/docstore/do
 import { DocumentAccess, DocumentJobAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
-import { User } from '@arpanet/gen/resources/users/users_pb';
 import AccessEntry from '../partials/AccessEntry.vue';
 import PlusIcon from '@heroicons/vue/20/solid/PlusIcon';
+import { useRouter, useRoute } from 'vue-router/auto';
 
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
 
-export default defineComponent({
-    components: {
-        QuillEditor,
-        AccessEntry,
-        PlusIcon,
-    },
-    data() {
-        return {
-            saving: false,
-            title: "",
-            content: "",
-            categoryID: 0,
-            closed: false,
-            state: "",
-            public: false,
-            access: [] as { id: number, type: string, values: { name: string, accessrole: string, minimumrank: string } }[]
-        };
-    },
-    computed: {
-        ...mapState({
-            activeChar: 'activeChar',
-        }),
-    },
-    updated() {
-        console.log(this.content);
-    },
-    setup() {
-        const modules = [] as Quill.Module[];
+const activeChar = computed(() => store.state.activeChar);
 
-        return {
-            modules,
-        };
-    },
-    mounted() {
+const title = ref('');
+const content = ref('');
+const categoryID = ref(0);
+const closed = ref(false);
+const state = ref('');
+const isPublic = ref(false);
+const access = ref<{ id: number, type: string, values: { name: string, accessrole: string, minimumrank: string } }[]>([]);
 
-    },
-    methods: {
-        addAccessEntry(): void {
-            if (this.access.length > 4) {
-                dispatchNotification({ title: 'Maximum amount of Access entries exceeded', content: 'There can only be a maximum of 5 access entries on a Document', type: 'error' })
-                return;
-            }
+const modules = [] as Quill.Module[];
 
-            this.access.push({
-                id: this.access.length > 0 ? this.access[this.access.length - 1].id + 1 : 0,
-                type: 'jobs',
-                values: {
-                    name: '',
-                    accessrole: '',
-                    minimumrank: ''
-                }
-            })
-        },
-        updateAccesEntry(data: any): void {
-            const accessIndex = this.access.findIndex(e => e.id === data.id);
-            if (!accessIndex) return;
+function addAccessEntry(): void {
+    if (access.value.length > 4) {
+        dispatchNotification({ title: 'Maximum amount of Access entries exceeded', content: 'There can only be a maximum of 5 access entries on a Document', type: 'error' })
+        return;
+    }
 
-            this.access[accessIndex].type = data.selectedAccessType.id
+    access.value.push({
+        id: access.value.length > 0 ? access.value[access.value.length - 1].id + 1 : 0,
+        type: 'jobs',
+        values: {
+            name: '',
+            accessrole: '',
+            minimumrank: ''
+        }
+    })
+}
 
-            console.log(this.access);
-        },
-        submitForm(): void {
-            if (this.saving) {
-                return;
-            }
+function updateAccesEntry(data: any): void {
+    const accessIndex = access.value.findIndex(e => e.id === data.id);
+    if (!accessIndex) return;
 
-            this.saving = true;
-            const req = new CreateOrUpdateDocumentRequest();
-            req.setTitle(this.title);
-            req.setContent(this.content);
-            req.setContentType(DOC_CONTENT_TYPE.HTML);
-            req.setClosed(this.closed);
-            req.setState(this.state);
-            req.setPublic(this.public);
-            // req.setAccess(this.access);
+    access.value[accessIndex].type = data.selectedAccessType.id
 
-            const access = new DocumentAccess();
-            const jobsAccessList = new Array<DocumentJobAccess>();
-            const jobAccess = new DocumentJobAccess();
-            jobAccess.setAccess(DOC_ACCESS.VIEW);
-            const activeChar = this.activeChar as null | User;
-            jobAccess.setJob(activeChar?.getJob());
-            jobsAccessList.push(jobAccess);
+    console.log(access);
+}
 
-            access.setJobsList(jobsAccessList);
+function submitForm(): void {
+    const req = new CreateOrUpdateDocumentRequest();
+    req.setTitle(title.value);
+    req.setContent(content.value);
+    req.setContentType(DOC_CONTENT_TYPE.HTML);
+    req.setClosed(closed.value);
+    req.setState(state.value);
+    req.setPublic(isPublic.value);
+    // req.setAccess(access);
 
-            req.setAccess(access);
+    const access = new DocumentAccess();
+    const jobsAccessList = new Array<DocumentJobAccess>();
+    const jobAccess = new DocumentJobAccess();
+    jobAccess.setAccess(DOC_ACCESS.VIEW);
+    jobAccess.setJob(activeChar.getJob());
+    jobsAccessList.push(jobAccess);
 
-            getDocStoreClient().
-                createOrUpdateDocument(req, null).then((resp) => {
-                    dispatchNotification({ title: "Document created!", content: "Document has been created." });
-                    this.saving = false;
-                    this.$router.push('/documents/' + resp.getId());
-                }).catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                    this.saving = false;
-                });
-        },
-    },
-});
+    access.setJobsList(jobsAccessList);
+
+    req.setAccess(access);
+
+    getDocStoreClient().
+        createOrUpdateDocument(req, null).then((resp) => {
+            dispatchNotification({ title: "Document created!", content: "Document has been created." });
+            router.push('/documents/' + resp.getId());
+        }).catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
 </script>
 
 <route lang="json">

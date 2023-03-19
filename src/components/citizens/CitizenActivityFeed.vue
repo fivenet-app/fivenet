@@ -1,46 +1,38 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref, defineProps, onBeforeMount } from 'vue';
 import { BoltIcon, ChatBubbleLeftEllipsisIcon, TagIcon, UserCircleIcon } from '@heroicons/vue/20/solid'
 import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { GetUserActivityRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@arpanet/gen/resources/users/users_pb';
+import { useRoute } from 'vue-router/auto';
 
-export default defineComponent({
-    components: {
-        ChatBubbleLeftEllipsisIcon,
-        TagIcon,
-        UserCircleIcon,
-        BoltIcon
-    },
-    data() {
-        return {
-            activities: [] as Array<UserActivity>,
-            defaultIcon: UserCircleIcon,
-        };
-    },
-    methods: {
-        getUserActivity() {
-            const req = new GetUserActivityRequest();
-            req.setUserId(this.userId);
+const route = useRoute();
 
-            getCitizenStoreClient().
-                getUserActivity(req, null).then((resp) => {
-                    this.activities = resp.getActivityList();
-                }).catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                });
-        },
+const activities = ref<Array<UserActivity>>([]);
+const defaultIcon = UserCircleIcon;
+
+const $props = defineProps({
+    userId: {
+        required: true,
+        type: Number,
     },
-    props: {
-        userId: {
-            required: true,
-            type: Number,
-        },
-    },
-    mounted() {
-        this.getUserActivity();
-    }
+});
+
+function getUserActivity() {
+    const req = new GetUserActivityRequest();
+    req.setUserId($props.userId);
+
+    getCitizenStoreClient().
+        getUserActivity(req, null).then((resp) => {
+            activities.value = resp.getActivityList();
+        }).catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
+
+onBeforeMount(() => {
+    getUserActivity();
 });
 </script>
 

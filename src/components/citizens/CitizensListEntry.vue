@@ -1,17 +1,11 @@
-<script lang="ts">
+<script setup lang="ts">
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { defineComponent } from 'vue';
-import { toTitleCase } from '../../utils/strings';
+import { defineProps } from 'vue';
 
-export default defineComponent({
-    methods: {
-        toTitleCase,
-    },
-    props: {
-        'user': {
-            required: true,
-            type: User,
-        },
+defineProps({
+    'user': {
+        required: true,
+        type: User,
     },
 });
 </script>

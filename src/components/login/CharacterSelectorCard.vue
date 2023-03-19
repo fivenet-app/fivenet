@@ -1,50 +1,46 @@
-<script lang="ts">
+<script setup lang="ts">
+import { computed, defineProps } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute, useRouter } from 'vue-router/auto';
 import { getAuthClient, handleGRPCError } from '../../grpc';
 import { ChooseCharacterRequest } from '@arpanet/gen/services/auth/auth_pb';
-import { defineComponent } from 'vue';
-import { mapActions, mapState } from 'vuex';
 import { RpcError } from 'grpc-web';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { parseQuery } from 'vue-router/auto';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { getSecondsFormattedAsDuration } from '../../utils/time';
 
-export default defineComponent({
-    computed: {
-        ...mapState(["lastCharID"]),
-    },
-    props: {
-        char: {
-            required: true,
-            type: User,
-        },
-    },
-    methods: {
-        ...mapActions(["updateAccessToken", "updateActiveChar", "updatePermissions"]),
-        chooseCharacter() {
-            const req = new ChooseCharacterRequest();
-            req.setCharId(this.char.getUserId());
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
 
-            getAuthClient()
-                .chooseCharacter(req, null)
-                .then((resp) => {
-                    this.updateAccessToken(resp.getToken());
-                    this.updateActiveChar(this.char);
-                    this.updatePermissions(resp.getPermissionsList());
-                    console.log(resp.getPermissionsList());
-                    const path = this.$route.query.redirect?.toString() || "/overview";
-                    const url = new URL("https://example.com" + path);
-                    this.$router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
-                }).catch((err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                });
-        },
-        getSecondsFormattedAsDuration,
+const lastCharID = computed(() => store.state.lastCharID);
+
+const $props = defineProps({
+    char: {
+        required: true,
+        type: User,
     },
-    components: {
-        CharSexBadge,
-    }
 });
+
+function chooseCharacter() {
+    const req = new ChooseCharacterRequest();
+    req.setCharId($props.char.getUserId());
+
+    getAuthClient()
+        .chooseCharacter(req, null)
+        .then((resp) => {
+            store.dispatch('updateAccessToken', resp.getToken());
+            store.dispatch('updateActiveChar', $props.char);
+            store.dispatch('updatePermissions', resp.getPermissionsList());
+            console.log(resp.getPermissionsList());
+            const path = route.query.redirect?.toString() || "/overview";
+            const url = new URL("https://example.com" + path);
+            router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
+        }).catch((err: RpcError) => {
+            handleGRPCError(err, route);
+        });
+}
 </script>
 
 <template>
