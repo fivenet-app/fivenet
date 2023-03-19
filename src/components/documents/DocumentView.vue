@@ -1,16 +1,21 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { Document, DocumentAccess, DocumentReference, DocumentRelation, DOC_REFERENCE_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
+import { CreateOrUpdateDocumentRequest, GetDocumentRequest, RemoveDcoumentReferenceRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { getDateLocaleString, getDate } from '../../utils/time';
-import { DOC_REFERENCE_TYPE_Util, DOC_RELATION_TYPE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
+import { DOC_ACCESS_Util, DOC_REFERENCE_TYPE_Util, DOC_RELATION_TYPE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import {
     Menu,
     MenuButton,
     MenuItem,
     MenuItems,
+    TabGroup,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
 } from '@headlessui/vue';
 import {
     LockOpenIcon,
@@ -19,23 +24,35 @@ import {
     ChatBubbleLeftEllipsisIcon,
     CalendarIcon,
     UserIcon,
+    DocumentMagnifyingGlassIcon,
+    TagIcon,
+    ArrowLongRightIcon,
 } from '@heroicons/vue/20/solid';
 
 export default defineComponent({
     components: {
-        Menu,
-        MenuButton,
-        MenuItem,
-        MenuItems,
-        LockOpenIcon,
-        BellIcon,
-        PencilIcon,
-        ChatBubbleLeftEllipsisIcon,
-        CalendarIcon,
-        UserIcon,
-    },
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems,
+    LockOpenIcon,
+    BellIcon,
+    PencilIcon,
+    ChatBubbleLeftEllipsisIcon,
+    CalendarIcon,
+    UserIcon,
+    DocumentMagnifyingGlassIcon,
+    TabGroup,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    TagIcon,
+    ArrowLongRightIcon
+},
     data() {
         return {
+            DOC_ACCESS_Util: DOC_ACCESS_Util,
             DOC_REFERENCE_TYPE_Util: DOC_REFERENCE_TYPE_Util,
             DOC_RELATION_TYPE_Util: DOC_RELATION_TYPE_Util,
             document: undefined as undefined | Document,
@@ -44,6 +61,10 @@ export default defineComponent({
             activeResponse: undefined as undefined | Document,
             feedReferences: [] as Array<DocumentReference>,
             feedRelations: [] as Array<DocumentRelation>,
+            tabs: [
+                { name: 'References', href: '#', icon: DocumentMagnifyingGlassIcon },
+                { name: 'Relations', href: '#', icon: UserIcon },
+            ],
         };
     },
     props: {
@@ -92,7 +113,7 @@ export default defineComponent({
                 });
         },
         editDocumentTest() {
-            const req = new UpdateDocumentRequest();
+            const req = new CreateOrUpdateDocumentRequest();
             req.setDocumentId(this.document?.getId());
             req.setTitle("SCOTT'S DOKUMENTEN WOCHENDSSPAß");
             req.setContent(this.document?.getContent());
@@ -101,7 +122,7 @@ export default defineComponent({
             req.setPublic(this.document?.getPublic());
 
             getDocStoreClient().
-                updateDocument(req, null).then((resp) => {
+                createOrUpdateDocument(req, null).then((resp) => {
                     console.log(resp);
                 }).
                 catch((err: RpcError) => {
@@ -113,11 +134,11 @@ export default defineComponent({
             req.setId(1);
 
             getDocStoreClient().
-            removeDcoumentReference(req, null).then((resp) => {
-                console.log(typeof resp);
-            }).catch((err: RpcError) => {
-                handleGRPCError(err, this.$route);
-            });
+                removeDcoumentReference(req, null).then((resp) => {
+                    console.log(typeof resp);
+                }).catch((err: RpcError) => {
+                    handleGRPCError(err, this.$route);
+                });
         },
     },
 });
@@ -138,7 +159,7 @@ export default defineComponent({
                                     <span v-if="commentIdx !== comments.length - 1"
                                         class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
                                     <div class="relative flex space-x-3 cursor-pointer select-none"
-                                        @click="$event => activeResponse = comment">
+                                        @click="activeResponse = comment">
                                         <div>
                                             <span
                                                 class="h-8 w-8 rounded-full flex items-center justify-center ring-4 ring-white bg-gray-300">
@@ -333,7 +354,8 @@ export default defineComponent({
                                         </div>
                                         <div class="ml-3 text-xs font-semibold text-gray-900">
                                             {{ ac.getJob() }}<span v-if="ac.getMinimumgrade() > 0">(Rank: {{
-                                                ac.getMinimumgrade() }})</span> - {{ ac.getAccess() }}
+                                                ac.getMinimumgrade() }})</span> - {{
+        DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
                                         </div>
                                     </a>
                                     {{ ' ' }}
@@ -345,7 +367,7 @@ export default defineComponent({
                                             <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
                                         </div>
                                         <div class="ml-3 text-xs font-semibold text-gray-900">{{ ac.getUserId() }} - {{
-                                            ac.getAccess().valueOf() }}</div>
+                                            DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}</div>
                                     </a>
                                     {{ ' ' }}
                                 </li>
@@ -357,14 +379,87 @@ export default defineComponent({
         </div>
     </div>
     <div class="bg-white">
-        <p v-for="item in feedReferences" class="text-2xl">
-            REFERENCE: {{ item.getSourceDocumentId() }} &RightArrow; {{
-                DOC_REFERENCE_TYPE_Util.toEnumKey(item.getReference()) }} &RightArrow; {{ item.getTargetDocumentId() }}
-            <hr />
-        </p>
-        <p v-for="item in feedRelations" class="text-2xl">
-            RELATION: {{ item.getSourceUserId() }} &RightArrow; {{ DOC_RELATION_TYPE_Util.toEnumKey(item.getRelation()) }}
-            &RightArrow; {{ item.getTargetUserId() }}
-        </p>
-    </div>
-</template>
+        <TabGroup>
+            <TabList>
+                <Tab v-for="tab in tabs" :key="tab.name"
+                    class="border-indigo-500 text-indigo-600 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium">
+                    <component :is="tab.icon"
+                        class="text-indigo-500 text-gray-400 group-hover:text-gray-500 -ml-0.5 mr-2 h-5 w-5"
+                        aria-hidden="true" /> {{ tab.name }}
+                </Tab>
+            </TabList>
+            <TabPanels>
+                <TabPanel>
+                    <div class="overflow-hidden bg-white shadow sm:rounded-md">
+                        <ul role="list" class="divide-y divide-gray-200">
+                            <li v-for="item in feedReferences" :key="item.getId()">
+                                <a href="#" class="block hover:bg-gray-50">
+                                    <div class="px-4 py-4 sm:px-6">
+                                        <div class="flex items-center justify-between">
+                                            <p class="truncate text-sm font-medium text-indigo-600">{{ item.getSourceDocument()?.getTitle() }}</p>
+                                            <div class="ml-2 flex flex-shrink-0">
+                                                <p
+                                                    class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
+                                                    {{ DOC_REFERENCE_TYPE_Util.toEnumKey(item.getReference()) }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 sm:flex sm:justify-between">
+                                            <div class="sm:flex">
+                                                <p class="flex items-center text-sm text-gray-500">
+                                                    <TagIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                                                        aria-hidden="true" />
+                                                    {{ item.getSourceDocument()?.getCategory()?.getName() }}
+                                                </p>
+                                            </div>
+                                            <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                                                    aria-hidden="true" />
+                                                <p>
+                                                    Created on
+                                                    {{ ' ' }}
+                                                    <time :datetime="getDateLocaleString(item.getCreatedAt())">{{ getDateLocaleString(item.getCreatedAt()) }}</time>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </TabPanel>
+                <TabPanel>
+                    <div class="overflow-hidden bg-white shadow sm:rounded-md">
+                        <ul role="list" class="divide-y divide-gray-200">
+                            <li v-for="item in feedRelations" :key="item.getId()">
+                                <a href="#" class="block hover:bg-gray-50">
+                                    <div class="px-4 py-4 sm:px-6">
+                                        <div class="flex items-center justify-between">
+                                            <p class="truncate text-sm font-medium text-indigo-600">
+                                                {{ item.getSourceUser()?.getFirstname() }}, {{ item.getSourceUser()?.getLastname() }} <ArrowLongRightIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" /> {{ item.getSourceUser()?.getLastname() }}
+                                            </p>
+                                            <div class="ml-2 flex flex-shrink-0">
+                                                <p
+                                                    class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
+                                                    {{ DOC_RELATION_TYPE_Util.toEnumKey(item.getRelation()) }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 sm:flex sm:justify-between">
+                                            <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                                                    aria-hidden="true" />
+                                                <p>
+                                                    Created on
+                                                    {{ ' ' }}
+                                                    <time :datetime="getDateLocaleString(item.getCreatedAt())">{{ getDateLocaleString(item.getCreatedAt()) }}</time>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+            </TabPanel>
+        </TabPanels>
+    </TabGroup>
+</div></template>

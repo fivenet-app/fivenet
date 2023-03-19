@@ -25,9 +25,10 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		dComments.DocumentID.EQ(jet.Uint64(req.DocumentId)),
 		dComments.DeletedAt.IS_NULL(),
 	)
-	countStmt := dComments.SELECT(
-		jet.COUNT(docs.ID).AS("total_count"),
-	).
+	countStmt := dComments.
+		SELECT(
+			jet.COUNT(docs.ID).AS("total_count"),
+		).
 		FROM(
 			dComments,
 		).
@@ -37,17 +38,18 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		return nil, err
 	}
 
-	stmt := dComments.SELECT(
-		dComments.ID,
-		dComments.Comment,
-		dComments.CreatorID,
-		u.ID,
-		u.Identifier,
-		u.Job,
-		u.JobGrade,
-		u.Firstname,
-		u.Lastname,
-	).
+	stmt := dComments.
+		SELECT(
+			dComments.ID,
+			dComments.Comment,
+			dComments.CreatorID,
+			u.ID,
+			u.Identifier,
+			u.Job,
+			u.JobGrade,
+			u.Firstname,
+			u.Lastname,
+		).
 		FROM(
 			dComments.
 				LEFT_JOIN(u,
@@ -85,11 +87,12 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 	// Clean comment from
 	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
 
-	stmt := dComments.INSERT(
-		dComments.DocumentID,
-		dComments.Comment,
-		dComments.CreatorID,
-	).
+	stmt := dComments.
+		INSERT(
+			dComments.DocumentID,
+			dComments.Comment,
+			dComments.CreatorID,
+		).
 		VALUES(
 			req.Comment.DocumentId,
 			req.Comment.Comment,
@@ -113,7 +116,8 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this comment!")
 	}
 
-	stmt := dComments.UPDATE().
+	stmt := dComments.
+		UPDATE().
 		SET(
 			dComments.Comment.SET(jet.String(req.Comment.Comment)),
 		).

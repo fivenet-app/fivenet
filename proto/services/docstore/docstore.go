@@ -45,7 +45,10 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 
 	var condition jet.BoolExpression
 	if req.Search != "" {
-		condition = jet.BoolExp(jet.Raw("MATCH(title) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.Search}))
+		condition = jet.BoolExp(jet.Raw(
+			"MATCH(title) AGAINST ($search IN NATURAL LANGUAGE MODE)",
+			jet.RawArgs{"$search": req.Search},
+		))
 	} else {
 		condition = jet.Bool(true)
 	}
@@ -99,7 +102,6 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	resp := &GetDocumentResponse{
 		Document: &documents.Document{},
-		Access:   &documents.DocumentAccess{},
 	}
 
 	stmt := s.getDocumentsQuery(condition, nil, nil, userId, job, jobGrade)
@@ -126,16 +128,17 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateOrUpdateDocument
 
 	if req.DocumentId == 0 {
 		docs := table.ArpanetDocuments
-		stmt := docs.INSERT(
-			docs.Title,
-			docs.Content,
-			docs.ContentType,
-			docs.Closed,
-			docs.State,
-			docs.Public,
-			docs.CreatorID,
-			docs.CategoryID,
-		).VALUES(
+		stmt := docs.
+			INSERT(
+				docs.Title,
+				docs.Content,
+				docs.ContentType,
+				docs.Closed,
+				docs.State,
+				docs.Public,
+				docs.CreatorID,
+				docs.CategoryID,
+			).VALUES(
 			req.Title,
 			htmlsanitizer.Sanitize(req.Content),
 			documents.DOC_CONTENT_TYPE_HTML,
@@ -175,13 +178,14 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateOrUpdateDocument
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
 	}
 
-	stmt := docs.UPDATE(
-		docs.Title,
-		docs.Content,
-		docs.Closed,
-		docs.State,
-		docs.Public,
-	).
+	stmt := docs.
+		UPDATE(
+			docs.Title,
+			docs.Content,
+			docs.Closed,
+			docs.State,
+			docs.Public,
+		).
 		SET(
 			req.Title,
 			req.Content,
@@ -210,10 +214,11 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view document access!")
 	}
 
-	stmt := docs.SELECT(
-		dUserAccess.AllColumns,
-		dJobAccess.AllColumns,
-	).
+	stmt := docs.
+		SELECT(
+			dUserAccess.AllColumns,
+			dJobAccess.AllColumns,
+		).
 		FROM(
 			docs.
 				LEFT_JOIN(dUserAccess,
@@ -268,10 +273,11 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 		jobs  []*documents.DocumentJobAccess
 		users []*documents.DocumentUserAccess
 	}
-	selectStmt := jet.SELECT(
-		dJobAccess.AllColumns,
-		dUserAccess.AllColumns,
-	).
+	selectStmt := jet.
+		SELECT(
+			dJobAccess.AllColumns,
+			dUserAccess.AllColumns,
+		).
 		FROM(
 			dJobAccess,
 			dUserAccess,
@@ -297,13 +303,14 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 			}
 
 			// Create document job access
-			stmt := dJobAccess.INSERT(
-				dJobAccess.DocumentID,
-				dJobAccess.Job,
-				dJobAccess.MinimumGrade,
-				dJobAccess.Access,
-				dJobAccess.CreatorID,
-			).
+			stmt := dJobAccess.
+				INSERT(
+					dJobAccess.DocumentID,
+					dJobAccess.Job,
+					dJobAccess.MinimumGrade,
+					dJobAccess.Access,
+					dJobAccess.CreatorID,
+				).
 				MODELS(ja)
 
 			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -318,12 +325,13 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 				ua[k].CreatorId = userId
 			}
 			// Create document user access
-			stmt := dUserAccess.INSERT(
-				dUserAccess.DocumentID,
-				dUserAccess.UserID,
-				dUserAccess.Access,
-				dUserAccess.CreatorID,
-			).
+			stmt := dUserAccess.
+				INSERT(
+					dUserAccess.DocumentID,
+					dUserAccess.UserID,
+					dUserAccess.Access,
+					dUserAccess.CreatorID,
+				).
 				MODELS(ua)
 
 			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -340,7 +348,8 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 			jobIds = append(jobIds, jet.Uint64(access.Jobs[i].Id))
 		}
 
-		jobAccessStmt := dJobAccess.DELETE().
+		jobAccessStmt := dJobAccess.
+			DELETE().
 			WHERE(jet.AND(
 				dJobAccess.ID.IN(jobIds...),
 				dJobAccess.DocumentID.EQ(jet.Uint64(documentID)),
@@ -358,7 +367,8 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 			jobIds = append(jobIds, jet.Uint64(access.Users[i].Id))
 		}
 
-		userAccessStmt := dUserAccess.DELETE().
+		userAccessStmt := dUserAccess.
+			DELETE().
 			WHERE(jet.AND(
 				dUserAccess.ID.IN(uaIds...),
 				dUserAccess.DocumentID.EQ(jet.Uint64(documentID)),
@@ -369,14 +379,16 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 		}
 
 	case DOC_ACCESS_UPDATE_MODE_CLEAR:
-		jobAccessStmt := dJobAccess.DELETE().
+		jobAccessStmt := dJobAccess.
+			DELETE().
 			WHERE(dJobAccess.DocumentID.EQ(jet.Uint64(documentID)))
 
 		if _, err := jobAccessStmt.ExecContext(ctx, s.db); err != nil {
 			return err
 		}
 
-		userAccessStmt := dUserAccess.DELETE().
+		userAccessStmt := dUserAccess.
+			DELETE().
 			WHERE(dUserAccess.DocumentID.EQ(jet.Uint64(documentID)))
 
 		if _, err := userAccessStmt.ExecContext(ctx, s.db); err != nil {

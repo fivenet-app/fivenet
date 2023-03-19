@@ -71,7 +71,8 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	}
 
 	req.Reference.CreatorId = userId
-	stmt := docRef.INSERT().
+	stmt := docRef.
+		INSERT().
 		MODEL(req.Reference)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -90,10 +91,11 @@ func (s *Server) RemoveDcoumentReference(ctx context.Context, req *RemoveDcoumen
 	}
 
 	// Get document IDs of reference entry
-	docsStmt := docRef.SELECT(
-		docRef.SourceDocumentID.AS("source"),
-		docRef.TargetDocumentID.AS("target"),
-	).
+	docsStmt := docRef.
+		SELECT(
+			docRef.SourceDocumentID.AS("source"),
+			docRef.TargetDocumentID.AS("target"),
+		).
 		FROM(docRef).
 		WHERE(docRef.ID.EQ(jet.Uint64(req.Id))).
 		LIMIT(1)
@@ -110,7 +112,8 @@ func (s *Server) RemoveDcoumentReference(ctx context.Context, req *RemoveDcoumen
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
 	}
 
-	stmt := docRef.UPDATE().
+	stmt := docRef.
+		UPDATE().
 		SET(
 			docRef.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
@@ -136,7 +139,8 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	}
 
 	req.Relation.SourceUserId = userId
-	stmt := docRef.INSERT().
+	stmt := docRef.
+		INSERT().
 		MODEL(req.Relation)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -154,9 +158,10 @@ func (s *Server) RemoveDcoumentRelation(ctx context.Context, req *RemoveDcoument
 	}
 
 	// Get document IDs of reference entry
-	docsStmt := docRel.SELECT(
-		docRel.DocumentID.AS("id"),
-	).
+	docsStmt := docRel.
+		SELECT(
+			docRel.DocumentID.AS("id"),
+		).
 		FROM(docRel).
 		WHERE(docRel.ID.EQ(jet.Uint64(req.Id))).
 		LIMIT(1)
@@ -173,7 +178,8 @@ func (s *Server) RemoveDcoumentRelation(ctx context.Context, req *RemoveDcoument
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
 	}
 
-	stmt := docRel.UPDATE().
+	stmt := docRel.
+		UPDATE().
 		SET(
 			docRel.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
@@ -193,31 +199,32 @@ func (s *Server) RemoveDcoumentRelation(ctx context.Context, req *RemoveDcoument
 func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) ([]*documents.DocumentReference, error) {
 	sourceDoc := docs.AS("source_document")
 	uCreator := u.AS("ref_creator")
-	stmt := docRef.SELECT(
-		docRef.ID,
-		docRef.CreatedAt,
-		docRef.SourceDocumentID,
-		docRef.Reference,
-		docRef.TargetDocumentID,
-		docRef.CreatorID,
-		sourceDoc.ID,
-		sourceDoc.CreatedAt,
-		sourceDoc.UpdatedAt,
-		sourceDoc.CategoryID,
-		sourceDoc.Title,
-		sourceDoc.CreatorID,
-		sourceDoc.State,
-		sourceDoc.Closed,
-		dCategory.ID,
-		dCategory.Name,
-		dCategory.Description,
-		uCreator.ID,
-		uCreator.Identifier,
-		uCreator.Job,
-		uCreator.JobGrade,
-		uCreator.Firstname,
-		uCreator.Lastname,
-	).
+	stmt := docRef.
+		SELECT(
+			docRef.ID,
+			docRef.CreatedAt,
+			docRef.SourceDocumentID,
+			docRef.Reference,
+			docRef.TargetDocumentID,
+			docRef.CreatorID,
+			sourceDoc.ID,
+			sourceDoc.CreatedAt,
+			sourceDoc.UpdatedAt,
+			sourceDoc.CategoryID,
+			sourceDoc.Title,
+			sourceDoc.CreatorID,
+			sourceDoc.State,
+			sourceDoc.Closed,
+			dCategory.ID,
+			dCategory.Name,
+			dCategory.Description,
+			uCreator.ID,
+			uCreator.Identifier,
+			uCreator.Job,
+			uCreator.JobGrade,
+			uCreator.Firstname,
+			uCreator.Lastname,
+		).
 		FROM(
 			docRef.
 				LEFT_JOIN(sourceDoc,
@@ -253,29 +260,30 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([]*documents.DocumentRelation, error) {
 	uSource := u.AS("source_user")
 	uTarget := u.AS("target_user")
-	stmt := docRel.SELECT(
-		docRel.ID,
-		docRel.CreatedAt,
-		docRel.DocumentID,
-		docRel.SourceUserID,
-		docRel.Relation,
-		docRel.TargetUserID,
-		dCategory.ID,
-		dCategory.Name,
-		dCategory.Description,
-		uSource.ID,
-		uSource.Identifier,
-		uSource.Job,
-		uSource.JobGrade,
-		uSource.Firstname,
-		uSource.Lastname,
-		uTarget.ID,
-		uTarget.Identifier,
-		uTarget.Job,
-		uTarget.JobGrade,
-		uTarget.Firstname,
-		uTarget.Lastname,
-	).
+	stmt := docRel.
+		SELECT(
+			docRel.ID,
+			docRel.CreatedAt,
+			docRel.DocumentID,
+			docRel.SourceUserID,
+			docRel.Relation,
+			docRel.TargetUserID,
+			dCategory.ID,
+			dCategory.Name,
+			dCategory.Description,
+			uSource.ID,
+			uSource.Identifier,
+			uSource.Job,
+			uSource.JobGrade,
+			uSource.Firstname,
+			uSource.Lastname,
+			uTarget.ID,
+			uTarget.Identifier,
+			uTarget.Job,
+			uTarget.JobGrade,
+			uTarget.Firstname,
+			uTarget.Lastname,
+		).
 		FROM(
 			docRel.
 				LEFT_JOIN(docs,

@@ -10,14 +10,15 @@ import (
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
 	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
-	stmt := dTemplates.SELECT(
-		dTemplates.ID,
-		dTemplates.Job,
-		dTemplates.JobGrade,
-		dTemplates.Title,
-		dTemplates.Description,
-		dTemplates.CreatorID,
-	).
+	stmt := dTemplates.
+		SELECT(
+			dTemplates.ID,
+			dTemplates.Job,
+			dTemplates.JobGrade,
+			dTemplates.Title,
+			dTemplates.Description,
+			dTemplates.CreatorID,
+		).
 		FROM(dTemplates).
 		WHERE(
 			jet.AND(
@@ -37,9 +38,10 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*GetTemplateResponse, error) {
 	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
-	stmt := dTemplates.SELECT(
-		dTemplates.AllColumns,
-	).
+	stmt := dTemplates.
+		SELECT(
+			dTemplates.AllColumns,
+		).
 		FROM(dTemplates).
 		WHERE(
 			jet.AND(

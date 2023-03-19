@@ -41,22 +41,24 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 	u := u.AS("creator")
 	var q jet.SelectStatement
 	if onlyColumns != nil {
-		q = docs.SELECT(
-			onlyColumns,
-		)
+		q = docs.
+			SELECT(
+				onlyColumns,
+			)
 	} else {
 		if additionalColumns == nil {
-			q = docs.SELECT(
-				docs.AllColumns,
-				dCategory.ID,
-				dCategory.Name,
-				u.ID,
-				u.Identifier,
-				u.Job,
-				u.JobGrade,
-				u.Firstname,
-				u.Lastname,
-			)
+			q = docs.
+				SELECT(
+					docs.AllColumns,
+					dCategory.ID,
+					dCategory.Name,
+					u.ID,
+					u.Identifier,
+					u.Job,
+					u.JobGrade,
+					u.Firstname,
+					u.Lastname,
+				)
 		} else {
 			additionalColumns = append(jet.ProjectionList{
 				dCategory.Name,
@@ -68,18 +70,20 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 				u.Firstname,
 				u.Lastname,
 			}, additionalColumns)
-			q = docs.SELECT(
-				docs.AllColumns,
-				additionalColumns...,
-			)
+			q = docs.
+				SELECT(
+					docs.AllColumns,
+					additionalColumns...,
+				)
 		}
 	}
 
 	return q.
 		FROM(
-			docs.LEFT_JOIN(dUserAccess,
-				dUserAccess.DocumentID.EQ(docs.ID).
-					AND(dUserAccess.UserID.EQ(jet.Int32(userId)))).
+			docs.
+				LEFT_JOIN(dUserAccess,
+					dUserAccess.DocumentID.EQ(docs.ID).
+						AND(dUserAccess.UserID.EQ(jet.Int32(userId)))).
 				LEFT_JOIN(dJobAccess,
 					dJobAccess.DocumentID.EQ(docs.ID).
 						AND(dJobAccess.Job.EQ(jet.String(job))).
@@ -91,11 +95,12 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 				LEFT_JOIN(dCategory,
 					docs.CategoryID.EQ(dCategory.ID),
 				),
-		).WHERE(
-		jet.AND(
-			wheres...,
-		),
-	).
+		).
+		WHERE(
+			jet.AND(
+				wheres...,
+			),
+		).
 		ORDER_BY(docs.CreatedAt.DESC()).
 		LIMIT(database.PaginationLimit)
 }
@@ -134,13 +139,15 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32,
 		),
 	)
 
-	stmt := docs.SELECT(
-		docs.ID,
-	).
+	stmt := docs.
+		SELECT(
+			docs.ID,
+		).
 		FROM(
-			docs.LEFT_JOIN(dUserAccess,
-				dUserAccess.DocumentID.EQ(docs.ID).
-					AND(dUserAccess.UserID.EQ(jet.Int32(userId)))).
+			docs.
+				LEFT_JOIN(dUserAccess,
+					dUserAccess.DocumentID.EQ(docs.ID).
+						AND(dUserAccess.UserID.EQ(jet.Int32(userId)))).
 				LEFT_JOIN(dJobAccess,
 					dJobAccess.DocumentID.EQ(docs.ID).
 						AND(dJobAccess.Job.EQ(jet.String(job))).
