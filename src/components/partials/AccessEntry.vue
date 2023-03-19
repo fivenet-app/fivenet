@@ -1,10 +1,9 @@
-import { defineComponent } from 'vue';
-<script lang="ts">
-import { defineComponent, ref, watch, watchEffect } from 'vue';
+<script setup lang="ts">
+import { onMounted, ref, watch, defineProps } from 'vue';
+import { useRoute } from 'vue-router/auto';
 import {
     Listbox,
     ListboxButton,
-    ListboxLabel,
     ListboxOption,
     ListboxOptions,
     Combobox,
@@ -12,7 +11,7 @@ import {
     ComboboxInput,
     ComboboxOption,
     ComboboxOptions
-} from '@headlessui/vue'
+} from '@headlessui/vue';
 import {
     CheckIcon,
     ChevronDownIcon
@@ -26,96 +25,84 @@ import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
 import { toTitleCase } from '../../utils/strings';
 
-export default defineComponent({
-    components: {
-        CheckIcon,
-        ChevronDownIcon,
-        Listbox,
-        ListboxButton,
-        ListboxLabel,
-        ListboxOption,
-        ListboxOptions,
-        Combobox,
-        ComboboxButton,
-        ComboboxInput,
-        ComboboxOption,
-        ComboboxOptions,
-    },
-    props: {
-        type: {
-            required: true,
-            type: String
-        },
-        id: {
-            required: true,
-            type: Number
-        }
-    },
-    emits: ['typeChange'],
-    data() {
-        return {
-            accessTypes: [
-                { id: 0, name: 'Citizen' },
-                { id: 1, name: 'Jobs' },
-            ],
-            selectedAccessType: ref<{ id: number, name: string }>({ id: -1, name: '' }),
-            entriesChars: [] as UserShort[],
-            queryChar: { value: '' },
-            selectedChar: ref<undefined | UserShort>(undefined),
-            entriesJobs: [] as Job[],
-            queryJob: { value: '' },
-            selectedJob: ref<Job>(new Job()),
-            entriesMinimumRank: [] as JobGrade[],
-            queryMinimumRank: { value: '' },
-            selectedMinimumRank: ref(undefined),
-            entriesAccessRole: Object.keys(DOC_ACCESS),
-            queryAccessRole: { value: '' },
-            selectedAccessRole: ref(undefined),
-        }
-    },
-    mounted() {
-        const passedType = this.accessTypes.find(e => e.name.toLowerCase() === this.$props.type);
-        if (passedType) this.selectedAccessType = passedType;
+const $route = useRoute();
 
-        // watch(this.selectedAccessType, () => {
-        //     console.log(1);
-        //     this.$emit('typeChange', { id: this.$props.id, data: this.$data })
-        // })
-
-        watchDebounced(this.queryJob, () => this.findJobs(), { debounce: 750, maxWait: 2000 });
-        watchDebounced(this.queryChar, () => this.findChars(), { debounce: 750, maxWait: 2000 });
-        watch(this.selectedJob, () => this.entriesMinimumRank = this.selectedJob.getGradesList())
-        watch(this.selectedAccessType, () => {
-            this.selectedChar = undefined;
-            this.selectedJob = new Job();
-            this.selectedMinimumRank = undefined;
-        })
+const $props = defineProps({
+    type: {
+        required: true,
+        type: String
     },
-    methods: {
-        toTitleCase(input: string): string { return toTitleCase(input) },
-        findJobs(): void {
-            const req = new CompleteJobNamesRequest();
-            req.setSearch(this.queryJob.value);
-
-            getCompletorClient().completeJobNames(req, null).then((resp) => {
-                this.entriesJobs = resp.getJobsList();
-            }).catch((err: RpcError) => {
-                handleGRPCError(err, this.$route);
-            })
-        },
-        findChars(): void {
-            const req = new CompleteCharNamesRequest();
-            req.setSearch(this.queryJob.value);
-
-            getCompletorClient().completeCharNames(req, null).then((resp) => {
-                this.entriesChars = resp.getUsersList();
-            }).catch((err: RpcError) => {
-                handleGRPCError(err, this.$route);
-            })
-        }
+    id: {
+        required: true,
+        type: Number
     }
-})
+});
 
+const accessTypes = [
+    { id: 0, name: 'Citizen' },
+    { id: 1, name: 'Jobs' },
+];
+let selectedAccessType = ref<{ id: number, name: string }>({ id: -1, name: '' });
+let entriesChars = [] as UserShort[];
+const queryChar = ref('');
+let selectedChar = ref<undefined | UserShort>(undefined);
+let entriesJobs = [] as Job[];
+const queryJob = ref('');
+let selectedJob = ref<Job>();
+let entriesMinimumRank = [] as JobGrade[];
+const queryMinimumRank = '';
+let selectedMinimumRank = ref(undefined);
+const entriesAccessRole = Object.keys(DOC_ACCESS);
+const queryAccessRole = ref('');
+let selectedAccessRole = ref();
+
+function findJobs(): void {
+    const req = new CompleteJobNamesRequest();
+    req.setSearch(queryJob.value);
+
+    getCompletorClient().completeJobNames(req, null).then((resp) => {
+        entriesJobs = resp.getJobsList();
+    }).catch((err: RpcError) => {
+        handleGRPCError(err, $route);
+    })
+}
+function findChars(): void {
+    const req = new CompleteCharNamesRequest();
+    req.setSearch(queryJob.value);
+
+    getCompletorClient().completeCharNames(req, null).then((resp) => {
+        entriesChars = resp.getUsersList();
+    }).catch((err: RpcError) => {
+        handleGRPCError(err, $route);
+    })
+}
+
+const emit = defineEmits(['typeChange'])
+
+watchDebounced(queryJob, () => findJobs(), { debounce: 750, maxWait: 2000 });
+watchDebounced(queryChar, () => findChars(), { debounce: 750, maxWait: 2000 });
+
+watch(selectedJob, () => {
+    console.log(selectedJob.value);
+    entriesMinimumRank = selectedJob.value?.getGradesList()
+});
+
+watch(selectedAccessType, () => {
+    selectedChar.value = undefined;
+    selectedJob.value = undefined;
+    selectedMinimumRank.value = undefined;
+
+    if (selectedAccessType.value.id === 0) {
+        findChars();
+    } else {
+        findJobs();
+    }
+});
+
+onMounted(() => {
+    const passedType = accessTypes.find(e => e.name.toLowerCase() === $props.type);
+    if (passedType) selectedAccessType.value = passedType;
+});
 </script>
 
 <template>
@@ -161,7 +148,7 @@ export default defineComponent({
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                @change="queryChar.value = $event.target.value" @click="findChars()"
+                                @change="queryChar = $event.target.value" @click="findChars()"
                                 :display-value="(char: any) => `${char?.getFirstname()} ${char?.getLastname()}`" />
                         </ComboboxButton>
 
@@ -193,7 +180,7 @@ export default defineComponent({
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                @change="queryJob.value = $event.target.value" @click="findJobs()"
+                                @change="queryJob = $event.target.value" @click="findJobs()"
                                 :display-value="(job: any) => job?.getLabel()" />
                         </ComboboxButton>
 
@@ -223,14 +210,14 @@ export default defineComponent({
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                @change="queryMinimumRank.value = $event.target.value"
-                                :display-value="(rank: any) => rank?.label" />
+                                @change="queryMinimumRank = $event.target.value"
+                                :display-value="(rank: any) => rank?.getLabel()" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesMinimumRank.length > 0"
                             class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.getGrade()" :value="rank" as="minimumrank"
-                                v-slot="{ active, selected }">
+                            <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.getGrade()" :value="rank"
+                                as="minimumrank" v-slot="{ active, selected }">
                                 <li
                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
@@ -254,7 +241,7 @@ export default defineComponent({
                     <ComboboxButton as="div">
                         <ComboboxInput
                             class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            @change="queryAccessRole.value = $event.target.value"
+                            @change="queryAccessRole = $event.target.value"
                             @click="selectedAccessType?.id === 0 ? findChars() : findJobs()"
                             :display-value="(role: any) => toTitleCase(role.toLowerCase())" />
                     </ComboboxButton>
