@@ -11,6 +11,8 @@ import { dispatchNotification } from '../notification';
 import AccessEntry from '../partials/AccessEntry.vue';
 import PlusIcon from '@heroicons/vue/20/solid/PlusIcon';
 import { useRouter, useRoute } from 'vue-router/auto';
+import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
+import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 
 const store = useStore();
 const router = useRouter();
@@ -24,34 +26,80 @@ const categoryID = ref(0);
 const closed = ref(false);
 const state = ref('');
 const isPublic = ref(false);
-const access = ref<{ id: number, type: string, values: { name: string, accessrole: string, minimumrank: string } }[]>([]);
+const access = ref<Map<number, { id: number, type: number, values: { job?: Job, char?: UserShort, accessrole?: DOC_ACCESS, minimumrank?: JobGrade } }>>(new Map());
 
 const modules = [] as Quill.Module[];
 
 function addAccessEntry(): void {
-    if (access.value.length > 4) {
+    if (access.value.size > 4) {
         dispatchNotification({ title: 'Maximum amount of Access entries exceeded', content: 'There can only be a maximum of 5 access entries on a Document', type: 'error' })
         return;
     }
 
-    access.value.push({
-        id: access.value.length > 0 ? access.value[access.value.length - 1].id + 1 : 0,
-        type: 'jobs',
-        values: {
-            name: '',
-            accessrole: '',
-            minimumrank: ''
-        }
+    let id = access.value.size > 0 ? [...access.value.keys()].pop() as number + 1 : 0;
+    access.value.set(id, {
+        id,
+        type: 1,
+        values: {}
     })
 }
 
-function updateAccesEntry(data: any): void {
-    const accessIndex = access.value.findIndex(e => e.id === data.id);
-    if (!accessIndex) return;
+function removeAccessEntry(event: {
+    id: number
+}): void {
+    access.value.delete(event.id);
+}
 
-    access.value[accessIndex].type = data.selectedAccessType.id
+function updateAccessEntryType(event: {
+    id: number,
+    type: number
+}): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) return;
 
-    console.log(access);
+    accessEntry.type = event.type;
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryName(event: {
+    id: number,
+    job?: Job,
+    char?: UserShort
+}): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) return;
+
+    if (event.job) {
+        accessEntry.values.job = event.job;
+        accessEntry.values.char = undefined;
+    } else if (event.char) {
+        accessEntry.values.job = undefined;
+        accessEntry.values.char = event.char;
+    }
+
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryRank(event: {
+    id: number,
+    rank: JobGrade
+}): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) return;
+
+    accessEntry.values.minimumrank = event.rank;
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryAccess(event: {
+    id: number,
+    access: DOC_ACCESS
+}): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) return;
+
+    accessEntry.values.accessrole = event.access;
+    access.value.set(event.id, accessEntry);
 }
 
 function submitForm(): void {
@@ -107,8 +155,12 @@ function submitForm(): void {
     </div>
     <div class="my-3">
         <h2 class="text-neutral">Access</h2>
-        <AccessEntry v-for="entry in access" :type="entry.type" :key="entry.id" :id="entry.id"
-            @typeChange="$event => updateAccesEntry($event)" />
+        <AccessEntry v-for="entry in access.values()" :type="entry.type" :key="entry.id" :id="entry.id"
+            @typeChange="$event => updateAccessEntryType($event)"
+            @nameChange="$event => updateAccessEntryName($event)"
+            @rankChange="$event => updateAccessEntryRank($event)"
+            @accessChange="$event => updateAccessEntryAccess($event)"
+            @deleteRequest="$event => removeAccessEntry($event)" />
         <button type="button"
             class="rounded-full bg-indigo-600 p-2 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             data-te-toggle="tooltip" title="Add Permission" @click="addAccessEntry()">

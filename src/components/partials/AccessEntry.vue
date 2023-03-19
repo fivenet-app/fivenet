@@ -31,7 +31,7 @@ const $route = useRoute();
 const $props = defineProps({
     type: {
         required: true,
-        type: String
+        type: Number
     },
     id: {
         required: true,
@@ -40,11 +40,11 @@ const $props = defineProps({
 });
 
 const emit = defineEmits<{
-    (e: 'typeChange', id: number, type: number): void,
-    (e: 'nameChange', id: number, job: Job | undefined, char: UserShort | undefined): void,
-    (e: 'rankChange', id: number, rank: JobGrade): void,
-    (e: 'accessChange', id: number, access: DOC_ACCESS): void,
-    (e: 'deleteRequest', id: number): void,
+    (e: 'typeChange', payload: { id: number, type: number }): void,
+    (e: 'nameChange', payload: { id: number, job: Job | undefined, char: UserShort | undefined }): void,
+    (e: 'rankChange', payload: { id: number, rank: JobGrade }): void,
+    (e: 'accessChange', payload: { id: number, access: DOC_ACCESS }): void,
+    (e: 'deleteRequest', payload: { id: number }): void,
 }>()
 
 const accessTypes = [
@@ -91,7 +91,7 @@ function findChars(): void {
 }
 
 onMounted(() => {
-    const passedType = accessTypes.find(e => e.name.toLowerCase() === $props.type);
+    const passedType = accessTypes.find(e => e.id === $props.type);
     if (passedType) selectedAccessType.value = passedType;
 });
 
@@ -99,7 +99,7 @@ watchDebounced(queryJob, () => findJobs(), { debounce: 750, maxWait: 2000 });
 watchDebounced(queryChar, () => findChars(), { debounce: 750, maxWait: 2000 });
 
 watch(selectedAccessType, () => {
-    emit('typeChange', $props.id, selectedAccessType.value.id);
+    emit('typeChange', { id: $props.id, type: selectedAccessType.value.id });
 
     selectedChar.value = undefined;
     selectedJob.value = undefined;
@@ -114,24 +114,24 @@ watch(selectedAccessType, () => {
 
 watch(selectedJob, () => {
     if (!selectedJob.value) return;
-    emit('nameChange', $props.id, selectedJob.value, undefined);
+    emit('nameChange', { id: $props.id, job: selectedJob.value, char: undefined });
 
     entriesMinimumRank = selectedJob.value.getGradesList()
 });
 
 watch(selectedChar, () => {
     if (!selectedChar.value) return;
-    emit('nameChange', $props.id, undefined, selectedChar.value);
+    emit('nameChange', { id: $props.id, job: undefined, char: selectedChar.value });
 });
 
 watch(selectedMinimumRank, () => {
     if (!selectedMinimumRank.value) return;
-    emit('rankChange', $props.id, selectedMinimumRank.value);
+    emit('rankChange', { id: $props.id, rank: selectedMinimumRank.value });
 });
 
 watch(selectedAccessRole, () => {
     if (!selectedAccessRole.value) return;
-    emit('accessChange', $props.id, selectedAccessRole.value);
+    emit('accessChange', { id: $props.id, access: selectedAccessRole.value });
 });
 </script>
 
@@ -297,7 +297,7 @@ watch(selectedAccessRole, () => {
         <div class="flex-initial">
             <button type="button"
                 class="rounded-full bg-indigo-600 p-1.5 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest')" aria-hidden="true" />
+                <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest', { id: $props.id })" aria-hidden="true" />
             </button>
         </div>
     </div>
