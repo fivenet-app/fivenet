@@ -1,18 +1,35 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { getDocStoreClient, handleGRPCError } from '../../grpc';
+import { getCompletorClient, getDocStoreClient, handleGRPCError } from '../../grpc';
 import { CreateDocumentRequest, GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { DocumentAccess, DocumentJobAccess, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
+import { DocumentAccess, DocumentCategory, DocumentJobAccess, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
 import AccessEntry from '../partials/AccessEntry.vue';
-import PlusIcon from '@heroicons/vue/20/solid/PlusIcon';
+import {
+    PlusIcon,
+    ChevronDownIcon,
+    CheckIcon,
+} from '@heroicons/vue/20/solid';
 import { useRouter, useRoute } from 'vue-router/auto';
 import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@arpanet/gen/resources/users/users_pb';
+import {
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+    Combobox,
+    ComboboxButton,
+    ComboboxInput,
+    ComboboxOption,
+    ComboboxOptions
+} from '@headlessui/vue';
+import { CompleteDocumentCategoryRequest } from '@arpanet/gen/services/completor/completor_pb';
+import { watchDebounced } from '@vueuse/core';
 
 const store = useStore();
 const router = useRouter();
@@ -27,15 +44,40 @@ const props = defineProps({
 
 const activeChar = computed(() => store.state.activeChar);
 
+const openclose = [
+    { id: 0, label: 'Open', closed: false },
+    { id: 1, label: 'Closed', closed: true },
+]
+
 const title = ref('');
 const content = ref('');
-const categoryID = ref(0);
-const closed = ref(false);
+const closed = ref(openclose[0]);
 const state = ref('');
 const isPublic = ref(false);
 const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }>>(new Map());
 
+let entriesCategory = [] as DocumentCategory[];
+const queryCategory = ref('');
+const selectedCategory = ref<DocumentCategory | undefined>(undefined);
+
 const modules = [] as Quill.Module[];
+
+onMounted(() => {
+    findCategories();
+});
+
+watchDebounced(queryCategory, () => findCategories(), { debounce: 750, maxWait: 2000 });
+
+function findCategories(): void {
+    const req = new CompleteDocumentCategoryRequest();
+    req.setSearch(queryCategory.value);
+
+    getCompletorClient().completeDocumentCategory(req, null).then((resp) => {
+        entriesCategory = resp.getCategoriesList();
+    }).catch((err: RpcError) => {
+        handleGRPCError(err, route);
+    })
+}
 
 function addAccessEntry(): void {
     if (access.value.size > 4) {
@@ -114,7 +156,7 @@ function submitForm(): void {
     req.setTitle(title.value);
     req.setContent(content.value);
     req.setContentType(DOC_CONTENT_TYPE.HTML);
-    req.setClosed(closed.value);
+    req.setClosed(closed.value.closed);
     req.setState(state.value);
     req.setPublic(isPublic.value);
 
@@ -169,7 +211,7 @@ function editForm(): void {
     req.setTitle(title.value);
     req.setContent(content.value);
     req.setContentType(DOC_CONTENT_TYPE.HTML);
-    req.setClosed(closed.value);
+    req.setClosed(closed.value.closed);
     req.setState(state.value);
     req.setPublic(isPublic.value);
 
@@ -230,7 +272,7 @@ if (props.id) {
         if (document) {
             title.value = document.getTitle();
             content.value = document.getContent();
-            closed.value = document.getClosed();
+            closed.value = openclose.find(e => e.closed === document.getClosed());
             state.value = document.getState();
             isPublic.value = document.getPublic();
         };
@@ -272,6 +314,76 @@ if (props.id) {
         <input v-model="title" type="text" name="name"
             class="block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
             placeholder="Document Title" />
+    </div>
+    <div class="flex flex-row">
+        <div class="flex-1">
+            <!-- Category -->
+            <Combobox as="div" v-model="selectedCategory">
+                    <div class="relative">
+                        <ComboboxButton as="div">
+                            <ComboboxInput
+                                class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                @change="queryCategory = $event.target.value" :display-value="(category: any) => category?.getName()" />
+                        </ComboboxButton>
+
+                        <ComboboxOptions v-if="entriesCategory.length > 0"
+                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            <ComboboxOption v-for="category in entriesCategory" :key="category.getId()" :value="category" as="category"
+                                v-slot="{ active, selected }">
+                                <li
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                        {{ category.getName() }}
+                                    </span>
+
+                                    <span v-if="selected"
+                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                    </span>
+                                </li>
+                            </ComboboxOption>
+                        </ComboboxOptions>
+                    </div>
+                </Combobox>
+        </div>
+        <div class="flex-1">
+            <!-- State -->
+        </div>
+        <div class="flex-1">
+            <!-- Open/Close -->
+            <Listbox as="div" v-model="closed">
+                <div class="relative">
+                    <ListboxButton
+                        class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        <span class="block truncate">{{ openclose.find(e => e.closed === closed)?.label }}</span>
+                        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                            <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </span>
+                    </ListboxButton>
+
+                    <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
+                        leave-to-class="opacity-0">
+                        <ListboxOptions
+                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            <ListboxOption as="template" v-for="type in openclose" :key="type.id"
+                                :value="type" v-slot="{ active, selected }">
+                                <li
+                                    :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
+                                    <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                                        type.label
+                                    }}</span>
+
+                                    <span v-if="selected"
+                                        :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                    </span>
+                                </li>
+                            </ListboxOption>
+                        </ListboxOptions>
+                    </transition>
+                </div>
+            </Listbox>
+        </div>
     </div>
     <div class="bg-white">
         <QuillEditor v-model:content="content" contentType="html" toolbar="full" theme="snow" :modules="modules" />
