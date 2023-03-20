@@ -26,7 +26,6 @@ const props = defineProps({
 function chooseCharacter() {
     const req = new ChooseCharacterRequest();
     req.setCharId(props.char.getUserId());
-    console.log("🚀 ~ file: CharacterSelectorCard.vue:29 ~ chooseCharacter ~ $props.char.getUserId():", props.char.getUserId())
 
     getAuthClient()
         .chooseCharacter(req, null)
