@@ -84,6 +84,7 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 				),
 		).
 		WHERE(condition).
+		OFFSET(req.Offset).
 		LIMIT(database.PaginationLimit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Vehicles); err != nil {
