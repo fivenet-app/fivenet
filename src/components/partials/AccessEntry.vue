@@ -29,7 +29,7 @@ import { toTitleCase } from '../../utils/strings';
 const route = useRoute();
 
 const props = defineProps<{
-    initializationData: { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }
+    init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }
 }>();
 
 const emit = defineEmits<{
@@ -62,11 +62,13 @@ let entriesAccessRole = Object.keys(DOC_ACCESS);
 const queryAccessRole = ref('');
 const selectedAccessRole = ref();
 
-if (props.initializationData.type === 0 && props.initializationData.values.char) {
-    selectedChar.value = entriesChars.find(char => char.getUserId() === props.initializationData.values.char);
-} else if (props.initializationData.type === 1 && props.initializationData.values.job && props.initializationData.values.minimumrank) {
-    selectedJob.value = entriesJobs.find(job => job.getName() === props.initializationData.values.job);
-    selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.getGrade() === props.initializationData.values.minimumrank);
+if (props.init.type === 0 && props.init.values.char && props.init.values.accessrole) {
+    selectedChar.value = entriesChars.find(char => char.getUserId() === props.init.values.char);
+    selectedAccessRole.value = accessTypes.find(type => type.id === props.init.values.accessrole)
+} else if (props.init.type === 1 && props.init.values.job && props.init.values.minimumrank && props.init.values.accessrole) {
+    selectedJob.value = entriesJobs.find(job => job.getName() === props.init.values.job);
+    selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.getGrade() === props.init.values.minimumrank);
+    selectedAccessRole.value = accessTypes.find(type => type.id === props.init.values.accessrole)
 }
 
 function findJobs(): void {
@@ -92,7 +94,7 @@ function findChars(): void {
 }
 
 onMounted(() => {
-    const passedType = accessTypes.find(e => e.id === props.initializationData.type);
+    const passedType = accessTypes.find(e => e.id === props.init.type);
     if (passedType) selectedAccessType.value = passedType;
 });
 
@@ -100,7 +102,7 @@ watchDebounced(queryJob, () => findJobs(), { debounce: 750, maxWait: 2000 });
 watchDebounced(queryChar, () => findChars(), { debounce: 750, maxWait: 2000 });
 
 watch(selectedAccessType, () => {
-    emit('typeChange', { id: props.initializationData.id, type: selectedAccessType.value.id });
+    emit('typeChange', { id: props.init.id, type: selectedAccessType.value.id });
 
     selectedChar.value = undefined;
     selectedJob.value = undefined;
@@ -115,24 +117,24 @@ watch(selectedAccessType, () => {
 
 watch(selectedJob, () => {
     if (!selectedJob.value) return;
-    emit('nameChange', { id: props.initializationData.id, job: selectedJob.value, char: undefined });
+    emit('nameChange', { id: props.init.id, job: selectedJob.value, char: undefined });
 
     entriesMinimumRank = selectedJob.value.getGradesList()
 });
 
 watch(selectedChar, () => {
     if (!selectedChar.value) return;
-    emit('nameChange', { id: props.initializationData.id, job: undefined, char: selectedChar.value });
+    emit('nameChange', { id: props.init.id, job: undefined, char: selectedChar.value });
 });
 
 watch(selectedMinimumRank, () => {
     if (!selectedMinimumRank.value) return;
-    emit('rankChange', { id: props.initializationData.id, rank: selectedMinimumRank.value });
+    emit('rankChange', { id: props.init.id, rank: selectedMinimumRank.value });
 });
 
 watch(selectedAccessRole, () => {
     if (!selectedAccessRole.value) return;
-    emit('accessChange', { id: props.initializationData.id, access: selectedAccessRole.value });
+    emit('accessChange', { id: props.init.id, access: selectedAccessRole.value });
 });
 </script>
 
@@ -298,7 +300,7 @@ watch(selectedAccessRole, () => {
         <div class="flex-initial">
             <button type="button"
                 class="rounded-full bg-indigo-600 p-1.5 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest', { id: $props.initializationData.id })" aria-hidden="true" />
+                <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest', { id: $props.init.id })" aria-hidden="true" />
             </button>
         </div>
     </div>

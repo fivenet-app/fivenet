@@ -279,7 +279,7 @@ if (props.id) {
     <div class="my-3">
         <h2 class="text-neutral">Access</h2>
         <AccessEntry v-for="entry in access.values()" :key="entry.id"
-            :initializationData="entry"
+            :init="entry"
             @typeChange="$event => updateAccessEntryType($event)"
             @nameChange="$event => updateAccessEntryName($event)"
             @rankChange="$event => updateAccessEntryRank($event)"
