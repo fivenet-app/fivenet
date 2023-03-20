@@ -6,6 +6,7 @@ includeTables:
   - "arpanet_*"
   - "job_grades"
   - "jobs"
+  - "owned_vehicles"
   - "user_licenses"
   - "users"
   - "vpcLS"

@@ -26,7 +26,6 @@ import (
 	pbauth "github.com/galexrt/arpanet/proto/services/auth"
 	pbcitizenstore "github.com/galexrt/arpanet/proto/services/citizenstore"
 	pbcompletor "github.com/galexrt/arpanet/proto/services/completor"
-	pbdispatcher "github.com/galexrt/arpanet/proto/services/dispatcher"
 	pbdocstore "github.com/galexrt/arpanet/proto/services/docstore"
 	pbjobs "github.com/galexrt/arpanet/proto/services/jobs"
 	pblivemapper "github.com/galexrt/arpanet/proto/services/livemapper"
@@ -87,8 +86,7 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p))
 	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, complhelp))
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, complhelp))
-	pbdispatcher.RegisterDispatcherServiceServer(grpcServer, pbdispatcher.NewServer())
-	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p))
+	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, complhelp))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(logger.Named("grpc_livemap"), db, p)
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)

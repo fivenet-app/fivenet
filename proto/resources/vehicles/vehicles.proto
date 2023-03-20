@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package resources.vehicles;
+option go_package = "github.com/galexrt/arpanet/proto/resources/vehicles;vehicles";
+
+import "resources/users/users.proto";
+
+message Vehicles {
+  string plate = 1; // @gotags: alias:"plate"
+  string mode = 2; // @gotags: alias:"mode"
+  string type = 3; // @gotags: alias:"type"
+  resources.users.UserShort owner = 4;
+}

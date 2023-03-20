@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_comments` (
   PRIMARY KEY (`id`),
   KEY `idx_arpanet_documents_comments_document_id` (`document_id`),
   KEY `idx_arpanet_documents_comments_creator_id` (`creator_id`),
-  CONSTRAINT `fk_arpanet_documents_comments_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`),
+  CONSTRAINT `fk_arpanet_documents_comments_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_arpanet_documents_comments_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_job_access` (
   UNIQUE KEY `idx_arpanet_documents_job_access` (`document_id`, `job`),
   KEY `idx_arpanet_documents_job_access_deleted_at` (`deleted_at`),
   KEY `idx_arpanet_documents_job_access_document_id` (`document_id`),
-  CONSTRAINT `fk_arpanet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`),
+  CONSTRAINT `fk_arpanet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_arpanet_documents_job_access_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -125,8 +125,8 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_references` (
   KEY `idx_arpanet_documents_references_source_document_id` (`source_document_id`),
   KEY `idx_arpanet_documents_references_target_document_id` (`target_document_id`),
   KEY `idx_arpanet_documents_references_creator_id` (`creator_id`),
-  CONSTRAINT `fk_arpanet_documents_references_source_document_id` FOREIGN KEY (`source_document_id`) REFERENCES `arpanet_documents` (`id`),
-  CONSTRAINT `fk_arpanet_documents_references_target_document_id` FOREIGN KEY (`target_document_id`) REFERENCES `arpanet_documents` (`id`),
+  CONSTRAINT `fk_arpanet_documents_references_source_document_id` FOREIGN KEY (`source_document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_arpanet_documents_references_target_document_id` FOREIGN KEY (`target_document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_arpanet_documents_references_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_relations` (
   KEY `idx_arpanet_documents_relations_document_id` (`document_id`),
   KEY `idx_arpanet_documents_relations_source_user_id` (`source_user_id`),
   KEY `idx_arpanet_documents_relations_target_user_id` (`target_user_id`),
-  CONSTRAINT `fk_arpanet_documents_relations` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`),
+  CONSTRAINT `fk_arpanet_documents_relations_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_arpanet_documents_relations_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `fk_arpanet_documents_relations_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_user_access` (
   KEY `idx_arpanet_documents_users_access_deleted_at` (`deleted_at`),
   KEY `idx_arpanet_documents_user_access_document_id` (`document_id`),
   KEY `idx_arpanet_documents_user_access_user_id` (`user_id`),
-  CONSTRAINT `fk_arpanet_documents_user_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`),
+  CONSTRAINT `fk_arpanet_documents_user_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_arpanet_documents_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `fk_arpanet_documents_user_access_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

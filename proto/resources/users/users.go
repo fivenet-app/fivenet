@@ -1,12 +1,5 @@
 package users
 
-type IJobInfo interface {
-	GetJob() string
-	GetJobGrade() int32
-	SetJobLabel(label string)
-	SetJobGradeLabel(label string)
-}
-
 func (x *User) SetJobLabel(label string) {
 	x.JobLabel = label
 }

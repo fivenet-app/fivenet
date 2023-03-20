@@ -39,7 +39,6 @@ declare module 'vue-router/auto/routes' {
     '/[...path]': RouteRecordInfo<'/[...path]', '/:path(.*)', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     'Citizens': RouteRecordInfo<'Citizens', '/citizens', Record<never, never>, Record<never, never>>,
     'Citizens Info': RouteRecordInfo<'Citizens Info', '/citizens/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
-    'dispatches': RouteRecordInfo<'dispatches', '/dispatches', Record<never, never>, Record<never, never>>,
     'Documents': RouteRecordInfo<'Documents', '/documents', Record<never, never>, Record<never, never>>,
     'Documents: Info': RouteRecordInfo<'Documents: Info', '/documents/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'Documents: Create': RouteRecordInfo<'Documents: Create', '/documents/create', Record<never, never>, Record<never, never>>,
@@ -48,6 +47,7 @@ declare module 'vue-router/auto/routes' {
     'Login': RouteRecordInfo<'Login', '/login', Record<never, never>, Record<never, never>>,
     'logout': RouteRecordInfo<'logout', '/logout', Record<never, never>, Record<never, never>>,
     'overview': RouteRecordInfo<'overview', '/overview', Record<never, never>, Record<never, never>>,
+    'Vehicles': RouteRecordInfo<'Vehicles', '/vehicles', Record<never, never>, Record<never, never>>,
   }
 }
 

@@ -21,15 +21,15 @@
 LOCK TABLES `arpanet_documents` WRITE;
 /*!40000 ALTER TABLE `arpanet_documents` DISABLE KEYS */;
 INSERT INTO `arpanet_documents` VALUES
-(1,'2023-03-17 19:57:09.898','2023-03-17 18:57:16.587',NULL,NULL,'Public Document without category',0,'I\'m a public Document without a category.',NULL,1,'Open',NULL,1),
-(2,'2023-03-17 19:57:13.244','2023-03-17 18:57:16.596',NULL,4,'Public Document with category (Closed State)',0,'I\'m a public Document with a category that is closed.',NULL,1,'Closed',1,1),
+(1,'2023-03-17 19:57:09.898','2023-03-17 18:57:16.587',NULL,NULL,'Public Document without category',0,'I\'m a public Document without a category.',NULL,1,'ambulance','Open',NULL,1),
+(2,'2023-03-17 19:57:13.244','2023-03-17 18:57:16.596',NULL,4,'Public Document with category (Closed State)',0,'I\'m a public Document with a category that is closed.',NULL,1,'ambulance','Closed',1,1),
 (3,'2023-03-17 18:54:44.115','2023-03-17 18:57:04.438',NULL,1,'Patientenakte Thomas G.',0,'Only for Ambulance.',NULL,2,'Open',0,0),
-(4,'2023-03-17 18:57:04.391',NULL,NULL,1,'Bloodresults for DOJ Case',0,'Only for DOJ, Ambulance and the patient.',NULL,2,'Open',0,0),
-(5,'2023-03-17 18:57:04.413',NULL,NULL,1,'Drugtest for DOJ Case',0,'Only for PD, DOJ and Ambulance.',NULL,2,'Open',0,0),
+(4,'2023-03-17 18:57:04.391',NULL,NULL,1,'Bloodresults for DOJ Case',0,'Only for DOJ, Ambulance and the patient.',NULL,2,'ambulance','Open',0,0),
+(5,'2023-03-17 18:57:04.413',NULL,NULL,1,'Drugtest for DOJ Case',0,'Only for PD, DOJ and Ambulance.',NULL,2,'ambulance','Open',0,0),
 (6,'2023-03-17 18:57:55.203',NULL,NULL,2,'Police document about a criminal investigation',0,'Only for PD.',NULL,4,'Open',0,0),
-(7,'2023-03-17 18:58:53.956','2023-03-17 18:59:51.616',NULL,NULL,'DOJ Request for medical bloodtests',0,'Only for DOJ and Ambulance.',NULL,3,'Closed',0,0),
-(8,'2023-03-17 19:28:38.145',NULL,NULL,4,'Internal Ambulance Doc',0,'Internal Ambulance Doc',NULL,2,'Open',0,0),
-(9,'2023-03-17 19:28:38.155',NULL,NULL,4,'Internal Ambulance Doc only grade 17 and higher',0,'Internal Ambulance Doc only grade 17 and higher',NULL,1,'Open',0,0);
+(7,'2023-03-17 18:58:53.956','2023-03-17 18:59:51.616',NULL,NULL,'DOJ Request for medical bloodtests',0,'Only for DOJ and Ambulance.',NULL,3,'doj','Closed',0,0),
+(8,'2023-03-17 19:28:38.145',NULL,NULL,4,'Internal Ambulance Doc',0,'Internal Ambulance Doc',NULL,2,'ambulance','Open',0,0),
+(9,'2023-03-17 19:28:38.155',NULL,NULL,4,'Internal Ambulance Doc only grade 17 and higher',0,'Internal Ambulance Doc only grade 17 and higher',NULL,1,'ambulance','Open',0,0);
 /*!40000 ALTER TABLE `arpanet_documents` ENABLE KEYS */;
 UNLOCK TABLES;
 

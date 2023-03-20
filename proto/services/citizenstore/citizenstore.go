@@ -107,7 +107,9 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
 		FROM(u.
-			LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
+			LEFT_JOIN(aup,
+				aup.UserID.EQ(u.ID),
+			),
 		).
 		WHERE(condition).
 		OFFSET(req.Offset).

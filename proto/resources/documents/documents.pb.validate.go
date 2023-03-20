@@ -1605,10 +1605,32 @@ func (m *DocumentJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+		err := DocumentJobAccessValidationError{
+			field:  "JobLabel",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.GetMinimumGrade() < 0 {
 		err := DocumentJobAccessValidationError{
 			field:  "MinimumGrade",
 			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
+		err := DocumentJobAccessValidationError{
+			field:  "JobGradeLabel",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -1916,6 +1938,39 @@ func (m *DocumentUserAccess) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return DocumentUserAccessValidationError{
 					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.User != nil {
+
+		if all {
+			switch v := interface{}(m.GetUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentUserAccessValidationError{
+						field:  "User",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentUserAccessValidationError{
+						field:  "User",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentUserAccessValidationError{
+					field:  "User",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

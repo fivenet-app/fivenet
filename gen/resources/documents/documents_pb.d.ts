@@ -391,8 +391,14 @@ export class DocumentJobAccess extends jspb.Message {
   getJob(): string;
   setJob(value: string): DocumentJobAccess;
 
+  getJobLabel(): string;
+  setJobLabel(value: string): DocumentJobAccess;
+
   getMinimumgrade(): number;
   setMinimumgrade(value: number): DocumentJobAccess;
+
+  getJobGradeLabel(): string;
+  setJobGradeLabel(value: string): DocumentJobAccess;
 
   getAccess(): DOC_ACCESS;
   setAccess(value: DOC_ACCESS): DocumentJobAccess;
@@ -420,7 +426,9 @@ export namespace DocumentJobAccess {
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     documentId: number,
     job: string,
+    jobLabel: string,
     minimumgrade: number,
+    jobGradeLabel: string,
     access: DOC_ACCESS,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
@@ -438,7 +446,7 @@ export namespace DocumentJobAccess {
 
   export enum CreatorCase { 
     _CREATOR_NOT_SET = 0,
-    CREATOR = 9,
+    CREATOR = 11,
   }
 }
 
@@ -461,6 +469,11 @@ export class DocumentUserAccess extends jspb.Message {
 
   getUserId(): number;
   setUserId(value: number): DocumentUserAccess;
+
+  getUser(): resources_users_users_pb.UserShort | undefined;
+  setUser(value?: resources_users_users_pb.UserShort): DocumentUserAccess;
+  hasUser(): boolean;
+  clearUser(): DocumentUserAccess;
 
   getAccess(): DOC_ACCESS;
   setAccess(value: DOC_ACCESS): DocumentUserAccess;
@@ -488,6 +501,7 @@ export namespace DocumentUserAccess {
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     documentId: number,
     userId: number,
+    user?: resources_users_users_pb.UserShort.AsObject,
     access: DOC_ACCESS,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
@@ -503,9 +517,14 @@ export namespace DocumentUserAccess {
     UPDATED_AT = 3,
   }
 
+  export enum UserCase { 
+    _USER_NOT_SET = 0,
+    USER = 6,
+  }
+
   export enum CreatorCase { 
     _CREATOR_NOT_SET = 0,
-    CREATOR = 8,
+    CREATOR = 9,
   }
 }
 

@@ -10,9 +10,9 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lfu"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
+	"github.com/galexrt/arpanet/proto/resources/common"
 	"github.com/galexrt/arpanet/proto/resources/documents"
 	"github.com/galexrt/arpanet/proto/resources/jobs"
-	"github.com/galexrt/arpanet/proto/resources/users"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 )
 
@@ -126,7 +126,7 @@ func (c *Completor) refreshJobsCache() error {
 	return nil
 }
 
-func (c *Completor) ResolveJob(usr users.IJobInfo) {
+func (c *Completor) ResolveJob(usr common.IJobInfo) {
 	job, ok := c.Jobs.Get(usr.GetJob())
 	if ok {
 		usr.SetJobLabel(job.Label)

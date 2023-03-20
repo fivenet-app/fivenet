@@ -3116,9 +3116,11 @@ proto.resources.documents.DocumentJobAccess.toObject = function(includeInstance,
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     documentId: jspb.Message.getFieldWithDefault(msg, 4, 0),
     job: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    minimumgrade: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    access: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    creatorId: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    jobLabel: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    minimumgrade: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    jobGradeLabel: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    access: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    creatorId: jspb.Message.getFieldWithDefault(msg, 10, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f)
   };
 
@@ -3179,18 +3181,26 @@ proto.resources.documents.DocumentJobAccess.deserializeBinaryFromReader = functi
       msg.setJob(value);
       break;
     case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setJobLabel(value);
+      break;
+    case 7:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setMinimumgrade(value);
       break;
-    case 7:
+    case 8:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setJobGradeLabel(value);
+      break;
+    case 9:
       var value = /** @type {!proto.resources.documents.DOC_ACCESS} */ (reader.readEnum());
       msg.setAccess(value);
       break;
-    case 8:
+    case 10:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorId(value);
       break;
-    case 9:
+    case 11:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setCreator(value);
@@ -3261,31 +3271,45 @@ proto.resources.documents.DocumentJobAccess.serializeBinaryToWriter = function(m
       f
     );
   }
+  f = message.getJobLabel();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
+      f
+    );
+  }
   f = message.getMinimumgrade();
   if (f !== 0) {
     writer.writeInt32(
-      6,
+      7,
+      f
+    );
+  }
+  f = message.getJobGradeLabel();
+  if (f.length > 0) {
+    writer.writeString(
+      8,
       f
     );
   }
   f = message.getAccess();
   if (f !== 0.0) {
     writer.writeEnum(
-      7,
+      9,
       f
     );
   }
   f = message.getCreatorId();
   if (f !== 0) {
     writer.writeInt32(
-      8,
+      10,
       f
     );
   }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      9,
+      11,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -3422,11 +3446,29 @@ proto.resources.documents.DocumentJobAccess.prototype.setJob = function(value) {
 
 
 /**
- * optional int32 minimumGrade = 6;
+ * optional string job_label = 6;
+ * @return {string}
+ */
+proto.resources.documents.DocumentJobAccess.prototype.getJobLabel = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.documents.DocumentJobAccess} returns this
+ */
+proto.resources.documents.DocumentJobAccess.prototype.setJobLabel = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional int32 minimumGrade = 7;
  * @return {number}
  */
 proto.resources.documents.DocumentJobAccess.prototype.getMinimumgrade = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
@@ -3435,16 +3477,34 @@ proto.resources.documents.DocumentJobAccess.prototype.getMinimumgrade = function
  * @return {!proto.resources.documents.DocumentJobAccess} returns this
  */
 proto.resources.documents.DocumentJobAccess.prototype.setMinimumgrade = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
 /**
- * optional DOC_ACCESS access = 7;
+ * optional string job_grade_label = 8;
+ * @return {string}
+ */
+proto.resources.documents.DocumentJobAccess.prototype.getJobGradeLabel = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.documents.DocumentJobAccess} returns this
+ */
+proto.resources.documents.DocumentJobAccess.prototype.setJobGradeLabel = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional DOC_ACCESS access = 9;
  * @return {!proto.resources.documents.DOC_ACCESS}
  */
 proto.resources.documents.DocumentJobAccess.prototype.getAccess = function() {
-  return /** @type {!proto.resources.documents.DOC_ACCESS} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+  return /** @type {!proto.resources.documents.DOC_ACCESS} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
 };
 
 
@@ -3453,16 +3513,16 @@ proto.resources.documents.DocumentJobAccess.prototype.getAccess = function() {
  * @return {!proto.resources.documents.DocumentJobAccess} returns this
  */
 proto.resources.documents.DocumentJobAccess.prototype.setAccess = function(value) {
-  return jspb.Message.setProto3EnumField(this, 7, value);
+  return jspb.Message.setProto3EnumField(this, 9, value);
 };
 
 
 /**
- * optional int32 creator_id = 8;
+ * optional int32 creator_id = 10;
  * @return {number}
  */
 proto.resources.documents.DocumentJobAccess.prototype.getCreatorId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
 };
 
 
@@ -3471,17 +3531,17 @@ proto.resources.documents.DocumentJobAccess.prototype.getCreatorId = function() 
  * @return {!proto.resources.documents.DocumentJobAccess} returns this
  */
 proto.resources.documents.DocumentJobAccess.prototype.setCreatorId = function(value) {
-  return jspb.Message.setProto3IntField(this, 8, value);
+  return jspb.Message.setProto3IntField(this, 10, value);
 };
 
 
 /**
- * optional resources.users.UserShort creator = 9;
+ * optional resources.users.UserShort creator = 11;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.documents.DocumentJobAccess.prototype.getCreator = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 9));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 11));
 };
 
 
@@ -3490,7 +3550,7 @@ proto.resources.documents.DocumentJobAccess.prototype.getCreator = function() {
  * @return {!proto.resources.documents.DocumentJobAccess} returns this
 */
 proto.resources.documents.DocumentJobAccess.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 9, value);
+  return jspb.Message.setWrapperField(this, 11, value);
 };
 
 
@@ -3508,7 +3568,7 @@ proto.resources.documents.DocumentJobAccess.prototype.clearCreator = function() 
  * @return {boolean}
  */
 proto.resources.documents.DocumentJobAccess.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 9) != null;
+  return jspb.Message.getField(this, 11) != null;
 };
 
 
@@ -3549,8 +3609,9 @@ proto.resources.documents.DocumentUserAccess.toObject = function(includeInstance
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     documentId: jspb.Message.getFieldWithDefault(msg, 4, 0),
     userId: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    access: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    creatorId: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    user: (f = msg.getUser()) && resources_users_users_pb.UserShort.toObject(includeInstance, f),
+    access: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    creatorId: jspb.Message.getFieldWithDefault(msg, 8, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f)
   };
 
@@ -3611,14 +3672,19 @@ proto.resources.documents.DocumentUserAccess.deserializeBinaryFromReader = funct
       msg.setUserId(value);
       break;
     case 6:
+      var value = new resources_users_users_pb.UserShort;
+      reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
+      msg.setUser(value);
+      break;
+    case 7:
       var value = /** @type {!proto.resources.documents.DOC_ACCESS} */ (reader.readEnum());
       msg.setAccess(value);
       break;
-    case 7:
+    case 8:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorId(value);
       break;
-    case 8:
+    case 9:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setCreator(value);
@@ -3689,24 +3755,32 @@ proto.resources.documents.DocumentUserAccess.serializeBinaryToWriter = function(
       f
     );
   }
+  f = message.getUser();
+  if (f != null) {
+    writer.writeMessage(
+      6,
+      f,
+      resources_users_users_pb.UserShort.serializeBinaryToWriter
+    );
+  }
   f = message.getAccess();
   if (f !== 0.0) {
     writer.writeEnum(
-      6,
+      7,
       f
     );
   }
   f = message.getCreatorId();
   if (f !== 0) {
     writer.writeInt32(
-      7,
+      8,
       f
     );
   }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      8,
+      9,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -3843,11 +3917,48 @@ proto.resources.documents.DocumentUserAccess.prototype.setUserId = function(valu
 
 
 /**
- * optional DOC_ACCESS access = 6;
+ * optional resources.users.UserShort user = 6;
+ * @return {?proto.resources.users.UserShort}
+ */
+proto.resources.documents.DocumentUserAccess.prototype.getUser = function() {
+  return /** @type{?proto.resources.users.UserShort} */ (
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 6));
+};
+
+
+/**
+ * @param {?proto.resources.users.UserShort|undefined} value
+ * @return {!proto.resources.documents.DocumentUserAccess} returns this
+*/
+proto.resources.documents.DocumentUserAccess.prototype.setUser = function(value) {
+  return jspb.Message.setWrapperField(this, 6, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.resources.documents.DocumentUserAccess} returns this
+ */
+proto.resources.documents.DocumentUserAccess.prototype.clearUser = function() {
+  return this.setUser(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.DocumentUserAccess.prototype.hasUser = function() {
+  return jspb.Message.getField(this, 6) != null;
+};
+
+
+/**
+ * optional DOC_ACCESS access = 7;
  * @return {!proto.resources.documents.DOC_ACCESS}
  */
 proto.resources.documents.DocumentUserAccess.prototype.getAccess = function() {
-  return /** @type {!proto.resources.documents.DOC_ACCESS} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {!proto.resources.documents.DOC_ACCESS} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
@@ -3856,16 +3967,16 @@ proto.resources.documents.DocumentUserAccess.prototype.getAccess = function() {
  * @return {!proto.resources.documents.DocumentUserAccess} returns this
  */
 proto.resources.documents.DocumentUserAccess.prototype.setAccess = function(value) {
-  return jspb.Message.setProto3EnumField(this, 6, value);
+  return jspb.Message.setProto3EnumField(this, 7, value);
 };
 
 
 /**
- * optional int32 creator_id = 7;
+ * optional int32 creator_id = 8;
  * @return {number}
  */
 proto.resources.documents.DocumentUserAccess.prototype.getCreatorId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
 
@@ -3874,17 +3985,17 @@ proto.resources.documents.DocumentUserAccess.prototype.getCreatorId = function()
  * @return {!proto.resources.documents.DocumentUserAccess} returns this
  */
 proto.resources.documents.DocumentUserAccess.prototype.setCreatorId = function(value) {
-  return jspb.Message.setProto3IntField(this, 7, value);
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
 /**
- * optional resources.users.UserShort creator = 8;
+ * optional resources.users.UserShort creator = 9;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.documents.DocumentUserAccess.prototype.getCreator = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 8));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 9));
 };
 
 
@@ -3893,7 +4004,7 @@ proto.resources.documents.DocumentUserAccess.prototype.getCreator = function() {
  * @return {!proto.resources.documents.DocumentUserAccess} returns this
 */
 proto.resources.documents.DocumentUserAccess.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 8, value);
+  return jspb.Message.setWrapperField(this, 9, value);
 };
 
 
@@ -3911,7 +4022,7 @@ proto.resources.documents.DocumentUserAccess.prototype.clearCreator = function()
  * @return {boolean}
  */
 proto.resources.documents.DocumentUserAccess.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 8) != null;
+  return jspb.Message.getField(this, 9) != null;
 };
 
 

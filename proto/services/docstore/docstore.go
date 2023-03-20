@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/galexrt/arpanet/pkg/auth"
+	"github.com/galexrt/arpanet/pkg/complhelper"
 	"github.com/galexrt/arpanet/pkg/htmlsanitizer"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/documents"
@@ -30,12 +31,14 @@ type Server struct {
 
 	db *sql.DB
 	p  perms.Permissions
+	c  *complhelper.Completor
 }
 
-func NewServer(db *sql.DB, p perms.Permissions) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *complhelper.Completor) *Server {
 	return &Server{
 		db: db,
 		p:  p,
+		c:  c,
 	}
 }
 

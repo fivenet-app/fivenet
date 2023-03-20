@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package services.dmv;
+option go_package = "github.com/galexrt/arpanet/proto/services/dmv;dmv";
+
+message FindVehiclesRequest {
+
+}
+
+message FindVehiclesResponse {
+
+}
+
+service DMVService {
+  // @permission
+  rpc FindVehicles(FindVehiclesRequest) returns (FindVehiclesResponse);
+}

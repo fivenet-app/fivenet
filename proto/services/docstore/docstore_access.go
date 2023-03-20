@@ -24,42 +24,21 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view document access!")
 	}
 
-	stmt := docs.
-		SELECT(
-			dUserAccess.AllColumns,
-			dJobAccess.AllColumns,
-		).
-		FROM(
-			docs.
-				LEFT_JOIN(dUserAccess,
-					docs.ID.EQ(dUserAccess.DocumentID)).
-				LEFT_JOIN(dJobAccess,
-					docs.ID.EQ(dJobAccess.DocumentID)),
-		).
-		WHERE(
-			jet.AND(
-				docs.ID.EQ(jet.Uint64(req.DocumentId)),
-				jet.OR(
-					jet.AND(
-						dUserAccess.Access.IS_NOT_NULL(),
-						dUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.DOC_ACCESS_BLOCKED))),
-					),
-					jet.AND(
-						dUserAccess.Access.IS_NULL(),
-						dJobAccess.Access.IS_NOT_NULL(),
-						dJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.DOC_ACCESS_BLOCKED))),
-					),
-				),
-			),
-		)
+	access, err := s.getDocumentAccess(ctx, req.DocumentId)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 0; i < len(access.Jobs); i++ {
+		s.c.ResolveJob(access.Jobs[i])
+	}
+
+	for i := 0; i < len(access.Users); i++ {
+		s.c.ResolveJob(access.Users[i].User)
+	}
 
 	resp := &GetDocumentAccessResponse{
-		Access: &documents.DocumentAccess{},
-	}
-	if err := stmt.QueryContext(ctx, s.db, resp.Access); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
-		}
+		Access: access,
 	}
 
 	return resp, nil
@@ -221,12 +200,22 @@ func (s *Server) compareDocumentAccess(current, in *documents.DocumentAccess) (*
 
 func (s *Server) getDocumentAccess(ctx context.Context, documentID uint64) (*documents.DocumentAccess, error) {
 	dJobAccess := table.ArpanetDocumentsJobAccess.AS("documentjobaccess")
+	uCreator := u.AS("creator")
 	jobStmt := dJobAccess.
 		SELECT(
 			dJobAccess.AllColumns,
+			uCreator.ID,
+			uCreator.Identifier,
+			uCreator.Job,
+			uCreator.JobGrade,
+			uCreator.Firstname,
+			uCreator.Lastname,
 		).
 		FROM(
-			dJobAccess,
+			dJobAccess.
+				LEFT_JOIN(uCreator,
+					uCreator.ID.EQ(dJobAccess.CreatorID),
+				),
 		).
 		WHERE(
 			dJobAccess.DocumentID.EQ(jet.Uint64(documentID)),
@@ -242,13 +231,32 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentID uint64) (*doc
 		}
 	}
 
+	u := u.AS("user")
 	dUserAccess := table.ArpanetDocumentsUserAccess.AS("documentuseraccess")
 	userStmt := dUserAccess.
 		SELECT(
 			dUserAccess.AllColumns,
+			u.ID,
+			u.Identifier,
+			u.Job,
+			u.JobGrade,
+			u.Firstname,
+			u.Lastname,
+			uCreator.ID,
+			uCreator.Identifier,
+			uCreator.Job,
+			uCreator.JobGrade,
+			uCreator.Firstname,
+			uCreator.Lastname,
 		).
 		FROM(
-			dUserAccess,
+			dUserAccess.
+				LEFT_JOIN(u,
+					u.ID.EQ(dUserAccess.UserID),
+				).
+				LEFT_JOIN(uCreator,
+					uCreator.ID.EQ(dJobAccess.CreatorID),
+				),
 		).
 		WHERE(
 			dUserAccess.DocumentID.EQ(jet.Uint64(documentID)),

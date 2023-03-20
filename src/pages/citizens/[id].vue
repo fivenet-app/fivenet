@@ -7,14 +7,14 @@ import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { RpcError } from 'grpc-web';
 import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
-import { ref, Ref, onBeforeUnmount } from 'vue';
+import { ref, Ref, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router/auto';
 
 const user = ref() as Ref<undefined | User>;
 
 const route = useRoute();
 
-onBeforeUnmount(() => {
+onBeforeMount(() => {
     const req = new GetUserRequest();
     req.setUserId(route.params.id);
 
