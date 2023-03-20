@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { DocumentIcon, RectangleGroupIcon, UserIcon, TruckIcon } from '@heroicons/vue/20/solid'
+import { RectangleGroupIcon, UserIcon, TruckIcon, DocumentTextIcon } from '@heroicons/vue/20/solid'
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import CitizenInfoProfile from './CitizenInfoProfile.vue';
 import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
@@ -11,7 +11,7 @@ const currentTab = ref('Profile');
 const tabs = [
     { name: 'Profile', icon: UserIcon, permission: 'CitizenStoreService.FindUsers' },
     { name: 'Vehicles', icon: TruckIcon, permission: 'DMVService.FindVehicles' },
-    { name: 'Documents', icon: DocumentIcon, permission: 'CitizenStoreService.GetUserDocuments' },
+    { name: 'Documents', icon: DocumentTextIcon, permission: 'CitizenStoreService.GetUserDocuments' },
     { name: 'Activity', icon: RectangleGroupIcon, permission: 'CitizenStoreService.GetUserActivity' },
 ];
 
@@ -21,26 +21,23 @@ defineProps({
         type: User,
     },
 });
-
-function setTab(tabName: string) {
-    currentTab.value = tabName;
-}
 </script>
 
 <template>
     <div>
         <div class="flex items-center">
-            <h3 class="text-xl font-bold text-gray-300 sm:text-2xl">
+            <h3 class="text-xl font-bold text-gray-300 sm:text-2xl inline-flex">
                 {{ user?.getFirstname() }}, {{ user?.getLastname() }}
+                &nbsp;
+                <span
+                    class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
+                        user.getJobLabel() }} (Rank: {{ user.getJobGradeLabel() }})
+                </span>
+                &nbsp;
                 <span v-if="user.getProps()?.getWanted()"
                     class="inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">WANTED</span>
             </h3>
         </div>
-        <p class="text-sm text-white">
-            <span class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
-                user.getJobLabel() }} (Rank: {{ user.getJobGradeLabel() }})
-            </span>
-        </p>
     </div>
     <div>
         <div class="sm:hidden">
@@ -55,7 +52,7 @@ function setTab(tabName: string) {
         <div class="hidden sm:block">
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <button v-for="tab in tabs" :key="tab.name" href="#" @click="setTab(tab.name)"
+                    <button v-for="tab in tabs" :key="tab.name" href="#" @click="currentTab = tab.name"
                         :class="[tab.name === currentTab ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700', 'group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium']"
                         :aria-current="tab.name === currentTab ? 'page' : undefined" v-can="tab.permission">
                         <component :is="tab.icon"
@@ -72,7 +69,7 @@ function setTab(tabName: string) {
             <CitizenInfoProfile :user="user" />
         </div>
         <div v-else-if="currentTab === 'Vehicles'" v-can="'DMVService.FindVehicles'">
-            <VehiclesList :userId="user.getUserId()" :hideOwner="true" />
+            <VehiclesList :userId="user.getUserId()" :hide-owner="true" />
         </div>
         <div v-else-if="currentTab === 'Documents'" v-can="'CitizenStoreService.GetUserDocuments'">
             <CitizenInfoDocuments :userId="user.getUserId()" />

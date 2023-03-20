@@ -81,10 +81,11 @@ function toggleOrderBy(column: string): void {
     findVehicles(offset.value);
 }
 
-watchDebounced(search, () => findVehicles(0), { debounce: 750, maxWait: 1500 });
+watchDebounced(search.value, () => findVehicles(0), { debounce: 750, maxWait: 1500 });
 
 onMounted(() => {
     findVehicles(0);
+    console.log(props.hideOwner);
 });
 </script>
 
@@ -133,7 +134,7 @@ onMounted(() => {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-800">
-                                <VehiclesListEntry v-for="vehicle in vehicles" :key="vehicle.getPlate()" :vehicle="vehicle" />
+                                <VehiclesListEntry v-for="vehicle in vehicles" :key="vehicle.getPlate()" :vehicle="vehicle" :hide-owner="hideOwner" />
                             </tbody>
                             <thead>
                                 <tr>

@@ -3,7 +3,6 @@ package dmv
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/complhelper"
@@ -66,8 +65,6 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 				),
 		).
 		WHERE(condition)
-
-	fmt.Println(countStmt.DebugSql())
 
 	var count struct{ TotalCount int64 }
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {

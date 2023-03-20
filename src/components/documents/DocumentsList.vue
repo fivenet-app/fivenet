@@ -41,7 +41,7 @@ function findDocuments(pos: number) {
         });
 }
 
-watchDebounced(search, () => findDocuments(0), { debounce: 750, maxWait: 1500 });
+watchDebounced(search.value, () => findDocuments(0), { debounce: 750, maxWait: 1500 });
 
 onBeforeMount(() => {
     findDocuments(0);
