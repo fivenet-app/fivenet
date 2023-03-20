@@ -19,7 +19,7 @@ import (
 var (
 	j   = table.Jobs.AS("job")
 	jg  = table.JobGrades.AS("job_grade")
-	adc = table.ArpanetDocumentsCategories
+	adc = table.ArpanetDocumentsCategories.AS("documentcategory")
 )
 
 type Completor struct {
@@ -76,6 +76,7 @@ func (c *Completor) refreshDocumentCategories() error {
 		FROM(adc).
 		GROUP_BY(adc.Job).
 		ORDER_BY(adc.Name.ASC())
+
 	if err := stmt.Query(c.db, &dest); err != nil {
 		return err
 	}
