@@ -18,10 +18,10 @@ export namespace StreamRequest {
 }
 
 export class StreamResponse extends jspb.Message {
-  getDispatchesList(): Array<resources_livemap_livemap_pb.DispatchMarker>;
-  setDispatchesList(value: Array<resources_livemap_livemap_pb.DispatchMarker>): StreamResponse;
+  getDispatchesList(): Array<resources_livemap_livemap_pb.GenericMarker>;
+  setDispatchesList(value: Array<resources_livemap_livemap_pb.GenericMarker>): StreamResponse;
   clearDispatchesList(): StreamResponse;
-  addDispatches(value?: resources_livemap_livemap_pb.DispatchMarker, index?: number): resources_livemap_livemap_pb.DispatchMarker;
+  addDispatches(value?: resources_livemap_livemap_pb.GenericMarker, index?: number): resources_livemap_livemap_pb.GenericMarker;
 
   getUsersList(): Array<resources_livemap_livemap_pb.UserMarker>;
   setUsersList(value: Array<resources_livemap_livemap_pb.UserMarker>): StreamResponse;
@@ -38,7 +38,7 @@ export class StreamResponse extends jspb.Message {
 
 export namespace StreamResponse {
   export type AsObject = {
-    dispatchesList: Array<resources_livemap_livemap_pb.DispatchMarker.AsObject>,
+    dispatchesList: Array<resources_livemap_livemap_pb.GenericMarker.AsObject>,
     usersList: Array<resources_livemap_livemap_pb.UserMarker.AsObject>,
   }
 }

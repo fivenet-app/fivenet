@@ -10,3 +10,4 @@ includeTables:
   - "user_licenses"
   - "users"
   - "vpcLS"
+  - "gksphone_job_message"

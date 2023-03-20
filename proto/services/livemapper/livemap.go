@@ -1,8 +1,11 @@
 package livemapper
 
 import (
+	"context"
 	"database/sql"
 	"math/rand"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/galexrt/arpanet/pkg/auth"
@@ -58,7 +61,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	locs := locs.AS("usermarker")
 	stmt := locs.SELECT(
-		locs.UserID,
+		locs.UserID.AS("usermarker.userid"),
 		locs.Job,
 		locs.X,
 		locs.Y,
@@ -87,19 +90,70 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		)
 
 	for {
-		resp := &StreamResponse{
-			Dispatches: []*livemap.DispatchMarker{},
-		}
+		resp := &StreamResponse{}
 
 		if err := stmt.QueryContext(srv.Context(), s.db, &resp.Users); err != nil {
 			return err
 		}
+
+		ds, err := s.getDispatches(srv.Context(), jobs)
+		if err != nil {
+			return err
+		}
+		resp.Dispatches = ds
 
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
 		time.Sleep(3 * time.Second)
 	}
+}
+
+func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.GenericMarker, error) {
+	d := table.GksphoneJobMessage
+	stmt := d.SELECT(
+		d.ID,
+		d.Name,
+		d.Number,
+		d.Message,
+		d.Photo,
+		d.Gps,
+		d.Owner,
+		d.Jobm,
+		d.Anon,
+		d.Time,
+	).
+		FROM(
+			d,
+		).
+		WHERE(
+			d.Jobm.REGEXP_LIKE(jet.String("\\[\"(" + strings.Join(jobs, "|") + ")\"\\]")),
+		)
+
+	var dest []*model.GksphoneJobMessage
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, err
+	}
+
+	ds := make([]*livemap.GenericMarker, len(dest))
+
+	for i, v := range dest {
+		gps, _ := strings.CutPrefix(*v.Gps, "GPS: ")
+		gpsSplit := strings.Split(gps, ", ")
+		x, _ := strconv.ParseFloat(gpsSplit[0], 32)
+		y, _ := strconv.ParseFloat(gpsSplit[1], 32)
+
+		ds[i] = &livemap.GenericMarker{
+			X:     float32(x),
+			Y:     float32(y),
+			Id:    v.ID,
+			Icon:  "https://em-content.zobj.net/thumbs/120/sony/336/large-red-circle_1f534.png",
+			Name:  *v.Name,
+			Popup: *v.Message,
+		}
+	}
+
+	return ds, nil
 }
 
 func (s *Server) GenerateRandomUserMarker() {

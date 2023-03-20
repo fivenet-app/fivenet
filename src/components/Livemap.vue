@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 import { getLivemapperClient, handleGRPCError } from '../grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
-import { DispatchMarker, UserMarker } from '@arpanet/gen/resources/livemap/livemap_pb';
+import { GenericMarker, UserMarker } from '@arpanet/gen/resources/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import { Hash } from '../class/Hash';
@@ -35,7 +35,7 @@ export default defineComponent({
             map: {} as undefined | Livemap,
             hash: {} as Hash,
             zoom: 1,
-            dispatchesList: [] as Array<DispatchMarker>,
+            dispatchesList: [] as Array<GenericMarker>,
             usersList: [] as Array<UserMarker>,
         };
     },
@@ -121,7 +121,9 @@ export default defineComponent({
             this.stream = getLivemapperClient()
                 .stream(request)
                 .on('data', function (resp) {
+                    outer.dispatchesList = resp.getDispatchesList();
                     outer.usersList = resp.getUsersList();
+                    outer.map?.parseMarkerlist(MarkerType.dispatch, outer.dispatchesList);
                     outer.map?.parseMarkerlist(MarkerType.player, outer.usersList);
                 })
                 .on('error', (err: RpcError) => {

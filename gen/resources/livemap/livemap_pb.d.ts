@@ -4,31 +4,51 @@ import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/tim
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
 
-export class Marker extends jspb.Message {
+export class GenericMarker extends jspb.Message {
   getX(): number;
-  setX(value: number): Marker;
+  setX(value: number): GenericMarker;
 
   getY(): number;
-  setY(value: number): Marker;
+  setY(value: number): GenericMarker;
 
   getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): Marker;
+  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): GenericMarker;
   hasUpdatedAt(): boolean;
-  clearUpdatedAt(): Marker;
+  clearUpdatedAt(): GenericMarker;
+
+  getId(): number;
+  setId(value: number): GenericMarker;
+
+  getName(): string;
+  setName(value: string): GenericMarker;
+
+  getIcon(): string;
+  setIcon(value: string): GenericMarker;
+
+  getPopup(): string;
+  setPopup(value: string): GenericMarker;
+
+  getLink(): string;
+  setLink(value: string): GenericMarker;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Marker.AsObject;
-  static toObject(includeInstance: boolean, msg: Marker): Marker.AsObject;
-  static serializeBinaryToWriter(message: Marker, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Marker;
-  static deserializeBinaryFromReader(message: Marker, reader: jspb.BinaryReader): Marker;
+  toObject(includeInstance?: boolean): GenericMarker.AsObject;
+  static toObject(includeInstance: boolean, msg: GenericMarker): GenericMarker.AsObject;
+  static serializeBinaryToWriter(message: GenericMarker, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GenericMarker;
+  static deserializeBinaryFromReader(message: GenericMarker, reader: jspb.BinaryReader): GenericMarker;
 }
 
-export namespace Marker {
+export namespace GenericMarker {
   export type AsObject = {
     x: number,
     y: number,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    id: number,
+    name: string,
+    icon: string,
+    popup: string,
+    link: string,
   }
 }
 
@@ -44,16 +64,8 @@ export class UserMarker extends jspb.Message {
   hasUpdatedAt(): boolean;
   clearUpdatedAt(): UserMarker;
 
-  getJob(): string;
-  setJob(value: string): UserMarker;
-
-  getUserId(): number;
-  setUserId(value: number): UserMarker;
-
-  getUser(): resources_users_users_pb.UserShort | undefined;
-  setUser(value?: resources_users_users_pb.UserShort): UserMarker;
-  hasUser(): boolean;
-  clearUser(): UserMarker;
+  getId(): number;
+  setId(value: number): UserMarker;
 
   getName(): string;
   setName(value: string): UserMarker;
@@ -66,6 +78,17 @@ export class UserMarker extends jspb.Message {
 
   getLink(): string;
   setLink(value: string): UserMarker;
+
+  getJob(): string;
+  setJob(value: string): UserMarker;
+
+  getJoblabel(): string;
+  setJoblabel(value: string): UserMarker;
+
+  getUser(): resources_users_users_pb.UserShort | undefined;
+  setUser(value?: resources_users_users_pb.UserShort): UserMarker;
+  hasUser(): boolean;
+  clearUser(): UserMarker;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UserMarker.AsObject;
@@ -80,57 +103,14 @@ export namespace UserMarker {
     x: number,
     y: number,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    id: number,
+    name: string,
+    icon: string,
+    popup: string,
+    link: string,
     job: string,
-    userId: number,
+    joblabel: string,
     user?: resources_users_users_pb.UserShort.AsObject,
-    name: string,
-    icon: string,
-    popup: string,
-    link: string,
-  }
-}
-
-export class DispatchMarker extends jspb.Message {
-  getX(): number;
-  setX(value: number): DispatchMarker;
-
-  getY(): number;
-  setY(value: number): DispatchMarker;
-
-  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DispatchMarker;
-  hasUpdatedAt(): boolean;
-  clearUpdatedAt(): DispatchMarker;
-
-  getName(): string;
-  setName(value: string): DispatchMarker;
-
-  getIcon(): string;
-  setIcon(value: string): DispatchMarker;
-
-  getPopup(): string;
-  setPopup(value: string): DispatchMarker;
-
-  getLink(): string;
-  setLink(value: string): DispatchMarker;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): DispatchMarker.AsObject;
-  static toObject(includeInstance: boolean, msg: DispatchMarker): DispatchMarker.AsObject;
-  static serializeBinaryToWriter(message: DispatchMarker, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): DispatchMarker;
-  static deserializeBinaryFromReader(message: DispatchMarker, reader: jspb.BinaryReader): DispatchMarker;
-}
-
-export namespace DispatchMarker {
-  export type AsObject = {
-    x: number,
-    y: number,
-    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    name: string,
-    icon: string,
-    popup: string,
-    link: string,
   }
 }
 

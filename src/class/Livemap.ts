@@ -1,5 +1,5 @@
-import { UserMarker } from '@arpanet/gen/resources/livemap/livemap_pb';
-import L from 'leaflet';
+import { GenericMarker } from '@arpanet/gen/resources/livemap/livemap_pb';
+import L, { popup } from 'leaflet';
 
 import { AnimatedMarker } from './AnimatedMarker';
 import { Hash } from './Hash';
@@ -15,7 +15,7 @@ export class Livemap extends L.Map {
 
     public markers: Map<number, AnimatedMarker> = new Map();
     public popups: Map<number, L.Popup> = new Map();
-    private prevMarkerLists: Map<MarkerType, Array<UserMarker.AsObject>> = new Map();
+    private prevMarkerLists: Map<MarkerType, Array<GenericMarker.AsObject>> = new Map();
 
     private element: HTMLElement;
 
@@ -55,7 +55,7 @@ export class Livemap extends L.Map {
         }
     }
 
-    public addMarker(id: number, latitude: number, longitude: number, content: string, options: L.MarkerOptions): void {
+    public addMarker(id: number, latitude: number, longitude: number, popupContent: string, options: L.MarkerOptions): void {
         const marker = this.markers.get(id);
 
         if (marker) {
@@ -68,8 +68,8 @@ export class Livemap extends L.Map {
 
             const marker = new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(this);
 
-            if (content) {
-                const popup = L.popup({ content, closeButton: false });
+            if (popupContent) {
+                const popup = L.popup({ content: popupContent, closeButton: false });
                 this.popups.set(id, popup);
                 marker.bindPopup(popup);
             }
@@ -86,28 +86,32 @@ export class Livemap extends L.Map {
         return this.markers.delete(id);
     }
 
-    public parseMarkerlist(type: MarkerType, list: Array<UserMarker>): void {
+    public parseMarkerlist(type: MarkerType, list: Array<GenericMarker>): void {
         let options: L.MarkerOptions = {};
         switch (type) {
             case MarkerType.player: {
                 options = {};
             }
+            break;
 
             case MarkerType.dispatch: {
-                options = {};
+                options = {
+                    icon: L.icon({iconUrl: "https://em-content.zobj.net/thumbs/120/sony/336/large-red-circle_1f534.png"}),
+                };
             }
+            break;
         }
 
         const previousList = this.prevMarkerLists.get(type);
         if (previousList) {
-            const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getUserId() === entry.userId));
+            const markersToRemove = previousList.filter((entry) => !list.find((e) => e.getId() === entry.id));
             markersToRemove.forEach((marker) => {
-                this.removeMarker(marker.userId);
+                this.removeMarker(marker.id);
             });
         }
 
         list.forEach((marker) => {
-            this.addMarker(marker.getUserId(), marker.getY(), marker.getX(), marker.getPopup(), options);
+            this.addMarker(marker.getId(), marker.getY(), marker.getX(), marker.getPopup(), options);
         });
 
         this.prevMarkerLists.set(
