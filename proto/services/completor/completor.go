@@ -15,10 +15,7 @@ import (
 )
 
 var (
-	us  = table.Users.AS("usershort")
-	j   = table.Jobs.AS("job")
-	jg  = table.JobGrades.AS("job_grade")
-	adc = table.ArpanetDocumentsCategories
+	us = table.Users.AS("usershort")
 )
 
 type Server struct {
@@ -108,6 +105,8 @@ func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocu
 		return resp, nil
 	}
 
+	req.Search = strings.ToLower(req.Search)
+
 	for _, j := range jobs {
 		c, ok := s.c.DocCategories.Get(j)
 		if !ok {
@@ -115,7 +114,7 @@ func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocu
 		}
 
 		for _, v := range c {
-			if strings.HasPrefix(v.Name, req.Search) || strings.Contains(v.Name, req.Search) {
+			if strings.HasPrefix(strings.ToLower(v.Name), req.Search) || strings.Contains(strings.ToLower(v.Name), req.Search) {
 				resp.Categories = append(resp.Categories, v)
 			}
 		}
