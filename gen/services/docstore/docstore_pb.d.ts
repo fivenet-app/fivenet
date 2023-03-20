@@ -651,6 +651,11 @@ export class UpdateDocumentRequest extends jspb.Message {
   hasPublic(): boolean;
   clearPublic(): UpdateDocumentRequest;
 
+  getAccess(): resources_documents_documents_pb.DocumentAccess | undefined;
+  setAccess(value?: resources_documents_documents_pb.DocumentAccess): UpdateDocumentRequest;
+  hasAccess(): boolean;
+  clearAccess(): UpdateDocumentRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateDocumentRequest.AsObject;
   static toObject(includeInstance: boolean, msg: UpdateDocumentRequest): UpdateDocumentRequest.AsObject;
@@ -670,6 +675,7 @@ export namespace UpdateDocumentRequest {
     state?: string,
     closed?: boolean,
     pb_public?: boolean,
+    access?: resources_documents_documents_pb.DocumentAccess.AsObject,
   }
 
   export enum CategoryIdCase { 
@@ -710,6 +716,11 @@ export namespace UpdateDocumentRequest {
   export enum PublicCase { 
     _PUBLIC_NOT_SET = 0,
     PUBLIC = 9,
+  }
+
+  export enum AccessCase { 
+    _ACCESS_NOT_SET = 0,
+    ACCESS = 10,
   }
 }
 
@@ -812,7 +823,7 @@ export namespace SetDocumentAccessResponse {
 }
 
 export enum DOC_ACCESS_UPDATE_MODE { 
-  ADD = 0,
+  UPDATE = 0,
   DELETE = 1,
   CLEAR = 2,
 }

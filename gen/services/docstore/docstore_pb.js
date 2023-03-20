@@ -5235,7 +5235,8 @@ proto.services.docstore.UpdateDocumentRequest.toObject = function(includeInstanc
     data: jspb.Message.getFieldWithDefault(msg, 6, ""),
     state: jspb.Message.getFieldWithDefault(msg, 7, ""),
     closed: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
-    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 9, false)
+    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 9, false),
+    access: (f = msg.getAccess()) && resources_documents_documents_pb.DocumentAccess.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -5307,6 +5308,11 @@ proto.services.docstore.UpdateDocumentRequest.deserializeBinaryFromReader = func
     case 9:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setPublic(value);
+      break;
+    case 10:
+      var value = new resources_documents_documents_pb.DocumentAccess;
+      reader.readMessage(value,resources_documents_documents_pb.DocumentAccess.deserializeBinaryFromReader);
+      msg.setAccess(value);
       break;
     default:
       reader.skipField();
@@ -5398,6 +5404,14 @@ proto.services.docstore.UpdateDocumentRequest.serializeBinaryToWriter = function
     writer.writeBool(
       9,
       f
+    );
+  }
+  f = message.getAccess();
+  if (f != null) {
+    writer.writeMessage(
+      10,
+      f,
+      resources_documents_documents_pb.DocumentAccess.serializeBinaryToWriter
     );
   }
 };
@@ -5706,6 +5720,43 @@ proto.services.docstore.UpdateDocumentRequest.prototype.clearPublic = function()
  */
 proto.services.docstore.UpdateDocumentRequest.prototype.hasPublic = function() {
   return jspb.Message.getField(this, 9) != null;
+};
+
+
+/**
+ * optional resources.documents.DocumentAccess access = 10;
+ * @return {?proto.resources.documents.DocumentAccess}
+ */
+proto.services.docstore.UpdateDocumentRequest.prototype.getAccess = function() {
+  return /** @type{?proto.resources.documents.DocumentAccess} */ (
+    jspb.Message.getWrapperField(this, resources_documents_documents_pb.DocumentAccess, 10));
+};
+
+
+/**
+ * @param {?proto.resources.documents.DocumentAccess|undefined} value
+ * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
+*/
+proto.services.docstore.UpdateDocumentRequest.prototype.setAccess = function(value) {
+  return jspb.Message.setWrapperField(this, 10, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
+ */
+proto.services.docstore.UpdateDocumentRequest.prototype.clearAccess = function() {
+  return this.setAccess(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.docstore.UpdateDocumentRequest.prototype.hasAccess = function() {
+  return jspb.Message.getField(this, 10) != null;
 };
 
 
@@ -6436,7 +6487,7 @@ proto.services.docstore.SetDocumentAccessResponse.serializeBinaryToWriter = func
  * @enum {number}
  */
 proto.services.docstore.DOC_ACCESS_UPDATE_MODE = {
-  ADD: 0,
+  UPDATE: 0,
   DELETE: 1,
   CLEAR: 2
 };

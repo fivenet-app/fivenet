@@ -137,6 +137,8 @@ message UpdateDocumentRequest {
   optional string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   optional bool closed = 8; // @gotags: alias:"closed"
   optional bool public = 9; // @gotags: alias:"public"
+
+  optional resources.documents.DocumentAccess access = 10;
 }
 
 message UpdateDocumentResponse {
@@ -152,7 +154,7 @@ message GetDocumentAccessResponse {
 }
 
 enum DOC_ACCESS_UPDATE_MODE {
-  ADD = 0;
+  UPDATE = 0;
   DELETE = 1;
   CLEAR = 2;
 }

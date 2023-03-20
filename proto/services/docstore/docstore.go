@@ -4,7 +4,6 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/htmlsanitizer"
@@ -163,7 +162,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, err
 	}
 
-	if err := s.handleDocumentAccessChanges(ctx, DOC_ACCESS_UPDATE_MODE_ADD, uint64(lastId), req.Access); err != nil {
+	if err := s.handleDocumentAccessChanges(ctx, DOC_ACCESS_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
 		return nil, err
 	}
 
@@ -203,210 +202,11 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, err
 	}
 
+	if err := s.handleDocumentAccessChanges(ctx, DOC_ACCESS_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
+		return nil, err
+	}
+
 	return &UpdateDocumentResponse{
 		DocumentId: req.DocumentId,
 	}, nil
-}
-
-func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_ACCESS)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view document access!")
-	}
-
-	stmt := docs.
-		SELECT(
-			dUserAccess.AllColumns,
-			dJobAccess.AllColumns,
-		).
-		FROM(
-			docs.
-				LEFT_JOIN(dUserAccess,
-					docs.ID.EQ(dUserAccess.DocumentID)).
-				LEFT_JOIN(dJobAccess,
-					docs.ID.EQ(dJobAccess.DocumentID)),
-		).
-		WHERE(
-			jet.AND(
-				docs.ID.EQ(jet.Uint64(req.DocumentId)),
-				jet.OR(
-					jet.AND(
-						dUserAccess.Access.IS_NOT_NULL(),
-						dUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.DOC_ACCESS_BLOCKED))),
-					),
-					jet.AND(
-						dUserAccess.Access.IS_NULL(),
-						dJobAccess.Access.IS_NOT_NULL(),
-						dJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.DOC_ACCESS_BLOCKED))),
-					),
-				),
-			),
-		)
-
-	resp := &GetDocumentAccessResponse{
-		Access: &documents.DocumentAccess{},
-	}
-	if err := stmt.QueryContext(ctx, s.db, resp.Access); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
-		}
-	}
-
-	return resp, nil
-}
-
-func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
-	resp := &SetDocumentAccessResponse{}
-
-	if err := s.handleDocumentAccessChanges(ctx, req.Mode, req.DocumentId, req.Access); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCESS_UPDATE_MODE, documentID uint64, access *documents.DocumentAccess) error {
-	userId := auth.GetUserIDFromContext(ctx)
-
-	// Select existing job and user accesses
-	var dest struct {
-		jobs  []*documents.DocumentJobAccess
-		users []*documents.DocumentUserAccess
-	}
-	selectStmt := jet.
-		SELECT(
-			dJobAccess.AllColumns,
-			dUserAccess.AllColumns,
-		).
-		FROM(
-			dJobAccess,
-			dUserAccess,
-		).
-		WHERE(
-			dJobAccess.DocumentID.EQ(jet.Uint64(documentID)),
-		)
-
-	if err := selectStmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
-		}
-	}
-
-	switch mode {
-	case DOC_ACCESS_UPDATE_MODE_ADD:
-		// Create accesses
-		if len(access.Jobs) > 0 {
-			for k := 0; k < len(access.Jobs); k++ {
-				// Create document job access
-				dJobAccess := table.ArpanetDocumentsJobAccess
-				stmt := dJobAccess.
-					INSERT(
-						dJobAccess.DocumentID,
-						dJobAccess.Job,
-						dJobAccess.MinimumGrade,
-						dJobAccess.Access,
-						dJobAccess.CreatorID,
-					).
-					VALUES(
-						documentID,
-						access.Jobs[k].Job,
-						access.Jobs[k].MinimumGrade,
-						access.Jobs[k].Access,
-						userId,
-					)
-
-				fmt.Println(stmt.DebugSql())
-
-				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-					return err
-				}
-			}
-		}
-
-		if len(access.Users) > 0 {
-			for k := 0; k < len(access.Users); k++ {
-				// Create document user access
-				dUserAccess := table.ArpanetDocumentsUserAccess
-				stmt := dUserAccess.
-					INSERT(
-						dUserAccess.DocumentID,
-						dUserAccess.UserID,
-						dUserAccess.Access,
-						dUserAccess.CreatorID,
-					).
-					VALUES(
-						documentID,
-						access.Users[k].UserId,
-						access.Users[k].Access,
-						userId,
-					)
-
-				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-					return err
-				}
-			}
-		}
-
-	case DOC_ACCESS_UPDATE_MODE_DELETE:
-		jobIds := []jet.Expression{}
-		for i := 0; i < len(access.Jobs); i++ {
-			if access.Jobs[i].Id == 0 {
-				continue
-			}
-			jobIds = append(jobIds, jet.Uint64(access.Jobs[i].Id))
-		}
-
-		jobAccessStmt := dJobAccess.
-			DELETE().
-			WHERE(jet.AND(
-				dJobAccess.ID.IN(jobIds...),
-				dJobAccess.DocumentID.EQ(jet.Uint64(documentID)),
-			))
-
-		if _, err := jobAccessStmt.ExecContext(ctx, s.db); err != nil {
-			return err
-		}
-
-		uaIds := []jet.Expression{}
-		for i := 0; i < len(access.Users); i++ {
-			if access.Users[i].Id == 0 {
-				continue
-			}
-			jobIds = append(jobIds, jet.Uint64(access.Users[i].Id))
-		}
-
-		userAccessStmt := dUserAccess.
-			DELETE().
-			WHERE(jet.AND(
-				dUserAccess.ID.IN(uaIds...),
-				dUserAccess.DocumentID.EQ(jet.Uint64(documentID)),
-			))
-
-		if _, err := userAccessStmt.ExecContext(ctx, s.db); err != nil {
-			return err
-		}
-
-	case DOC_ACCESS_UPDATE_MODE_CLEAR:
-		jobAccessStmt := dJobAccess.
-			DELETE().
-			WHERE(dJobAccess.DocumentID.EQ(jet.Uint64(documentID)))
-
-		if _, err := jobAccessStmt.ExecContext(ctx, s.db); err != nil {
-			return err
-		}
-
-		userAccessStmt := dUserAccess.
-			DELETE().
-			WHERE(dUserAccess.DocumentID.EQ(jet.Uint64(documentID)))
-
-		if _, err := userAccessStmt.ExecContext(ctx, s.db); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

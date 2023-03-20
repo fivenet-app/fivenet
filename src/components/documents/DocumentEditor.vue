@@ -4,7 +4,7 @@ import { useStore } from 'vuex';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
-import { CreateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { CreateDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentJobAccess, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
@@ -155,6 +155,60 @@ function submitForm(): void {
             handleGRPCError(err, route);
         });
 }
+
+function editForm(): void {
+    const req = new UpdateDocumentRequest();
+    req.setDocumentId(31);
+    req.setTitle(title.value);
+    req.setContent(content.value);
+    req.setContentType(DOC_CONTENT_TYPE.HTML);
+    req.setClosed(closed.value);
+    req.setState(state.value);
+    req.setPublic(isPublic.value);
+
+    const reqAccess = new DocumentAccess();
+    access.value.forEach(entry => {
+        if (entry.values.accessrole === undefined) return;
+
+        if (entry.type === 0) {
+            if (!entry.values.char) return;
+
+            const user = new DocumentUserAccess();
+            user.setAccess(DOC_ACCESS[entry.values.accessrole]);
+            user.setUserId(entry.values.char.getUserId());
+
+            reqAccess.addUsers(user);
+        } else if (entry.type === 1) {
+            if (!entry.values.job) return;
+
+            const job = new DocumentJobAccess();
+            job.setJob(entry.values.job.getName());
+            job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank.getGrade() : 0);
+            job.setAccess(DOC_ACCESS[entry.values.accessrole]);
+            job.setCreatorId(activeChar.value.getUserId());
+
+            reqAccess.addJobs(job);
+        }
+    });
+    req.setAccess(reqAccess);
+
+    // const access = new DocumentAccess();
+    // const jobsAccessList = new Array<DocumentJobAccess>();
+    // const jobAccess = new DocumentJobAccess();
+    // jobAccess.setAccess(DOC_ACCESS.VIEW);
+    // jobAccess.setJob(activeChar.getJob());
+    // jobsAccessList.push(jobAccess);
+    // access.setJobsList(jobsAccessList);
+
+    getDocStoreClient().
+        updateDocument(req, null).
+        then((resp) => {
+            dispatchNotification({ title: "Document updated!", content: "Document has been updated." });
+        }).catch((err: RpcError) => {
+            console.log(err);
+            handleGRPCError(err, route);
+        });
+}
 </script>
 
 <route lang="json">
@@ -193,4 +247,6 @@ function submitForm(): void {
     </div>
     <button @click="submitForm()"
         class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Submit</button>
+    <button @click="editForm()"
+        class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Edit</button>
 </template>
