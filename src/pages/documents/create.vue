@@ -22,7 +22,7 @@ import Footer from '../../components/partials/Footer.vue';
 <template>
     <NavPageHeader title="Documents" />
     <ContentWrapper>
-        <DocumentEditor />
+        <DocumentEditor :id="9 /* TODO: Remove this. It's only for testing rn */" />
     </ContentWrapper>
     <Footer />
 </template>

@@ -4,7 +4,7 @@ import { useStore } from 'vuex';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
-import { CreateDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { CreateDocumentRequest, GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentJobAccess, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
@@ -18,6 +18,13 @@ const store = useStore();
 const router = useRouter();
 const route = useRoute();
 
+const props = defineProps({
+    id: {
+        required: false,
+        type: Number
+    },
+});
+
 const activeChar = computed(() => store.state.activeChar);
 
 const title = ref('');
@@ -26,7 +33,7 @@ const categoryID = ref(0);
 const closed = ref(false);
 const state = ref('');
 const isPublic = ref(false);
-const access = ref<Map<number, { id: number, type: number, values: { job?: Job, char?: UserShort, accessrole?: DOC_ACCESS, minimumrank?: JobGrade } }>>(new Map());
+const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }>>(new Map());
 
 const modules = [] as Quill.Module[];
 
@@ -70,11 +77,11 @@ function updateAccessEntryName(event: {
     if (!accessEntry) return;
 
     if (event.job) {
-        accessEntry.values.job = event.job;
+        accessEntry.values.job = event.job.getName();
         accessEntry.values.char = undefined;
     } else if (event.char) {
         accessEntry.values.job = undefined;
-        accessEntry.values.char = event.char;
+        accessEntry.values.char = event.char.getUserId();
     }
 
     access.value.set(event.id, accessEntry);
@@ -87,7 +94,7 @@ function updateAccessEntryRank(event: {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
-    accessEntry.values.minimumrank = event.rank;
+    accessEntry.values.minimumrank = event.rank.getGrade();
     access.value.set(event.id, accessEntry);
 }
 
@@ -120,7 +127,7 @@ function submitForm(): void {
 
             const user = new DocumentUserAccess();
             user.setAccess(DOC_ACCESS[entry.values.accessrole]);
-            user.setUserId(entry.values.char.getUserId());
+            user.setUserId(entry.values.char);
 
             reqAccess.addUsers(user);
         } else if (entry.type === 1) {
@@ -128,9 +135,9 @@ function submitForm(): void {
 
             const job = new DocumentJobAccess();
             job.setJob(entry.values.job.getName());
-            job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank.getGrade() : 0);
+            job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
             job.setAccess(DOC_ACCESS[entry.values.accessrole]);
-            job.setCreatorId(activeChar.value.getUserId());
+            job.setCreatorId(activeChar.value);
 
             reqAccess.addJobs(job);
         }
@@ -158,7 +165,7 @@ function submitForm(): void {
 
 function editForm(): void {
     const req = new UpdateDocumentRequest();
-    req.setDocumentId(31);
+    req.setDocumentId(9);
     req.setTitle(title.value);
     req.setContent(content.value);
     req.setContentType(DOC_CONTENT_TYPE.HTML);
@@ -174,8 +181,10 @@ function editForm(): void {
             if (!entry.values.char) return;
 
             const user = new DocumentUserAccess();
+            console.log(DOC_ACCESS[entry.values.accessrole])
+            console.log(entry.values.accessrole)
             user.setAccess(DOC_ACCESS[entry.values.accessrole]);
-            user.setUserId(entry.values.char.getUserId());
+            user.setUserId(entry.values.char);
 
             reqAccess.addUsers(user);
         } else if (entry.type === 1) {
@@ -183,9 +192,9 @@ function editForm(): void {
 
             const job = new DocumentJobAccess();
             job.setJob(entry.values.job.getName());
-            job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank.getGrade() : 0);
+            job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
             job.setAccess(DOC_ACCESS[entry.values.accessrole]);
-            job.setCreatorId(activeChar.value.getUserId());
+            job.setCreatorId(activeChar.value);
 
             reqAccess.addJobs(job);
         }
@@ -208,6 +217,42 @@ function editForm(): void {
             console.log(err);
             handleGRPCError(err, route);
         });
+}
+
+if (props.id) {
+    const req = new GetDocumentRequest();
+    req.setDocumentId(props.id);
+
+    getDocStoreClient().getDocument(req, null).then((resp) => {
+        const document = resp.getDocument();
+        const docAccess = resp.getAccess();
+
+        if (document) {
+            title.value = document.getTitle();
+            content.value = document.getContent();
+            closed.value = document.getClosed();
+            state.value = document.getState();
+            isPublic.value = document.getPublic();
+        };
+
+        if (docAccess) {
+            let accessId = 0;
+            console.log(docAccess.toObject());
+
+            docAccess.getUsersList().forEach(user => {
+                access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } })
+                accessId++;
+            });
+
+            docAccess.getJobsList().forEach(job => {
+                access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } })
+                accessId++;
+            });
+        }
+    }).catch((err: RpcError) => {
+        console.log(err);
+        handleGRPCError(err, route);
+    })
 }
 </script>
 
@@ -233,7 +278,8 @@ function editForm(): void {
     </div>
     <div class="my-3">
         <h2 class="text-neutral">Access</h2>
-        <AccessEntry v-for="entry in access.values()" :type="entry.type" :key="entry.id" :id="entry.id"
+        <AccessEntry v-for="entry in access.values()" :key="entry.id"
+            :initializationData="entry"
             @typeChange="$event => updateAccessEntryType($event)"
             @nameChange="$event => updateAccessEntryName($event)"
             @rankChange="$event => updateAccessEntryRank($event)"

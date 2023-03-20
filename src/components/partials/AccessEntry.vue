@@ -26,18 +26,11 @@ import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
 import { toTitleCase } from '../../utils/strings';
 
-const $route = useRoute();
+const route = useRoute();
 
-const $props = defineProps({
-    type: {
-        required: true,
-        type: Number
-    },
-    id: {
-        required: true,
-        type: Number
-    }
-});
+const props = defineProps<{
+    initializationData: { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }
+}>();
 
 const emit = defineEmits<{
     (e: 'typeChange', payload: { id: number, type: number }): void,
@@ -52,21 +45,29 @@ const accessTypes = [
     { id: 1, name: 'Jobs' },
 ];
 const selectedAccessType = ref<{ id: number, name: string }>({ id: -1, name: '' });
+
 let entriesChars = [] as UserShort[];
 const queryChar = ref('');
-
 const selectedChar = ref<undefined | UserShort>(undefined);
+
 let entriesJobs = [] as Job[];
 const queryJob = ref('');
-
 const selectedJob = ref<Job>();
+
 let entriesMinimumRank = [] as JobGrade[];
 const queryMinimumRank = ref('');
+const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
-const selectedMinimumRank = ref(undefined);
 let entriesAccessRole = Object.keys(DOC_ACCESS);
 const queryAccessRole = ref('');
 const selectedAccessRole = ref();
+
+if (props.initializationData.type === 0 && props.initializationData.values.char) {
+    selectedChar.value = entriesChars.find(char => char.getUserId() === props.initializationData.values.char);
+} else if (props.initializationData.type === 1 && props.initializationData.values.job && props.initializationData.values.minimumrank) {
+    selectedJob.value = entriesJobs.find(job => job.getName() === props.initializationData.values.job);
+    selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.getGrade() === props.initializationData.values.minimumrank);
+}
 
 function findJobs(): void {
     const req = new CompleteJobNamesRequest();
@@ -75,7 +76,7 @@ function findJobs(): void {
     getCompletorClient().completeJobNames(req, null).then((resp) => {
         entriesJobs = resp.getJobsList();
     }).catch((err: RpcError) => {
-        handleGRPCError(err, $route);
+        handleGRPCError(err, route);
     })
 }
 
@@ -86,12 +87,12 @@ function findChars(): void {
     getCompletorClient().completeCharNames(req, null).then((resp) => {
         entriesChars = resp.getUsersList();
     }).catch((err: RpcError) => {
-        handleGRPCError(err, $route);
+        handleGRPCError(err, route);
     })
 }
 
 onMounted(() => {
-    const passedType = accessTypes.find(e => e.id === $props.type);
+    const passedType = accessTypes.find(e => e.id === props.initializationData.type);
     if (passedType) selectedAccessType.value = passedType;
 });
 
@@ -99,7 +100,7 @@ watchDebounced(queryJob, () => findJobs(), { debounce: 750, maxWait: 2000 });
 watchDebounced(queryChar, () => findChars(), { debounce: 750, maxWait: 2000 });
 
 watch(selectedAccessType, () => {
-    emit('typeChange', { id: $props.id, type: selectedAccessType.value.id });
+    emit('typeChange', { id: props.initializationData.id, type: selectedAccessType.value.id });
 
     selectedChar.value = undefined;
     selectedJob.value = undefined;
@@ -114,24 +115,24 @@ watch(selectedAccessType, () => {
 
 watch(selectedJob, () => {
     if (!selectedJob.value) return;
-    emit('nameChange', { id: $props.id, job: selectedJob.value, char: undefined });
+    emit('nameChange', { id: props.initializationData.id, job: selectedJob.value, char: undefined });
 
     entriesMinimumRank = selectedJob.value.getGradesList()
 });
 
 watch(selectedChar, () => {
     if (!selectedChar.value) return;
-    emit('nameChange', { id: $props.id, job: undefined, char: selectedChar.value });
+    emit('nameChange', { id: props.initializationData.id, job: undefined, char: selectedChar.value });
 });
 
 watch(selectedMinimumRank, () => {
     if (!selectedMinimumRank.value) return;
-    emit('rankChange', { id: $props.id, rank: selectedMinimumRank.value });
+    emit('rankChange', { id: props.initializationData.id, rank: selectedMinimumRank.value });
 });
 
 watch(selectedAccessRole, () => {
     if (!selectedAccessRole.value) return;
-    emit('accessChange', { id: $props.id, access: selectedAccessRole.value });
+    emit('accessChange', { id: props.initializationData.id, access: selectedAccessRole.value });
 });
 </script>
 
@@ -297,7 +298,7 @@ watch(selectedAccessRole, () => {
         <div class="flex-initial">
             <button type="button"
                 class="rounded-full bg-indigo-600 p-1.5 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest', { id: $props.id })" aria-hidden="true" />
+                <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest', { id: $props.initializationData.id })" aria-hidden="true" />
             </button>
         </div>
     </div>
