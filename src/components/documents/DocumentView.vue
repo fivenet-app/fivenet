@@ -38,7 +38,7 @@ const tabs = ref<{ name: string, href: string, icon: Component }[]>([
     { name: 'Relations', href: '#', icon: UserIcon },
 ]);
 
-const $props = defineProps({
+const props = defineProps({
     documentID: {
         required: true,
         type: Number,
@@ -47,7 +47,7 @@ const $props = defineProps({
 
 function getDocument(): void {
     const req = new GetDocumentRequest();
-    req.setDocumentId($props.documentID);
+    req.setDocumentId(props.documentID);
 
     getDocStoreClient().
         getDocument(req, null).

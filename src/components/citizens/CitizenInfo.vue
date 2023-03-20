@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { ref, defineProps } from 'vue';
-import { DocumentIcon, RectangleGroupIcon, UserIcon, } from '@heroicons/vue/20/solid'
+import { ref } from 'vue';
+import { DocumentIcon, RectangleGroupIcon, UserIcon, TruckIcon } from '@heroicons/vue/20/solid'
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import CitizenInfoProfile from './CitizenInfoProfile.vue';
 import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
 import CitizenActivityFeed from './CitizenActivityFeed.vue';
+import VehiclesList from '../vehicles/VehiclesList.vue';
 
 const currentTab = ref('Profile');
 const tabs = [
     { name: 'Profile', icon: UserIcon, permission: 'CitizenStoreService.FindUsers' },
-    { name: 'Activity', icon: RectangleGroupIcon, permission: 'CitizenStoreService.GetUserActivity' },
+    { name: 'Vehicles', icon: TruckIcon, permission: 'DMVService.FindVehicles' },
     { name: 'Documents', icon: DocumentIcon, permission: 'CitizenStoreService.GetUserDocuments' },
+    { name: 'Activity', icon: RectangleGroupIcon, permission: 'CitizenStoreService.GetUserActivity' },
 ];
 
 defineProps({
@@ -69,11 +71,14 @@ function setTab(tabName: string) {
         <div v-if="currentTab === 'Profile'" v-can="'CitizenStoreService.FindUsers'">
             <CitizenInfoProfile :user="user" />
         </div>
-        <div v-if="currentTab === 'Activity'" v-can="'CitizenStoreService.GetUserActivity'">
-            <CitizenActivityFeed :userId="user.getUserId()" />
+        <div v-else-if="currentTab === 'Vehicles'" v-can="'DMVService.FindVehicles'">
+            <VehiclesList :userId="user.getUserId()" :hideOwner="true" />
         </div>
-        <div v-if="currentTab === 'Documents'" v-can="'CitizenStoreService.GetUserDocuments'">
+        <div v-else-if="currentTab === 'Documents'" v-can="'CitizenStoreService.GetUserDocuments'">
             <CitizenInfoDocuments :userId="user.getUserId()" />
+        </div>
+        <div v-else-if="currentTab === 'Activity'" v-can="'CitizenStoreService.GetUserActivity'">
+            <CitizenActivityFeed :userId="user.getUserId()" />
         </div>
     </div>
 </template>

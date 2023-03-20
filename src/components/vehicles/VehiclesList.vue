@@ -10,6 +10,19 @@ import { FindVehiclesRequest } from '@arpanet/gen/services/dmv/vehicles_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import VehiclesListEntry from './VehiclesListEntry.vue';
 
+const props = defineProps({
+    'userId': {
+        type: Number,
+        required: false,
+        default: 0,
+    },
+    'hideOwner': {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
+});
+
 const route = useRoute();
 
 const search = ref<{ name: string, type: string }>({ name: '', type: '' });
@@ -19,12 +32,14 @@ const totalCount = ref(0);
 const listEnd = ref(0);
 const vehicles = ref<Array<Vehicle>>([]);
 
-
 function findVehicles(pos: number) {
     if (pos < 0) return;
 
     const req = new FindVehiclesRequest();
     req.setOffset(pos);
+    if (props.userId && props.userId > 0) {
+        req.setUserId(props.userId);
+    }
     req.setSearch(search.value.name);
     req.setType(search.value.type);
     req.setOrderbyList(orderBys.value);
@@ -106,10 +121,10 @@ onMounted(() => {
                                     </th>
                                     <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">Type
                                     </th>
-                                    <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                    <th v-if="!hideOwner" scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
                                         Owner
                                     </th>
-                                    <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                    <th v-if="!hideOwner" scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
                                         Job
                                     </th>
                                     <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
@@ -130,10 +145,10 @@ onMounted(() => {
                                     </th>
                                     <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">Type
                                     </th>
-                                    <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                    <th v-if="!hideOwner" scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
                                         Owner
                                     </th>
-                                    <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                    <th v-if="!hideOwner" scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
                                         Job
                                     </th>
                                     <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">

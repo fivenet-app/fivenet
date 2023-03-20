@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
-import { defineProps } from 'vue';
 
 defineProps({
     'vehicle': {
         required: true,
         type: Vehicle,
+    },
+    'hideOwner': {
+        type: Boolean,
+        required: false,
+        default: false,
     },
 });
 </script>
@@ -21,10 +25,10 @@ defineProps({
         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
             {{ vehicle.getType().toUpperCase() }}
         </td>
-        <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
+        <td v-if="!hideOwner" class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
             {{ vehicle.getOwner()?.getFirstname() }}, {{ vehicle.getOwner()?.getLastname() }}
         </td>
-        <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
+        <td v-if="!hideOwner" class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
             {{ vehicle.getOwner()?.getJobLabel() }}
         </td>
         <td class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">

@@ -112,7 +112,8 @@ proto.services.dmv.FindVehiclesRequest.toObject = function(includeInstance, msg)
     orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
     resources_common_database_database_pb.OrderBy.toObject, includeInstance),
     search: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    type: jspb.Message.getFieldWithDefault(msg, 4, "")
+    type: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    userId: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
   if (includeInstance) {
@@ -165,6 +166,10 @@ proto.services.dmv.FindVehiclesRequest.deserializeBinaryFromReader = function(ms
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setType(value);
+      break;
+    case 5:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setUserId(value);
       break;
     default:
       reader.skipField();
@@ -221,6 +226,13 @@ proto.services.dmv.FindVehiclesRequest.serializeBinaryToWriter = function(messag
   if (f.length > 0) {
     writer.writeString(
       4,
+      f
+    );
+  }
+  f = message.getUserId();
+  if (f !== 0) {
+    writer.writeInt32(
+      5,
       f
     );
   }
@@ -316,6 +328,24 @@ proto.services.dmv.FindVehiclesRequest.prototype.getType = function() {
  */
 proto.services.dmv.FindVehiclesRequest.prototype.setType = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional int32 user_id = 5;
+ * @return {number}
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.getUserId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.dmv.FindVehiclesRequest} returns this
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.setUserId = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 

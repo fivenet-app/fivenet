@@ -10,7 +10,7 @@ const route = useRoute();
 
 const relations = ref<Array<DocumentRelation>>([]);
 
-const $props = defineProps({
+const props = defineProps({
     userId: {
         required: true,
         type: Number,
@@ -18,9 +18,9 @@ const $props = defineProps({
 });
 
 function getUserDocuments(offset: number) {
-    if (!$props.userId) return;
+    if (!props.userId) return;
     const req = new GetUserDocumentsRequest();
-    req.setUserId($props.userId);
+    req.setUserId(props.userId);
 
     getCitizenStoreClient().
         getUserDocuments(req, null).

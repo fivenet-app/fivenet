@@ -15,3 +15,11 @@ func (x *UserShort) SetJobLabel(label string) {
 func (x *UserShort) SetJobGradeLabel(label string) {
 	x.JobGradeLabel = label
 }
+
+func (x *UserShortNI) SetJobLabel(label string) {
+	x.JobLabel = label
+}
+
+func (x *UserShortNI) SetJobGradeLabel(label string) {
+	x.JobGradeLabel = label
+}

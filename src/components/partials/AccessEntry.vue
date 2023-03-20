@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, defineProps } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router/auto';
 import {
     Listbox,
@@ -300,7 +300,7 @@ watch(selectedAccessRole, () => {
         <div class="flex-initial">
             <button type="button"
                 class="rounded-full bg-indigo-600 p-1.5 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest', { id: $props.init.id })" aria-hidden="true" />
+                <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest', { id: props.init.id })" aria-hidden="true" />
             </button>
         </div>
     </div>

@@ -73,7 +73,8 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		return resp, nil
 	}
 
-	stmt := s.getDocumentsQuery(condition, nil, nil, userId, job, jobGrade)
+	stmt := s.getDocumentsQuery(condition, nil, nil, userId, job, jobGrade).
+		OFFSET(req.Offset)
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
 		return nil, err
 	}

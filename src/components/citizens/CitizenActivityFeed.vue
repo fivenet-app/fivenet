@@ -12,7 +12,7 @@ const route = useRoute();
 const activities = ref<Array<UserActivity>>([]);
 const defaultIcon = UserCircleIcon;
 
-const $props = defineProps({
+const props = defineProps({
     userId: {
         required: true,
         type: Number,
@@ -21,7 +21,7 @@ const $props = defineProps({
 
 function getUserActivity() {
     const req = new GetUserActivityRequest();
-    req.setUserId($props.userId);
+    req.setUserId(props.userId);
 
     getCitizenStoreClient().
         getUserActivity(req, null).then((resp) => {

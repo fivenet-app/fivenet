@@ -20,7 +20,7 @@ const route = useRoute();
 
 const wantedState = ref(false);
 
-const $props = defineProps({
+const props = defineProps({
     user: {
         required: true,
         type: User,
@@ -28,24 +28,24 @@ const $props = defineProps({
 });
 
 onMounted(() => {
-    const userProps = $props.user.getProps();
+    const userProps = props.user.getProps();
     if (!userProps) return;
 
     wantedState.value = userProps.getWanted();
 });
 
 function toggleWantedStatus() {
-    if (!$props.user) return;
+    if (!props.user) return;
 
-    wantedState.value = !$props.user.getProps()?.getWanted();
+    wantedState.value = !props.user.getProps()?.getWanted();
 
     const req = new SetUserPropsRequest();
-    let userProps = $props.user?.getProps();
+    let userProps = props.user?.getProps();
     if (!userProps) {
         userProps = new UserProps();
-        userProps.setUserId($props.user.getUserId());
+        userProps.setUserId(props.user.getUserId());
 
-        $props.user.setProps(userProps);
+        props.user.setProps(userProps);
     }
 
     userProps?.setWanted(wantedState.value);

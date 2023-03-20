@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { defineProps } from 'vue';
-
 defineProps({
     'user': {
         required: true,

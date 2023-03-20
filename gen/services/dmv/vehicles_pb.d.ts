@@ -19,6 +19,9 @@ export class FindVehiclesRequest extends jspb.Message {
   getType(): string;
   setType(value: string): FindVehiclesRequest;
 
+  getUserId(): number;
+  setUserId(value: number): FindVehiclesRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindVehiclesRequest.AsObject;
   static toObject(includeInstance: boolean, msg: FindVehiclesRequest): FindVehiclesRequest.AsObject;
@@ -33,6 +36,7 @@ export namespace FindVehiclesRequest {
     orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
     search: string,
     type: string,
+    userId: number,
   }
 }
 

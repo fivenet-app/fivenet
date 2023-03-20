@@ -3,6 +3,8 @@ package dmv
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/galexrt/arpanet/pkg/complhelper"
 	"github.com/galexrt/arpanet/pkg/perms"
@@ -13,7 +15,7 @@ import (
 
 var (
 	ve = table.OwnedVehicles.AS("vehicle")
-	us = table.Users.AS("usershort")
+	us = table.Users.AS("usershortni")
 )
 
 type Server struct {
@@ -33,14 +35,24 @@ func NewServer(db *sql.DB, p perms.Permissions, c *complhelper.Completor) *Serve
 }
 
 func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*FindVehiclesResponse, error) {
-	var condition jet.BoolExpression
+	condition := jet.Bool(true)
 	if req.Search != "" {
-		condition = jet.BoolExp(jet.Raw(
+		condition = jet.AND(condition, jet.BoolExp(jet.Raw(
 			"MATCH(plate) AGAINST ($search IN NATURAL LANGUAGE MODE)",
 			jet.RawArgs{"$search": req.Search},
-		))
-	} else {
-		condition = jet.Bool(true)
+		)))
+	}
+	if req.Type != "" {
+		req.Type = strings.ReplaceAll(req.Type, "%", "") + "%"
+		condition = jet.AND(condition, jet.BoolExp(ve.Type.LIKE(jet.String(req.Type))))
+	}
+	userCondition := us.Identifier.EQ(ve.Owner)
+	if req.UserId != 0 {
+		condition = jet.AND(condition,
+			jet.BoolExp(us.Identifier.EQ(ve.Owner)),
+			us.ID.EQ(jet.Int32(req.UserId)),
+		)
+		userCondition = jet.AND(userCondition, us.ID.EQ(jet.Int32(req.UserId)))
 	}
 
 	countStmt := ve.
@@ -48,9 +60,15 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 			jet.COUNT(ve.Owner).AS("total_count"),
 		).
 		FROM(
-			ve,
+			ve.
+				LEFT_JOIN(us,
+					userCondition,
+				),
 		).
 		WHERE(condition)
+
+	fmt.Println(countStmt.DebugSql())
+
 	var count struct{ TotalCount int64 }
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
@@ -80,10 +98,14 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 		FROM(
 			ve.
 				LEFT_JOIN(us,
-					us.Identifier.EQ(ve.Owner),
+					userCondition,
 				),
 		).
 		WHERE(condition).
+		ORDER_BY(
+			ve.Type.ASC(),
+			ve.Plate.ASC(),
+		).
 		OFFSET(req.Offset).
 		LIMIT(database.PaginationLimit)
 
@@ -100,6 +122,10 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 	resp.End = resp.Offset + int64(len(resp.Vehicles))
 
 	for i := 0; i < len(resp.Vehicles); i++ {
+		if resp.Vehicles[i].Owner == nil {
+			continue
+		}
+
 		s.c.ResolveJob(resp.Vehicles[i].Owner)
 	}
 
