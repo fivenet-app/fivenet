@@ -5,9 +5,9 @@ option go_package = "github.com/galexrt/arpanet/proto/resources/vehicles;vehicle
 
 import "resources/users/users.proto";
 
-message Vehicles {
+message Vehicle {
   string plate = 1; // @gotags: alias:"plate"
-  string mode = 2; // @gotags: alias:"mode"
+  string model = 2; // @gotags: alias:"model"
   string type = 3; // @gotags: alias:"type"
   resources.users.UserShort owner = 4;
 }

@@ -132,7 +132,13 @@ func (c *Completor) ResolveJob(usr common.IJobInfo) {
 		usr.SetJobLabel(job.Label)
 
 		jg := usr.GetJobGrade() - 1
-		usr.SetJobGradeLabel(job.Grades[jg].Label)
+
+		if len(job.Grades)+1 > int(jg) {
+			usr.SetJobGradeLabel(job.Grades[jg].Label)
+		} else {
+			jg := strconv.Itoa(int(usr.GetJobGrade()))
+			usr.SetJobGradeLabel(jg)
+		}
 	} else {
 		usr.SetJobLabel(usr.GetJob())
 		jg := strconv.Itoa(int(usr.GetJobGrade()))

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Footer from '../../components/partials/Footer.vue';
+import VehiclesList from '../../components/vehicles/VehiclesList.vue';
 </script>
 
 <route lang="json">
@@ -15,7 +16,7 @@ import Footer from '../../components/partials/Footer.vue';
 
 <template>
     <div class="w-full">
-        VEHICLES
+        <VehiclesList />
     </div>
     <Footer />
 </template>

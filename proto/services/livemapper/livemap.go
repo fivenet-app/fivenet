@@ -104,11 +104,12 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 func (s *Server) GenerateRandomUserMarker() {
 	userIds := []int32{
-		1,
-		2,
-		3,
-		4,
-		5,
+		26061,
+		4650,
+		29225,
+		931,
+		6173,
+		16235,
 	}
 
 	markers := make([]*model.ArpanetUserLocations, len(userIds))

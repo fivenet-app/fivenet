@@ -26,6 +26,7 @@ import (
 	pbauth "github.com/galexrt/arpanet/proto/services/auth"
 	pbcitizenstore "github.com/galexrt/arpanet/proto/services/citizenstore"
 	pbcompletor "github.com/galexrt/arpanet/proto/services/completor"
+	pbdmv "github.com/galexrt/arpanet/proto/services/dmv"
 	pbdocstore "github.com/galexrt/arpanet/proto/services/docstore"
 	pbjobs "github.com/galexrt/arpanet/proto/services/jobs"
 	pblivemapper "github.com/galexrt/arpanet/proto/services/livemapper"
@@ -92,6 +93,7 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
 	go livemapper.GenerateRandomUserMarker()
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p))
+	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, complhelp))
 
 	return grpcServer, lis
 }

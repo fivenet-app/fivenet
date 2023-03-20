@@ -3,33 +3,33 @@ import * as jspb from 'google-protobuf'
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
 
-export class Vehicles extends jspb.Message {
+export class Vehicle extends jspb.Message {
   getPlate(): string;
-  setPlate(value: string): Vehicles;
+  setPlate(value: string): Vehicle;
 
-  getMode(): string;
-  setMode(value: string): Vehicles;
+  getModel(): string;
+  setModel(value: string): Vehicle;
 
   getType(): string;
-  setType(value: string): Vehicles;
+  setType(value: string): Vehicle;
 
   getOwner(): resources_users_users_pb.UserShort | undefined;
-  setOwner(value?: resources_users_users_pb.UserShort): Vehicles;
+  setOwner(value?: resources_users_users_pb.UserShort): Vehicle;
   hasOwner(): boolean;
-  clearOwner(): Vehicles;
+  clearOwner(): Vehicle;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Vehicles.AsObject;
-  static toObject(includeInstance: boolean, msg: Vehicles): Vehicles.AsObject;
-  static serializeBinaryToWriter(message: Vehicles, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Vehicles;
-  static deserializeBinaryFromReader(message: Vehicles, reader: jspb.BinaryReader): Vehicles;
+  toObject(includeInstance?: boolean): Vehicle.AsObject;
+  static toObject(includeInstance: boolean, msg: Vehicle): Vehicle.AsObject;
+  static serializeBinaryToWriter(message: Vehicle, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Vehicle;
+  static deserializeBinaryFromReader(message: Vehicle, reader: jspb.BinaryReader): Vehicle;
 }
 
-export namespace Vehicles {
+export namespace Vehicle {
   export type AsObject = {
     plate: string,
-    mode: string,
+    model: string,
     type: string,
     owner?: resources_users_users_pb.UserShort.AsObject,
   }

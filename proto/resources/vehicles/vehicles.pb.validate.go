@@ -35,22 +35,21 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on Vehicles with the rules defined in the
+// Validate checks the field values on Vehicle with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *Vehicles) Validate() error {
+func (m *Vehicle) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Vehicles with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in VehiclesMultiError, or nil
-// if none found.
-func (m *Vehicles) ValidateAll() error {
+// ValidateAll checks the field values on Vehicle with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in VehicleMultiError, or nil if none found.
+func (m *Vehicle) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Vehicles) validate(all bool) error {
+func (m *Vehicle) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -59,7 +58,7 @@ func (m *Vehicles) validate(all bool) error {
 
 	// no validation rules for Plate
 
-	// no validation rules for Mode
+	// no validation rules for Model
 
 	// no validation rules for Type
 
@@ -67,7 +66,7 @@ func (m *Vehicles) validate(all bool) error {
 		switch v := interface{}(m.GetOwner()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, VehiclesValidationError{
+				errors = append(errors, VehicleValidationError{
 					field:  "Owner",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -75,7 +74,7 @@ func (m *Vehicles) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, VehiclesValidationError{
+				errors = append(errors, VehicleValidationError{
 					field:  "Owner",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -84,7 +83,7 @@ func (m *Vehicles) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetOwner()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return VehiclesValidationError{
+			return VehicleValidationError{
 				field:  "Owner",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -93,18 +92,18 @@ func (m *Vehicles) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return VehiclesMultiError(errors)
+		return VehicleMultiError(errors)
 	}
 
 	return nil
 }
 
-// VehiclesMultiError is an error wrapping multiple validation errors returned
-// by Vehicles.ValidateAll() if the designated constraints aren't met.
-type VehiclesMultiError []error
+// VehicleMultiError is an error wrapping multiple validation errors returned
+// by Vehicle.ValidateAll() if the designated constraints aren't met.
+type VehicleMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m VehiclesMultiError) Error() string {
+func (m VehicleMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -113,11 +112,11 @@ func (m VehiclesMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m VehiclesMultiError) AllErrors() []error { return m }
+func (m VehicleMultiError) AllErrors() []error { return m }
 
-// VehiclesValidationError is the validation error returned by
-// Vehicles.Validate if the designated constraints aren't met.
-type VehiclesValidationError struct {
+// VehicleValidationError is the validation error returned by Vehicle.Validate
+// if the designated constraints aren't met.
+type VehicleValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -125,22 +124,22 @@ type VehiclesValidationError struct {
 }
 
 // Field function returns field value.
-func (e VehiclesValidationError) Field() string { return e.field }
+func (e VehicleValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e VehiclesValidationError) Reason() string { return e.reason }
+func (e VehicleValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e VehiclesValidationError) Cause() error { return e.cause }
+func (e VehicleValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e VehiclesValidationError) Key() bool { return e.key }
+func (e VehicleValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e VehiclesValidationError) ErrorName() string { return "VehiclesValidationError" }
+func (e VehicleValidationError) ErrorName() string { return "VehicleValidationError" }
 
 // Error satisfies the builtin error interface
-func (e VehiclesValidationError) Error() string {
+func (e VehicleValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -152,14 +151,14 @@ func (e VehiclesValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sVehicles.%s: %s%s",
+		"invalid %sVehicle.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = VehiclesValidationError{}
+var _ error = VehicleValidationError{}
 
 var _ interface {
 	Field() string
@@ -167,4 +166,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = VehiclesValidationError{}
+} = VehicleValidationError{}

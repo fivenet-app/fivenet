@@ -57,6 +57,66 @@ func (m *FindVehiclesRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetOffset() < 0 {
+		err := FindVehiclesRequestValidationError{
+			field:  "Offset",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetOrderBy()) > 3 {
+		err := FindVehiclesRequestValidationError{
+			field:  "OrderBy",
+			reason: "value must contain no more than 3 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetOrderBy() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, FindVehiclesRequestValidationError{
+						field:  fmt.Sprintf("OrderBy[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, FindVehiclesRequestValidationError{
+						field:  fmt.Sprintf("OrderBy[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return FindVehiclesRequestValidationError{
+					field:  fmt.Sprintf("OrderBy[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Search
+
+	// no validation rules for Type
+
 	if len(errors) > 0 {
 		return FindVehiclesRequestMultiError(errors)
 	}
@@ -158,6 +218,46 @@ func (m *FindVehiclesResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for TotalCount
+
+	// no validation rules for Offset
+
+	// no validation rules for End
+
+	for idx, item := range m.GetVehicles() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, FindVehiclesResponseValidationError{
+						field:  fmt.Sprintf("Vehicles[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, FindVehiclesResponseValidationError{
+						field:  fmt.Sprintf("Vehicles[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return FindVehiclesResponseValidationError{
+					field:  fmt.Sprintf("Vehicles[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return FindVehiclesResponseMultiError(errors)

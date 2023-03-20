@@ -21,6 +21,10 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
+var resources_common_database_database_pb = require('../../resources/common/database/database_pb.js');
+goog.object.extend(proto, resources_common_database_database_pb);
+var resources_vehicles_vehicles_pb = require('../../resources/vehicles/vehicles_pb.js');
+goog.object.extend(proto, resources_vehicles_vehicles_pb);
 goog.exportSymbol('proto.services.dmv.FindVehiclesRequest', null, global);
 goog.exportSymbol('proto.services.dmv.FindVehiclesResponse', null, global);
 /**
@@ -34,7 +38,7 @@ goog.exportSymbol('proto.services.dmv.FindVehiclesResponse', null, global);
  * @constructor
  */
 proto.services.dmv.FindVehiclesRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.services.dmv.FindVehiclesRequest.repeatedFields_, null);
 };
 goog.inherits(proto.services.dmv.FindVehiclesRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -55,7 +59,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.services.dmv.FindVehiclesResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.services.dmv.FindVehiclesResponse.repeatedFields_, null);
 };
 goog.inherits(proto.services.dmv.FindVehiclesResponse, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -65,6 +69,13 @@ if (goog.DEBUG && !COMPILED) {
    */
   proto.services.dmv.FindVehiclesResponse.displayName = 'proto.services.dmv.FindVehiclesResponse';
 }
+
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.services.dmv.FindVehiclesRequest.repeatedFields_ = [2];
 
 
 
@@ -97,7 +108,11 @@ proto.services.dmv.FindVehiclesRequest.prototype.toObject = function(opt_include
  */
 proto.services.dmv.FindVehiclesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    offset: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
+    resources_common_database_database_pb.OrderBy.toObject, includeInstance),
+    search: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    type: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -134,6 +149,23 @@ proto.services.dmv.FindVehiclesRequest.deserializeBinaryFromReader = function(ms
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setOffset(value);
+      break;
+    case 2:
+      var value = new resources_common_database_database_pb.OrderBy;
+      reader.readMessage(value,resources_common_database_database_pb.OrderBy.deserializeBinaryFromReader);
+      msg.addOrderby(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSearch(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setType(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -163,9 +195,137 @@ proto.services.dmv.FindVehiclesRequest.prototype.serializeBinary = function() {
  */
 proto.services.dmv.FindVehiclesRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getOffset();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
+  f = message.getOrderbyList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      2,
+      f,
+      resources_common_database_database_pb.OrderBy.serializeBinaryToWriter
+    );
+  }
+  f = message.getSearch();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getType();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
 };
 
 
+/**
+ * optional int64 offset = 1;
+ * @return {number}
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.getOffset = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.dmv.FindVehiclesRequest} returns this
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.setOffset = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * repeated resources.common.database.OrderBy orderBy = 2;
+ * @return {!Array<!proto.resources.common.database.OrderBy>}
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.getOrderbyList = function() {
+  return /** @type{!Array<!proto.resources.common.database.OrderBy>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_common_database_database_pb.OrderBy, 2));
+};
+
+
+/**
+ * @param {!Array<!proto.resources.common.database.OrderBy>} value
+ * @return {!proto.services.dmv.FindVehiclesRequest} returns this
+*/
+proto.services.dmv.FindVehiclesRequest.prototype.setOrderbyList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+};
+
+
+/**
+ * @param {!proto.resources.common.database.OrderBy=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.resources.common.database.OrderBy}
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.addOrderby = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.common.database.OrderBy, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.dmv.FindVehiclesRequest} returns this
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.clearOrderbyList = function() {
+  return this.setOrderbyList([]);
+};
+
+
+/**
+ * optional string search = 3;
+ * @return {string}
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.getSearch = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.services.dmv.FindVehiclesRequest} returns this
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.setSearch = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string type = 4;
+ * @return {string}
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.getType = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.services.dmv.FindVehiclesRequest} returns this
+ */
+proto.services.dmv.FindVehiclesRequest.prototype.setType = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.services.dmv.FindVehiclesResponse.repeatedFields_ = [4];
 
 
 
@@ -198,7 +358,11 @@ proto.services.dmv.FindVehiclesResponse.prototype.toObject = function(opt_includ
  */
 proto.services.dmv.FindVehiclesResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    totalCount: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    end: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    vehiclesList: jspb.Message.toObjectList(msg.getVehiclesList(),
+    resources_vehicles_vehicles_pb.Vehicle.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -235,6 +399,23 @@ proto.services.dmv.FindVehiclesResponse.deserializeBinaryFromReader = function(m
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setTotalCount(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setOffset(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setEnd(value);
+      break;
+    case 4:
+      var value = new resources_vehicles_vehicles_pb.Vehicle;
+      reader.readMessage(value,resources_vehicles_vehicles_pb.Vehicle.deserializeBinaryFromReader);
+      msg.addVehicles(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -264,6 +445,127 @@ proto.services.dmv.FindVehiclesResponse.prototype.serializeBinary = function() {
  */
 proto.services.dmv.FindVehiclesResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getTotalCount();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
+  f = message.getOffset();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
+  f = message.getEnd();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
+  f = message.getVehiclesList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      4,
+      f,
+      resources_vehicles_vehicles_pb.Vehicle.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional int64 total_count = 1;
+ * @return {number}
+ */
+proto.services.dmv.FindVehiclesResponse.prototype.getTotalCount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.dmv.FindVehiclesResponse} returns this
+ */
+proto.services.dmv.FindVehiclesResponse.prototype.setTotalCount = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional int64 offset = 2;
+ * @return {number}
+ */
+proto.services.dmv.FindVehiclesResponse.prototype.getOffset = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.dmv.FindVehiclesResponse} returns this
+ */
+proto.services.dmv.FindVehiclesResponse.prototype.setOffset = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 end = 3;
+ * @return {number}
+ */
+proto.services.dmv.FindVehiclesResponse.prototype.getEnd = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.dmv.FindVehiclesResponse} returns this
+ */
+proto.services.dmv.FindVehiclesResponse.prototype.setEnd = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * repeated resources.vehicles.Vehicle vehicles = 4;
+ * @return {!Array<!proto.resources.vehicles.Vehicle>}
+ */
+proto.services.dmv.FindVehiclesResponse.prototype.getVehiclesList = function() {
+  return /** @type{!Array<!proto.resources.vehicles.Vehicle>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_vehicles_vehicles_pb.Vehicle, 4));
+};
+
+
+/**
+ * @param {!Array<!proto.resources.vehicles.Vehicle>} value
+ * @return {!proto.services.dmv.FindVehiclesResponse} returns this
+*/
+proto.services.dmv.FindVehiclesResponse.prototype.setVehiclesList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 4, value);
+};
+
+
+/**
+ * @param {!proto.resources.vehicles.Vehicle=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.resources.vehicles.Vehicle}
+ */
+proto.services.dmv.FindVehiclesResponse.prototype.addVehicles = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.resources.vehicles.Vehicle, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.dmv.FindVehiclesResponse} returns this
+ */
+proto.services.dmv.FindVehiclesResponse.prototype.clearVehiclesList = function() {
+  return this.setVehiclesList([]);
 };
 
 

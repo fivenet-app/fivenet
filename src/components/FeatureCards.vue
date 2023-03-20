@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { BriefcaseIcon, BellAlertIcon, DocumentTextIcon, UsersIcon, MapIcon } from '@heroicons/vue/24/outline';
+import { BriefcaseIcon, BellAlertIcon, DocumentTextIcon, UsersIcon, MapIcon, TruckIcon } from '@heroicons/vue/24/outline';
 
 export default defineComponent({
     data() {
@@ -13,6 +13,16 @@ export default defineComponent({
                     href: '/citizens',
                     permission: 'CitizenStoreService.FindUsers',
                     icon: UsersIcon,
+                    iconForeground: 'text-purple-800',
+                    iconBackground: 'bg-purple-50',
+                },
+                {
+                    title: 'Vehicles',
+                    description:
+                        'Search and find information about Vehicles.',
+                    href: '/vehicles',
+                    permission: 'DMVService.FindVehicles',
+                    icon: TruckIcon,
                     iconForeground: 'text-purple-800',
                     iconBackground: 'bg-purple-50',
                 },

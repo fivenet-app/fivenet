@@ -11,6 +11,7 @@ import { DispatcherServiceClient } from '@arpanet/gen/services/dispatcher/Dispat
 import { DocStoreServiceClient } from '@arpanet/gen/services/docstore/DocstoreServiceClientPb';
 import { JobsServiceClient } from '@arpanet/gen/services/jobs/JobsServiceClientPb';
 import { LivemapperServiceClient } from '@arpanet/gen/services/livemapper/LivemapServiceClientPb';
+import { DMVServiceClient } from '@arpanet/gen/services/dmv/VehiclesServiceClientPb';
 
 class AuthInterceptor implements StreamInterceptor<any, any>, UnaryInterceptor<any, any> {
     intercept(request: any, invoker: any) {
@@ -97,6 +98,16 @@ export function getDispatcherClient(): DispatcherServiceClient {
     }
 
     return dispatcherClient;
+}
+
+// DMV (Vehicles)
+let dmvClient: DMVServiceClient;
+export function getDMVClient(): DMVServiceClient {
+    if (!dmvClient) {
+        dmvClient = new DMVServiceClient(config.apiProtoURL, null, clientAuthOptions);
+    }
+
+    return dmvClient;
 }
 
 // Documents

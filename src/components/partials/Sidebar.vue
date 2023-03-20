@@ -23,6 +23,7 @@ import {
     HomeIcon,
     Square2StackIcon,
     UserIcon,
+    TruckIcon,
 } from '@heroicons/vue/24/outline'
 import { MagnifyingGlassIcon, ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid'
 
@@ -72,6 +73,13 @@ export default defineComponent({
                     href: '/citizens',
                     permission: 'CitizenStoreService.FindUsers',
                     icon: UsersIcon,
+                    current: false,
+                },
+                {
+                    name: 'Vehicles',
+                    href: '/vehicles',
+                    permission: 'DMVService.FindVehicles',
+                    icon: TruckIcon,
                     current: false,
                 },
                 {

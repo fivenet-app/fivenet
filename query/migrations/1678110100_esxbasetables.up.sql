@@ -36,6 +36,10 @@ BEGIN;
 --   KEY `IDX_OWNED_VEHICLES_OWNERTYPE` (`owner`,`type`),
 --   KEY `IDX_OWNED_VEHICLES_OWNERRMODELTYPE` (`owner`,`model`,`type`)
 -- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+set @x := (select count(*) from information_schema.statistics where table_name = 'users' and index_name = 'users_firstname_IDX' and table_schema = database());
+set @sql := if( @x > 0, 'select ''Index exists.''', 'ALTER TABLE owned_vehicles ADD FULLTEXT KEY `owned_vehicles_plate_IDX` (`plate`);');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
 
 -- Table: user_licenses - Should already exist
 -- CREATE TABLE IF NOT EXISTS `user_licenses` (

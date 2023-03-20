@@ -3,12 +3,23 @@ syntax = "proto3";
 package services.dmv;
 option go_package = "github.com/galexrt/arpanet/proto/services/dmv;dmv";
 
-message FindVehiclesRequest {
+import "resources/common/database/database.proto";
+import "resources/vehicles/vehicles.proto";
+import "validate/validate.proto";
 
+message FindVehiclesRequest {
+  int64 offset = 1 [(validate.rules).int64.gte = 0];
+  repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
+  // Search params
+  string search = 3;
+  string type = 4;
 }
 
 message FindVehiclesResponse {
-
+  int64 total_count = 1;
+  int64 offset = 2;
+  int64 end = 3;
+  repeated resources.vehicles.Vehicle vehicles = 4;
 }
 
 service DMVService {
