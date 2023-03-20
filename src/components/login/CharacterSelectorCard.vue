@@ -16,7 +16,7 @@ const router = useRouter();
 
 const lastCharID = computed(() => store.state.lastCharID);
 
-const $props = defineProps({
+const props = defineProps({
     char: {
         required: true,
         type: User,
@@ -25,13 +25,14 @@ const $props = defineProps({
 
 function chooseCharacter() {
     const req = new ChooseCharacterRequest();
-    req.setCharId($props.char.getUserId());
+    req.setCharId(props.char.getUserId());
+    console.log("🚀 ~ file: CharacterSelectorCard.vue:29 ~ chooseCharacter ~ $props.char.getUserId():", props.char.getUserId())
 
     getAuthClient()
         .chooseCharacter(req, null)
         .then((resp) => {
             store.dispatch('updateAccessToken', resp.getToken());
-            store.dispatch('updateActiveChar', $props.char);
+            store.dispatch('updateActiveChar', props.char);
             store.dispatch('updatePermissions', resp.getPermissionsList());
             console.log(resp.getPermissionsList());
             const path = route.query.redirect?.toString() || "/overview";
