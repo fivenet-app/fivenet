@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router/auto';
-import { ref, defineProps, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetUserDocumentsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { getCitizenStoreClient, handleGRPCError } from '../../grpc';

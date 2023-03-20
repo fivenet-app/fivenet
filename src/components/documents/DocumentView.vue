@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router/auto';
-import { ref, Component, defineProps, onBeforeMount } from 'vue';
+import { ref, Component, onBeforeMount } from 'vue';
 import { CreateDocumentRequest, GetDocumentRequest, RemoveDcoumentReferenceRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router/auto';
 import { User, UserProps } from '@arpanet/gen/resources/users/users_pb';
 import { RpcError } from 'grpc-web';

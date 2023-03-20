@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps, computed } from 'vue';
-
 defineProps({
     title: {
         required: true,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, defineProps, onBeforeMount } from 'vue';
-import { BoltIcon, ChatBubbleLeftEllipsisIcon, TagIcon, UserCircleIcon } from '@heroicons/vue/20/solid'
+import { ref, onBeforeMount } from 'vue';
+import { UserCircleIcon } from '@heroicons/vue/20/solid'
 import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { GetUserActivityRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
