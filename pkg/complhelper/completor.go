@@ -71,7 +71,10 @@ func (c *Completor) refreshDocumentCategories() error {
 
 	stmt := adc.
 		SELECT(
-			adc.AllColumns,
+			adc.ID,
+			adc.Name,
+			adc.Description,
+			adc.Job,
 		).
 		FROM(adc).
 		GROUP_BY(adc.Job).
