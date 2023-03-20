@@ -14,6 +14,9 @@
     - [x] Wanted aka "additional UserProps"
         - [x] Allow certain jobs to set a person as wanted
         - [x] Add toggle to display only wanted people
+- [x] Vehicles Search
+    - [x] By Plate
+    - [x] By Citizen on the citizen profile
 - [ ] Documents ("Akten")
     - [x] Each document is independent and has no direct parent or responses
         - [x] Users can leave Comments on documents
@@ -35,24 +38,21 @@
         - [ ] View Document Comments
         - [ ] Post Document Comments
         - [ ] Edit Document Comments
-- [ ] Dispatch System
-    - [ ] Livemap to display dispatches
-    - [ ] Tools to coordinate dispatches
-        - [ ] Manually by user input
-        - [ ] Automatically
 - [x] Livemap
     - [x] See your colleagues (for now using Copnet VPC Connector's data)
         - [x] Create table model for our own player location table
         - [ ] Write FiveM plugin that writes into our own location table
     - [x] Multiple different designs
-    - [ ] Future: See other jobs' positions and/ or dispatches
+    - [x] Display dispatches (from GKS phone for now)
+    - [x] See other jobs' positions and/ or dispatches
 - [ ] Employee Management
     - [ ] Create Notes and Warns for Employees ("Führungsregister")
     - [ ] Promote and Demote Employees
     - [ ] Fire employees
 - [x] Permissions System
     - [x] Based on Job + Job Rank/ Grade
-- [ ] Vehicles Search
+- [ ] "Admin" panel for faction leaders
+    - [ ] Setting permission per rank
 - [ ] Breadcrumbs
   - [ ] Use "page title" (e.g., when viewing an user or editing a document) it should be reflected in the breadcrumbs, instead of just relying on the path
   - [ ] Correctly make href based on breadcrumb
