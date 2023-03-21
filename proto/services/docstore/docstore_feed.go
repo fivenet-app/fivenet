@@ -313,14 +313,12 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([
 		).
 		LIMIT(25)
 
-	var dest struct {
-		Relations []*documents.DocumentRelation
-	}
+	var dest []*documents.DocumentRelation
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}
 
-	return dest.Relations, nil
+	return dest, nil
 }
