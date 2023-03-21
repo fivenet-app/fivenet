@@ -5,8 +5,8 @@ import (
 	"net"
 
 	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/complhelper"
 	"github.com/galexrt/arpanet/pkg/config"
+	"github.com/galexrt/arpanet/pkg/dataenricher"
 	grpc_auth "github.com/galexrt/arpanet/pkg/grpc/auth"
 	grpc_permission "github.com/galexrt/arpanet/pkg/grpc/permission"
 	"github.com/galexrt/arpanet/pkg/perms"
@@ -80,20 +80,20 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 		)),
 	)
 
-	// Completor helper
-	complhelp := complhelper.New(db)
+	// Data enricher helper
+	de := dataenricher.New(db)
 
 	// Attach our GRPC services
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p))
-	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, complhelp))
-	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, complhelp))
-	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, complhelp))
+	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, de))
+	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, de))
+	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, de))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(logger.Named("grpc_livemap"), db, p)
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
 	go livemapper.GenerateRandomUserMarker()
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p))
-	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, complhelp))
+	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, de))
 
 	return grpcServer, lis
 }

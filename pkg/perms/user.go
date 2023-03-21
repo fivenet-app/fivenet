@@ -28,11 +28,17 @@ func (p *Perms) GetAllPermissionsOfUser(userId int32) (collections.Permissions, 
 					).
 					FROM(
 						aup,
-					).WHERE(aup.UserID.EQ(jet.Int32(userId))).
+					).
+					WHERE(
+						aup.UserID.EQ(jet.Int32(userId)),
+					).
 					UNION(
 						aur.
 							SELECT(arp.PermissionID).
-							FROM(aur.INNER_JOIN(arp, arp.RoleID.EQ(aur.RoleID))).
+							FROM(aur.
+								INNER_JOIN(arp,
+									arp.RoleID.EQ(aur.RoleID)),
+							).
 							WHERE(
 								aur.UserID.EQ(jet.Int32(userId)),
 							),
@@ -76,11 +82,17 @@ func (p *Perms) getAllPermissionsByPrefixOfUser(userId int32, prefix string) (co
 						).
 						FROM(
 							aup,
-						).WHERE(aup.UserID.EQ(jet.Int32(userId))).
+						).
+						WHERE(
+							aup.UserID.EQ(jet.Int32(userId)),
+						).
 						UNION(
 							aur.
 								SELECT(arp.PermissionID).
-								FROM(aur.INNER_JOIN(arp, arp.RoleID.EQ(aur.RoleID))).
+								FROM(aur.
+									INNER_JOIN(arp,
+										arp.RoleID.EQ(aur.RoleID)),
+								).
 								WHERE(
 									aur.UserID.EQ(jet.Int32(userId)),
 								),
@@ -128,9 +140,10 @@ func (p *Perms) can(userId int32, guardName string) bool {
 			ap.ID.AS("id"),
 		).
 		FROM(
-			ap.LEFT_JOIN(aup,
-				aup.PermissionID.EQ(ap.ID),
-			).
+			ap.
+				LEFT_JOIN(aup,
+					aup.PermissionID.EQ(ap.ID),
+				).
 				LEFT_JOIN(aur,
 					aur.UserID.EQ(jet.Int32(userId)),
 				).
@@ -141,7 +154,9 @@ func (p *Perms) can(userId int32, guardName string) bool {
 						),
 				),
 		).
-		WHERE(ap.GuardName.EQ(jet.String(guardName))).
+		WHERE(
+			ap.GuardName.EQ(jet.String(guardName)),
+		).
 		LIMIT(1)
 
 	var dest struct {

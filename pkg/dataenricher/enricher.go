@@ -1,4 +1,4 @@
-package complhelper
+package dataenricher
 
 import (
 	"context"
@@ -22,14 +22,14 @@ var (
 	adc = table.ArpanetDocumentsCategories.AS("documentcategory")
 )
 
-type Completor struct {
+type Enricher struct {
 	db            *sql.DB
 	cancel        context.CancelFunc
 	Jobs          *cache.Cache[string, *jobs.Job]
 	DocCategories *cache.Cache[string, []*documents.DocumentCategory]
 }
 
-func New(db *sql.DB) *Completor {
+func New(db *sql.DB) *Enricher {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	jobsCache := cache.NewContext(
@@ -42,7 +42,7 @@ func New(db *sql.DB) *Completor {
 		ctx,
 		cache.AsLRU[string, []*documents.DocumentCategory](lru.WithCapacity(32)),
 	)
-	c := &Completor{
+	c := &Enricher{
 		db:            db,
 		cancel:        cancel,
 		Jobs:          jobsCache,
@@ -54,7 +54,7 @@ func New(db *sql.DB) *Completor {
 	return c
 }
 
-func (c *Completor) refreshCache() error {
+func (c *Enricher) refreshCache() error {
 	if err := c.refreshDocumentCategories(); err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func (c *Completor) refreshCache() error {
 	return nil
 }
 
-func (c *Completor) refreshDocumentCategories() error {
+func (c *Enricher) refreshDocumentCategories() error {
 	var dest []*documents.DocumentCategory
 
 	stmt := adc.
@@ -100,7 +100,7 @@ func (c *Completor) refreshDocumentCategories() error {
 	return nil
 }
 
-func (c *Completor) refreshJobsCache() error {
+func (c *Enricher) refreshJobsCache() error {
 	var dest []*jobs.Job
 
 	stmt := j.
@@ -110,11 +110,12 @@ func (c *Completor) refreshJobsCache() error {
 			jg.JobName.AS("job_grade.job_name"),
 			jg.Grade,
 			jg.Label,
-		).FROM(
-		j.LEFT_JOIN(jg,
-			jg.JobName.EQ(j.Name),
-		),
-	).
+		).
+		FROM(j.
+			LEFT_JOIN(jg,
+				jg.JobName.EQ(j.Name),
+			),
+		).
 		ORDER_BY(
 			j.Name.ASC(),
 			jg.Grade.ASC(),
@@ -132,7 +133,7 @@ func (c *Completor) refreshJobsCache() error {
 	return nil
 }
 
-func (c *Completor) ResolveJob(usr common.IJobInfo) {
+func (c *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 	job, ok := c.Jobs.Get(usr.GetJob())
 	if ok {
 		usr.SetJobLabel(job.Label)

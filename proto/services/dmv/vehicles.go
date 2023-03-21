@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"strings"
 
-	"github.com/galexrt/arpanet/pkg/complhelper"
+	"github.com/galexrt/arpanet/pkg/dataenricher"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/common/database"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -22,10 +22,10 @@ type Server struct {
 
 	db *sql.DB
 	p  perms.Permissions
-	c  *complhelper.Completor
+	c  *dataenricher.Enricher
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *complhelper.Completor) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *dataenricher.Enricher) *Server {
 	return &Server{
 		db: db,
 		p:  p,
@@ -123,7 +123,7 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 			continue
 		}
 
-		s.c.ResolveJob(resp.Vehicles[i].Owner)
+		s.c.EnrichJobInfo(resp.Vehicles[i].Owner)
 	}
 
 	return resp, nil

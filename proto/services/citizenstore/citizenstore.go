@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/complhelper"
+	"github.com/galexrt/arpanet/pkg/dataenricher"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/common/database"
 	users "github.com/galexrt/arpanet/proto/resources/users"
@@ -33,10 +33,10 @@ type Server struct {
 
 	db *sql.DB
 	p  perms.Permissions
-	c  *complhelper.Completor
+	c  *dataenricher.Enricher
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *complhelper.Completor) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *dataenricher.Enricher) *Server {
 	return &Server{
 		db: db,
 		p:  p,
@@ -83,7 +83,8 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 			jet.COUNT(u.ID).AS("total_count"),
 		).
 		FROM(
-			u.LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
+			u.
+				LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
 		).
 		WHERE(condition)
 
@@ -150,7 +151,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	resp.End = resp.Offset + int64(len(resp.Users))
 
 	for i := 0; i < len(resp.Users); i++ {
-		s.c.ResolveJob(resp.Users[i])
+		s.c.EnrichJobInfo(resp.Users[i])
 	}
 
 	return resp, nil
@@ -206,7 +207,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		return nil, err
 	}
 
-	s.c.ResolveJob(resp.User)
+	s.c.EnrichJobInfo(resp.User)
 
 	return resp, nil
 }
@@ -257,8 +258,8 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 	}
 
 	for i := 0; i < len(resp.Activity); i++ {
-		s.c.ResolveJob(resp.Activity[i].SourceUser)
-		s.c.ResolveJob(resp.Activity[i].TargetUser)
+		s.c.EnrichJobInfo(resp.Activity[i].SourceUser)
+		s.c.EnrichJobInfo(resp.Activity[i].TargetUser)
 	}
 
 	return resp, nil
@@ -382,8 +383,8 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 	}
 
 	for i := 0; i < len(resp.Relations); i++ {
-		s.c.ResolveJob(resp.Relations[i].SourceUser)
-		s.c.ResolveJob(resp.Relations[i].TargetUser)
+		s.c.EnrichJobInfo(resp.Relations[i].SourceUser)
+		s.c.EnrichJobInfo(resp.Relations[i].TargetUser)
 	}
 
 	return resp, nil

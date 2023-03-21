@@ -30,11 +30,11 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 	}
 
 	for i := 0; i < len(access.Jobs); i++ {
-		s.c.ResolveJob(access.Jobs[i])
+		s.c.EnrichJobInfo(access.Jobs[i])
 	}
 
 	for i := 0; i < len(access.Users); i++ {
-		s.c.ResolveJob(access.Users[i].User)
+		s.c.EnrichJobInfo(access.Users[i].User)
 	}
 
 	resp := &GetDocumentAccessResponse{

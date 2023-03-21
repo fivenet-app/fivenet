@@ -109,7 +109,8 @@ func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.
 		WHERE(
 			a.Enabled.IS_TRUE().
 				AND(a.Username.EQ(jet.String(username))),
-		).LIMIT(1)
+		).
+		LIMIT(1)
 
 	var account model.ArpanetAccounts
 	if err := stmt.QueryContext(ctx, s.db, &account); err != nil {

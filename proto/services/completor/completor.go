@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/complhelper"
+	"github.com/galexrt/arpanet/pkg/dataenricher"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -23,10 +23,10 @@ type Server struct {
 
 	db *sql.DB
 	p  perms.Permissions
-	c  *complhelper.Completor
+	c  *dataenricher.Enricher
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *complhelper.Completor) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *dataenricher.Enricher) *Server {
 	return &Server{
 		db: db,
 		p:  p,
