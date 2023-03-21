@@ -1,5 +1,13 @@
 package documents
 
+func (x *DocumentShort) SetCategory(cat *DocumentCategory) {
+	x.Category = cat
+}
+
+func (x *Document) SetCategory(cat *DocumentCategory) {
+	x.Category = cat
+}
+
 func (x *DocumentJobAccess) GetJobGrade() int32 {
 	return x.MinimumGrade
 }

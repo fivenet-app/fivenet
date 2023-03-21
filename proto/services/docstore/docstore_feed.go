@@ -198,6 +198,7 @@ func (s *Server) RemoveDcoumentRelation(ctx context.Context, req *RemoveDcoument
 
 func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) ([]*documents.DocumentReference, error) {
 	sourceDoc := docs.AS("source_document")
+	targetDoc := docs.AS("target_document")
 	uCreator := user.AS("ref_creator")
 	stmt := docRef.
 		SELECT(
@@ -215,9 +216,14 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 			sourceDoc.CreatorID,
 			sourceDoc.State,
 			sourceDoc.Closed,
-			dCategory.ID,
-			dCategory.Name,
-			dCategory.Description,
+			targetDoc.ID,
+			targetDoc.CreatedAt,
+			targetDoc.UpdatedAt,
+			targetDoc.CategoryID,
+			targetDoc.Title,
+			targetDoc.CreatorID,
+			targetDoc.State,
+			targetDoc.Closed,
 			uCreator.ID,
 			uCreator.Identifier,
 			uCreator.Job,
@@ -230,8 +236,8 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 				LEFT_JOIN(sourceDoc,
 					docRef.SourceDocumentID.EQ(sourceDoc.ID),
 				).
-				LEFT_JOIN(dCategory,
-					dCategory.ID.EQ(sourceDoc.CategoryID),
+				LEFT_JOIN(targetDoc,
+					docRef.TargetDocumentID.EQ(targetDoc.ID),
 				).
 				LEFT_JOIN(uCreator,
 					docRef.CreatorID.EQ(uCreator.ID),
@@ -239,8 +245,11 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 		).
 		WHERE(
 			jet.AND(
-				docRef.TargetDocumentID.EQ(jet.Uint64(documentID)),
 				docRef.DeletedAt.IS_NULL(),
+				jet.OR(
+					docRef.SourceDocumentID.EQ(jet.Uint64(documentID)),
+					docRef.TargetDocumentID.EQ(jet.Uint64(documentID)),
+				),
 			),
 		).
 		LIMIT(25)
@@ -254,6 +263,8 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 
 	for i := 0; i < len(dest); i++ {
 		s.c.EnrichJobInfo(dest[i].Creator)
+		s.c.EnrichDocumentCategory(dest[i].SourceDocument)
+		s.c.EnrichDocumentCategory(dest[i].TargetDocument)
 	}
 
 	return dest, nil

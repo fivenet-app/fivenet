@@ -132,6 +132,9 @@ export class DocumentTemplateShort extends jspb.Message {
   getJob(): string;
   setJob(value: string): DocumentTemplateShort;
 
+  getCategoryId(): number;
+  setCategoryId(value: number): DocumentTemplateShort;
+
   getCategory(): DocumentCategory | undefined;
   setCategory(value?: DocumentCategory): DocumentTemplateShort;
   hasCategory(): boolean;
@@ -165,6 +168,7 @@ export namespace DocumentTemplateShort {
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     job: string,
+    categoryId: number,
     category?: DocumentCategory.AsObject,
     title: string,
     description: string,
@@ -223,6 +227,9 @@ export class Document extends jspb.Message {
   hasUpdatedAt(): boolean;
   clearUpdatedAt(): Document;
 
+  getCategoryId(): number;
+  setCategoryId(value: number): Document;
+
   getCategory(): DocumentCategory | undefined;
   setCategory(value?: DocumentCategory): Document;
   hasCategory(): boolean;
@@ -273,6 +280,7 @@ export namespace Document {
     id: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    categoryId: number,
     category?: DocumentCategory.AsObject,
     title: string,
     contentType: DOC_CONTENT_TYPE,
@@ -300,6 +308,9 @@ export class DocumentShort extends jspb.Message {
   setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentShort;
   hasUpdatedAt(): boolean;
   clearUpdatedAt(): DocumentShort;
+
+  getCategoryId(): number;
+  setCategoryId(value: number): DocumentShort;
 
   getCategory(): DocumentCategory | undefined;
   setCategory(value?: DocumentCategory): DocumentShort;
@@ -336,6 +347,7 @@ export namespace DocumentShort {
     id: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    categoryId: number,
     category?: DocumentCategory.AsObject,
     title: string,
     creatorId: number,
@@ -551,6 +563,11 @@ export class DocumentReference extends jspb.Message {
   getTargetDocumentId(): number;
   setTargetDocumentId(value: number): DocumentReference;
 
+  getTargetDocument(): DocumentShort | undefined;
+  setTargetDocument(value?: DocumentShort): DocumentReference;
+  hasTargetDocument(): boolean;
+  clearTargetDocument(): DocumentReference;
+
   getCreatorId(): number;
   setCreatorId(value: number): DocumentReference;
 
@@ -575,6 +592,7 @@ export namespace DocumentReference {
     sourceDocument?: DocumentShort.AsObject,
     reference: DOC_REFERENCE_TYPE,
     targetDocumentId: number,
+    targetDocument?: DocumentShort.AsObject,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }

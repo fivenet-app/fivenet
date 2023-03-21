@@ -566,6 +566,8 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for CategoryId
+
 	if all {
 		switch v := interface{}(m.GetCategory()).(type) {
 		case interface{ ValidateAll() error }:
@@ -956,6 +958,8 @@ func (m *Document) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for CategoryId
+
 	if all {
 		switch v := interface{}(m.GetCategory()).(type) {
 		case interface{ ValidateAll() error }:
@@ -1237,6 +1241,8 @@ func (m *DocumentShort) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for CategoryId
 
 	if all {
 		switch v := interface{}(m.GetCategory()).(type) {
@@ -2188,6 +2194,35 @@ func (m *DocumentReference) validate(all bool) error {
 	}
 
 	// no validation rules for TargetDocumentId
+
+	if all {
+		switch v := interface{}(m.GetTargetDocument()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocumentReferenceValidationError{
+					field:  "TargetDocument",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocumentReferenceValidationError{
+					field:  "TargetDocument",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTargetDocument()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocumentReferenceValidationError{
+				field:  "TargetDocument",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	// no validation rules for CreatorId
 

@@ -108,7 +108,7 @@ func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocu
 	req.Search = strings.ToLower(req.Search)
 
 	for _, j := range jobs {
-		c, ok := s.c.DocCategories.Get(j)
+		c, ok := s.c.DocCategoriesByJob.Get(j)
 		if !ok {
 			continue
 		}

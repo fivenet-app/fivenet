@@ -1119,10 +1119,11 @@ proto.resources.documents.DocumentTemplateShort.toObject = function(includeInsta
     createdAt: (f = msg.getCreatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     job: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    categoryId: jspb.Message.getFieldWithDefault(msg, 5, 0),
     category: (f = msg.getCategory()) && proto.resources.documents.DocumentCategory.toObject(includeInstance, f),
-    title: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    description: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    creatorId: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    title: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    description: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    creatorId: jspb.Message.getFieldWithDefault(msg, 9, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f)
   };
 
@@ -1179,23 +1180,27 @@ proto.resources.documents.DocumentTemplateShort.deserializeBinaryFromReader = fu
       msg.setJob(value);
       break;
     case 5:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setCategoryId(value);
+      break;
+    case 6:
       var value = new proto.resources.documents.DocumentCategory;
       reader.readMessage(value,proto.resources.documents.DocumentCategory.deserializeBinaryFromReader);
       msg.setCategory(value);
       break;
-    case 6:
+    case 7:
       var value = /** @type {string} */ (reader.readString());
       msg.setTitle(value);
       break;
-    case 7:
+    case 8:
       var value = /** @type {string} */ (reader.readString());
       msg.setDescription(value);
       break;
-    case 8:
+    case 9:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorId(value);
       break;
-    case 9:
+    case 10:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setCreator(value);
@@ -1259,10 +1264,17 @@ proto.resources.documents.DocumentTemplateShort.serializeBinaryToWriter = functi
       f
     );
   }
+  f = message.getCategoryId();
+  if (f !== 0) {
+    writer.writeUint64(
+      5,
+      f
+    );
+  }
   f = message.getCategory();
   if (f != null) {
     writer.writeMessage(
-      5,
+      6,
       f,
       proto.resources.documents.DocumentCategory.serializeBinaryToWriter
     );
@@ -1270,28 +1282,28 @@ proto.resources.documents.DocumentTemplateShort.serializeBinaryToWriter = functi
   f = message.getTitle();
   if (f.length > 0) {
     writer.writeString(
-      6,
+      7,
       f
     );
   }
   f = message.getDescription();
   if (f.length > 0) {
     writer.writeString(
-      7,
+      8,
       f
     );
   }
   f = message.getCreatorId();
   if (f !== 0) {
     writer.writeInt32(
-      8,
+      9,
       f
     );
   }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      9,
+      10,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -1410,12 +1422,30 @@ proto.resources.documents.DocumentTemplateShort.prototype.setJob = function(valu
 
 
 /**
- * optional DocumentCategory category = 5;
+ * optional uint64 category_id = 5;
+ * @return {number}
+ */
+proto.resources.documents.DocumentTemplateShort.prototype.getCategoryId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.resources.documents.DocumentTemplateShort} returns this
+ */
+proto.resources.documents.DocumentTemplateShort.prototype.setCategoryId = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional DocumentCategory category = 6;
  * @return {?proto.resources.documents.DocumentCategory}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.getCategory = function() {
   return /** @type{?proto.resources.documents.DocumentCategory} */ (
-    jspb.Message.getWrapperField(this, proto.resources.documents.DocumentCategory, 5));
+    jspb.Message.getWrapperField(this, proto.resources.documents.DocumentCategory, 6));
 };
 
 
@@ -1424,7 +1454,7 @@ proto.resources.documents.DocumentTemplateShort.prototype.getCategory = function
  * @return {!proto.resources.documents.DocumentTemplateShort} returns this
 */
 proto.resources.documents.DocumentTemplateShort.prototype.setCategory = function(value) {
-  return jspb.Message.setWrapperField(this, 5, value);
+  return jspb.Message.setWrapperField(this, 6, value);
 };
 
 
@@ -1442,33 +1472,15 @@ proto.resources.documents.DocumentTemplateShort.prototype.clearCategory = functi
  * @return {boolean}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.hasCategory = function() {
-  return jspb.Message.getField(this, 5) != null;
+  return jspb.Message.getField(this, 6) != null;
 };
 
 
 /**
- * optional string title = 6;
+ * optional string title = 7;
  * @return {string}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.getTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.resources.documents.DocumentTemplateShort} returns this
- */
-proto.resources.documents.DocumentTemplateShort.prototype.setTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 6, value);
-};
-
-
-/**
- * optional string description = 7;
- * @return {string}
- */
-proto.resources.documents.DocumentTemplateShort.prototype.getDescription = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
@@ -1477,17 +1489,35 @@ proto.resources.documents.DocumentTemplateShort.prototype.getDescription = funct
  * @param {string} value
  * @return {!proto.resources.documents.DocumentTemplateShort} returns this
  */
-proto.resources.documents.DocumentTemplateShort.prototype.setDescription = function(value) {
+proto.resources.documents.DocumentTemplateShort.prototype.setTitle = function(value) {
   return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
 /**
- * optional int32 creator_id = 8;
+ * optional string description = 8;
+ * @return {string}
+ */
+proto.resources.documents.DocumentTemplateShort.prototype.getDescription = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.documents.DocumentTemplateShort} returns this
+ */
+proto.resources.documents.DocumentTemplateShort.prototype.setDescription = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional int32 creator_id = 9;
  * @return {number}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.getCreatorId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
 };
 
 
@@ -1496,17 +1526,17 @@ proto.resources.documents.DocumentTemplateShort.prototype.getCreatorId = functio
  * @return {!proto.resources.documents.DocumentTemplateShort} returns this
  */
 proto.resources.documents.DocumentTemplateShort.prototype.setCreatorId = function(value) {
-  return jspb.Message.setProto3IntField(this, 8, value);
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
 /**
- * optional resources.users.UserShort creator = 9;
+ * optional resources.users.UserShort creator = 10;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.getCreator = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 9));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 10));
 };
 
 
@@ -1515,7 +1545,7 @@ proto.resources.documents.DocumentTemplateShort.prototype.getCreator = function(
  * @return {!proto.resources.documents.DocumentTemplateShort} returns this
 */
 proto.resources.documents.DocumentTemplateShort.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 9, value);
+  return jspb.Message.setWrapperField(this, 10, value);
 };
 
 
@@ -1533,7 +1563,7 @@ proto.resources.documents.DocumentTemplateShort.prototype.clearCreator = functio
  * @return {boolean}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 9) != null;
+  return jspb.Message.getField(this, 10) != null;
 };
 
 
@@ -1843,17 +1873,18 @@ proto.resources.documents.Document.toObject = function(includeInstance, msg) {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     createdAt: (f = msg.getCreatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    categoryId: jspb.Message.getFieldWithDefault(msg, 4, 0),
     category: (f = msg.getCategory()) && proto.resources.documents.DocumentCategory.toObject(includeInstance, f),
-    title: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    contentType: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    content: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    data: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    creatorId: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    title: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    contentType: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    content: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    data: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    creatorId: jspb.Message.getFieldWithDefault(msg, 10, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f),
-    state: jspb.Message.getFieldWithDefault(msg, 11, ""),
-    closed: jspb.Message.getBooleanFieldWithDefault(msg, 12, false),
-    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 13, false),
-    commentcount: jspb.Message.getFieldWithDefault(msg, 14, 0)
+    state: jspb.Message.getFieldWithDefault(msg, 12, ""),
+    closed: jspb.Message.getBooleanFieldWithDefault(msg, 13, false),
+    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 14, false),
+    commentcount: jspb.Message.getFieldWithDefault(msg, 15, 0)
   };
 
   if (includeInstance) {
@@ -1905,48 +1936,52 @@ proto.resources.documents.Document.deserializeBinaryFromReader = function(msg, r
       msg.setUpdatedAt(value);
       break;
     case 4:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setCategoryId(value);
+      break;
+    case 5:
       var value = new proto.resources.documents.DocumentCategory;
       reader.readMessage(value,proto.resources.documents.DocumentCategory.deserializeBinaryFromReader);
       msg.setCategory(value);
       break;
-    case 5:
+    case 6:
       var value = /** @type {string} */ (reader.readString());
       msg.setTitle(value);
       break;
-    case 6:
+    case 7:
       var value = /** @type {!proto.resources.documents.DOC_CONTENT_TYPE} */ (reader.readEnum());
       msg.setContentType(value);
       break;
-    case 7:
+    case 8:
       var value = /** @type {string} */ (reader.readString());
       msg.setContent(value);
       break;
-    case 8:
+    case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setData(value);
       break;
-    case 9:
+    case 10:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorId(value);
       break;
-    case 10:
+    case 11:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setCreator(value);
       break;
-    case 11:
+    case 12:
       var value = /** @type {string} */ (reader.readString());
       msg.setState(value);
       break;
-    case 12:
+    case 13:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setClosed(value);
       break;
-    case 13:
+    case 14:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setPublic(value);
       break;
-    case 14:
+    case 15:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setCommentcount(value);
       break;
@@ -2002,10 +2037,17 @@ proto.resources.documents.Document.serializeBinaryToWriter = function(message, w
       resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
   }
+  f = message.getCategoryId();
+  if (f !== 0) {
+    writer.writeUint64(
+      4,
+      f
+    );
+  }
   f = message.getCategory();
   if (f != null) {
     writer.writeMessage(
-      4,
+      5,
       f,
       proto.resources.documents.DocumentCategory.serializeBinaryToWriter
     );
@@ -2013,42 +2055,42 @@ proto.resources.documents.Document.serializeBinaryToWriter = function(message, w
   f = message.getTitle();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      6,
       f
     );
   }
   f = message.getContentType();
   if (f !== 0.0) {
     writer.writeEnum(
-      6,
+      7,
       f
     );
   }
   f = message.getContent();
   if (f.length > 0) {
     writer.writeString(
-      7,
+      8,
       f
     );
   }
   f = message.getData();
   if (f.length > 0) {
     writer.writeString(
-      8,
+      9,
       f
     );
   }
   f = message.getCreatorId();
   if (f !== 0) {
     writer.writeInt32(
-      9,
+      10,
       f
     );
   }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      10,
+      11,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -2056,28 +2098,28 @@ proto.resources.documents.Document.serializeBinaryToWriter = function(message, w
   f = message.getState();
   if (f.length > 0) {
     writer.writeString(
-      11,
+      12,
       f
     );
   }
   f = message.getClosed();
   if (f) {
     writer.writeBool(
-      12,
+      13,
       f
     );
   }
   f = message.getPublic();
   if (f) {
     writer.writeBool(
-      13,
+      14,
       f
     );
   }
   f = message.getCommentcount();
   if (f !== 0) {
     writer.writeInt64(
-      14,
+      15,
       f
     );
   }
@@ -2177,12 +2219,30 @@ proto.resources.documents.Document.prototype.hasUpdatedAt = function() {
 
 
 /**
- * optional DocumentCategory category = 4;
+ * optional uint64 category_id = 4;
+ * @return {number}
+ */
+proto.resources.documents.Document.prototype.getCategoryId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.resources.documents.Document} returns this
+ */
+proto.resources.documents.Document.prototype.setCategoryId = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional DocumentCategory category = 5;
  * @return {?proto.resources.documents.DocumentCategory}
  */
 proto.resources.documents.Document.prototype.getCategory = function() {
   return /** @type{?proto.resources.documents.DocumentCategory} */ (
-    jspb.Message.getWrapperField(this, proto.resources.documents.DocumentCategory, 4));
+    jspb.Message.getWrapperField(this, proto.resources.documents.DocumentCategory, 5));
 };
 
 
@@ -2191,7 +2251,7 @@ proto.resources.documents.Document.prototype.getCategory = function() {
  * @return {!proto.resources.documents.Document} returns this
 */
 proto.resources.documents.Document.prototype.setCategory = function(value) {
-  return jspb.Message.setWrapperField(this, 4, value);
+  return jspb.Message.setWrapperField(this, 5, value);
 };
 
 
@@ -2209,16 +2269,16 @@ proto.resources.documents.Document.prototype.clearCategory = function() {
  * @return {boolean}
  */
 proto.resources.documents.Document.prototype.hasCategory = function() {
-  return jspb.Message.getField(this, 4) != null;
+  return jspb.Message.getField(this, 5) != null;
 };
 
 
 /**
- * optional string title = 5;
+ * optional string title = 6;
  * @return {string}
  */
 proto.resources.documents.Document.prototype.getTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
 
@@ -2227,16 +2287,16 @@ proto.resources.documents.Document.prototype.getTitle = function() {
  * @return {!proto.resources.documents.Document} returns this
  */
 proto.resources.documents.Document.prototype.setTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
 /**
- * optional DOC_CONTENT_TYPE content_type = 6;
+ * optional DOC_CONTENT_TYPE content_type = 7;
  * @return {!proto.resources.documents.DOC_CONTENT_TYPE}
  */
 proto.resources.documents.Document.prototype.getContentType = function() {
-  return /** @type {!proto.resources.documents.DOC_CONTENT_TYPE} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {!proto.resources.documents.DOC_CONTENT_TYPE} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
@@ -2245,33 +2305,15 @@ proto.resources.documents.Document.prototype.getContentType = function() {
  * @return {!proto.resources.documents.Document} returns this
  */
 proto.resources.documents.Document.prototype.setContentType = function(value) {
-  return jspb.Message.setProto3EnumField(this, 6, value);
+  return jspb.Message.setProto3EnumField(this, 7, value);
 };
 
 
 /**
- * optional string content = 7;
+ * optional string content = 8;
  * @return {string}
  */
 proto.resources.documents.Document.prototype.getContent = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.resources.documents.Document} returns this
- */
-proto.resources.documents.Document.prototype.setContent = function(value) {
-  return jspb.Message.setProto3StringField(this, 7, value);
-};
-
-
-/**
- * optional string data = 8;
- * @return {string}
- */
-proto.resources.documents.Document.prototype.getData = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
@@ -2280,17 +2322,35 @@ proto.resources.documents.Document.prototype.getData = function() {
  * @param {string} value
  * @return {!proto.resources.documents.Document} returns this
  */
-proto.resources.documents.Document.prototype.setData = function(value) {
+proto.resources.documents.Document.prototype.setContent = function(value) {
   return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 
 /**
- * optional int32 creator_id = 9;
+ * optional string data = 9;
+ * @return {string}
+ */
+proto.resources.documents.Document.prototype.getData = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.documents.Document} returns this
+ */
+proto.resources.documents.Document.prototype.setData = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional int32 creator_id = 10;
  * @return {number}
  */
 proto.resources.documents.Document.prototype.getCreatorId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
 };
 
 
@@ -2299,17 +2359,17 @@ proto.resources.documents.Document.prototype.getCreatorId = function() {
  * @return {!proto.resources.documents.Document} returns this
  */
 proto.resources.documents.Document.prototype.setCreatorId = function(value) {
-  return jspb.Message.setProto3IntField(this, 9, value);
+  return jspb.Message.setProto3IntField(this, 10, value);
 };
 
 
 /**
- * optional resources.users.UserShort creator = 10;
+ * optional resources.users.UserShort creator = 11;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.documents.Document.prototype.getCreator = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 10));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 11));
 };
 
 
@@ -2318,7 +2378,7 @@ proto.resources.documents.Document.prototype.getCreator = function() {
  * @return {!proto.resources.documents.Document} returns this
 */
 proto.resources.documents.Document.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 10, value);
+  return jspb.Message.setWrapperField(this, 11, value);
 };
 
 
@@ -2336,16 +2396,16 @@ proto.resources.documents.Document.prototype.clearCreator = function() {
  * @return {boolean}
  */
 proto.resources.documents.Document.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 10) != null;
+  return jspb.Message.getField(this, 11) != null;
 };
 
 
 /**
- * optional string state = 11;
+ * optional string state = 12;
  * @return {string}
  */
 proto.resources.documents.Document.prototype.getState = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 11, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 12, ""));
 };
 
 
@@ -2354,33 +2414,15 @@ proto.resources.documents.Document.prototype.getState = function() {
  * @return {!proto.resources.documents.Document} returns this
  */
 proto.resources.documents.Document.prototype.setState = function(value) {
-  return jspb.Message.setProto3StringField(this, 11, value);
+  return jspb.Message.setProto3StringField(this, 12, value);
 };
 
 
 /**
- * optional bool closed = 12;
+ * optional bool closed = 13;
  * @return {boolean}
  */
 proto.resources.documents.Document.prototype.getClosed = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 12, false));
-};
-
-
-/**
- * @param {boolean} value
- * @return {!proto.resources.documents.Document} returns this
- */
-proto.resources.documents.Document.prototype.setClosed = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 12, value);
-};
-
-
-/**
- * optional bool public = 13;
- * @return {boolean}
- */
-proto.resources.documents.Document.prototype.getPublic = function() {
   return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 13, false));
 };
 
@@ -2389,17 +2431,35 @@ proto.resources.documents.Document.prototype.getPublic = function() {
  * @param {boolean} value
  * @return {!proto.resources.documents.Document} returns this
  */
-proto.resources.documents.Document.prototype.setPublic = function(value) {
+proto.resources.documents.Document.prototype.setClosed = function(value) {
   return jspb.Message.setProto3BooleanField(this, 13, value);
 };
 
 
 /**
- * optional int64 commentCount = 14;
+ * optional bool public = 14;
+ * @return {boolean}
+ */
+proto.resources.documents.Document.prototype.getPublic = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 14, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.resources.documents.Document} returns this
+ */
+proto.resources.documents.Document.prototype.setPublic = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 14, value);
+};
+
+
+/**
+ * optional int64 commentCount = 15;
  * @return {number}
  */
 proto.resources.documents.Document.prototype.getCommentcount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 14, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 15, 0));
 };
 
 
@@ -2408,7 +2468,7 @@ proto.resources.documents.Document.prototype.getCommentcount = function() {
  * @return {!proto.resources.documents.Document} returns this
  */
 proto.resources.documents.Document.prototype.setCommentcount = function(value) {
-  return jspb.Message.setProto3IntField(this, 14, value);
+  return jspb.Message.setProto3IntField(this, 15, value);
 };
 
 
@@ -2447,12 +2507,13 @@ proto.resources.documents.DocumentShort.toObject = function(includeInstance, msg
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     createdAt: (f = msg.getCreatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    categoryId: jspb.Message.getFieldWithDefault(msg, 4, 0),
     category: (f = msg.getCategory()) && proto.resources.documents.DocumentCategory.toObject(includeInstance, f),
-    title: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    creatorId: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    title: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    creatorId: jspb.Message.getFieldWithDefault(msg, 7, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f),
-    state: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    closed: jspb.Message.getBooleanFieldWithDefault(msg, 9, false)
+    state: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    closed: jspb.Message.getBooleanFieldWithDefault(msg, 10, false)
   };
 
   if (includeInstance) {
@@ -2504,28 +2565,32 @@ proto.resources.documents.DocumentShort.deserializeBinaryFromReader = function(m
       msg.setUpdatedAt(value);
       break;
     case 4:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setCategoryId(value);
+      break;
+    case 5:
       var value = new proto.resources.documents.DocumentCategory;
       reader.readMessage(value,proto.resources.documents.DocumentCategory.deserializeBinaryFromReader);
       msg.setCategory(value);
       break;
-    case 5:
+    case 6:
       var value = /** @type {string} */ (reader.readString());
       msg.setTitle(value);
       break;
-    case 6:
+    case 7:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorId(value);
       break;
-    case 7:
+    case 8:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setCreator(value);
       break;
-    case 8:
+    case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setState(value);
       break;
-    case 9:
+    case 10:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setClosed(value);
       break;
@@ -2581,10 +2646,17 @@ proto.resources.documents.DocumentShort.serializeBinaryToWriter = function(messa
       resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
   }
+  f = message.getCategoryId();
+  if (f !== 0) {
+    writer.writeUint64(
+      4,
+      f
+    );
+  }
   f = message.getCategory();
   if (f != null) {
     writer.writeMessage(
-      4,
+      5,
       f,
       proto.resources.documents.DocumentCategory.serializeBinaryToWriter
     );
@@ -2592,21 +2664,21 @@ proto.resources.documents.DocumentShort.serializeBinaryToWriter = function(messa
   f = message.getTitle();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      6,
       f
     );
   }
   f = message.getCreatorId();
   if (f !== 0) {
     writer.writeInt32(
-      6,
+      7,
       f
     );
   }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      7,
+      8,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -2614,14 +2686,14 @@ proto.resources.documents.DocumentShort.serializeBinaryToWriter = function(messa
   f = message.getState();
   if (f.length > 0) {
     writer.writeString(
-      8,
+      9,
       f
     );
   }
   f = message.getClosed();
   if (f) {
     writer.writeBool(
-      9,
+      10,
       f
     );
   }
@@ -2721,12 +2793,30 @@ proto.resources.documents.DocumentShort.prototype.hasUpdatedAt = function() {
 
 
 /**
- * optional DocumentCategory category = 4;
+ * optional uint64 category_id = 4;
+ * @return {number}
+ */
+proto.resources.documents.DocumentShort.prototype.getCategoryId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.resources.documents.DocumentShort} returns this
+ */
+proto.resources.documents.DocumentShort.prototype.setCategoryId = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional DocumentCategory category = 5;
  * @return {?proto.resources.documents.DocumentCategory}
  */
 proto.resources.documents.DocumentShort.prototype.getCategory = function() {
   return /** @type{?proto.resources.documents.DocumentCategory} */ (
-    jspb.Message.getWrapperField(this, proto.resources.documents.DocumentCategory, 4));
+    jspb.Message.getWrapperField(this, proto.resources.documents.DocumentCategory, 5));
 };
 
 
@@ -2735,7 +2825,7 @@ proto.resources.documents.DocumentShort.prototype.getCategory = function() {
  * @return {!proto.resources.documents.DocumentShort} returns this
 */
 proto.resources.documents.DocumentShort.prototype.setCategory = function(value) {
-  return jspb.Message.setWrapperField(this, 4, value);
+  return jspb.Message.setWrapperField(this, 5, value);
 };
 
 
@@ -2753,16 +2843,16 @@ proto.resources.documents.DocumentShort.prototype.clearCategory = function() {
  * @return {boolean}
  */
 proto.resources.documents.DocumentShort.prototype.hasCategory = function() {
-  return jspb.Message.getField(this, 4) != null;
+  return jspb.Message.getField(this, 5) != null;
 };
 
 
 /**
- * optional string title = 5;
+ * optional string title = 6;
  * @return {string}
  */
 proto.resources.documents.DocumentShort.prototype.getTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
 
@@ -2771,16 +2861,16 @@ proto.resources.documents.DocumentShort.prototype.getTitle = function() {
  * @return {!proto.resources.documents.DocumentShort} returns this
  */
 proto.resources.documents.DocumentShort.prototype.setTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
 /**
- * optional int32 creator_id = 6;
+ * optional int32 creator_id = 7;
  * @return {number}
  */
 proto.resources.documents.DocumentShort.prototype.getCreatorId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
@@ -2789,17 +2879,17 @@ proto.resources.documents.DocumentShort.prototype.getCreatorId = function() {
  * @return {!proto.resources.documents.DocumentShort} returns this
  */
 proto.resources.documents.DocumentShort.prototype.setCreatorId = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
 /**
- * optional resources.users.UserShort creator = 7;
+ * optional resources.users.UserShort creator = 8;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.documents.DocumentShort.prototype.getCreator = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 7));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 8));
 };
 
 
@@ -2808,7 +2898,7 @@ proto.resources.documents.DocumentShort.prototype.getCreator = function() {
  * @return {!proto.resources.documents.DocumentShort} returns this
 */
 proto.resources.documents.DocumentShort.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 7, value);
+  return jspb.Message.setWrapperField(this, 8, value);
 };
 
 
@@ -2826,16 +2916,16 @@ proto.resources.documents.DocumentShort.prototype.clearCreator = function() {
  * @return {boolean}
  */
 proto.resources.documents.DocumentShort.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 7) != null;
+  return jspb.Message.getField(this, 8) != null;
 };
 
 
 /**
- * optional string state = 8;
+ * optional string state = 9;
  * @return {string}
  */
 proto.resources.documents.DocumentShort.prototype.getState = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
 };
 
 
@@ -2844,16 +2934,16 @@ proto.resources.documents.DocumentShort.prototype.getState = function() {
  * @return {!proto.resources.documents.DocumentShort} returns this
  */
 proto.resources.documents.DocumentShort.prototype.setState = function(value) {
-  return jspb.Message.setProto3StringField(this, 8, value);
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 
 /**
- * optional bool closed = 9;
+ * optional bool closed = 10;
  * @return {boolean}
  */
 proto.resources.documents.DocumentShort.prototype.getClosed = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 9, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 10, false));
 };
 
 
@@ -2862,7 +2952,7 @@ proto.resources.documents.DocumentShort.prototype.getClosed = function() {
  * @return {!proto.resources.documents.DocumentShort} returns this
  */
 proto.resources.documents.DocumentShort.prototype.setClosed = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 9, value);
+  return jspb.Message.setProto3BooleanField(this, 10, value);
 };
 
 
@@ -4064,7 +4154,8 @@ proto.resources.documents.DocumentReference.toObject = function(includeInstance,
     sourceDocument: (f = msg.getSourceDocument()) && proto.resources.documents.DocumentShort.toObject(includeInstance, f),
     reference: jspb.Message.getFieldWithDefault(msg, 5, 0),
     targetDocumentId: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    creatorId: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    targetDocument: (f = msg.getTargetDocument()) && proto.resources.documents.DocumentShort.toObject(includeInstance, f),
+    creatorId: jspb.Message.getFieldWithDefault(msg, 8, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f)
   };
 
@@ -4129,10 +4220,15 @@ proto.resources.documents.DocumentReference.deserializeBinaryFromReader = functi
       msg.setTargetDocumentId(value);
       break;
     case 7:
+      var value = new proto.resources.documents.DocumentShort;
+      reader.readMessage(value,proto.resources.documents.DocumentShort.deserializeBinaryFromReader);
+      msg.setTargetDocument(value);
+      break;
+    case 8:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorId(value);
       break;
-    case 8:
+    case 9:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setCreator(value);
@@ -4210,17 +4306,25 @@ proto.resources.documents.DocumentReference.serializeBinaryToWriter = function(m
       f
     );
   }
+  f = message.getTargetDocument();
+  if (f != null) {
+    writer.writeMessage(
+      7,
+      f,
+      proto.resources.documents.DocumentShort.serializeBinaryToWriter
+    );
+  }
   f = message.getCreatorId();
   if (f !== 0) {
     writer.writeInt32(
-      7,
+      8,
       f
     );
   }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      8,
+      9,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -4375,11 +4479,48 @@ proto.resources.documents.DocumentReference.prototype.setTargetDocumentId = func
 
 
 /**
- * optional int32 creator_id = 7;
+ * optional DocumentShort target_document = 7;
+ * @return {?proto.resources.documents.DocumentShort}
+ */
+proto.resources.documents.DocumentReference.prototype.getTargetDocument = function() {
+  return /** @type{?proto.resources.documents.DocumentShort} */ (
+    jspb.Message.getWrapperField(this, proto.resources.documents.DocumentShort, 7));
+};
+
+
+/**
+ * @param {?proto.resources.documents.DocumentShort|undefined} value
+ * @return {!proto.resources.documents.DocumentReference} returns this
+*/
+proto.resources.documents.DocumentReference.prototype.setTargetDocument = function(value) {
+  return jspb.Message.setWrapperField(this, 7, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.resources.documents.DocumentReference} returns this
+ */
+proto.resources.documents.DocumentReference.prototype.clearTargetDocument = function() {
+  return this.setTargetDocument(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.DocumentReference.prototype.hasTargetDocument = function() {
+  return jspb.Message.getField(this, 7) != null;
+};
+
+
+/**
+ * optional int32 creator_id = 8;
  * @return {number}
  */
 proto.resources.documents.DocumentReference.prototype.getCreatorId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
 
@@ -4388,17 +4529,17 @@ proto.resources.documents.DocumentReference.prototype.getCreatorId = function() 
  * @return {!proto.resources.documents.DocumentReference} returns this
  */
 proto.resources.documents.DocumentReference.prototype.setCreatorId = function(value) {
-  return jspb.Message.setProto3IntField(this, 7, value);
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
 /**
- * optional resources.users.UserShort creator = 8;
+ * optional resources.users.UserShort creator = 9;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.documents.DocumentReference.prototype.getCreator = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 8));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 9));
 };
 
 
@@ -4407,7 +4548,7 @@ proto.resources.documents.DocumentReference.prototype.getCreator = function() {
  * @return {!proto.resources.documents.DocumentReference} returns this
 */
 proto.resources.documents.DocumentReference.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 8, value);
+  return jspb.Message.setWrapperField(this, 9, value);
 };
 
 
@@ -4425,7 +4566,7 @@ proto.resources.documents.DocumentReference.prototype.clearCreator = function() 
  * @return {boolean}
  */
 proto.resources.documents.DocumentReference.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 8) != null;
+  return jspb.Message.getField(this, 9) != null;
 };
 
 

@@ -23,10 +23,11 @@ var (
 )
 
 type Enricher struct {
-	db            *sql.DB
-	cancel        context.CancelFunc
-	Jobs          *cache.Cache[string, *jobs.Job]
-	DocCategories *cache.Cache[string, []*documents.DocumentCategory]
+	db                 *sql.DB
+	cancel             context.CancelFunc
+	Jobs               *cache.Cache[string, *jobs.Job]
+	DocCategories      *cache.Cache[uint64, *documents.DocumentCategory]
+	DocCategoriesByJob *cache.Cache[string, []*documents.DocumentCategory]
 }
 
 func New(db *sql.DB) *Enricher {
@@ -40,13 +41,20 @@ func New(db *sql.DB) *Enricher {
 
 	doccategoriesCache := cache.NewContext(
 		ctx,
+		cache.AsLRU[uint64, *documents.DocumentCategory](lru.WithCapacity(512)),
+	)
+
+	doccategoriesByJobCache := cache.NewContext(
+		ctx,
 		cache.AsLRU[string, []*documents.DocumentCategory](lru.WithCapacity(32)),
 	)
+
 	c := &Enricher{
-		db:            db,
-		cancel:        cancel,
-		Jobs:          jobsCache,
-		DocCategories: doccategoriesCache,
+		db:                 db,
+		cancel:             cancel,
+		Jobs:               jobsCache,
+		DocCategories:      doccategoriesCache,
+		DocCategoriesByJob: doccategoriesByJobCache,
 	}
 
 	c.refreshCache()
@@ -85,16 +93,18 @@ func (c *Enricher) refreshDocumentCategories() error {
 	}
 
 	categoriesPerJob := map[string][]*documents.DocumentCategory{}
-	for _, c := range dest {
-		if _, ok := categoriesPerJob[c.Job]; !ok {
-			categoriesPerJob[c.Job] = []*documents.DocumentCategory{}
+	for _, d := range dest {
+		c.DocCategories.Set(d.Id, d)
+
+		if _, ok := categoriesPerJob[d.Job]; !ok {
+			categoriesPerJob[d.Job] = []*documents.DocumentCategory{}
 		}
-		categoriesPerJob[c.Job] = append(categoriesPerJob[c.Job], c)
+		categoriesPerJob[d.Job] = append(categoriesPerJob[d.Job], d)
 	}
 
 	// Update cache
 	for job, cs := range categoriesPerJob {
-		c.DocCategories.Set(job, cs)
+		c.DocCategoriesByJob.Set(job, cs)
 	}
 
 	return nil
@@ -153,5 +163,20 @@ func (c *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 		usr.SetJobLabel(usr.GetJob())
 		jg := strconv.Itoa(int(usr.GetJobGrade()))
 		usr.SetJobGradeLabel(jg)
+	}
+}
+
+func (c *Enricher) EnrichDocumentCategory(doc common.IDocumentCategory) {
+	cId := doc.GetCategoryId()
+
+	dc, ok := c.DocCategories.Get(cId)
+	if !ok {
+		doc.SetCategory(&documents.DocumentCategory{
+			Id:   0,
+			Name: "N/A",
+			Job:  "N/A",
+		})
+	} else {
+		doc.SetCategory(dc)
 	}
 }
