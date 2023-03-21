@@ -10,10 +10,7 @@ import Footer from '../../components/partials/Footer.vue';
     "name": "Citizens",
     "meta": {
         "requiresAuth": true,
-        "permission": "CitizenStoreService.FindUsers",
-        "breadCrumbs": [
-            { "name": "Citizens", "href": "/citizens" }
-        ]
+        "permission": "CitizenStoreService.FindUsers"
     }
 }
 </route>

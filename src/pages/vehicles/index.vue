@@ -8,8 +8,7 @@ import VehiclesList from '../../components/vehicles/VehiclesList.vue';
     "name": "Vehicles",
     "meta": {
         "requiresAuth": true,
-        "permission": "DMVService.FindVehicles",
-        "breadCrumbs": null
+        "permission": "DMVService.FindVehicles"
     }
 }
 </route>

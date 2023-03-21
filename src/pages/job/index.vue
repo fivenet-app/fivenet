@@ -9,10 +9,7 @@ import Footer from '../../components/partials/Footer.vue';
     "name": "Job",
     "meta": {
         "requiresAuth": true,
-        "permission": "Jobs.View",
-        "breadCrumbs": [
-            { "name": "Job", "href": "/job" }
-        ]
+        "permission": "Jobs.View"
     }
 }
 </route>

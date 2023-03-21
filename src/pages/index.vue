@@ -13,8 +13,7 @@ const accessToken = computed(() => store.state.auth?.accessToken);
 {
     "name": "Home",
     "meta": {
-        "requiresAuth": false,
-        "breadCrumbs": null
+        "requiresAuth": false
     }
 }
 </route>

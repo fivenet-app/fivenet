@@ -8,8 +8,7 @@ import Livemap from '../../components/Livemap.vue';
     "name": "Livemap",
     "meta": {
         "requiresAuth": true,
-        "permission": "LivemapperService.Stream",
-        "breadCrumbs": null
+        "permission": "LivemapperService.Stream"
     }
 }
 </route>

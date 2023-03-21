@@ -10,11 +10,7 @@ import Footer from '../../components/partials/Footer.vue';
     "name": "Documents: Create",
     "meta": {
         "requiresAuth": true,
-        "permission": "DocStoreService.CreateDocument",
-        "breadCrumbs": [
-            { "name": "Documents", "href": "/documents" },
-            { "name": "Create Document", "href": "#" }
-        ]
+        "permission": "DocStoreService.CreateDocument"
     }
 }
 </route>

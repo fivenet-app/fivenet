@@ -20,11 +20,7 @@ onBeforeUnmount(() => {
     "name": "Documents: Info",
     "meta": {
         "requiresAuth": true,
-        "permission": "DocStoreService.GetDocument",
-        "breadCrumbs": [
-            { "name": "Documents", "href": "/documents" },
-            { "name": "Document Info: ...", "href": "/documents" }
-        ]
+        "permission": "DocStoreService.GetDocument"
     }
 }
 </route>

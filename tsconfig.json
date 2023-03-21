@@ -12,19 +12,17 @@
         "lib": ["ESNext", "DOM"],
         "skipLibCheck": true,
         "noEmit": true,
-        "removeComments": true
+        "removeComments": true,
+        "types": ["node"]
     },
     "include": [
         "src/**/*.ts",
         "src/**/*.d.ts",
         "src/**/*.tsx",
         "src/**/*.vue",
-        "gen/**/*.ts",
-        "gen/**/*.d.ts",
         "vite.config.*",
-        "vitest.config.*",
-        "cypress.config.*",
-        "*.d.ts"
+        "shims.d.ts",
+        "typed-router.d.ts"
     ],
     "references": [
         {

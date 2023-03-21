@@ -10,10 +10,7 @@ import Footer from '../../components/partials/Footer.vue';
     "name": "Documents",
     "meta": {
         "requiresAuth": true,
-        "permission": "DocStoreService.FindDocuments",
-        "breadCrumbs": [
-            { "name": "Documents", "href": "/documents" }
-        ]
+        "permission": "DocStoreService.FindDocuments"
     }
 }
 </route>

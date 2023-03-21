@@ -10,12 +10,12 @@ export default defineConfig({
         mkcert(),
         VueRouter({
             dataFetching: true,
-            exclude: ['ignored', '**/__*', '**/__**/*', '!*.component.vue'],
-            extensions: ['.page.vue', '.vue', '.md'],
+            exclude: ['**/__*', '**/__**/*', '!*.component.vue'],
+            extensions: ['.vue', '.md'],
             logs: true,
             routesFolder: [
                 {
-                    src: 'src/pages',
+                    src: './src/pages',
                 },
             ],
         }),
@@ -30,6 +30,7 @@ export default defineConfig({
         commonjsOptions: {
             transformMixedEsModules: true,
         },
+        manifest: true,
     },
     server: {
         https: true,

@@ -10,8 +10,7 @@ import NavPageHeader from '../components/partials/NavPageHeader.vue';
     "name": "overview",
     "meta": {
         "requiresAuth": true,
-        "permission": "Overview.View",
-        "breadCrumbs": [ ]
+        "permission": "Overview.View"
     }
 }
 </route>

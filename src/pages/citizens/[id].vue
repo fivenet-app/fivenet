@@ -30,11 +30,7 @@ onBeforeMount(() => {
     "name": "Citizens Info",
     "meta": {
         "requiresAuth": true,
-        "permission": "CitizenStoreService.FindUsers",
-        "breadCrumbs": [
-            { "name": "Citizens", "href": "/citizens" },
-            { "name": "Citizen Info: ...", "href": "#" }
-        ]
+        "permission": "CitizenStoreService.FindUsers"
     }
 }
 </route>

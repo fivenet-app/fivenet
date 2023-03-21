@@ -16,7 +16,6 @@ const totalCount = ref(0);
 const listEnd = ref(0);
 const users = ref<Array<User>>([]);
 
-
 function findUsers(pos: number) {
     if (pos < 0) return;
 
