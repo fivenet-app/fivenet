@@ -3,7 +3,6 @@ package dmv
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/dataenricher"
@@ -71,8 +70,6 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}
-
-	fmt.Println(countStmt.DebugSql())
 
 	resp := &FindVehiclesResponse{
 		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),

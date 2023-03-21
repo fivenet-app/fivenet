@@ -4,7 +4,6 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -218,7 +217,6 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			WHERE(u.ID.EQ(jet.Int32(req.UserId))).
 			LIMIT(15)
 
-		fmt.Println(stmt.DebugSql())
 		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
 			if !errors.Is(qrm.ErrNoRows, err) {
 				return nil, err
