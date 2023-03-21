@@ -1,11 +1,10 @@
-<script lang="ts">
-import { ref, onMounted, onBeforeUnmount, onUnmounted } from 'vue';
+<script setup lang="ts">
+import { onMounted, onBeforeUnmount, onUnmounted } from 'vue';
 import { getLivemapperClient, handleGRPCError } from '../grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
-import { Hash } from '../class/Hash';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -63,6 +62,32 @@ const satelite = L.tileLayer('tiles/satelite/{z}/{x}/{y}.png', {
     tms: true,
 });
 
+function start() {
+    console.log('starting livemap data stream');
+    const request = new StreamRequest();
+
+    stream = getLivemapperClient()
+        .stream(request)
+        .on('data', function (resp) {
+            map?.parseMarkerlist(MarkerType.dispatch, resp.getDispatchesList());
+            map?.parseMarkerlist(MarkerType.player, resp.getUsersList());
+        })
+        .on('error', (err: RpcError) => {
+            handleGRPCError(err);
+        })
+        .on('end', function () {
+            console.log('livemap data stream ended');
+        });
+}
+
+function stop() {
+    console.log('stopping livemap data stream');
+    if (stream) {
+        stream.cancel();
+        stream = null;
+    }
+}
+
 onMounted(() => {
     map = new Livemap('map', { layers: [postal], crs: customCRS });
     map.addHash();
@@ -94,32 +119,6 @@ onBeforeUnmount(() => {
 onUnmounted(() => {
     map = undefined;
 });
-
-function start() {
-    console.log('starting livemap data stream');
-    const request = new StreamRequest();
-
-    stream = getLivemapperClient()
-        .stream(request)
-        .on('data', function (resp) {
-            map?.parseMarkerlist(MarkerType.dispatch, resp.getDispatchesList());
-            map?.parseMarkerlist(MarkerType.player, resp.getUsersList());
-        })
-        .on('error', (err: RpcError) => {
-            handleGRPCError(err);
-        })
-        .on('end', function () {
-            console.log('livemap data stream ended');
-        });
-}
-
-function stop() {
-    console.log('stopping livemap data stream');
-    if (stream) {
-        stream.cancel();
-        stream = null;
-    }
-}
 </script>
 
 <style scoped>

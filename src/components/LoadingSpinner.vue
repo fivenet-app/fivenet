@@ -5,8 +5,6 @@ import { useStore } from '../store/store';
 
 const store = useStore();
 
-console.log(store);
-
 const loading = useLoading({
     isFullPage: true,
     canCancel: false,

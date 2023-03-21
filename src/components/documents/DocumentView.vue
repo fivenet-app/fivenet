@@ -90,7 +90,7 @@ function editDocumentTest() {
             console.log(resp);
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 
@@ -102,7 +102,7 @@ function removeDocRefTest() {
         removeDcoumentReference(req, null).then((resp) => {
             console.log(typeof resp);
         }).catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 

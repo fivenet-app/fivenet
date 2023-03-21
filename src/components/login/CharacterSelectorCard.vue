@@ -38,7 +38,7 @@ function chooseCharacter() {
             const url = new URL("https://example.com" + path);
             router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
         }).catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 </script>

@@ -75,7 +75,7 @@ function findCategories(): void {
     getCompletorClient().completeDocumentCategory(req, null).then((resp) => {
         entriesCategory = resp.getCategoriesList();
     }).catch((err: RpcError) => {
-        handleGRPCError(err, route);
+        handleGRPCError(err);
     })
 }
 
@@ -201,7 +201,7 @@ function submitForm(): void {
             router.push('/documents/' + resp.getDocumentId());
         }).catch((err: RpcError) => {
             console.log(err);
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 
@@ -257,7 +257,7 @@ function editForm(): void {
             dispatchNotification({ title: "Document updated!", content: "Document has been updated." });
         }).catch((err: RpcError) => {
             console.log(err);
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 
@@ -293,7 +293,7 @@ if (props.id) {
         }
     }).catch((err: RpcError) => {
         console.log(err);
-        handleGRPCError(err, route);
+        handleGRPCError(err);
     })
 }
 </script>
