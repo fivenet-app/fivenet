@@ -264,7 +264,7 @@ if (props.id) {
         if (document) {
             title.value = document.getTitle();
             content.value = document.getContent();
-            closed.value = openclose.find(e => e.closed === document.getClosed());
+            closed.value = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
             state.value = document.getState();
             isPublic.value = document.getPublic();
         };
@@ -336,8 +336,11 @@ if (props.id) {
                 </div>
             </Combobox>
         </div>
-        <div class="flex-1">
+        <div class="flex-1 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 bg-white">
             <!-- State -->
+            <input v-model="state" type="text" name="state"
+            class="block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+            placeholder="Document State" />
         </div>
         <div class="flex-1">
             <!-- Open/Close -->
@@ -345,7 +348,7 @@ if (props.id) {
                 <div class="relative">
                     <ListboxButton
                         class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        <span class="block truncate">{{ openclose.find(e => e.closed === closed)?.label }}</span>
+                        <span class="block truncate">{{ openclose.find(e => e.closed === closed.closed)?.label }}</span>
                         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                             <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                         </span>
