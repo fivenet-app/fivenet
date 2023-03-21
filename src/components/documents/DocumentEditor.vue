@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { useStore } from 'vuex';
+import { useStore } from '../../store/store';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getCompletorClient, getDocStoreClient, handleGRPCError } from '../../grpc';
@@ -42,7 +42,7 @@ const props = defineProps({
     },
 });
 
-const activeChar = computed(() => store.state.activeChar);
+const activeChar = computed(() => store.state.auth?.activeChar);
 
 const openclose = [
     { id: 0, label: 'Open', closed: false },

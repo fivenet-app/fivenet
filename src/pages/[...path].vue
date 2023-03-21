@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useStore } from 'vuex';
+import { useStore } from '../store/store';
 import HeroFull from '../components/partials/HeroFull.vue';
 import Footer from '../components/partials/Footer.vue';
 import './herofull-pattern.css';
 import { computed } from 'vue';
 
 const store = useStore();
-const accessToken = computed(() => store.state.accessToken);
+const accessToken = computed(() => store.state.auth?.accessToken);
 </script>
 
 <route lang="json">

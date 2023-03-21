@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router/auto';
 import { ref, Component, onBeforeMount } from 'vue';
-import { CreateDocumentRequest, GetDocumentRequest, RemoveDcoumentReferenceRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
@@ -80,7 +80,7 @@ function getDocument(): void {
 }
 
 function editDocumentTest() {
-    const req = new CreateDocumentRequest();
+    const req = new UpdateDocumentRequest();
     req.setDocumentId(document?.value?.getId());
     req.setTitle("SCOTT'S DOKUMENTEN WOCHENDSSPAß");
     req.setContent(document?.value?.getContent());
@@ -89,7 +89,7 @@ function editDocumentTest() {
     req.setPublic(document?.value?.getPublic());
 
     getDocStoreClient().
-        createOrUpdateDocument(req, null).then((resp) => {
+        updateDocument(req, null).then((resp) => {
             console.log(resp);
         }).
         catch((err: RpcError) => {

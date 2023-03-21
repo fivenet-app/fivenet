@@ -1,17 +1,26 @@
-import { createStore } from 'vuex';
 import { RpcError } from 'grpc-web';
 import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
 import { LoginRequest, LogoutRequest } from '@arpanet/gen/services/auth/auth_pb';
-import { version } from '../package.json';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { getAuthClient } from './grpc';
-import config from './config';
-import { dispatchNotification } from './components/notification';
+import { getAuthClient } from '../../grpc';
+import config from '../../config';
+import { dispatchNotification } from '../../components/notification';
+import { RootState } from '../store';
+import { Module } from 'vuex';
 
-const store = createStore({
+export interface AuthModuleState {
+    accessToken: null | string;
+    lastCharID: number;
+    activeChar: null | User;
+    loggingIn: boolean;
+    loginError: null | string;
+    permissions: Array<String>;
+}
+
+const authModule: Module<AuthModuleState, RootState> = {
+    namespaced: true,
     state: {
         // Persisted to Local Storage
-        version: '' as string,
         accessToken: null as null | string,
         lastCharID: 0 as number,
         // Temporary
@@ -19,35 +28,21 @@ const store = createStore({
         loggingIn: false as boolean,
         loginError: null as null | string,
         permissions: [] as Array<String>,
-    },
+    } as AuthModuleState,
     mutations: {
-        initialiseStore(state) {
-            // Check if the store exists
-            if (localStorage.getItem('store')) {
-                let store = JSON.parse(localStorage.getItem('store') as string);
-
-                // Check the version stored against current. If different, don't
-                // load the cached version
-                if (store.version == version) {
-                    this.replaceState(Object.assign(state, store));
-                } else {
-                    state.version = version;
-                }
-            }
-        },
-        loginStart: (state) => (state.loggingIn = true),
-        loginStop: (state, errorMessage) => {
+        loginStart: (state: AuthModuleState) => (state.loggingIn = true),
+        loginStop: (state: AuthModuleState, errorMessage: string) => {
             state.loggingIn = false;
             state.loginError = errorMessage;
         },
-        updateAccessToken: (state, accessToken) => {
+        updateAccessToken: (state: AuthModuleState, accessToken: string) => {
             state.accessToken = accessToken;
         },
-        updateActiveChar: (state, char: null | User) => {
+        updateActiveChar: (state: AuthModuleState, char: null | User) => {
             state.activeChar = char;
             state.lastCharID = char ? char.getUserId() : state.lastCharID;
         },
-        updatePermissions: (state, permissions: string[]) => {
+        updatePermissions: (state: AuthModuleState, permissions: string[]) => {
             state.permissions = permissions;
         },
     },
@@ -102,17 +97,6 @@ const store = createStore({
             commit('updatePermissions', permissions);
         },
     },
-});
+};
 
-export default store;
-
-// Local Storage saving
-store.subscribe((mutation, state) => {
-    const s = {
-        version: state.version,
-        accessToken: state.accessToken,
-        lastCharID: state.lastCharID,
-    };
-
-    localStorage.setItem('store', JSON.stringify(s));
-});
+export default authModule;

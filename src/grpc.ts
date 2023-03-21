@@ -1,7 +1,7 @@
-import store from './store';
+import { store } from './store/store';
 import { RpcError, StatusCode, StreamInterceptor, UnaryInterceptor } from 'grpc-web';
 import { _RouteLocationBase } from 'vue-router/auto';
-import router from './router';
+import { router } from './router';
 import config from './config';
 import { dispatchNotification } from './components/notification';
 import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
@@ -15,9 +15,9 @@ import { DMVServiceClient } from '@arpanet/gen/services/dmv/VehiclesServiceClien
 
 class AuthInterceptor implements StreamInterceptor<any, any>, UnaryInterceptor<any, any> {
     intercept(request: any, invoker: any) {
-        if (store.state.accessToken) {
+        if (store.state.auth?.accessToken) {
             const metadata = request.getMetadata();
-            metadata.Authorization = 'Bearer ' + store.state.accessToken;
+            metadata.Authorization = 'Bearer ' + store.state.auth?.accessToken;
         }
         return invoker(request);
     }
@@ -25,10 +25,20 @@ class AuthInterceptor implements StreamInterceptor<any, any>, UnaryInterceptor<a
 
 export const authInterceptor = new AuthInterceptor();
 
+class LoaderInterceptor implements StreamInterceptor<any, any>, UnaryInterceptor<any, any> {
+    intercept(request: any, invoker: any) {
+        console.log("SHOWING LOADER");
+        store.dispatch('loader/show');
+        return invoker(request);
+    }
+}
+
+const loaderInterceptor = new LoaderInterceptor();
+
 // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
 export const clientAuthOptions = {
-    unaryInterceptors: [authInterceptor],
-    streamInterceptors: [authInterceptor],
+    unaryInterceptors: [authInterceptor, loaderInterceptor],
+    streamInterceptors: [authInterceptor, loaderInterceptor],
 } as { [index: string]: any };
 
 //@ts-ignore GRPCWeb Devtools only exist when the user has the extension installed
@@ -43,7 +53,7 @@ if (devInterceptors) {
 // Handle GRPC errors
 export function handleGRPCError(err: RpcError, route: _RouteLocationBase): boolean {
     if (err.code == StatusCode.UNAUTHENTICATED) {
-        store.dispatch('doLogout');
+        store.dispatch('auth/doLogout');
 
         dispatchNotification({ title: 'Please login again!', content: 'You are not signed in anymore', type: 'warning' });
 

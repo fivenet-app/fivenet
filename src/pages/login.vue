@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useStore } from 'vuex';
+import { useStore } from '../store/store';
 import { computed } from 'vue';
 import Footer from '../components/partials/Footer.vue';
 import Login from '../components/Login.vue';
@@ -8,7 +8,7 @@ import NavPageHeader from '../components/partials/NavPageHeader.vue';
 import CharacterSelector from '../components/login/CharacterSelector.vue';
 
 const store = useStore();
-const accessToken = computed(() => store.state.accessToken);
+const accessToken = computed(() => store.state.auth?.accessToken);
 </script>
 
 <route lang="json">

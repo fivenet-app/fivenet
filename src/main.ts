@@ -3,10 +3,9 @@ import App from './App.vue';
 import * as Sentry from '@sentry/vue';
 import config from './config';
 import { LoadingPlugin } from 'vue-loading-overlay';
-import router from './router';
-import store from './store';
+import { router } from './router';
+import { store, key } from './store/store';
 import slug from './utils/slugify';
-import { showLoader } from './loading';
 
 // Load styles and Inter font (all weights)
 import './style.css';
@@ -33,21 +32,13 @@ Sentry.init({
 
 app.use(LoadingPlugin);
 app.use(router);
-app.use(store);
-
-router.beforeResolve((to, from, next) => {
-    // If this isn't an initial page load.
-    if (to.name) {
-        //showLoader();
-    }
-    next();
-});
+app.use(store, key);
 
 // Add `v-can` directive for easy permission checking
 app.directive('can', (el, binding, vnode) => {
-    const permissions = store.state.permissions;
+    const permissions = store.state.auth?.permissions;
     const val = slug(binding.value as string);
-    if (permissions.includes(val) || val === '') {
+    if (permissions && (permissions.includes(val) || val === '')) {
         return (vnode.el.hidden = false);
     } else {
         return (vnode.el.hidden = true);

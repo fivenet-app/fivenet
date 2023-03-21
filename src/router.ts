@@ -1,36 +1,36 @@
 import { createWebHistory, createRouter, setupDataFetchingGuard, RouteRecordRaw } from 'vue-router/auto';
 import { dispatchNotification } from './components/notification';
-import store from './store';
+import { store } from './store/store';
 import slug from './utils/slugify';
 
-const router = createRouter({
+export const router = createRouter({
     history: createWebHistory(),
     extendRoutes: (routes: RouteRecordRaw[]) => {
         return routes;
     },
-});
+}) as Router;
 
 setupDataFetchingGuard(router);
 
-router.beforeEach((to, from) => {
+router.beforeResolve((to, from) => {
     // Default is that a page requires authentication
     if (!to.meta.hasOwnProperty('requiresAuth') || to.meta.requiresAuth) {
         // Check if user has access token
-        if (store.state.accessToken && store.state.activeChar) {
+        if (store.state.auth?.accessToken && store.state.auth?.activeChar) {
             // Route has permission attached to it, check if user has required permission
             if (to.meta.permission) {
                 const perm = slug(to.meta.permission as string);
-                if (store.state.permissions.includes(perm)) {
+                if (store.state.auth?.permissions.includes(perm)) {
                     // User has permission
                     return;
                 } else {
                     dispatchNotification({
                         title: "You don't have permission!",
-                        content: "You don't have permission to go to " + (to.name ? to.name?.toString() : to.path) + '.',
+                        content: 'No permission to navigate to ' + (to.name ? to.name?.toString() : to.path) + '.',
                         type: 'warning',
                     });
 
-                    if (store.state.accessToken) {
+                    if (store.state.auth?.accessToken) {
                         return {
                             path: '/overview',
                         };
@@ -38,7 +38,7 @@ router.beforeEach((to, from) => {
                 }
             } else {
                 // No route permission check, so we can go ahead and return
-                return;
+                return true;
             }
         }
 
@@ -49,5 +49,3 @@ router.beforeEach((to, from) => {
         };
     }
 });
-
-export default router;

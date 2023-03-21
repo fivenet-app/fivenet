@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router/auto';
-import { ref, onMounted, onUpdated } from 'vue';
+import { ref, onMounted } from 'vue';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
@@ -23,9 +23,6 @@ const users = ref<Array<User>>([]);
 
 function findUsers(pos: number) {
     if (pos < 0) return;
-
-    console.log(search.value.name);
-    console.log(search.value.wanted);
 
     const req = new FindUsersRequest();
     req.setOffset(pos);

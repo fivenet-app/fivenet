@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStore } from 'vuex';
+import { useStore } from '../store/store';
 import Footer from '../components/partials/Footer.vue';
 import HeroFull from '../components/partials/HeroFull.vue';
-
 import './herofull-pattern.css';
 
 const store = useStore();
-const accessToken = computed(() => store.state.accessToken);
+const accessToken = computed(() => store.state.auth?.accessToken);
 </script>
 
 <route lang="json">
 {
-    "name": "index",
+    "name": "Home",
     "meta": {
         "requiresAuth": false,
         "breadCrumbs": null

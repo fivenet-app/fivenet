@@ -7,7 +7,7 @@ import { User } from '@arpanet/gen/resources/users/users_pb';
 import { getAuthClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { useRoute } from 'vue-router/auto';
-import { useStore } from 'vuex';
+import { useStore } from '../../store/store';
 
 const route = useRoute();
 const store = useStore();
@@ -25,7 +25,7 @@ async function fetchCharacters() {
 }
 
 onBeforeMount(() => {
-    store.dispatch('updateActiveChar', null);
+    store.dispatch('auth/updateActiveChar', null);
 
     // Fetch user's characters
     fetchCharacters();

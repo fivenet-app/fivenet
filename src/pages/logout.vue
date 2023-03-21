@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue';
-import { useStore } from 'vuex';
+import { useStore } from '../store/store';
 import { useRouter } from 'vue-router/auto';
 import Footer from '../components/partials/Footer.vue';
 import HeroFull from '../components/partials/HeroFull.vue';
-
 import './herofull-pattern.css';
 
 const store = useStore();
 const router = useRouter();
 
 onBeforeMount(() => {
-    store.dispatch('doLogout').
+    store.dispatch('auth/doLogout').
         then(() => {
             setTimeout(() => {
                 router.push('/');
-            }, 2000);
+            }, 1500);
         });
 });
 </script>

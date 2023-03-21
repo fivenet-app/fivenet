@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStore } from 'vuex';
+import { useStore } from '../../store/store';
 import { useRoute, useRouter } from 'vue-router/auto';
 import { getAuthClient, handleGRPCError } from '../../grpc';
 import { ChooseCharacterRequest } from '@arpanet/gen/services/auth/auth_pb';
@@ -14,7 +14,7 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 
-const lastCharID = computed(() => store.state.lastCharID);
+const lastCharID = computed(() => store.state.auth?.lastCharID);
 
 const props = defineProps({
     char: {
@@ -30,9 +30,9 @@ function chooseCharacter() {
     getAuthClient()
         .chooseCharacter(req, null)
         .then((resp) => {
-            store.dispatch('updateAccessToken', resp.getToken());
-            store.dispatch('updateActiveChar', props.char);
-            store.dispatch('updatePermissions', resp.getPermissionsList());
+            store.dispatch('auth/updateAccessToken', resp.getToken());
+            store.dispatch('auth/updateActiveChar', props.char);
+            store.dispatch('auth/updatePermissions', resp.getPermissionsList());
             console.log(resp.getPermissionsList());
             const path = route.query.redirect?.toString() || "/overview";
             const url = new URL("https://example.com" + path);

@@ -85,7 +85,6 @@ watchDebounced(search.value, () => findVehicles(0), { debounce: 750, maxWait: 15
 
 onMounted(() => {
     findVehicles(0);
-    console.log(props.hideOwner);
 });
 </script>
 
@@ -99,8 +98,8 @@ onMounted(() => {
                             <div class="col-span-4 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-white">Plate</label>
                                 <div class="relative mt-2 flex items-center">
-                                    <input v-model="search.name" v-on:keyup.enter="findVehicles(0)" type="text" name="search"
-                                        id="search"
+                                    <input v-model="search.name" v-on:keyup.enter="findVehicles(0)" type="text"
+                                        name="search" id="search"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
@@ -122,10 +121,12 @@ onMounted(() => {
                                     </th>
                                     <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">Type
                                     </th>
-                                    <th v-if="!hideOwner" scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                    <th v-if="!hideOwner" scope="col"
+                                        class="py-3.5 px-2 text-left text-sm font-semibold text-white">
                                         Owner
                                     </th>
-                                    <th v-if="!hideOwner" scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                    <th v-if="!hideOwner" scope="col"
+                                        class="py-3.5 px-2 text-left text-sm font-semibold text-white">
                                         Job
                                     </th>
                                     <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
@@ -134,7 +135,8 @@ onMounted(() => {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-800">
-                                <VehiclesListEntry v-for="vehicle in vehicles" :key="vehicle.getPlate()" :vehicle="vehicle" :hide-owner="hideOwner" />
+                                <VehiclesListEntry v-for="vehicle in vehicles" :key="vehicle.getPlate()" :vehicle="vehicle"
+                                    :hide-owner="hideOwner" />
                             </tbody>
                             <thead>
                                 <tr>
@@ -146,10 +148,12 @@ onMounted(() => {
                                     </th>
                                     <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">Type
                                     </th>
-                                    <th v-if="!hideOwner" scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                    <th v-if="!hideOwner" scope="col"
+                                        class="py-3.5 px-2 text-left text-sm font-semibold text-white">
                                         Owner
                                     </th>
-                                    <th v-if="!hideOwner" scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                    <th v-if="!hideOwner" scope="col"
+                                        class="py-3.5 px-2 text-left text-sm font-semibold text-white">
                                         Job
                                     </th>
                                     <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
@@ -164,6 +168,5 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-        </div>
     </div>
-</template>
+</div></template>
