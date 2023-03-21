@@ -7,7 +7,7 @@ import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 message UserShort {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"id"
+  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
   string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
   string job = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
@@ -29,7 +29,7 @@ message UserShortNI {
 }
 
 message User {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"id"
+  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
   string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
   string job = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
@@ -49,11 +49,11 @@ message User {
 }
 
 message License {
-  string type = 1 [(validate.rules).string = {min_len: 3, max_len: 60}]; // @gotags: sql:"primary_key" alias:"type"
+  string type = 1 [(validate.rules).string = {min_len: 3, max_len: 60}]; // @gotags: alias:"type"
 }
 
 message UserProps {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"user_id"
+  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
   bool wanted = 2; // @gotags: alias:"wanted"
 }
 
@@ -64,7 +64,7 @@ enum USER_ACTIVITY_TYPE {
 }
 
 message UserActivity {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"arpanet_user_activity.id"
+  uint64 id = 1; // @gotags: alias:"arpanet_user_activity.id"
   USER_ACTIVITY_TYPE type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"arpanet_user_activity.type"
   resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"arpanet_user_activity.created_at"
   UserShort source_user = 4; // @gotags: alias:"source_user"

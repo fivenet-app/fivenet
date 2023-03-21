@@ -134,14 +134,14 @@ type UserMarker struct {
 	X         float32              `protobuf:"fixed32,1,opt,name=x,proto3" json:"x,omitempty" alias:"x"`                                // @gotags: alias:"x"
 	Y         float32              `protobuf:"fixed32,2,opt,name=y,proto3" json:"y,omitempty" alias:"y"`                                // @gotags: alias:"y"
 	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"` // @gotags: alias:"updated_at"
-	Id        int32                `protobuf:"varint,4,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"user_id"`                               // @gotags: sql:"primary_key" alias:"user_id"
+	Id        int32                `protobuf:"varint,4,opt,name=id,proto3" json:"id,omitempty" alias:"user_id"`                               // @gotags: alias:"user_id"
 	Name      string               `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
 	Icon      string               `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
 	Popup     string               `protobuf:"bytes,7,opt,name=popup,proto3" json:"popup,omitempty"`
 	Link      string               `protobuf:"bytes,8,opt,name=link,proto3" json:"link,omitempty"`
 	Job       string               `protobuf:"bytes,9,opt,name=job,proto3" json:"job,omitempty" alias:"job"` // @gotags: alias:"job"
 	JobLabel  string               `protobuf:"bytes,10,opt,name=jobLabel,proto3" json:"jobLabel,omitempty"`
-	User      *users.UserShort     `protobuf:"bytes,11,opt,name=user,proto3" json:"user,omitempty" sql:"primary_key" alias:"user"` // @gotags: sql:"primary_key" alias:"user"
+	User      *users.UserShort     `protobuf:"bytes,11,opt,name=user,proto3" json:"user,omitempty" alias:"user"` // @gotags: alias:"user"
 }
 
 func (x *UserMarker) Reset() {

@@ -27,7 +27,7 @@ type Notification struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"arpanet_notifications.id"`                               // @gotags: sql:"primary_key" alias:"arpanet_notifications.id"
+	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"arpanet_notifications.id"`                               // @gotags: alias:"arpanet_notifications.id"
 	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"arpanet_notifications.created_at"` // @gotags: alias:"arpanet_notifications.created_at"
 	ReadAt    *timestamp.Timestamp `protobuf:"bytes,3,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty" alias:"arpanet_notifications.read_at"`          // @gotags: alias:"arpanet_notifications.read_at"
 	UserId    int32                `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"arpanet_notifications.user_id"`         // @gotags: alias:"arpanet_notifications.user_id"

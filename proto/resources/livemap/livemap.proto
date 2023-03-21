@@ -22,7 +22,7 @@ message UserMarker {
   float x = 1; // @gotags: alias:"x"
   float y = 2; // @gotags: alias:"y"
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  int32 id = 4 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key" alias:"user_id"
+  int32 id = 4 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
   string name = 5;
   string icon = 6;
   string popup = 7;
@@ -30,5 +30,5 @@ message UserMarker {
 
   string job = 9 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   string jobLabel = 10;
-  resources.users.UserShort user = 11; // @gotags: sql:"primary_key" alias:"user"
+  resources.users.UserShort user = 11; // @gotags: alias:"user"
 }

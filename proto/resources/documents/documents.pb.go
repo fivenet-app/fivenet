@@ -233,7 +233,7 @@ type DocumentCategory struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                        // @gotags: sql:"primary_key" alias:"id"
+	Id          uint64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                        // @gotags: alias:"id"
 	Name        string  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" alias:"name"`                     // @gotags: alias:"name"
 	Description *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty" alias:"description"` // @gotags: alias:"description"
 	Job         string  `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                       // @gotags: alias:"job"
@@ -304,7 +304,7 @@ type DocumentTemplate struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id             uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                                               // @gotags: sql:"primary_key" alias:"id"
+	Id             uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                               // @gotags: alias:"id"
 	CreatedAt      *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`                 // @gotags: alias:"created_at"
 	UpdatedAt      *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"`                 // @gotags: alias:"updated_at"
 	Job            string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                              // @gotags: alias:"job"
@@ -447,7 +447,7 @@ type DocumentTemplateShort struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                                // @gotags: sql:"primary_key" alias:"id"
+	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                // @gotags: alias:"id"
 	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`  // @gotags: alias:"created_at"
 	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"`  // @gotags: alias:"updated_at"
 	Job         string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                               // @gotags: alias:"job"
@@ -637,7 +637,7 @@ type Document struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id           uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                                                                                // @gotags: sql:"primary_key" alias:"id"
+	Id           uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                                                                // @gotags: alias:"id"
 	CreatedAt    *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`                                                  // @gotags: alias:"created_at"
 	UpdatedAt    *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"`                                                  // @gotags: alias:"updated_at"
 	Category     *DocumentCategory    `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`                                                                     // @gotags: alias:"category"
@@ -788,7 +788,7 @@ type DocumentShort struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                                // @gotags: sql:"primary_key" alias:"id"
+	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                // @gotags: alias:"id"
 	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`  // @gotags: alias:"created_at"
 	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"`  // @gotags: alias:"updated_at"
 	Category  *DocumentCategory    `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`                     // @gotags: alias:"category"
@@ -954,7 +954,7 @@ type DocumentJobAccess struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                                             // @gotags: sql:"primary_key" alias:"id"
+	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                             // @gotags: alias:"id"
 	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`         // @gotags: alias:"created_at"
 	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty" alias:"updated_at"`         // @gotags: alias:"updated_at"
 	DocumentId    uint64               `protobuf:"varint,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"document_id"`           // @gotags: alias:"document_id"
@@ -1081,7 +1081,7 @@ type DocumentUserAccess struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                                     // @gotags: sql:"primary_key" alias:"id"
+	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                     // @gotags: alias:"id"
 	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"` // @gotags: alias:"created_at"
 	UpdatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty" alias:"updated_at"` // @gotags: alias:"updated_at"
 	DocumentId uint64               `protobuf:"varint,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"document_id"`   // @gotags: alias:"document_id"
@@ -1192,7 +1192,7 @@ type DocumentReference struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id               uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                                                           // @gotags: sql:"primary_key" alias:"id"
+	Id               uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                                           // @gotags: alias:"id"
 	CreatedAt        *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`                             // @gotags: alias:"created_at"
 	SourceDocumentId uint64               `protobuf:"varint,3,opt,name=source_document_id,json=sourceDocumentId,proto3" json:"source_document_id,omitempty" alias:"source_document_id"`     // @gotags: alias:"source_document_id"
 	SourceDocument   *DocumentShort       `protobuf:"bytes,4,opt,name=source_document,json=sourceDocument,proto3" json:"source_document,omitempty" alias:"source_document"`              // @gotags: alias:"source_document"
@@ -1295,7 +1295,7 @@ type DocumentRelation struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id           uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                                                        // @gotags: sql:"primary_key" alias:"id"
+	Id           uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                                        // @gotags: alias:"id"
 	CreatedAt    *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`                          // @gotags: alias:"created_at"
 	DocumentId   uint64               `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"document_id"`                      // @gotags: alias:"document_id"
 	Document     *DocumentShort       `protobuf:"bytes,4,opt,name=document,proto3" json:"document,omitempty" alias:"document"`                                             // @gotags: alias:"document"

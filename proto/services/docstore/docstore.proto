@@ -124,11 +124,11 @@ message CreateDocumentRequest {
 }
 
 message CreateDocumentResponse {
-  uint64 document_id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 document_id = 1; // @gotags: alias:"id"
 }
 
 message UpdateDocumentRequest {
-  uint64 document_id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 document_id = 1; // @gotags: alias:"id"
   optional uint64 category_id = 2; // @gotags: alias:"category_id"
   optional string title = 3 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   optional string content = 4 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
@@ -142,7 +142,7 @@ message UpdateDocumentRequest {
 }
 
 message UpdateDocumentResponse {
-  uint64 document_id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 document_id = 1; // @gotags: alias:"id"
 }
 
 message GetDocumentAccessRequest {

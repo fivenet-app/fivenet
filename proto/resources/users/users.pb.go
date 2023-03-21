@@ -76,7 +76,7 @@ type UserShort struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId        int32  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" sql:"primary_key" alias:"id"`                       // @gotags: sql:"primary_key" alias:"id"
+	UserId        int32  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`                       // @gotags: alias:"id"
 	Identifier    string `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty" alias:"identifier"`                              // @gotags: alias:"identifier"
 	Job           string `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                            // @gotags: alias:"job"
 	JobLabel      string `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty" alias:"job_label"`                  // @gotags: alias:"job_label"
@@ -282,7 +282,7 @@ type User struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId        int32      `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" sql:"primary_key" alias:"id"`                       // @gotags: sql:"primary_key" alias:"id"
+	UserId        int32      `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`                       // @gotags: alias:"id"
 	Identifier    string     `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty" alias:"identifier"`                              // @gotags: alias:"identifier"
 	Job           string     `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                            // @gotags: alias:"job"
 	JobLabel      string     `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty" alias:"job_label"`                  // @gotags: alias:"job_label"
@@ -449,7 +449,7 @@ type License struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty" sql:"primary_key" alias:"type"` // @gotags: sql:"primary_key" alias:"type"
+	Type string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty" alias:"type"` // @gotags: alias:"type"
 }
 
 func (x *License) Reset() {
@@ -496,7 +496,7 @@ type UserProps struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId int32 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" sql:"primary_key" alias:"user_id"` // @gotags: sql:"primary_key" alias:"user_id"
+	UserId int32 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id"` // @gotags: alias:"user_id"
 	Wanted bool  `protobuf:"varint,2,opt,name=wanted,proto3" json:"wanted,omitempty" alias:"wanted"`               // @gotags: alias:"wanted"
 }
 
@@ -551,7 +551,7 @@ type UserActivity struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"arpanet_user_activity.id"`                                             // @gotags: sql:"primary_key" alias:"arpanet_user_activity.id"
+	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"arpanet_user_activity.id"`                                             // @gotags: alias:"arpanet_user_activity.id"
 	Type       USER_ACTIVITY_TYPE   `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.USER_ACTIVITY_TYPE" json:"type,omitempty" alias:"arpanet_user_activity.type"` // @gotags: alias:"arpanet_user_activity.type"
 	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"arpanet_user_activity.created_at"`               // @gotags: alias:"arpanet_user_activity.created_at"
 	SourceUser *UserShort           `protobuf:"bytes,4,opt,name=source_user,json=sourceUser,proto3" json:"source_user,omitempty" alias:"source_user"`            // @gotags: alias:"source_user"

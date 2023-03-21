@@ -111,7 +111,9 @@ func (c *Completor) refreshJobsCache() error {
 			jg.Grade,
 			jg.Label,
 		).FROM(
-		j.LEFT_JOIN(jg, jg.JobName.EQ(j.Name)),
+		j.LEFT_JOIN(jg,
+			jg.JobName.EQ(j.Name),
+		),
 	).
 		ORDER_BY(
 			j.Name.ASC(),
@@ -137,7 +139,7 @@ func (c *Completor) ResolveJob(usr common.IJobInfo) {
 
 		jg := usr.GetJobGrade() - 1
 
-		if len(job.Grades)+1 > int(jg) {
+		if len(job.Grades) >= int(jg) {
 			usr.SetJobGradeLabel(job.Grades[jg].Label)
 		} else {
 			jg := strconv.Itoa(int(usr.GetJobGrade()))

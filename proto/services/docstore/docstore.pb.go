@@ -1444,7 +1444,7 @@ type CreateDocumentResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DocumentId uint64 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
+	DocumentId uint64 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"` // @gotags: alias:"id"
 }
 
 func (x *CreateDocumentResponse) Reset() {
@@ -1491,7 +1491,7 @@ type UpdateDocumentRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DocumentId  uint64                      `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" sql:"primary_key" alias:"id"`                                                    // @gotags: sql:"primary_key" alias:"id"
+	DocumentId  uint64                      `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`                                                    // @gotags: alias:"id"
 	CategoryId  *uint64                     `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"`                                              // @gotags: alias:"category_id"
 	Title       *string                     `protobuf:"bytes,3,opt,name=title,proto3,oneof" json:"title,omitempty" alias:"title"`                                                                           // @gotags: alias:"title"
 	Content     *string                     `protobuf:"bytes,4,opt,name=content,proto3,oneof" json:"content,omitempty" alias:"content"`                                                                       // @gotags: alias:"content"
@@ -1610,7 +1610,7 @@ type UpdateDocumentResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DocumentId uint64 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
+	DocumentId uint64 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"` // @gotags: alias:"id"
 }
 
 func (x *UpdateDocumentResponse) Reset() {
