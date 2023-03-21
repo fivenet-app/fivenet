@@ -155,7 +155,7 @@ onMounted(() => {
                                     </p>
                                 </div>
                                 <div class="mt-4 flex space-x-3 md:mt-0">
-                                    <router-link :to="{ name: 'Documents: Info', params: { id: document?.getId() ?? 0 } }"
+                                    <router-link :to="{ name: 'Documents: Edit', params: { id: document?.getId() ?? 0 } }"
                                         type="button"
                                         class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                                         <PencilIcon class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />

@@ -17,6 +17,7 @@ require (
 	github.com/gosimple/slug v1.13.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
+	github.com/jmoiron/sqlx v1.3.1
 	github.com/microcosm-cc/bluemonday v1.0.23
 	github.com/ory/dockertest/v3 v3.9.1
 	github.com/prometheus/client_golang v1.14.0

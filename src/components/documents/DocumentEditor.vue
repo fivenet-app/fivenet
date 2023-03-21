@@ -188,14 +188,6 @@ function submitForm(): void {
     });
     req.setAccess(reqAccess);
 
-    // const access = new DocumentAccess();
-    // const jobsAccessList = new Array<DocumentJobAccess>();
-    // const jobAccess = new DocumentJobAccess();
-    // jobAccess.setAccess(DOC_ACCESS.VIEW);
-    // jobAccess.setJob(activeChar.getJob());
-    // jobsAccessList.push(jobAccess);
-    // access.setJobsList(jobsAccessList);
-
     getDocStoreClient().
         createDocument(req, null).
         then((resp) => {
@@ -242,14 +234,6 @@ function editForm(): void {
         }
     });
     req.setAccess(reqAccess);
-
-    // const access = new DocumentAccess();
-    // const jobsAccessList = new Array<DocumentJobAccess>();
-    // const jobAccess = new DocumentJobAccess();
-    // jobAccess.setAccess(DOC_ACCESS.VIEW);
-    // jobAccess.setJob(activeChar.getJob());
-    // jobsAccessList.push(jobAccess);
-    // access.setJobsList(jobsAccessList);
 
     getDocStoreClient().
         updateDocument(req, null).

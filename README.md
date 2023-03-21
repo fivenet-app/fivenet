@@ -31,8 +31,9 @@
         - [x] ~~Sub-categories~~  - One level of categories that is sorted by names
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
     - [ ] Functionality
-        - [ ] Create Documents
+        - [x] Create Documents with access
         - [ ] Edit Documents
+            - [x] With access modifications
             - [ ] Set/ Update document category
             - [ ] Set Access for Jobs and Users
         - [ ] View Document Comments

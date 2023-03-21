@@ -1,0 +1,27 @@
+<script setup lang="ts">
+import NavPageHeader from '../../../components/partials/NavPageHeader.vue';
+import ContentWrapper from '../../../components/partials/ContentWrapper.vue';
+import DocumentEditor from '../../../components/documents/DocumentEditor.vue';
+import Footer from '../../../components/partials/Footer.vue';
+import { useRoute } from 'vue-router/auto';
+
+const route = useRoute<'Documents: Edit'>();
+</script>
+
+<route lang="json">
+{
+    "name": "Documents: Edit",
+    "meta": {
+        "requiresAuth": true,
+        "permission": "DocStoreService.CreateDocument"
+    }
+}
+</route>
+
+<template>
+    <NavPageHeader title="" />
+    <ContentWrapper>
+        <DocumentEditor :id="parseInt(route.params.id)" />
+    </ContentWrapper>
+    <Footer />
+</template>
