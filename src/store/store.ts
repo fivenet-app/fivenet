@@ -14,6 +14,12 @@ const vuexPersist = new VuexPersistence<RootState>({
     key: 'arpanet',
     storage: window.localStorage,
     modules: ['auth'],
+    reducer: (state) => ({
+        auth: {
+            accessToken: state.auth?.accessToken,
+            lastCharID: state.auth?.lastCharID,
+        },
+    }),
 });
 
 export const key: InjectionKey<Store<RootState>> = Symbol();

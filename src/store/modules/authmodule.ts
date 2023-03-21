@@ -2,7 +2,7 @@ import { RpcError } from 'grpc-web';
 import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
 import { LoginRequest, LogoutRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { getAuthClient } from '../../grpc';
+import { getAuthClient } from '../../grpc/grpc';
 import config from '../../config';
 import { dispatchNotification } from '../../components/notification';
 import { RootState } from '../store';

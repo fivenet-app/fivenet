@@ -1,5 +1,4 @@
-import { _RouteLocationBase } from 'vue-router/auto';
-import config from './config';
+import config from '../config';
 import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
 import { CitizenStoreServiceClient } from '@arpanet/gen/services/citizenstore/CitizenstoreServiceClientPb';
 import { CompletorServiceClient } from '@arpanet/gen/services/completor/CompletorServiceClientPb';
@@ -8,7 +7,7 @@ import { DocStoreServiceClient } from '@arpanet/gen/services/docstore/DocstoreSe
 import { JobsServiceClient } from '@arpanet/gen/services/jobs/JobsServiceClientPb';
 import { LivemapperServiceClient } from '@arpanet/gen/services/livemapper/LivemapServiceClientPb';
 import { DMVServiceClient } from '@arpanet/gen/services/dmv/VehiclesServiceClientPb';
-import { AuthInterceptor, StreamErrorHandlerInterceptor, UnaryErrorHandlerInterceptor } from './grpc/interceptors';
+import { AuthInterceptor, StreamErrorHandlerInterceptor, UnaryErrorHandlerInterceptor } from './interceptors';
 
 const authInterceptor = new AuthInterceptor();
 
