@@ -73,12 +73,13 @@ function findJobs(): void {
 
     getCompletorClient().completeJobNames(req, null).then((resp) => {
         entriesJobs = resp.getJobsList();
+        console.log("🚀 ~ file: AccessEntry.vue:76 ~ getCompletorClient ~ entriesJobs:", entriesJobs)
     });
 }
 
 function findChars(): void {
     const req = new CompleteCharNamesRequest();
-    req.setSearch(queryJob.value);
+    req.setSearch(queryChar.value);
 
     getCompletorClient().completeCharNames(req, null).then((resp) => {
         entriesChars = resp.getUsersList();
@@ -101,8 +102,11 @@ watch(selectedAccessType, () => {
     selectedMinimumRank.value = undefined;
 
     if (selectedAccessType.value.id === 0) {
+        queryChar.value = '';
         findChars();
     } else {
+        queryJob.value = '';
+        queryMinimumRank.value = '';
         findJobs();
     }
 });

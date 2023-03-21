@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, Component, onBeforeMount } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient } from '../../grpc/grpc';
@@ -29,7 +29,7 @@ const comments = ref<Array<Document>>([])
 const activeResponse = ref<undefined | Document>(undefined)
 const feedReferences = ref<Array<DocumentReference>>([])
 const feedRelations = ref<Array<DocumentRelation>>([])
-const tabs = ref<{ name: string, href: string, icon: Component }[]>([
+const tabs = ref<{ name: string, href: string, icon: typeof LockOpenIcon }[]>([
     { name: 'References', href: '#', icon: DocumentMagnifyingGlassIcon },
     { name: 'Relations', href: '#', icon: UserIcon },
 ]);
