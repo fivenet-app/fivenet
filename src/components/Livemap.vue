@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, onUnmounted } from 'vue';
-import { getLivemapperClient, handleGRPCError } from '../grpc';
-import { ClientReadableStream, RpcError } from 'grpc-web';
+import { getLivemapperClient } from '../grpc/grpc';
+import { ClientReadableStream } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
@@ -71,9 +71,6 @@ function start() {
         .on('data', function (resp) {
             map?.parseMarkerlist(MarkerType.dispatch, resp.getDispatchesList());
             map?.parseMarkerlist(MarkerType.player, resp.getUsersList());
-        })
-        .on('error', (err: RpcError) => {
-            handleGRPCError(err);
         })
         .on('end', function () {
             console.log('livemap data stream ended');

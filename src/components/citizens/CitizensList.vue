@@ -3,8 +3,7 @@ import { ref, onMounted } from 'vue';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
-import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
-import { RpcError } from 'grpc-web';
+import { getCitizenStoreClient } from '../../grpc/grpc';
 import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
@@ -34,9 +33,6 @@ function findUsers(pos: number) {
             offset.value = resp.getOffset();
             listEnd.value = resp.getEnd();
             users.value = resp.getUsersList();
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 

@@ -2,9 +2,8 @@
 import { computed } from 'vue';
 import { useStore } from '../../store/store';
 import { useRoute, useRouter } from 'vue-router/auto';
-import { getAuthClient, handleGRPCError } from '../../grpc';
+import { getAuthClient } from '../../grpc/grpc';
 import { ChooseCharacterRequest } from '@arpanet/gen/services/auth/auth_pb';
-import { RpcError } from 'grpc-web';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { parseQuery } from 'vue-router/auto';
 import CharSexBadge from '../misc/CharSexBadge.vue';
@@ -33,12 +32,10 @@ function chooseCharacter() {
             store.dispatch('auth/updateAccessToken', resp.getToken());
             store.dispatch('auth/updateActiveChar', props.char);
             store.dispatch('auth/updatePermissions', resp.getPermissionsList());
-            console.log(resp.getPermissionsList());
+            console.log("Char Permissions: " + resp.getPermissionsList());
             const path = route.query.redirect?.toString() || "/overview";
             const url = new URL("https://example.com" + path);
             router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
-        }).catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 </script>

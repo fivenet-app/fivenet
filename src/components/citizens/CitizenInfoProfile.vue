@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { User, UserProps } from '@arpanet/gen/resources/users/users_pb';
-import { RpcError } from 'grpc-web';
-import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
+import { getCitizenStoreClient } from '../../grpc/grpc';
 import { SetUserPropsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { getSecondsFormattedAsDuration } from '../../utils/time';
 import { dispatchNotification } from '../notification';
@@ -52,9 +51,6 @@ function toggleWantedStatus() {
         setUserProps(req, null)
         .then((resp) => {
             dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 </script>

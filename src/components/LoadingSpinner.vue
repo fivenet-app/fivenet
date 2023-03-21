@@ -25,7 +25,6 @@ function showLoader(): ActiveLoader {
 }
 
 watch(loadingState, (newState) => {
-    console.log("LOADING STATE: " + newState);
     if (newState) {
         loader = showLoader();
     } else {

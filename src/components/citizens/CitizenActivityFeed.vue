@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, onBeforeMount } from 'vue';
 import { UserCircleIcon } from '@heroicons/vue/20/solid'
-import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
-import { RpcError } from 'grpc-web';
+import { getCitizenStoreClient } from '../../grpc/grpc';
 import { GetUserActivityRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@arpanet/gen/resources/users/users_pb';
 
@@ -23,8 +22,6 @@ function getUserActivity() {
     getCitizenStoreClient().
         getUserActivity(req, null).then((resp) => {
             activities.value = resp.getActivityList();
-        }).catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 

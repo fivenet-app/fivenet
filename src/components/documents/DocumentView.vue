@@ -2,8 +2,7 @@
 import { ref, Component, onBeforeMount } from 'vue';
 import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
-import { getDocStoreClient, handleGRPCError } from '../../grpc';
-import { RpcError } from 'grpc-web';
+import { getDocStoreClient } from '../../grpc/grpc';
 import { getDateLocaleString, getDate } from '../../utils/time';
 import { DOC_ACCESS_Util, DOC_REFERENCE_TYPE_Util, DOC_RELATION_TYPE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import {
@@ -51,9 +50,6 @@ function getDocument(): void {
         then((resp) => {
             document.value = resp.getDocument();
             access.value = resp.getAccess();
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 
     // Document References
@@ -61,18 +57,12 @@ function getDocument(): void {
         getDocumentReferences(req, null).
         then((resp) => {
             feedReferences.value = resp.getReferencesList();
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
     // Document Relations
     getDocStoreClient().
         getDocumentRelations(req, null).
         then((resp) => {
             feedRelations.value = resp.getRelationsList();
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 
@@ -88,9 +78,6 @@ function editDocumentTest() {
     getDocStoreClient().
         updateDocument(req, null).then((resp) => {
             console.log(resp);
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 
@@ -101,8 +88,6 @@ function removeDocRefTest() {
     getDocStoreClient().
         removeDcoumentReference(req, null).then((resp) => {
             console.log(typeof resp);
-        }).catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 

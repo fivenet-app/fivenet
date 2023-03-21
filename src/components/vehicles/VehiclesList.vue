@@ -3,8 +3,7 @@ import { ref, onMounted } from 'vue';
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
-import { getDMVClient, handleGRPCError } from '../../grpc';
-import { RpcError } from 'grpc-web';
+import { getDMVClient } from '../../grpc/grpc';
 import { FindVehiclesRequest } from '@arpanet/gen/services/dmv/vehicles_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import VehiclesListEntry from './VehiclesListEntry.vue';
@@ -48,9 +47,6 @@ function findVehicles(pos: number) {
             offset.value = resp.getOffset();
             listEnd.value = resp.getEnd();
             vehicles.value = resp.getVehiclesList();
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 

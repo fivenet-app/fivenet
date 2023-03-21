@@ -1,9 +1,5 @@
-import { store } from './store/store';
-import { RpcError, StatusCode } from 'grpc-web';
 import { _RouteLocationBase } from 'vue-router/auto';
-import { router } from './router';
 import config from './config';
-import { dispatchNotification } from './components/notification';
 import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
 import { CitizenStoreServiceClient } from '@arpanet/gen/services/citizenstore/CitizenstoreServiceClientPb';
 import { CompletorServiceClient } from '@arpanet/gen/services/completor/CompletorServiceClientPb';
@@ -12,12 +8,14 @@ import { DocStoreServiceClient } from '@arpanet/gen/services/docstore/DocstoreSe
 import { JobsServiceClient } from '@arpanet/gen/services/jobs/JobsServiceClientPb';
 import { LivemapperServiceClient } from '@arpanet/gen/services/livemapper/LivemapServiceClientPb';
 import { DMVServiceClient } from '@arpanet/gen/services/dmv/VehiclesServiceClientPb';
-import { authInterceptor, streamErrorHandlerInterceptor, unaryErrorHandlerInterceptor } from './grpc/interceptors';
+import { AuthInterceptor, StreamErrorHandlerInterceptor, UnaryErrorHandlerInterceptor } from './grpc/interceptors';
+
+const authInterceptor = new AuthInterceptor();
 
 // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
 export const grpcClientOptions = {
-    unaryInterceptors: [authInterceptor, unaryErrorHandlerInterceptor],
-    streamInterceptors: [authInterceptor, streamErrorHandlerInterceptor],
+    unaryInterceptors: [authInterceptor, new UnaryErrorHandlerInterceptor()],
+    streamInterceptors: [authInterceptor, new StreamErrorHandlerInterceptor()],
 } as { [index: string]: any };
 
 //@ts-ignore GRPCWeb Devtools only exist when the user has the extension installed
@@ -27,25 +25,6 @@ if (devInterceptors) {
 
     grpcClientOptions.unaryInterceptors.push(devToolsUnaryInterceptor);
     grpcClientOptions.streamInterceptors.push(devToolsStreamInterceptor);
-}
-
-// Handle GRPC errors
-export function handleGRPCError(err: RpcError): boolean {
-    if (err.code == StatusCode.UNAUTHENTICATED) {
-        store.dispatch('auth/doLogout');
-
-        dispatchNotification({ title: 'Please login again!', content: 'You are not signed in anymore', type: 'warning' });
-
-        router.push({ path: '/login', query: { redirect: router.currentRoute.value.fullPath } });
-        return true;
-    } else if (err.code == StatusCode.PERMISSION_DENIED) {
-        dispatchNotification({ title: 'Error!', content: err.message, type: 'error' });
-        return true;
-    } else {
-        dispatchNotification({ title: 'Unknown error occured!', content: err.message, type: 'error' });
-    }
-
-    return false;
 }
 
 // GRPC Clients ===============================================================

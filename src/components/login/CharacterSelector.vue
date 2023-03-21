@@ -4,8 +4,7 @@ import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 import { GetCharactersRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { getAuthClient, handleGRPCError } from '../../grpc';
-import { RpcError } from 'grpc-web';
+import { getAuthClient } from '../../grpc/grpc';
 import { useStore } from '../../store/store';
 
 const store = useStore();
@@ -17,8 +16,6 @@ async function fetchCharacters() {
         getCharacters(new GetCharactersRequest(), null).
         then((resp) => {
             chars.value = resp.getCharsList();
-        }).catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 

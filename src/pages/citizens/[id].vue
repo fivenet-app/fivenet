@@ -5,8 +5,7 @@ import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { RpcError } from 'grpc-web';
-import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
+import { getCitizenStoreClient } from '../../grpc/grpc';
 import { ref, Ref, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router/auto';
 
@@ -22,9 +21,6 @@ onBeforeMount(() => {
         .getUser(req, null)
         .then((resp) => {
             user.value = resp.getUser();
-        })
-        .catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 });
 </script>

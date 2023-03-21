@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { DocumentTemplate, DocumentTemplateShort } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetTemplateRequest, ListTemplatesRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { RpcError } from 'grpc-web';
 import { ref, onBeforeMount } from 'vue';
-import { getDocStoreClient, handleGRPCError } from '../../grpc';
+import { getDocStoreClient } from '../../grpc/grpc';
 
 const templates = ref<Array<DocumentTemplateShort>>([]);
 const templateObj = ref<undefined | DocumentTemplate>(undefined);
@@ -14,9 +13,6 @@ function findTemplates(): void {
     getDocStoreClient().
         listTemplates(req, null).then((resp) => {
             templates.value = resp.getTemplatesList();
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 function getTemplate(id: number): void {
@@ -26,9 +22,6 @@ function getTemplate(id: number): void {
     getDocStoreClient().
         getTemplate(req, null).then((resp) => {
             templateObj.value = resp.getTemplate();
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 

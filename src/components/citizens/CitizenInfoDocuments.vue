@@ -2,8 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetUserDocumentsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
-import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
-import { RpcError } from 'grpc-web';
+import { getCitizenStoreClient } from '../../grpc/grpc';
 
 const relations = ref<Array<DocumentRelation>>([]);
 
@@ -24,9 +23,6 @@ function getUserDocuments(offset: number) {
         then((resp) => {
             resp.getRelationsList
             relations.value = resp.getRelationsList();
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 

@@ -3,10 +3,9 @@ import { computed, onMounted, ref } from 'vue';
 import { useStore } from '../../store/store';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { getCompletorClient, getDocStoreClient, handleGRPCError } from '../../grpc';
+import { getCompletorClient, getDocStoreClient } from '../../grpc/grpc';
 import { CreateDocumentRequest, GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentCategory, DocumentJobAccess, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
-import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
 import AccessEntry from '../partials/AccessEntry.vue';
 import {
@@ -14,7 +13,7 @@ import {
     ChevronDownIcon,
     CheckIcon,
 } from '@heroicons/vue/20/solid';
-import { useRouter, useRoute } from 'vue-router/auto';
+import { useRouter } from 'vue-router/auto';
 import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import {
@@ -33,7 +32,6 @@ import { watchDebounced } from '@vueuse/core';
 
 const store = useStore();
 const router = useRouter();
-const route = useRoute();
 
 const props = defineProps({
     id: {
@@ -72,11 +70,11 @@ function findCategories(): void {
     const req = new CompleteDocumentCategoryRequest();
     req.setSearch(queryCategory.value);
 
-    getCompletorClient().completeDocumentCategory(req, null).then((resp) => {
-        entriesCategory = resp.getCategoriesList();
-    }).catch((err: RpcError) => {
-        handleGRPCError(err);
-    })
+    getCompletorClient().
+        completeDocumentCategory(req, null).
+        then((resp) => {
+            entriesCategory = resp.getCategoriesList();
+        });
 }
 
 function addAccessEntry(): void {
@@ -199,9 +197,6 @@ function submitForm(): void {
         then((resp) => {
             dispatchNotification({ title: "Document created!", content: "Document has been created." });
             router.push('/documents/' + resp.getDocumentId());
-        }).catch((err: RpcError) => {
-            console.log(err);
-            handleGRPCError(err);
         });
 }
 
@@ -255,9 +250,6 @@ function editForm(): void {
         updateDocument(req, null).
         then((resp) => {
             dispatchNotification({ title: "Document updated!", content: "Document has been updated." });
-        }).catch((err: RpcError) => {
-            console.log(err);
-            handleGRPCError(err);
         });
 }
 
@@ -291,10 +283,7 @@ if (props.id) {
                 accessId++;
             });
         }
-    }).catch((err: RpcError) => {
-        console.log(err);
-        handleGRPCError(err);
-    })
+    });
 }
 </script>
 
@@ -319,32 +308,33 @@ if (props.id) {
         <div class="flex-1">
             <!-- Category -->
             <Combobox as="div" v-model="selectedCategory">
-                    <div class="relative">
-                        <ComboboxButton as="div">
-                            <ComboboxInput
-                                class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                @change="queryCategory = $event.target.value" :display-value="(category: any) => category?.getName()" />
-                        </ComboboxButton>
+                <div class="relative">
+                    <ComboboxButton as="div">
+                        <ComboboxInput
+                            class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            @change="queryCategory = $event.target.value"
+                            :display-value="(category: any) => category?.getName()" />
+                    </ComboboxButton>
 
-                        <ComboboxOptions v-if="entriesCategory.length > 0"
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            <ComboboxOption v-for="category in entriesCategory" :key="category.getId()" :value="category" as="category"
-                                v-slot="{ active, selected }">
-                                <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
-                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ category.getName() }}
-                                    </span>
+                    <ComboboxOptions v-if="entriesCategory.length > 0"
+                        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                        <ComboboxOption v-for="category in entriesCategory" :key="category.getId()" :value="category"
+                            as="category" v-slot="{ active, selected }">
+                            <li
+                                :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                <span :class="['block truncate', selected && 'font-semibold']">
+                                    {{ category.getName() }}
+                                </span>
 
-                                    <span v-if="selected"
-                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
-                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                    </span>
-                                </li>
-                            </ComboboxOption>
-                        </ComboboxOptions>
-                    </div>
-                </Combobox>
+                                <span v-if="selected"
+                                    :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                </span>
+                            </li>
+                        </ComboboxOption>
+                    </ComboboxOptions>
+                </div>
+            </Combobox>
         </div>
         <div class="flex-1">
             <!-- State -->
@@ -365,8 +355,8 @@ if (props.id) {
                         leave-to-class="opacity-0">
                         <ListboxOptions
                             class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            <ListboxOption as="template" v-for="type in openclose" :key="type.id"
-                                :value="type" v-slot="{ active, selected }">
+                            <ListboxOption as="template" v-for="type in openclose" :key="type.id" :value="type"
+                                v-slot="{ active, selected }">
                                 <li
                                     :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
                                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
@@ -390,12 +380,9 @@ if (props.id) {
     </div>
     <div class="my-3">
         <h2 class="text-neutral">Access</h2>
-        <AccessEntry v-for="entry in access.values()" :key="entry.id"
-            :init="entry"
-            @typeChange="$event => updateAccessEntryType($event)"
-            @nameChange="$event => updateAccessEntryName($event)"
-            @rankChange="$event => updateAccessEntryRank($event)"
-            @accessChange="$event => updateAccessEntryAccess($event)"
+        <AccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry"
+            @typeChange="$event => updateAccessEntryType($event)" @nameChange="$event => updateAccessEntryName($event)"
+            @rankChange="$event => updateAccessEntryRank($event)" @accessChange="$event => updateAccessEntryAccess($event)"
             @deleteRequest="$event => removeAccessEntry($event)" />
         <button type="button"
             class="rounded-full bg-indigo-600 p-2 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

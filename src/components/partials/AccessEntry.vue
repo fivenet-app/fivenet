@@ -18,8 +18,7 @@ import {
 } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/core';
 import { CompleteCharNamesRequest, CompleteJobNamesRequest } from '@arpanet/gen/services/completor/completor_pb';
-import { getCompletorClient, handleGRPCError } from '../../grpc';
-import { RpcError } from 'grpc-web';
+import { getCompletorClient } from '../../grpc/grpc';
 import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
@@ -74,9 +73,7 @@ function findJobs(): void {
 
     getCompletorClient().completeJobNames(req, null).then((resp) => {
         entriesJobs = resp.getJobsList();
-    }).catch((err: RpcError) => {
-        handleGRPCError(err);
-    })
+    });
 }
 
 function findChars(): void {
@@ -85,9 +82,7 @@ function findChars(): void {
 
     getCompletorClient().completeCharNames(req, null).then((resp) => {
         entriesChars = resp.getUsersList();
-    }).catch((err: RpcError) => {
-        handleGRPCError(err);
-    })
+    });
 }
 
 onMounted(() => {

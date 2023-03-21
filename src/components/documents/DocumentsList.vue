@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, onBeforeMount } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
-import { getDocStoreClient, handleGRPCError } from '../../grpc';
+import { getDocStoreClient } from '../../grpc/grpc';
 import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
-import { RpcError } from 'grpc-web';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
@@ -32,9 +31,6 @@ function findDocuments(pos: number) {
             offset.value = resp.getOffset();
             listEnd.value = resp.getEnd();
             documents.value = resp.getDocumentsList();
-        }).
-        catch((err: RpcError) => {
-            handleGRPCError(err);
         });
 }
 
