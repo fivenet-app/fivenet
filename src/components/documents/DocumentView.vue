@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onBeforeMount } from 'vue';
+import { ref, onMounted } from 'vue';
 import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient } from '../../grpc/grpc';
@@ -48,6 +48,7 @@ function getDocument(): void {
     getDocStoreClient().
         getDocument(req, null).
         then((resp) => {
+    console.log(1)
             document.value = resp.getDocument();
             access.value = resp.getAccess();
         });
@@ -58,6 +59,7 @@ function getDocument(): void {
         then((resp) => {
             feedReferences.value = resp.getReferencesList();
         });
+
     // Document Relations
     getDocStoreClient().
         getDocumentRelations(req, null).
@@ -91,7 +93,7 @@ function removeDocRefTest() {
         });
 }
 
-onBeforeMount(() => {
+onMounted(() => {
     getDocument();
 });
 </script>

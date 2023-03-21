@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router/auto';
-import { ref, onBeforeUnmount } from 'vue';
+import { ref, onMounted } from 'vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import DocumentView from '../../components/documents/DocumentView.vue';
@@ -9,9 +9,8 @@ import Footer from '../../components/partials/Footer.vue';
 const route = useRoute();
 const documentID = ref(0);
 
-onBeforeUnmount(() => {
-    //@ts-ignore it is defined but the router gen isn't correctly typping it
-    documentID.value = +route.params.id;
+onMounted(() => {
+    documentID.value = parseInt(route.params.id);
 });
 </script>
 
