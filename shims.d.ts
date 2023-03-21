@@ -14,23 +14,3 @@ declare module 'vue-router/auto' {
         href?: RouteNamedMap;
     }
 }
-
-// Manual extension of route types
-declare module 'vue-router/auto/routes' {
-    import type { RouteRecordInfo, ParamValue } from 'unplugin-vue-router';
-
-    export interface RouteNamedMap {
-        'Citizens: Info': RouteRecordInfo<
-            'Citizens: Info',
-            '/citizens/:id',
-            { id: ParamValue<true> },
-            { id: ParamValue<false> }
-        >;
-        'Documents: Info': RouteRecordInfo<
-            'Documents: Info',
-            '/documents/:id',
-            { id: ParamValue<true> },
-            { id: ParamValue<false> }
-        >;
-    }
-}

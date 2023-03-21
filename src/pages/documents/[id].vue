@@ -6,7 +6,7 @@ import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import DocumentView from '../../components/documents/DocumentView.vue';
 import Footer from '../../components/partials/Footer.vue';
 
-const route = useRoute();
+const route = useRoute<'Documents: Info'>();
 const documentID = ref(0);
 
 onMounted(() => {

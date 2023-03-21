@@ -58,7 +58,7 @@ onBeforeMount(() => {
                             </div>
                             <div class="form-control">
                                 <div class="relative mt-2 flex items-center">
-                                    <router-link to="/documents/create"
+                                    <router-link :to="{ name: 'Documents: Create' }"
                                         class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Create</router-link>
                                 </div>
                             </div>
@@ -69,7 +69,7 @@ onBeforeMount(() => {
             <div class="overflow-hidden bg-white shadow sm:rounded-md mt-3">
                 <ul role="list" class="divide-y divide-gray-200">
                     <li v-for="doc in documents" :key="doc.getId()">
-                        <router-link :to="{ path: '/documents/:id', params: { id: doc.getId() } }"
+                        <router-link :to="{ name: 'Documents: Info', params: { id: doc.getId() } }"
                             class="block hover:bg-gray-50">
                             <div class="px-4 py-4 sm:px-6">
                                 <div class="flex items-center justify-between">

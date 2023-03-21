@@ -73,7 +73,6 @@ function findJobs(): void {
 
     getCompletorClient().completeJobNames(req, null).then((resp) => {
         entriesJobs = resp.getJobsList();
-        console.log("🚀 ~ file: AccessEntry.vue:76 ~ getCompletorClient ~ entriesJobs:", entriesJobs)
     });
 }
 

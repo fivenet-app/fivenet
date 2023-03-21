@@ -14,7 +14,7 @@ const vuexPersist = new VuexPersistence<RootState>({
     key: 'arpanet',
     storage: window.localStorage,
     modules: ['auth'],
-    reducer: (state) => ({
+    reducer: (state: RootState) => ({
         auth: {
             accessToken: state.auth?.accessToken,
             lastCharID: state.auth?.lastCharID,

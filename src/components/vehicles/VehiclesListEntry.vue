@@ -33,7 +33,7 @@ defineProps({
         </td>
         <td class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <div v-can="'CitizenStoreService.FindUsers'">
-                <router-link :to="{ path: '/citizens/:id', params: { id: vehicle.getOwner()?.getUserId() } }"
+                <router-link :to="{ name: 'Citizens: Info', params: { id: vehicle.getOwner()?.getUserId() ?? 0 } }"
                     class="text-indigo-400 hover:text-indigo-300">VIEW OWNER</router-link>
             </div>
         </td>

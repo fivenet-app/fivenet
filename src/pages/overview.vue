@@ -7,7 +7,7 @@ import NavPageHeader from '../components/partials/NavPageHeader.vue';
 
 <route lang="json">
 {
-    "name": "overview",
+    "name": "Overview",
     "meta": {
         "requiresAuth": true,
         "permission": "Overview.View"

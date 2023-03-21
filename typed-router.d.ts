@@ -42,11 +42,11 @@ declare module 'vue-router/auto/routes' {
     'Documents': RouteRecordInfo<'Documents', '/documents', Record<never, never>, Record<never, never>>,
     'Documents: Info': RouteRecordInfo<'Documents: Info', '/documents/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'Documents: Create': RouteRecordInfo<'Documents: Create', '/documents/create', Record<never, never>, Record<never, never>>,
-    'Job': RouteRecordInfo<'Job', '/job', Record<never, never>, Record<never, never>>,
+    'Jobs': RouteRecordInfo<'Jobs', '/jobs', Record<never, never>, Record<never, never>>,
     'Livemap': RouteRecordInfo<'Livemap', '/livemap', Record<never, never>, Record<never, never>>,
     'Login': RouteRecordInfo<'Login', '/login', Record<never, never>, Record<never, never>>,
     'logout': RouteRecordInfo<'logout', '/logout', Record<never, never>, Record<never, never>>,
-    'overview': RouteRecordInfo<'overview', '/overview', Record<never, never>, Record<never, never>>,
+    'Overview': RouteRecordInfo<'Overview', '/overview', Record<never, never>, Record<never, never>>,
     'Vehicles': RouteRecordInfo<'Vehicles', '/vehicles', Record<never, never>, Record<never, never>>,
   }
 }

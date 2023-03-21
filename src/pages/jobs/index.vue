@@ -6,7 +6,7 @@ import Footer from '../../components/partials/Footer.vue';
 
 <route lang="json">
 {
-    "name": "Job",
+    "name": "Jobs",
     "meta": {
         "requiresAuth": true,
         "permission": "Jobs.View"

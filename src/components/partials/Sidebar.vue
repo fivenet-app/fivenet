@@ -1,6 +1,6 @@
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { mapState } from 'vuex';
+<script setup lang="ts">
+import { computed, ref, FunctionalComponent, onMounted } from 'vue';
+import { RouteNamedMap } from 'vue-router/auto/routes';
 import { toTitleCase } from '../../utils/strings';
 import {
     Dialog,
@@ -11,143 +11,120 @@ import {
     MenuItems,
     TransitionChild,
     TransitionRoot,
-} from '@headlessui/vue'
+} from '@headlessui/vue';
 import {
     Bars3BottomLeftIcon,
     XMarkIcon,
     UsersIcon,
     DocumentTextIcon,
-    BellAlertIcon,
     BriefcaseIcon,
     MapIcon,
     HomeIcon,
     Square2StackIcon,
     UserIcon,
     TruckIcon,
-} from '@heroicons/vue/24/outline'
-import { MagnifyingGlassIcon, ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid'
+} from '@heroicons/vue/24/outline';
+import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
+import { useStore } from '../../store/store';
+import { useRoute, useRouter } from 'vue-router/auto';
 
-export default defineComponent({
-    components: {
-        Bars3BottomLeftIcon,
-        XMarkIcon,
-        MagnifyingGlassIcon,
-        UserIcon,
-        ChevronRightIcon,
-        HomeIconSolid,
-        Dialog,
-        DialogPanel,
-        Menu,
-        MenuButton,
-        MenuItem,
-        MenuItems,
-        TransitionChild,
-        TransitionRoot,
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
+
+const accessToken = computed(() => store.state.auth?.accessToken);
+const activeChar = computed(() => store.state.auth?.activeChar);
+
+const sidebarNavigation = [
+    {
+        name: 'Home',
+        href: 'Home',
+        permission: '',
+        icon: HomeIcon,
+        current: false,
     },
-    computed: {
-        ...mapState({
-            accessToken: 'accessToken',
-            activeChar: 'activeChar',
-            lastCharID: 'lastCharID',
-        }),
+    {
+        name: 'Overview',
+        href: 'Overview',
+        permission: 'Overview.View',
+        icon: Square2StackIcon,
+        current: false,
     },
-    data() {
-        return {
-            sidebarNavigation: [
-                {
-                    name: 'Home',
-                    href: '/',
-                    permission: '',
-                    icon: HomeIcon,
-                    current: false,
-                },
-                {
-                    name: 'Overview',
-                    href: '/overview',
-                    permission: 'Overview.View',
-                    icon: Square2StackIcon,
-                    current: false,
-                },
-                {
-                    name: 'Citizens',
-                    href: '/citizens',
-                    permission: 'CitizenStoreService.FindUsers',
-                    icon: UsersIcon,
-                    current: false,
-                },
-                {
-                    name: 'Vehicles',
-                    href: '/vehicles',
-                    permission: 'DMVService.FindVehicles',
-                    icon: TruckIcon,
-                    current: false,
-                },
-                {
-                    name: 'Documents',
-                    href: '/documents',
-                    permission: 'DocStoreService.FindDocuments',
-                    icon: DocumentTextIcon,
-                    current: false,
-                },
-                {
-                    name: 'Dispatches',
-                    href: '/dispatches',
-                    permission: 'Dispatcher.View',
-                    icon: BellAlertIcon,
-                    current: false,
-                },
-                {
-                    name: 'Job',
-                    href: '/job',
-                    permission: 'Jobs.View',
-                    icon: BriefcaseIcon,
-                    current: false,
-                },
-                {
-                    name: 'Livemap',
-                    href: '/livemap',
-                    permission: 'LivemapperService.Stream',
-                    icon: MapIcon,
-                    current: false,
-                },
-            ],
-            userNavigation: [
-                { name: 'Login', href: '/login' }
-            ] as { name: string, href: string }[],
-            breadcrumbs: [] as { name: string, href: string, current: boolean }[],
-            mobileMenuOpen: ref(false)
-        }
+    {
+        name: 'Citizens',
+        href: 'Citizens',
+        permission: 'CitizenStoreService.FindUsers',
+        icon: UsersIcon,
+        current: false,
     },
-    mounted() {
-        if (this.$route.name) {
-            const sidebarElement = this.sidebarNavigation.find(e => e.name.toLowerCase() === this.$route.name.toLowerCase());
-            if (sidebarElement) {
-                const sidebarIndex = this.sidebarNavigation.indexOf(sidebarElement);
-                this.sidebarNavigation[sidebarIndex].current = true;
-            } else {
-                this.sidebarNavigation[0].current = true;
-            }
+    {
+        name: 'Vehicles',
+        href: 'Vehicles',
+        permission: 'DMVService.FindVehicles',
+        icon: TruckIcon,
+        current: false,
+    },
+    {
+        name: 'Documents',
+        href: 'Documents',
+        permission: 'DocStoreService.FindDocuments',
+        icon: DocumentTextIcon,
+        current: false,
+    },
+    {
+        name: 'Job',
+        href: 'Jobs',
+        permission: 'Jobs.View',
+        icon: BriefcaseIcon,
+        current: false,
+    },
+    {
+        name: 'Livemap',
+        href: 'Livemap',
+        permission: 'LivemapperService.Stream',
+        icon: MapIcon,
+        current: false,
+    },
+] as { name: string, href: keyof RouteNamedMap, permission: string, icon: FunctionalComponent, current: boolean }[];
+let userNavigation = [
+    { name: 'Login', href: '/login' }
+] as { name: string, href: string }[];
+const breadcrumbs = [] as { name: string, href: string, current: boolean }[];
+const mobileMenuOpen = ref(false);
+
+onMounted(() => {
+    if (route.name) {
+        const sidebarElement = sidebarNavigation.find(e => e.name.toLowerCase() === route.name.toLowerCase());
+        if (sidebarElement) {
+            const sidebarIndex = sidebarNavigation.indexOf(sidebarElement);
+            sidebarNavigation[sidebarIndex].current = true;
         } else {
-            this.sidebarNavigation[0].current = true;
+            sidebarNavigation[0].current = true;
+        }
+    } else {
+        sidebarNavigation[0].current = true;
+    }
+
+    if (accessToken)
+    userNavigation = [
+            { name: 'Change Character', href: '/login' },
+            { name: 'Sign out', href: '/logout' }
+        ];
+
+    const pathSplit = route.path.split('/').filter(e => e !== '');
+    pathSplit.forEach(breadcrumb => {
+        const route = router.getRoutes().find(r => r.name?.toString().toLowerCase() === breadcrumb.toLowerCase());
+
+        if (route === undefined) {
+            return;
         }
 
-        if (this.accessToken)
-            this.userNavigation = [
-                { name: 'Change Character', href: '/login' },
-                { name: 'Sign out', href: '/logout' }
-            ];
-
-        const breadcrumbs = this.$route.path.split('/').filter(e => e !== '');
-        breadcrumbs.forEach(breadcrumb => {
-            const route = this.$router.getRoutes().find(r => r.name?.toString().toLowerCase() === breadcrumb.toLowerCase());
-
-            this.breadcrumbs.push({
-                name: toTitleCase(breadcrumb),
-                href: route ? route.path : '/',
-                current: this.$route.name.toLowerCase() === breadcrumb.toLowerCase()
-            })
+        breadcrumbs.push({
+            name: toTitleCase(breadcrumb),
+            href: route ? route.path : '/',
+            current: route.name?.toString().toLowerCase() === breadcrumb.toLowerCase()
         })
-    }
+    })
 });
 </script>
 
@@ -160,7 +137,7 @@ export default defineComponent({
                     <img class="w-auto h-12" src="/images/logo.png" alt="aRPaNet" />
                 </div>
                 <div class="flex-1 w-full px-2 mt-6 space-y-1">
-                    <router-link v-for="item in sidebarNavigation" :key="item.name" :to="item.href" v-can="item.permission"
+                    <router-link v-for="item in sidebarNavigation" :key="item.name" :to="{ name: item.href }" v-can="item.permission"
                         :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"
@@ -260,7 +237,8 @@ export default defineComponent({
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
-                            <span v-if="activeChar" class="text-xl text-base-100">{{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}</span>
+                            <span v-if="activeChar" class="text-xl text-base-100">{{ activeChar.getFirstname() }}, {{
+                                activeChar.getLastname() }}</span>
                             <!-- Profile dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">
                                 <div>

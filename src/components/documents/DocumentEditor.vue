@@ -94,7 +94,7 @@ function addAccessEntry(): void {
 function removeAccessEntry(event: {
     id: number
 }): void {
-    // access.value.delete(event.id);
+    access.value.delete(event.id);
 }
 
 function updateAccessEntryType(event: {
@@ -162,6 +162,9 @@ function submitForm(): void {
     access.value.forEach(entry => {
         if (entry.values.accessrole === undefined) return;
 
+        console.log(DOC_ACCESS[entry.values.accessrole]);
+        console.log(entry.values.accessrole);
+
         if (entry.type === 0) {
             if (!entry.values.char) return;
 
@@ -215,12 +218,12 @@ function editForm(): void {
     access.value.forEach(entry => {
         if (entry.values.accessrole === undefined) return;
 
+        console.log(DOC_ACCESS[entry.values.accessrole]);
+        console.log(entry.values.accessrole);
         if (entry.type === 0) {
             if (!entry.values.char) return;
 
             const user = new DocumentUserAccess();
-            console.log(DOC_ACCESS[entry.values.accessrole])
-            console.log(entry.values.accessrole)
             user.setAccess(DOC_ACCESS[entry.values.accessrole]);
             user.setUserId(entry.values.char);
             if (activeChar.value) user.setCreatorId(activeChar.value.getUserId());
@@ -386,9 +389,9 @@ if (props.id) {
     <div class="my-3">
         <h2 class="text-neutral">Access</h2>
         <AccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry"
-            @typeChange="$event => updateAccessEntryType($event)" @nameChange="$event => updateAccessEntryName($event)"
-            @rankChange="$event => updateAccessEntryRank($event)" @accessChange="$event => updateAccessEntryAccess($event)"
-            @deleteRequest="$event => removeAccessEntry($event)" />
+            @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
+            @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
+            @deleteRequest="removeAccessEntry($event)" />
         <button type="button"
             class="rounded-full bg-indigo-600 p-2 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             data-te-toggle="tooltip" title="Add Permission" @click="addAccessEntry()">
