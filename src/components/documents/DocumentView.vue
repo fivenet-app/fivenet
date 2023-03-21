@@ -147,7 +147,7 @@ onMounted(() => {
                                     <p class="mt-2 text-sm text-gray-500">
                                         Created by
                                         {{ ' ' }}
-                                        <router-link :to="'/citizens/' + document?.getCreator()?.getUserId()"
+                                        <router-link :to="{ path: '/citizens/:id', params: { id: document?.getCreator()?.getUserId() } }"
                                             class="font-medium text-gray-900">
                                             {{ document?.getCreator()?.getFirstname() }}
                                             {{ document?.getCreator()?.getLastname() }}
@@ -155,7 +155,7 @@ onMounted(() => {
                                     </p>
                                 </div>
                                 <div class="mt-4 flex space-x-3 md:mt-0">
-                                    <router-link :to="'/documents/' + document?.getId()" type="button"
+                                    <router-link :to="{ path: '/documents/:id', params: { id: document?.getId() } }" type="button"
                                         class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                                         <PencilIcon class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
                                         Edit
@@ -188,7 +188,7 @@ onMounted(() => {
                                         <h2 class="text-sm font-medium text-gray-500">Creator</h2>
                                         <ul role="list" class="mt-3 space-y-3">
                                             <li class="flex justify-start">
-                                                <router-link :to="'/citizens/' + document?.getCreator()?.getUserId()"
+                                                <router-link :to="{ path: '/citizens/:id', params: {id: document?.getCreator()?.getUserId() } }"
                                                     class="flex items-center space-x-3">
                                                     <div class="text-sm font-medium text-gray-900">{{
                                                         document?.getCreator()?.getFirstname() + ", " +
@@ -240,7 +240,7 @@ onMounted(() => {
                                         <p class="mt-2 text-sm text-gray-500">
                                             Reply by
                                             {{ ' ' }}
-                                            <router-link :to="'/citizens/' + activeResponse?.getCreator()?.getUserId()"
+                                            <router-link :to="{ path: '/citizens/:id', params: { id: activeResponse?.getCreator()?.getUserId() } }"
                                                 class="font-medium text-gray-900">
                                                 {{ activeResponse?.getCreator()?.getFirstname() }}
                                                 {{ activeResponse?.getCreator()?.getLastname() }}
@@ -287,7 +287,7 @@ onMounted(() => {
                             <h2 class="text-sm font-medium text-gray-500">Creator</h2>
                             <ul role="list" class="mt-3 space-y-3">
                                 <li class="flex justify-start">
-                                    <router-link :to="'/citizens/' + document?.getCreator()?.getUserId()"
+                                    <router-link :to="{ path: '/citizens/:id', params: { id: document?.getCreator()?.getUserId() } }"
                                         class="flex items-center space-x-3">
                                         <div class="text-sm font-medium text-gray-900">
                                             {{ document?.getCreator()?.getFirstname() + ", " +

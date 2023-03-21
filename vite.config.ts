@@ -10,7 +10,7 @@ export default defineConfig({
         mkcert(),
         VueRouter({
             dataFetching: true,
-            exclude: ['**/__*', '**/__**/*', '!*.component.vue'],
+            exclude: ['!*.component.vue'],
             extensions: ['.vue', '.md'],
             logs: true,
             routesFolder: [

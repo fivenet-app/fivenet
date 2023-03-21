@@ -255,7 +255,7 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentID uint64) (*doc
 					u.ID.EQ(dUserAccess.UserID),
 				).
 				LEFT_JOIN(uCreator,
-					uCreator.ID.EQ(dJobAccess.CreatorID),
+					uCreator.ID.EQ(dUserAccess.CreatorID),
 				),
 		).
 		WHERE(

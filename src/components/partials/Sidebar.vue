@@ -239,7 +239,7 @@ export default defineComponent({
                                 <ol role="list" class="flex items-center space-x-4">
                                     <li>
                                         <div>
-                                            <router-link :to="accessToken ? '/overview' : '/'"
+                                            <router-link :to="{ path: accessToken ? '/overview' : '/' }"
                                                 class="text-base-400 hover:text-neutral hover:transition-colors">
                                                 <HomeIconSolid class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                                 <span class="sr-only">Home</span>
@@ -250,7 +250,7 @@ export default defineComponent({
                                         <div class="flex items-center">
                                             <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-base-400"
                                                 aria-hidden="true" />
-                                            <router-link :to="page.href"
+                                            <router-link :to="{ path: page.href }"
                                                 class="ml-4 text-sm font-medium text-base-400 hover:text-neutral hover:transition-colors"
                                                 :aria-current="page.current ? 'page' : undefined">{{ page.name
                                                 }}</router-link>

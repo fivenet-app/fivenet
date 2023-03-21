@@ -69,7 +69,7 @@ onBeforeMount(() => {
             <div class="overflow-hidden bg-white shadow sm:rounded-md mt-3">
                 <ul role="list" class="divide-y divide-gray-200">
                     <li v-for="doc in documents" :key="doc.getId()">
-                        <router-link :to="{ name: 'Documents: Info', params: { id: doc.getId() } }"
+                        <router-link :to="{ path: '/documents/:id', params: { id: doc.getId() } }"
                             class="block hover:bg-gray-50">
                             <div class="px-4 py-4 sm:px-6">
                                 <div class="flex items-center justify-between">

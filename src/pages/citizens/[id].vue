@@ -6,22 +6,27 @@ import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { getCitizenStoreClient } from '../../grpc/grpc';
-import { ref, Ref, onBeforeMount } from 'vue';
-import { useRoute } from 'vue-router/auto';
 
-const user = ref() as Ref<undefined | User>;
+const { data: user } = useUserData();
+</script>
 
-const route = useRoute();
+<script lang="ts">
+import { defineLoader } from 'vue-router/auto';
 
-onBeforeMount(() => {
+export const useUserData = defineLoader(async (route) => {
     const req = new GetUserRequest();
     req.setUserId(route.params.id);
 
-    getCitizenStoreClient()
+    let user: User;
+    await getCitizenStoreClient()
         .getUser(req, null)
         .then((resp) => {
-            user.value = resp.getUser();
+            if (resp.hasUser()) {
+                user = resp.getUser();
+            }
         });
+
+    return user;
 });
 </script>
 

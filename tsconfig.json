@@ -16,13 +16,13 @@
         "types": ["node"]
     },
     "include": [
+        "typed-router.d.ts",
+        "shims.d.ts",
         "src/**/*.ts",
         "src/**/*.d.ts",
         "src/**/*.tsx",
         "src/**/*.vue",
         "vite.config.*",
-        "shims.d.ts",
-        "typed-router.d.ts"
     ],
     "references": [
         {
