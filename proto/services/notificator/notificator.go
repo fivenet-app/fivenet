@@ -44,7 +44,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 
 	countStmt := nots.
 		SELECT(
-			jet.COUNT(nots.ID),
+			jet.COUNT(nots.ID).AS("datacount.totalcount"),
 		).
 		FROM(nots).
 		WHERE(condition)
@@ -55,9 +55,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 	}
 
 	resp := &GetNotificationsResponse{
-		Offset:     req.Offset,
-		TotalCount: count.TotalCount,
-		End:        0,
+		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -72,7 +70,9 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 			jet.AND(
 				nots.UserID.EQ(jet.Int32(userId)),
 			),
-		)
+		).
+		OFFSET(req.Pagination.Offset).
+		LIMIT(database.DefaultPageLimit)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.Notifications); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
@@ -80,13 +80,10 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 		}
 	}
 
-	resp.TotalCount = count.TotalCount
-	if req.Offset >= resp.TotalCount {
-		resp.Offset = 0
-	} else {
-		resp.Offset = req.Offset
-	}
-	resp.End = resp.Offset + int64(len(resp.Notifications))
+	database.PaginationHelper(resp.Pagination,
+		count.TotalCount,
+		req.Pagination.Offset,
+		len(resp.Notifications))
 
 	return resp, nil
 }

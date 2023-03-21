@@ -2,8 +2,13 @@ package docstore
 
 import (
 	context "context"
+	"encoding/json"
+	"html/template"
+	"os"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/galexrt/arpanet/pkg/auth"
+	"github.com/galexrt/arpanet/proto/resources/documents"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -90,5 +95,49 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		return nil, err
 	}
 
+	if req.Process {
+		// Parse data as json for the templating process
+		var data map[string]interface{}
+		err := json.Unmarshal([]byte(req.Data), &data)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.Template.Content, resp.Template.ContentTitle, err = s.renderDocumentTemplate(resp.Template, data)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.Processed = true
+	}
+
 	return resp, nil
+}
+
+func (s *Server) renderDocumentTemplate(docTmpl *documents.DocumentTemplate, data map[string]interface{}) (out string, outTile string, err error) {
+	tmplTitle, err := template.
+		New("title").
+		Funcs(sprig.FuncMap()).
+		Parse(docTmpl.ContentTitle)
+	if err != nil {
+		return
+	}
+	err = tmplTitle.Execute(os.Stdout, data)
+	if err != nil {
+		return
+	}
+
+	tmpl, err := template.
+		New("content").
+		Funcs(sprig.FuncMap()).
+		Parse(docTmpl.Content)
+	if err != nil {
+		return
+	}
+	err = tmpl.Execute(os.Stdout, data)
+	if err != nil {
+		return
+	}
+
+	return
 }

@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
 import * as resources_notifications_notifications_pb from '../../resources/notifications/notifications_pb';
 
 
@@ -46,8 +47,10 @@ export namespace StreamResponse {
 }
 
 export class GetNotificationsRequest extends jspb.Message {
-  getOffset(): number;
-  setOffset(value: number): GetNotificationsRequest;
+  getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationRequest): GetNotificationsRequest;
+  hasPagination(): boolean;
+  clearPagination(): GetNotificationsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetNotificationsRequest.AsObject;
@@ -59,19 +62,15 @@ export class GetNotificationsRequest extends jspb.Message {
 
 export namespace GetNotificationsRequest {
   export type AsObject = {
-    offset: number,
+    pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
   }
 }
 
 export class GetNotificationsResponse extends jspb.Message {
-  getTotalCount(): number;
-  setTotalCount(value: number): GetNotificationsResponse;
-
-  getOffset(): number;
-  setOffset(value: number): GetNotificationsResponse;
-
-  getEnd(): number;
-  setEnd(value: number): GetNotificationsResponse;
+  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationResponse): GetNotificationsResponse;
+  hasPagination(): boolean;
+  clearPagination(): GetNotificationsResponse;
 
   getNotificationsList(): Array<resources_notifications_notifications_pb.Notification>;
   setNotificationsList(value: Array<resources_notifications_notifications_pb.Notification>): GetNotificationsResponse;
@@ -88,9 +87,7 @@ export class GetNotificationsResponse extends jspb.Message {
 
 export namespace GetNotificationsResponse {
   export type AsObject = {
-    totalCount: number,
-    offset: number,
-    end: number,
+    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
     notificationsList: Array<resources_notifications_notifications_pb.Notification.AsObject>,
   }
 }

@@ -21,6 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
+var resources_common_database_database_pb = require('../../resources/common/database/database_pb.js');
+goog.object.extend(proto, resources_common_database_database_pb);
 var resources_notifications_notifications_pb = require('../../resources/notifications/notifications_pb.js');
 goog.object.extend(proto, resources_notifications_notifications_pb);
 goog.exportSymbol('proto.services.notificator.GetNotificationsRequest', null, global);
@@ -507,7 +509,7 @@ proto.services.notificator.GetNotificationsRequest.prototype.toObject = function
  */
 proto.services.notificator.GetNotificationsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    offset: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -545,8 +547,9 @@ proto.services.notificator.GetNotificationsRequest.deserializeBinaryFromReader =
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
+      var value = new resources_common_database_database_pb.PaginationRequest;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationRequest.deserializeBinaryFromReader);
+      msg.setPagination(value);
       break;
     default:
       reader.skipField();
@@ -577,31 +580,51 @@ proto.services.notificator.GetNotificationsRequest.prototype.serializeBinary = f
  */
 proto.services.notificator.GetNotificationsRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
+      f,
+      resources_common_database_database_pb.PaginationRequest.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * optional int64 offset = 1;
- * @return {number}
+ * optional resources.common.database.PaginationRequest pagination = 1;
+ * @return {?proto.resources.common.database.PaginationRequest}
  */
-proto.services.notificator.GetNotificationsRequest.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.services.notificator.GetNotificationsRequest.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationRequest} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationRequest, 1));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.common.database.PaginationRequest|undefined} value
+ * @return {!proto.services.notificator.GetNotificationsRequest} returns this
+*/
+proto.services.notificator.GetNotificationsRequest.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.notificator.GetNotificationsRequest} returns this
  */
-proto.services.notificator.GetNotificationsRequest.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+proto.services.notificator.GetNotificationsRequest.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.notificator.GetNotificationsRequest.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -611,7 +634,7 @@ proto.services.notificator.GetNotificationsRequest.prototype.setOffset = functio
  * @private {!Array<number>}
  * @const
  */
-proto.services.notificator.GetNotificationsResponse.repeatedFields_ = [4];
+proto.services.notificator.GetNotificationsResponse.repeatedFields_ = [2];
 
 
 
@@ -644,9 +667,7 @@ proto.services.notificator.GetNotificationsResponse.prototype.toObject = functio
  */
 proto.services.notificator.GetNotificationsResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    totalCount: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    end: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationResponse.toObject(includeInstance, f),
     notificationsList: jspb.Message.toObjectList(msg.getNotificationsList(),
     resources_notifications_notifications_pb.Notification.toObject, includeInstance)
   };
@@ -686,18 +707,11 @@ proto.services.notificator.GetNotificationsResponse.deserializeBinaryFromReader 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setTotalCount(value);
+      var value = new resources_common_database_database_pb.PaginationResponse;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationResponse.deserializeBinaryFromReader);
+      msg.setPagination(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
-      break;
-    case 3:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setEnd(value);
-      break;
-    case 4:
       var value = new resources_notifications_notifications_pb.Notification;
       reader.readMessage(value,resources_notifications_notifications_pb.Notification.deserializeBinaryFromReader);
       msg.addNotifications(value);
@@ -731,31 +745,18 @@ proto.services.notificator.GetNotificationsResponse.prototype.serializeBinary = 
  */
 proto.services.notificator.GetNotificationsResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTotalCount();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
-    );
-  }
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
-      2,
-      f
-    );
-  }
-  f = message.getEnd();
-  if (f !== 0) {
-    writer.writeInt64(
-      3,
-      f
+      f,
+      resources_common_database_database_pb.PaginationResponse.serializeBinaryToWriter
     );
   }
   f = message.getNotificationsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      4,
+      2,
       f,
       resources_notifications_notifications_pb.Notification.serializeBinaryToWriter
     );
@@ -764,66 +765,49 @@ proto.services.notificator.GetNotificationsResponse.serializeBinaryToWriter = fu
 
 
 /**
- * optional int64 total_count = 1;
- * @return {number}
+ * optional resources.common.database.PaginationResponse pagination = 1;
+ * @return {?proto.resources.common.database.PaginationResponse}
  */
-proto.services.notificator.GetNotificationsResponse.prototype.getTotalCount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.services.notificator.GetNotificationsResponse.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationResponse} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationResponse, 1));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.common.database.PaginationResponse|undefined} value
+ * @return {!proto.services.notificator.GetNotificationsResponse} returns this
+*/
+proto.services.notificator.GetNotificationsResponse.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.notificator.GetNotificationsResponse} returns this
  */
-proto.services.notificator.GetNotificationsResponse.prototype.setTotalCount = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+proto.services.notificator.GetNotificationsResponse.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
 };
 
 
 /**
- * optional int64 offset = 2;
- * @return {number}
+ * Returns whether this field is set.
+ * @return {boolean}
  */
-proto.services.notificator.GetNotificationsResponse.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+proto.services.notificator.GetNotificationsResponse.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
 /**
- * @param {number} value
- * @return {!proto.services.notificator.GetNotificationsResponse} returns this
- */
-proto.services.notificator.GetNotificationsResponse.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional int64 end = 3;
- * @return {number}
- */
-proto.services.notificator.GetNotificationsResponse.prototype.getEnd = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.services.notificator.GetNotificationsResponse} returns this
- */
-proto.services.notificator.GetNotificationsResponse.prototype.setEnd = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * repeated resources.notifications.Notification notifications = 4;
+ * repeated resources.notifications.Notification notifications = 2;
  * @return {!Array<!proto.resources.notifications.Notification>}
  */
 proto.services.notificator.GetNotificationsResponse.prototype.getNotificationsList = function() {
   return /** @type{!Array<!proto.resources.notifications.Notification>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_notifications_notifications_pb.Notification, 4));
+    jspb.Message.getRepeatedWrapperField(this, resources_notifications_notifications_pb.Notification, 2));
 };
 
 
@@ -832,7 +816,7 @@ proto.services.notificator.GetNotificationsResponse.prototype.getNotificationsLi
  * @return {!proto.services.notificator.GetNotificationsResponse} returns this
 */
 proto.services.notificator.GetNotificationsResponse.prototype.setNotificationsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 4, value);
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
 
@@ -842,7 +826,7 @@ proto.services.notificator.GetNotificationsResponse.prototype.setNotificationsLi
  * @return {!proto.resources.notifications.Notification}
  */
 proto.services.notificator.GetNotificationsResponse.prototype.addNotifications = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.resources.notifications.Notification, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.notifications.Notification, opt_index);
 };
 
 

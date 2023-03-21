@@ -4,7 +4,7 @@ import { watchDebounced } from '@vueuse/shared';
 import { getDocStoreClient } from '../../grpc/grpc';
 import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
-import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
+import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
 
@@ -20,16 +20,19 @@ function findDocuments(pos: number) {
     if (pos < 0) return;
 
     const req = new FindDocumentsRequest();
-    req.setOffset(pos);
+    req.setPagination((new PaginationRequest()).setOffset(pos));
     req.setSearch(search.value.title);
     req.setOrderbyList([]);
 
     getDocStoreClient().
         findDocuments(req, null).
         then((resp) => {
-            totalCount.value = resp.getTotalCount();
-            offset.value = resp.getOffset();
-            listEnd.value = resp.getEnd();
+            const pag = resp.getPagination();
+            if (pag !== undefined) {
+                totalCount.value = pag.getTotalCount();
+                offset.value = pag.getOffset();
+                listEnd.value = pag.getEnd();
+            }
             documents.value = resp.getDocumentsList();
         });
 }

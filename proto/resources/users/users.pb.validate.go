@@ -751,6 +751,8 @@ func (m *License) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Label
+
 	if len(errors) > 0 {
 		return LicenseMultiError(errors)
 	}

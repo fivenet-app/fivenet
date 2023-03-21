@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
-import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
+import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
 import { getDMVClient } from '../../grpc/grpc';
 import { FindVehiclesRequest } from '@arpanet/gen/services/dmv/vehicles_pb';
@@ -32,7 +32,7 @@ function findVehicles(pos: number) {
     if (pos < 0) return;
 
     const req = new FindVehiclesRequest();
-    req.setOffset(pos);
+    req.setPagination((new PaginationRequest()).setOffset(pos));
     if (props.userId && props.userId > 0) {
         req.setUserId(props.userId);
     }
@@ -43,9 +43,12 @@ function findVehicles(pos: number) {
     getDMVClient().
         findVehicles(req, null).
         then((resp) => {
-            totalCount.value = resp.getTotalCount();
-            offset.value = resp.getOffset();
-            listEnd.value = resp.getEnd();
+            const pag = resp.getPagination();
+            if (pag !== undefined) {
+                totalCount.value = pag.getTotalCount();
+                offset.value = pag.getOffset();
+                listEnd.value = pag.getEnd();
+            }
             vehicles.value = resp.getVehiclesList();
         });
 }
@@ -161,5 +164,6 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
+        </div>
     </div>
-</div></template>
+</template>

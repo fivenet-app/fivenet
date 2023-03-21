@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
+import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
 import { getCitizenStoreClient } from '../../grpc/grpc';
 import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
@@ -20,7 +20,7 @@ function findUsers(pos: number) {
     if (pos < 0) return;
 
     const req = new FindUsersRequest();
-    req.setOffset(pos);
+    req.setPagination((new PaginationRequest()).setOffset(pos));
     req.setSearchname(search.value.name);
     req.setWanted(search.value.wanted);
     req.setOrderbyList(orderBys.value);
@@ -28,9 +28,12 @@ function findUsers(pos: number) {
     getCitizenStoreClient().
         findUsers(req, null).
         then((resp) => {
-            totalCount.value = resp.getTotalCount();
-            offset.value = resp.getOffset();
-            listEnd.value = resp.getEnd();
+            const pag = resp.getPagination();
+            if (pag !== undefined) {
+                totalCount.value = pag.getTotalCount();
+                offset.value = pag.getOffset();
+                listEnd.value = pag.getEnd();
+            }
             users.value = resp.getUsersList();
         });
 }

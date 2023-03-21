@@ -16,14 +16,16 @@ message ListTemplatesResponse {
 message GetTemplateRequest {
   uint64 template_id = 1;
   string data = 2 [(validate.rules).string.max_bytes = 1024];
+  bool process = 3;
 }
 
 message GetTemplateResponse {
   resources.documents.DocumentTemplate template = 1;
+  bool processed = 2;
 }
 
 message FindDocumentsRequest {
-  int64 offset = 1 [(validate.rules).int64.gte = 0];
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
   // Search param
   string search = 3;
@@ -31,10 +33,8 @@ message FindDocumentsRequest {
 }
 
 message FindDocumentsResponse {
-  int64 total_count = 1;
-  int64 offset = 2;
-  int64 end = 3;
-  repeated resources.documents.Document documents = 4;
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.documents.Document documents = 2;
 }
 
 message GetDocumentRequest {
@@ -87,15 +87,13 @@ message RemoveDcoumentRelationRequest {
 message RemoveDcoumentRelationResponse {}
 
 message GetDocumentCommentsRequest {
-  uint64 document_id = 1;
-  int64 offset = 2 [(validate.rules).int64.gte = 0];
+  resources.common.database.PaginationResponse pagination = 1;
+  uint64 document_id = 2;
 }
 
 message GetDocumentCommentsResponse {
-  int64 total_count = 1;
-  int64 offset = 2;
-  int64 end = 3;
-  repeated resources.documents.DocumentComment comments = 4;
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.documents.DocumentComment comments = 2;
 }
 
 message PostDocumentCommentRequest {

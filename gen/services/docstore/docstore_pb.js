@@ -1068,7 +1068,8 @@ proto.services.docstore.GetTemplateRequest.prototype.toObject = function(opt_inc
 proto.services.docstore.GetTemplateRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     templateId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    data: jspb.Message.getFieldWithDefault(msg, 2, "")
+    data: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    process: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
   };
 
   if (includeInstance) {
@@ -1113,6 +1114,10 @@ proto.services.docstore.GetTemplateRequest.deserializeBinaryFromReader = functio
       var value = /** @type {string} */ (reader.readString());
       msg.setData(value);
       break;
+    case 3:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setProcess(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1156,6 +1161,13 @@ proto.services.docstore.GetTemplateRequest.serializeBinaryToWriter = function(me
       f
     );
   }
+  f = message.getProcess();
+  if (f) {
+    writer.writeBool(
+      3,
+      f
+    );
+  }
 };
 
 
@@ -1195,6 +1207,24 @@ proto.services.docstore.GetTemplateRequest.prototype.setData = function(value) {
 };
 
 
+/**
+ * optional bool process = 3;
+ * @return {boolean}
+ */
+proto.services.docstore.GetTemplateRequest.prototype.getProcess = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 3, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.services.docstore.GetTemplateRequest} returns this
+ */
+proto.services.docstore.GetTemplateRequest.prototype.setProcess = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 3, value);
+};
+
+
 
 
 
@@ -1227,7 +1257,8 @@ proto.services.docstore.GetTemplateResponse.prototype.toObject = function(opt_in
  */
 proto.services.docstore.GetTemplateResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    template: (f = msg.getTemplate()) && resources_documents_documents_pb.DocumentTemplate.toObject(includeInstance, f)
+    template: (f = msg.getTemplate()) && resources_documents_documents_pb.DocumentTemplate.toObject(includeInstance, f),
+    processed: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {
@@ -1269,6 +1300,10 @@ proto.services.docstore.GetTemplateResponse.deserializeBinaryFromReader = functi
       reader.readMessage(value,resources_documents_documents_pb.DocumentTemplate.deserializeBinaryFromReader);
       msg.setTemplate(value);
       break;
+    case 2:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setProcessed(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1304,6 +1339,13 @@ proto.services.docstore.GetTemplateResponse.serializeBinaryToWriter = function(m
       1,
       f,
       resources_documents_documents_pb.DocumentTemplate.serializeBinaryToWriter
+    );
+  }
+  f = message.getProcessed();
+  if (f) {
+    writer.writeBool(
+      2,
+      f
     );
   }
 };
@@ -1346,6 +1388,24 @@ proto.services.docstore.GetTemplateResponse.prototype.hasTemplate = function() {
 };
 
 
+/**
+ * optional bool processed = 2;
+ * @return {boolean}
+ */
+proto.services.docstore.GetTemplateResponse.prototype.getProcessed = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.services.docstore.GetTemplateResponse} returns this
+ */
+proto.services.docstore.GetTemplateResponse.prototype.setProcessed = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 2, value);
+};
+
+
 
 /**
  * List of repeated fields within this message type.
@@ -1385,7 +1445,7 @@ proto.services.docstore.FindDocumentsRequest.prototype.toObject = function(opt_i
  */
 proto.services.docstore.FindDocumentsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    offset: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f),
     orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
     resources_common_database_database_pb.OrderBy.toObject, includeInstance),
     search: jspb.Message.getFieldWithDefault(msg, 3, ""),
@@ -1427,8 +1487,9 @@ proto.services.docstore.FindDocumentsRequest.deserializeBinaryFromReader = funct
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
+      var value = new resources_common_database_database_pb.PaginationRequest;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationRequest.deserializeBinaryFromReader);
+      msg.setPagination(value);
       break;
     case 2:
       var value = new resources_common_database_database_pb.OrderBy;
@@ -1472,11 +1533,12 @@ proto.services.docstore.FindDocumentsRequest.prototype.serializeBinary = functio
  */
 proto.services.docstore.FindDocumentsRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
+      f,
+      resources_common_database_database_pb.PaginationRequest.serializeBinaryToWriter
     );
   }
   f = message.getOrderbyList();
@@ -1505,20 +1567,39 @@ proto.services.docstore.FindDocumentsRequest.serializeBinaryToWriter = function(
 
 
 /**
- * optional int64 offset = 1;
- * @return {number}
+ * optional resources.common.database.PaginationRequest pagination = 1;
+ * @return {?proto.resources.common.database.PaginationRequest}
  */
-proto.services.docstore.FindDocumentsRequest.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.services.docstore.FindDocumentsRequest.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationRequest} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationRequest, 1));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.common.database.PaginationRequest|undefined} value
+ * @return {!proto.services.docstore.FindDocumentsRequest} returns this
+*/
+proto.services.docstore.FindDocumentsRequest.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.docstore.FindDocumentsRequest} returns this
  */
-proto.services.docstore.FindDocumentsRequest.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+proto.services.docstore.FindDocumentsRequest.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.docstore.FindDocumentsRequest.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -1602,7 +1683,7 @@ proto.services.docstore.FindDocumentsRequest.prototype.setCategory = function(va
  * @private {!Array<number>}
  * @const
  */
-proto.services.docstore.FindDocumentsResponse.repeatedFields_ = [4];
+proto.services.docstore.FindDocumentsResponse.repeatedFields_ = [2];
 
 
 
@@ -1635,9 +1716,7 @@ proto.services.docstore.FindDocumentsResponse.prototype.toObject = function(opt_
  */
 proto.services.docstore.FindDocumentsResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    totalCount: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    end: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationResponse.toObject(includeInstance, f),
     documentsList: jspb.Message.toObjectList(msg.getDocumentsList(),
     resources_documents_documents_pb.Document.toObject, includeInstance)
   };
@@ -1677,18 +1756,11 @@ proto.services.docstore.FindDocumentsResponse.deserializeBinaryFromReader = func
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setTotalCount(value);
+      var value = new resources_common_database_database_pb.PaginationResponse;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationResponse.deserializeBinaryFromReader);
+      msg.setPagination(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
-      break;
-    case 3:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setEnd(value);
-      break;
-    case 4:
       var value = new resources_documents_documents_pb.Document;
       reader.readMessage(value,resources_documents_documents_pb.Document.deserializeBinaryFromReader);
       msg.addDocuments(value);
@@ -1722,31 +1794,18 @@ proto.services.docstore.FindDocumentsResponse.prototype.serializeBinary = functi
  */
 proto.services.docstore.FindDocumentsResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTotalCount();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
-    );
-  }
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
-      2,
-      f
-    );
-  }
-  f = message.getEnd();
-  if (f !== 0) {
-    writer.writeInt64(
-      3,
-      f
+      f,
+      resources_common_database_database_pb.PaginationResponse.serializeBinaryToWriter
     );
   }
   f = message.getDocumentsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      4,
+      2,
       f,
       resources_documents_documents_pb.Document.serializeBinaryToWriter
     );
@@ -1755,66 +1814,49 @@ proto.services.docstore.FindDocumentsResponse.serializeBinaryToWriter = function
 
 
 /**
- * optional int64 total_count = 1;
- * @return {number}
+ * optional resources.common.database.PaginationResponse pagination = 1;
+ * @return {?proto.resources.common.database.PaginationResponse}
  */
-proto.services.docstore.FindDocumentsResponse.prototype.getTotalCount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.services.docstore.FindDocumentsResponse.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationResponse} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationResponse, 1));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.common.database.PaginationResponse|undefined} value
+ * @return {!proto.services.docstore.FindDocumentsResponse} returns this
+*/
+proto.services.docstore.FindDocumentsResponse.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.docstore.FindDocumentsResponse} returns this
  */
-proto.services.docstore.FindDocumentsResponse.prototype.setTotalCount = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+proto.services.docstore.FindDocumentsResponse.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
 };
 
 
 /**
- * optional int64 offset = 2;
- * @return {number}
+ * Returns whether this field is set.
+ * @return {boolean}
  */
-proto.services.docstore.FindDocumentsResponse.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+proto.services.docstore.FindDocumentsResponse.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
 /**
- * @param {number} value
- * @return {!proto.services.docstore.FindDocumentsResponse} returns this
- */
-proto.services.docstore.FindDocumentsResponse.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional int64 end = 3;
- * @return {number}
- */
-proto.services.docstore.FindDocumentsResponse.prototype.getEnd = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.services.docstore.FindDocumentsResponse} returns this
- */
-proto.services.docstore.FindDocumentsResponse.prototype.setEnd = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * repeated resources.documents.Document documents = 4;
+ * repeated resources.documents.Document documents = 2;
  * @return {!Array<!proto.resources.documents.Document>}
  */
 proto.services.docstore.FindDocumentsResponse.prototype.getDocumentsList = function() {
   return /** @type{!Array<!proto.resources.documents.Document>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.Document, 4));
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.Document, 2));
 };
 
 
@@ -1823,7 +1865,7 @@ proto.services.docstore.FindDocumentsResponse.prototype.getDocumentsList = funct
  * @return {!proto.services.docstore.FindDocumentsResponse} returns this
 */
 proto.services.docstore.FindDocumentsResponse.prototype.setDocumentsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 4, value);
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
 
@@ -1833,7 +1875,7 @@ proto.services.docstore.FindDocumentsResponse.prototype.setDocumentsList = funct
  * @return {!proto.resources.documents.Document}
  */
 proto.services.docstore.FindDocumentsResponse.prototype.addDocuments = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.resources.documents.Document, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.documents.Document, opt_index);
 };
 
 
@@ -3756,8 +3798,8 @@ proto.services.docstore.GetDocumentCommentsRequest.prototype.toObject = function
  */
 proto.services.docstore.GetDocumentCommentsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    documentId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    offset: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationResponse.toObject(includeInstance, f),
+    documentId: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -3795,12 +3837,13 @@ proto.services.docstore.GetDocumentCommentsRequest.deserializeBinaryFromReader =
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
-      msg.setDocumentId(value);
+      var value = new resources_common_database_database_pb.PaginationResponse;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationResponse.deserializeBinaryFromReader);
+      msg.setPagination(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setDocumentId(value);
       break;
     default:
       reader.skipField();
@@ -3831,16 +3874,17 @@ proto.services.docstore.GetDocumentCommentsRequest.prototype.serializeBinary = f
  */
 proto.services.docstore.GetDocumentCommentsRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      resources_common_database_database_pb.PaginationResponse.serializeBinaryToWriter
+    );
+  }
   f = message.getDocumentId();
   if (f !== 0) {
     writer.writeUint64(
-      1,
-      f
-    );
-  }
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
       2,
       f
     );
@@ -3849,28 +3893,47 @@ proto.services.docstore.GetDocumentCommentsRequest.serializeBinaryToWriter = fun
 
 
 /**
- * optional uint64 document_id = 1;
+ * optional resources.common.database.PaginationResponse pagination = 1;
+ * @return {?proto.resources.common.database.PaginationResponse}
+ */
+proto.services.docstore.GetDocumentCommentsRequest.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationResponse} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationResponse, 1));
+};
+
+
+/**
+ * @param {?proto.resources.common.database.PaginationResponse|undefined} value
+ * @return {!proto.services.docstore.GetDocumentCommentsRequest} returns this
+*/
+proto.services.docstore.GetDocumentCommentsRequest.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.docstore.GetDocumentCommentsRequest} returns this
+ */
+proto.services.docstore.GetDocumentCommentsRequest.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.docstore.GetDocumentCommentsRequest.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional uint64 document_id = 2;
  * @return {number}
  */
 proto.services.docstore.GetDocumentCommentsRequest.prototype.getDocumentId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.services.docstore.GetDocumentCommentsRequest} returns this
- */
-proto.services.docstore.GetDocumentCommentsRequest.prototype.setDocumentId = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional int64 offset = 2;
- * @return {number}
- */
-proto.services.docstore.GetDocumentCommentsRequest.prototype.getOffset = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -3879,7 +3942,7 @@ proto.services.docstore.GetDocumentCommentsRequest.prototype.getOffset = functio
  * @param {number} value
  * @return {!proto.services.docstore.GetDocumentCommentsRequest} returns this
  */
-proto.services.docstore.GetDocumentCommentsRequest.prototype.setOffset = function(value) {
+proto.services.docstore.GetDocumentCommentsRequest.prototype.setDocumentId = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
 };
 
@@ -3890,7 +3953,7 @@ proto.services.docstore.GetDocumentCommentsRequest.prototype.setOffset = functio
  * @private {!Array<number>}
  * @const
  */
-proto.services.docstore.GetDocumentCommentsResponse.repeatedFields_ = [4];
+proto.services.docstore.GetDocumentCommentsResponse.repeatedFields_ = [2];
 
 
 
@@ -3923,9 +3986,7 @@ proto.services.docstore.GetDocumentCommentsResponse.prototype.toObject = functio
  */
 proto.services.docstore.GetDocumentCommentsResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    totalCount: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    end: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationResponse.toObject(includeInstance, f),
     commentsList: jspb.Message.toObjectList(msg.getCommentsList(),
     resources_documents_documents_pb.DocumentComment.toObject, includeInstance)
   };
@@ -3965,18 +4026,11 @@ proto.services.docstore.GetDocumentCommentsResponse.deserializeBinaryFromReader 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setTotalCount(value);
+      var value = new resources_common_database_database_pb.PaginationResponse;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationResponse.deserializeBinaryFromReader);
+      msg.setPagination(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
-      break;
-    case 3:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setEnd(value);
-      break;
-    case 4:
       var value = new resources_documents_documents_pb.DocumentComment;
       reader.readMessage(value,resources_documents_documents_pb.DocumentComment.deserializeBinaryFromReader);
       msg.addComments(value);
@@ -4010,31 +4064,18 @@ proto.services.docstore.GetDocumentCommentsResponse.prototype.serializeBinary = 
  */
 proto.services.docstore.GetDocumentCommentsResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTotalCount();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
-    );
-  }
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
-      2,
-      f
-    );
-  }
-  f = message.getEnd();
-  if (f !== 0) {
-    writer.writeInt64(
-      3,
-      f
+      f,
+      resources_common_database_database_pb.PaginationResponse.serializeBinaryToWriter
     );
   }
   f = message.getCommentsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      4,
+      2,
       f,
       resources_documents_documents_pb.DocumentComment.serializeBinaryToWriter
     );
@@ -4043,66 +4084,49 @@ proto.services.docstore.GetDocumentCommentsResponse.serializeBinaryToWriter = fu
 
 
 /**
- * optional int64 total_count = 1;
- * @return {number}
+ * optional resources.common.database.PaginationResponse pagination = 1;
+ * @return {?proto.resources.common.database.PaginationResponse}
  */
-proto.services.docstore.GetDocumentCommentsResponse.prototype.getTotalCount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.services.docstore.GetDocumentCommentsResponse.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationResponse} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationResponse, 1));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.common.database.PaginationResponse|undefined} value
+ * @return {!proto.services.docstore.GetDocumentCommentsResponse} returns this
+*/
+proto.services.docstore.GetDocumentCommentsResponse.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.docstore.GetDocumentCommentsResponse} returns this
  */
-proto.services.docstore.GetDocumentCommentsResponse.prototype.setTotalCount = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+proto.services.docstore.GetDocumentCommentsResponse.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
 };
 
 
 /**
- * optional int64 offset = 2;
- * @return {number}
+ * Returns whether this field is set.
+ * @return {boolean}
  */
-proto.services.docstore.GetDocumentCommentsResponse.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+proto.services.docstore.GetDocumentCommentsResponse.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
 /**
- * @param {number} value
- * @return {!proto.services.docstore.GetDocumentCommentsResponse} returns this
- */
-proto.services.docstore.GetDocumentCommentsResponse.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional int64 end = 3;
- * @return {number}
- */
-proto.services.docstore.GetDocumentCommentsResponse.prototype.getEnd = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.services.docstore.GetDocumentCommentsResponse} returns this
- */
-proto.services.docstore.GetDocumentCommentsResponse.prototype.setEnd = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * repeated resources.documents.DocumentComment comments = 4;
+ * repeated resources.documents.DocumentComment comments = 2;
  * @return {!Array<!proto.resources.documents.DocumentComment>}
  */
 proto.services.docstore.GetDocumentCommentsResponse.prototype.getCommentsList = function() {
   return /** @type{!Array<!proto.resources.documents.DocumentComment>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentComment, 4));
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentComment, 2));
 };
 
 
@@ -4111,7 +4135,7 @@ proto.services.docstore.GetDocumentCommentsResponse.prototype.getCommentsList = 
  * @return {!proto.services.docstore.GetDocumentCommentsResponse} returns this
 */
 proto.services.docstore.GetDocumentCommentsResponse.prototype.setCommentsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 4, value);
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
 
@@ -4121,7 +4145,7 @@ proto.services.docstore.GetDocumentCommentsResponse.prototype.setCommentsList = 
  * @return {!proto.resources.documents.DocumentComment}
  */
 proto.services.docstore.GetDocumentCommentsResponse.prototype.addComments = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.resources.documents.DocumentComment, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.documents.DocumentComment, opt_index);
 };
 
 

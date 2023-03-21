@@ -5,6 +5,17 @@ option go_package = "github.com/galexrt/arpanet/proto/resources/common/database;
 
 import "validate/validate.proto";
 
+message PaginationRequest {
+  int64 offset = 1 [(validate.rules).int64.gte = 0];
+}
+
+message PaginationResponse {
+  int64 total_count = 1;
+  int64 offset = 2;
+  int64 end = 3;
+  int64 page_size = 4;
+}
+
 message OrderBy {
   string column = 1 [(validate.rules).string = {min_len: 1, max_len: 64}];
   bool desc = 2;

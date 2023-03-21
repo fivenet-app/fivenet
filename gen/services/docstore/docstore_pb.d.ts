@@ -45,6 +45,9 @@ export class GetTemplateRequest extends jspb.Message {
   getData(): string;
   setData(value: string): GetTemplateRequest;
 
+  getProcess(): boolean;
+  setProcess(value: boolean): GetTemplateRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetTemplateRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetTemplateRequest): GetTemplateRequest.AsObject;
@@ -57,6 +60,7 @@ export namespace GetTemplateRequest {
   export type AsObject = {
     templateId: number,
     data: string,
+    process: boolean,
   }
 }
 
@@ -65,6 +69,9 @@ export class GetTemplateResponse extends jspb.Message {
   setTemplate(value?: resources_documents_documents_pb.DocumentTemplate): GetTemplateResponse;
   hasTemplate(): boolean;
   clearTemplate(): GetTemplateResponse;
+
+  getProcessed(): boolean;
+  setProcessed(value: boolean): GetTemplateResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetTemplateResponse.AsObject;
@@ -77,12 +84,15 @@ export class GetTemplateResponse extends jspb.Message {
 export namespace GetTemplateResponse {
   export type AsObject = {
     template?: resources_documents_documents_pb.DocumentTemplate.AsObject,
+    processed: boolean,
   }
 }
 
 export class FindDocumentsRequest extends jspb.Message {
-  getOffset(): number;
-  setOffset(value: number): FindDocumentsRequest;
+  getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationRequest): FindDocumentsRequest;
+  hasPagination(): boolean;
+  clearPagination(): FindDocumentsRequest;
 
   getOrderbyList(): Array<resources_common_database_database_pb.OrderBy>;
   setOrderbyList(value: Array<resources_common_database_database_pb.OrderBy>): FindDocumentsRequest;
@@ -105,7 +115,7 @@ export class FindDocumentsRequest extends jspb.Message {
 
 export namespace FindDocumentsRequest {
   export type AsObject = {
-    offset: number,
+    pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
     orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
     search: string,
     category: string,
@@ -113,14 +123,10 @@ export namespace FindDocumentsRequest {
 }
 
 export class FindDocumentsResponse extends jspb.Message {
-  getTotalCount(): number;
-  setTotalCount(value: number): FindDocumentsResponse;
-
-  getOffset(): number;
-  setOffset(value: number): FindDocumentsResponse;
-
-  getEnd(): number;
-  setEnd(value: number): FindDocumentsResponse;
+  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationResponse): FindDocumentsResponse;
+  hasPagination(): boolean;
+  clearPagination(): FindDocumentsResponse;
 
   getDocumentsList(): Array<resources_documents_documents_pb.Document>;
   setDocumentsList(value: Array<resources_documents_documents_pb.Document>): FindDocumentsResponse;
@@ -137,9 +143,7 @@ export class FindDocumentsResponse extends jspb.Message {
 
 export namespace FindDocumentsResponse {
   export type AsObject = {
-    totalCount: number,
-    offset: number,
-    end: number,
+    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
     documentsList: Array<resources_documents_documents_pb.Document.AsObject>,
   }
 }
@@ -397,11 +401,13 @@ export namespace RemoveDcoumentRelationResponse {
 }
 
 export class GetDocumentCommentsRequest extends jspb.Message {
+  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationResponse): GetDocumentCommentsRequest;
+  hasPagination(): boolean;
+  clearPagination(): GetDocumentCommentsRequest;
+
   getDocumentId(): number;
   setDocumentId(value: number): GetDocumentCommentsRequest;
-
-  getOffset(): number;
-  setOffset(value: number): GetDocumentCommentsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetDocumentCommentsRequest.AsObject;
@@ -413,20 +419,16 @@ export class GetDocumentCommentsRequest extends jspb.Message {
 
 export namespace GetDocumentCommentsRequest {
   export type AsObject = {
+    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
     documentId: number,
-    offset: number,
   }
 }
 
 export class GetDocumentCommentsResponse extends jspb.Message {
-  getTotalCount(): number;
-  setTotalCount(value: number): GetDocumentCommentsResponse;
-
-  getOffset(): number;
-  setOffset(value: number): GetDocumentCommentsResponse;
-
-  getEnd(): number;
-  setEnd(value: number): GetDocumentCommentsResponse;
+  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationResponse): GetDocumentCommentsResponse;
+  hasPagination(): boolean;
+  clearPagination(): GetDocumentCommentsResponse;
 
   getCommentsList(): Array<resources_documents_documents_pb.DocumentComment>;
   setCommentsList(value: Array<resources_documents_documents_pb.DocumentComment>): GetDocumentCommentsResponse;
@@ -443,9 +445,7 @@ export class GetDocumentCommentsResponse extends jspb.Message {
 
 export namespace GetDocumentCommentsResponse {
   export type AsObject = {
-    totalCount: number,
-    offset: number,
-    end: number,
+    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
     commentsList: Array<resources_documents_documents_pb.DocumentComment.AsObject>,
   }
 }

@@ -50,6 +50,7 @@ message User {
 
 message License {
   string type = 1 [(validate.rules).string = {min_len: 3, max_len: 60}]; // @gotags: alias:"type"
+  string label = 2; // @gotags: alias:"label"
 }
 
 message UserProps {

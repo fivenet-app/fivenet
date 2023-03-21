@@ -3,6 +3,8 @@ package citizenstore
 import (
 	context "context"
 	"database/sql"
+	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -14,13 +16,15 @@ import (
 	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 var (
-	u  = table.Users.AS("user")
-	ul = table.UserLicenses
+	u        = table.Users.AS("user")
+	ul       = table.UserLicenses
+	licenses = table.Licenses
 
 	aup = table.ArpanetUserProps
 	aua = table.ArpanetUserActivity
@@ -80,7 +84,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	// Get total count of values
 	countStmt := u.
 		SELECT(
-			jet.COUNT(u.ID).AS("total_count"),
+			jet.COUNT(u.ID).AS("datacount.totalcount"),
 		).
 		FROM(
 			u.
@@ -94,9 +98,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	}
 
 	resp := &FindUsersResponse{
-		Offset:     req.Offset,
-		TotalCount: count.TotalCount,
-		End:        0,
+		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -113,8 +115,8 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 			),
 		).
 		WHERE(condition).
-		OFFSET(req.Offset).
-		LIMIT(database.PaginationLimit)
+		OFFSET(req.Pagination.Offset).
+		LIMIT(database.DefaultPageLimit)
 
 	// Convert our proto abstracted `common.OrderBy` to actual gorm order by instructions
 	orderBys := []jet.OrderByClause{}
@@ -142,13 +144,10 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		return nil, err
 	}
 
-	resp.TotalCount = count.TotalCount
-	if req.Offset >= resp.TotalCount {
-		resp.Offset = 0
-	} else {
-		resp.Offset = req.Offset
-	}
-	resp.End = resp.Offset + int64(len(resp.Users))
+	database.PaginationHelper(resp.Pagination,
+		count.TotalCount,
+		req.Pagination.Offset,
+		len(resp.Users))
 
 	for i := 0; i < len(resp.Users); i++ {
 		s.c.EnrichJobInfo(resp.Users[i])
@@ -180,9 +179,6 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		selectors = append(selectors, aup.Wanted)
 	}
-	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
-		selectors = append(selectors, ul.Type)
-	}
 
 	resp := &GetUserResponse{
 		User: &users.User{},
@@ -195,16 +191,39 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			u.
 				LEFT_JOIN(aup,
 					aup.UserID.EQ(u.ID),
-				).
-				LEFT_JOIN(ul,
-					ul.Owner.EQ(u.Identifier),
 				),
 		).
 		WHERE(u.ID.EQ(jet.Int32(req.UserId))).
-		LIMIT(15)
+		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.User); err != nil {
 		return nil, err
+	}
+
+	// Check if user can see licenses and fetch them separately
+	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
+		stmt := u.
+			SELECT(
+				ul.Type.AS("license.type"),
+				licenses.Label.AS("license.label"),
+			).
+			FROM(
+				ul.
+					INNER_JOIN(u,
+						ul.Owner.EQ(u.Identifier),
+					).
+					LEFT_JOIN(licenses,
+						licenses.Type.EQ(ul.Type)),
+			).
+			WHERE(u.ID.EQ(jet.Int32(req.UserId))).
+			LIMIT(15)
+
+		fmt.Println(stmt.DebugSql())
+		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
+			if !errors.Is(qrm.ErrNoRows, err) {
+				return nil, err
+			}
+		}
 	}
 
 	s.c.EnrichJobInfo(resp.User)
@@ -254,7 +273,9 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 		LIMIT(12)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
-		return nil, err
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
 	}
 
 	for i := 0; i < len(resp.Activity); i++ {
@@ -379,7 +400,9 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 		)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
-		return nil, err
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
 	}
 
 	for i := 0; i < len(resp.Relations); i++ {

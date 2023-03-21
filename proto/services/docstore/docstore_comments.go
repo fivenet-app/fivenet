@@ -29,7 +29,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 
 	countStmt := dComments.
 		SELECT(
-			jet.COUNT(docs.ID).AS("total_count"),
+			jet.COUNT(docs.ID).AS("datacount.totalcount"),
 		).
 		FROM(
 			dComments,
@@ -39,6 +39,13 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
+	}
+
+	resp := &GetDocumentCommentsResponse{
+		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
 	}
 
 	stmt := dComments.
@@ -61,18 +68,14 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		).
 		WHERE(condition)
 
-	resp := &GetDocumentCommentsResponse{}
 	if err := stmt.QueryContext(ctx, s.db, resp.Comments); err != nil {
 		return nil, err
 	}
 
-	resp.TotalCount = count.TotalCount
-	if req.Offset >= resp.TotalCount {
-		resp.Offset = 0
-	} else {
-		resp.Offset = req.Offset
-	}
-	resp.End = resp.Offset + int64(len(resp.Comments))
+	database.PaginationHelper(resp.Pagination,
+		count.TotalCount,
+		req.Pagination.Offset,
+		len(resp.Comments))
 
 	return resp, nil
 }

@@ -18,6 +18,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	DocShortContentLength = 250
+)
+
 var (
 	u           = table.Users
 	docs        = table.ArpanetDocuments.AS("document")
@@ -58,8 +62,8 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 
 	countStmt := s.getDocumentsQuery(
 		condition,
-		jet.ProjectionList{jet.COUNT(docs.ID).AS("total_count")},
-		nil, userId, job, jobGrade)
+		jet.ProjectionList{jet.COUNT(docs.ID).AS("datacount.totalcount")},
+		-1, userId, job, jobGrade)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -67,27 +71,24 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 	}
 
 	resp := &FindDocumentsResponse{
-		Offset:     req.Offset,
-		TotalCount: count.TotalCount,
-		End:        0,
+		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
 
-	stmt := s.getDocumentsQuery(condition, nil, nil, userId, job, jobGrade).
-		OFFSET(req.Offset)
+	stmt := s.getDocumentsQuery(condition, nil,
+		DocShortContentLength, userId, job, jobGrade).
+		OFFSET(req.Pagination.Offset)
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
 		return nil, err
 	}
 
-	resp.TotalCount = count.TotalCount
-	if req.Offset >= resp.TotalCount {
-		resp.Offset = 0
-	} else {
-		resp.Offset = req.Offset
-	}
-	resp.End = resp.Offset + int64(len(resp.Documents))
+	database.PaginationHelper(resp.Pagination,
+		count.TotalCount,
+		req.Pagination.Offset,
+		len(resp.Documents),
+	)
 
 	return resp, nil
 }
@@ -99,7 +100,9 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		docs.ID.EQ(jet.Uint64(req.DocumentId)),
 	)
 
-	countStmt := s.getDocumentsQuery(condition, jet.ProjectionList{jet.COUNT(docs.ID).AS("total_count")}, nil, userId, job, jobGrade)
+	countStmt := s.getDocumentsQuery(condition,
+		jet.ProjectionList{jet.COUNT(docs.ID).AS("datacount.totalcount")},
+		-1, userId, job, jobGrade)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -110,7 +113,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		Document: &documents.Document{},
 	}
 
-	stmt := s.getDocumentsQuery(condition, nil, nil, userId, job, jobGrade)
+	stmt := s.getDocumentsQuery(condition, nil, -1, userId, job, jobGrade)
 	if err := stmt.QueryContext(ctx, s.db, resp.Document); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

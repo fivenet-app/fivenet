@@ -155,7 +155,7 @@ function toggleWantedStatus() {
                                 <div class="flex flex-1 items-center">
                                     <KeyIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                                     <span class="ml-2 flex-1 truncate">{{
-                                        license.getType().toUpperCase() }}</span>
+                                        license.getLabel() }} ({{ license.getType().toUpperCase() }})</span>
                                 </div>
                             </li>
                         </ul>

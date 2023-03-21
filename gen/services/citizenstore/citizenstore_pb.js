@@ -286,7 +286,7 @@ proto.services.citizenstore.FindUsersRequest.prototype.toObject = function(opt_i
  */
 proto.services.citizenstore.FindUsersRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    offset: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f),
     orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
     resources_common_database_database_pb.OrderBy.toObject, includeInstance),
     searchname: jspb.Message.getFieldWithDefault(msg, 3, ""),
@@ -328,8 +328,9 @@ proto.services.citizenstore.FindUsersRequest.deserializeBinaryFromReader = funct
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
+      var value = new resources_common_database_database_pb.PaginationRequest;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationRequest.deserializeBinaryFromReader);
+      msg.setPagination(value);
       break;
     case 2:
       var value = new resources_common_database_database_pb.OrderBy;
@@ -373,11 +374,12 @@ proto.services.citizenstore.FindUsersRequest.prototype.serializeBinary = functio
  */
 proto.services.citizenstore.FindUsersRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
+      f,
+      resources_common_database_database_pb.PaginationRequest.serializeBinaryToWriter
     );
   }
   f = message.getOrderbyList();
@@ -406,20 +408,39 @@ proto.services.citizenstore.FindUsersRequest.serializeBinaryToWriter = function(
 
 
 /**
- * optional int64 offset = 1;
- * @return {number}
+ * optional resources.common.database.PaginationRequest pagination = 1;
+ * @return {?proto.resources.common.database.PaginationRequest}
  */
-proto.services.citizenstore.FindUsersRequest.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.services.citizenstore.FindUsersRequest.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationRequest} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationRequest, 1));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.common.database.PaginationRequest|undefined} value
+ * @return {!proto.services.citizenstore.FindUsersRequest} returns this
+*/
+proto.services.citizenstore.FindUsersRequest.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.citizenstore.FindUsersRequest} returns this
  */
-proto.services.citizenstore.FindUsersRequest.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+proto.services.citizenstore.FindUsersRequest.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.citizenstore.FindUsersRequest.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -503,7 +524,7 @@ proto.services.citizenstore.FindUsersRequest.prototype.setWanted = function(valu
  * @private {!Array<number>}
  * @const
  */
-proto.services.citizenstore.FindUsersResponse.repeatedFields_ = [4];
+proto.services.citizenstore.FindUsersResponse.repeatedFields_ = [2];
 
 
 
@@ -536,9 +557,7 @@ proto.services.citizenstore.FindUsersResponse.prototype.toObject = function(opt_
  */
 proto.services.citizenstore.FindUsersResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    totalCount: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    end: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationResponse.toObject(includeInstance, f),
     usersList: jspb.Message.toObjectList(msg.getUsersList(),
     resources_users_users_pb.User.toObject, includeInstance)
   };
@@ -578,18 +597,11 @@ proto.services.citizenstore.FindUsersResponse.deserializeBinaryFromReader = func
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setTotalCount(value);
+      var value = new resources_common_database_database_pb.PaginationResponse;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationResponse.deserializeBinaryFromReader);
+      msg.setPagination(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
-      break;
-    case 3:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setEnd(value);
-      break;
-    case 4:
       var value = new resources_users_users_pb.User;
       reader.readMessage(value,resources_users_users_pb.User.deserializeBinaryFromReader);
       msg.addUsers(value);
@@ -623,31 +635,18 @@ proto.services.citizenstore.FindUsersResponse.prototype.serializeBinary = functi
  */
 proto.services.citizenstore.FindUsersResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTotalCount();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
-    );
-  }
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
-      2,
-      f
-    );
-  }
-  f = message.getEnd();
-  if (f !== 0) {
-    writer.writeInt64(
-      3,
-      f
+      f,
+      resources_common_database_database_pb.PaginationResponse.serializeBinaryToWriter
     );
   }
   f = message.getUsersList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      4,
+      2,
       f,
       resources_users_users_pb.User.serializeBinaryToWriter
     );
@@ -656,66 +655,49 @@ proto.services.citizenstore.FindUsersResponse.serializeBinaryToWriter = function
 
 
 /**
- * optional int64 total_count = 1;
- * @return {number}
+ * optional resources.common.database.PaginationResponse pagination = 1;
+ * @return {?proto.resources.common.database.PaginationResponse}
  */
-proto.services.citizenstore.FindUsersResponse.prototype.getTotalCount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.services.citizenstore.FindUsersResponse.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationResponse} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationResponse, 1));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.common.database.PaginationResponse|undefined} value
+ * @return {!proto.services.citizenstore.FindUsersResponse} returns this
+*/
+proto.services.citizenstore.FindUsersResponse.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.citizenstore.FindUsersResponse} returns this
  */
-proto.services.citizenstore.FindUsersResponse.prototype.setTotalCount = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+proto.services.citizenstore.FindUsersResponse.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
 };
 
 
 /**
- * optional int64 offset = 2;
- * @return {number}
+ * Returns whether this field is set.
+ * @return {boolean}
  */
-proto.services.citizenstore.FindUsersResponse.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+proto.services.citizenstore.FindUsersResponse.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
 /**
- * @param {number} value
- * @return {!proto.services.citizenstore.FindUsersResponse} returns this
- */
-proto.services.citizenstore.FindUsersResponse.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional int64 end = 3;
- * @return {number}
- */
-proto.services.citizenstore.FindUsersResponse.prototype.getEnd = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.services.citizenstore.FindUsersResponse} returns this
- */
-proto.services.citizenstore.FindUsersResponse.prototype.setEnd = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * repeated resources.users.User users = 4;
+ * repeated resources.users.User users = 2;
  * @return {!Array<!proto.resources.users.User>}
  */
 proto.services.citizenstore.FindUsersResponse.prototype.getUsersList = function() {
   return /** @type{!Array<!proto.resources.users.User>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_users_users_pb.User, 4));
+    jspb.Message.getRepeatedWrapperField(this, resources_users_users_pb.User, 2));
 };
 
 
@@ -724,7 +706,7 @@ proto.services.citizenstore.FindUsersResponse.prototype.getUsersList = function(
  * @return {!proto.services.citizenstore.FindUsersResponse} returns this
 */
 proto.services.citizenstore.FindUsersResponse.prototype.setUsersList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 4, value);
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
 
@@ -734,7 +716,7 @@ proto.services.citizenstore.FindUsersResponse.prototype.setUsersList = function(
  * @return {!proto.resources.users.User}
  */
 proto.services.citizenstore.FindUsersResponse.prototype.addUsers = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.resources.users.User, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.users.User, opt_index);
 };
 
 
@@ -1350,7 +1332,7 @@ proto.services.citizenstore.GetUserDocumentsRequest.prototype.toObject = functio
  */
 proto.services.citizenstore.GetUserDocumentsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    offset: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f),
     userId: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
@@ -1389,8 +1371,9 @@ proto.services.citizenstore.GetUserDocumentsRequest.deserializeBinaryFromReader 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
+      var value = new resources_common_database_database_pb.PaginationRequest;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationRequest.deserializeBinaryFromReader);
+      msg.setPagination(value);
       break;
     case 2:
       var value = /** @type {number} */ (reader.readInt32());
@@ -1425,11 +1408,12 @@ proto.services.citizenstore.GetUserDocumentsRequest.prototype.serializeBinary = 
  */
 proto.services.citizenstore.GetUserDocumentsRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
+      f,
+      resources_common_database_database_pb.PaginationRequest.serializeBinaryToWriter
     );
   }
   f = message.getUserId();
@@ -1443,20 +1427,39 @@ proto.services.citizenstore.GetUserDocumentsRequest.serializeBinaryToWriter = fu
 
 
 /**
- * optional int64 offset = 1;
- * @return {number}
+ * optional resources.common.database.PaginationRequest pagination = 1;
+ * @return {?proto.resources.common.database.PaginationRequest}
  */
-proto.services.citizenstore.GetUserDocumentsRequest.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.services.citizenstore.GetUserDocumentsRequest.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationRequest} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationRequest, 1));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.common.database.PaginationRequest|undefined} value
+ * @return {!proto.services.citizenstore.GetUserDocumentsRequest} returns this
+*/
+proto.services.citizenstore.GetUserDocumentsRequest.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.citizenstore.GetUserDocumentsRequest} returns this
  */
-proto.services.citizenstore.GetUserDocumentsRequest.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+proto.services.citizenstore.GetUserDocumentsRequest.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.citizenstore.GetUserDocumentsRequest.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -1484,7 +1487,7 @@ proto.services.citizenstore.GetUserDocumentsRequest.prototype.setUserId = functi
  * @private {!Array<number>}
  * @const
  */
-proto.services.citizenstore.GetUserDocumentsResponse.repeatedFields_ = [4];
+proto.services.citizenstore.GetUserDocumentsResponse.repeatedFields_ = [2];
 
 
 
@@ -1517,9 +1520,7 @@ proto.services.citizenstore.GetUserDocumentsResponse.prototype.toObject = functi
  */
 proto.services.citizenstore.GetUserDocumentsResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    totalCount: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    end: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationResponse.toObject(includeInstance, f),
     relationsList: jspb.Message.toObjectList(msg.getRelationsList(),
     resources_documents_documents_pb.DocumentRelation.toObject, includeInstance)
   };
@@ -1559,18 +1560,11 @@ proto.services.citizenstore.GetUserDocumentsResponse.deserializeBinaryFromReader
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setTotalCount(value);
+      var value = new resources_common_database_database_pb.PaginationResponse;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationResponse.deserializeBinaryFromReader);
+      msg.setPagination(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
-      break;
-    case 3:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setEnd(value);
-      break;
-    case 4:
       var value = new resources_documents_documents_pb.DocumentRelation;
       reader.readMessage(value,resources_documents_documents_pb.DocumentRelation.deserializeBinaryFromReader);
       msg.addRelations(value);
@@ -1604,31 +1598,18 @@ proto.services.citizenstore.GetUserDocumentsResponse.prototype.serializeBinary =
  */
 proto.services.citizenstore.GetUserDocumentsResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTotalCount();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
-    );
-  }
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
-      2,
-      f
-    );
-  }
-  f = message.getEnd();
-  if (f !== 0) {
-    writer.writeInt64(
-      3,
-      f
+      f,
+      resources_common_database_database_pb.PaginationResponse.serializeBinaryToWriter
     );
   }
   f = message.getRelationsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      4,
+      2,
       f,
       resources_documents_documents_pb.DocumentRelation.serializeBinaryToWriter
     );
@@ -1637,66 +1618,49 @@ proto.services.citizenstore.GetUserDocumentsResponse.serializeBinaryToWriter = f
 
 
 /**
- * optional int64 total_count = 1;
- * @return {number}
+ * optional resources.common.database.PaginationResponse pagination = 1;
+ * @return {?proto.resources.common.database.PaginationResponse}
  */
-proto.services.citizenstore.GetUserDocumentsResponse.prototype.getTotalCount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.services.citizenstore.GetUserDocumentsResponse.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationResponse} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationResponse, 1));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.common.database.PaginationResponse|undefined} value
+ * @return {!proto.services.citizenstore.GetUserDocumentsResponse} returns this
+*/
+proto.services.citizenstore.GetUserDocumentsResponse.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.citizenstore.GetUserDocumentsResponse} returns this
  */
-proto.services.citizenstore.GetUserDocumentsResponse.prototype.setTotalCount = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+proto.services.citizenstore.GetUserDocumentsResponse.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
 };
 
 
 /**
- * optional int64 offset = 2;
- * @return {number}
+ * Returns whether this field is set.
+ * @return {boolean}
  */
-proto.services.citizenstore.GetUserDocumentsResponse.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+proto.services.citizenstore.GetUserDocumentsResponse.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
 /**
- * @param {number} value
- * @return {!proto.services.citizenstore.GetUserDocumentsResponse} returns this
- */
-proto.services.citizenstore.GetUserDocumentsResponse.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional int64 end = 3;
- * @return {number}
- */
-proto.services.citizenstore.GetUserDocumentsResponse.prototype.getEnd = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.services.citizenstore.GetUserDocumentsResponse} returns this
- */
-proto.services.citizenstore.GetUserDocumentsResponse.prototype.setEnd = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * repeated resources.documents.DocumentRelation relations = 4;
+ * repeated resources.documents.DocumentRelation relations = 2;
  * @return {!Array<!proto.resources.documents.DocumentRelation>}
  */
 proto.services.citizenstore.GetUserDocumentsResponse.prototype.getRelationsList = function() {
   return /** @type{!Array<!proto.resources.documents.DocumentRelation>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentRelation, 4));
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentRelation, 2));
 };
 
 
@@ -1705,7 +1669,7 @@ proto.services.citizenstore.GetUserDocumentsResponse.prototype.getRelationsList 
  * @return {!proto.services.citizenstore.GetUserDocumentsResponse} returns this
 */
 proto.services.citizenstore.GetUserDocumentsResponse.prototype.setRelationsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 4, value);
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
 
@@ -1715,7 +1679,7 @@ proto.services.citizenstore.GetUserDocumentsResponse.prototype.setRelationsList 
  * @return {!proto.resources.documents.DocumentRelation}
  */
 proto.services.citizenstore.GetUserDocumentsResponse.prototype.addRelations = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.resources.documents.DocumentRelation, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.documents.DocumentRelation, opt_index);
 };
 
 

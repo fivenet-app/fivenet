@@ -1499,7 +1499,8 @@ proto.resources.users.License.prototype.toObject = function(opt_includeInstance)
  */
 proto.resources.users.License.toObject = function(includeInstance, msg) {
   var f, obj = {
-    type: jspb.Message.getFieldWithDefault(msg, 1, "")
+    type: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    label: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -1540,6 +1541,10 @@ proto.resources.users.License.deserializeBinaryFromReader = function(msg, reader
       var value = /** @type {string} */ (reader.readString());
       msg.setType(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLabel(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1576,6 +1581,13 @@ proto.resources.users.License.serializeBinaryToWriter = function(message, writer
       f
     );
   }
+  f = message.getLabel();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -1594,6 +1606,24 @@ proto.resources.users.License.prototype.getType = function() {
  */
 proto.resources.users.License.prototype.setType = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string label = 2;
+ * @return {string}
+ */
+proto.resources.users.License.prototype.getLabel = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.users.License} returns this
+ */
+proto.resources.users.License.prototype.setLabel = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

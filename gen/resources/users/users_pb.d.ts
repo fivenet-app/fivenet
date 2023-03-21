@@ -181,6 +181,9 @@ export class License extends jspb.Message {
   getType(): string;
   setType(value: string): License;
 
+  getLabel(): string;
+  setLabel(value: string): License;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): License.AsObject;
   static toObject(includeInstance: boolean, msg: License): License.AsObject;
@@ -192,6 +195,7 @@ export class License extends jspb.Message {
 export namespace License {
   export type AsObject = {
     type: string,
+    label: string,
   }
 }
 

@@ -312,6 +312,8 @@ func (m *GetTemplateRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Process
+
 	if len(errors) > 0 {
 		return GetTemplateRequestMultiError(errors)
 	}
@@ -443,6 +445,8 @@ func (m *GetTemplateResponse) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for Processed
+
 	if len(errors) > 0 {
 		return GetTemplateResponseMultiError(errors)
 	}
@@ -545,15 +549,44 @@ func (m *FindDocumentsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetOffset() < 0 {
+	if m.GetPagination() == nil {
 		err := FindDocumentsRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
+			field:  "Pagination",
+			reason: "value is required",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, FindDocumentsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, FindDocumentsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FindDocumentsRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if len(m.GetOrderBy()) > 3 {
@@ -707,11 +740,34 @@ func (m *FindDocumentsResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for TotalCount
-
-	// no validation rules for Offset
-
-	// no validation rules for End
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, FindDocumentsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, FindDocumentsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FindDocumentsResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	for idx, item := range m.GetDocuments() {
 		_, _ = idx, item
@@ -2482,18 +2538,36 @@ func (m *GetDocumentCommentsRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for DocumentId
-
-	if m.GetOffset() < 0 {
-		err := GetDocumentCommentsRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetDocumentCommentsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetDocumentCommentsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
 		}
-		if !all {
-			return err
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetDocumentCommentsRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
 		}
-		errors = append(errors, err)
 	}
+
+	// no validation rules for DocumentId
 
 	if len(errors) > 0 {
 		return GetDocumentCommentsRequestMultiError(errors)
@@ -2597,11 +2671,34 @@ func (m *GetDocumentCommentsResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for TotalCount
-
-	// no validation rules for Offset
-
-	// no validation rules for End
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetDocumentCommentsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetDocumentCommentsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetDocumentCommentsResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	for idx, item := range m.GetComments() {
 		_, _ = idx, item

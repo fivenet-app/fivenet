@@ -3,6 +3,7 @@ package dmv
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/dataenricher"
@@ -56,7 +57,7 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 
 	countStmt := ve.
 		SELECT(
-			jet.COUNT(ve.Owner).AS("total_count"),
+			jet.COUNT(ve.Owner).AS("datacount.totalcount"),
 		).
 		FROM(
 			ve.
@@ -71,10 +72,10 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 		return nil, err
 	}
 
+	fmt.Println(countStmt.DebugSql())
+
 	resp := &FindVehiclesResponse{
-		Offset:     req.Offset,
-		TotalCount: count.TotalCount,
-		End:        0,
+		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -103,20 +104,17 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 			ve.Type.ASC(),
 			ve.Plate.ASC(),
 		).
-		OFFSET(req.Offset).
-		LIMIT(database.PaginationLimit)
+		OFFSET(req.Pagination.Offset).
+		LIMIT(database.DefaultPageLimit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Vehicles); err != nil {
 		return nil, err
 	}
 
-	resp.TotalCount = count.TotalCount
-	if req.Offset >= resp.TotalCount {
-		resp.Offset = 0
-	} else {
-		resp.Offset = req.Offset
-	}
-	resp.End = resp.Offset + int64(len(resp.Vehicles))
+	database.PaginationHelper(resp.Pagination,
+		count.TotalCount,
+		req.Pagination.Offset,
+		len(resp.Vehicles))
 
 	for i := 0; i < len(resp.Vehicles); i++ {
 		if resp.Vehicles[i].Owner == nil {

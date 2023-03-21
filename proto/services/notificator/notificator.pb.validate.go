@@ -295,15 +295,44 @@ func (m *GetNotificationsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetOffset() < 0 {
+	if m.GetPagination() == nil {
 		err := GetNotificationsRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
+			field:  "Pagination",
+			reason: "value is required",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetNotificationsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetNotificationsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetNotificationsRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if len(errors) > 0 {
@@ -408,11 +437,34 @@ func (m *GetNotificationsResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for TotalCount
-
-	// no validation rules for Offset
-
-	// no validation rules for End
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetNotificationsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetNotificationsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetNotificationsResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	for idx, item := range m.GetNotifications() {
 		_, _ = idx, item
@@ -549,6 +601,17 @@ func (m *ReadNotificationsRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if l := len(m.GetIds()); l < 1 || l > 20 {
+		err := ReadNotificationsRequestValidationError{
+			field:  "Ids",
+			reason: "value must contain between 1 and 20 items, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ReadNotificationsRequestMultiError(errors)

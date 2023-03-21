@@ -6,8 +6,10 @@ import * as resources_users_users_pb from '../../resources/users/users_pb';
 
 
 export class FindUsersRequest extends jspb.Message {
-  getOffset(): number;
-  setOffset(value: number): FindUsersRequest;
+  getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationRequest): FindUsersRequest;
+  hasPagination(): boolean;
+  clearPagination(): FindUsersRequest;
 
   getOrderbyList(): Array<resources_common_database_database_pb.OrderBy>;
   setOrderbyList(value: Array<resources_common_database_database_pb.OrderBy>): FindUsersRequest;
@@ -30,7 +32,7 @@ export class FindUsersRequest extends jspb.Message {
 
 export namespace FindUsersRequest {
   export type AsObject = {
-    offset: number,
+    pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
     orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
     searchname: string,
     wanted: boolean,
@@ -38,14 +40,10 @@ export namespace FindUsersRequest {
 }
 
 export class FindUsersResponse extends jspb.Message {
-  getTotalCount(): number;
-  setTotalCount(value: number): FindUsersResponse;
-
-  getOffset(): number;
-  setOffset(value: number): FindUsersResponse;
-
-  getEnd(): number;
-  setEnd(value: number): FindUsersResponse;
+  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationResponse): FindUsersResponse;
+  hasPagination(): boolean;
+  clearPagination(): FindUsersResponse;
 
   getUsersList(): Array<resources_users_users_pb.User>;
   setUsersList(value: Array<resources_users_users_pb.User>): FindUsersResponse;
@@ -62,9 +60,7 @@ export class FindUsersResponse extends jspb.Message {
 
 export namespace FindUsersResponse {
   export type AsObject = {
-    totalCount: number,
-    offset: number,
-    end: number,
+    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
     usersList: Array<resources_users_users_pb.User.AsObject>,
   }
 }
@@ -146,8 +142,10 @@ export namespace GetUserActivityResponse {
 }
 
 export class GetUserDocumentsRequest extends jspb.Message {
-  getOffset(): number;
-  setOffset(value: number): GetUserDocumentsRequest;
+  getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationRequest): GetUserDocumentsRequest;
+  hasPagination(): boolean;
+  clearPagination(): GetUserDocumentsRequest;
 
   getUserId(): number;
   setUserId(value: number): GetUserDocumentsRequest;
@@ -162,20 +160,16 @@ export class GetUserDocumentsRequest extends jspb.Message {
 
 export namespace GetUserDocumentsRequest {
   export type AsObject = {
-    offset: number,
+    pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
     userId: number,
   }
 }
 
 export class GetUserDocumentsResponse extends jspb.Message {
-  getTotalCount(): number;
-  setTotalCount(value: number): GetUserDocumentsResponse;
-
-  getOffset(): number;
-  setOffset(value: number): GetUserDocumentsResponse;
-
-  getEnd(): number;
-  setEnd(value: number): GetUserDocumentsResponse;
+  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationResponse): GetUserDocumentsResponse;
+  hasPagination(): boolean;
+  clearPagination(): GetUserDocumentsResponse;
 
   getRelationsList(): Array<resources_documents_documents_pb.DocumentRelation>;
   setRelationsList(value: Array<resources_documents_documents_pb.DocumentRelation>): GetUserDocumentsResponse;
@@ -192,9 +186,7 @@ export class GetUserDocumentsResponse extends jspb.Message {
 
 export namespace GetUserDocumentsResponse {
   export type AsObject = {
-    totalCount: number,
-    offset: number,
-    end: number,
+    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
     relationsList: Array<resources_documents_documents_pb.DocumentRelation.AsObject>,
   }
 }

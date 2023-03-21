@@ -10,7 +10,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, additionalColumns jet.ProjectionList, userId int32, job string, jobGrade int32) jet.SelectStatement {
+func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, contentLength int, userId int32, job string, jobGrade int32) jet.SelectStatement {
 	wheres := []jet.BoolExpression{
 		jet.AND(
 			docs.DeletedAt.IS_NULL(),
@@ -46,36 +46,27 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 				onlyColumns,
 			)
 	} else {
-		if additionalColumns == nil {
-			q = docs.
-				SELECT(
-					docs.AllColumns,
-					dCategory.ID,
-					dCategory.Name,
-					u.ID,
-					u.Identifier,
-					u.Job,
-					u.JobGrade,
-					u.Firstname,
-					u.Lastname,
-				)
-		} else {
-			additionalColumns = append(jet.ProjectionList{
-				dCategory.Name,
-				dCategory.ID,
-				u.ID,
-				u.Identifier,
-				u.Job,
-				u.JobGrade,
-				u.Firstname,
-				u.Lastname,
-			}, additionalColumns)
-			q = docs.
-				SELECT(
-					docs.AllColumns,
-					additionalColumns...,
-				)
+		columns := jet.ProjectionList{
+			docs.ID,
+			docs.CreatedAt,
+			docs.UpdatedAt,
+			docs.DeletedAt,
+			docs.CategoryID,
+			docs.Title,
+			docs.ContentType,
+			docs.Data,
+			docs.CreatorID,
+			docs.CreatorJob,
+			docs.State,
+			docs.Closed,
+			docs.Public,
 		}
+		if contentLength > 0 {
+			columns = append(columns, jet.LEFT(docs.Content, jet.Int(int64(contentLength))))
+		} else {
+			columns = append(columns, docs.Content)
+		}
+		q = docs.SELECT(columns[0], columns[1:])
 	}
 
 	return q.
@@ -102,7 +93,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			),
 		).
 		ORDER_BY(docs.CreatedAt.DESC()).
-		LIMIT(database.PaginationLimit)
+		LIMIT(database.DefaultPageLimit)
 }
 
 func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentID uint64, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS) (bool, error) {

@@ -9,7 +9,7 @@ import "resources/users/users.proto";
 import "validate/validate.proto";
 
 message FindUsersRequest {
-  int64 offset = 1 [(validate.rules).int64.gte = 0];
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
   // Search params
   string searchName = 3 [(validate.rules).string.max_len = 50];
@@ -17,10 +17,8 @@ message FindUsersRequest {
 }
 
 message FindUsersResponse {
-  int64 total_count = 1;
-  int64 offset = 2;
-  int64 end = 3;
-  repeated resources.users.User users = 4;
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.users.User users = 2;
 }
 
 message GetUserRequest {
@@ -40,15 +38,13 @@ message GetUserActivityResponse {
 }
 
 message GetUserDocumentsRequest {
-  int64 offset = 1 [(validate.rules).int64.gte = 0];
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   int32 user_id = 2 [(validate.rules).int32.gt = 0];
 }
 
 message GetUserDocumentsResponse {
-  int64 total_count = 1;
-  int64 offset = 2;
-  int64 end = 3;
-  repeated resources.documents.DocumentRelation relations = 4;
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.documents.DocumentRelation relations = 2;
 }
 
 message SetUserPropsRequest {

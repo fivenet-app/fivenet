@@ -252,6 +252,10 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 		}
 	}
 
+	for i := 0; i < len(dest); i++ {
+		s.c.EnrichJobInfo(dest[i].Creator)
+	}
+
 	return dest, nil
 }
 
@@ -318,6 +322,11 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
+	}
+
+	for i := 0; i < len(dest); i++ {
+		s.c.EnrichJobInfo(dest[i].SourceUser)
+		s.c.EnrichJobInfo(dest[i].TargetUser)
 	}
 
 	return dest, nil

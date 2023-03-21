@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.notificator;
 option go_package = "github.com/galexrt/arpanet/proto/services/notificator;notificator";
 
+import "resources/common/database/database.proto";
 import "resources/notifications/notifications.proto";
 import "validate/validate.proto";
 
@@ -16,18 +17,16 @@ message StreamResponse {
 }
 
 message GetNotificationsRequest {
-  int64 offset = 1 [(validate.rules).int64.gte = 0];
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
 }
 
 message GetNotificationsResponse {
-  int64 total_count = 1;
-  int64 offset = 2;
-  int64 end = 3;
-  repeated resources.notifications.Notification notifications = 4;
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.notifications.Notification notifications = 2;
 }
 
 message ReadNotificationsRequest {
-  repeated uint64 ids = 1;
+  repeated uint64 ids = 1 [(validate.rules).repeated = {min_items: 1, max_items: 20}];
 }
 
 message ReadNotificationsResponse {}

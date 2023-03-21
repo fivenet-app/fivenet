@@ -5,8 +5,10 @@ import * as resources_vehicles_vehicles_pb from '../../resources/vehicles/vehicl
 
 
 export class FindVehiclesRequest extends jspb.Message {
-  getOffset(): number;
-  setOffset(value: number): FindVehiclesRequest;
+  getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationRequest): FindVehiclesRequest;
+  hasPagination(): boolean;
+  clearPagination(): FindVehiclesRequest;
 
   getOrderbyList(): Array<resources_common_database_database_pb.OrderBy>;
   setOrderbyList(value: Array<resources_common_database_database_pb.OrderBy>): FindVehiclesRequest;
@@ -32,7 +34,7 @@ export class FindVehiclesRequest extends jspb.Message {
 
 export namespace FindVehiclesRequest {
   export type AsObject = {
-    offset: number,
+    pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
     orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
     search: string,
     type: string,
@@ -41,14 +43,10 @@ export namespace FindVehiclesRequest {
 }
 
 export class FindVehiclesResponse extends jspb.Message {
-  getTotalCount(): number;
-  setTotalCount(value: number): FindVehiclesResponse;
-
-  getOffset(): number;
-  setOffset(value: number): FindVehiclesResponse;
-
-  getEnd(): number;
-  setEnd(value: number): FindVehiclesResponse;
+  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationResponse): FindVehiclesResponse;
+  hasPagination(): boolean;
+  clearPagination(): FindVehiclesResponse;
 
   getVehiclesList(): Array<resources_vehicles_vehicles_pb.Vehicle>;
   setVehiclesList(value: Array<resources_vehicles_vehicles_pb.Vehicle>): FindVehiclesResponse;
@@ -65,9 +63,7 @@ export class FindVehiclesResponse extends jspb.Message {
 
 export namespace FindVehiclesResponse {
   export type AsObject = {
-    totalCount: number,
-    offset: number,
-    end: number,
+    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
     vehiclesList: Array<resources_vehicles_vehicles_pb.Vehicle.AsObject>,
   }
 }
