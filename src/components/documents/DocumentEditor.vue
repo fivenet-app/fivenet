@@ -168,16 +168,17 @@ function submitForm(): void {
             const user = new DocumentUserAccess();
             user.setAccess(DOC_ACCESS[entry.values.accessrole]);
             user.setUserId(entry.values.char);
+            if (activeChar.value) user.setCreatorId(activeChar.value.getUserId());
 
             reqAccess.addUsers(user);
         } else if (entry.type === 1) {
             if (!entry.values.job) return;
 
             const job = new DocumentJobAccess();
-            job.setJob(entry.values.job.getName());
+            job.setJob(entry.values.job);
             job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
             job.setAccess(DOC_ACCESS[entry.values.accessrole]);
-            job.setCreatorId(activeChar.value);
+            if (activeChar.value) job.setCreatorId(activeChar.value.getUserId());
 
             reqAccess.addJobs(job);
         }
@@ -222,16 +223,17 @@ function editForm(): void {
             console.log(entry.values.accessrole)
             user.setAccess(DOC_ACCESS[entry.values.accessrole]);
             user.setUserId(entry.values.char);
+            if (activeChar.value) user.setCreatorId(activeChar.value.getUserId());
 
             reqAccess.addUsers(user);
         } else if (entry.type === 1) {
             if (!entry.values.job) return;
 
             const job = new DocumentJobAccess();
-            job.setJob(entry.values.job.getName());
+            job.setJob(entry.values.job);
             job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
             job.setAccess(DOC_ACCESS[entry.values.accessrole]);
-            job.setCreatorId(activeChar.value);
+            if (activeChar.value) job.setCreatorId(activeChar.value.getUserId());
 
             reqAccess.addJobs(job);
         }
