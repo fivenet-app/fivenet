@@ -80,6 +80,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 	stmt := s.getDocumentsQuery(condition, nil,
 		DocShortContentLength, userId, job, jobGrade).
 		OFFSET(req.Pagination.Offset)
+
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
 		return nil, err
 	}

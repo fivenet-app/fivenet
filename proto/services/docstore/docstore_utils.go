@@ -62,7 +62,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			docs.Public,
 		}
 		if contentLength > 0 {
-			columns = append(columns, jet.LEFT(docs.Content, jet.Int(int64(contentLength))))
+			columns = append(columns, jet.LEFT(docs.Content, jet.Int(int64(contentLength))).AS("document.content"))
 		} else {
 			columns = append(columns, docs.Content)
 		}
