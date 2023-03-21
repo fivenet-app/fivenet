@@ -25,10 +25,10 @@ import (
 )
 
 var (
-	a  = table.ArpanetAccounts
-	u  = table.Users.AS("user")
-	js = table.Jobs
-	jg = table.JobGrades
+	account   = table.ArpanetAccounts
+	user      = table.Users.AS("user")
+	jobs      = table.Jobs
+	jobGrades = table.JobGrades
 )
 
 var (
@@ -101,14 +101,14 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 }
 
 func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.ArpanetAccounts, error) {
-	stmt := a.
+	stmt := account.
 		SELECT(
-			a.AllColumns,
+			account.AllColumns,
 		).
-		FROM(a).
+		FROM(account).
 		WHERE(
-			a.Enabled.IS_TRUE().
-				AND(a.Username.EQ(jet.String(username))),
+			account.Enabled.IS_TRUE().
+				AND(account.Username.EQ(jet.String(username))),
 		).
 		LIMIT(1)
 
@@ -152,38 +152,38 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	}
 
 	// Load chars from database
-	stmt := u.
+	stmt := user.
 		SELECT(
-			u.ID,
-			u.Identifier,
-			u.Job,
-			js.Label.AS("user.job_label"),
-			u.JobGrade,
-			jg.Label.AS("user.job_grade_label"),
-			u.Firstname,
-			u.Lastname,
-			u.Dateofbirth,
-			u.Sex,
-			u.Height,
-			u.PhoneNumber,
-			u.Visum,
-			u.Playtime,
+			user.ID,
+			user.Identifier,
+			user.Job,
+			jobs.Label.AS("user.job_label"),
+			user.JobGrade,
+			jobGrades.Label.AS("user.job_grade_label"),
+			user.Firstname,
+			user.Lastname,
+			user.Dateofbirth,
+			user.Sex,
+			user.Height,
+			user.PhoneNumber,
+			user.Visum,
+			user.Playtime,
 		).
-		FROM(u.
-			LEFT_JOIN(js,
-				js.Name.EQ(u.Job),
+		FROM(user.
+			LEFT_JOIN(jobs,
+				jobs.Name.EQ(user.Job),
 			).
-			LEFT_JOIN(jg,
+			LEFT_JOIN(jobGrades,
 				jet.AND(
-					jg.Grade.EQ(u.JobGrade),
-					jg.JobName.EQ(u.Job),
+					jobGrades.Grade.EQ(user.JobGrade),
+					jobGrades.JobName.EQ(user.Job),
 				),
 			),
 		).
 		WHERE(
-			u.Identifier.LIKE(jet.String(buildCharSearchIdentifier(claims.Subject))),
+			user.Identifier.LIKE(jet.String(buildCharSearchIdentifier(claims.Subject))),
 		).
-		ORDER_BY(u.ID).
+		ORDER_BY(user.ID).
 		LIMIT(10)
 
 	resp := &GetCharactersResponse{}
@@ -207,28 +207,28 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	stmt := u.
+	stmt := user.
 		SELECT(
-			u.ID,
-			u.Identifier,
-			u.Job,
-			u.JobGrade,
-			js.Label.AS("user.job_label"),
-			jg.Label.AS("user.job_grade_label"),
+			user.ID,
+			user.Identifier,
+			user.Job,
+			user.JobGrade,
+			jobs.Label.AS("user.job_label"),
+			jobGrades.Label.AS("user.job_grade_label"),
 		).
-		FROM(u.
-			LEFT_JOIN(js,
-				js.Name.EQ(u.Job),
+		FROM(user.
+			LEFT_JOIN(jobs,
+				jobs.Name.EQ(user.Job),
 			).
-			LEFT_JOIN(jg,
+			LEFT_JOIN(jobGrades,
 				jet.AND(
-					jg.Grade.EQ(u.JobGrade),
-					jg.JobName.EQ(u.Job),
+					jobGrades.Grade.EQ(user.JobGrade),
+					jobGrades.JobName.EQ(user.Job),
 				),
 			),
 		).
 		WHERE(
-			u.ID.EQ(jet.Int32(req.CharId)),
+			user.ID.EQ(jet.Int32(req.CharId)),
 		).
 		LIMIT(1)
 

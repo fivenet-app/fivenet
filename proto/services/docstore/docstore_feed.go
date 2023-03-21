@@ -198,7 +198,7 @@ func (s *Server) RemoveDcoumentRelation(ctx context.Context, req *RemoveDcoument
 
 func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) ([]*documents.DocumentReference, error) {
 	sourceDoc := docs.AS("source_document")
-	uCreator := u.AS("ref_creator")
+	uCreator := user.AS("ref_creator")
 	stmt := docRef.
 		SELECT(
 			docRef.ID,
@@ -260,8 +260,8 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 }
 
 func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([]*documents.DocumentRelation, error) {
-	uSource := u.AS("source_user")
-	uTarget := u.AS("target_user")
+	uSource := user.AS("source_user")
+	uTarget := user.AS("target_user")
 	stmt := docRel.
 		SELECT(
 			docRel.ID,

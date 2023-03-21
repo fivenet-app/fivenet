@@ -139,6 +139,9 @@ func (c *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 		usr.SetJobLabel(job.Label)
 
 		jg := usr.GetJobGrade() - 1
+		if jg < 0 {
+			jg = 0
+		}
 
 		if len(job.Grades) >= int(jg) {
 			usr.SetJobGradeLabel(job.Grades[jg].Label)

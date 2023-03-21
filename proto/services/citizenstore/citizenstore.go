@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	u        = table.Users.AS("user")
+	user     = table.Users.AS("user")
 	ul       = table.UserLicenses
 	licenses = table.Licenses
 
@@ -51,18 +51,18 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	userId, _, _ := auth.GetUserInfoFromContext(ctx)
 
 	selectors := jet.ProjectionList{
-		u.ID,
-		u.Identifier,
-		u.Job,
-		u.JobGrade,
-		u.Firstname,
-		u.Lastname,
-		u.Dateofbirth,
-		u.Sex,
-		u.Height,
-		u.PhoneNumber,
-		u.Visum,
-		u.Playtime,
+		user.ID,
+		user.Identifier,
+		user.Job,
+		user.JobGrade,
+		user.Firstname,
+		user.Lastname,
+		user.Dateofbirth,
+		user.Sex,
+		user.Height,
+		user.PhoneNumber,
+		user.Visum,
+		user.Playtime,
 		aup.UserID,
 	}
 	// Field Permission Check
@@ -81,13 +81,13 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	}
 
 	// Get total count of values
-	countStmt := u.
+	countStmt := user.
 		SELECT(
-			jet.COUNT(u.ID).AS("datacount.totalcount"),
+			jet.COUNT(user.ID).AS("datacount.totalcount"),
 		).
 		FROM(
-			u.
-				LEFT_JOIN(aup, aup.UserID.EQ(u.ID)),
+			user.
+				LEFT_JOIN(aup, aup.UserID.EQ(user.ID)),
 		).
 		WHERE(condition)
 
@@ -103,14 +103,14 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		return resp, nil
 	}
 
-	stmt := u.
+	stmt := user.
 		SELECT(
 			selectors[0], selectors[1:]...,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
-		FROM(u.
+		FROM(user.
 			LEFT_JOIN(aup,
-				aup.UserID.EQ(u.ID),
+				aup.UserID.EQ(user.ID),
 			),
 		).
 		WHERE(condition).
@@ -124,9 +124,9 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 			var column jet.Column
 			switch orderBy.Column {
 			case "firstname":
-				column = u.Firstname
+				column = user.Firstname
 			case "job":
-				column = u.Job
+				column = user.Job
 			}
 
 			if orderBy.Desc {
@@ -159,18 +159,18 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	userId := auth.GetUserIDFromContext(ctx)
 
 	selectors := jet.ProjectionList{
-		u.ID,
-		u.Identifier,
-		u.Job,
-		u.JobGrade,
-		u.Firstname,
-		u.Lastname,
-		u.Dateofbirth,
-		u.Sex,
-		u.Height,
-		u.PhoneNumber,
-		u.Visum,
-		u.Playtime,
+		user.ID,
+		user.Identifier,
+		user.Job,
+		user.JobGrade,
+		user.Firstname,
+		user.Lastname,
+		user.Dateofbirth,
+		user.Sex,
+		user.Height,
+		user.PhoneNumber,
+		user.Visum,
+		user.Playtime,
 		aup.UserID,
 	}
 
@@ -182,17 +182,17 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	resp := &GetUserResponse{
 		User: &users.User{},
 	}
-	stmt := u.
+	stmt := user.
 		SELECT(
 			selectors[0], selectors[1:]...,
 		).
 		FROM(
-			u.
+			user.
 				LEFT_JOIN(aup,
-					aup.UserID.EQ(u.ID),
+					aup.UserID.EQ(user.ID),
 				),
 		).
-		WHERE(u.ID.EQ(jet.Int32(req.UserId))).
+		WHERE(user.ID.EQ(jet.Int32(req.UserId))).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.User); err != nil {
@@ -201,20 +201,20 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 	// Check if user can see licenses and fetch them separately
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
-		stmt := u.
+		stmt := user.
 			SELECT(
 				ul.Type.AS("license.type"),
 				licenses.Label.AS("license.label"),
 			).
 			FROM(
 				ul.
-					INNER_JOIN(u,
-						ul.Owner.EQ(u.Identifier),
+					INNER_JOIN(user,
+						ul.Owner.EQ(user.Identifier),
 					).
 					LEFT_JOIN(licenses,
 						licenses.Type.EQ(ul.Type)),
 			).
-			WHERE(u.ID.EQ(jet.Int32(req.UserId))).
+			WHERE(user.ID.EQ(jet.Int32(req.UserId))).
 			LIMIT(15)
 
 		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
@@ -238,8 +238,8 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 		return resp, nil
 	}
 
-	uTarget := u.AS("target_user")
-	uSource := u.AS("source_user")
+	uTarget := user.AS("target_user")
+	uSource := user.AS("source_user")
 	stmt := aua.
 		SELECT(
 			aua.AllColumns,
@@ -345,9 +345,9 @@ func (s *Server) addUserAcitvity(ctx context.Context, activity *model.ArpanetUse
 func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error) {
 	resp := &GetUserDocumentsResponse{}
 
-	uCreator := u.AS("creator")
-	uSource := u.AS("source_user")
-	uTarget := u.AS("target_user")
+	uCreator := user.AS("creator")
+	uSource := user.AS("source_user")
+	uTarget := user.AS("target_user")
 	stmt := adr.
 		SELECT(
 			adr.AllColumns,

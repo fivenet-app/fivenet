@@ -23,7 +23,8 @@ const (
 )
 
 var (
-	u           = table.Users
+	user        = table.Users
+	uCreator    = user.AS("creator")
 	docs        = table.ArpanetDocuments.AS("document")
 	dComments   = table.ArpanetDocumentsComments
 	dUserAccess = table.ArpanetDocumentsUserAccess.AS("user_access")
@@ -115,6 +116,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 
 	stmt := s.getDocumentsQuery(condition, nil, -1, userId, job, jobGrade)
+
 	if err := stmt.QueryContext(ctx, s.db, resp.Document); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

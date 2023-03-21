@@ -53,17 +53,17 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 			dComments.ID,
 			dComments.Comment,
 			dComments.CreatorID,
-			u.ID,
-			u.Identifier,
-			u.Job,
-			u.JobGrade,
-			u.Firstname,
-			u.Lastname,
+			user.ID,
+			user.Identifier,
+			user.Job,
+			user.JobGrade,
+			user.Firstname,
+			user.Lastname,
 		).
 		FROM(
 			dComments.
-				LEFT_JOIN(u,
-					dComments.CreatorID.EQ(u.ID),
+				LEFT_JOIN(user,
+					dComments.CreatorID.EQ(user.ID),
 				),
 		).
 		WHERE(condition)

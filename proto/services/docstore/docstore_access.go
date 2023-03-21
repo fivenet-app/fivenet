@@ -200,7 +200,6 @@ func (s *Server) compareDocumentAccess(current, in *documents.DocumentAccess) (*
 
 func (s *Server) getDocumentAccess(ctx context.Context, documentID uint64) (*documents.DocumentAccess, error) {
 	dJobAccess := table.ArpanetDocumentsJobAccess.AS("documentjobaccess")
-	uCreator := u.AS("creator")
 	jobStmt := dJobAccess.
 		SELECT(
 			dJobAccess.AllColumns,
@@ -231,17 +230,17 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentID uint64) (*doc
 		}
 	}
 
-	u := u.AS("user")
+	user := user.AS("user")
 	dUserAccess := table.ArpanetDocumentsUserAccess.AS("documentuseraccess")
 	userStmt := dUserAccess.
 		SELECT(
 			dUserAccess.AllColumns,
-			u.ID,
-			u.Identifier,
-			u.Job,
-			u.JobGrade,
-			u.Firstname,
-			u.Lastname,
+			user.ID,
+			user.Identifier,
+			user.Job,
+			user.JobGrade,
+			user.Firstname,
+			user.Lastname,
 			uCreator.ID,
 			uCreator.Identifier,
 			uCreator.Job,
@@ -251,8 +250,8 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentID uint64) (*doc
 		).
 		FROM(
 			dUserAccess.
-				LEFT_JOIN(u,
-					u.ID.EQ(dUserAccess.UserID),
+				LEFT_JOIN(user,
+					user.ID.EQ(dUserAccess.UserID),
 				).
 				LEFT_JOIN(uCreator,
 					uCreator.ID.EQ(dUserAccess.CreatorID),
