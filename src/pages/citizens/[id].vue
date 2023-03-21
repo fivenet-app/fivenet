@@ -24,7 +24,7 @@ onBeforeMount(() => {
             user.value = resp.getUser();
         })
         .catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 });
 </script>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router/auto';
 import {
     Listbox,
     ListboxButton,
@@ -25,8 +24,6 @@ import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
 import { toTitleCase } from '../../utils/strings';
-
-const route = useRoute();
 
 const props = defineProps<{
     init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }
@@ -78,7 +75,7 @@ function findJobs(): void {
     getCompletorClient().completeJobNames(req, null).then((resp) => {
         entriesJobs = resp.getJobsList();
     }).catch((err: RpcError) => {
-        handleGRPCError(err, route);
+        handleGRPCError(err);
     })
 }
 
@@ -89,7 +86,7 @@ function findChars(): void {
     getCompletorClient().completeCharNames(req, null).then((resp) => {
         entriesChars = resp.getUsersList();
     }).catch((err: RpcError) => {
-        handleGRPCError(err, route);
+        handleGRPCError(err);
     })
 }
 

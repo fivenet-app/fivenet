@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router/auto';
 import { ref, Component, onBeforeMount } from 'vue';
 import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
@@ -24,8 +23,6 @@ import {
     TagIcon,
     ArrowLongRightIcon,
 } from '@heroicons/vue/20/solid';
-
-const route = useRoute();
 
 const document = ref<undefined | Document>(undefined)
 const access = ref<undefined | DocumentAccess>(undefined)
@@ -56,7 +53,7 @@ function getDocument(): void {
             access.value = resp.getAccess();
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 
     // Document References
@@ -66,7 +63,7 @@ function getDocument(): void {
             feedReferences.value = resp.getReferencesList();
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
     // Document Relations
     getDocStoreClient().
@@ -75,7 +72,7 @@ function getDocument(): void {
             feedRelations.value = resp.getRelationsList();
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 

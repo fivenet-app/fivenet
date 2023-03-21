@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router/auto';
 import { User, UserProps } from '@arpanet/gen/resources/users/users_pb';
 import { RpcError } from 'grpc-web';
 import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
@@ -15,8 +14,6 @@ import {
     MenuItem,
     MenuItems,
 } from '@headlessui/vue';
-
-const route = useRoute();
 
 const wantedState = ref(false);
 
@@ -57,7 +54,7 @@ function toggleWantedStatus() {
             dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 </script>

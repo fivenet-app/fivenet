@@ -5,9 +5,6 @@ import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
 import { GetUserActivityRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@arpanet/gen/resources/users/users_pb';
-import { useRoute } from 'vue-router/auto';
-
-const route = useRoute();
 
 const activities = ref<Array<UserActivity>>([]);
 const defaultIcon = UserCircleIcon;
@@ -27,7 +24,7 @@ function getUserActivity() {
         getUserActivity(req, null).then((resp) => {
             activities.value = resp.getActivityList();
         }).catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 

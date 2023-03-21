@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router/auto';
 import { ref, onMounted } from 'vue';
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
@@ -22,8 +21,6 @@ const props = defineProps({
         default: false,
     },
 });
-
-const route = useRoute();
 
 const search = ref<{ name: string, type: string }>({ name: '', type: '' });
 const orderBys = ref<Array<OrderBy>>([]);
@@ -53,7 +50,7 @@ function findVehicles(pos: number) {
             vehicles.value = resp.getVehiclesList();
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 

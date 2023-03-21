@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router/auto';
 import { ref, onMounted } from 'vue';
 import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetUserDocumentsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { getCitizenStoreClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
-
-const route = useRoute();
 
 const relations = ref<Array<DocumentRelation>>([]);
 
@@ -29,7 +26,7 @@ function getUserDocuments(offset: number) {
             relations.value = resp.getRelationsList();
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 

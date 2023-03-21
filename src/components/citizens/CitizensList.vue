@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router/auto';
 import { ref, onMounted } from 'vue';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
@@ -10,8 +9,6 @@ import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstor
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';
-
-const route = useRoute();
 
 const search = ref<{ name: string, wanted: boolean }>({ name: '', wanted: false });
 const orderBys = ref<Array<OrderBy>>([]);
@@ -39,12 +36,12 @@ function findUsers(pos: number) {
             users.value = resp.getUsersList();
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 
 function toggleOrderBy(column: string): void {
-    const index = orderBys.value.findIndex((o) => {
+    const index = orderBys.value.findIndex((o: OrderBy) => {
         return o.getColumn() == column;
     });
     let orderBy: OrderBy;

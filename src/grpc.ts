@@ -1,5 +1,5 @@
 import { store } from './store/store';
-import { RpcError, StatusCode, StreamInterceptor, UnaryInterceptor } from 'grpc-web';
+import { RpcError, StatusCode } from 'grpc-web';
 import { _RouteLocationBase } from 'vue-router/auto';
 import { router } from './router';
 import config from './config';
@@ -12,33 +12,12 @@ import { DocStoreServiceClient } from '@arpanet/gen/services/docstore/DocstoreSe
 import { JobsServiceClient } from '@arpanet/gen/services/jobs/JobsServiceClientPb';
 import { LivemapperServiceClient } from '@arpanet/gen/services/livemapper/LivemapServiceClientPb';
 import { DMVServiceClient } from '@arpanet/gen/services/dmv/VehiclesServiceClientPb';
-
-class AuthInterceptor implements StreamInterceptor<any, any>, UnaryInterceptor<any, any> {
-    intercept(request: any, invoker: any) {
-        if (store.state.auth?.accessToken) {
-            const metadata = request.getMetadata();
-            metadata.Authorization = 'Bearer ' + store.state.auth?.accessToken;
-        }
-        return invoker(request);
-    }
-}
-
-export const authInterceptor = new AuthInterceptor();
-
-class LoaderInterceptor implements StreamInterceptor<any, any>, UnaryInterceptor<any, any> {
-    intercept(request: any, invoker: any) {
-        console.log("SHOWING LOADER");
-        store.dispatch('loader/show');
-        return invoker(request);
-    }
-}
-
-const loaderInterceptor = new LoaderInterceptor();
+import { authInterceptor, streamErrorHandlerInterceptor, unaryErrorHandlerInterceptor } from './grpc/interceptors';
 
 // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
-export const clientAuthOptions = {
-    unaryInterceptors: [authInterceptor, loaderInterceptor],
-    streamInterceptors: [authInterceptor, loaderInterceptor],
+export const grpcClientOptions = {
+    unaryInterceptors: [authInterceptor, unaryErrorHandlerInterceptor],
+    streamInterceptors: [authInterceptor, streamErrorHandlerInterceptor],
 } as { [index: string]: any };
 
 //@ts-ignore GRPCWeb Devtools only exist when the user has the extension installed
@@ -46,18 +25,18 @@ const devInterceptors = window.__GRPCWEB_DEVTOOLS__;
 if (devInterceptors) {
     const { devToolsUnaryInterceptor, devToolsStreamInterceptor } = devInterceptors();
 
-    clientAuthOptions.unaryInterceptors.push(devToolsUnaryInterceptor);
-    clientAuthOptions.streamInterceptors.push(devToolsStreamInterceptor);
+    grpcClientOptions.unaryInterceptors.push(devToolsUnaryInterceptor);
+    grpcClientOptions.streamInterceptors.push(devToolsStreamInterceptor);
 }
 
 // Handle GRPC errors
-export function handleGRPCError(err: RpcError, route: _RouteLocationBase): boolean {
+export function handleGRPCError(err: RpcError): boolean {
     if (err.code == StatusCode.UNAUTHENTICATED) {
         store.dispatch('auth/doLogout');
 
         dispatchNotification({ title: 'Please login again!', content: 'You are not signed in anymore', type: 'warning' });
 
-        router.push({ path: '/login', query: { redirect: route.fullPath } });
+        router.push({ path: '/login', query: { redirect: router.currentRoute.value.fullPath } });
         return true;
     } else if (err.code == StatusCode.PERMISSION_DENIED) {
         dispatchNotification({ title: 'Error!', content: err.message, type: 'error' });
@@ -74,7 +53,7 @@ export function handleGRPCError(err: RpcError, route: _RouteLocationBase): boole
 let authClient: AuthServiceClient;
 export function getAuthClient(): AuthServiceClient {
     if (!authClient) {
-        authClient = new AuthServiceClient(config.apiProtoURL, null, clientAuthOptions);
+        authClient = new AuthServiceClient(config.apiProtoURL, null, grpcClientOptions);
     }
 
     return authClient;
@@ -84,7 +63,7 @@ export function getAuthClient(): AuthServiceClient {
 let citizenStoreClient: CitizenStoreServiceClient;
 export function getCitizenStoreClient(): CitizenStoreServiceClient {
     if (!citizenStoreClient) {
-        citizenStoreClient = new CitizenStoreServiceClient(config.apiProtoURL, null, clientAuthOptions);
+        citizenStoreClient = new CitizenStoreServiceClient(config.apiProtoURL, null, grpcClientOptions);
     }
 
     return citizenStoreClient;
@@ -94,7 +73,7 @@ export function getCitizenStoreClient(): CitizenStoreServiceClient {
 let completorClient: CompletorServiceClient;
 export function getCompletorClient(): CompletorServiceClient {
     if (!completorClient) {
-        completorClient = new CompletorServiceClient(config.apiProtoURL, null, clientAuthOptions);
+        completorClient = new CompletorServiceClient(config.apiProtoURL, null, grpcClientOptions);
     }
 
     return completorClient;
@@ -104,7 +83,7 @@ export function getCompletorClient(): CompletorServiceClient {
 let dispatcherClient: DispatcherServiceClient;
 export function getDispatcherClient(): DispatcherServiceClient {
     if (!dispatcherClient) {
-        dispatcherClient = new DispatcherServiceClient(config.apiProtoURL, null, clientAuthOptions);
+        dispatcherClient = new DispatcherServiceClient(config.apiProtoURL, null, grpcClientOptions);
     }
 
     return dispatcherClient;
@@ -114,7 +93,7 @@ export function getDispatcherClient(): DispatcherServiceClient {
 let dmvClient: DMVServiceClient;
 export function getDMVClient(): DMVServiceClient {
     if (!dmvClient) {
-        dmvClient = new DMVServiceClient(config.apiProtoURL, null, clientAuthOptions);
+        dmvClient = new DMVServiceClient(config.apiProtoURL, null, grpcClientOptions);
     }
 
     return dmvClient;
@@ -124,7 +103,7 @@ export function getDMVClient(): DMVServiceClient {
 let docstoreClient: DocStoreServiceClient;
 export function getDocStoreClient(): DocStoreServiceClient {
     if (!docstoreClient) {
-        docstoreClient = new DocStoreServiceClient(config.apiProtoURL, null, clientAuthOptions);
+        docstoreClient = new DocStoreServiceClient(config.apiProtoURL, null, grpcClientOptions);
     }
 
     return docstoreClient;
@@ -134,7 +113,7 @@ export function getDocStoreClient(): DocStoreServiceClient {
 let jobsClient: JobsServiceClient;
 export function getJobsClient(): JobsServiceClient {
     if (!jobsClient) {
-        jobsClient = new JobsServiceClient(config.apiProtoURL, null, clientAuthOptions);
+        jobsClient = new JobsServiceClient(config.apiProtoURL, null, grpcClientOptions);
     }
 
     return jobsClient;
@@ -144,7 +123,7 @@ export function getJobsClient(): JobsServiceClient {
 let livemapperClient: LivemapperServiceClient;
 export function getLivemapperClient(): LivemapperServiceClient {
     if (!livemapperClient) {
-        livemapperClient = new LivemapperServiceClient(config.apiProtoURL, null, clientAuthOptions);
+        livemapperClient = new LivemapperServiceClient(config.apiProtoURL, null, grpcClientOptions);
     }
 
     return livemapperClient;

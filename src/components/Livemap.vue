@@ -1,9 +1,8 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { ref, onMounted, onBeforeUnmount, onUnmounted } from 'vue';
 import { getLivemapperClient, handleGRPCError } from '../grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
-import { GenericMarker, UserMarker } from '@arpanet/gen/resources/livemap/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import { Hash } from '../class/Hash';
@@ -28,123 +27,99 @@ const Position = L.Control.extend({
 });
 const position = new Position();
 
-export default defineComponent({
-    data() {
-        return {
-            stream: null as null | ClientReadableStream<StreamResponse>,
-            map: {} as undefined | Livemap,
-            hash: {} as Hash,
-            zoom: 1,
-            dispatchesList: [] as Array<GenericMarker>,
-            usersList: [] as Array<UserMarker>,
-        };
-    },
-    setup: function () {
-        const atlas = L.tileLayer('tiles/atlas/{z}/{x}/{y}.png', {
-            attribution:
-                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
-            minZoom: 1,
-            maxZoom: 6,
-            noWrap: false,
-            tms: true,
-        });
-        const postal = L.tileLayer('tiles/postal/{z}/{x}/{y}.png', {
-            attribution:
-                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
-            minZoom: 1,
-            maxZoom: 6,
-            noWrap: false,
-            tms: true,
-        });
-        const road = L.tileLayer('tiles/road/{z}/{x}/{y}.png', {
-            attribution:
-                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
-            minZoom: 1,
-            maxZoom: 6,
-            noWrap: false,
-            tms: true,
-        });
-        const satelite = L.tileLayer('tiles/satelite/{z}/{x}/{y}.png', {
-            attribution:
-                '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
-            minZoom: 1,
-            maxZoom: 6,
-            noWrap: false,
-            tms: true,
-        });
+let stream = null as null | ClientReadableStream<StreamResponse>;
+let map = {} as undefined | Livemap;
 
-        return {
-            customCRS,
-            position,
-            atlas,
-            postal,
-            road,
-            satelite,
-        };
-    },
-    mounted() {
-        this.map = new Livemap('map', { layers: [this.postal], crs: customCRS });
-        this.map.addHash();
-        this.map.setView([0, 0], 2);
-
-        const markersLayer = new L.LayerGroup().addTo(this.map as L.Map);
-        L.control
-            .layers({ Satelite: this.satelite, Atlas: this.atlas, Road: this.road, Postal: this.postal }, { Markers: markersLayer })
-            .addTo(this.map as L.Map);
-        this.postal.bringToFront();
-
-        this.map.updateBackground('Postal');
-        this.map.on('baselayerchange', (context) => this.map?.updateBackground(context.name));
-
-        this.map.addControl(position);
-        this.map.addEventListener('mousemove', (event: L.LeafletMouseEvent) => {
-            const lat = Math.round(event.latlng.lat * 100000) / 100000;
-            const lng = Math.round(event.latlng.lng * 100000) / 100000;
-            position.updateHTML(lat, lng);
-        });
-
-        this.start();
-    },
-    beforeUnmount: function () {
-        this.stop();
-    },
-    unmounted() {
-        this.map = undefined;
-    },
-    methods: {
-        start: function () {
-            console.log('starting livemap data stream');
-
-            let outer = this;
-            const request = new StreamRequest();
-
-            this.stream = getLivemapperClient()
-                .stream(request)
-                .on('data', function (resp) {
-                    outer.dispatchesList = resp.getDispatchesList();
-                    outer.usersList = resp.getUsersList();
-                    outer.map?.parseMarkerlist(MarkerType.dispatch, outer.dispatchesList);
-                    outer.map?.parseMarkerlist(MarkerType.player, outer.usersList);
-                })
-                .on('error', (err: RpcError) => {
-                    handleGRPCError(err, this.$route);
-                })
-                .on('end', function () {
-                    console.log('livemap data stream ended');
-                });
-        },
-        stop: function () {
-            console.log('stopping livemap data stream');
-            if (this.stream) {
-                this.stream.cancel();
-                this.stream = null;
-            }
-        },
-        updateBackground: function (layer: string) {
-            this.map?.updateBackground(layer);
-        },
-    },
+const atlas = L.tileLayer('tiles/atlas/{z}/{x}/{y}.png', {
+    attribution:
+        '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
+    minZoom: 1,
+    maxZoom: 6,
+    noWrap: false,
+    tms: true,
 });
+const postal = L.tileLayer('tiles/postal/{z}/{x}/{y}.png', {
+    attribution:
+        '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
+    minZoom: 1,
+    maxZoom: 6,
+    noWrap: false,
+    tms: true,
+});
+const road = L.tileLayer('tiles/road/{z}/{x}/{y}.png', {
+    attribution:
+        '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
+    minZoom: 1,
+    maxZoom: 6,
+    noWrap: false,
+    tms: true,
+});
+const satelite = L.tileLayer('tiles/satelite/{z}/{x}/{y}.png', {
+    attribution:
+        '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
+    minZoom: 1,
+    maxZoom: 6,
+    noWrap: false,
+    tms: true,
+});
+
+onMounted(() => {
+    map = new Livemap('map', { layers: [postal], crs: customCRS });
+    map.addHash();
+    map.setView([0, 0], 2);
+
+    const markersLayer = new L.LayerGroup().addTo(map as L.Map);
+    L.control
+        .layers({ Satelite: satelite, Atlas: atlas, Road: road, Postal: postal }, { Markers: markersLayer })
+        .addTo(map as L.Map);
+    postal.bringToFront();
+
+    map.updateBackground('Postal');
+    map.on('baselayerchange', (event: L.LayersControlEvent) => map?.updateBackground(event.name));
+
+    map.addControl(position);
+    map.addEventListener('mousemove', (event: L.LeafletMouseEvent) => {
+        const lat = Math.round(event.latlng.lat * 100000) / 100000;
+        const lng = Math.round(event.latlng.lng * 100000) / 100000;
+        position.updateHTML(lat, lng);
+    });
+
+    start();
+});
+
+onBeforeUnmount(() => {
+    stop();
+});
+
+onUnmounted(() => {
+    map = undefined;
+});
+
+function start() {
+    console.log('starting livemap data stream');
+    const request = new StreamRequest();
+
+    stream = getLivemapperClient()
+        .stream(request)
+        .on('data', function (resp) {
+            map?.parseMarkerlist(MarkerType.dispatch, resp.getDispatchesList());
+            map?.parseMarkerlist(MarkerType.player, resp.getUsersList());
+        })
+        .on('error', (err: RpcError) => {
+            handleGRPCError(err);
+        })
+        .on('end', function () {
+            console.log('livemap data stream ended');
+        });
+}
+
+function stop() {
+    console.log('stopping livemap data stream');
+    if (stream) {
+        stream.cancel();
+        stream = null;
+    }
+}
 </script>
 
 <style scoped>

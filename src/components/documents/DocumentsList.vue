@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onBeforeMount } from 'vue';
-import { useRoute } from 'vue-router/auto';
 import { watchDebounced } from '@vueuse/shared';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
 import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
@@ -9,8 +8,6 @@ import { RpcError } from 'grpc-web';
 import { OrderBy } from '@arpanet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
-
-const route = useRoute();
 
 const search = ref({ title: '', });
 // TODO Implement order by for documents
@@ -37,7 +34,7 @@ function findDocuments(pos: number) {
             documents.value = resp.getDocumentsList();
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 

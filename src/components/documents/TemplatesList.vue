@@ -4,9 +4,6 @@ import { GetTemplateRequest, ListTemplatesRequest } from '@arpanet/gen/services/
 import { RpcError } from 'grpc-web';
 import { ref, onBeforeMount } from 'vue';
 import { getDocStoreClient, handleGRPCError } from '../../grpc';
-import { useRoute } from 'vue-router/auto';
-
-const route = useRoute();
 
 const templates = ref<Array<DocumentTemplateShort>>([]);
 const templateObj = ref<undefined | DocumentTemplate>(undefined);
@@ -19,7 +16,7 @@ function findTemplates(): void {
             templates.value = resp.getTemplatesList();
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 function getTemplate(id: number): void {
@@ -31,7 +28,7 @@ function getTemplate(id: number): void {
             templateObj.value = resp.getTemplate();
         }).
         catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 

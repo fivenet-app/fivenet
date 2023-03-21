@@ -1,4 +1,4 @@
-import { createWebHistory, createRouter, setupDataFetchingGuard, RouteRecordRaw } from 'vue-router/auto';
+import { createWebHistory, createRouter, setupDataFetchingGuard, RouteRecordRaw, Router } from 'vue-router/auto';
 import { dispatchNotification } from './components/notification';
 import { store } from './store/store';
 import slug from './utils/slugify';

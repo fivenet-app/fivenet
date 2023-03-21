@@ -6,10 +6,8 @@ import { GetCharactersRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { getAuthClient, handleGRPCError } from '../../grpc';
 import { RpcError } from 'grpc-web';
-import { useRoute } from 'vue-router/auto';
 import { useStore } from '../../store/store';
 
-const route = useRoute();
 const store = useStore();
 
 const chars = ref<Array<User>>([]);
@@ -20,7 +18,7 @@ async function fetchCharacters() {
         then((resp) => {
             chars.value = resp.getCharsList();
         }).catch((err: RpcError) => {
-            handleGRPCError(err, route);
+            handleGRPCError(err);
         });
 }
 
