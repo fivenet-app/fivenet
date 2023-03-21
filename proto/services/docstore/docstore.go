@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/arpanet/pkg/complhelper"
 	"github.com/galexrt/arpanet/pkg/htmlsanitizer"
 	"github.com/galexrt/arpanet/pkg/perms"
+	database "github.com/galexrt/arpanet/proto/resources/common/database"
 	"github.com/galexrt/arpanet/proto/resources/documents"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -59,7 +60,8 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		condition,
 		jet.ProjectionList{jet.COUNT(docs.ID).AS("total_count")},
 		nil, userId, job, jobGrade)
-	var count struct{ TotalCount int64 }
+
+	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}
@@ -98,7 +100,8 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	)
 
 	countStmt := s.getDocumentsQuery(condition, jet.ProjectionList{jet.COUNT(docs.ID).AS("total_count")}, nil, userId, job, jobGrade)
-	var count struct{ TotalCount int64 }
+
+	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}

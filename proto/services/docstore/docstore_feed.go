@@ -245,16 +245,14 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 		).
 		LIMIT(25)
 
-	var dest struct {
-		References []*documents.DocumentReference
-	}
+	var dest []*documents.DocumentReference
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}
 
-	return dest.References, nil
+	return dest, nil
 }
 
 func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([]*documents.DocumentRelation, error) {

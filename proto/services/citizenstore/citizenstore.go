@@ -87,7 +87,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		).
 		WHERE(condition)
 
-	var count struct{ TotalCount int64 }
+	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}

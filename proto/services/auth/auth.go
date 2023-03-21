@@ -101,9 +101,10 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 }
 
 func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.ArpanetAccounts, error) {
-	stmt := a.SELECT(
-		a.AllColumns,
-	).
+	stmt := a.
+		SELECT(
+			a.AllColumns,
+		).
 		FROM(a).
 		WHERE(
 			a.Enabled.IS_TRUE().

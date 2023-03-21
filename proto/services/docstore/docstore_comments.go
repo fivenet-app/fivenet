@@ -5,6 +5,7 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/htmlsanitizer"
+	database "github.com/galexrt/arpanet/proto/resources/common/database"
 	"github.com/galexrt/arpanet/proto/resources/documents"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
@@ -25,6 +26,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		dComments.DocumentID.EQ(jet.Uint64(req.DocumentId)),
 		dComments.DeletedAt.IS_NULL(),
 	)
+
 	countStmt := dComments.
 		SELECT(
 			jet.COUNT(docs.ID).AS("total_count"),
@@ -33,7 +35,8 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 			dComments,
 		).
 		WHERE(condition)
-	var count struct{ TotalCount int64 }
+
+	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}

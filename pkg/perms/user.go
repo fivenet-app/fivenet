@@ -15,9 +15,10 @@ func (p *Perms) GetAllPermissionsOfUser(userId int32) (collections.Permissions, 
 		return cached, nil
 	}
 
-	stmt := ap.SELECT(
-		ap.AllColumns,
-	).
+	stmt := ap.
+		SELECT(
+			ap.AllColumns,
+		).
 		FROM(ap).
 		WHERE(
 			ap.ID.IN(
@@ -29,7 +30,8 @@ func (p *Perms) GetAllPermissionsOfUser(userId int32) (collections.Permissions, 
 						aup,
 					).WHERE(aup.UserID.EQ(jet.Int32(userId))).
 					UNION(
-						aur.SELECT(arp.PermissionID).
+						aur.
+							SELECT(arp.PermissionID).
 							FROM(aur.INNER_JOIN(arp, arp.RoleID.EQ(aur.RoleID))).
 							WHERE(
 								aur.UserID.EQ(jet.Int32(userId)),
@@ -59,9 +61,10 @@ func (p *Perms) getAllPermissionsByPrefixOfUser(userId int32, prefix string) (co
 		return cached.HasPrefix(prefix), nil
 	}
 
-	stmt := ap.SELECT(
-		ap.AllColumns,
-	).
+	stmt := ap.
+		SELECT(
+			ap.AllColumns,
+		).
 		FROM(ap).
 		WHERE(
 			jet.AND(
@@ -75,7 +78,8 @@ func (p *Perms) getAllPermissionsByPrefixOfUser(userId int32, prefix string) (co
 							aup,
 						).WHERE(aup.UserID.EQ(jet.Int32(userId))).
 						UNION(
-							aur.SELECT(arp.PermissionID).
+							aur.
+								SELECT(arp.PermissionID).
 								FROM(aur.INNER_JOIN(arp, arp.RoleID.EQ(aur.RoleID))).
 								WHERE(
 									aur.UserID.EQ(jet.Int32(userId)),

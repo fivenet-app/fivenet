@@ -13,14 +13,15 @@ import (
 func (p *Perms) GetUserRoles(userId int32) (collections.Roles, error) {
 	var dest collections.Roles
 
-	stmt := aur.SELECT(
-		ar.ID,
-		ar.CreatedAt,
-		ar.UpdatedAt,
-		ar.Name,
-		ar.GuardName,
-		ar.Description,
-	).
+	stmt := aur.
+		SELECT(
+			ar.ID,
+			ar.CreatedAt,
+			ar.UpdatedAt,
+			ar.Name,
+			ar.GuardName,
+			ar.Description,
+		).
 		FROM(aur.
 			INNER_JOIN(ar,
 				ar.ID.EQ(aur.RoleID)),
@@ -48,15 +49,17 @@ func (p *Perms) AddUserRoles(userId int32, roles ...string) error {
 		roleGuards[i] = jet.String(helpers.Guard(roles[i]))
 	}
 
-	stmt := aur.INSERT(
-		aur.UserID,
-		aur.RoleID,
-	).
+	stmt := aur.
+		INSERT(
+			aur.UserID,
+			aur.RoleID,
+		).
 		QUERY(
-			ar.SELECT(
-				jet.Int32(userId),
-				ar.ID,
-			).
+			ar.
+				SELECT(
+					jet.Int32(userId),
+					ar.ID,
+				).
 				FROM(ar).
 				WHERE(ar.GuardName.IN(roleGuards...)),
 		)
@@ -80,7 +83,8 @@ func (p *Perms) RemoveUserRoles(userId int32, roles ...string) error {
 		roleGuards[i] = jet.String(helpers.Guard(roles[i]))
 	}
 
-	stmt := aur.DELETE().
+	stmt := aur.
+		DELETE().
 		USING(aur.
 			INNER_JOIN(ar,
 				ar.GuardName.IN(roleGuards...),

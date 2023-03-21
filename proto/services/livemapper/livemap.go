@@ -60,19 +60,20 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 
 	locs := locs.AS("usermarker")
-	stmt := locs.SELECT(
-		locs.UserID.AS("usermarker.userid"),
-		locs.Job,
-		locs.X,
-		locs.Y,
-		locs.UpdatedAt,
-		users.ID,
-		users.Identifier,
-		users.Job,
-		users.JobGrade,
-		users.Firstname,
-		users.Lastname,
-	).
+	stmt := locs.
+		SELECT(
+			locs.UserID.AS("usermarker.userid"),
+			locs.Job,
+			locs.X,
+			locs.Y,
+			locs.UpdatedAt,
+			users.ID,
+			users.Identifier,
+			users.Job,
+			users.JobGrade,
+			users.Firstname,
+			users.Lastname,
+		).
 		FROM(
 			locs.
 				LEFT_JOIN(users,
@@ -111,18 +112,19 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.GenericMarker, error) {
 	d := table.GksphoneJobMessage
-	stmt := d.SELECT(
-		d.ID,
-		d.Name,
-		d.Number,
-		d.Message,
-		d.Photo,
-		d.Gps,
-		d.Owner,
-		d.Jobm,
-		d.Anon,
-		d.Time,
-	).
+	stmt := d.
+		SELECT(
+			d.ID,
+			d.Name,
+			d.Number,
+			d.Message,
+			d.Photo,
+			d.Gps,
+			d.Owner,
+			d.Jobm,
+			d.Anon,
+			d.Time,
+		).
 		FROM(
 			d,
 		).
@@ -219,13 +221,14 @@ func (s *Server) GenerateRandomUserMarker() {
 			moveMarkers()
 		}
 
-		stmt := locs.INSERT(
-			locs.UserID,
-			locs.Job,
-			locs.X,
-			locs.Y,
-			locs.Hidden,
-		).
+		stmt := locs.
+			INSERT(
+				locs.UserID,
+				locs.Job,
+				locs.X,
+				locs.Y,
+				locs.Hidden,
+			).
 			MODELS(markers).
 			ON_DUPLICATE_KEY_UPDATE(
 				locs.X.SET(jet.RawFloat("VALUES(x)")),

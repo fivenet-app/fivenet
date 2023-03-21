@@ -7,11 +7,12 @@ import (
 )
 
 func (p *Perms) CreatePermission(name string, description string) error {
-	stmt := ap.INSERT(
-		ap.Name,
-		ap.GuardName,
-		ap.Description,
-	).
+	stmt := ap.
+		INSERT(
+			ap.Name,
+			ap.GuardName,
+			ap.Description,
+		).
 		VALUES(
 			name,
 			helpers.Guard(name),
@@ -28,9 +29,11 @@ func (p *Perms) CreatePermission(name string, description string) error {
 }
 
 func (p *Perms) GetAllPermissions() (collections.Permissions, error) {
-	stmt := ap.SELECT(
-		ap.AllColumns,
-	).FROM(ap)
+	stmt := ap.
+		SELECT(
+			ap.AllColumns,
+		).
+		FROM(ap)
 
 	var dest collections.Permissions
 	err := stmt.QueryContext(p.ctx, p.db, &dest)

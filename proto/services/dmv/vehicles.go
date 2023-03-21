@@ -66,7 +66,7 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 		).
 		WHERE(condition)
 
-	var count struct{ TotalCount int64 }
+	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}

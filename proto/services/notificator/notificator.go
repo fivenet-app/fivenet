@@ -8,6 +8,7 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
+	"github.com/galexrt/arpanet/proto/resources/common/database"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -41,12 +42,14 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 		nots.UserID.EQ(jet.Int32(userId)),
 	)
 
-	countStmt := nots.SELECT(
-		jet.COUNT(nots.ID),
-	).
+	countStmt := nots.
+		SELECT(
+			jet.COUNT(nots.ID),
+		).
 		FROM(nots).
 		WHERE(condition)
-	var count struct{ TotalCount int64 }
+
+	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		return nil, err
 	}
@@ -60,9 +63,10 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 		return resp, nil
 	}
 
-	stmt := nots.SELECT(
-		nots.AllColumns,
-	).
+	stmt := nots.
+		SELECT(
+			nots.AllColumns,
+		).
 		FROM(nots).
 		WHERE(
 			jet.AND(
@@ -95,7 +99,8 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 		ids[i] = jet.Uint64(req.Ids[i])
 	}
 
-	stmt := nots.UPDATE(nots.ReadAt).
+	stmt := nots.
+		UPDATE(nots.ReadAt).
 		SET(
 			nots.ReadAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
@@ -116,9 +121,10 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer) error {
 	userId := auth.GetUserIDFromContext(srv.Context())
 
-	stmt := nots.SELECT(
-		nots.AllColumns,
-	).
+	stmt := nots.
+		SELECT(
+			nots.AllColumns,
+		).
 		FROM(nots).
 		ORDER_BY(nots.ID.DESC()).
 		LIMIT(10)
@@ -128,12 +134,13 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	for {
 		resp := &StreamResponse{}
 
-		q := stmt.WHERE(
-			jet.AND(
-				nots.UserID.EQ(jet.Int32(userId)),
-				nots.ID.GT(jet.Uint64(lastId)),
-			),
-		)
+		q := stmt.
+			WHERE(
+				jet.AND(
+					nots.UserID.EQ(jet.Int32(userId)),
+					nots.ID.GT(jet.Uint64(lastId)),
+				),
+			)
 
 		if err := q.QueryContext(srv.Context(), s.db, &resp.Notifications); err != nil {
 			return err

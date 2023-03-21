@@ -13,9 +13,10 @@ import (
 func (p *Perms) GetRoles(prefix string) (collections.Roles, error) {
 	prefix = helpers.Guard(prefix)
 
-	stmt := ar.SELECT(
-		ar.AllColumns,
-	).
+	stmt := ar.
+		SELECT(
+			ar.AllColumns,
+		).
 		FROM(ar).
 		WHERE(
 			ar.GuardName.LIKE(jet.String(prefix + "%")),
@@ -30,11 +31,12 @@ func (p *Perms) GetRoles(prefix string) (collections.Roles, error) {
 }
 
 func (p *Perms) CreateRole(name string, description string) error {
-	stmt := ar.INSERT(
-		ar.Name,
-		ar.GuardName,
-		ar.Description,
-	).
+	stmt := ar.
+		INSERT(
+			ar.Name,
+			ar.GuardName,
+			ar.Description,
+		).
 		VALUES(name, helpers.Guard(name), description)
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
@@ -47,8 +49,11 @@ func (p *Perms) CreateRole(name string, description string) error {
 }
 
 func (p *Perms) DeleteRole(name string) error {
-	_, err := ar.DELETE().
-		WHERE(ar.GuardName.EQ(jet.String(helpers.Guard(name)))).
+	_, err := ar.
+		DELETE().
+		WHERE(
+			ar.GuardName.EQ(jet.String(helpers.Guard(name))),
+		).
 		ExecContext(p.ctx, p.db)
 	return err
 }
@@ -82,10 +87,11 @@ func (p *Perms) AddPermissionsToRole(name string, perms collections.Permissions)
 		})
 	}
 
-	_, err := arp.INSERT(
-		arp.PermissionID,
-		arp.RoleID,
-	).
+	_, err := arp.
+		INSERT(
+			arp.PermissionID,
+			arp.RoleID,
+		).
 		MODELS(rolePerms).
 		ExecContext(p.ctx, p.db)
 
