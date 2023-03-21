@@ -36,9 +36,9 @@ import type {
 declare module 'vue-router/auto/routes' {
   export interface RouteNamedMap {
     'Home': RouteRecordInfo<'Home', '/', Record<never, never>, Record<never, never>>,
-    '/[...path]': RouteRecordInfo<'/[...path]', '/:path(.*)', { path: ParamValue<true> }, { path: ParamValue<false> }>,
+    '404 Not Found': RouteRecordInfo<'404 Not Found', '/:path(.*)', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     'Citizens': RouteRecordInfo<'Citizens', '/citizens', Record<never, never>, Record<never, never>>,
-    'Citizens Info': RouteRecordInfo<'Citizens Info', '/citizens/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'Citizens: Info': RouteRecordInfo<'Citizens: Info', '/citizens/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'Documents': RouteRecordInfo<'Documents', '/documents', Record<never, never>, Record<never, never>>,
     'Documents: Info': RouteRecordInfo<'Documents: Info', '/documents/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'Documents: Create': RouteRecordInfo<'Documents: Create', '/documents/create', Record<never, never>, Record<never, never>>,

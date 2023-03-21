@@ -15,10 +15,10 @@ export class Hash {
 
 	private lastHash: string = '';
 	private changeDefer: number = 100;
-	private changeTimeout: number | null = null;
+	private changeTimeout: NodeJS.Timeout | undefined = undefined;
 	private movingMap: boolean = false;
 	private isListening: boolean = false;
-	private hashChangeInterval: number | undefined = undefined;
+	private hashChangeInterval: NodeJS.Timer | undefined = undefined;
 
 	constructor(map: Livemap, element: HTMLElement) {
 		this.onHashChange = Util.bind(this.onHashChange, this);
@@ -102,9 +102,9 @@ export class Hash {
 	private onHashChange(): void {
 		if (!this.changeTimeout) {
 			var that = this;
-			this.changeTimeout = setTimeout(function () {
+			this.changeTimeout = setTimeout(() => {
 				that.update();
-				that.changeTimeout = null;
+				that.changeTimeout = undefined;
 			}, this.changeDefer);
 		}
 	}

@@ -26,11 +26,17 @@ declare module 'vue-router/auto/routes' {
     } from 'unplugin-vue-router';
 
     export interface RouteNamedMap {
-        'custom-dynamic-name': RouteRecordInfo<
-            'custom-dynamic-name',
-            '/added-during-runtime/[...path]',
+        'Citizens: Info': RouteRecordInfo<
+            'Citizens: Info',
+            '/citizens/:id',
             { id: ParamValue<true> },
-            { path: ParamValue<false> }
+            { id: ParamValue<false> }
+        >;
+        'Documents: Info': RouteRecordInfo<
+            'Documents: Info',
+            '/documents/:id',
+            { id: ParamValue<true> },
+            { id: ParamValue<false> }
         >;
     }
 }

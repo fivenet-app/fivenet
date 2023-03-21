@@ -11,6 +11,7 @@ const accessToken = computed(() => store.state.auth?.accessToken);
 
 <route lang="json">
 {
+    "name": "404 Not Found",
     "meta": {
         "requiresAuth": false
     }

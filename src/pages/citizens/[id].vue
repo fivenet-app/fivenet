@@ -27,7 +27,7 @@ onBeforeMount(() => {
 
 <route lang="json">
 {
-    "name": "Citizens Info",
+    "name": "Citizens: Info",
     "meta": {
         "requiresAuth": true,
         "permission": "CitizenStoreService.FindUsers"
