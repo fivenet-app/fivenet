@@ -25,24 +25,24 @@ export class DOC_ACCESS_Util {
     }
 }
 
-// DOC_REFERENCE_TYPE
-export class DOC_REFERENCE_TYPE_Util {
-    public static toEnumKey(input: enums.DOC_REFERENCE_TYPE): string | undefined {
-        const index = Object.values(enums.DOC_REFERENCE_TYPE).indexOf(input);
+// DOC_REFERENCE
+export class DOC_REFERENCE_Util {
+    public static toEnumKey(input: enums.DOC_REFERENCE): string | undefined {
+        const index = Object.values(enums.DOC_REFERENCE).indexOf(input);
         if (index <= -1) {
             return "N/A";
         }
-        return Object.keys(enums.DOC_REFERENCE_TYPE)[index];
+        return Object.keys(enums.DOC_REFERENCE)[index];
     }
 }
 
-// DOC_RELATION_TYPE
-export class DOC_RELATION_TYPE_Util {
-    public static toEnumKey(input: enums.DOC_RELATION_TYPE): string | undefined {
-        const index = Object.values(enums.DOC_RELATION_TYPE).indexOf(input);
+// DOC_RELATION
+export class DOC_RELATION_Util {
+    public static toEnumKey(input: enums.DOC_RELATION): string | undefined {
+        const index = Object.values(enums.DOC_RELATION).indexOf(input);
         if (index <= -1) {
             return "N/A";
         }
-        return Object.keys(enums.DOC_RELATION_TYPE)[index];
+        return Object.keys(enums.DOC_RELATION)[index];
     }
 }

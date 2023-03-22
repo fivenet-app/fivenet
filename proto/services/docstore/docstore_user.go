@@ -71,6 +71,9 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 			docs.State,
 			docs.Closed,
 			docs.Title,
+			dCategory.ID,
+			dCategory.Name,
+			dCategory.Description,
 			dCreator.ID,
 			dCreator.Identifier,
 			dCreator.Job,
@@ -97,6 +100,9 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 			docRel.
 				LEFT_JOIN(docs,
 					docRel.DocumentID.EQ(docs.ID),
+				).
+				LEFT_JOIN(dCategory,
+					docs.CategoryID.EQ(dCategory.ID),
 				).
 				LEFT_JOIN(dCreator,
 					docs.CreatorID.EQ(dCreator.ID),

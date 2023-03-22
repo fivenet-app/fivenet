@@ -4,7 +4,7 @@ import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentReque
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient } from '../../grpc/grpc';
 import { getDateLocaleString, getDate } from '../../utils/time';
-import { DOC_ACCESS_Util, DOC_REFERENCE_TYPE_Util, DOC_RELATION_TYPE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
+import { DOC_ACCESS_Util, DOC_REFERENCE_Util, DOC_RELATION_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import {
     TabGroup,
     TabList,
@@ -359,7 +359,7 @@ onMounted(() => {
                                             <div class="ml-2 flex flex-shrink-0">
                                                 <p
                                                     class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                                    {{ DOC_REFERENCE_TYPE_Util.toEnumKey(item.getReference()) }}</p>
+                                                    {{ DOC_REFERENCE_Util.toEnumKey(item.getReference()) }}</p>
                                             </div>
                                         </div>
                                         <div class="mt-2 sm:flex sm:justify-between">
@@ -403,7 +403,7 @@ onMounted(() => {
                                             <div class="ml-2 flex flex-shrink-0">
                                                 <p
                                                     class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                                    {{ DOC_RELATION_TYPE_Util.toEnumKey(item.getRelation()) }}</p>
+                                                    {{ DOC_RELATION_Util.toEnumKey(item.getRelation()) }}</p>
                                             </div>
                                         </div>
                                         <div class="mt-2 sm:flex sm:justify-between">

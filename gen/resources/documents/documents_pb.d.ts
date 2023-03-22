@@ -557,8 +557,8 @@ export class DocumentReference extends jspb.Message {
   hasSourceDocument(): boolean;
   clearSourceDocument(): DocumentReference;
 
-  getReference(): DOC_REFERENCE_TYPE;
-  setReference(value: DOC_REFERENCE_TYPE): DocumentReference;
+  getReference(): DOC_REFERENCE;
+  setReference(value: DOC_REFERENCE): DocumentReference;
 
   getTargetDocumentId(): number;
   setTargetDocumentId(value: number): DocumentReference;
@@ -590,7 +590,7 @@ export namespace DocumentReference {
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     sourceDocumentId: number,
     sourceDocument?: DocumentShort.AsObject,
-    reference: DOC_REFERENCE_TYPE,
+    reference: DOC_REFERENCE,
     targetDocumentId: number,
     targetDocument?: DocumentShort.AsObject,
     creatorId: number,
@@ -623,8 +623,8 @@ export class DocumentRelation extends jspb.Message {
   hasSourceUser(): boolean;
   clearSourceUser(): DocumentRelation;
 
-  getRelation(): DOC_RELATION_TYPE;
-  setRelation(value: DOC_RELATION_TYPE): DocumentRelation;
+  getRelation(): DOC_RELATION;
+  setRelation(value: DOC_RELATION): DocumentRelation;
 
   getTargetUserId(): number;
   setTargetUserId(value: number): DocumentRelation;
@@ -650,7 +650,7 @@ export namespace DocumentRelation {
     document?: DocumentShort.AsObject,
     sourceUserId: number,
     sourceUser?: resources_users_users_pb.UserShort.AsObject,
-    relation: DOC_RELATION_TYPE,
+    relation: DOC_RELATION,
     targetUserId: number,
     targetUser?: resources_users_users_pb.UserShort.AsObject,
   }
@@ -667,15 +667,14 @@ export enum DOC_ACCESS {
   ACCESS = 3,
   EDIT = 4,
 }
-export enum DOC_REFERENCE_TYPE { 
+export enum DOC_REFERENCE { 
   LINKED = 0,
   SOLVES = 1,
   CLOSES = 2,
   DEPRECATES = 3,
 }
-export enum DOC_RELATION_TYPE { 
-  CREATED = 0,
-  MENTIONED = 1,
-  TARGETS = 2,
-  CAUSED = 3,
+export enum DOC_RELATION { 
+  MENTIONED = 0,
+  TARGETS = 1,
+  CAUSED = 2,
 }

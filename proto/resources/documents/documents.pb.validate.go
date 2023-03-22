@@ -2182,7 +2182,7 @@ func (m *DocumentReference) validate(all bool) error {
 		}
 	}
 
-	if _, ok := DOC_REFERENCE_TYPE_name[int32(m.GetReference())]; !ok {
+	if _, ok := DOC_REFERENCE_name[int32(m.GetReference())]; !ok {
 		err := DocumentReferenceValidationError{
 			field:  "Reference",
 			reason: "value must be one of the defined enum values",
@@ -2459,7 +2459,7 @@ func (m *DocumentRelation) validate(all bool) error {
 		}
 	}
 
-	if _, ok := DOC_RELATION_TYPE_name[int32(m.GetRelation())]; !ok {
+	if _, ok := DOC_RELATION_name[int32(m.GetRelation())]; !ok {
 		err := DocumentRelationValidationError{
 			field:  "Relation",
 			reason: "value must be one of the defined enum values",

@@ -843,10 +843,10 @@ export class GetUserDocumentsRequest extends jspb.Message {
   getUserId(): number;
   setUserId(value: number): GetUserDocumentsRequest;
 
-  getRelationsList(): Array<resources_documents_documents_pb.DOC_RELATION_TYPE>;
-  setRelationsList(value: Array<resources_documents_documents_pb.DOC_RELATION_TYPE>): GetUserDocumentsRequest;
+  getRelationsList(): Array<resources_documents_documents_pb.DOC_RELATION>;
+  setRelationsList(value: Array<resources_documents_documents_pb.DOC_RELATION>): GetUserDocumentsRequest;
   clearRelationsList(): GetUserDocumentsRequest;
-  addRelations(value: resources_documents_documents_pb.DOC_RELATION_TYPE, index?: number): GetUserDocumentsRequest;
+  addRelations(value: resources_documents_documents_pb.DOC_RELATION, index?: number): GetUserDocumentsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetUserDocumentsRequest.AsObject;
@@ -860,7 +860,7 @@ export namespace GetUserDocumentsRequest {
   export type AsObject = {
     pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
     userId: number,
-    relationsList: Array<resources_documents_documents_pb.DOC_RELATION_TYPE>,
+    relationsList: Array<resources_documents_documents_pb.DOC_RELATION>,
   }
 }
 

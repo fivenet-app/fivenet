@@ -6726,7 +6726,7 @@ proto.services.docstore.GetUserDocumentsRequest.deserializeBinaryFromReader = fu
       msg.setUserId(value);
       break;
     case 3:
-      var values = /** @type {!Array<!proto.resources.documents.DOC_RELATION_TYPE>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
+      var values = /** @type {!Array<!proto.resources.documents.DOC_RELATION>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
       for (var i = 0; i < values.length; i++) {
         msg.addRelations(values[i]);
       }
@@ -6841,16 +6841,16 @@ proto.services.docstore.GetUserDocumentsRequest.prototype.setUserId = function(v
 
 
 /**
- * repeated resources.documents.DOC_RELATION_TYPE relations = 3;
- * @return {!Array<!proto.resources.documents.DOC_RELATION_TYPE>}
+ * repeated resources.documents.DOC_RELATION relations = 3;
+ * @return {!Array<!proto.resources.documents.DOC_RELATION>}
  */
 proto.services.docstore.GetUserDocumentsRequest.prototype.getRelationsList = function() {
-  return /** @type {!Array<!proto.resources.documents.DOC_RELATION_TYPE>} */ (jspb.Message.getRepeatedField(this, 3));
+  return /** @type {!Array<!proto.resources.documents.DOC_RELATION>} */ (jspb.Message.getRepeatedField(this, 3));
 };
 
 
 /**
- * @param {!Array<!proto.resources.documents.DOC_RELATION_TYPE>} value
+ * @param {!Array<!proto.resources.documents.DOC_RELATION>} value
  * @return {!proto.services.docstore.GetUserDocumentsRequest} returns this
  */
 proto.services.docstore.GetUserDocumentsRequest.prototype.setRelationsList = function(value) {
@@ -6859,7 +6859,7 @@ proto.services.docstore.GetUserDocumentsRequest.prototype.setRelationsList = fun
 
 
 /**
- * @param {!proto.resources.documents.DOC_RELATION_TYPE} value
+ * @param {!proto.resources.documents.DOC_RELATION} value
  * @param {number=} opt_index
  * @return {!proto.services.docstore.GetUserDocumentsRequest} returns this
  */

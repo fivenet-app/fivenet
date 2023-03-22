@@ -27,8 +27,8 @@ var resources_users_users_pb = require('../../resources/users/users_pb.js');
 goog.object.extend(proto, resources_users_users_pb);
 goog.exportSymbol('proto.resources.documents.DOC_ACCESS', null, global);
 goog.exportSymbol('proto.resources.documents.DOC_CONTENT_TYPE', null, global);
-goog.exportSymbol('proto.resources.documents.DOC_REFERENCE_TYPE', null, global);
-goog.exportSymbol('proto.resources.documents.DOC_RELATION_TYPE', null, global);
+goog.exportSymbol('proto.resources.documents.DOC_REFERENCE', null, global);
+goog.exportSymbol('proto.resources.documents.DOC_RELATION', null, global);
 goog.exportSymbol('proto.resources.documents.Document', null, global);
 goog.exportSymbol('proto.resources.documents.DocumentAccess', null, global);
 goog.exportSymbol('proto.resources.documents.DocumentCategory', null, global);
@@ -4212,7 +4212,7 @@ proto.resources.documents.DocumentReference.deserializeBinaryFromReader = functi
       msg.setSourceDocument(value);
       break;
     case 5:
-      var value = /** @type {!proto.resources.documents.DOC_REFERENCE_TYPE} */ (reader.readEnum());
+      var value = /** @type {!proto.resources.documents.DOC_REFERENCE} */ (reader.readEnum());
       msg.setReference(value);
       break;
     case 6:
@@ -4443,16 +4443,16 @@ proto.resources.documents.DocumentReference.prototype.hasSourceDocument = functi
 
 
 /**
- * optional DOC_REFERENCE_TYPE reference = 5;
- * @return {!proto.resources.documents.DOC_REFERENCE_TYPE}
+ * optional DOC_REFERENCE reference = 5;
+ * @return {!proto.resources.documents.DOC_REFERENCE}
  */
 proto.resources.documents.DocumentReference.prototype.getReference = function() {
-  return /** @type {!proto.resources.documents.DOC_REFERENCE_TYPE} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+  return /** @type {!proto.resources.documents.DOC_REFERENCE} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
 
 /**
- * @param {!proto.resources.documents.DOC_REFERENCE_TYPE} value
+ * @param {!proto.resources.documents.DOC_REFERENCE} value
  * @return {!proto.resources.documents.DocumentReference} returns this
  */
 proto.resources.documents.DocumentReference.prototype.setReference = function(value) {
@@ -4675,7 +4675,7 @@ proto.resources.documents.DocumentRelation.deserializeBinaryFromReader = functio
       msg.setSourceUser(value);
       break;
     case 7:
-      var value = /** @type {!proto.resources.documents.DOC_RELATION_TYPE} */ (reader.readEnum());
+      var value = /** @type {!proto.resources.documents.DOC_RELATION} */ (reader.readEnum());
       msg.setRelation(value);
       break;
     case 8:
@@ -4952,16 +4952,16 @@ proto.resources.documents.DocumentRelation.prototype.hasSourceUser = function() 
 
 
 /**
- * optional DOC_RELATION_TYPE relation = 7;
- * @return {!proto.resources.documents.DOC_RELATION_TYPE}
+ * optional DOC_RELATION relation = 7;
+ * @return {!proto.resources.documents.DOC_RELATION}
  */
 proto.resources.documents.DocumentRelation.prototype.getRelation = function() {
-  return /** @type {!proto.resources.documents.DOC_RELATION_TYPE} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+  return /** @type {!proto.resources.documents.DOC_RELATION} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
 /**
- * @param {!proto.resources.documents.DOC_RELATION_TYPE} value
+ * @param {!proto.resources.documents.DOC_RELATION} value
  * @return {!proto.resources.documents.DocumentRelation} returns this
  */
 proto.resources.documents.DocumentRelation.prototype.setRelation = function(value) {
@@ -5046,7 +5046,7 @@ proto.resources.documents.DOC_ACCESS = {
 /**
  * @enum {number}
  */
-proto.resources.documents.DOC_REFERENCE_TYPE = {
+proto.resources.documents.DOC_REFERENCE = {
   LINKED: 0,
   SOLVES: 1,
   CLOSES: 2,
@@ -5056,11 +5056,10 @@ proto.resources.documents.DOC_REFERENCE_TYPE = {
 /**
  * @enum {number}
  */
-proto.resources.documents.DOC_RELATION_TYPE = {
-  CREATED: 0,
-  MENTIONED: 1,
-  TARGETS: 2,
-  CAUSED: 3
+proto.resources.documents.DOC_RELATION = {
+  MENTIONED: 0,
+  TARGETS: 1,
+  CAUSED: 2
 };
 
 goog.object.extend(exports, proto.resources.documents);
