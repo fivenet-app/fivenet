@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
-import { GetUserDocumentsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
-import { getCitizenStoreClient } from '../../grpc/grpc';
+import { GetUserDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { getDocStoreClient } from '../../grpc/grpc';
 import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 
 const relations = ref<Array<DocumentRelation>>([]);
@@ -22,10 +22,9 @@ function getUserDocuments(pos: number) {
     req.setPagination((new PaginationRequest()).setOffset(pos))
     req.setUserId(props.userId);
 
-    getCitizenStoreClient().
+    getDocStoreClient().
         getUserDocuments(req, null).
         then((resp) => {
-            resp.getRelationsList
             relations.value = resp.getRelationsList();
         });
 }
@@ -43,7 +42,7 @@ onMounted(() => {
     </span>
     <ul v-else class="bg-white">
         <li v-for="relation in relations" :key="relation.getId()">
-            {{ relation.getDocument()?.getTitle() }}
+            <router-link :to="{ name: 'Documents: Info', params: { id: relation.getDocumentId() } }">{{ relation.getDocument()?.getTitle() }}</router-link>
         </li>
     </ul>
 </template>

@@ -37,17 +37,6 @@ message GetUserActivityResponse {
   repeated resources.users.UserActivity activity = 1;
 }
 
-message GetUserDocumentsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  int32 user_id = 2 [(validate.rules).int32.gt = 0];
-  repeated resources.documents.DOC_RELATION_TYPE relations = 3 [(validate.rules).repeated.max_items = 3];
-}
-
-message GetUserDocumentsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.documents.DocumentRelation relations = 2;
-}
-
 message SetUserPropsRequest {
   resources.users.UserProps props = 1;
 }
@@ -61,8 +50,6 @@ service CitizenStoreService {
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // @permission: fields=SourceUser
   rpc GetUserActivity(GetUserActivityRequest) returns (GetUserActivityResponse);
-  // @permission
-  rpc GetUserDocuments(GetUserDocumentsRequest) returns (GetUserDocumentsResponse);
   // @permission: fields=Wanted
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 }

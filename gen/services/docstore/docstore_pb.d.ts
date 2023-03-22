@@ -834,6 +834,62 @@ export namespace SetDocumentAccessResponse {
   }
 }
 
+export class GetUserDocumentsRequest extends jspb.Message {
+  getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationRequest): GetUserDocumentsRequest;
+  hasPagination(): boolean;
+  clearPagination(): GetUserDocumentsRequest;
+
+  getUserId(): number;
+  setUserId(value: number): GetUserDocumentsRequest;
+
+  getRelationsList(): Array<resources_documents_documents_pb.DOC_RELATION_TYPE>;
+  setRelationsList(value: Array<resources_documents_documents_pb.DOC_RELATION_TYPE>): GetUserDocumentsRequest;
+  clearRelationsList(): GetUserDocumentsRequest;
+  addRelations(value: resources_documents_documents_pb.DOC_RELATION_TYPE, index?: number): GetUserDocumentsRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetUserDocumentsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetUserDocumentsRequest): GetUserDocumentsRequest.AsObject;
+  static serializeBinaryToWriter(message: GetUserDocumentsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetUserDocumentsRequest;
+  static deserializeBinaryFromReader(message: GetUserDocumentsRequest, reader: jspb.BinaryReader): GetUserDocumentsRequest;
+}
+
+export namespace GetUserDocumentsRequest {
+  export type AsObject = {
+    pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
+    userId: number,
+    relationsList: Array<resources_documents_documents_pb.DOC_RELATION_TYPE>,
+  }
+}
+
+export class GetUserDocumentsResponse extends jspb.Message {
+  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationResponse): GetUserDocumentsResponse;
+  hasPagination(): boolean;
+  clearPagination(): GetUserDocumentsResponse;
+
+  getRelationsList(): Array<resources_documents_documents_pb.DocumentRelation>;
+  setRelationsList(value: Array<resources_documents_documents_pb.DocumentRelation>): GetUserDocumentsResponse;
+  clearRelationsList(): GetUserDocumentsResponse;
+  addRelations(value?: resources_documents_documents_pb.DocumentRelation, index?: number): resources_documents_documents_pb.DocumentRelation;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetUserDocumentsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetUserDocumentsResponse): GetUserDocumentsResponse.AsObject;
+  static serializeBinaryToWriter(message: GetUserDocumentsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetUserDocumentsResponse;
+  static deserializeBinaryFromReader(message: GetUserDocumentsResponse, reader: jspb.BinaryReader): GetUserDocumentsResponse;
+}
+
+export namespace GetUserDocumentsResponse {
+  export type AsObject = {
+    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
+    relationsList: Array<resources_documents_documents_pb.DocumentRelation.AsObject>,
+  }
+}
+
 export enum DOC_ACCESS_UPDATE_MODE { 
   UPDATE = 0,
   DELETE = 1,

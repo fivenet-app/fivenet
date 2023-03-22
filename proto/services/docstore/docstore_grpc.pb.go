@@ -56,6 +56,8 @@ type DocStoreServiceClient interface {
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
 	// @permission
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
+	// @permission
+	GetUserDocuments(ctx context.Context, in *GetUserDocumentsRequest, opts ...grpc.CallOption) (*GetUserDocumentsResponse, error)
 }
 
 type docStoreServiceClient struct {
@@ -219,6 +221,15 @@ func (c *docStoreServiceClient) SetDocumentAccess(ctx context.Context, in *SetDo
 	return out, nil
 }
 
+func (c *docStoreServiceClient) GetUserDocuments(ctx context.Context, in *GetUserDocumentsRequest, opts ...grpc.CallOption) (*GetUserDocumentsResponse, error) {
+	out := new(GetUserDocumentsResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetUserDocuments", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DocStoreServiceServer is the server API for DocStoreService service.
 // All implementations must embed UnimplementedDocStoreServiceServer
 // for forward compatibility
@@ -257,6 +268,8 @@ type DocStoreServiceServer interface {
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
 	// @permission
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
+	// @permission
+	GetUserDocuments(context.Context, *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error)
 	mustEmbedUnimplementedDocStoreServiceServer()
 }
 
@@ -314,6 +327,9 @@ func (UnimplementedDocStoreServiceServer) GetDocumentAccess(context.Context, *Ge
 }
 func (UnimplementedDocStoreServiceServer) SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetDocumentAccess not implemented")
+}
+func (UnimplementedDocStoreServiceServer) GetUserDocuments(context.Context, *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserDocuments not implemented")
 }
 func (UnimplementedDocStoreServiceServer) mustEmbedUnimplementedDocStoreServiceServer() {}
 
@@ -634,6 +650,24 @@ func _DocStoreService_SetDocumentAccess_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DocStoreService_GetUserDocuments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserDocumentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).GetUserDocuments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/GetUserDocuments",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).GetUserDocuments(ctx, req.(*GetUserDocumentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DocStoreService_ServiceDesc is the grpc.ServiceDesc for DocStoreService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -708,6 +742,10 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetDocumentAccess",
 			Handler:    _DocStoreService_SetDocumentAccess_Handler,
+		},
+		{
+			MethodName: "GetUserDocuments",
+			Handler:    _DocStoreService_GetUserDocuments_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

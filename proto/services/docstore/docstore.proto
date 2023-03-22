@@ -171,6 +171,17 @@ message SetDocumentAccessRequest {
 
 message SetDocumentAccessResponse {}
 
+message GetUserDocumentsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  int32 user_id = 2 [(validate.rules).int32.gt = 0];
+  repeated resources.documents.DOC_RELATION_TYPE relations = 3 [(validate.rules).repeated.max_items = 3];
+}
+
+message GetUserDocumentsResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.documents.DocumentRelation relations = 2;
+}
+
 service DocStoreService {
   // @permission
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
@@ -210,4 +221,7 @@ service DocStoreService {
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
   // @permission
   rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
+
+  // @permission
+  rpc GetUserDocuments(GetUserDocumentsRequest) returns (GetUserDocumentsResponse);
 }

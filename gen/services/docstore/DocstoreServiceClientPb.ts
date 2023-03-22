@@ -770,5 +770,48 @@ export class DocStoreServiceClient {
     this.methodDescriptorSetDocumentAccess);
   }
 
+  methodDescriptorGetUserDocuments = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/GetUserDocuments',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.GetUserDocumentsRequest,
+    services_docstore_docstore_pb.GetUserDocumentsResponse,
+    (request: services_docstore_docstore_pb.GetUserDocumentsRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.GetUserDocumentsResponse.deserializeBinary
+  );
+
+  getUserDocuments(
+    request: services_docstore_docstore_pb.GetUserDocumentsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.GetUserDocumentsResponse>;
+
+  getUserDocuments(
+    request: services_docstore_docstore_pb.GetUserDocumentsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.GetUserDocumentsResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.GetUserDocumentsResponse>;
+
+  getUserDocuments(
+    request: services_docstore_docstore_pb.GetUserDocumentsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.GetUserDocumentsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/GetUserDocuments',
+        request,
+        metadata || {},
+        this.methodDescriptorGetUserDocuments,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/GetUserDocuments',
+    request,
+    metadata || {},
+    this.methodDescriptorGetUserDocuments);
+  }
+
 }
 

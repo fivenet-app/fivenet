@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = documents.DOC_CONTENT_TYPE(0)
+	_ = documents.DOC_RELATION_TYPE(0)
 )
 
 // Validate checks the field values on ListTemplatesRequest with the rules
@@ -4381,3 +4381,332 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SetDocumentAccessResponseValidationError{}
+
+// Validate checks the field values on GetUserDocumentsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUserDocumentsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUserDocumentsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUserDocumentsRequestMultiError, or nil if none found.
+func (m *GetUserDocumentsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUserDocumentsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := GetUserDocumentsRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetUserDocumentsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetUserDocumentsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetUserDocumentsRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.GetUserId() <= 0 {
+		err := GetUserDocumentsRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetRelations()) > 3 {
+		err := GetUserDocumentsRequestValidationError{
+			field:  "Relations",
+			reason: "value must contain no more than 3 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetUserDocumentsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUserDocumentsRequestMultiError is an error wrapping multiple validation
+// errors returned by GetUserDocumentsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetUserDocumentsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUserDocumentsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUserDocumentsRequestMultiError) AllErrors() []error { return m }
+
+// GetUserDocumentsRequestValidationError is the validation error returned by
+// GetUserDocumentsRequest.Validate if the designated constraints aren't met.
+type GetUserDocumentsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserDocumentsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserDocumentsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserDocumentsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserDocumentsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserDocumentsRequestValidationError) ErrorName() string {
+	return "GetUserDocumentsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserDocumentsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserDocumentsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserDocumentsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserDocumentsRequestValidationError{}
+
+// Validate checks the field values on GetUserDocumentsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUserDocumentsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUserDocumentsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUserDocumentsResponseMultiError, or nil if none found.
+func (m *GetUserDocumentsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUserDocumentsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetUserDocumentsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetUserDocumentsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetUserDocumentsResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetRelations() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetUserDocumentsResponseValidationError{
+						field:  fmt.Sprintf("Relations[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetUserDocumentsResponseValidationError{
+						field:  fmt.Sprintf("Relations[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetUserDocumentsResponseValidationError{
+					field:  fmt.Sprintf("Relations[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetUserDocumentsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUserDocumentsResponseMultiError is an error wrapping multiple validation
+// errors returned by GetUserDocumentsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetUserDocumentsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUserDocumentsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUserDocumentsResponseMultiError) AllErrors() []error { return m }
+
+// GetUserDocumentsResponseValidationError is the validation error returned by
+// GetUserDocumentsResponse.Validate if the designated constraints aren't met.
+type GetUserDocumentsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserDocumentsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserDocumentsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserDocumentsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserDocumentsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserDocumentsResponseValidationError) ErrorName() string {
+	return "GetUserDocumentsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserDocumentsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserDocumentsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserDocumentsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserDocumentsResponseValidationError{}

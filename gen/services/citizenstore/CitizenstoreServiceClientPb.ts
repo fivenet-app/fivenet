@@ -168,49 +168,6 @@ export class CitizenStoreServiceClient {
     this.methodDescriptorGetUserActivity);
   }
 
-  methodDescriptorGetUserDocuments = new grpcWeb.MethodDescriptor(
-    '/services.citizenstore.CitizenStoreService/GetUserDocuments',
-    grpcWeb.MethodType.UNARY,
-    services_citizenstore_citizenstore_pb.GetUserDocumentsRequest,
-    services_citizenstore_citizenstore_pb.GetUserDocumentsResponse,
-    (request: services_citizenstore_citizenstore_pb.GetUserDocumentsRequest) => {
-      return request.serializeBinary();
-    },
-    services_citizenstore_citizenstore_pb.GetUserDocumentsResponse.deserializeBinary
-  );
-
-  getUserDocuments(
-    request: services_citizenstore_citizenstore_pb.GetUserDocumentsRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_citizenstore_citizenstore_pb.GetUserDocumentsResponse>;
-
-  getUserDocuments(
-    request: services_citizenstore_citizenstore_pb.GetUserDocumentsRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: services_citizenstore_citizenstore_pb.GetUserDocumentsResponse) => void): grpcWeb.ClientReadableStream<services_citizenstore_citizenstore_pb.GetUserDocumentsResponse>;
-
-  getUserDocuments(
-    request: services_citizenstore_citizenstore_pb.GetUserDocumentsRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: services_citizenstore_citizenstore_pb.GetUserDocumentsResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/services.citizenstore.CitizenStoreService/GetUserDocuments',
-        request,
-        metadata || {},
-        this.methodDescriptorGetUserDocuments,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/services.citizenstore.CitizenStoreService/GetUserDocuments',
-    request,
-    metadata || {},
-    this.methodDescriptorGetUserDocuments);
-  }
-
   methodDescriptorSetUserProps = new grpcWeb.MethodDescriptor(
     '/services.citizenstore.CitizenStoreService/SetUserProps',
     grpcWeb.MethodType.UNARY,

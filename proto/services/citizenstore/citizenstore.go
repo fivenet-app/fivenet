@@ -21,14 +21,12 @@ import (
 )
 
 var (
-	user     = table.Users.AS("user")
-	ul       = table.UserLicenses
-	licenses = table.Licenses
+	user         = table.Users.AS("user")
+	userLicenses = table.UserLicenses
+	licenses     = table.Licenses
 
 	userProps = table.ArpanetUserProps
 	userAct   = table.ArpanetUserActivity
-	docRel    = table.ArpanetDocumentsRelations.AS("document_relation")
-	document  = table.ArpanetDocuments.AS("document")
 )
 
 type Server struct {
@@ -203,16 +201,16 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
 		stmt := user.
 			SELECT(
-				ul.Type.AS("license.type"),
+				userLicenses.Type.AS("license.type"),
 				licenses.Label.AS("license.label"),
 			).
 			FROM(
-				ul.
+				userLicenses.
 					INNER_JOIN(user,
-						ul.Owner.EQ(user.Identifier),
+						userLicenses.Owner.EQ(user.Identifier),
 					).
 					LEFT_JOIN(licenses,
-						licenses.Type.EQ(ul.Type)),
+						licenses.Type.EQ(userLicenses.Type)),
 			).
 			WHERE(user.ID.EQ(jet.Int32(req.UserId))).
 			LIMIT(15)
@@ -354,94 +352,4 @@ func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, activity *mode
 
 	_, err := stmt.ExecContext(ctx, s.db)
 	return err
-}
-
-func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error) {
-	userId := auth.GetUserIDFromContext(ctx)
-
-	resp := &GetUserDocumentsResponse{}
-
-	// TODO use query to get documents which the user has access to before selecting
-
-	// An user can never see their own activity on their own "profile"
-	if userId == req.UserId {
-		return resp, nil
-	}
-
-	dCreator := user.AS("creator")
-	uSource := user.AS("source_user")
-	uTarget := user.AS("target_user")
-	stmt := docRel.
-		SELECT(
-			docRel.ID,
-			docRel.CreatedAt,
-			docRel.DeletedAt,
-			docRel.DocumentID,
-			docRel.SourceUserID,
-			document.ID,
-			document.CreatedAt,
-			document.UpdatedAt,
-			document.CategoryID,
-			document.CreatorID,
-			document.State,
-			document.Closed,
-			document.Title,
-			dCreator.ID,
-			dCreator.Identifier,
-			dCreator.Job,
-			dCreator.JobGrade,
-			dCreator.Firstname,
-			dCreator.Lastname,
-			docRel.SourceUserID,
-			uSource.ID,
-			uSource.Identifier,
-			uSource.Job,
-			uSource.JobGrade,
-			uSource.Firstname,
-			uSource.Lastname,
-			docRel.Relation,
-			docRel.TargetUserID,
-			uTarget.ID,
-			uTarget.Identifier,
-			uTarget.Job,
-			uTarget.JobGrade,
-			uTarget.Firstname,
-			uTarget.Lastname,
-		).
-		FROM(
-			docRel.
-				LEFT_JOIN(document,
-					docRel.DocumentID.EQ(document.ID),
-				).
-				LEFT_JOIN(dCreator,
-					document.CreatorID.EQ(dCreator.ID),
-				).
-				LEFT_JOIN(uSource,
-					uSource.ID.EQ(docRel.SourceUserID),
-				).
-				LEFT_JOIN(uTarget,
-					uTarget.ID.EQ(docRel.TargetUserID),
-				),
-		).
-		WHERE(
-			jet.OR(
-				docRel.SourceUserID.EQ(jet.Int32(req.UserId)),
-				docRel.TargetUserID.EQ(jet.Int32(req.UserId)),
-			),
-		)
-
-	// TODO There's no permission check happening for the documents
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
-		}
-	}
-
-	for i := 0; i < len(resp.Relations); i++ {
-		s.c.EnrichJobInfo(resp.Relations[i].SourceUser)
-		s.c.EnrichJobInfo(resp.Relations[i].TargetUser)
-	}
-
-	return resp, nil
 }

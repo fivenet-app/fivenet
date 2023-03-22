@@ -72,6 +72,10 @@ func init() {
 		},
 		{
 			Key:  DocStoreServicePermKey,
+			Name: "GetUserDocuments",
+		},
+		{
+			Key:  DocStoreServicePermKey,
 			Name: "ListTemplates",
 		},
 		{
