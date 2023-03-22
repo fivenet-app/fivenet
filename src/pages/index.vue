@@ -22,9 +22,9 @@ const accessToken = computed(() => store.state.auth?.accessToken);
     <HeroFull>
         <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">Welcome to aRPaNet!</h1>
         <p class="mt-6 text-lg leading-8 text-gray-300">
-            aRPaNet is your access to FiveM roleplay. From searching the state's user
-            database, filling documents for court and a livemap of your colleagues and dispatches.<br />It's all
-            in here.
+            From searching the state's citizen and vehicles database, filling documents for investigations, court and a
+            livemap of your colleagues and dispatches.
+            <br />All that and more is (mostly) ready in this net, the aRPaNet.
         </p>
         <div class="mt-10 flex items-center justify-center gap-x-6">
             <router-link v-if="accessToken" :to="{ name: 'Overview' }"

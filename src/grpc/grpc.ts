@@ -7,14 +7,14 @@ import { DocStoreServiceClient } from '@arpanet/gen/services/docstore/DocstoreSe
 import { JobsServiceClient } from '@arpanet/gen/services/jobs/JobsServiceClientPb';
 import { LivemapperServiceClient } from '@arpanet/gen/services/livemapper/LivemapServiceClientPb';
 import { DMVServiceClient } from '@arpanet/gen/services/dmv/VehiclesServiceClientPb';
-import { AuthInterceptor, StreamErrorHandlerInterceptor, UnaryErrorHandlerInterceptor } from './interceptors';
+import { AuthInterceptor, UnaryErrorHandlerInterceptor } from './interceptors';
 
 const authInterceptor = new AuthInterceptor();
 
 // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
 export const grpcClientOptions = {
     unaryInterceptors: [authInterceptor, new UnaryErrorHandlerInterceptor()],
-    streamInterceptors: [authInterceptor, new StreamErrorHandlerInterceptor()],
+    streamInterceptors: [authInterceptor],
 } as { [index: string]: any };
 
 //@ts-ignore GRPCWeb Devtools only exist when the user has the extension installed

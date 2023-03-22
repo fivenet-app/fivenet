@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetUserDocumentsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { getCitizenStoreClient } from '../../grpc/grpc';
+import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 
 const relations = ref<Array<DocumentRelation>>([]);
 
@@ -13,9 +14,12 @@ const props = defineProps({
     },
 });
 
-function getUserDocuments(offset: number) {
+function getUserDocuments(pos: number) {
     if (!props.userId) return;
+    if (pos < 0) return;
+
     const req = new GetUserDocumentsRequest();
+    req.setPagination((new PaginationRequest()).setOffset(pos))
     req.setUserId(props.userId);
 
     getCitizenStoreClient().

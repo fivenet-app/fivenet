@@ -30,9 +30,9 @@ Sentry.init({
     trackComponents: false,
 });
 
+app.use(store, key);
 app.use(LoadingPlugin);
 app.use(router);
-app.use(store, key);
 
 // Add `v-can` directive for easy permission checking
 app.directive('can', (el, binding, vnode) => {

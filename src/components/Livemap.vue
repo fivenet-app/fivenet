@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, onUnmounted } from 'vue';
 import { getLivemapperClient } from '../grpc/grpc';
-import { ClientReadableStream } from 'grpc-web';
+import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { handleGRPCError } from '../grpc/interceptors';
 
 // Latitude and Longitiude popup on mouse over
 let _latlng: HTMLDivElement;
@@ -68,6 +69,9 @@ function start() {
 
     stream = getLivemapperClient()
         .stream(request)
+        .on('error', (err: RpcError) => {
+            handleGRPCError(err);
+        })
         .on('data', function (resp) {
             map?.parseMarkerlist(MarkerType.dispatch, resp.getDispatchesList());
             map?.parseMarkerlist(MarkerType.player, resp.getUsersList());
