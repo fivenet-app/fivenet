@@ -341,7 +341,16 @@ func (s *Server) addUserAcitvity(ctx context.Context, activity *model.ArpanetUse
 }
 
 func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error) {
+	userId := auth.GetUserIDFromContext(ctx)
+
 	resp := &GetUserDocumentsResponse{}
+
+	// TODO use query to get documents which the user has access to before selecting
+
+	// An user can never see their own activity on their own "profile"
+	if userId == req.UserId {
+		return resp, nil
+	}
 
 	uCreator := user.AS("creator")
 	uSource := user.AS("source_user")
@@ -392,8 +401,13 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 				),
 		).
 		WHERE(
-			adr.TargetUserID.EQ(jet.Int32(req.UserId)),
+			jet.OR(
+				adr.SourceUserID.EQ(jet.Int32(req.UserId)),
+				adr.TargetUserID.EQ(jet.Int32(req.UserId)),
+			),
 		)
+
+	// TODO There's no permission check happening for the documents
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {

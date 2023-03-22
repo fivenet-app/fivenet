@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	documents "github.com/galexrt/arpanet/proto/resources/documents"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = documents.DOC_RELATION_TYPE(0)
 )
 
 // Validate checks the field values on FindUsersRequest with the rules defined
@@ -953,6 +957,17 @@ func (m *GetUserDocumentsRequest) validate(all bool) error {
 		err := GetUserDocumentsRequestValidationError{
 			field:  "UserId",
 			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetRelations()) > 3 {
+		err := GetUserDocumentsRequestValidationError{
+			field:  "Relations",
+			reason: "value must contain no more than 3 item(s)",
 		}
 		if !all {
 			return err

@@ -174,7 +174,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.services.citizenstore.GetUserDocumentsRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.services.citizenstore.GetUserDocumentsRequest.repeatedFields_, null);
 };
 goog.inherits(proto.services.citizenstore.GetUserDocumentsRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -1301,6 +1301,13 @@ proto.services.citizenstore.GetUserActivityResponse.prototype.clearActivityList 
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.services.citizenstore.GetUserDocumentsRequest.repeatedFields_ = [3];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -1333,7 +1340,8 @@ proto.services.citizenstore.GetUserDocumentsRequest.prototype.toObject = functio
 proto.services.citizenstore.GetUserDocumentsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f),
-    userId: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    userId: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    relationsList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -1379,6 +1387,12 @@ proto.services.citizenstore.GetUserDocumentsRequest.deserializeBinaryFromReader 
       var value = /** @type {number} */ (reader.readInt32());
       msg.setUserId(value);
       break;
+    case 3:
+      var values = /** @type {!Array<!proto.resources.documents.DOC_RELATION_TYPE>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
+      for (var i = 0; i < values.length; i++) {
+        msg.addRelations(values[i]);
+      }
+      break;
     default:
       reader.skipField();
       break;
@@ -1420,6 +1434,13 @@ proto.services.citizenstore.GetUserDocumentsRequest.serializeBinaryToWriter = fu
   if (f !== 0) {
     writer.writeInt32(
       2,
+      f
+    );
+  }
+  f = message.getRelationsList();
+  if (f.length > 0) {
+    writer.writePackedEnum(
+      3,
       f
     );
   }
@@ -1478,6 +1499,43 @@ proto.services.citizenstore.GetUserDocumentsRequest.prototype.getUserId = functi
  */
 proto.services.citizenstore.GetUserDocumentsRequest.prototype.setUserId = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * repeated resources.documents.DOC_RELATION_TYPE relations = 3;
+ * @return {!Array<!proto.resources.documents.DOC_RELATION_TYPE>}
+ */
+proto.services.citizenstore.GetUserDocumentsRequest.prototype.getRelationsList = function() {
+  return /** @type {!Array<!proto.resources.documents.DOC_RELATION_TYPE>} */ (jspb.Message.getRepeatedField(this, 3));
+};
+
+
+/**
+ * @param {!Array<!proto.resources.documents.DOC_RELATION_TYPE>} value
+ * @return {!proto.services.citizenstore.GetUserDocumentsRequest} returns this
+ */
+proto.services.citizenstore.GetUserDocumentsRequest.prototype.setRelationsList = function(value) {
+  return jspb.Message.setField(this, 3, value || []);
+};
+
+
+/**
+ * @param {!proto.resources.documents.DOC_RELATION_TYPE} value
+ * @param {number=} opt_index
+ * @return {!proto.services.citizenstore.GetUserDocumentsRequest} returns this
+ */
+proto.services.citizenstore.GetUserDocumentsRequest.prototype.addRelations = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 3, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.citizenstore.GetUserDocumentsRequest} returns this
+ */
+proto.services.citizenstore.GetUserDocumentsRequest.prototype.clearRelationsList = function() {
+  return this.setRelationsList([]);
 };
 
 

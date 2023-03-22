@@ -344,8 +344,9 @@ type GetUserDocumentsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	UserId     int32                       `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Pagination *database.PaginationRequest   `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	UserId     int32                         `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Relations  []documents.DOC_RELATION_TYPE `protobuf:"varint,3,rep,packed,name=relations,proto3,enum=resources.documents.DOC_RELATION_TYPE" json:"relations,omitempty"`
 }
 
 func (x *GetUserDocumentsRequest) Reset() {
@@ -392,6 +393,13 @@ func (x *GetUserDocumentsRequest) GetUserId() int32 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *GetUserDocumentsRequest) GetRelations() []documents.DOC_RELATION_TYPE {
+	if x != nil {
+		return x.Relations
+	}
+	return nil
 }
 
 type GetUserDocumentsResponse struct {
@@ -590,7 +598,7 @@ var file_services_citizenstore_citizenstore_proto_rawDesc = []byte{
 	0x69, 0x74, 0x79, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x72, 0x65, 0x73, 0x6f,
 	0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72,
 	0x41, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x79, 0x52, 0x08, 0x61, 0x63, 0x74, 0x69, 0x76, 0x69,
-	0x74, 0x79, 0x22, 0x93, 0x01, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x44, 0x6f,
+	0x74, 0x79, 0x22, 0xe3, 0x01, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x44, 0x6f,
 	0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x56,
 	0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x0b, 0x32, 0x2c, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x63,
@@ -599,7 +607,12 @@ var file_services_citizenstore_citizenstore_proto_rawDesc = []byte{
 	0x42, 0x08, 0xfa, 0x42, 0x05, 0x8a, 0x01, 0x02, 0x10, 0x01, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69,
 	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x20, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69,
 	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x42, 0x07, 0xfa, 0x42, 0x04, 0x1a, 0x02, 0x20, 0x00,
-	0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0xae, 0x01, 0x0a, 0x18, 0x47, 0x65, 0x74,
+	0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x4e, 0x0a, 0x09, 0x72, 0x65, 0x6c, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0e, 0x32, 0x26, 0x2e, 0x72, 0x65,
+	0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
+	0x73, 0x2e, 0x44, 0x4f, 0x43, 0x5f, 0x52, 0x45, 0x4c, 0x41, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x54,
+	0x59, 0x50, 0x45, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x92, 0x01, 0x02, 0x10, 0x03, 0x52, 0x09, 0x72,
+	0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0xae, 0x01, 0x0a, 0x18, 0x47, 0x65, 0x74,
 	0x55, 0x73, 0x65, 0x72, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4d, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74,
 	0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x2d, 0x2e, 0x72, 0x65, 0x73, 0x6f,
@@ -687,8 +700,9 @@ var file_services_citizenstore_citizenstore_proto_goTypes = []interface{}{
 	(*database.PaginationResponse)(nil), // 12: resources.common.database.PaginationResponse
 	(*users.User)(nil),                  // 13: resources.users.User
 	(*users.UserActivity)(nil),          // 14: resources.users.UserActivity
-	(*documents.DocumentRelation)(nil),  // 15: resources.documents.DocumentRelation
-	(*users.UserProps)(nil),             // 16: resources.users.UserProps
+	(documents.DOC_RELATION_TYPE)(0),    // 15: resources.documents.DOC_RELATION_TYPE
+	(*documents.DocumentRelation)(nil),  // 16: resources.documents.DocumentRelation
+	(*users.UserProps)(nil),             // 17: resources.users.UserProps
 }
 var file_services_citizenstore_citizenstore_proto_depIdxs = []int32{
 	10, // 0: services.citizenstore.FindUsersRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -698,24 +712,25 @@ var file_services_citizenstore_citizenstore_proto_depIdxs = []int32{
 	13, // 4: services.citizenstore.GetUserResponse.user:type_name -> resources.users.User
 	14, // 5: services.citizenstore.GetUserActivityResponse.activity:type_name -> resources.users.UserActivity
 	10, // 6: services.citizenstore.GetUserDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	12, // 7: services.citizenstore.GetUserDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	15, // 8: services.citizenstore.GetUserDocumentsResponse.relations:type_name -> resources.documents.DocumentRelation
-	16, // 9: services.citizenstore.SetUserPropsRequest.props:type_name -> resources.users.UserProps
-	0,  // 10: services.citizenstore.CitizenStoreService.FindUsers:input_type -> services.citizenstore.FindUsersRequest
-	2,  // 11: services.citizenstore.CitizenStoreService.GetUser:input_type -> services.citizenstore.GetUserRequest
-	4,  // 12: services.citizenstore.CitizenStoreService.GetUserActivity:input_type -> services.citizenstore.GetUserActivityRequest
-	6,  // 13: services.citizenstore.CitizenStoreService.GetUserDocuments:input_type -> services.citizenstore.GetUserDocumentsRequest
-	8,  // 14: services.citizenstore.CitizenStoreService.SetUserProps:input_type -> services.citizenstore.SetUserPropsRequest
-	1,  // 15: services.citizenstore.CitizenStoreService.FindUsers:output_type -> services.citizenstore.FindUsersResponse
-	3,  // 16: services.citizenstore.CitizenStoreService.GetUser:output_type -> services.citizenstore.GetUserResponse
-	5,  // 17: services.citizenstore.CitizenStoreService.GetUserActivity:output_type -> services.citizenstore.GetUserActivityResponse
-	7,  // 18: services.citizenstore.CitizenStoreService.GetUserDocuments:output_type -> services.citizenstore.GetUserDocumentsResponse
-	9,  // 19: services.citizenstore.CitizenStoreService.SetUserProps:output_type -> services.citizenstore.SetUserPropsResponse
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	15, // 7: services.citizenstore.GetUserDocumentsRequest.relations:type_name -> resources.documents.DOC_RELATION_TYPE
+	12, // 8: services.citizenstore.GetUserDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	16, // 9: services.citizenstore.GetUserDocumentsResponse.relations:type_name -> resources.documents.DocumentRelation
+	17, // 10: services.citizenstore.SetUserPropsRequest.props:type_name -> resources.users.UserProps
+	0,  // 11: services.citizenstore.CitizenStoreService.FindUsers:input_type -> services.citizenstore.FindUsersRequest
+	2,  // 12: services.citizenstore.CitizenStoreService.GetUser:input_type -> services.citizenstore.GetUserRequest
+	4,  // 13: services.citizenstore.CitizenStoreService.GetUserActivity:input_type -> services.citizenstore.GetUserActivityRequest
+	6,  // 14: services.citizenstore.CitizenStoreService.GetUserDocuments:input_type -> services.citizenstore.GetUserDocumentsRequest
+	8,  // 15: services.citizenstore.CitizenStoreService.SetUserProps:input_type -> services.citizenstore.SetUserPropsRequest
+	1,  // 16: services.citizenstore.CitizenStoreService.FindUsers:output_type -> services.citizenstore.FindUsersResponse
+	3,  // 17: services.citizenstore.CitizenStoreService.GetUser:output_type -> services.citizenstore.GetUserResponse
+	5,  // 18: services.citizenstore.CitizenStoreService.GetUserActivity:output_type -> services.citizenstore.GetUserActivityResponse
+	7,  // 19: services.citizenstore.CitizenStoreService.GetUserDocuments:output_type -> services.citizenstore.GetUserDocumentsResponse
+	9,  // 20: services.citizenstore.CitizenStoreService.SetUserProps:output_type -> services.citizenstore.SetUserPropsResponse
+	16, // [16:21] is the sub-list for method output_type
+	11, // [11:16] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_services_citizenstore_citizenstore_proto_init() }

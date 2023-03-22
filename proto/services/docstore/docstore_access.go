@@ -105,7 +105,6 @@ func (s *Server) compareDocumentAccess(current, in *documents.DocumentAccess) (*
 	slices.SortFunc(current.Jobs, func(a, b *documents.DocumentJobAccess) bool {
 		return a.Id > b.Id
 	})
-	// TODO compare existing access rules with new access rules
 
 	if len(current.Jobs) == 0 {
 		toCreate.Jobs = in.Jobs
@@ -280,49 +279,53 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentID uint64) (*doc
 }
 
 func (s *Server) createDocumentAccess(ctx context.Context, documentID uint64, userId int32, access *documents.DocumentAccess) error {
-	for k := 0; k < len(access.Jobs); k++ {
-		// Create document job access
-		dJobAccess := table.ArpanetDocumentsJobAccess
-		stmt := dJobAccess.
-			INSERT(
-				dJobAccess.DocumentID,
-				dJobAccess.Job,
-				dJobAccess.MinimumGrade,
-				dJobAccess.Access,
-				dJobAccess.CreatorID,
-			).
-			VALUES(
-				documentID,
-				access.Jobs[k].Job,
-				access.Jobs[k].MinimumGrade,
-				access.Jobs[k].Access,
-				userId,
-			)
+	if access.Jobs != nil {
+		for k := 0; k < len(access.Jobs); k++ {
+			// Create document job access
+			dJobAccess := table.ArpanetDocumentsJobAccess
+			stmt := dJobAccess.
+				INSERT(
+					dJobAccess.DocumentID,
+					dJobAccess.Job,
+					dJobAccess.MinimumGrade,
+					dJobAccess.Access,
+					dJobAccess.CreatorID,
+				).
+				VALUES(
+					documentID,
+					access.Jobs[k].Job,
+					access.Jobs[k].MinimumGrade,
+					access.Jobs[k].Access,
+					userId,
+				)
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				return err
+			}
 		}
 	}
 
-	for k := 0; k < len(access.Users); k++ {
-		// Create document user access
-		dUserAccess := table.ArpanetDocumentsUserAccess
-		stmt := dUserAccess.
-			INSERT(
-				dUserAccess.DocumentID,
-				dUserAccess.UserID,
-				dUserAccess.Access,
-				dUserAccess.CreatorID,
-			).
-			VALUES(
-				documentID,
-				access.Users[k].UserId,
-				access.Users[k].Access,
-				userId,
-			)
+	if access.Users != nil {
+		for k := 0; k < len(access.Users); k++ {
+			// Create document user access
+			dUserAccess := table.ArpanetDocumentsUserAccess
+			stmt := dUserAccess.
+				INSERT(
+					dUserAccess.DocumentID,
+					dUserAccess.UserID,
+					dUserAccess.Access,
+					dUserAccess.CreatorID,
+				).
+				VALUES(
+					documentID,
+					access.Users[k].UserId,
+					access.Users[k].Access,
+					userId,
+				)
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -330,55 +333,59 @@ func (s *Server) createDocumentAccess(ctx context.Context, documentID uint64, us
 }
 
 func (s *Server) updateDocumentAccess(ctx context.Context, documentID uint64, userId int32, access *documents.DocumentAccess) error {
-	for k := 0; k < len(access.Jobs); k++ {
-		// Create document job access
-		dJobAccess := table.ArpanetDocumentsJobAccess
-		stmt := dJobAccess.
-			UPDATE(
-				dJobAccess.DocumentID,
-				dJobAccess.Job,
-				dJobAccess.MinimumGrade,
-				dJobAccess.Access,
-				dJobAccess.CreatorID,
-			).
-			SET(
-				documentID,
-				access.Jobs[k].Job,
-				access.Jobs[k].MinimumGrade,
-				access.Jobs[k].Access,
-				userId,
-			).
-			WHERE(
-				dJobAccess.ID.EQ(jet.Uint64(access.Jobs[k].Id)),
-			)
+	if access.Jobs != nil {
+		for k := 0; k < len(access.Jobs); k++ {
+			// Create document job access
+			dJobAccess := table.ArpanetDocumentsJobAccess
+			stmt := dJobAccess.
+				UPDATE(
+					dJobAccess.DocumentID,
+					dJobAccess.Job,
+					dJobAccess.MinimumGrade,
+					dJobAccess.Access,
+					dJobAccess.CreatorID,
+				).
+				SET(
+					documentID,
+					access.Jobs[k].Job,
+					access.Jobs[k].MinimumGrade,
+					access.Jobs[k].Access,
+					userId,
+				).
+				WHERE(
+					dJobAccess.ID.EQ(jet.Uint64(access.Jobs[k].Id)),
+				)
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				return err
+			}
 		}
 	}
 
-	for k := 0; k < len(access.Users); k++ {
-		// Create document user access
-		dUserAccess := table.ArpanetDocumentsUserAccess
-		stmt := dUserAccess.
-			UPDATE(
-				dUserAccess.DocumentID,
-				dUserAccess.UserID,
-				dUserAccess.Access,
-				dUserAccess.CreatorID,
-			).
-			SET(
-				documentID,
-				access.Users[k].UserId,
-				access.Users[k].Access,
-				userId,
-			).
-			WHERE(
-				dUserAccess.ID.EQ(jet.Uint64(access.Users[k].Id)),
-			)
+	if access.Users != nil {
+		for k := 0; k < len(access.Users); k++ {
+			// Create document user access
+			dUserAccess := table.ArpanetDocumentsUserAccess
+			stmt := dUserAccess.
+				UPDATE(
+					dUserAccess.DocumentID,
+					dUserAccess.UserID,
+					dUserAccess.Access,
+					dUserAccess.CreatorID,
+				).
+				SET(
+					documentID,
+					access.Users[k].UserId,
+					access.Users[k].Access,
+					userId,
+				).
+				WHERE(
+					dUserAccess.ID.EQ(jet.Uint64(access.Users[k].Id)),
+				)
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -386,7 +393,7 @@ func (s *Server) updateDocumentAccess(ctx context.Context, documentID uint64, us
 }
 
 func (s *Server) deleteDocumentAccess(ctx context.Context, documentID uint64, access *documents.DocumentAccess) error {
-	if len(access.Jobs) > 0 {
+	if access.Jobs != nil && len(access.Jobs) > 0 {
 		jobIds := []jet.Expression{}
 		for i := 0; i < len(access.Jobs); i++ {
 			if access.Jobs[i].Id == 0 {
@@ -411,7 +418,7 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, documentID uint64, ac
 		}
 	}
 
-	if len(access.Users) > 0 {
+	if access.Users != nil && len(access.Users) > 0 {
 		uaIds := []jet.Expression{}
 		for i := 0; i < len(access.Users); i++ {
 			if access.Users[i].Id == 0 {

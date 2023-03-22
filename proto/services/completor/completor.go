@@ -35,6 +35,8 @@ func NewServer(db *sql.DB, p perms.Permissions, c *dataenricher.Enricher) *Serve
 }
 
 func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRequest) (*CompleteCharNamesRespoonse, error) {
+	req.Search = strings.ToLower(strings.TrimSpace(req.Search))
+
 	var condition jet.BoolExpression
 	if req.Search != "" {
 		condition = jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.Search}))
@@ -69,7 +71,7 @@ func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRe
 func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error) {
 	resp := &CompleteJobNamesResponse{}
 
-	req.Search = strings.ToLower(req.Search)
+	req.Search = strings.ToLower(strings.TrimSpace(req.Search))
 
 	keys := s.c.Jobs.Keys()
 	for i := 0; i < len(keys); i++ {
@@ -93,6 +95,8 @@ func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequ
 }
 
 func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error) {
+	req.Search = strings.ToLower(strings.TrimSpace(req.Search))
+
 	userId := auth.GetUserIDFromContext(ctx)
 
 	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, CompletorServicePermKey+"-CompleteDocumentCategory")
