@@ -134,9 +134,13 @@ export class User extends jspb.Message {
 
   getVisum(): number;
   setVisum(value: number): User;
+  hasVisum(): boolean;
+  clearVisum(): User;
 
   getPlaytime(): number;
   setPlaytime(value: number): User;
+  hasPlaytime(): boolean;
+  clearPlaytime(): User;
 
   getProps(): UserProps | undefined;
   setProps(value?: UserProps): User;
@@ -170,10 +174,20 @@ export namespace User {
     sex: string,
     height: string,
     phoneNumber: string,
-    visum: number,
-    playtime: number,
+    visum?: number,
+    playtime?: number,
     props?: UserProps.AsObject,
     licensesList: Array<License.AsObject>,
+  }
+
+  export enum VisumCase { 
+    _VISUM_NOT_SET = 0,
+    VISUM = 13,
+  }
+
+  export enum PlaytimeCase { 
+    _PLAYTIME_NOT_SET = 0,
+    PLAYTIME = 14,
   }
 }
 

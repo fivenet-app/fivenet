@@ -137,13 +137,6 @@ function toggleWantedStatus() {
                     <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                         {{ user?.getVisum() }}</dd>
                 </div>
-                <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
-                        Playtime</dt>
-                    <dd class="mt-1 text-sm text-gray-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                        {{ getSecondsFormattedAsDuration(user?.getPlaytime()) }}
-                    </dd>
-                </div>
                 <div v-can="'CitizenStoreService.FindUsers.Licenses'" class="sm:flex sm:px-6 sm:py-5">
                     <dt class="text-sm font-medium text-white sm:w-40 sm:flex-shrink-0 lg:w-48">
                         Licenses</dt>

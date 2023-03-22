@@ -1107,15 +1107,15 @@ proto.resources.users.User.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getVisum();
-  if (f !== 0) {
+  f = /** @type {number} */ (jspb.Message.getField(message, 13));
+  if (f != null) {
     writer.writeInt32(
       13,
       f
     );
   }
-  f = message.getPlaytime();
-  if (f !== 0) {
+  f = /** @type {number} */ (jspb.Message.getField(message, 14));
+  if (f != null) {
     writer.writeInt32(
       14,
       f
@@ -1370,7 +1370,25 @@ proto.resources.users.User.prototype.getVisum = function() {
  * @return {!proto.resources.users.User} returns this
  */
 proto.resources.users.User.prototype.setVisum = function(value) {
-  return jspb.Message.setProto3IntField(this, 13, value);
+  return jspb.Message.setField(this, 13, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.users.User} returns this
+ */
+proto.resources.users.User.prototype.clearVisum = function() {
+  return jspb.Message.setField(this, 13, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.users.User.prototype.hasVisum = function() {
+  return jspb.Message.getField(this, 13) != null;
 };
 
 
@@ -1388,7 +1406,25 @@ proto.resources.users.User.prototype.getPlaytime = function() {
  * @return {!proto.resources.users.User} returns this
  */
 proto.resources.users.User.prototype.setPlaytime = function(value) {
-  return jspb.Message.setProto3IntField(this, 14, value);
+  return jspb.Message.setField(this, 14, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.users.User} returns this
+ */
+proto.resources.users.User.prototype.clearPlaytime = function() {
+  return jspb.Message.setField(this, 14, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.users.User.prototype.hasPlaytime = function() {
+  return jspb.Message.getField(this, 14) != null;
 };
 
 

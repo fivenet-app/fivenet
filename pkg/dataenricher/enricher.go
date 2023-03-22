@@ -169,6 +169,11 @@ func (c *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 func (c *Enricher) EnrichDocumentCategory(doc common.IDocumentCategory) {
 	cId := doc.GetCategoryId()
 
+	// No category
+	if cId == 0 {
+		return
+	}
+
 	dc, ok := c.DocCategories.Get(cId)
 	if !ok {
 		doc.SetCategory(&documents.DocumentCategory{

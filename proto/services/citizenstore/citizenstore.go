@@ -62,7 +62,6 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		user.Height,
 		user.PhoneNumber,
 		user.Visum,
-		user.Playtime,
 		aup.UserID,
 	}
 	// Field Permission Check
@@ -170,7 +169,6 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		user.Height,
 		user.PhoneNumber,
 		user.Visum,
-		user.Playtime,
 		aup.UserID,
 	}
 

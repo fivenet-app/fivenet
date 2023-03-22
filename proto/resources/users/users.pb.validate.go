@@ -557,28 +557,6 @@ func (m *User) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetVisum() < 0 {
-		err := UserValidationError{
-			field:  "Visum",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.GetPlaytime() < 0 {
-		err := UserValidationError{
-			field:  "Playtime",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if all {
 		switch v := interface{}(m.GetProps()).(type) {
 		case interface{ ValidateAll() error }:
@@ -638,6 +616,36 @@ func (m *User) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.Visum != nil {
+
+		if m.GetVisum() < 0 {
+			err := UserValidationError{
+				field:  "Visum",
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Playtime != nil {
+
+		if m.GetPlaytime() < 0 {
+			err := UserValidationError{
+				field:  "Playtime",
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}
