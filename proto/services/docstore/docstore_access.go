@@ -72,8 +72,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 		return nil, err
 	}
 
-	resp := &SetDocumentAccessResponse{}
-	return resp, nil
+	return &SetDocumentAccessResponse{}, nil
 }
 
 func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mode DOC_ACCESS_UPDATE_MODE, documentID uint64, access *documents.DocumentAccess) error {
@@ -296,12 +295,10 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentID uint64) (*doc
 		}
 	}
 
-	resp := &documents.DocumentAccess{
+	return &documents.DocumentAccess{
 		Jobs:  jobAccess,
 		Users: userAccess,
-	}
-
-	return resp, nil
+	}, nil
 }
 
 func (s *Server) createDocumentAccess(ctx context.Context, tx *sql.Tx, documentID uint64, userId int32, access *documents.DocumentAccess) error {

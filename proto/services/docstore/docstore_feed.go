@@ -72,30 +72,17 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 
 	req.Reference.CreatorId = userId
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
 	stmt := docRef.
 		INSERT().
 		MODEL(req.Reference)
 
-	result, err := stmt.ExecContext(ctx, tx)
+	result, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
 		return nil, err
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, err
-	}
-
-	// Commit the transaction
-	if err = tx.Commit(); err != nil {
 		return nil, err
 	}
 
@@ -160,14 +147,6 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	req.Relation.SourceUserId = userId
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
 	stmt := docRef.
 		INSERT().
 		MODEL(req.Relation)
@@ -179,11 +158,6 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, err
-	}
-
-	// Commit the transaction
-	if err = tx.Commit(); err != nil {
 		return nil, err
 	}
 

@@ -330,6 +330,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		return nil, err
 	}
 
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
 	return &SetUserPropsResponse{}, nil
 }
 

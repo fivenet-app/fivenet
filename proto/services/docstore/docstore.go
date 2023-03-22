@@ -136,6 +136,8 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 }
 
 func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest) (*CreateDocumentResponse, error) {
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -143,8 +145,6 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
-
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	docs := table.ArpanetDocuments
 	stmt := docs.
