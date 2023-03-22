@@ -116,6 +116,9 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 		).
 		WHERE(
 			docRel.DocumentID.IN(dIds...),
+		).
+		ORDER_BY(
+			docRel.CreatedAt.DESC(),
 		)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {

@@ -266,6 +266,9 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentId uint64) (
 				),
 			),
 		).
+		ORDER_BY(
+			docRef.CreatedAt.DESC(),
+		).
 		LIMIT(25)
 
 	var dest []*documents.DocumentReference
@@ -339,6 +342,9 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([
 				docRel.DocumentID.EQ(jet.Uint64(documentId)),
 				docRel.DeletedAt.IS_NULL(),
 			),
+		).
+		ORDER_BY(
+			docRel.CreatedAt.DESC(),
 		).
 		LIMIT(25)
 

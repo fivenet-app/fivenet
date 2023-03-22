@@ -32,9 +32,11 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 
 	for i := 0; i < len(access.Jobs); i++ {
 		s.c.EnrichJobInfo(access.Jobs[i])
+		s.c.EnrichJobInfo(access.Jobs[i].Creator)
 	}
 
 	for i := 0; i < len(access.Users); i++ {
+		s.c.EnrichJobInfo(access.Users[i].Creator)
 		s.c.EnrichJobInfo(access.Users[i].User)
 	}
 
@@ -254,7 +256,7 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 		}
 	}
 
-	user := user.AS("user")
+	user := user.AS("usershort")
 	dUserAccess := table.ArpanetDocumentsUserAccess.AS("documentuseraccess")
 	userStmt := dUserAccess.
 		SELECT(

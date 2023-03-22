@@ -97,7 +97,9 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 				wheres...,
 			),
 		).
-		ORDER_BY(docs.CreatedAt.DESC()).
+		ORDER_BY(
+			docs.CreatedAt.DESC(),
+		).
 		LIMIT(database.DefaultPageLimit)
 }
 

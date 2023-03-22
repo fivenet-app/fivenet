@@ -41,5 +41,5 @@ onMounted(() => {
             No Citizen Activities found.
         </p>
     </span>
-    <DocumentRelations v-else :relations="relations" />
+    <DocumentRelations v-else :showDocument="true" :relations="relations" />
 </template>

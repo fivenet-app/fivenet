@@ -86,6 +86,10 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		return nil, err
 	}
 
+	for i := 0; i < len(resp.Documents); i++ {
+		s.c.EnrichJobInfo(resp.Documents[i].Creator)
+	}
+
 	database.PaginationHelper(resp.Pagination,
 		count.TotalCount,
 		req.Pagination.Offset,
@@ -122,6 +126,8 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 			return nil, err
 		}
 	}
+
+	s.c.EnrichJobInfo(resp.Document.Creator)
 
 	docAccess, err := s.GetDocumentAccess(ctx, &GetDocumentAccessRequest{
 		DocumentId: resp.Document.Id,

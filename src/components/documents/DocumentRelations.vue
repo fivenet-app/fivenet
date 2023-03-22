@@ -1,12 +1,18 @@
 <script lang="ts" setup>
 import { DOC_RELATION_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
+import { ChevronRightIcon } from '@heroicons/vue/24/outline';
 import { getDateLocaleString } from '../../utils/time';
 
 defineProps({
     relations: {
         required: true,
         type: Array<DocumentRelation>,
+    },
+    showDocument: {
+        required: false,
+        type: Boolean,
+        default: false,
     },
 });
 </script>
@@ -45,18 +51,26 @@ defineProps({
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
+                                <th v-if="showDocument" class="bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                                    Document</th>
                                 <th class="bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                                    Source</th>
+                                    Target</th>
                                 <th class="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900" scope="col">
                                     Relation</th>
                                 <th class="hidden bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900 md:block"
-                                    scope="col">Target</th>
+                                    scope="col">Source</th>
                                 <th class="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900" scope="col">
                                     Date</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
                             <tr v-for="relation in relations" :key="relation.getId()" class="bg-white">
+                                <td v-if="showDocument" class="px-6 py-4 text-sm text-gray-900">
+                                    <span class="">{{ relation.getDocument()?.getTitle() }}<span
+                                            v-if="relation.getDocument()?.getCategory()"> (Category: {{
+                                                relation.getDocument()?.getCategory()?.getName() }})</span>
+                                    </span>
+                                </td>
                                 <td class="px-6 py-4 text-sm text-gray-900">
                                     <div class="flex">
                                         <router-link

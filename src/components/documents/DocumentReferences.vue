@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { DOC_REFERENCE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import { DocumentReference } from '@arpanet/gen/resources/documents/documents_pb';
+import { ChevronRightIcon } from '@heroicons/vue/24/outline';
 import { getDateLocaleString } from '../../utils/time';
 
 defineProps({
@@ -52,11 +53,11 @@ defineProps({
                         <thead>
                             <tr>
                                 <th class="bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                                    Source</th>
+                                    Target</th>
                                 <th class="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900" scope="col">
                                     Relation</th>
                                 <th class="hidden bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900 md:block"
-                                    scope="col">Target</th>
+                                    scope="col">Source</th>
                                 <th class="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900" scope="col">
                                     Date</th>
                             </tr>

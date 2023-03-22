@@ -6,7 +6,8 @@ import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
-import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/vue/20/solid';
+import { CalendarIcon, BriefcaseIcon, UserIcon } from '@heroicons/vue/20/solid';
+import { getDateLocaleString, getDateRelativeString } from '../../utils/time';
 
 const search = ref({ title: '', });
 // TODO Implement order by for documents
@@ -80,30 +81,31 @@ onBeforeMount(() => {
                                     <div class="ml-2 flex flex-shrink-0">
                                         <p
                                             class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                            {{ doc.getContentType() }}</p>
+                                            {{ doc.getState() }}</p>
                                     </div>
                                 </div>
                                 <div class="mt-2 sm:flex sm:justify-between">
                                     <div class="sm:flex">
+                                        <p class="truncate">{{ doc.getContent() }}</p>
+                                    </div>
+                                    <div class="sm:flex">
                                         <p class="flex items-center text-sm text-gray-500">
-                                            <UsersIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                                            <UserIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                                                 aria-hidden="true" />
-                                            {{ doc.getContent() }}
+                                            {{ doc.getCreator()?.getFirstname() }}, {{ doc.getCreator()?.getLastname() }}
                                         </p>
                                         <p class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
-                                            <MapPinIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                                            <BriefcaseIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                                                 aria-hidden="true" />
-                                            {{ doc.getCreator()?.getJob() }}
+                                            {{ doc.getCreator()?.getJobLabel() }}
                                         </p>
                                     </div>
                                     <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
                                         <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                                             aria-hidden="true" />
                                         <p>
-                                            Created at
-                                            {{ ' ' }}
-                                            <time :datetime="doc.getCreatedAt()?.getTimestamp()?.toDate().toDateString()">{{
-                                                doc.getCreatedAt()?.getTimestamp()?.toDate() }}</time>
+                                            Created <time :datetime="getDateLocaleString(doc.getCreatedAt())">{{
+                                                getDateRelativeString(doc.getCreatedAt()) }}</time>
                                         </p>
                                     </div>
                                 </div>
