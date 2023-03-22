@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/dataenricher"
+	"github.com/galexrt/arpanet/pkg/mstlystcdata"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/query/arpanet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -21,17 +21,19 @@ var (
 type Server struct {
 	CompletorServiceServer
 
-	db *sql.DB
-	p  perms.Permissions
-	c  *dataenricher.Enricher
+	db   *sql.DB
+	p    perms.Permissions
+	data *mstlystcdata.Cache
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *dataenricher.Enricher) *Server {
-	return &Server{
-		db: db,
-		p:  p,
-		c:  c,
+func NewServer(db *sql.DB, p perms.Permissions, data *mstlystcdata.Cache) *Server {
+	s := &Server{
+		db:   db,
+		p:    p,
+		data: data,
 	}
+
+	return s
 }
 
 func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRequest) (*CompleteCharNamesRespoonse, error) {
@@ -71,32 +73,16 @@ func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRe
 func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error) {
 	resp := &CompleteJobNamesResponse{}
 
-	req.Search = strings.ToLower(strings.TrimSpace(req.Search))
-
-	keys := s.c.Jobs.Keys()
-	for i := 0; i < len(keys); i++ {
-		job, ok := s.c.Jobs.Get(keys[i])
-		if !ok {
-			continue
-		}
-
-		if strings.HasPrefix(strings.ToLower(job.Label), req.Search) || strings.Contains(strings.ToLower(job.Label), req.Search) {
-			resp.Jobs = append(resp.Jobs, job)
-		} else if strings.HasPrefix(job.Name, req.Search) || strings.Contains(job.Name, req.Search) {
-			resp.Jobs = append(resp.Jobs, job)
-		}
-
-		if i > 10 {
-			break
-		}
+	var err error
+	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, req.Search)
+	if err != nil {
+		return nil, err
 	}
 
 	return resp, nil
 }
 
 func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error) {
-	req.Search = strings.ToLower(strings.TrimSpace(req.Search))
-
 	userId := auth.GetUserIDFromContext(ctx)
 
 	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, CompletorServicePermKey+"-CompleteDocumentCategory")
@@ -109,19 +95,10 @@ func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocu
 		return resp, nil
 	}
 
-	req.Search = strings.ToLower(req.Search)
-
-	for _, j := range jobs {
-		c, ok := s.c.DocCategoriesByJob.Get(j)
-		if !ok {
-			continue
-		}
-
-		for _, v := range c {
-			if strings.HasPrefix(strings.ToLower(v.Name), req.Search) || strings.Contains(strings.ToLower(v.Name), req.Search) {
-				resp.Categories = append(resp.Categories, v)
-			}
-		}
+	resp.Categories, err = s.data.GetSearcher().
+		SearchDocumentCategories(ctx, req.Search, jobs)
+	if err != nil {
+		return nil, err
 	}
 
 	return resp, nil

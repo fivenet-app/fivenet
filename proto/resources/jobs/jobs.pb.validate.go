@@ -211,6 +211,8 @@ func (m *JobGrade) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for JobName
+
 	if m.GetGrade() <= 0 {
 		err := JobGradeValidationError{
 			field:  "Grade",

@@ -1,19 +1,18 @@
-package dataenricher
+package mstlystcdata
 
 import (
 	"context"
 	"database/sql"
-	"strconv"
 	"strings"
 	"time"
 
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lfu"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
-	"github.com/galexrt/arpanet/proto/resources/common"
 	"github.com/galexrt/arpanet/proto/resources/documents"
 	"github.com/galexrt/arpanet/proto/resources/jobs"
 	"github.com/galexrt/arpanet/query/arpanet/table"
+	"go.uber.org/zap"
 )
 
 var (
@@ -22,15 +21,19 @@ var (
 	adc = table.ArpanetDocumentsCategories.AS("documentcategory")
 )
 
-type Enricher struct {
-	db                 *sql.DB
+type Cache struct {
+	logger *zap.Logger
+	db     *sql.DB
+
 	cancel             context.CancelFunc
-	Jobs               *cache.Cache[string, *jobs.Job]
-	DocCategories      *cache.Cache[uint64, *documents.DocumentCategory]
-	DocCategoriesByJob *cache.Cache[string, []*documents.DocumentCategory]
+	jobs               *cache.Cache[string, *jobs.Job]
+	docCategories      *cache.Cache[uint64, *documents.DocumentCategory]
+	docCategoriesByJob *cache.Cache[string, []*documents.DocumentCategory]
+
+	searcher *Searcher
 }
 
-func New(db *sql.DB) *Enricher {
+func NewCache(logger *zap.Logger, db *sql.DB) (*Cache, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	jobsCache := cache.NewContext(
@@ -39,30 +42,43 @@ func New(db *sql.DB) *Enricher {
 		cache.WithJanitorInterval[string, *jobs.Job](120*time.Second),
 	)
 
-	doccategoriesCache := cache.NewContext(
+	docCategoriesCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[uint64, *documents.DocumentCategory](lru.WithCapacity(512)),
 	)
 
-	doccategoriesByJobCache := cache.NewContext(
+	docCategoriesByJobCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[string, []*documents.DocumentCategory](lru.WithCapacity(32)),
 	)
 
-	c := &Enricher{
-		db:                 db,
+	c := &Cache{
+		logger: logger,
+		db:     db,
+
 		cancel:             cancel,
-		Jobs:               jobsCache,
-		DocCategories:      doccategoriesCache,
-		DocCategoriesByJob: doccategoriesByJobCache,
+		jobs:               jobsCache,
+		docCategories:      docCategoriesCache,
+		docCategoriesByJob: docCategoriesByJobCache,
 	}
 
-	c.refreshCache()
+	// TODO this needs to be run every x minutes to refresh the cache data
+	if err := c.refreshCache(); err != nil {
+		return nil, err
+	}
 
-	return c
+	var err error
+	c.searcher, err = NewSearcher(c)
+	c.searcher.addDataToIndex()
+
+	return c, err
 }
 
-func (c *Enricher) refreshCache() error {
+func (c *Cache) GetSearcher() *Searcher {
+	return c.searcher
+}
+
+func (c *Cache) refreshCache() error {
 	if err := c.refreshDocumentCategories(); err != nil {
 		return err
 	}
@@ -71,10 +87,14 @@ func (c *Enricher) refreshCache() error {
 		return err
 	}
 
+	if c.searcher != nil {
+		c.searcher.addDataToIndex()
+	}
+
 	return nil
 }
 
-func (c *Enricher) refreshDocumentCategories() error {
+func (c *Cache) refreshDocumentCategories() error {
 	var dest []*documents.DocumentCategory
 
 	stmt := adc.
@@ -85,7 +105,6 @@ func (c *Enricher) refreshDocumentCategories() error {
 			adc.Job,
 		).
 		FROM(adc).
-		GROUP_BY(adc.Job).
 		ORDER_BY(
 			adc.Job.ASC(),
 			adc.Name.ASC(),
@@ -97,7 +116,7 @@ func (c *Enricher) refreshDocumentCategories() error {
 
 	categoriesPerJob := map[string][]*documents.DocumentCategory{}
 	for _, d := range dest {
-		c.DocCategories.Set(d.Id, d)
+		c.docCategories.Set(d.Id, d)
 
 		if _, ok := categoriesPerJob[d.Job]; !ok {
 			categoriesPerJob[d.Job] = []*documents.DocumentCategory{}
@@ -107,13 +126,13 @@ func (c *Enricher) refreshDocumentCategories() error {
 
 	// Update cache
 	for job, cs := range categoriesPerJob {
-		c.DocCategoriesByJob.Set(job, cs)
+		c.docCategoriesByJob.Set(job, cs)
 	}
 
 	return nil
 }
 
-func (c *Enricher) refreshJobsCache() error {
+func (c *Cache) refreshJobsCache() error {
 	var dest []*jobs.Job
 
 	stmt := j.
@@ -140,51 +159,8 @@ func (c *Enricher) refreshJobsCache() error {
 
 	// Update cache
 	for _, job := range dest {
-		c.Jobs.Set(strings.ToLower(job.Name), job)
+		c.jobs.Set(strings.ToLower(job.Name), job)
 	}
 
 	return nil
-}
-
-func (c *Enricher) EnrichJobInfo(usr common.IJobInfo) {
-	job, ok := c.Jobs.Get(usr.GetJob())
-	if ok {
-		usr.SetJobLabel(job.Label)
-
-		jg := usr.GetJobGrade() - 1
-		if jg < 0 {
-			jg = 0
-		}
-
-		if len(job.Grades) >= int(jg) {
-			usr.SetJobGradeLabel(job.Grades[jg].Label)
-		} else {
-			jg := strconv.Itoa(int(usr.GetJobGrade()))
-			usr.SetJobGradeLabel(jg)
-		}
-	} else {
-		usr.SetJobLabel(usr.GetJob())
-		jg := strconv.Itoa(int(usr.GetJobGrade()))
-		usr.SetJobGradeLabel(jg)
-	}
-}
-
-func (c *Enricher) EnrichDocumentCategory(doc common.IDocumentCategory) {
-	cId := doc.GetCategoryId()
-
-	// No category
-	if cId == 0 {
-		return
-	}
-
-	dc, ok := c.DocCategories.Get(cId)
-	if !ok {
-		doc.SetCategory(&documents.DocumentCategory{
-			Id:   0,
-			Name: "N/A",
-			Job:  "N/A",
-		})
-	} else {
-		doc.SetCategory(dc)
-	}
 }

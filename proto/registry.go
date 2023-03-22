@@ -6,9 +6,9 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/config"
-	"github.com/galexrt/arpanet/pkg/dataenricher"
 	grpc_auth "github.com/galexrt/arpanet/pkg/grpc/auth"
 	grpc_permission "github.com/galexrt/arpanet/pkg/grpc/permission"
+	"github.com/galexrt/arpanet/pkg/mstlystcdata"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/getsentry/sentry-go"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -80,20 +80,25 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 		)),
 	)
 
+	// "Mostly Static Data" Cache
+	cache, err := mstlystcdata.NewCache(logger.Named("mstlystcdata"), db)
+	if err != nil {
+		logger.Fatal("failed to create mostly static data cache", zap.Error(err))
+	}
 	// Data enricher helper
-	de := dataenricher.New(db)
+	enricher := mstlystcdata.NewEnricher(cache)
 
 	// Attach our GRPC services
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p))
-	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, de))
-	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, de))
-	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, de))
+	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher))
+	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
+	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(logger.Named("grpc_livemap"), db, p)
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
 	go livemapper.GenerateRandomUserMarker()
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p))
-	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, de))
+	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher))
 
 	return grpcServer, lis
 }

@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"strings"
 
-	"github.com/galexrt/arpanet/pkg/dataenricher"
+	"github.com/galexrt/arpanet/pkg/mstlystcdata"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/galexrt/arpanet/proto/resources/common/database"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -22,10 +22,10 @@ type Server struct {
 
 	db *sql.DB
 	p  perms.Permissions
-	c  *dataenricher.Enricher
+	c  *mstlystcdata.Enricher
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *dataenricher.Enricher) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
 	return &Server{
 		db: db,
 		p:  p,
