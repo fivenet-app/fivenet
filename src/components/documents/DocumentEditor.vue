@@ -7,7 +7,7 @@ import { getCompletorClient, getDocStoreClient } from '../../grpc/grpc';
 import { CreateDocumentRequest, GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentCategory, DocumentJobAccess, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { dispatchNotification } from '../notification';
-import AccessEntry from '../partials/AccessEntry.vue';
+import AccessEntry from './DocumentAccessEntry.vue';
 import {
     PlusIcon,
     ChevronDownIcon,
