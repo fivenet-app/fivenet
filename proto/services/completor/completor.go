@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	us = table.Users.AS("usershort")
+	user = table.Users.AS("usershort")
 )
 
 type Server struct {
@@ -44,17 +44,17 @@ func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRe
 		condition = jet.Bool(true)
 	}
 
-	stmt := us.
+	stmt := user.
 		SELECT(
-			us.ID,
-			us.Identifier,
-			us.Firstname,
-			us.Lastname,
-			us.Job,
-			us.JobGrade,
+			user.ID,
+			user.Identifier,
+			user.Firstname,
+			user.Lastname,
+			user.Job,
+			user.JobGrade,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
-		FROM(us).
+		FROM(user).
 		WHERE(condition).
 		LIMIT(15)
 

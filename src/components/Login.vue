@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useStore } from '../store/store';
 import { computed, ref } from 'vue';
 import { LoginRequest } from '@arpanet/gen/services/auth/auth_pb';

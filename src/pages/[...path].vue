@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useStore } from '../store/store';
 import HeroFull from '../components/partials/HeroFull.vue';
 import Footer from '../components/partials/Footer.vue';

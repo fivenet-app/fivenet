@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, onBeforeMount } from 'vue';
 import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { XCircleIcon } from '@heroicons/vue/20/solid';

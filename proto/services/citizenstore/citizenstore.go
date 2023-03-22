@@ -25,10 +25,10 @@ var (
 	ul       = table.UserLicenses
 	licenses = table.Licenses
 
-	aup = table.ArpanetUserProps
-	aua = table.ArpanetUserActivity
-	adr = table.ArpanetDocumentsRelations.AS("document_relation")
-	ad  = table.ArpanetDocuments.AS("document")
+	userProps = table.ArpanetUserProps
+	userAct   = table.ArpanetUserActivity
+	docRel    = table.ArpanetDocumentsRelations.AS("document_relation")
+	document  = table.ArpanetDocuments.AS("document")
 )
 
 type Server struct {
@@ -62,11 +62,11 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		user.Height,
 		user.PhoneNumber,
 		user.Visum,
-		aup.UserID,
+		userProps.UserID,
 	}
 	// Field Permission Check
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
-		selectors = append(selectors, aup.Wanted)
+		selectors = append(selectors, userProps.Wanted)
 	}
 
 	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
@@ -76,7 +76,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		condition = condition.AND(jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.SearchName})))
 	}
 	if req.Wanted {
-		condition = condition.AND(aup.Wanted.IS_TRUE())
+		condition = condition.AND(userProps.Wanted.IS_TRUE())
 	}
 
 	// Get total count of values
@@ -86,7 +86,9 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		).
 		FROM(
 			user.
-				LEFT_JOIN(aup, aup.UserID.EQ(user.ID)),
+				LEFT_JOIN(userProps,
+					userProps.UserID.EQ(user.ID),
+				),
 		).
 		WHERE(condition)
 
@@ -108,8 +110,8 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
 		FROM(user.
-			LEFT_JOIN(aup,
-				aup.UserID.EQ(user.ID),
+			LEFT_JOIN(userProps,
+				userProps.UserID.EQ(user.ID),
 			),
 		).
 		WHERE(condition).
@@ -169,12 +171,12 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		user.Height,
 		user.PhoneNumber,
 		user.Visum,
-		aup.UserID,
+		userProps.UserID,
 	}
 
 	// Field Permission Check
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
-		selectors = append(selectors, aup.Wanted)
+		selectors = append(selectors, userProps.Wanted)
 	}
 
 	resp := &GetUserResponse{
@@ -186,8 +188,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		).
 		FROM(
 			user.
-				LEFT_JOIN(aup,
-					aup.UserID.EQ(user.ID),
+				LEFT_JOIN(userProps,
+					userProps.UserID.EQ(user.ID),
 				),
 		).
 		WHERE(user.ID.EQ(jet.Int32(req.UserId))).
@@ -238,9 +240,9 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 
 	uTarget := user.AS("target_user")
 	uSource := user.AS("source_user")
-	stmt := aua.
+	stmt := userAct.
 		SELECT(
-			aua.AllColumns,
+			userAct.AllColumns,
 			uTarget.ID,
 			uTarget.Identifier,
 			uTarget.Job,
@@ -255,16 +257,16 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 			uSource.Lastname,
 		).
 		FROM(
-			aua.
+			userAct.
 				LEFT_JOIN(uTarget,
-					uTarget.ID.EQ(aua.TargetUserID),
+					uTarget.ID.EQ(userAct.TargetUserID),
 				).
 				LEFT_JOIN(uSource,
-					uSource.ID.EQ(aua.SourceUserID),
+					uSource.ID.EQ(userAct.SourceUserID),
 				),
 		).
 		WHERE(
-			aua.TargetUserID.EQ(jet.Int32(req.UserId)),
+			userAct.TargetUserID.EQ(jet.Int32(req.UserId)),
 		).
 		LIMIT(12)
 
@@ -298,16 +300,16 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := aup.
+	stmt := userProps.
 		INSERT(
-			aup.AllColumns,
+			userProps.AllColumns,
 		).
 		VALUES(
 			req.Props.UserId,
 			req.Props.Wanted,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			aup.Wanted.SET(jet.Bool(req.Props.Wanted)),
+			userProps.Wanted.SET(jet.Bool(req.Props.Wanted)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -339,14 +341,14 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 }
 
 func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, activity *model.ArpanetUserActivity) error {
-	stmt := aua.
+	stmt := userAct.
 		INSERT(
-			aua.SourceUserID,
-			aua.TargetUserID,
-			aua.Type,
-			aua.Key,
-			aua.OldValue,
-			aua.NewValue,
+			userAct.SourceUserID,
+			userAct.TargetUserID,
+			userAct.Type,
+			userAct.Key,
+			userAct.OldValue,
+			userAct.NewValue,
 		).
 		MODEL(activity)
 
@@ -366,32 +368,39 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 		return resp, nil
 	}
 
-	uCreator := user.AS("creator")
+	dCreator := user.AS("creator")
 	uSource := user.AS("source_user")
 	uTarget := user.AS("target_user")
-	stmt := adr.
+	stmt := docRel.
 		SELECT(
-			adr.AllColumns,
-			ad.ID,
-			ad.CreatedAt,
-			ad.UpdatedAt,
-			ad.CategoryID,
-			ad.CreatorID,
-			ad.State,
-			ad.Closed,
-			ad.Title,
-			uCreator.ID,
-			uCreator.Identifier,
-			uCreator.Job,
-			uCreator.JobGrade,
-			uCreator.Firstname,
-			uCreator.Lastname,
+			docRel.ID,
+			docRel.CreatedAt,
+			docRel.DeletedAt,
+			docRel.DocumentID,
+			docRel.SourceUserID,
+			document.ID,
+			document.CreatedAt,
+			document.UpdatedAt,
+			document.CategoryID,
+			document.CreatorID,
+			document.State,
+			document.Closed,
+			document.Title,
+			dCreator.ID,
+			dCreator.Identifier,
+			dCreator.Job,
+			dCreator.JobGrade,
+			dCreator.Firstname,
+			dCreator.Lastname,
+			docRel.SourceUserID,
 			uSource.ID,
 			uSource.Identifier,
 			uSource.Job,
 			uSource.JobGrade,
 			uSource.Firstname,
 			uSource.Lastname,
+			docRel.Relation,
+			docRel.TargetUserID,
 			uTarget.ID,
 			uTarget.Identifier,
 			uTarget.Job,
@@ -400,24 +409,24 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 			uTarget.Lastname,
 		).
 		FROM(
-			adr.
-				LEFT_JOIN(ad,
-					adr.DocumentID.EQ(ad.ID),
+			docRel.
+				LEFT_JOIN(document,
+					docRel.DocumentID.EQ(document.ID),
 				).
-				LEFT_JOIN(uCreator,
-					ad.CreatorID.EQ(uCreator.ID),
+				LEFT_JOIN(dCreator,
+					document.CreatorID.EQ(dCreator.ID),
 				).
 				LEFT_JOIN(uSource,
-					uSource.ID.EQ(adr.SourceUserID),
+					uSource.ID.EQ(docRel.SourceUserID),
 				).
 				LEFT_JOIN(uTarget,
-					uTarget.ID.EQ(adr.TargetUserID),
+					uTarget.ID.EQ(docRel.TargetUserID),
 				),
 		).
 		WHERE(
 			jet.OR(
-				adr.SourceUserID.EQ(jet.Int32(req.UserId)),
-				adr.TargetUserID.EQ(jet.Int32(req.UserId)),
+				docRel.SourceUserID.EQ(jet.Int32(req.UserId)),
+				docRel.TargetUserID.EQ(jet.Int32(req.UserId)),
 			),
 		)
 

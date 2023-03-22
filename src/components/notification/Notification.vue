@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import store from './store';
 import type { Notification } from './interfaces';
 

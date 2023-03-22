@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import Footer from '../../components/partials/Footer.vue';
 import Livemap from '../../components/Livemap.vue';
 </script>

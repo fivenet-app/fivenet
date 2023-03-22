@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import LoadingSpinner from './components/LoadingSpinner.vue';
 import { NotificationProvider } from './components/notification';
 import Sidebar from './components/partials/Sidebar.vue';

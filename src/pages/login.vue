@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useStore } from '../store/store';
 import { computed } from 'vue';
 import Footer from '../components/partials/Footer.vue';

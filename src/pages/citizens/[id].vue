@@ -17,7 +17,7 @@ export const useUserData = defineLoader(async (route: RouteLocationNormalizedLoa
 });
 </script>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import Footer from '../../components/partials/Footer.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';

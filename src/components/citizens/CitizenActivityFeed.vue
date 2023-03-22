@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, onBeforeMount } from 'vue';
 import { UserCircleIcon } from '@heroicons/vue/20/solid'
 import { getCitizenStoreClient } from '../../grpc/grpc';

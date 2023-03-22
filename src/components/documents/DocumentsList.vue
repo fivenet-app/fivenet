@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, onBeforeMount } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
 import { getDocStoreClient } from '../../grpc/grpc';

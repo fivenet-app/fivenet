@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetUserDocumentsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';

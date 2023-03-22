@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import DocumentsList from '../../components/documents/DocumentsList.vue';

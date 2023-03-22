@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from '../../store/store';
 import { Quill, QuillEditor } from '@vueup/vue-quill';

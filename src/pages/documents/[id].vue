@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useRoute } from 'vue-router/auto';
 import { ref, onMounted } from 'vue';
 import NavPageHeader from '../../components/partials/NavPageHeader.vue';

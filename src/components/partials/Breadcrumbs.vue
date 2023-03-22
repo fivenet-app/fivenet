@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { HomeIcon } from '@heroicons/vue/20/solid';
 
 const pages = [

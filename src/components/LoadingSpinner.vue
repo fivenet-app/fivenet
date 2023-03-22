@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, computed, watch } from 'vue'
 import { useLoading, ActiveLoader } from 'vue-loading-overlay'
 import { useStore } from '../store/store';

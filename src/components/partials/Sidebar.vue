@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, ref, FunctionalComponent, onMounted } from 'vue';
 import { RouteNamedMap } from 'vue-router/auto/routes';
 import { toTitleCase } from '../../utils/strings';

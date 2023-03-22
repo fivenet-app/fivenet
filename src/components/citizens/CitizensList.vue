@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { User, UserProps } from '@arpanet/gen/resources/users/users_pb';
 import { getCitizenStoreClient } from '../../grpc/grpc';

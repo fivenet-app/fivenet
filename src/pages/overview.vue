@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import Footer from '../components/partials/Footer.vue';
 import FeatureCards from '../components/FeatureCards.vue';
 import ContentWrapper from '../components/partials/ContentWrapper.vue';

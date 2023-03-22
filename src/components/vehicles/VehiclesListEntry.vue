@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
 
 defineProps({

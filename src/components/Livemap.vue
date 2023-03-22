@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted, onBeforeUnmount, onUnmounted } from 'vue';
 import { getLivemapperClient } from '../grpc/grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';

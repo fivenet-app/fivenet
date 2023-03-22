@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { DocumentTemplate, DocumentTemplateShort } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetTemplateRequest, ListTemplatesRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { ref, onBeforeMount } from 'vue';

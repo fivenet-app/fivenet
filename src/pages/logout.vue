@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onBeforeMount } from 'vue';
 import { useStore } from '../store/store';
 import { useRouter } from 'vue-router/auto';

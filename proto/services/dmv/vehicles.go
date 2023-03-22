@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	ve = table.OwnedVehicles.AS("vehicle")
-	us = table.Users.AS("usershortni")
+	vehicle = table.OwnedVehicles.AS("vehicle")
+	user    = table.Users.AS("usershortni")
 )
 
 type Server struct {
@@ -43,24 +43,24 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 	}
 	if req.Type != "" {
 		req.Type = strings.ReplaceAll(req.Type, "%", "") + "%"
-		condition = jet.AND(condition, jet.BoolExp(ve.Type.LIKE(jet.String(req.Type))))
+		condition = jet.AND(condition, jet.BoolExp(vehicle.Type.LIKE(jet.String(req.Type))))
 	}
-	userCondition := us.Identifier.EQ(ve.Owner)
+	userCondition := user.Identifier.EQ(vehicle.Owner)
 	if req.UserId != 0 {
 		condition = jet.AND(condition,
-			jet.BoolExp(us.Identifier.EQ(ve.Owner)),
-			us.ID.EQ(jet.Int32(req.UserId)),
+			jet.BoolExp(user.Identifier.EQ(vehicle.Owner)),
+			user.ID.EQ(jet.Int32(req.UserId)),
 		)
-		userCondition = jet.AND(userCondition, us.ID.EQ(jet.Int32(req.UserId)))
+		userCondition = jet.AND(userCondition, user.ID.EQ(jet.Int32(req.UserId)))
 	}
 
-	countStmt := ve.
+	countStmt := vehicle.
 		SELECT(
-			jet.COUNT(ve.Owner).AS("datacount.totalcount"),
+			jet.COUNT(vehicle.Owner).AS("datacount.totalcount"),
 		).
 		FROM(
-			ve.
-				LEFT_JOIN(us,
+			vehicle.
+				LEFT_JOIN(user,
 					userCondition,
 				),
 		).
@@ -78,28 +78,28 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 		return resp, nil
 	}
 
-	stmt := ve.
+	stmt := vehicle.
 		SELECT(
-			ve.Plate,
-			ve.Model,
-			ve.Type,
-			us.ID,
-			us.Identifier,
-			us.Job,
-			us.JobGrade,
-			us.Firstname,
-			us.Lastname,
+			vehicle.Plate,
+			vehicle.Model,
+			vehicle.Type,
+			user.ID,
+			user.Identifier,
+			user.Job,
+			user.JobGrade,
+			user.Firstname,
+			user.Lastname,
 		).
 		FROM(
-			ve.
-				LEFT_JOIN(us,
+			vehicle.
+				LEFT_JOIN(user,
 					userCondition,
 				),
 		).
 		WHERE(condition).
 		ORDER_BY(
-			ve.Type.ASC(),
-			ve.Plate.ASC(),
+			vehicle.Type.ASC(),
+			vehicle.Plate.ASC(),
 		).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(database.DefaultPageLimit)

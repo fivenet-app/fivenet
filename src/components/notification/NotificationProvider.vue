@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import Notification from './Notification.vue';
 import store from './store';
 </script>
