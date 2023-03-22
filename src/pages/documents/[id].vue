@@ -7,10 +7,10 @@ import DocumentView from '../../components/documents/DocumentView.vue';
 import Footer from '../../components/partials/Footer.vue';
 
 const route = useRoute<'Documents: Info'>();
-const documentID = ref(0);
+const documentId = ref(0);
 
 onMounted(() => {
-    documentID.value = parseInt(route.params.id);
+    documentId.value = parseInt(route.params.id);
 });
 </script>
 
@@ -27,7 +27,7 @@ onMounted(() => {
 <template>
     <NavPageHeader title="Document" />
     <ContentWrapper>
-        <DocumentView v-if="documentID > 0" :documentID="documentID" />
+        <DocumentView v-if="documentId > 0" :documentId="documentId" />
     </ContentWrapper>
     <Footer />
 </template>

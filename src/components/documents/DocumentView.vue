@@ -4,7 +4,7 @@ import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentReque
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient } from '../../grpc/grpc';
 import { getDateLocaleString, getDate } from '../../utils/time';
-import { DOC_ACCESS_Util, DOC_REFERENCE_Util, DOC_RELATION_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
+import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import {
     TabGroup,
     TabList,
@@ -22,6 +22,8 @@ import {
     TagIcon,
     ArrowLongRightIcon,
 } from '@heroicons/vue/20/solid';
+import DocumentRelations from './DocumentRelations.vue';
+import DocumentReferences from './DocumentReferences.vue';
 
 const document = ref<undefined | Document>(undefined)
 const access = ref<undefined | DocumentAccess>(undefined)
@@ -35,7 +37,7 @@ const tabs = ref<{ name: string, href: string, icon: typeof LockOpenIcon }[]>([
 ]);
 
 const props = defineProps({
-    documentID: {
+    documentId: {
         required: true,
         type: Number,
     },
@@ -43,7 +45,7 @@ const props = defineProps({
 
 function getDocument(): void {
     const req = new GetDocumentRequest();
-    req.setDocumentId(props.documentID);
+    req.setDocumentId(props.documentId);
 
     getDocStoreClient().
         getDocument(req, null).
@@ -348,82 +350,12 @@ onMounted(() => {
             </TabList>
             <TabPanels>
                 <TabPanel>
-                    <div class="overflow-hidden bg-white shadow sm:rounded-md">
-                        <ul role="list" class="divide-y divide-gray-200">
-                            <li v-for="item in feedReferences" :key="item.getId()">
-                                <a href="#" class="block hover:bg-gray-50">
-                                    <div class="px-4 py-4 sm:px-6">
-                                        <div class="flex items-center justify-between">
-                                            <p class="truncate text-sm font-medium text-indigo-600">{{
-                                                item.getSourceDocument()?.getTitle() }}</p>
-                                            <div class="ml-2 flex flex-shrink-0">
-                                                <p
-                                                    class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                                    {{ DOC_REFERENCE_Util.toEnumKey(item.getReference()) }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="mt-2 sm:flex sm:justify-between">
-                                            <div class="sm:flex">
-                                                <p class="flex items-center text-sm text-gray-500">
-                                                    <TagIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
-                                                        aria-hidden="true" />
-                                                    {{ item.getSourceDocument()?.getCategory()?.getName() }}
-                                                </p>
-                                            </div>
-                                            <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                                                <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
-                                                    aria-hidden="true" />
-                                                <p>
-                                                    Created on
-                                                    {{ ' ' }}
-                                                    <time :datetime="getDateLocaleString(item.getCreatedAt())">{{
-                                                        getDateLocaleString(item.getCreatedAt()) }}</time>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <DocumentReferences :references="feedReferences" />
                 </TabPanel>
                 <TabPanel>
-                    <div class="overflow-hidden bg-white shadow sm:rounded-md">
-                        <ul role="list" class="divide-y divide-gray-200">
-                            <li v-for="item in feedRelations" :key="item.getId()">
-                                <a href="#" class="block hover:bg-gray-50">
-                                    <div class="px-4 py-4 sm:px-6">
-                                        <div class="flex items-center justify-between">
-                                            <p class="truncate text-sm font-medium text-indigo-600">
-                                                {{ item.getSourceUser()?.getFirstname() }}, {{
-                                                    item.getSourceUser()?.getLastname() }}
-                                                <ArrowLongRightIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
-                                                    aria-hidden="true" /> {{ item.getSourceUser()?.getLastname() }}
-                                            </p>
-                                            <div class="ml-2 flex flex-shrink-0">
-                                                <p
-                                                    class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                                    {{ DOC_RELATION_Util.toEnumKey(item.getRelation()) }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="mt-2 sm:flex sm:justify-between">
-                                            <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                                                <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
-                                                    aria-hidden="true" />
-                                                <p>
-                                                    Created on
-                                                    {{ ' ' }}
-                                                    <time :datetime="getDateLocaleString(item.getCreatedAt())">{{
-                                                        getDateLocaleString(item.getCreatedAt()) }}</time>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <DocumentRelations :relations="feedRelations" />
                 </TabPanel>
             </TabPanels>
-    </TabGroup>
-</div></template>
+        </TabGroup>
+    </div>
+</template>

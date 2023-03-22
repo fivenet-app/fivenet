@@ -210,7 +210,7 @@ func (s *Server) RemoveDcoumentRelation(ctx context.Context, req *RemoveDcoument
 	return resp, nil
 }
 
-func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) ([]*documents.DocumentReference, error) {
+func (s *Server) getDocumentReferences(ctx context.Context, documentId uint64) ([]*documents.DocumentReference, error) {
 	sourceDoc := docs.AS("source_document")
 	targetDoc := docs.AS("target_document")
 	uCreator := user.AS("ref_creator")
@@ -261,8 +261,8 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 			jet.AND(
 				docRef.DeletedAt.IS_NULL(),
 				jet.OR(
-					docRef.SourceDocumentID.EQ(jet.Uint64(documentID)),
-					docRef.TargetDocumentID.EQ(jet.Uint64(documentID)),
+					docRef.SourceDocumentID.EQ(jet.Uint64(documentId)),
+					docRef.TargetDocumentID.EQ(jet.Uint64(documentId)),
 				),
 			),
 		).
@@ -284,7 +284,7 @@ func (s *Server) getDocumentReferences(ctx context.Context, documentID uint64) (
 	return dest, nil
 }
 
-func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([]*documents.DocumentRelation, error) {
+func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([]*documents.DocumentRelation, error) {
 	uSource := user.AS("source_user")
 	uTarget := user.AS("target_user")
 	stmt := docRel.
@@ -336,7 +336,7 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentID uint64) ([
 		).
 		WHERE(
 			jet.AND(
-				docRel.DocumentID.EQ(jet.Uint64(documentID)),
+				docRel.DocumentID.EQ(jet.Uint64(documentId)),
 				docRel.DeletedAt.IS_NULL(),
 			),
 		).

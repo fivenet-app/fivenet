@@ -1,3 +1,5 @@
+VALIDATE_VERSION ?= v0.10.1
+
 .DEFAULT: run-server
 
 .PHONY: clean
@@ -29,9 +31,10 @@ gen-sql:
 
 protoc-gen-validate:
 	if test ! -d validate/; then \
-		git clone https://github.com/bufbuild/protoc-gen-validate.git validate; \
+		git clone --branch $(VALIDATE_VERSION) https://github.com/bufbuild/protoc-gen-validate.git validate; \
 	else \
 		git -C validate/ pull --all; \
+		git -C validate/ checkout $(VALIDATE_VERSION); \
 	fi
 
 protoc-gen-customizer:

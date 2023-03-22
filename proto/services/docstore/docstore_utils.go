@@ -101,20 +101,20 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		LIMIT(database.DefaultPageLimit)
 }
 
-func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentID uint64, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS) (bool, error) {
-	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, publicOk, access, documentID)
+func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS) (bool, error) {
+	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, publicOk, access, documentId)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS, documentIDs ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, publicOk, access, documentIDs...)
-	return len(out) == len(documentIDs), err
+func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS, documentIds ...uint64) (bool, error) {
+	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, publicOk, access, documentIds...)
+	return len(out) == len(documentIds), err
 }
 
-func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS, documentIDs ...uint64) ([]uint64, error) {
-	ids := make([]jet.Expression, len(documentIDs))
-	for i := 0; i < len(documentIDs); i++ {
-		ids[i] = jet.Uint64(documentIDs[i])
+func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS, documentIds ...uint64) ([]uint64, error) {
+	ids := make([]jet.Expression, len(documentIds))
+	for i := 0; i < len(documentIds); i++ {
+		ids[i] = jet.Uint64(documentIds[i])
 	}
 
 	condition := jet.AND(
