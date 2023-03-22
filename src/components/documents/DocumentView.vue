@@ -100,43 +100,8 @@ onMounted(() => {
 
 <template>
     <div class="mx-auto w-full max-w-7xl flex-grow lg:flex xl:px-8">
-        <!-- Left sidebar & main wrapper -->
+        <!-- Main wrapper -->
         <div class="min-w-0 flex-1 bg-white xl:flex">
-            <div
-                class="border-b border-gray-200 bg-white xl:w-64 xl:flex-shrink-0 xl:border-b-0 xl:border-r xl:border-gray-200 mt-1">
-                <div class="h-full py-6 pl-4 pr-6">
-                    <div class="flow-root">
-                        <h3 class="text-base font-semibold leading-6 text-gray-900 pb-5">Responses</h3>
-                        <ul role="list" class="-mb-8">
-                            <li v-for="(comment, commentIdx) in comments" :key="comment.getId()" class="mb-5">
-                                <div class="relative pb-2 bg-gray-300 rounded-xl">
-                                    <span v-if="commentIdx !== comments.length - 1"
-                                        class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
-                                    <div class="relative flex space-x-3 cursor-pointer select-none"
-                                        @click="activeResponse = comment">
-                                        <div>
-                                            <span
-                                                class="h-8 w-8 rounded-full flex items-center justify-center ring-4 ring-white bg-gray-300">
-                                                <UserIcon class="h-5 w-5 text-white" aria-hidden="true" />
-                                            </span>
-                                        </div>
-                                        <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
-                                            <div>
-                                                <p class="font-medium text-gray-900">{{ comment.getTitle() }}</p>
-                                                <p class="text-sm text-gray-500">
-                                                    by {{ comment.getCreator()?.getFirstname() }} {{
-                                                        comment.getCreator()?.getLastname() }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
             <div class="bg-white lg:min-w-0 lg:flex-1">
                 <div class="h-full py-6 px-4 sm:px-6 lg:px-8">
                     <div>
