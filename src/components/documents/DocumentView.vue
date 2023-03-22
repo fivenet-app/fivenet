@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient } from '../../grpc/grpc';
-import { getDateLocaleString, getDate } from '../../utils/time';
+import { getDate } from '../../utils/time';
 import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import {
     TabGroup,
@@ -19,8 +19,6 @@ import {
     CalendarIcon,
     UserIcon,
     DocumentMagnifyingGlassIcon,
-    TagIcon,
-    ArrowLongRightIcon,
 } from '@heroicons/vue/20/solid';
 import DocumentRelations from './DocumentRelations.vue';
 import DocumentReferences from './DocumentReferences.vue';
@@ -52,6 +50,7 @@ function getDocument(): void {
         then((resp) => {
             document.value = resp.getDocument();
             access.value = resp.getAccess();
+            console.log("UPDATED ACCESS AND DOC");
         });
 
     // Document References
@@ -202,29 +201,33 @@ onMounted(() => {
                                         </ul>
                                     </div>
                                     <div>
-                                        <h2 class="text-sm font-medium text-gray-500">Tags</h2>
+                                        <h2 class="text-sm font-medium text-gray-500">Access</h2>
                                         <ul role="list" class="mt-2 leading-8">
-                                            <li class="inline">
+                                            <li v-for="ac in access?.getJobsList()" class="inline">
                                                 <a href="#"
                                                     class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                                                     <div class="absolute flex flex-shrink-0 items-center justify-center">
                                                         <span class="h-1.5 w-1.5 rounded-full bg-rose-500"
                                                             aria-hidden="true" />
                                                     </div>
-                                                    <div class="ml-3 text-xs font-semibold text-gray-900">Bug</div>
+                                                    <div class="ml-3 text-xs font-semibold text-gray-900">
+                                                        {{ ac.getJobLabel() }}<span v-if="ac.getMinimumgrade() > 0">(Rank: {{
+                                                            ac.getMinimumgrade() }})</span> - {{ DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
+                                                    </div>
                                                 </a>
                                                 {{ ' ' }}
                                             </li>
-                                            <li class="inline">
-                                                <a href="#"
+                                            <li v-for="ac in access?.getUsersList()" class="inline">
+                                                <router-link :to="{ name: 'Citizens: Info', params: { id: ac.getUserId()} }"
                                                     class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                                                     <div class="absolute flex flex-shrink-0 items-center justify-center">
-                                                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-500"
+                                                        <span class="h-1.5 w-1.5 rounded-full bg-rose-500"
                                                             aria-hidden="true" />
                                                     </div>
-                                                    <div class="ml-3 text-xs font-semibold text-gray-900">Accessibility
+                                                    <div class="ml-3 text-xs font-semibold text-gray-900">
+                                                        {{ ac.getUser()?.getFirstname()}}, {{ ac.getUser()?.getLastname() }} - {{ DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
                                                     </div>
-                                                </a>
+                                                </router-link>
                                                 {{ ' ' }}
                                             </li>
                                         </ul>
@@ -313,22 +316,22 @@ onMounted(() => {
                                             <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
                                         </div>
                                         <div class="ml-3 text-xs font-semibold text-gray-900">
-                                            {{ ac.getJob() }}<span v-if="ac.getMinimumgrade() > 0">(Rank: {{
-                                                ac.getMinimumgrade() }})</span> - {{
-        DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
+                                            {{ ac.getJobLabel() }}<span v-if="ac.getMinimumgrade() > 0">(Rank: {{
+                                                            ac.getMinimumgrade() }})</span> - {{ DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
                                         </div>
                                     </a>
                                     {{ ' ' }}
                                 </li>
                                 <li v-for="ac in access?.getUsersList()" class="inline">
-                                    <a href="#"
+                                    <router-link :to="{ name: 'Citizens: Info', params: { id: ac.getUserId() } }"
                                         class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                                         <div class="absolute flex flex-shrink-0 items-center justify-center">
                                             <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
                                         </div>
-                                        <div class="ml-3 text-xs font-semibold text-gray-900">{{ ac.getUserId() }} - {{
-                                            DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}</div>
-                                    </a>
+                                        <div class="ml-3 text-xs font-semibold text-gray-900">
+                                            {{ ac.getUser()?.getFirstname()}}, {{ ac.getUser()?.getLastname() }} - {{ DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
+                                        </div>
+                                    </router-link>
                                     {{ ' ' }}
                                 </li>
                             </ul>
@@ -357,5 +360,4 @@ onMounted(() => {
                 </TabPanel>
             </TabPanels>
         </TabGroup>
-    </div>
-</template>
+    </div></template>

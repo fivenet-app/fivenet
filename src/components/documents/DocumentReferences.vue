@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { DOC_REFERENCE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import { DocumentReference } from '@arpanet/gen/resources/documents/documents_pb';
-import { ChevronRightIcon } from '@heroicons/vue/24/outline';
+import { ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
 import { getDateLocaleString } from '../../utils/time';
 
 defineProps({
@@ -20,7 +20,7 @@ defineProps({
                 <a href="#" class="block bg-white px-4 py-4 hover:bg-gray-50">
                     <span class="flex items-center space-x-4">
                         <span class="flex flex-1 space-x-2 truncate">
-                            <BanknotesIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                            <ArrowsRightLeftIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                             <span class="flex flex-col truncate text-sm text-gray-500">
                                 <span>
                                     {{ reference.getTargetDocument()?.getTitle() }}<span
