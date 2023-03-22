@@ -93,6 +93,14 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 	// Clean comment from
 	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := dComments.
 		INSERT(
 			dComments.DocumentID,
@@ -105,12 +113,24 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 			userId,
 		)
 
-	resp := &PostDocumentCommentResponse{}
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	result, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	lastId, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	return &PostDocumentCommentResponse{
+		Id: uint64(lastId),
+	}, nil
 }
 func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
@@ -121,6 +141,14 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 	if !check {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this comment!")
 	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	stmt := dComments.
 		UPDATE().
@@ -135,7 +163,12 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 		)
 
 	resp := &EditDocumentCommentResponse{}
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return nil, err
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
 		return nil, err
 	}
 

@@ -136,6 +136,14 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 }
 
 func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest) (*CreateDocumentResponse, error) {
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	docs := table.ArpanetDocuments
@@ -165,7 +173,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 			req.Public,
 		)
 
-	result, err := stmt.ExecContext(ctx, s.db)
+	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
 		return nil, err
 	}
@@ -175,7 +183,12 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, err
 	}
 
-	if err := s.handleDocumentAccessChanges(ctx, DOC_ACCESS_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
+	if err := s.handleDocumentAccessChanges(ctx, tx, DOC_ACCESS_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
+		return nil, err
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
 		return nil, err
 	}
 
@@ -192,6 +205,12 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 	if !check {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
+	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
 	}
 
 	stmt := docs.
@@ -211,15 +230,25 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		).
 		WHERE(docs.ID.EQ(jet.Uint64(req.DocumentId)))
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, err
 	}
 
-	if err := s.handleDocumentAccessChanges(ctx, DOC_ACCESS_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
+	if err := s.handleDocumentAccessChanges(ctx, tx, DOC_ACCESS_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
+		return nil, err
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
 		return nil, err
 	}
 
 	return &UpdateDocumentResponse{
 		DocumentId: req.DocumentId,
 	}, nil
+}
+
+func (s *Server) DeleteDocument(ctx context.Context) error {
+
+	return nil
 }

@@ -290,6 +290,14 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user wanted status!")
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := aup.
 		INSERT(
 			aup.AllColumns,
@@ -301,7 +309,8 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		ON_DUPLICATE_KEY_UPDATE(
 			aup.Wanted.SET(jet.Bool(req.Props.Wanted)),
 		)
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, err
 	}
 
@@ -309,19 +318,22 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	key := "UserProps.Wanted"
 	newValue := strconv.FormatBool(req.Props.Wanted)
 	oldValue := strconv.FormatBool(!req.Props.Wanted)
-	s.addUserAcitvity(ctx, &model.ArpanetUserActivity{
-		SourceUserID: userId,
-		TargetUserID: req.Props.UserId,
-		Type:         int16(users.USER_ACTIVITY_TYPE_CHANGED),
-		Key:          key,
-		OldValue:     &oldValue,
-		NewValue:     &newValue,
-	})
+	if err := s.addUserAcitvity(ctx, tx,
+		&model.ArpanetUserActivity{
+			SourceUserID: userId,
+			TargetUserID: req.Props.UserId,
+			Type:         int16(users.USER_ACTIVITY_TYPE_CHANGED),
+			Key:          key,
+			OldValue:     &oldValue,
+			NewValue:     &newValue,
+		}); err != nil {
+		return nil, err
+	}
 
 	return &SetUserPropsResponse{}, nil
 }
 
-func (s *Server) addUserAcitvity(ctx context.Context, activity *model.ArpanetUserActivity) error {
+func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, activity *model.ArpanetUserActivity) error {
 	stmt := aua.
 		INSERT(
 			aua.SourceUserID,
@@ -333,11 +345,8 @@ func (s *Server) addUserAcitvity(ctx context.Context, activity *model.ArpanetUse
 		).
 		MODEL(activity)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return err
-	}
-
-	return nil
+	_, err := stmt.ExecContext(ctx, s.db)
+	return err
 }
 
 func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error) {

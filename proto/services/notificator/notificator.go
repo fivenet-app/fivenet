@@ -38,9 +38,13 @@ func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions) *Server {
 func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequest) (*GetNotificationsResponse, error) {
 	userId := auth.GetUserIDFromContext(ctx)
 
-	condition := jet.AND(
-		nots.UserID.EQ(jet.Int32(userId)),
-	)
+	condition := nots.UserID.EQ(jet.Int32(userId))
+	if req.IncludeRead {
+		condition = jet.AND(
+			condition,
+			nots.ReadAt.IS_NOT_NULL(),
+		)
+	}
 
 	countStmt := nots.
 		SELECT(
@@ -67,9 +71,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 		).
 		FROM(nots).
 		WHERE(
-			jet.AND(
-				nots.UserID.EQ(jet.Int32(userId)),
-			),
+			condition,
 		).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(database.DefaultPageLimit)

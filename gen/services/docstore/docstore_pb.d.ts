@@ -289,6 +289,9 @@ export namespace AddDocumentReferenceRequest {
 }
 
 export class AddDocumentReferenceResponse extends jspb.Message {
+  getId(): number;
+  setId(value: number): AddDocumentReferenceResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AddDocumentReferenceResponse.AsObject;
   static toObject(includeInstance: boolean, msg: AddDocumentReferenceResponse): AddDocumentReferenceResponse.AsObject;
@@ -299,6 +302,7 @@ export class AddDocumentReferenceResponse extends jspb.Message {
 
 export namespace AddDocumentReferenceResponse {
   export type AsObject = {
+    id: number,
   }
 }
 
@@ -355,6 +359,9 @@ export namespace AddDocumentRelationRequest {
 }
 
 export class AddDocumentRelationResponse extends jspb.Message {
+  getId(): number;
+  setId(value: number): AddDocumentRelationResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AddDocumentRelationResponse.AsObject;
   static toObject(includeInstance: boolean, msg: AddDocumentRelationResponse): AddDocumentRelationResponse.AsObject;
@@ -365,6 +372,7 @@ export class AddDocumentRelationResponse extends jspb.Message {
 
 export namespace AddDocumentRelationResponse {
   export type AsObject = {
+    id: number,
   }
 }
 
@@ -471,6 +479,9 @@ export namespace PostDocumentCommentRequest {
 }
 
 export class PostDocumentCommentResponse extends jspb.Message {
+  getId(): number;
+  setId(value: number): PostDocumentCommentResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): PostDocumentCommentResponse.AsObject;
   static toObject(includeInstance: boolean, msg: PostDocumentCommentResponse): PostDocumentCommentResponse.AsObject;
@@ -481,6 +492,7 @@ export class PostDocumentCommentResponse extends jspb.Message {
 
 export namespace PostDocumentCommentResponse {
   export type AsObject = {
+    id: number,
   }
 }
 

@@ -1785,6 +1785,8 @@ func (m *AddDocumentReferenceResponse) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	if len(errors) > 0 {
 		return AddDocumentReferenceResponseMultiError(errors)
 	}
@@ -2226,6 +2228,8 @@ func (m *AddDocumentRelationResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return AddDocumentRelationResponseMultiError(errors)
@@ -2967,6 +2971,8 @@ func (m *PostDocumentCommentResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return PostDocumentCommentResponseMultiError(errors)

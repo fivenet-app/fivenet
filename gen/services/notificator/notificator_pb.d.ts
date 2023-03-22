@@ -4,53 +4,14 @@ import * as resources_common_database_database_pb from '../../resources/common/d
 import * as resources_notifications_notifications_pb from '../../resources/notifications/notifications_pb';
 
 
-export class StreamRequest extends jspb.Message {
-  getLastId(): number;
-  setLastId(value: number): StreamRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): StreamRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: StreamRequest): StreamRequest.AsObject;
-  static serializeBinaryToWriter(message: StreamRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): StreamRequest;
-  static deserializeBinaryFromReader(message: StreamRequest, reader: jspb.BinaryReader): StreamRequest;
-}
-
-export namespace StreamRequest {
-  export type AsObject = {
-    lastId: number,
-  }
-}
-
-export class StreamResponse extends jspb.Message {
-  getLastId(): number;
-  setLastId(value: number): StreamResponse;
-
-  getNotificationsList(): Array<resources_notifications_notifications_pb.Notification>;
-  setNotificationsList(value: Array<resources_notifications_notifications_pb.Notification>): StreamResponse;
-  clearNotificationsList(): StreamResponse;
-  addNotifications(value?: resources_notifications_notifications_pb.Notification, index?: number): resources_notifications_notifications_pb.Notification;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): StreamResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: StreamResponse): StreamResponse.AsObject;
-  static serializeBinaryToWriter(message: StreamResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): StreamResponse;
-  static deserializeBinaryFromReader(message: StreamResponse, reader: jspb.BinaryReader): StreamResponse;
-}
-
-export namespace StreamResponse {
-  export type AsObject = {
-    lastId: number,
-    notificationsList: Array<resources_notifications_notifications_pb.Notification.AsObject>,
-  }
-}
-
 export class GetNotificationsRequest extends jspb.Message {
   getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
   setPagination(value?: resources_common_database_database_pb.PaginationRequest): GetNotificationsRequest;
   hasPagination(): boolean;
   clearPagination(): GetNotificationsRequest;
+
+  getIncludeRead(): boolean;
+  setIncludeRead(value: boolean): GetNotificationsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetNotificationsRequest.AsObject;
@@ -63,6 +24,7 @@ export class GetNotificationsRequest extends jspb.Message {
 export namespace GetNotificationsRequest {
   export type AsObject = {
     pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
+    includeRead: boolean,
   }
 }
 
@@ -123,6 +85,48 @@ export class ReadNotificationsResponse extends jspb.Message {
 
 export namespace ReadNotificationsResponse {
   export type AsObject = {
+  }
+}
+
+export class StreamRequest extends jspb.Message {
+  getLastId(): number;
+  setLastId(value: number): StreamRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StreamRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: StreamRequest): StreamRequest.AsObject;
+  static serializeBinaryToWriter(message: StreamRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StreamRequest;
+  static deserializeBinaryFromReader(message: StreamRequest, reader: jspb.BinaryReader): StreamRequest;
+}
+
+export namespace StreamRequest {
+  export type AsObject = {
+    lastId: number,
+  }
+}
+
+export class StreamResponse extends jspb.Message {
+  getLastId(): number;
+  setLastId(value: number): StreamResponse;
+
+  getNotificationsList(): Array<resources_notifications_notifications_pb.Notification>;
+  setNotificationsList(value: Array<resources_notifications_notifications_pb.Notification>): StreamResponse;
+  clearNotificationsList(): StreamResponse;
+  addNotifications(value?: resources_notifications_notifications_pb.Notification, index?: number): resources_notifications_notifications_pb.Notification;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StreamResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: StreamResponse): StreamResponse.AsObject;
+  static serializeBinaryToWriter(message: StreamResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StreamResponse;
+  static deserializeBinaryFromReader(message: StreamResponse, reader: jspb.BinaryReader): StreamResponse;
+}
+
+export namespace StreamResponse {
+  export type AsObject = {
+    lastId: number,
+    notificationsList: Array<resources_notifications_notifications_pb.Notification.AsObject>,
   }
 }
 

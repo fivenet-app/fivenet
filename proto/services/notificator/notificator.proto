@@ -7,17 +7,9 @@ import "resources/common/database/database.proto";
 import "resources/notifications/notifications.proto";
 import "validate/validate.proto";
 
-message StreamRequest {
-  uint64 last_id = 1;
-}
-
-message StreamResponse {
-  uint64 last_id = 1;
-  repeated resources.notifications.Notification notifications = 2;
-}
-
 message GetNotificationsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  bool include_read = 2;
 }
 
 message GetNotificationsResponse {
@@ -30,6 +22,15 @@ message ReadNotificationsRequest {
 }
 
 message ReadNotificationsResponse {}
+
+message StreamRequest {
+  uint64 last_id = 1;
+}
+
+message StreamResponse {
+  uint64 last_id = 1;
+  repeated resources.notifications.Notification notifications = 2;
+}
 
 service NotificatorService {
   // @permission

@@ -71,17 +71,37 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	}
 
 	req.Reference.CreatorId = userId
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := docRef.
 		INSERT().
 		MODEL(req.Reference)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	result, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
 		return nil, err
 	}
 
-	resp := &AddDocumentReferenceResponse{}
+	lastId, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
 
-	return resp, nil
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	return &AddDocumentReferenceResponse{
+		Id: uint64(lastId),
+	}, nil
 }
 func (s *Server) RemoveDcoumentReference(ctx context.Context, req *RemoveDcoumentReferenceRequest) (*RemoveDcoumentReferenceResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
@@ -139,17 +159,37 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	}
 
 	req.Relation.SourceUserId = userId
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := docRef.
 		INSERT().
 		MODEL(req.Relation)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	result, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
 		return nil, err
 	}
 
-	resp := &AddDocumentRelationResponse{}
+	lastId, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
 
-	return resp, nil
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	return &AddDocumentRelationResponse{
+		Id: uint64(lastId),
+	}, nil
 }
 func (s *Server) RemoveDcoumentRelation(ctx context.Context, req *RemoveDcoumentRelationRequest) (*RemoveDcoumentRelationResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)

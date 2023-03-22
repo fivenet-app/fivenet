@@ -2983,7 +2983,7 @@ proto.services.docstore.AddDocumentReferenceResponse.prototype.toObject = functi
  */
 proto.services.docstore.AddDocumentReferenceResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -3020,6 +3020,10 @@ proto.services.docstore.AddDocumentReferenceResponse.deserializeBinaryFromReader
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setId(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -3049,6 +3053,31 @@ proto.services.docstore.AddDocumentReferenceResponse.prototype.serializeBinary =
  */
 proto.services.docstore.AddDocumentReferenceResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeUint64(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional uint64 id = 1;
+ * @return {number}
+ */
+proto.services.docstore.AddDocumentReferenceResponse.prototype.getId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.docstore.AddDocumentReferenceResponse} returns this
+ */
+proto.services.docstore.AddDocumentReferenceResponse.prototype.setId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -3466,7 +3495,7 @@ proto.services.docstore.AddDocumentRelationResponse.prototype.toObject = functio
  */
 proto.services.docstore.AddDocumentRelationResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -3503,6 +3532,10 @@ proto.services.docstore.AddDocumentRelationResponse.deserializeBinaryFromReader 
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setId(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -3532,6 +3565,31 @@ proto.services.docstore.AddDocumentRelationResponse.prototype.serializeBinary = 
  */
 proto.services.docstore.AddDocumentRelationResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeUint64(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional uint64 id = 1;
+ * @return {number}
+ */
+proto.services.docstore.AddDocumentRelationResponse.prototype.getId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.docstore.AddDocumentRelationResponse} returns this
+ */
+proto.services.docstore.AddDocumentRelationResponse.prototype.setId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -4341,7 +4399,7 @@ proto.services.docstore.PostDocumentCommentResponse.prototype.toObject = functio
  */
 proto.services.docstore.PostDocumentCommentResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -4378,6 +4436,10 @@ proto.services.docstore.PostDocumentCommentResponse.deserializeBinaryFromReader 
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setId(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -4407,6 +4469,31 @@ proto.services.docstore.PostDocumentCommentResponse.prototype.serializeBinary = 
  */
 proto.services.docstore.PostDocumentCommentResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeUint64(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional uint64 id = 1;
+ * @return {number}
+ */
+proto.services.docstore.PostDocumentCommentResponse.prototype.getId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.services.docstore.PostDocumentCommentResponse} returns this
+ */
+proto.services.docstore.PostDocumentCommentResponse.prototype.setId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 

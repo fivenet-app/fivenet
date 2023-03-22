@@ -2,6 +2,7 @@ package docstore
 
 import (
 	context "context"
+	"database/sql"
 	"errors"
 
 	"github.com/galexrt/arpanet/pkg/auth"
@@ -45,16 +46,37 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 }
 
 func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
-	resp := &SetDocumentAccessResponse{}
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_ACCESS)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit the document access!")
+	}
 
-	if err := s.handleDocumentAccessChanges(ctx, req.Mode, req.DocumentId, req.Access); err != nil {
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	if err := s.handleDocumentAccessChanges(ctx, tx, req.Mode, req.DocumentId, req.Access); err != nil {
 		return nil, err
 	}
 
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	resp := &SetDocumentAccessResponse{}
 	return resp, nil
 }
 
-func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCESS_UPDATE_MODE, documentID uint64, access *documents.DocumentAccess) error {
+func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mode DOC_ACCESS_UPDATE_MODE, documentID uint64, access *documents.DocumentAccess) error {
 	userId := auth.GetUserIDFromContext(ctx)
 
 	// Get existing job and user accesses from database
@@ -65,27 +87,27 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 
 	switch mode {
 	case DOC_ACCESS_UPDATE_MODE_UPDATE:
-		toCreate, toUpdate, toDelete := s.compareDocumentAccess(current, access)
+		toCreate, toUpdate, toDelete := s.compareDocumentAccess(tx, current, access)
 
-		if err := s.createDocumentAccess(ctx, documentID, userId, toCreate); err != nil {
+		if err := s.createDocumentAccess(ctx, tx, documentID, userId, toCreate); err != nil {
 			return err
 		}
 
-		if err := s.updateDocumentAccess(ctx, documentID, userId, toUpdate); err != nil {
+		if err := s.updateDocumentAccess(ctx, tx, documentID, userId, toUpdate); err != nil {
 			return err
 		}
 
-		if err := s.deleteDocumentAccess(ctx, documentID, toDelete); err != nil {
+		if err := s.deleteDocumentAccess(ctx, tx, documentID, toDelete); err != nil {
 			return err
 		}
 
 	case DOC_ACCESS_UPDATE_MODE_DELETE:
-		if err := s.deleteDocumentAccess(ctx, documentID, access); err != nil {
+		if err := s.deleteDocumentAccess(ctx, tx, documentID, access); err != nil {
 			return err
 		}
 
 	case DOC_ACCESS_UPDATE_MODE_CLEAR:
-		if err := s.clearDocumentAccess(ctx, documentID); err != nil {
+		if err := s.clearDocumentAccess(ctx, tx, documentID); err != nil {
 			return err
 		}
 	}
@@ -93,13 +115,17 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, mode DOC_ACCES
 	return nil
 }
 
-func (s *Server) compareDocumentAccess(current, in *documents.DocumentAccess) (*documents.DocumentAccess, *documents.DocumentAccess, *documents.DocumentAccess) {
-	toCreate := &documents.DocumentAccess{}
-	toUpdate := &documents.DocumentAccess{}
-	toDelete := &documents.DocumentAccess{}
+func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.DocumentAccess) (toCreate *documents.DocumentAccess, toUpdate *documents.DocumentAccess, toDelete *documents.DocumentAccess) {
+	toCreate = &documents.DocumentAccess{}
+	toUpdate = &documents.DocumentAccess{}
+	toDelete = &documents.DocumentAccess{}
+
+	if current == nil {
+		return
+	}
 
 	if len(current.Jobs) == 0 && len(current.Users) == 0 {
-		return in, nil, nil
+		return in, toUpdate, toDelete
 	}
 
 	slices.SortFunc(current.Jobs, func(a, b *documents.DocumentJobAccess) bool {
@@ -194,7 +220,7 @@ func (s *Server) compareDocumentAccess(current, in *documents.DocumentAccess) (*
 		}
 	}
 
-	return toCreate, toUpdate, toDelete
+	return
 }
 
 func (s *Server) getDocumentAccess(ctx context.Context, documentID uint64) (*documents.DocumentAccess, error) {
@@ -278,7 +304,11 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentID uint64) (*doc
 	return resp, nil
 }
 
-func (s *Server) createDocumentAccess(ctx context.Context, documentID uint64, userId int32, access *documents.DocumentAccess) error {
+func (s *Server) createDocumentAccess(ctx context.Context, tx *sql.Tx, documentID uint64, userId int32, access *documents.DocumentAccess) error {
+	if access == nil {
+		return nil
+	}
+
 	if access.Jobs != nil {
 		for k := 0; k < len(access.Jobs); k++ {
 			// Create document job access
@@ -299,7 +329,7 @@ func (s *Server) createDocumentAccess(ctx context.Context, documentID uint64, us
 					userId,
 				)
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return err
 			}
 		}
@@ -323,7 +353,7 @@ func (s *Server) createDocumentAccess(ctx context.Context, documentID uint64, us
 					userId,
 				)
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return err
 			}
 		}
@@ -332,7 +362,11 @@ func (s *Server) createDocumentAccess(ctx context.Context, documentID uint64, us
 	return nil
 }
 
-func (s *Server) updateDocumentAccess(ctx context.Context, documentID uint64, userId int32, access *documents.DocumentAccess) error {
+func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentID uint64, userId int32, access *documents.DocumentAccess) error {
+	if access == nil {
+		return nil
+	}
+
 	if access.Jobs != nil {
 		for k := 0; k < len(access.Jobs); k++ {
 			// Create document job access
@@ -356,7 +390,7 @@ func (s *Server) updateDocumentAccess(ctx context.Context, documentID uint64, us
 					dJobAccess.ID.EQ(jet.Uint64(access.Jobs[k].Id)),
 				)
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return err
 			}
 		}
@@ -383,7 +417,7 @@ func (s *Server) updateDocumentAccess(ctx context.Context, documentID uint64, us
 					dUserAccess.ID.EQ(jet.Uint64(access.Users[k].Id)),
 				)
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return err
 			}
 		}
@@ -392,7 +426,11 @@ func (s *Server) updateDocumentAccess(ctx context.Context, documentID uint64, us
 	return nil
 }
 
-func (s *Server) deleteDocumentAccess(ctx context.Context, documentID uint64, access *documents.DocumentAccess) error {
+func (s *Server) deleteDocumentAccess(ctx context.Context, tx *sql.Tx, documentID uint64, access *documents.DocumentAccess) error {
+	if access == nil {
+		return nil
+	}
+
 	if access.Jobs != nil && len(access.Jobs) > 0 {
 		jobIds := []jet.Expression{}
 		for i := 0; i < len(access.Jobs); i++ {
@@ -413,7 +451,7 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, documentID uint64, ac
 			).
 			LIMIT(25)
 
-		if _, err := jobStmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := jobStmt.ExecContext(ctx, tx); err != nil {
 			return err
 		}
 	}
@@ -438,7 +476,7 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, documentID uint64, ac
 			).
 			LIMIT(25)
 
-		if _, err := userStmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := userStmt.ExecContext(ctx, tx); err != nil {
 			return err
 		}
 	}
@@ -446,12 +484,12 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, documentID uint64, ac
 	return nil
 }
 
-func (s *Server) clearDocumentAccess(ctx context.Context, documentID uint64) error {
+func (s *Server) clearDocumentAccess(ctx context.Context, tx *sql.Tx, documentID uint64) error {
 	jobStmt := dJobAccess.
 		DELETE().
 		WHERE(dJobAccess.DocumentID.EQ(jet.Uint64(documentID)))
 
-	if _, err := jobStmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := jobStmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 
@@ -459,7 +497,7 @@ func (s *Server) clearDocumentAccess(ctx context.Context, documentID uint64) err
 		DELETE().
 		WHERE(dUserAccess.DocumentID.EQ(jet.Uint64(documentID)))
 
-	if _, err := userStmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := userStmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 

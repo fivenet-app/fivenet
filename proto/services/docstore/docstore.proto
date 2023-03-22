@@ -66,7 +66,9 @@ message AddDocumentReferenceRequest {
   resources.documents.DocumentReference reference = 1;
 }
 
-message AddDocumentReferenceResponse {}
+message AddDocumentReferenceResponse {
+  uint64 id = 1;
+}
 
 message RemoveDcoumentReferenceRequest {
   uint64 id = 1;
@@ -78,7 +80,9 @@ message AddDocumentRelationRequest {
   resources.documents.DocumentRelation relation = 1;
 }
 
-message AddDocumentRelationResponse {}
+message AddDocumentRelationResponse {
+  uint64 id = 1;
+}
 
 message RemoveDcoumentRelationRequest {
   uint64 id = 1;
@@ -100,7 +104,9 @@ message PostDocumentCommentRequest {
   resources.documents.DocumentComment comment = 1;
 }
 
-message PostDocumentCommentResponse {}
+message PostDocumentCommentResponse {
+  uint64 id = 1;
+}
 
 message EditDocumentCommentRequest {
   resources.documents.DocumentComment comment = 1;
