@@ -23,6 +23,7 @@ import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
 import { toTitleCase } from '../../utils/strings';
+import { ArrayElement } from '../../utils/types';
 
 const props = defineProps<{
     init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }
@@ -32,7 +33,7 @@ const emit = defineEmits<{
     (e: 'typeChange', payload: { id: number, type: number }): void,
     (e: 'nameChange', payload: { id: number, job: Job | undefined, char: UserShort | undefined }): void,
     (e: 'rankChange', payload: { id: number, rank: JobGrade }): void,
-    (e: 'accessChange', payload: { id: number, access: string }): void,
+    (e: 'accessChange', payload: { id: number, access: DOC_ACCESS }): void,
     (e: 'deleteRequest', payload: { id: number }): void,
 }>()
 
@@ -56,7 +57,7 @@ const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
 let entriesAccessRole = Object.keys(DOC_ACCESS).map(e => { return { id: DOC_ACCESS[e] as number, value: e } });
 const queryAccessRole = ref('');
-const selectedAccessRole = ref();
+const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRole>>();
 
 async function findJobs(): Promise<void> {
     const req = new CompleteJobNamesRequest();
@@ -134,7 +135,7 @@ watch(selectedMinimumRank, () => {
 
 watch(selectedAccessRole, () => {
     if (!selectedAccessRole.value) return;
-    emit('accessChange', { id: props.init.id, access: selectedAccessRole.value });
+    emit('accessChange', { id: props.init.id, access: selectedAccessRole.value.id });
 });
 </script>
 
