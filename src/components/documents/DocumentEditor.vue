@@ -30,6 +30,8 @@ import {
 import { CompleteDocumentCategoryRequest } from '@arpanet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/core';
 import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
+import DocumentReferenceManager from './DocumentReferenceManager.vue';
+import DocumentRelationManager from './DocumentRelationManager.vue';
 
 const store = useStore();
 const router = useRouter();
@@ -55,6 +57,9 @@ const state = ref('');
 const isPublic = ref(false);
 const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }>>(new Map());
 
+const showRelationManager = ref<boolean>(false);
+const showReferenceManager = ref<boolean>(false);
+
 let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
 const selectedCategory = ref<DocumentCategory | undefined>(undefined);
@@ -63,7 +68,6 @@ const modules = [] as Quill.Module[];
 
 onMounted(async () => {
     await findCategories();
-    console.log("🚀 ~ file: DocumentEditor.vue:59 ~ entriesCategory:", entriesCategory)
 
     if (props.id) {
         const req = new GetDocumentRequest();
@@ -282,6 +286,8 @@ function editForm(): void {
 </route>
 
 <template>
+    <DocumentRelationManager :open="showRelationManager" @close="showRelationManager = false" />
+    <DocumentReferenceManager :open="showReferenceManager" :document="$props.id" @close="showReferenceManager = false" />
     <div
         class="rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 bg-white">
         <label for="name" class="block text-xs font-medium text-gray-900">Title</label>
@@ -366,6 +372,16 @@ function editForm(): void {
     </div>
     <div class="bg-white">
         <QuillEditor v-model:content="content" contentType="html" toolbar="full" theme="snow" :modules="modules" />
+    </div>
+    <div class="flex flex-row">
+        <div class="flex-1">
+            <button type="button"
+                class="rounded-bl-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="showRelationManager = true">Edit Relations</button>
+        </div>
+        <div class="flex-1">
+            <button type="button"
+                class="rounded-br-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="showReferenceManager = true">Edit References</button>
+        </div>
     </div>
     <div class="my-3">
         <h2 class="text-neutral">Access</h2>
