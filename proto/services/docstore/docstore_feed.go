@@ -25,17 +25,154 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		return nil, err
 	}
 	if !check {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document!")
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document's references!")
 	}
 
-	references, err := s.getDocumentReferences(ctx, req.DocumentId)
+	resp := &GetDocumentReferencesResponse{}
+
+	var docsIds []struct {
+		Source *uint64
+		Target *uint64
+	}
+	idStmt := docRef.
+		SELECT(
+			docRef.SourceDocumentID.AS("source"),
+			docRef.TargetDocumentID.AS("target"),
+		).
+		FROM(
+			docRef,
+		).
+		WHERE(
+			jet.AND(
+				docRef.DeletedAt.IS_NULL(),
+				jet.OR(
+					docRef.SourceDocumentID.EQ(jet.Uint64(req.DocumentId)),
+					docRef.TargetDocumentID.EQ(jet.Uint64(req.DocumentId)),
+				),
+			),
+		)
+
+	if err := idStmt.QueryContext(ctx, s.db, &docsIds); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	if len(docsIds) == 0 {
+		return resp, nil
+	}
+
+	var docIds []uint64
+	for _, v := range docsIds {
+		if v.Source != nil {
+			docIds = append(docIds, *v.Source)
+		}
+		if v.Target != nil {
+			docIds = append(docIds, *v.Target)
+		}
+	}
+
+	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, true, documents.DOC_ACCESS_VIEW, docIds...)
 	if err != nil {
 		return nil, err
 	}
 
-	return &GetDocumentReferencesResponse{
-		References: references,
-	}, nil
+	if len(ids) == 0 {
+		return resp, nil
+	}
+
+	dIds := make([]jet.Expression, len(ids))
+	for i := 0; i < len(ids); i++ {
+		dIds[i] = jet.Uint64(ids[i])
+	}
+
+	sourceDoc := docs.AS("source_document")
+	targetDoc := docs.AS("target_document")
+	refCreator := user.AS("ref_creator")
+	dCreator := user.AS("creator")
+	stmt := docRef.
+		SELECT(
+			docRef.ID,
+			docRef.CreatedAt,
+			docRef.SourceDocumentID,
+			docRef.Reference,
+			docRef.TargetDocumentID,
+			docRef.CreatorID,
+			sourceDoc.ID,
+			sourceDoc.CreatedAt,
+			sourceDoc.UpdatedAt,
+			sourceDoc.CategoryID,
+			sourceDoc.Title,
+			sourceDoc.CreatorID,
+			sourceDoc.State,
+			sourceDoc.Closed,
+			dCreator.ID,
+			dCreator.Identifier,
+			dCreator.Job,
+			dCreator.JobGrade,
+			dCreator.Firstname,
+			dCreator.Lastname,
+			targetDoc.ID,
+			targetDoc.CreatedAt,
+			targetDoc.UpdatedAt,
+			targetDoc.CategoryID,
+			targetDoc.Title,
+			targetDoc.CreatorID,
+			targetDoc.State,
+			targetDoc.Closed,
+			refCreator.ID,
+			refCreator.Identifier,
+			refCreator.Job,
+			refCreator.JobGrade,
+			refCreator.Firstname,
+			refCreator.Lastname,
+		).
+		FROM(
+			docRef.
+				LEFT_JOIN(sourceDoc,
+					docRef.SourceDocumentID.EQ(sourceDoc.ID),
+				).
+				LEFT_JOIN(targetDoc,
+					docRef.TargetDocumentID.EQ(targetDoc.ID),
+				).
+				LEFT_JOIN(dCreator,
+					sourceDoc.CreatorID.EQ(dCreator.ID),
+				).
+				LEFT_JOIN(refCreator,
+					docRef.CreatorID.EQ(refCreator.ID),
+				),
+		).
+		WHERE(
+			jet.AND(
+				docRef.DeletedAt.IS_NULL(),
+				jet.OR(
+					docRef.SourceDocumentID.EQ(jet.Uint64(req.DocumentId)),
+					docRef.TargetDocumentID.EQ(jet.Uint64(req.DocumentId)),
+				),
+			),
+		).
+		ORDER_BY(
+			docRef.CreatedAt.DESC(),
+		).
+		LIMIT(25)
+
+	var dest []*documents.DocumentReference
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	for i := 0; i < len(dest); i++ {
+		s.c.EnrichJobInfo(dest[i].Creator)
+		s.c.EnrichDocumentCategory(dest[i].SourceDocument)
+		s.c.EnrichJobInfo(dest[i].SourceDocument.Creator)
+		s.c.EnrichDocumentCategory(dest[i].TargetDocument)
+	}
+
+	resp.References = dest
+
+	return resp, nil
 }
 
 func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error) {
@@ -208,83 +345,6 @@ func (s *Server) RemoveDcoumentRelation(ctx context.Context, req *RemoveDcoument
 	resp := &RemoveDcoumentRelationResponse{}
 
 	return resp, nil
-}
-
-func (s *Server) getDocumentReferences(ctx context.Context, documentId uint64) ([]*documents.DocumentReference, error) {
-	sourceDoc := docs.AS("source_document")
-	targetDoc := docs.AS("target_document")
-	uCreator := user.AS("ref_creator")
-	stmt := docRef.
-		SELECT(
-			docRef.ID,
-			docRef.CreatedAt,
-			docRef.SourceDocumentID,
-			docRef.Reference,
-			docRef.TargetDocumentID,
-			docRef.CreatorID,
-			sourceDoc.ID,
-			sourceDoc.CreatedAt,
-			sourceDoc.UpdatedAt,
-			sourceDoc.CategoryID,
-			sourceDoc.Title,
-			sourceDoc.CreatorID,
-			sourceDoc.State,
-			sourceDoc.Closed,
-			targetDoc.ID,
-			targetDoc.CreatedAt,
-			targetDoc.UpdatedAt,
-			targetDoc.CategoryID,
-			targetDoc.Title,
-			targetDoc.CreatorID,
-			targetDoc.State,
-			targetDoc.Closed,
-			uCreator.ID,
-			uCreator.Identifier,
-			uCreator.Job,
-			uCreator.JobGrade,
-			uCreator.Firstname,
-			uCreator.Lastname,
-		).
-		FROM(
-			docRef.
-				LEFT_JOIN(sourceDoc,
-					docRef.SourceDocumentID.EQ(sourceDoc.ID),
-				).
-				LEFT_JOIN(targetDoc,
-					docRef.TargetDocumentID.EQ(targetDoc.ID),
-				).
-				LEFT_JOIN(uCreator,
-					docRef.CreatorID.EQ(uCreator.ID),
-				),
-		).
-		WHERE(
-			jet.AND(
-				docRef.DeletedAt.IS_NULL(),
-				jet.OR(
-					docRef.SourceDocumentID.EQ(jet.Uint64(documentId)),
-					docRef.TargetDocumentID.EQ(jet.Uint64(documentId)),
-				),
-			),
-		).
-		ORDER_BY(
-			docRef.CreatedAt.DESC(),
-		).
-		LIMIT(25)
-
-	var dest []*documents.DocumentReference
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
-		}
-	}
-
-	for i := 0; i < len(dest); i++ {
-		s.c.EnrichJobInfo(dest[i].Creator)
-		s.c.EnrichDocumentCategory(dest[i].SourceDocument)
-		s.c.EnrichDocumentCategory(dest[i].TargetDocument)
-	}
-
-	return dest, nil
 }
 
 func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([]*documents.DocumentRelation, error) {

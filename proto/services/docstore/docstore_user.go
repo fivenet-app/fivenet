@@ -19,7 +19,6 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 		return resp, nil
 	}
 
-	// TODO use query to get documents which the user has access to before selecting
 	var docIds []uint64
 	idStmt := docRel.
 		SELECT(
@@ -38,8 +37,6 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 	if err := idStmt.QueryContext(ctx, s.db, &docIds); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
-		} else {
-			return resp, nil
 		}
 	}
 

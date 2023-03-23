@@ -109,8 +109,8 @@ onMounted(() => {
                                 <h2 class="sr-only">Details</h2>
                                 <div class="space-y-5">
                                     <div class="flex items-center space-x-2">
-                                        <LockClosedIcon v-if="document?.getClosed()"
-                                        class="h-5 w-5 text-green-500" aria-hidden="true" />
+                                        <LockClosedIcon v-if="document?.getClosed()" class="h-5 w-5 text-green-500"
+                                            aria-hidden="true" />
                                         <LockOpenIcon v-else class="h-5 w-5 text-green-500" aria-hidden="true" />
                                         <span class="text-sm font-medium text-green-700">Open Issue</span>
                                     </div>
