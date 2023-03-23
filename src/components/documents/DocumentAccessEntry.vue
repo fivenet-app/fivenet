@@ -25,7 +25,7 @@ import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
 import { toTitleCase } from '../../utils/strings';
 
 const props = defineProps<{
-    init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: string, minimumrank?: number } }
+    init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }
 }>();
 
 const emit = defineEmits<{
@@ -54,44 +54,49 @@ let entriesMinimumRank = [] as JobGrade[];
 const queryMinimumRank = ref('');
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
-let entriesAccessRole = Object.keys(DOC_ACCESS);
+let entriesAccessRole = Object.keys(DOC_ACCESS).map(e => { return { id: DOC_ACCESS[e] as number, value: e } });
 const queryAccessRole = ref('');
 const selectedAccessRole = ref();
 
-if (props.init.type === 0 && props.init.values.char && props.init.values.accessrole) {
-    selectedChar.value = entriesChars.find(char => char.getUserId() === props.init.values.char);
-    selectedAccessRole.value = entriesAccessRole.find(type => type === props.init.values.accessrole);
-} else if (props.init.type === 1 && props.init.values.job && props.init.values.minimumrank && props.init.values.accessrole) {
-    selectedJob.value = entriesJobs.find(job => job.getName() === props.init.values.job);
-    selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.getGrade() === props.init.values.minimumrank);
-    selectedAccessRole.value = entriesAccessRole.find(type => type === props.init.values.accessrole);
-}
-
-function findJobs(): void {
+async function findJobs(): Promise<void> {
     const req = new CompleteJobNamesRequest();
     req.setSearch(queryJob.value);
 
-    getCompletorClient().completeJobNames(req, null).then((resp) => {
-        entriesJobs = resp.getJobsList();
-    });
+    const resp = await getCompletorClient().completeJobNames(req, null)
+    entriesJobs = resp.getJobsList();
+    console.log("🚀 ~ file: DocumentAccessEntry.vue:67 ~ findJobs ~ entriesJobs:", entriesJobs)
 }
 
-function findChars(): void {
+async function findChars(): Promise<void> {
     const req = new CompleteCharNamesRequest();
     req.setSearch(queryChar.value);
 
-    getCompletorClient().completeCharNames(req, null).then((resp) => {
-        entriesChars = resp.getUsersList();
-    });
+    const resp = await getCompletorClient().completeCharNames(req, null)
+    entriesChars = resp.getUsersList();
+    console.log("🚀 ~ file: DocumentAccessEntry.vue:75 ~ findChars ~ entriesChars:", entriesChars)
 }
 
-onMounted(() => {
+onMounted(async () => {
     const passedType = accessTypes.find(e => e.id === props.init.type);
     if (passedType) selectedAccessType.value = passedType;
+
+    console.log("🚀 ~ file: DocumentAccessEntry.vue:97 ~ onMounted ~ props.init.values.job:", props.init.values.job)
+    console.log("🚀 ~ file: DocumentAccessEntry.vue:96 ~ onMounted ~ props.init.values.minimumrank:", props.init.values.minimumrank)
+    console.log("🚀 ~ file: DocumentAccessEntry.vue:85 ~ onMounted ~ props.init.values.accessrole:", props.init.values.accessrole)
+    if (props.init.type === 0 && props.init.values.char && props.init.values.accessrole) {
+        await findChars();
+        selectedChar.value = entriesChars.find(char => char.getUserId() === props.init.values.char);
+        selectedAccessRole.value = entriesAccessRole.find(type => type.id === props.init.values.accessrole);
+    } else if (props.init.type === 1 && props.init.values.job && props.init.values.minimumrank && props.init.values.accessrole) {
+        await findJobs();
+        selectedJob.value = entriesJobs.find(job => job.getName() === props.init.values.job);
+        selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.getGrade() === props.init.values.minimumrank);
+        selectedAccessRole.value = entriesAccessRole.find(type => type.id === props.init.values.accessrole);
+    }
 });
 
-watchDebounced(queryJob, () => findJobs(), { debounce: 750, maxWait: 2000 });
-watchDebounced(queryChar, () => findChars(), { debounce: 750, maxWait: 2000 });
+watchDebounced(queryJob, async () => await findJobs(), { debounce: 750, maxWait: 2000 });
+watchDebounced(queryChar, async () => await findChars(), { debounce: 750, maxWait: 2000 });
 
 watch(selectedAccessType, () => {
     emit('typeChange', { id: props.init.id, type: selectedAccessType.value.id });
@@ -269,17 +274,17 @@ watch(selectedAccessRole, () => {
                         <ComboboxInput
                             class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             @change="queryAccessRole = $event.target.value"
-                            :display-value="(role: any) => toTitleCase(role.toLowerCase())" />
+                            :display-value="(role: any) => toTitleCase(role.value.toLowerCase())" />
                     </ComboboxButton>
 
                     <ComboboxOptions v-if="entriesAccessRole.length > 0"
                         class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        <ComboboxOption v-for="role in entriesAccessRole" :key="role" :value="role" as="accessrole"
+                        <ComboboxOption v-for="role in entriesAccessRole" :key="role.id" :value="role.id" as="accessrole"
                             v-slot="{ active, selected }">
                             <li
                                 :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
                                 <span :class="['block truncate', selected && 'font-semibold']">
-                                    {{ toTitleCase(role.toLowerCase()) }}
+                                    {{ toTitleCase(role.value.toLowerCase()) }}
                                 </span>
 
                                 <span v-if="selected"

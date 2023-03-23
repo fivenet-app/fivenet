@@ -53,7 +53,7 @@ const content = ref('');
 const closed = ref(openclose[0]);
 const state = ref('');
 const isPublic = ref(false);
-const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: string, minimumrank?: number } }>>(new Map());
+const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }>>(new Map());
 
 let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
@@ -63,6 +63,39 @@ const modules = [] as Quill.Module[];
 
 onMounted(() => {
     findCategories();
+
+    if (props.id) {
+    const req = new GetDocumentRequest();
+    req.setDocumentId(props.id);
+
+    getDocStoreClient().getDocument(req, null).then((resp) => {
+        const document = resp.getDocument();
+        const docAccess = resp.getAccess();
+
+        if (document) {
+            title.value = document.getTitle();
+            content.value = document.getContent();
+            closed.value = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
+            state.value = document.getState();
+            isPublic.value = document.getPublic();
+        };
+
+        if (docAccess) {
+            let accessId = 0;
+            console.log(docAccess.toObject());
+
+            docAccess.getUsersList().forEach(user => {
+                access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } })
+                accessId++;
+            });
+
+            docAccess.getJobsList().forEach(job => {
+                access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } })
+                accessId++;
+            });
+        }
+    });
+}
 });
 
 watchDebounced(queryCategory, () => findCategories(), { debounce: 750, maxWait: 2000 });
@@ -235,39 +268,6 @@ function editForm(): void {
         then((resp) => {
             dispatchNotification({ title: "Document updated!", content: "Document has been updated." });
         });
-}
-
-if (props.id) {
-    const req = new GetDocumentRequest();
-    req.setDocumentId(props.id);
-
-    getDocStoreClient().getDocument(req, null).then((resp) => {
-        const document = resp.getDocument();
-        const docAccess = resp.getAccess();
-
-        if (document) {
-            title.value = document.getTitle();
-            content.value = document.getContent();
-            closed.value = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
-            state.value = document.getState();
-            isPublic.value = document.getPublic();
-        };
-
-        if (docAccess) {
-            let accessId = 0;
-            console.log(docAccess.toObject());
-
-            docAccess.getUsersList().forEach(user => {
-                access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess().toString() } })
-                accessId++;
-            });
-
-            docAccess.getJobsList().forEach(job => {
-                access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess().toString(), minimumrank: job.getMinimumgrade() } })
-                accessId++;
-            });
-        }
-    });
 }
 </script>
 
