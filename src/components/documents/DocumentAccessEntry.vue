@@ -65,7 +65,6 @@ async function findJobs(): Promise<void> {
 
     const resp = await getCompletorClient().completeJobNames(req, null)
     entriesJobs = resp.getJobsList();
-    console.log("🚀 ~ file: DocumentAccessEntry.vue:67 ~ findJobs ~ entriesJobs:", entriesJobs)
 }
 
 async function findChars(): Promise<void> {
@@ -74,16 +73,12 @@ async function findChars(): Promise<void> {
 
     const resp = await getCompletorClient().completeCharNames(req, null)
     entriesChars = resp.getUsersList();
-    console.log("🚀 ~ file: DocumentAccessEntry.vue:75 ~ findChars ~ entriesChars:", entriesChars)
 }
 
 onMounted(async () => {
     const passedType = accessTypes.find(e => e.id === props.init.type);
     if (passedType) selectedAccessType.value = passedType;
 
-    console.log("🚀 ~ file: DocumentAccessEntry.vue:97 ~ onMounted ~ props.init.values.job:", props.init.values.job)
-    console.log("🚀 ~ file: DocumentAccessEntry.vue:96 ~ onMounted ~ props.init.values.minimumrank:", props.init.values.minimumrank)
-    console.log("🚀 ~ file: DocumentAccessEntry.vue:85 ~ onMounted ~ props.init.values.accessrole:", props.init.values.accessrole)
     if (props.init.type === 0 && props.init.values.char && props.init.values.accessrole) {
         await findChars();
         selectedChar.value = entriesChars.find(char => char.getUserId() === props.init.values.char);
@@ -91,6 +86,7 @@ onMounted(async () => {
     } else if (props.init.type === 1 && props.init.values.job && props.init.values.minimumrank && props.init.values.accessrole) {
         await findJobs();
         selectedJob.value = entriesJobs.find(job => job.getName() === props.init.values.job);
+        if (selectedJob.value) entriesMinimumRank = selectedJob.value.getGradesList();
         selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.getGrade() === props.init.values.minimumrank);
         selectedAccessRole.value = entriesAccessRole.find(type => type.id === props.init.values.accessrole);
     }

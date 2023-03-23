@@ -174,7 +174,7 @@ function updateAccessEntryRank(event: {
 
 function updateAccessEntryAccess(event: {
     id: number,
-    access: string
+    access: DOC_ACCESS
 }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
