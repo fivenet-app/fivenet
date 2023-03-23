@@ -5,6 +5,7 @@ import { getCitizenStoreClient } from '../../grpc/grpc';
 import { GetUserActivityRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@arpanet/gen/resources/users/users_pb';
 import { getDateRelativeString } from '../../utils/time';
+import { USER_ACTIVITY_TYPE_Util } from '@arpanet/gen/resources/users/users.pb_enums';
 
 const activities = ref<Array<UserActivity>>([]);
 const defaultIcon = UserCircleIcon;
@@ -50,7 +51,7 @@ onBeforeMount(() => {
                                 activity.getSourceUser()?.getLastname() }}</h3>
                             <p class="text-sm text-gray-400">{{ getDateRelativeString(activity.getCreatedAt()) }}</p>
                         </div>
-                        <p class="text-sm text-gray-300">{{ activity.getType() }} {{ activity.getKey() }}: {{
+                        <p class="text-sm text-gray-300">{{ activity.getKey() }} <span class="font-bold">{{ USER_ACTIVITY_TYPE_Util.toEnumKey(activity.getType()) }}</span>: {{
                             activity.getOldvalue() }} ⇒ {{ activity.getNewvalue() }}</p>
                     </div>
                 </div>
