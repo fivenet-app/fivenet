@@ -24,6 +24,7 @@ import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
 import { toTitleCase } from '../../utils/strings';
 import { ArrayElement } from '../../utils/types';
+import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 
 const props = defineProps<{
     init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }
@@ -55,7 +56,7 @@ let entriesMinimumRank = [] as JobGrade[];
 const queryMinimumRank = ref('');
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
-let entriesAccessRole = Object.keys(DOC_ACCESS).map(e => { return { id: DOC_ACCESS[e] as number, value: e } });
+let entriesAccessRole = Object.keys(DOC_ACCESS).map(e => { return { id: DOC_ACCESS_Util.fromString(e), value: e } });
 const queryAccessRole = ref('');
 const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRole>>();
 
