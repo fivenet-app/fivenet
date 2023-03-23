@@ -236,6 +236,7 @@ function editForm(): void {
     req.setClosed(closed.value.closed);
     req.setState(state.value);
     req.setPublic(isPublic.value);
+    req.setCategoryId(selectedCategory.value!.getId());
 
     const reqAccess = new DocumentAccess();
     access.value.forEach(entry => {
@@ -379,8 +380,8 @@ function editForm(): void {
             <PlusIcon class="h-5 w-5" aria-hidden="true" />
         </button>
     </div>
-    <button @click="submitForm()"
+    <button v-if="!props.id" @click="submitForm()"
         class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Submit</button>
-    <button @click="editForm()"
+    <button v-if="props.id" @click="editForm()"
         class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Edit</button>
 </template>
