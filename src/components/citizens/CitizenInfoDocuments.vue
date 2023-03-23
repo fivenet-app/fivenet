@@ -31,7 +31,7 @@ function getUserDocuments(pos: number) {
 }
 
 onMounted(() => {
-    getUserDocuments(props.userId);
+    getUserDocuments(0);
 });
 </script>
 

@@ -4,6 +4,7 @@ import { UserCircleIcon } from '@heroicons/vue/20/solid'
 import { getCitizenStoreClient } from '../../grpc/grpc';
 import { GetUserActivityRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@arpanet/gen/resources/users/users_pb';
+import { getDateRelativeString } from '../../utils/time';
 
 const activities = ref<Array<UserActivity>>([]);
 const defaultIcon = UserCircleIcon;
@@ -47,7 +48,7 @@ onBeforeMount(() => {
                         <div class="flex items-center justify-between">
                             <h3 class="text-sm font-medium text-white">{{ activity.getSourceUser()?.getFirstname() }} {{
                                 activity.getSourceUser()?.getLastname() }}</h3>
-                            <p class="text-sm text-gray-400">{{ activity.getCreatedAt() }}</p>
+                            <p class="text-sm text-gray-400">{{ getDateRelativeString(activity.getCreatedAt()) }}</p>
                         </div>
                         <p class="text-sm text-gray-300">{{ activity.getType() }} {{ activity.getKey() }}: {{
                             activity.getOldvalue() }} ⇒ {{ activity.getNewvalue() }}</p>
