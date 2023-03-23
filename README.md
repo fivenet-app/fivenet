@@ -32,10 +32,10 @@
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
     - [ ] Functionality
         - [x] Create Documents with access
-        - [ ] Edit Documents
+        - [x] Edit Documents
             - [x] With access modifications
-            - [ ] Set/ Update document category
-            - [ ] Set Access for Jobs and Users
+            - [x] Set/ Update document category
+            - [x] Set Access for Jobs and Users
         - [ ] View Document Comments
         - [ ] Post Document Comments
         - [ ] Edit Document Comments
