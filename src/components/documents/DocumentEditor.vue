@@ -61,54 +61,54 @@ const selectedCategory = ref<DocumentCategory | undefined>(undefined);
 
 const modules = [] as Quill.Module[];
 
-onMounted(() => {
-    findCategories();
+onMounted(async () => {
+    await findCategories();
+    console.log("🚀 ~ file: DocumentEditor.vue:59 ~ entriesCategory:", entriesCategory)
 
     if (props.id) {
-    const req = new GetDocumentRequest();
-    req.setDocumentId(props.id);
+        const req = new GetDocumentRequest();
+        req.setDocumentId(props.id);
 
-    getDocStoreClient().getDocument(req, null).then((resp) => {
-        const document = resp.getDocument();
-        const docAccess = resp.getAccess();
+        getDocStoreClient().getDocument(req, null).then((resp) => {
+            const document = resp.getDocument();
+            const docAccess = resp.getAccess();
 
-        if (document) {
-            title.value = document.getTitle();
-            content.value = document.getContent();
-            closed.value = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
-            state.value = document.getState();
-            isPublic.value = document.getPublic();
-        };
+            if (document) {
+                title.value = document.getTitle();
+                content.value = document.getContent();
+                closed.value = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
+                selectedCategory.value = entriesCategory.find(e => e.getId() === document.getCategory()?.getId());
+                console.log("🚀 ~ file: DocumentEditor.vue:81 ~ getDocStoreClient ~ document.getCategory():", document.getCategory())
+                console.log("🚀 ~ file: DocumentEditor.vue:81 ~ getDocStoreClient ~ document.getCategory()?.getId():", document.getCategory()?.getId())
+                state.value = document.getState();
+                isPublic.value = document.getPublic();
+            };
 
-        if (docAccess) {
-            let accessId = 0;
-            console.log(docAccess.toObject());
+            if (docAccess) {
+                let accessId = 0;
 
-            docAccess.getUsersList().forEach(user => {
-                access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } })
-                accessId++;
-            });
+                docAccess.getUsersList().forEach(user => {
+                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } })
+                    accessId++;
+                });
 
-            docAccess.getJobsList().forEach(job => {
-                access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } })
-                accessId++;
-            });
-        }
-    });
-}
+                docAccess.getJobsList().forEach(job => {
+                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } })
+                    accessId++;
+                });
+            }
+        });
+    }
 });
 
 watchDebounced(queryCategory, () => findCategories(), { debounce: 750, maxWait: 2000 });
 
-function findCategories(): void {
+async function findCategories(): Promise<void> {
     const req = new CompleteDocumentCategoryRequest();
     req.setSearch(queryCategory.value);
 
-    getCompletorClient().
-        completeDocumentCategory(req, null).
-        then((resp) => {
-            entriesCategory = resp.getCategoriesList();
-        });
+    const resp = await getCompletorClient().completeDocumentCategory(req, null)
+    entriesCategory = resp.getCategoriesList();
 }
 
 function addAccessEntry(): void {
@@ -191,6 +191,7 @@ function submitForm(): void {
     req.setClosed(closed.value.closed);
     req.setState(state.value);
     req.setPublic(isPublic.value);
+    req.setCategoryId(selectedCategory.value!.getId());
 
     const reqAccess = new DocumentAccess();
     access.value.forEach(entry => {
@@ -320,11 +321,12 @@ function editForm(): void {
                 </div>
             </Combobox>
         </div>
-        <div class="flex-1 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 bg-white">
+        <div
+            class="flex-1 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 bg-white">
             <!-- State -->
             <input v-model="state" type="text" name="state"
-            class="block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-            placeholder="Document State" />
+                class="block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                placeholder="Document State" />
         </div>
         <div class="flex-1">
             <!-- Open/Close -->
