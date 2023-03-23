@@ -51,20 +51,24 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			docs.UpdatedAt,
 			docs.DeletedAt,
 			docs.CategoryID,
+			dCategory.ID,
+			dCategory.Name,
+			dCategory.Description,
+			dCategory.Job,
 			docs.Title,
 			docs.ContentType,
 			docs.Data,
 			docs.CreatorID,
-			docs.CreatorJob,
-			docs.State,
-			docs.Closed,
-			docs.Public,
 			uCreator.ID,
 			uCreator.Identifier,
 			uCreator.Job,
 			uCreator.JobGrade,
 			uCreator.Firstname,
 			uCreator.Lastname,
+			docs.CreatorJob,
+			docs.State,
+			docs.Closed,
+			docs.Public,
 		}
 		if contentLength > 0 {
 			columns = append(columns, jet.LEFT(docs.Content, jet.Int(int64(contentLength))).AS("document.content"))
@@ -85,11 +89,11 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 						AND(dJobAccess.Job.EQ(jet.String(job))).
 						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				).
-				LEFT_JOIN(uCreator,
-					docs.CreatorID.EQ(uCreator.ID),
-				).
 				LEFT_JOIN(dCategory,
 					docs.CategoryID.EQ(dCategory.ID),
+				).
+				LEFT_JOIN(uCreator,
+					docs.CreatorID.EQ(uCreator.ID),
 				),
 		).
 		WHERE(
