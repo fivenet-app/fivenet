@@ -147,7 +147,7 @@ func (s *Searcher) SearchJobs(ctx context.Context, search string) ([]*jobs.Job, 
 	}
 
 	searchRequest := bleve.NewSearchRequest(searchQuery)
-	searchRequest.Size = 15
+	searchRequest.Size = 32
 	searchRequest.Fields = []string{"label", "name"}
 	searchRequest.SortBy([]string{"label", "_id"})
 
