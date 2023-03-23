@@ -25,14 +25,14 @@ import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
 import { toTitleCase } from '../../utils/strings';
 
 const props = defineProps<{
-    init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }
+    init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: string, minimumrank?: number } }
 }>();
 
 const emit = defineEmits<{
     (e: 'typeChange', payload: { id: number, type: number }): void,
     (e: 'nameChange', payload: { id: number, job: Job | undefined, char: UserShort | undefined }): void,
     (e: 'rankChange', payload: { id: number, rank: JobGrade }): void,
-    (e: 'accessChange', payload: { id: number, access: DOC_ACCESS }): void,
+    (e: 'accessChange', payload: { id: number, access: string }): void,
     (e: 'deleteRequest', payload: { id: number }): void,
 }>()
 
@@ -60,11 +60,11 @@ const selectedAccessRole = ref();
 
 if (props.init.type === 0 && props.init.values.char && props.init.values.accessrole) {
     selectedChar.value = entriesChars.find(char => char.getUserId() === props.init.values.char);
-    selectedAccessRole.value = accessTypes.find(type => type.id === props.init.values.accessrole)
+    selectedAccessRole.value = entriesAccessRole.find(type => type === props.init.values.accessrole);
 } else if (props.init.type === 1 && props.init.values.job && props.init.values.minimumrank && props.init.values.accessrole) {
     selectedJob.value = entriesJobs.find(job => job.getName() === props.init.values.job);
     selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.getGrade() === props.init.values.minimumrank);
-    selectedAccessRole.value = accessTypes.find(type => type.id === props.init.values.accessrole)
+    selectedAccessRole.value = entriesAccessRole.find(type => type === props.init.values.accessrole);
 }
 
 function findJobs(): void {

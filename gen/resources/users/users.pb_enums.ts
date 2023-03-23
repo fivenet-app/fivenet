@@ -3,6 +3,7 @@
 
 import * as enums from './users_pb';
 
+
 // USER_ACTIVITY_TYPE
 export class USER_ACTIVITY_TYPE_Util {
     public static toEnumKey(input: enums.USER_ACTIVITY_TYPE): string | undefined {
@@ -11,5 +12,33 @@ export class USER_ACTIVITY_TYPE_Util {
             return "N/A";
         }
         return Object.keys(enums.USER_ACTIVITY_TYPE)[index];
+    }
+
+    public static fromInt(input: Number): enums.USER_ACTIVITY_TYPE {
+        switch (input) {
+            case 0:
+                return enums.USER_ACTIVITY_TYPE.CHANGED;
+            
+            case 1:
+                return enums.USER_ACTIVITY_TYPE.MENTIONED;
+            
+            case 2:
+                return enums.USER_ACTIVITY_TYPE.CREATED;
+            }
+        return;
+    }
+
+    public static fromString(input: String): enums.USER_ACTIVITY_TYPE {
+        switch (input) {
+            case 'CHANGED':
+                return enums.USER_ACTIVITY_TYPE.CHANGED;
+            
+            case 'MENTIONED':
+                return enums.USER_ACTIVITY_TYPE.MENTIONED;
+            
+            case 'CREATED':
+                return enums.USER_ACTIVITY_TYPE.CREATED;
+            }
+        return enums.USER_ACTIVITY_TYPE.CHANGED;
     }
 }

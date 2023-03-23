@@ -29,6 +29,7 @@ import {
 } from '@headlessui/vue';
 import { CompleteDocumentCategoryRequest } from '@arpanet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/core';
+import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 
 const store = useStore();
 const router = useRouter();
@@ -52,7 +53,7 @@ const content = ref('');
 const closed = ref(openclose[0]);
 const state = ref('');
 const isPublic = ref(false);
-const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }>>(new Map());
+const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: string, minimumrank?: number } }>>(new Map());
 
 let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
@@ -140,7 +141,7 @@ function updateAccessEntryRank(event: {
 
 function updateAccessEntryAccess(event: {
     id: number,
-    access: DOC_ACCESS
+    access: string
 }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
@@ -162,16 +163,12 @@ function submitForm(): void {
     access.value.forEach(entry => {
         if (entry.values.accessrole === undefined) return;
 
-        console.log(DOC_ACCESS[entry.values.accessrole]);
-        console.log(entry.values.accessrole);
-
         if (entry.type === 0) {
             if (!entry.values.char) return;
 
             const user = new DocumentUserAccess();
-            user.setAccess(DOC_ACCESS[entry.values.accessrole]);
             user.setUserId(entry.values.char);
-            if (activeChar.value) user.setCreatorId(activeChar.value.getUserId());
+            user.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole));
 
             reqAccess.addUsers(user);
         } else if (entry.type === 1) {
@@ -180,11 +177,11 @@ function submitForm(): void {
             const job = new DocumentJobAccess();
             job.setJob(entry.values.job);
             job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-            job.setAccess(DOC_ACCESS[entry.values.accessrole]);
-            if (activeChar.value) job.setCreatorId(activeChar.value.getUserId());
+            job.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole));
 
             reqAccess.addJobs(job);
         }
+
     });
     req.setAccess(reqAccess);
 
@@ -210,13 +207,11 @@ function editForm(): void {
     access.value.forEach(entry => {
         if (entry.values.accessrole === undefined) return;
 
-        console.log(DOC_ACCESS[entry.values.accessrole]);
-        console.log(entry.values.accessrole);
         if (entry.type === 0) {
             if (!entry.values.char) return;
 
             const user = new DocumentUserAccess();
-            user.setAccess(DOC_ACCESS[entry.values.accessrole]);
+            user.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole));
             user.setUserId(entry.values.char);
             if (activeChar.value) user.setCreatorId(activeChar.value.getUserId());
 
@@ -227,7 +222,7 @@ function editForm(): void {
             const job = new DocumentJobAccess();
             job.setJob(entry.values.job);
             job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-            job.setAccess(DOC_ACCESS[entry.values.accessrole]);
+            job.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole));
             if (activeChar.value) job.setCreatorId(activeChar.value.getUserId());
 
             reqAccess.addJobs(job);
@@ -263,12 +258,12 @@ if (props.id) {
             console.log(docAccess.toObject());
 
             docAccess.getUsersList().forEach(user => {
-                access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } })
+                access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess().toString() } })
                 accessId++;
             });
 
             docAccess.getJobsList().forEach(job => {
-                access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } })
+                access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess().toString(), minimumrank: job.getMinimumgrade() } })
                 accessId++;
             });
         }

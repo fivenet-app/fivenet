@@ -23,8 +23,6 @@ var global =
 
 var resources_common_database_database_pb = require('../../resources/common/database/database_pb.js');
 goog.object.extend(proto, resources_common_database_database_pb);
-var resources_documents_documents_pb = require('../../resources/documents/documents_pb.js');
-goog.object.extend(proto, resources_documents_documents_pb);
 var resources_users_users_pb = require('../../resources/users/users_pb.js');
 goog.object.extend(proto, resources_users_users_pb);
 goog.exportSymbol('proto.services.citizenstore.FindUsersRequest', null, global);

@@ -1,7 +1,6 @@
 import * as jspb from 'google-protobuf'
 
 import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
-import * as resources_documents_documents_pb from '../../resources/documents/documents_pb';
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
 

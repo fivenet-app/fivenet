@@ -3,6 +3,7 @@
 
 import * as enums from './docstore_pb';
 
+
 // DOC_ACCESS_UPDATE_MODE
 export class DOC_ACCESS_UPDATE_MODE_Util {
     public static toEnumKey(input: enums.DOC_ACCESS_UPDATE_MODE): string | undefined {
@@ -11,5 +12,33 @@ export class DOC_ACCESS_UPDATE_MODE_Util {
             return "N/A";
         }
         return Object.keys(enums.DOC_ACCESS_UPDATE_MODE)[index];
+    }
+
+    public static fromInt(input: Number): enums.DOC_ACCESS_UPDATE_MODE {
+        switch (input) {
+            case 0:
+                return enums.DOC_ACCESS_UPDATE_MODE.UPDATE;
+            
+            case 1:
+                return enums.DOC_ACCESS_UPDATE_MODE.DELETE;
+            
+            case 2:
+                return enums.DOC_ACCESS_UPDATE_MODE.CLEAR;
+            }
+        return;
+    }
+
+    public static fromString(input: String): enums.DOC_ACCESS_UPDATE_MODE {
+        switch (input) {
+            case 'UPDATE':
+                return enums.DOC_ACCESS_UPDATE_MODE.UPDATE;
+            
+            case 'DELETE':
+                return enums.DOC_ACCESS_UPDATE_MODE.DELETE;
+            
+            case 'CLEAR':
+                return enums.DOC_ACCESS_UPDATE_MODE.CLEAR;
+            }
+        return enums.DOC_ACCESS_UPDATE_MODE.UPDATE;
     }
 }
