@@ -6,6 +6,7 @@ import HeroFull from '../components/partials/HeroFull.vue';
 import './herofull-pattern.css';
 
 const store = useStore();
+
 const accessToken = computed(() => store.state.auth?.accessToken);
 </script>
 

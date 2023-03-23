@@ -102,9 +102,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*GetDocumentResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
-	condition := jet.OR(
-		docs.ID.EQ(jet.Uint64(req.DocumentId)),
-	)
+	condition := docs.ID.EQ(jet.Uint64(req.DocumentId))
 
 	countStmt := s.getDocumentsQuery(condition,
 		jet.ProjectionList{jet.COUNT(docs.ID).AS("datacount.totalcount")},
@@ -115,19 +113,13 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, err
 	}
 
-	resp := &GetDocumentResponse{
-		Document: &documents.Document{},
+	resp := &GetDocumentResponse{}
+
+	var err error
+	resp.Document, err = s.getDocument(ctx, condition, userId, job, jobGrade)
+	if err != nil {
+		return nil, err
 	}
-
-	stmt := s.getDocumentsQuery(condition, nil, -1, userId, job, jobGrade)
-
-	if err := stmt.QueryContext(ctx, s.db, resp.Document); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	s.c.EnrichJobInfo(resp.Document.Creator)
 
 	docAccess, err := s.GetDocumentAccess(ctx, &GetDocumentAccessRequest{
 		DocumentId: resp.Document.Id,
@@ -139,6 +131,22 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	resp.Access = docAccess.Access
 
 	return resp, nil
+}
+
+func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, userId int32, job string, jobGrade int32) (*documents.Document, error) {
+	var doc documents.Document
+
+	stmt := s.getDocumentsQuery(condition, nil, -1, userId, job, jobGrade)
+
+	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	s.c.EnrichJobInfo(doc.Creator)
+
+	return &doc, nil
 }
 
 func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest) (*CreateDocumentResponse, error) {
@@ -211,6 +219,16 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 	if !check {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
+	}
+
+	doc, err := s.getDocument(ctx, docs.ID.EQ(jet.Uint64(req.DocumentId)), userId, job, jobGrade)
+	if err != nil {
+		return nil, err
+	}
+
+	// Either the document is closed and the update request isn't re-opening the document
+	if doc.GetClosed() && req.Closed == nil || !*req.Closed {
+		return nil, status.Error(codes.Canceled, "Document is closed and can't be edited!")
 	}
 
 	// Begin transaction

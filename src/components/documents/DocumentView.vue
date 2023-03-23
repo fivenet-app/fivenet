@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { GetDocumentRequest, RemoveDcoumentReferenceRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { GetDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient } from '../../grpc/grpc';
 import { getDate } from '../../utils/time';
@@ -14,6 +14,7 @@ import {
 } from '@headlessui/vue';
 import {
     LockOpenIcon,
+    LockClosedIcon,
     PencilIcon,
     ChatBubbleLeftEllipsisIcon,
     CalendarIcon,
@@ -67,32 +68,6 @@ function getDocument(): void {
             feedRelations.value = resp.getRelationsList();
         });
 }
-
-function editDocumentTest() {
-    const req = new UpdateDocumentRequest();
-    req.setDocumentId(document?.value?.getId());
-    req.setTitle("SCOTT'S DOKUMENTEN WOCHENDSSPAß");
-    req.setContent(document?.value?.getContent());
-    req.setClosed(document?.value?.getClosed());
-    req.setState(document?.value?.getState());
-    req.setPublic(document?.value?.getPublic());
-
-    getDocStoreClient().
-        updateDocument(req, null).then((resp) => {
-            console.log(resp);
-        });
-}
-
-function removeDocRefTest() {
-    const req = new RemoveDcoumentReferenceRequest();
-    req.setId(1);
-
-    getDocStoreClient().
-        removeDcoumentReference(req, null).then((resp) => {
-            console.log(typeof resp);
-        });
-}
-
 onMounted(() => {
     getDocument();
 });
@@ -123,19 +98,20 @@ onMounted(() => {
                                 <div class="mt-4 flex space-x-3 md:mt-0">
                                     <router-link :to="{ name: 'Documents: Edit', params: { id: document?.getId() ?? 0 } }"
                                         type="button"
-                                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                        v-can="'DocStoreService.CreateDocument'">
                                         <PencilIcon class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
                                         Edit
                                     </router-link>
-                                    <button @click="editDocumentTest()">TEST</button>
-                                    <button @click="removeDocRefTest()">DELETE REF</button>
                                 </div>
                             </div>
                             <aside class="mt-8 xl:hidden">
                                 <h2 class="sr-only">Details</h2>
                                 <div class="space-y-5">
                                     <div class="flex items-center space-x-2">
-                                        <LockOpenIcon class="h-5 w-5 text-green-500" aria-hidden="true" />
+                                        <LockClosedIcon v-if="document?.getClosed()"
+                                        class="h-5 w-5 text-green-500" aria-hidden="true" />
+                                        <LockOpenIcon v-else class="h-5 w-5 text-green-500" aria-hidden="true" />
                                         <span class="text-sm font-medium text-green-700">Open Issue</span>
                                     </div>
                                     <div class="flex items-center space-x-2">

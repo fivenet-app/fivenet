@@ -37,5 +37,6 @@ export const store = createStore<RootState>({
 });
 
 export function useStore() {
+    console.log("USE STORE");
     return baseUseStore(key);
 }
