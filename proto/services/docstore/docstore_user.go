@@ -19,33 +19,41 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 		return resp, nil
 	}
 
-	condition := jet.OR(
-		docRel.SourceUserID.EQ(jet.Int32(req.UserId)),
-		docRel.TargetUserID.EQ(jet.Int32(req.UserId)),
-	)
 	// TODO use query to get documents which the user has access to before selecting
 	var docIds []uint64
 	idStmt := docRel.
 		SELECT(
-			docs.ID,
+			docRel.DocumentID,
 		).
 		FROM(
-			docRel.
-				LEFT_JOIN(docs,
-					docRel.DocumentID.EQ(docs.ID),
-				),
+			docRel,
 		).
 		WHERE(
-			condition,
+			jet.OR(
+				docRel.SourceUserID.EQ(jet.Int32(req.UserId)),
+				docRel.TargetUserID.EQ(jet.Int32(req.UserId)),
+			),
 		)
 
 	if err := idStmt.QueryContext(ctx, s.db, &docIds); err != nil {
-		return nil, err
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		} else {
+			return resp, nil
+		}
+	}
+
+	if len(docIds) == 0 {
+		return resp, nil
 	}
 
 	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, true, documents.DOC_ACCESS_VIEW, docIds...)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(ids) == 0 {
+		return resp, nil
 	}
 
 	dIds := make([]jet.Expression, len(ids))

@@ -29,9 +29,9 @@ const comments = ref<Array<Document>>([])
 const activeResponse = ref<undefined | Document>(undefined)
 const feedReferences = ref<Array<DocumentReference>>([])
 const feedRelations = ref<Array<DocumentRelation>>([])
-const tabs = ref<{ name: string, href: string, icon: typeof LockOpenIcon }[]>([
-    { name: 'References', href: '#', icon: DocumentMagnifyingGlassIcon },
-    { name: 'Relations', href: '#', icon: UserIcon },
+const tabs = ref<{ name: string, icon: typeof LockOpenIcon }[]>([
+    { name: 'References', icon: DocumentMagnifyingGlassIcon },
+    { name: 'Relations', icon: UserIcon },
 ]);
 
 const props = defineProps({
@@ -176,21 +176,26 @@ onMounted(() => {
                                                             aria-hidden="true" />
                                                     </div>
                                                     <div class="ml-3 text-xs font-semibold text-gray-900">
-                                                        {{ ac.getJobLabel() }}<span v-if="ac.getMinimumgrade() > 0">(Rank: {{
-                                                            ac.getMinimumgrade() }})</span> - {{ DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
+                                                        {{ ac.getJobLabel() }}<span v-if="ac.getMinimumgrade() > 0">(Rank:
+                                                            {{
+                                                                ac.getMinimumgrade() }})</span> - {{
+        DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
                                                     </div>
                                                 </a>
                                                 {{ ' ' }}
                                             </li>
                                             <li v-for="ac in access?.getUsersList()" class="inline">
-                                                <router-link :to="{ name: 'Citizens: Info', params: { id: ac.getUserId()} }"
+                                                <router-link
+                                                    :to="{ name: 'Citizens: Info', params: { id: ac.getUserId() } }"
                                                     class="relative inline-flex items-center rounded-full px-2.5 py-1 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                                                     <div class="absolute flex flex-shrink-0 items-center justify-center">
                                                         <span class="h-1.5 w-1.5 rounded-full bg-rose-500"
                                                             aria-hidden="true" />
                                                     </div>
                                                     <div class="ml-3 text-xs font-semibold text-gray-900">
-                                                        {{ ac.getUser()?.getFirstname()}}, {{ ac.getUser()?.getLastname() }} - {{ DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
+                                                        {{ ac.getUser()?.getFirstname() }}, {{ ac.getUser()?.getLastname()
+                                                        }}
+                                                        - {{ DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
                                                     </div>
                                                 </router-link>
                                                 {{ ' ' }}
@@ -282,7 +287,8 @@ onMounted(() => {
                                         </div>
                                         <div class="ml-3 text-xs font-semibold text-gray-900">
                                             {{ ac.getJobLabel() }}<span v-if="ac.getMinimumgrade() > 0">(Rank: {{
-                                                            ac.getMinimumgrade() }})</span> - {{ DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
+                                                ac.getMinimumgrade() }})</span> - {{
+        DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
                                         </div>
                                     </a>
                                     {{ ' ' }}
@@ -294,7 +300,8 @@ onMounted(() => {
                                             <span class="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
                                         </div>
                                         <div class="ml-3 text-xs font-semibold text-gray-900">
-                                            {{ ac.getUser()?.getFirstname()}}, {{ ac.getUser()?.getLastname() }} - {{ DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
+                                            {{ ac.getUser()?.getFirstname() }}, {{ ac.getUser()?.getLastname() }} - {{
+                                                DOC_ACCESS_Util.toEnumKey(ac.getAccess()) }}
                                         </div>
                                     </router-link>
                                     {{ ' ' }}
@@ -306,14 +313,18 @@ onMounted(() => {
             </div>
         </div>
     </div>
-    <div class="bg-white">
+    <div>
         <TabGroup>
             <TabList>
-                <Tab v-for="tab in tabs" :key="tab.name"
-                    class="border-indigo-500 text-indigo-600 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium">
-                    <component :is="tab.icon"
-                        class="text-indigo-500 text-gray-400 group-hover:text-gray-500 -ml-0.5 mr-2 h-5 w-5"
-                        aria-hidden="true" /> {{ tab.name }}
+                <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }">
+                    <button
+                        :class="[selected ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700', 'group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium']"
+                        :aria-current="selected ? 'page' : undefined">
+                        <component :is="tab.icon"
+                            :class="[selected ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500', '-ml-0.5 mr-2 h-5 w-5']"
+                            aria-hidden="true" />
+                        <span>{{ tab.name }}</span>
+                    </button>
                 </Tab>
             </TabList>
             <TabPanels>
@@ -325,4 +336,5 @@ onMounted(() => {
                 </TabPanel>
             </TabPanels>
         </TabGroup>
-    </div></template>
+    </div>
+</template>

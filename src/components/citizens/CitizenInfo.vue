@@ -1,17 +1,16 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
 import { RectangleGroupIcon, UserIcon, TruckIcon, DocumentTextIcon } from '@heroicons/vue/20/solid'
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import CitizenInfoProfile from './CitizenInfoProfile.vue';
 import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
 import CitizenActivityFeed from './CitizenActivityFeed.vue';
 import VehiclesList from '../vehicles/VehiclesList.vue';
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 
-const currentTab = ref('Profile');
 const tabs = [
     { name: 'Profile', icon: UserIcon, permission: 'CitizenStoreService.FindUsers' },
     { name: 'Vehicles', icon: TruckIcon, permission: 'DMVService.FindVehicles' },
-    { name: 'Documents', icon: DocumentTextIcon, permission: 'CitizenStoreService.GetUserDocuments' },
+    { name: 'Documents', icon: DocumentTextIcon, permission: 'DocStoreService.GetUserDocuments' },
     { name: 'Activity', icon: RectangleGroupIcon, permission: 'CitizenStoreService.GetUserActivity' },
 ];
 
@@ -40,42 +39,33 @@ defineProps({
         </div>
     </div>
     <div>
-        <div class="sm:hidden">
-            <label for="tabs" class="sr-only">Select a tab</label>
-            <select id="tabs" name="tabs"
-                class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                v-model="currentTab">
-                <option v-for="tab in tabs" :key="tab.name" :selected="tab.name === currentTab" v-can="tab.permission">{{
-                    tab.name }}</option>
-            </select>
-        </div>
-        <div class="hidden sm:block">
-            <div class="border-b border-gray-200">
-                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <button v-for="tab in tabs" :key="tab.name" href="#" @click="currentTab = tab.name"
-                        :class="[tab.name === currentTab ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700', 'group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium']"
-                        :aria-current="tab.name === currentTab ? 'page' : undefined" v-can="tab.permission">
+        <TabGroup>
+            <TabList class="border-b border-gray-200">
+                <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" :v-can="tab.permission">
+                    <button
+                        :class="[selected ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700', 'group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium']"
+                        :aria-current="selected ? 'page' : undefined">
                         <component :is="tab.icon"
-                            :class="[tab.name === currentTab ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500', '-ml-0.5 mr-2 h-5 w-5']"
+                            :class="[selected ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500', '-ml-0.5 mr-2 h-5 w-5']"
                             aria-hidden="true" />
                         <span>{{ tab.name }}</span>
                     </button>
-                </nav>
-            </div>
-        </div>
-    </div>
-    <div class="p-3 mt-6">
-        <div v-if="currentTab === 'Profile'" v-can="'CitizenStoreService.FindUsers'">
-            <CitizenInfoProfile :user="user" />
-        </div>
-        <div v-else-if="currentTab === 'Vehicles'" v-can="'DMVService.FindVehicles'">
-            <VehiclesList :userId="user.getUserId()" :hide-owner="true" />
-        </div>
-        <div v-else-if="currentTab === 'Documents'" v-can="'CitizenStoreService.GetUserDocuments'">
-            <CitizenInfoDocuments :userId="user.getUserId()" />
-        </div>
-        <div v-else-if="currentTab === 'Activity'" v-can="'CitizenStoreService.GetUserActivity'">
-            <CitizenActivityFeed :userId="user.getUserId()" />
-        </div>
+                </Tab>
+            </TabList>
+            <TabPanels>
+                <TabPanel>
+                    <CitizenInfoProfile :user="user" />
+                </TabPanel>
+                <TabPanel>
+                    <VehiclesList :userId="user.getUserId()" :hide-owner="true" />
+                </TabPanel>
+                <TabPanel>
+                    <CitizenInfoDocuments :userId="user.getUserId()" />
+                </TabPanel>
+                <TabPanel v-can="'CitizenStoreService.GetUserActivity'">
+                    <CitizenActivityFeed :userId="user.getUserId()" />
+                </TabPanel>
+            </TabPanels>
+        </TabGroup>
     </div>
 </template>

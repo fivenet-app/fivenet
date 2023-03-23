@@ -114,6 +114,10 @@ func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userId int32, j
 }
 
 func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS, documentIds ...uint64) ([]uint64, error) {
+	if len(documentIds) == 0 {
+		return documentIds, nil
+	}
+
 	ids := make([]jet.Expression, len(documentIds))
 	for i := 0; i < len(documentIds); i++ {
 		ids[i] = jet.Uint64(documentIds[i])

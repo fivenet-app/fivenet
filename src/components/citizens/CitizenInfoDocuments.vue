@@ -31,14 +31,14 @@ function getUserDocuments(pos: number) {
 }
 
 onMounted(() => {
-    getUserDocuments(0);
+    getUserDocuments(props.userId);
 });
 </script>
 
 <template>
     <span v-if="relations.length === 0">
         <p class="text-sm font-medium text-white">
-            No Citizen Activities found.
+            No Documents found.
         </p>
     </span>
     <DocumentRelations v-else :showDocument="true" :relations="relations" />
