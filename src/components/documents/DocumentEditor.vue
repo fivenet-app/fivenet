@@ -78,8 +78,7 @@ onMounted(async () => {
                 content.value = document.getContent();
                 closed.value = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
                 selectedCategory.value = entriesCategory.find(e => e.getId() === document.getCategory()?.getId());
-                console.log("🚀 ~ file: DocumentEditor.vue:81 ~ getDocStoreClient ~ document.getCategory():", document.getCategory())
-                console.log("🚀 ~ file: DocumentEditor.vue:81 ~ getDocStoreClient ~ document.getCategory()?.getId():", document.getCategory()?.getId())
+                console.debug("🔎 • file: DocumentEditor.vue:81 • getDocStoreClient • document.getCategory()?.getId():", document.getCategory()?.getId())
                 state.value = document.getState();
                 isPublic.value = document.getPublic();
             };
@@ -202,7 +201,7 @@ function submitForm(): void {
 
             const user = new DocumentUserAccess();
             user.setUserId(entry.values.char);
-            user.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole));
+            user.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole.toString()));
 
             reqAccess.addUsers(user);
         } else if (entry.type === 1) {
@@ -211,7 +210,7 @@ function submitForm(): void {
             const job = new DocumentJobAccess();
             job.setJob(entry.values.job);
             job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-            job.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole));
+            job.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole.toString()));
 
             reqAccess.addJobs(job);
         }
@@ -246,7 +245,7 @@ function editForm(): void {
             if (!entry.values.char) return;
 
             const user = new DocumentUserAccess();
-            user.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole));
+            user.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole.toString()));
             user.setUserId(entry.values.char);
             if (activeChar.value) user.setCreatorId(activeChar.value.getUserId());
 
@@ -257,7 +256,7 @@ function editForm(): void {
             const job = new DocumentJobAccess();
             job.setJob(entry.values.job);
             job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-            job.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole));
+            job.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole.toString()));
             if (activeChar.value) job.setCreatorId(activeChar.value.getUserId());
 
             reqAccess.addJobs(job);
