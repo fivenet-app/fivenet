@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import ContentWrapper from '../components/partials/ContentWrapper.vue';
 import FeatureCards from '../components/FeatureCards.vue';
-import Footer from '../components/partials/Footer.vue';
 </script>
 
 <route lang="json">
@@ -18,5 +17,4 @@ import Footer from '../components/partials/Footer.vue';
     <ContentWrapper>
         <FeatureCards />
     </ContentWrapper>
-    <Footer />
 </template>
