@@ -209,6 +209,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 
 	req.Reference.CreatorId = userId
 
+	docRef := table.ArpanetDocumentsReferences
 	stmt := docRef.
 		INSERT(
 			docRef.SourceDocumentID,
@@ -294,6 +295,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	req.Relation.SourceUserId = userId
 
+	docRel := table.ArpanetDocumentsRelations
 	stmt := docRel.
 		INSERT(
 			docRel.DocumentID,
