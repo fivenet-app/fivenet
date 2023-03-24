@@ -87,7 +87,7 @@ const sidebarNavigation = [
     },
 ] as { name: string, href: keyof RouteNamedMap, permission: string, icon: FunctionalComponent, current: boolean }[];
 let userNavigation = [
-    { name: 'Login', href: '/login' }
+    { name: 'Login', href: 'Login' }
 ] as { name: string, href: string }[];
 const breadcrumbs = [] as { name: string, href: string, current: boolean }[];
 const mobileMenuOpen = ref(false);
@@ -107,8 +107,8 @@ onMounted(() => {
 
     if (accessToken)
     userNavigation = [
-            { name: 'Change Character', href: '/login' },
-            { name: 'Sign out', href: '/logout' }
+            { name: 'Change Character', href: 'Character Selector' },
+            { name: 'Sign out', href: 'Logout' }
         ];
 
     const pathSplit = route.path.split('/').filter(e => e !== '');

@@ -210,7 +210,12 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	req.Reference.CreatorId = userId
 
 	stmt := docRef.
-		INSERT().
+		INSERT(
+			docRef.SourceDocumentID,
+			docRef.Reference,
+			docRef.TargetDocumentID,
+			docRef.CreatorID,
+		).
 		MODEL(req.Reference)
 
 	result, err := stmt.ExecContext(ctx, s.db)
@@ -284,8 +289,13 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	req.Relation.SourceUserId = userId
 
-	stmt := docRef.
-		INSERT().
+	stmt := docRel.
+		INSERT(
+			docRel.DocumentID,
+			docRel.SourceUserID,
+			docRel.Relation,
+			docRel.TargetUserID,
+		).
 		MODEL(req.Relation)
 
 	result, err := stmt.ExecContext(ctx, s.db)

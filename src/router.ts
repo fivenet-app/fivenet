@@ -36,7 +36,7 @@ router.beforeResolve((to, from) => {
 
                     if (store.state.auth?.accessToken) {
                         return {
-                            path: '/overview',
+                            path: '/',
                         };
                     }
                 }

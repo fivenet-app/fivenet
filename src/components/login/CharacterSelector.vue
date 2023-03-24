@@ -12,7 +12,6 @@ const store = useStore();
 const chars = ref<Array<User>>([]);
 
 async function fetchCharacters() {
-    console.log("FETCH CHARS");
     return getAuthClient().
         getCharacters(new GetCharactersRequest(), null).
         then((resp) => {

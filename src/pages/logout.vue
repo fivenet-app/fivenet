@@ -21,7 +21,7 @@ onBeforeMount(() => {
 
 <route lang="json">
 {
-    "name": "logout",
+    "name": "Logout",
     "meta": {
         "requiresAuth": false
     }
