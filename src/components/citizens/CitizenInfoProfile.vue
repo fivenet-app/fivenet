@@ -61,107 +61,85 @@ function toggleWantedStatus(): void {
 </script>
 
 <template>
-    <div class="divide-y divide-base-200">
-        <div class="pb-6">
-            <div class="lg:-mt-15 -mt-12 flow-root px-4 sm:-mt-8 sm:flex sm:items-end sm:px-6">
-                <div class="mt-6 sm:ml-6 sm:flex-1">
-                    <div class="mt-5 flex flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                        <button v-can="'CitizenStoreService.SetUserProps.Wanted'" type="button"
-                            class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral shadow-sm hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
-                            @click="toggleWantedStatus()">{{ wantedState ?
-                                'Revoke Wanted Status' : 'Set Person Wanted' }}
-                        </button>
-                        <div class="ml-3 inline-flex sm:ml-0">
-                            <Menu as="div" class="relative inline-block text-left">
-                                <MenuButton
-                                    class="inline-flex items-center rounded-md bg-base-700 p-2 text-neutral hover:bg-base-600">
-                                    <span class="sr-only">Open options menu</span>
-                                    <EllipsisVerticalIcon class="h-5 w-5" aria-hidden="true" />
-                                </MenuButton>
-                                <transition enter-active-class="transition ease-out duration-100"
-                                    enter-from-class="transform opacity-0 scale-95"
-                                    enter-to-class="transform opacity-100 scale-100"
-                                    leave-active-class="transition ease-in duration-75"
-                                    leave-from-class="transform opacity-100 scale-100"
-                                    leave-to-class="transform opacity-0 scale-95">
-                                    <MenuItems
-                                        class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
-                                        <div class="py-1">
-                                            <MenuItem v-slot="{ active }">
-                                            <router-link
-                                                :to="{ name: 'Citizens: Info', params: { id: $props.user.getUserId() } }"
-                                                :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral hover:transition-colors']">View
-                                                profile</router-link>
-                                            </MenuItem>
-                                            <MenuItem v-slot="{ active }">
-                                            <div role="button" @click="clipboard.copy(w.location.href)"
-                                                :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral hover:transition-colors cursor-pointer']">
-                                                Copy
-                                                profile link</div>
-                                            </MenuItem>
-                                        </div>
-                                    </MenuItems>
-                                </transition>
-                            </Menu>
-                        </div>
+    <div class="mx-auto w-full max-w-7xl grow lg:flex xl:px-2">
+        <div class="flex-1 xl:flex">
+            <div class="py-3 px-2 xl:flex-1">
+                <div class="divide-y divide-base-200">
+                    <div class="px-4 py-5 sm:px-0 sm:py-0">
+                        <dl class="space-y-8 sm:space-y-0 sm:divide-y sm:divide-base-200">
+                            <div class="sm:flex sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
+                                    Date of Birth</dt>
+                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                    {{ user?.getDateofbirth() }}
+                                </dd>
+                            </div>
+                            <div class="sm:flex sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
+                                    Sex</dt>
+                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                    {{ user?.getSex().toUpperCase() }}
+                                    {{ ' ' }}
+                                    <CharSexBadge :sex="user?.getSex() ? user?.getSex() : ''" />
+                                </dd>
+                            </div>
+                            <div class="sm:flex sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
+                                    Height</dt>
+                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
+                                    user?.getHeight() }}cm</dd>
+                            </div>
+                            <div class="sm:flex sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
+                                    Phone Number</dt>
+                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
+                                    user?.getPhoneNumber() }}</dd>
+                            </div>
+                            <div class="sm:flex sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
+                                    Visum</dt>
+                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                    {{ user?.getVisum() }}</dd>
+                            </div>
+                            <div v-can="'CitizenStoreService.FindUsers.Licenses'" class="sm:flex sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
+                                    Licenses</dt>
+                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                    <span v-if="user?.getLicensesList().length == 0">No Licenses.</span>
+                                    <ul v-else role="list"
+                                        class="divide-y divide-base-200 rounded-md border border-base-200">
+                                        <li v-for="license in user?.getLicensesList()"
+                                            class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                                            <div class="flex flex-1 items-center">
+                                                <KeyIcon class="h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                                                <span class="ml-2 flex-1 truncate">{{
+                                                    license.getLabel() }} ({{ license.getType().toUpperCase() }})</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </dd>
+                            </div>
+                        </dl>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="px-4 py-5 sm:px-0 sm:py-0">
-            <dl class="space-y-8 sm:space-y-0 sm:divide-y sm:divide-base-200">
-                <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                        Date of Birth</dt>
-                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                        {{ user?.getDateofbirth() }}
-                    </dd>
-                </div>
-                <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                        Sex</dt>
-                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                        {{ user?.getSex().toUpperCase() }}
-                        {{ ' ' }}
-                        <CharSexBadge :sex="user?.getSex() ? user?.getSex() : ''" />
-                    </dd>
-                </div>
-                <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                        Height</dt>
-                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
-                        user?.getHeight() }}cm</dd>
-                </div>
-                <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                        Phone Number</dt>
-                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
-                        user?.getPhoneNumber() }}</dd>
-                </div>
-                <div class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                        Visum</dt>
-                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                        {{ user?.getVisum() }}</dd>
-                </div>
-                <div v-can="'CitizenStoreService.FindUsers.Licenses'" class="sm:flex sm:px-6 sm:py-5">
-                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                        Licenses</dt>
-                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                        <span v-if="user?.getLicensesList().length == 0">No Licenses.</span>
-                        <ul v-else role="list" class="divide-y divide-base-200 rounded-md border border-base-200">
-                            <li v-for="license in user?.getLicensesList()"
-                                class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                                <div class="flex flex-1 items-center">
-                                    <KeyIcon class="h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
-                                    <span class="ml-2 flex-1 truncate">{{
-                                        license.getLabel() }} ({{ license.getType().toUpperCase() }})</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </dd>
-                </div>
-            </dl>
+
+        <div class="shrink-0 py-4 px-2 lg:w-96 pr-2 flex flex-col gap-2">
+            <div class="flex-initial">
+                <button v-can="'CitizenStoreService.SetUserProps.Wanted'" type="button"
+                    class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-error-500 px-3 py-2 text-sm font-semibold text-neutral shadow-sm hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1 transition-colors"
+                    @click="toggleWantedStatus()">{{ wantedState ?
+                        'Revoke Wanted Status' : 'Set Person Wanted' }}
+                </button>
+            </div>
+            <div class="flex-initial">
+                <button v-can="'CitizenStoreService.SetUserProps.Wanted'" type="button"
+                    class="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral shadow-sm hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1 transition-colors"
+                    @click="clipboard.copy(w.location.href)">Copy
+                    profile link
+                </button>
+            </div>
         </div>
     </div>
 </template>
