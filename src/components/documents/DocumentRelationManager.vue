@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DocumentRelation, DOC_RELATION } from '@arpanet/gen/resources/documents/documents_pb';
-import { GetDocumentRequest, RemoveDcoumentReferenceRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { GetDocumentRequest, RemoveDcoumentRelationRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import {
     Dialog,
     DialogPanel,
@@ -43,11 +43,11 @@ function findRelations(): void {
         });
 }
 
-function removeReference(id: number): void {
-    const req = new RemoveDcoumentReferenceRequest();
+function removeRelation(id: number): void {
+    const req = new RemoveDcoumentRelationRequest();
     req.setId(id);
 
-    getDocStoreClient().removeDcoumentReference(req, null).then(() => {
+    getDocStoreClient().removeDcoumentRelation(req, null).then(() => {
         findRelations();
     });
 }
@@ -128,7 +128,7 @@ function removeReference(id: number): void {
                                                                     </div>
                                                                     <div class="flex">
                                                                         <button role="button"
-                                                                            @click="removeReference(ref.getId())">
+                                                                            @click="removeRelation(ref.getId())">
                                                                             <DocumentMinusIcon
                                                                                 class="w-6 h-auto text-red-700 hover:text-red-500">
                                                                             </DocumentMinusIcon>
