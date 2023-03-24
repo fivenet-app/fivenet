@@ -106,7 +106,7 @@ onMounted(() => {
     }
 
     if (accessToken)
-    userNavigation = [
+        userNavigation = [
             { name: 'Change Character', href: 'Character Selector' },
             { name: 'Sign out', href: 'Logout' }
         ];
@@ -137,7 +137,8 @@ onMounted(() => {
                     <img class="w-auto h-12" src="/images/logo.png" alt="aRPaNet" />
                 </div>
                 <div class="flex-1 w-full px-2 mt-6 space-y-1">
-                    <router-link v-for="item in sidebarNavigation" :key="item.name" :to="{ name: item.href }" v-can="item.permission"
+                    <router-link v-for="item in sidebarNavigation" :key="item.name" :to="{ name: item.href }"
+                        v-can="item.permission"
                         :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"
