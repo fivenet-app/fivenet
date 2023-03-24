@@ -30,7 +30,7 @@ const accessToken = computed(() => store.state.auth?.accessToken);
         </p>
         <div class="mt-4 flex items-center justify-center gap-x-6">
             <router-link v-if="accessToken" :to="{ name: 'Overview' }"
-                class="rounded-md w-20 bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-neutral shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Overview</router-link>
+                class="rounded-md w-32 bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-neutral shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Overview</router-link>
             <router-link v-else :to="{ name: 'Login' }"
                 class="rounded-md w-20 bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-neutral shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Login</router-link>
         </div>
