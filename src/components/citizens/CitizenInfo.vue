@@ -36,13 +36,13 @@ defineProps({
                 class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700">WANTED</span>
         </div>
         <TabGroup>
-            <TabList class="border-b border-base-200">
-                <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" :v-can="tab.permission">
+            <TabList class="border-b border-base-200 flex flex-row">
+                <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" :v-can="tab.permission" class="flex-1">
                     <button
-                        :class="[selected ? 'border-primary-400 text-primary-500' : 'border-transparent text-base-500 hover:border-base-300 hover:text-base-700', 'group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium']"
+                        :class="[selected ? 'border-primary-400 text-primary-500' : 'border-transparent text-base-500 hover:border-base-300 hover:text-base-300', 'w-full justify-center group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium']"
                         :aria-current="selected ? 'page' : undefined">
                         <component :is="tab.icon"
-                            :class="[selected ? 'text-primary-400' : 'text-base-400 group-hover:text-base-500', '-ml-0.5 mr-2 h-5 w-5']"
+                            :class="[selected ? 'text-primary-400' : 'text-base-500 group-hover:text-base-300', '-ml-0.5 mr-2 h-5 w-5']"
                             aria-hidden="true" />
                         <span>{{ tab.name }}</span>
                     </button>
