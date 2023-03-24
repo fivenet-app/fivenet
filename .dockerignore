@@ -35,11 +35,6 @@ __debug_bin
 # Localhost certs
 localhost.*
 
-# Map tiles
-public/tiles/*/
-dist/
-
 # Repo checkouts
 /gdal2tiles-leaflet/
 /validate/
-
