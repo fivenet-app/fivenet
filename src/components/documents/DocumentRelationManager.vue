@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DOC_RELATION_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import { DocumentRelation, DOC_RELATION } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetDocumentRequest, RemoveDocumentRelationRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import {
@@ -12,6 +13,7 @@ import { XMarkIcon, ArrowTopRightOnSquareIcon, DocumentMinusIcon } from '@heroic
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router/auto';
 import { getDocStoreClient } from '../../grpc/grpc';
+import { toTitleCase } from '../../utils/strings';
 
 const router = useRouter();
 
@@ -116,7 +118,7 @@ function removeRelation(id: number): void {
                                                                 {{ ref.getSourceUser()?.getLastname() }}
                                                             </td>
                                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{
-                                                                DOC_RELATION[ref.getRelation()]?.toString() ?? ref.getRelation() }}</td>
+                                                                toTitleCase(DOC_RELATION_Util.toEnumKey(ref.getRelation())!.toLowerCase()) ?? ref.getRelation() }}</td>
                                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                                 <div class="flex flex-row gap-2">
                                                                     <div class="flex">
