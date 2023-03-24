@@ -254,7 +254,7 @@ onMounted(() => {
                                     <MenuItems
                                         class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
                                         <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
-                                        <router-link :to="item.href"
+                                        <router-link :to="{ name: item.href }"
                                             :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral hover:transition-colors']">
                                             {{ item.name }}
                                         </router-link>
