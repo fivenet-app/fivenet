@@ -29,7 +29,7 @@ function loginSubmit() {
 </script>
 
 <template>
-    <div class="max-w-2xl mx-auto">
+    <div class="max-w-xl mx-auto">
         <div class="bg-base-850 py-8 px-4 rounded-lg sm:px-10">
             <form @submit.prevent="loginSubmit" class="space-y-6 my-2" action="#">
                 <div>
