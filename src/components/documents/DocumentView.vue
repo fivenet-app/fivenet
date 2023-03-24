@@ -288,7 +288,7 @@ onMounted(() => {
             </div>
         </div>
     </div>
-    <div>
+    <div class="w-full">
         <TabGroup>
             <TabList>
                 <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }">

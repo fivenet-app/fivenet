@@ -2,7 +2,6 @@
 import Footer from '../components/partials/Footer.vue';
 import Login from '../components/Login.vue';
 import ContentWrapper from '../components/partials/ContentWrapper.vue';
-import NavPageHeader from '../components/partials/NavPageHeader.vue';
 </script>
 
 <route lang="json">
@@ -15,7 +14,6 @@ import NavPageHeader from '../components/partials/NavPageHeader.vue';
 </route>
 
 <template>
-    <NavPageHeader title="Login" />
     <ContentWrapper>
         <Login />
     </ContentWrapper>

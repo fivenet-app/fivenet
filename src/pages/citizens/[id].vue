@@ -20,7 +20,6 @@ export const useUserData = defineLoader(async (route: RouteLocationNormalizedLoa
 <script lang="ts" setup>
 import Footer from '../../components/partials/Footer.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { getCitizenStoreClient } from '../../grpc/grpc';
@@ -39,7 +38,6 @@ const { data: user } = useUserData();
 </route>
 
 <template>
-    <NavPageHeader title="Citizens" />
     <ContentWrapper>
         <div v-if="user">
             <CitizenInfo :user="user" />

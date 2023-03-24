@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import DocumentEditor from '../../components/documents/DocumentEditor.vue';
 import Footer from '../../components/partials/Footer.vue';
@@ -16,7 +15,6 @@ import Footer from '../../components/partials/Footer.vue';
 </route>
 
 <template>
-    <NavPageHeader title="Documents" />
     <ContentWrapper>
         <DocumentEditor />
     </ContentWrapper>

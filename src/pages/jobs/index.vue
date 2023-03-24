@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import Footer from '../../components/partials/Footer.vue';
 </script>
 
@@ -15,7 +14,6 @@ import Footer from '../../components/partials/Footer.vue';
 </route>
 
 <template>
-    <NavPageHeader title="Job" />
     <ContentWrapper>
         <h1 class="text-lg font-semibold leading-6 text-white">EMPLOYEE INFO AND MANAGEMENT SYSTEM</h1>
     </ContentWrapper>

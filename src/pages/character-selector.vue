@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import Footer from '../components/partials/Footer.vue';
 import ContentWrapper from '../components/partials/ContentWrapper.vue';
-import NavPageHeader from '../components/partials/NavPageHeader.vue';
 import CharacterSelector from '../components/login/CharacterSelector.vue';
 </script>
 
@@ -16,7 +15,6 @@ import CharacterSelector from '../components/login/CharacterSelector.vue';
 </route>
 
 <template>
-    <NavPageHeader title="Character Selector" />
     <ContentWrapper>
         <CharacterSelector />
     </ContentWrapper>

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import CitizensList from '../../components/citizens/CitizensList.vue';
 import Footer from '../../components/partials/Footer.vue';
@@ -16,7 +15,6 @@ import Footer from '../../components/partials/Footer.vue';
 </route>
 
 <template>
-    <NavPageHeader title="Citizens" />
     <ContentWrapper>
         <CitizensList />
     </ContentWrapper>

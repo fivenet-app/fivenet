@@ -87,7 +87,7 @@ const breadcrumbs = [] as { name: string, href: string, current: boolean }[];
 const mobileMenuOpen = ref(false);
 
 onMounted(() => {
-    if (accessToken && activeChar) {
+    if (accessToken.value && activeChar.value) {
         sidebarNavigation.shift();
         userNavigation = [
             { name: 'Change Character', href: 'Character Selector' },

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router/auto';
 import { ref, onMounted } from 'vue';
-import NavPageHeader from '../../components/partials/NavPageHeader.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import DocumentView from '../../components/documents/DocumentView.vue';
 import Footer from '../../components/partials/Footer.vue';
@@ -25,7 +24,6 @@ onMounted(() => {
 </route>
 
 <template>
-    <NavPageHeader title="Document" />
     <ContentWrapper>
         <DocumentView v-if="documentId > 0" :documentId="documentId" />
     </ContentWrapper>
