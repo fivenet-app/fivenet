@@ -18,7 +18,7 @@ func New(logger *zap.Logger) *Routes {
 }
 
 func (r *Routes) Register(e *gin.Engine) {
-	e.GET("/ping", r.PingGET)
+	e.GET("/api/ping", r.PingGET)
 }
 
 func (r *Routes) PingGET(g *gin.Context) {

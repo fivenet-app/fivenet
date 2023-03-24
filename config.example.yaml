@@ -1,4 +1,5 @@
 logLevel: "DEBUG"
+# debug or release
 mode: "debug"
 sentry:
   dsn: "https://d3372a68f9b440618195a6893c3e95a3@glitchtip.edenmal.moe/2"

@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"io/fs"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -20,6 +22,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	ginzap "github.com/gin-contrib/zap"
+	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
@@ -142,19 +145,46 @@ func setupHTTPServer() *gin.Engine {
 	})
 	e.Use(sessions.SessionsMany([]string{"arpanet_"}, sessStore))
 
+	// GZIP
+	e.Use(gzip.Gzip(gzip.DefaultCompression))
+
 	// Prometheus Metrics endpoint
 	e.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
 	// Register app routes
 	rs := routes.New(logger)
 	rs.Register(e)
 	// Register embed FS for assets and other static files
 	if gin.Mode() == gin.DebugMode {
-		e.StaticFS("/public", gin.Dir(".", false))
+		e.StaticFS("/dist", gin.Dir("./dist", false))
 	} else {
-		e.StaticFS("/public", http.FS(assets))
+		distFs, err := fs.Sub(assets, "dist")
+		if err != nil {
+			logger.Fatal("failed to get dist dir in assets embed", zap.Error(err))
+		}
+		e.StaticFS("/dist", http.FS(distFs))
 	}
+
+	// Index.html helper for /
+	index := func(c *gin.Context) {
+		file, _ := assets.ReadFile("dist/index.html")
+		c.Data(
+			http.StatusOK,
+			"text/html",
+			file,
+		)
+	}
+	e.GET("/", index)
+
+	e.NoRoute(func(c *gin.Context) {
+		if !strings.HasPrefix(c.Request.URL.Path, "/dist") {
+			index(c)
+			return
+		}
+	})
+
 	e.GET("favicon.ico", func(c *gin.Context) {
-		file, _ := assets.ReadFile("assets/favicon.ico")
+		file, _ := assets.ReadFile("dist/favicon.ico")
 		c.Data(
 			http.StatusOK,
 			"image/x-icon",
