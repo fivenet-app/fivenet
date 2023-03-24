@@ -23,30 +23,26 @@ defineProps({
 </script>
 
 <template>
-    <div>
-        <div class="flex items-center">
-            <h3 class="text-xl font-bold text-gray-300 sm:text-2xl inline-flex">
+    <div class="sm:min-h-[52rem]">
+        <div class="flex flex-row items-center gap-3">
+            <h3 class="text-xl font-bold text-neutral sm:text-2xl inline-flex">
                 {{ user?.getFirstname() }}, {{ user?.getLastname() }}
-                &nbsp;
-                <span
-                    class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
-                        user.getJobLabel() }} (Rank: {{ user.getJobGradeLabel() }})
-                </span>
-                &nbsp;
-                <span v-if="user.getProps()?.getWanted()"
-                    class="inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">WANTED</span>
             </h3>
+            <span
+                class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">{{
+                    user.getJobLabel() }} (Rank: {{ user.getJobGradeLabel() }})
+            </span>
+            <span v-if="user.getProps()?.getWanted()"
+                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700">WANTED</span>
         </div>
-    </div>
-    <div>
         <TabGroup>
-            <TabList class="border-b border-gray-200">
+            <TabList class="border-b border-base-200">
                 <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" :v-can="tab.permission">
                     <button
-                        :class="[selected ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700', 'group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium']"
+                        :class="[selected ? 'border-primary-400 text-primary-500' : 'border-transparent text-base-500 hover:border-base-300 hover:text-base-700', 'group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium']"
                         :aria-current="selected ? 'page' : undefined">
                         <component :is="tab.icon"
-                            :class="[selected ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500', '-ml-0.5 mr-2 h-5 w-5']"
+                            :class="[selected ? 'text-primary-400' : 'text-base-400 group-hover:text-base-500', '-ml-0.5 mr-2 h-5 w-5']"
                             aria-hidden="true" />
                         <span>{{ tab.name }}</span>
                     </button>
