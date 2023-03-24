@@ -86,7 +86,7 @@ onBeforeMount(() => {
                                 </div>
                                 <div class="mt-2 sm:flex sm:justify-between">
                                     <div class="sm:flex">
-                                        <p class="truncate">{{ doc.getContent() }}</p>
+                                        <p class="max-w-2xl truncate">{{ doc.getContent() }}</p>
                                     </div>
                                     <div class="sm:flex">
                                         <p class="flex items-center text-sm text-gray-500">
