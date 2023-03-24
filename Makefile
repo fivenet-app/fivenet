@@ -21,10 +21,12 @@ build-go:
 
 .PHONY: build-yarn
 build-yarn:
+	rm -rf ./dist/
 	yarn build
 
 .PHONY: run-server
 run-server:
+	mkdir -p ./dist/
 	go run . server
 
 .PHONY: gen
