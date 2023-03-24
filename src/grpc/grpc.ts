@@ -57,16 +57,6 @@ export function getCompletorClient(): CompletorServiceClient {
     return completorClient;
 }
 
-// Dispatches
-let dispatcherClient: DispatcherServiceClient;
-export function getDispatcherClient(): DispatcherServiceClient {
-    if (!dispatcherClient) {
-        dispatcherClient = new DispatcherServiceClient(config.apiProtoURL, null, grpcClientOptions);
-    }
-
-    return dispatcherClient;
-}
-
 // DMV (Vehicles)
 let dmvClient: DMVServiceClient;
 export function getDMVClient(): DMVServiceClient {

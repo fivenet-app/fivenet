@@ -19,6 +19,11 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 		return resp, nil
 	}
 
+	condition := jet.OR(
+		docRel.SourceUserID.EQ(jet.Int32(req.UserId)),
+		docRel.TargetUserID.EQ(jet.Int32(req.UserId)),
+	)
+
 	var docIds []uint64
 	idStmt := docRel.
 		SELECT(
@@ -28,10 +33,7 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 			docRel,
 		).
 		WHERE(
-			jet.OR(
-				docRel.SourceUserID.EQ(jet.Int32(req.UserId)),
-				docRel.TargetUserID.EQ(jet.Int32(req.UserId)),
-			),
+			condition,
 		)
 
 	if err := idStmt.QueryContext(ctx, s.db, &docIds); err != nil {
@@ -120,7 +122,10 @@ func (s *Server) GetUserDocuments(ctx context.Context, req *GetUserDocumentsRequ
 				),
 		).
 		WHERE(
-			docRel.DocumentID.IN(dIds...),
+			jet.AND(
+				docRel.DocumentID.IN(dIds...),
+				condition,
+			),
 		).
 		ORDER_BY(
 			docRel.CreatedAt.DESC(),

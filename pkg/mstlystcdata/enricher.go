@@ -18,10 +18,6 @@ func NewEnricher(c *Cache) *Enricher {
 }
 
 func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
-	if usr == nil {
-		return
-	}
-
 	job, ok := e.c.jobs.Get(usr.GetJob())
 	if ok {
 		usr.SetJobLabel(job.Label)

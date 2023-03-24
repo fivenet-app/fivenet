@@ -222,7 +222,9 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 	}
 
-	s.c.EnrichJobInfo(resp.User)
+	if resp.User != nil {
+		s.c.EnrichJobInfo(resp.User)
+	}
 
 	return resp, nil
 }

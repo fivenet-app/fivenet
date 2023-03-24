@@ -13,7 +13,7 @@ export default defineComponent({
                     href: '/citizens',
                     permission: 'CitizenStoreService.FindUsers',
                     icon: UsersIcon,
-                    iconForeground: 'text-purple-800',
+                    iconForeground: 'text-purple-900',
                     iconBackground: 'bg-purple-50',
                 },
                 {
@@ -23,8 +23,8 @@ export default defineComponent({
                     href: '/vehicles',
                     permission: 'DMVService.FindVehicles',
                     icon: TruckIcon,
-                    iconForeground: 'text-purple-800',
-                    iconBackground: 'bg-purple-50',
+                    iconForeground: 'text-zinc-900',
+                    iconBackground: 'bg-zinc-50',
                 },
                 {
                     title: 'Documents',
@@ -33,17 +33,8 @@ export default defineComponent({
                     href: '/documents',
                     permission: 'DocStoreService.FindDocuments',
                     icon: DocumentTextIcon,
-                    iconForeground: 'text-sky-800',
+                    iconForeground: 'text-sky-900',
                     iconBackground: 'bg-sky-50',
-                },
-                {
-                    title: 'Dispatches',
-                    description: 'Dispatch Center and Management. Coming soon.',
-                    href: '/dispatches',
-                    permission: 'Dispatches.View',
-                    icon: BellAlertIcon,
-                    iconForeground: 'text-rose-800',
-                    iconBackground: 'bg-rose-50',
                 },
                 {
                     title: 'Job',
@@ -51,7 +42,7 @@ export default defineComponent({
                     href: '/job',
                     permission: 'Jobs.View',
                     icon: BriefcaseIcon,
-                    iconForeground: 'text-yellow-800',
+                    iconForeground: 'text-yellow-900',
                     iconBackground: 'bg-yellow-50',
                 },
                 {
@@ -60,7 +51,7 @@ export default defineComponent({
                     href: '/livemap',
                     permission: 'LivemapperService.Stream',
                     icon: MapIcon,
-                    iconForeground: 'text-teal-800',
+                    iconForeground: 'text-teal-900',
                     iconBackground: 'bg-teal-50',
                 },
             ],
@@ -71,7 +62,7 @@ export default defineComponent({
 
 <template>
     <div
-        class="divide-y divide-white overflow-hidden rounded-lg bg-gray-800 shadow sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0"
+        class="divide-y divide-white overflow-hidden rounded-lg bg-gray-900 shadow sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0"
     >
         <div
             v-for="(feature, featureIdx) in features"

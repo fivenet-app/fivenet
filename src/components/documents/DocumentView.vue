@@ -51,7 +51,6 @@ function getDocument(): void {
         then((resp) => {
             document.value = resp.getDocument();
             access.value = resp.getAccess();
-            console.log("UPDATED ACCESS AND DOC");
         });
 
     // Document References
