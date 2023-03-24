@@ -65,7 +65,7 @@ async function findDocuments(): Promise<void> {
     req.setSearch(queryDoc.value);
 
     const resp = await getDocStoreClient().findDocuments(req, null)
-    entriesDocuments.value = resp.getDocumentsList().filter(doc => !references.value.find(r => r.getId() === doc.getId()));
+    entriesDocuments.value = resp.getDocumentsList().filter(doc => !(references.value.find(r => r.getSourceDocumentId() === doc.getId() || doc.getId() === props.document)));
 }
 
 async function findReferences(): Promise<void> {
