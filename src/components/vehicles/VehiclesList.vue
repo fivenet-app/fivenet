@@ -90,18 +90,18 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
 </script>
 
 <template>
-    <div class="py-2">
+    <div class="py-2 sm:min-h-[67rem]">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="findVehicles(0)">
-                        <div class="grid grid-cols-5 gap-4">
-                            <div class="col-span-4 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Plate</label>
+                        <div class="flex flex-row gap-4 mx-auto">
+                            <div class="flex-1 form-control">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Search</label>
                                 <div class="relative mt-2 flex items-center">
-                                    <input v-model="search.name" ref="searchInput"
-                                        type="text" name="search" id="search"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                    <input v-model="search.name" ref="searchInput" type="text" name="search" id="search"
+                                        placeholder="License plate"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral shadow-sm placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
                         </div>
@@ -112,13 +112,13 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                 <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <button v-if="vehicles.length == 0" type="button" @click="focusSearch()"
-                            class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            class="relative block w-full rounded-lg border-2 border-dashed border-base-300 p-12 text-center hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="text-neutral mx-auto h-12 w-12" />
                             <span class="mt-2 block text-sm font-semibold text-gray-300">Use the search field
-                                above</span>
+                                above to search or update your query</span>
                         </button>
                         <div v-else>
-                            <table class="min-w-full divide-y divide-gray-700">
+                            <table class="min-w-full divide-y divide-base-600">
                                 <thead>
                                     <tr>
                                         <th v-on:click="toggleOrderBy('plate')" scope="col"
@@ -128,24 +128,26 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                         <th v-on:click="toggleOrderBy('model')" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Model
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Type
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            Type
                                         </th>
-                                        <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Owner
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Job
                                         </th>
-                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                                            {{ ' ' }}
+                                        <th v-if="!hideOwner" scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
+                                            Action
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-800">
+                                <tbody class="divide-y divide-base-800">
                                     <VehiclesListEntry v-for="vehicle in vehicles" :key="vehicle.getPlate()"
-                                        :vehicle="vehicle" :hide-owner="hideOwner" />
+                                        :vehicle="vehicle" :hide-owner="hideOwner"
+                                        class="hover:bg-neutral/5 transition-colors" />
                                 </tbody>
                                 <thead>
                                     <tr>
@@ -156,29 +158,29 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                         <th v-on:click="toggleOrderBy('model')" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Model
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Type
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            Type
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Owner
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Owner
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Job
                                         </th>
-                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                                            {{ ' ' }}
+                                        <th scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
+                                            Action
                                         </th>
                                     </tr>
                                 </thead>
                             </table>
 
-                            <TablePagination :offset="offset" :entries="vehicles.length" :end="listEnd" :total="totalCount"
-                                :callback="findVehicles" />
-                        </div>
+                        <TablePagination :offset="offset" :entries="vehicles.length" :end="listEnd" :total="totalCount"
+                            :callback="findVehicles" />
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</template>
+</div></template>
