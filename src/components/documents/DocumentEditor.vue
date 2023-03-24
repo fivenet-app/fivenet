@@ -42,6 +42,8 @@ const props = defineProps({
         type: Number
     },
 });
+console.debug("🔎 • file: DocumentEditor.vue:45 • props:", props)
+
 
 const activeChar = computed(() => store.state.auth?.activeChar);
 
@@ -286,8 +288,8 @@ function editForm(): void {
 </route>
 
 <template>
-    <DocumentRelationManager :open="showRelationManager" :document="$props.id ?? null" @close="showRelationManager = false" />
-    <DocumentReferenceManager :open="showReferenceManager" :document="$props.id ?? null" @close="showReferenceManager = false" />
+    <DocumentRelationManager :open="showRelationManager" :document="$props.id" @close="showRelationManager = false" />
+    <DocumentReferenceManager :open="showReferenceManager" :document="$props.id" @close="showReferenceManager = false" />
     <div
         class="rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 bg-white">
         <label for="name" class="block text-xs font-medium text-gray-900">Title</label>
@@ -373,7 +375,7 @@ function editForm(): void {
     <div class="bg-white">
         <QuillEditor v-model:content="content" contentType="html" toolbar="full" theme="snow" :modules="modules" />
     </div>
-    <div class="flex flex-row">
+    <div class="flex flex-row" v-if="$props.id">
         <div class="flex-1">
             <button type="button"
                 class="rounded-bl-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="showRelationManager = true">Edit Relations</button>

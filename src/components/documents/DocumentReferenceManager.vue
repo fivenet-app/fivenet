@@ -18,7 +18,7 @@ const router = useRouter();
 
 const props = defineProps<{
     open: boolean,
-    document: number | null,
+    document: number,
 }>();
 
 const emit = defineEmits<{
