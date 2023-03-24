@@ -233,7 +233,7 @@ onMounted(() => {
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
-                            <span v-if="activeChar" class="text-xl text-base-100">{{ activeChar.getFirstname() }}, {{
+                            <span v-if="activeChar" class="text-sm font-medium text-base-400">{{ activeChar.getFirstname() }}, {{
                                 activeChar.getLastname() }}</span>
                             <!-- Profile dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">
