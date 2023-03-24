@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import CitizensList from '../../components/citizens/CitizensList.vue';
 </script>
 
@@ -14,7 +13,7 @@ import CitizensList from '../../components/citizens/CitizensList.vue';
 </route>
 
 <template>
-    <ContentWrapper>
+    <div class="w-full">
         <CitizensList />
-    </ContentWrapper>
+    </div>
 </template>

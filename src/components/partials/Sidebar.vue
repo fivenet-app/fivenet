@@ -82,7 +82,7 @@ const sidebarNavigation = [
 const currSidebar = ref('')
 let userNavigation = [
     { name: 'Login', href: 'Login' }
-] as { name: string, href: string }[];
+] as { name: string, href: keyof RouteNamedMap }[];
 const breadcrumbs = [] as { name: string, href: string, current: boolean }[];
 const mobileMenuOpen = ref(false);
 
@@ -254,9 +254,10 @@ onMounted(() => {
                                     <MenuItems
                                         class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
                                         <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
-                                        <a :href="item.href"
-                                            :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral hover:transition-colors']">{{
-                                                item.name }}</a>
+                                        <router-link :to="item.href"
+                                            :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral hover:transition-colors']">
+                                            {{ item.name }}
+                                        </router-link>
                                         </MenuItem>
                                     </MenuItems>
                                 </transition>
