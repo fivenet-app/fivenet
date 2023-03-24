@@ -1,10 +1,20 @@
 <script setup lang="ts">
-import { DocumentReference } from '@arpanet/gen/resources/documents/documents_pb';
-import { GetDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { XMarkIcon, ArrowTopRightOnSquareIcon, DocumentMinusIcon } from '@heroicons/vue/24/outline'
+import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
+import { DocumentReference, Document } from '@arpanet/gen/resources/documents/documents_pb';
+import { FindDocumentsRequest, GetDocumentRequest, RemoveDcoumentReferenceRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import {
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    TransitionChild,
+    TransitionRoot,
+} from '@headlessui/vue';
+import { XMarkIcon, ArrowTopRightOnSquareIcon, DocumentMinusIcon } from '@heroicons/vue/24/outline';
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router/auto';
 import { getDocStoreClient } from '../../grpc/grpc';
+
+const router = useRouter();
 
 const props = defineProps<{
     open: boolean,
@@ -18,17 +28,30 @@ const emit = defineEmits<{
 const references = ref<DocumentReference[]>([])
 
 onMounted(() => {
-    if (props.document) {
-        const req = new GetDocumentRequest();
-        req.setDocumentId(props.document);
-
-        getDocStoreClient().
-            getDocumentReferences(req, null).
-            then((resp) => {
-                references.value = resp.getReferencesList();
-            });
-    }
+    findReferences();
 });
+
+function findReferences(): void {
+    if (!props.document) return;
+
+    const req = new GetDocumentRequest();
+    req.setDocumentId(props.document);
+
+    getDocStoreClient().
+        getDocumentReferences(req, null).
+        then((resp) => {
+            references.value = resp.getReferencesList();
+        });
+}
+
+function removeReference(id: number): void {
+    const req = new RemoveDcoumentReferenceRequest();
+    req.setId(id);
+
+    getDocStoreClient().removeDcoumentReference(req, null).then(() => {
+        findReferences();
+    });
+}
 </script>
 
 <template>
@@ -83,26 +106,29 @@ onMounted(() => {
                                                     <tbody class="divide-y divide-gray-200 bg-white">
                                                         <tr v-for="ref in references" :key="ref.getId()">
                                                             <td
-                                                                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">
-                                                                {{ ref.getSourceDocument()?.getCreator()?.getFirstname() }}
-                                                                {{ ref.getSourceDocument()?.getCreator()?.getLastname() }}
+                                                                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8 truncate">
+                                                                {{
+                                                                    ref.getSourceDocument()?.getTitle() }}
+
                                                             </td>
                                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{
-                                                                ref.getSourceDocument()?.getTitle() }}</td>
+                                                                ref.getSourceDocument()?.getCreator()?.getFirstname() }}
+                                                                {{ ref.getSourceDocument()?.getCreator()?.getLastname() }}
+                                                            </td>
                                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{
                                                                 ref.getSourceDocument()?.getState() }}</td>
                                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                                 <div class="flex flex-row gap-2">
                                                                     <div class="flex">
-                                                                        <router-link
-                                                                            :to="{ name: 'Documents: Info', params: { id: ref.getSourceDocumentId() } }">
+                                                                        <a :href="router.resolve({ name: 'Documents: Info', params: { id: ref.getSourceDocumentId() } }).href" target="_blank">
                                                                             <ArrowTopRightOnSquareIcon
                                                                                 class="w-6 h-auto text-indigo-700 hover:text-indigo-500">
                                                                             </ArrowTopRightOnSquareIcon>
-                                                                        </router-link>
+                                                                        </a>
                                                                     </div>
                                                                     <div class="flex">
-                                                                        <button role="button">
+                                                                        <button role="button"
+                                                                            @click="removeReference(ref.getId())">
                                                                             <DocumentMinusIcon
                                                                                 class="w-6 h-auto text-red-700 hover:text-red-500">
                                                                             </DocumentMinusIcon>
@@ -118,10 +144,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                                <button type="button"
-                                    class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-                                    @click="emit('close')">Deactivate</button>
+                            <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-2">
                                 <button type="button"
                                     class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                                     @click="emit('close')">Cancel</button>
@@ -131,4 +154,5 @@ onMounted(() => {
                 </div>
             </div>
         </Dialog>
-    </TransitionRoot></template>
+    </TransitionRoot>
+</template>
