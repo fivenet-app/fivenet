@@ -14,5 +14,5 @@ RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o arpanet .
 FROM docker.io/library/alpine:3.17.2
 RUN apk --no-cache add ca-certificates
 WORKDIR /app
-COPY --from=gobuilder /go/src/github.com/galexrt/arpanet/arpanet ./
-CMD ["/app/arpanet"]
+COPY --from=gobuilder /go/src/github.com/galexrt/arpanet/arpanet /usr/local/bin
+CMD ["arpanet", "server"]
