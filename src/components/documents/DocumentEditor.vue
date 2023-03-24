@@ -196,7 +196,8 @@ function submitForm(): void {
     req.setClosed(closed.value.closed);
     req.setState(state.value);
     req.setPublic(isPublic.value);
-    req.setCategoryId(selectedCategory.value!.getId());
+    if (selectedCategory.value != undefined)
+        req.setCategoryId(selectedCategory.value.getId());
 
     const reqAccess = new DocumentAccess();
     access.value.forEach(entry => {
@@ -241,7 +242,8 @@ function editForm(): void {
     req.setClosed(closed.value.closed);
     req.setState(state.value);
     req.setPublic(isPublic.value);
-    req.setCategoryId(selectedCategory.value!.getId());
+    if (selectedCategory.value != undefined)
+        req.setCategoryId(selectedCategory.value.getId());
 
     const reqAccess = new DocumentAccess();
     access.value.forEach(entry => {
@@ -378,11 +380,13 @@ function editForm(): void {
     <div class="flex flex-row" v-if="$props.id">
         <div class="flex-1">
             <button type="button"
-                class="rounded-bl-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="showRelationManager = true">Citizen Relations</button>
+                class="rounded-bl-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                @click="showRelationManager = true">Citizen Relations</button>
         </div>
         <div class="flex-1">
             <button type="button"
-                class="rounded-br-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="showReferenceManager = true">Document References</button>
+                class="rounded-br-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                @click="showReferenceManager = true">Document References</button>
         </div>
     </div>
     <div class="my-3">

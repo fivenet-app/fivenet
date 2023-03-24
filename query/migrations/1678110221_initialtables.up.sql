@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_job_access` (
   `deleted_at` datetime(3) DEFAULT NULL,
   `document_id` bigint(20) unsigned NOT NULL,
   `job` varchar(20) NOT NULL,
-  `minimum_grade` int(11) NOT NULL DEFAULT 0,
+  `minimum_grade` int(11) NOT NULL DEFAULT 1,
   `access` smallint(2) NOT NULL,
   `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
