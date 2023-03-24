@@ -27,7 +27,6 @@ import {
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
 import { useStore } from '../../store/store';
 import { useRoute, useRouter } from 'vue-router/auto';
-import { ArrayElement } from '../../utils/types';
 
 const store = useStore();
 const route = useRoute();
@@ -88,21 +87,20 @@ const breadcrumbs = [] as { name: string, href: string, current: boolean }[];
 const mobileMenuOpen = ref(false);
 
 onMounted(() => {
-    const sidebarIndex = sidebarNavigation.findIndex(e => e.href.toLowerCase() === route.name.toLowerCase());
-    console.debug("🔎 • file: Sidebar.vue:97 • onMounted • sidebarIndex:", sidebarIndex)
+    if (accessToken && activeChar) {
+        sidebarNavigation.shift();
+        userNavigation = [
+            { name: 'Change Character', href: 'Character Selector' },
+            { name: 'Sign out', href: 'Logout' }
+        ];
+    }
 
+    const sidebarIndex = sidebarNavigation.findIndex(e => e.href.toLowerCase() === route.name.toLowerCase());
     if (sidebarIndex !== -1) {
         currSidebar.value = sidebarNavigation[sidebarIndex].name;
     } else {
         currSidebar.value = sidebarNavigation[0].name;
     }
-    console.debug("🔎 • file: Sidebar.vue:97 • onMounted • sidebarIndex:", sidebarNavigation)
-
-    if (accessToken)
-        userNavigation = [
-            { name: 'Change Character', href: 'Character Selector' },
-            { name: 'Sign out', href: 'Logout' }
-        ];
 
     const pathSplit = route.path.split('/').filter(e => e !== '');
     pathSplit.forEach(breadcrumb => {
