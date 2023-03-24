@@ -117,7 +117,7 @@ onMounted(() => {
                                 class="flex flex-initial flex-row gap-1 bg-primary-100 text-primary-500 rounded-full px-2 py-1">
                                 <ChatBubbleLeftEllipsisIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-primary-700">{{ comments.length }}
-                                    replies</span>
+                                    comments</span>
                             </div>
                             <div class="flex flex-initial flex-row gap-1 bg-base-100 text-base-500 rounded-full px-2 py-1">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
