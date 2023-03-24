@@ -25,9 +25,9 @@ defineProps({
 <template>
     <div class="sm:min-h-[52rem]">
         <div class="flex flex-row items-center gap-3">
-            <h3 class="text-xl font-bold text-neutral sm:text-2xl inline-flex">
+            <p class="text-xl font-bold text-neutral sm:text-3xl inline-flex">
                 {{ user?.getFirstname() }}, {{ user?.getLastname() }}
-            </h3>
+            </p>
             <span
                 class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">{{
                     user.getJobLabel() }} (Rank: {{ user.getJobGradeLabel() }})
