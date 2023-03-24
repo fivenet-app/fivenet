@@ -18,7 +18,7 @@ const listEnd = ref(0);
 const documents = ref<Array<Document>>([]);
 
 function findDocuments(pos: number) {
-    if (pos < 0) return;
+    if (pos < 0) pos = 0;
 
     const req = new FindDocumentsRequest();
     req.setPagination((new PaginationRequest()).setOffset(pos));

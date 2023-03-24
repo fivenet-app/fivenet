@@ -17,7 +17,7 @@ const listEnd = ref(0);
 const users = ref<Array<User>>([]);
 
 function findUsers(pos: number) {
-    if (pos < 0) return;
+    if (pos < 0) pos = 0;
 
     const req = new FindUsersRequest();
     req.setPagination((new PaginationRequest()).setOffset(pos));

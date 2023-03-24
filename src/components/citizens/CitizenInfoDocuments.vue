@@ -17,7 +17,7 @@ const props = defineProps({
 
 function getUserDocuments(pos: number) {
     if (!props.userId) return;
-    if (pos < 0) return;
+    if (pos < 0) pos = 0;
 
     const req = new GetUserDocumentsRequest();
     req.setPagination((new PaginationRequest()).setOffset(pos))

@@ -29,7 +29,7 @@ const listEnd = ref(0);
 const vehicles = ref<Array<Vehicle>>([]);
 
 function findVehicles(pos: number) {
-    if (pos < 0) return;
+    if (pos < 0) pos = 0;
 
     const req = new FindVehiclesRequest();
     req.setPagination((new PaginationRequest()).setOffset(pos));
