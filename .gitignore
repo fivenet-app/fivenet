@@ -37,7 +37,6 @@ localhost.*
 
 # Map tiles
 public/tiles/*/
-dist/
 
 # Repo checkouts
 /gdal2tiles-leaflet/

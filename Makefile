@@ -11,9 +11,17 @@ clean:
 watch:
 	yarn dev
 
-.PHONY: build
-build:
+.PHONY: build-docker
+build-docker:
+	docker build -t galexrt/arpanet:latest .
+
+.PHONY: build-go
+build-go:
 	go build -o arpanet .
+
+.PHONY: build-yarn
+build-yarn:
+	yarn build
 
 .PHONY: run-server
 run-server:

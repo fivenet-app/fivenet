@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"io/fs"
 	"net/http"
 	"os"
 	"os/signal"
@@ -149,12 +150,16 @@ func setupHTTPServer() *gin.Engine {
 	rs.Register(e)
 	// Register embed FS for assets and other static files
 	if gin.Mode() == gin.DebugMode {
-		e.StaticFS("/public", gin.Dir(".", false))
+		e.StaticFS("/", gin.Dir("./dist", false))
 	} else {
-		e.StaticFS("/public", http.FS(assets))
+		assetsFs, err := fs.Sub(assets, "dist")
+		if err != nil {
+			logger.Fatal("failed to change dir in assets fs", zap.Error(err))
+		}
+		e.StaticFS("/", http.FS(assetsFs))
 	}
 	e.GET("favicon.ico", func(c *gin.Context) {
-		file, _ := assets.ReadFile("assets/favicon.ico")
+		file, _ := assets.ReadFile("dist/favicon.ico")
 		c.Data(
 			http.StatusOK,
 			"image/x-icon",

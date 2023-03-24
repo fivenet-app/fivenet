@@ -8,7 +8,7 @@ import (
 	"github.com/galexrt/arpanet/cmd"
 )
 
-//go:embed assets/*
+//go:embed dist/*
 var assets embed.FS
 
 func main() {
