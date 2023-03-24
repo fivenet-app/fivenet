@@ -28,7 +28,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div v-if="chars.length <= 0" class="rounded-md bg-red-50 p-4">
+    <div v-if="chars.length <= 0" class="rounded-md bg-red-50 p-4 max-w-xs mx-auto">
         <div class="flex">
             <div class="flex-shrink-0">
                 <XCircleIcon class="h-5 w-5 text-red-400" aria-hidden="true" />
@@ -41,7 +41,7 @@ onBeforeMount(() => {
             </div>
         </div>
     </div>
-    <ul v-else role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <CharacterSelectorCard v-for="char in chars" :char="char" :key="char.getUserId()" />
-    </ul>
+    <div v-else class="flex flex-row flex-wrap gap-y-2">
+        <CharacterSelectorCard v-for="char in chars" :char="char" :key="char.getUserId()" class="flex-auto max-w-xl mx-auto" />
+    </div>
 </template>

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import Footer from '../components/partials/Footer.vue';
 import Login from '../components/Login.vue';
 import ContentWrapper from '../components/partials/ContentWrapper.vue';
 </script>
@@ -17,5 +16,4 @@ import ContentWrapper from '../components/partials/ContentWrapper.vue';
     <ContentWrapper>
         <Login />
     </ContentWrapper>
-    <Footer />
 </template>

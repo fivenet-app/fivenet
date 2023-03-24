@@ -41,24 +41,23 @@ function chooseCharacter() {
 </script>
 
 <template>
-    <li :key="char.getUserId()"
-        class="col-span-2 flex flex-col divide-y divide-white rounded-lg bg-gray-800 text-center shadow">
+    <div :key="char.getUserId()" class="flex flex-col divide-y rounded-lg bg-base-800">
         <div class="flex flex-1 flex-col p-8">
-            <h2 class="mt-6 text-2xl font-medium text-white">
-                {{ char.getFirstname() }}, {{ char.getLastname() }}
+            <div class="flex flex-row mx-auto items-center gap-3">
+                <h2 class="text-2xl font-medium text-neutral text-center">
+                    {{ char.getFirstname() }}, {{ char.getLastname() }}
+                </h2>
                 <CharSexBadge :sex="char.getSex()" />
-            </h2>
-            <dl class="mt-1 flex flex-grow flex-col justify-between">
-                <dd>
-                    <span v-if="lastCharID == char.getUserId()"
-                        class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
+                <div v-if="lastCharID == char.getUserId()">
+                    <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
                         Last Used
                     </span>
-                    <br v-else />
-                </dd>
+                </div>
+            </div>
+            <dl class="flex flex-grow flex-col justify-between mt-2 text-center">
                 <dd class="mt-3">
                     <span
-                        class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
+                        class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
                             char.getJobLabel() }} (Rank: {{ char.getJobGradeLabel() }})</span>
                 </dd>
                 <dt class="text-sm text-white">Date of Birth</dt>
@@ -72,14 +71,14 @@ function chooseCharacter() {
             </dl>
         </div>
         <div>
-            <div class="-mt-px flex divide-x divide-white">
+            <div class="-mt-px flex">
                 <div class="flex w-0 flex-1">
                     <button @click="chooseCharacter()"
-                        class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-white bg-gray-600">
+                        class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-b-lg border border-transparent py-4 text-sm font-semibold text-white bg-base-700 hover:bg-base-600 transition-colors">
                         Choose
                     </button>
                 </div>
             </div>
         </div>
-    </li>
+    </div>
 </template>

@@ -267,7 +267,7 @@ onMounted(() => {
             </header>
 
             <!-- Main content -->
-            <div class="flex items-stretch flex-1 overflow-hidden">
+            <div class="flex flex-1 overflow-hidden items-center justify-center">
                 <main class="flex-1 overflow-y-auto">
                     <!-- Primary column -->
                     <section aria-labelledby="primary-heading" class="flex flex-col flex-1 h-full min-w-0 lg:order-last">
