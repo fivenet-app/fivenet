@@ -9,7 +9,8 @@ import CharacterSelector from '../components/login/CharacterSelector.vue';
 {
     "name": "Character Selector",
     "meta": {
-        "requiresAuth": true
+        "requiresAuth": true,
+        "authOnlyToken": true
     }
 }
 </route>

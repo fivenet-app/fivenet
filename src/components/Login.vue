@@ -3,17 +3,18 @@ import { useStore } from '../store/store';
 import { computed, ref, watch } from 'vue';
 import { LoginRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
-import { useRouter } from 'vue-router/auto';
+import { useRoute, useRouter } from 'vue-router/auto';
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const loginError = computed(() => store.state.auth?.loginError);
 const accesToken = computed(() => store.state.auth?.accessToken);
 
 watch(accesToken, () => {
     if (accesToken) {
-        router.push({ name: 'Character Selector' });
+        router.push({ name: 'Character Selector', query: route.query });
     }
 });
 

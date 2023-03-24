@@ -15,8 +15,12 @@ setupDataFetchingGuard(router);
 router.beforeResolve((to, from) => {
     // Default is that a page requires authentication
     if (!to.meta.hasOwnProperty('requiresAuth') || to.meta.requiresAuth) {
+        if (to.meta.authOnlyToken && store.state.auth?.accessToken) {
+            return true;
+        }
+
         // Check if user has access token
-        if (store.state.auth?.accessToken && store.state.auth?.activeChar) {
+        if (store.state.auth?.accessToken || store.state.auth?.activeChar) {
             // Route has permission attached to it, check if user has required permission
             if (to.meta.permission) {
                 const perm = slug(to.meta.permission as string);
