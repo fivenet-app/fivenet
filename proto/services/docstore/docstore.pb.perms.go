@@ -11,8 +11,8 @@ var PermsRemap = map[string]string{
 	"DocStoreService/GetDocumentReferences":   "DocStoreService/GetDocument",
 	"DocStoreService/GetDocumentRelations":    "DocStoreService/GetDocument",
 	"DocStoreService/GetTemplate":             "DocStoreService/ListTemplates",
-	"DocStoreService/RemoveDcoumentReference": "DocStoreService/AddDocumentReference",
-	"DocStoreService/RemoveDcoumentRelation":  "DocStoreService/AddDocumentRelation",
+	"DocStoreService/RemoveDocumentReference": "DocStoreService/AddDocumentReference",
+	"DocStoreService/RemoveDocumentRelation":  "DocStoreService/AddDocumentRelation",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

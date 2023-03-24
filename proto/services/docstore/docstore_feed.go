@@ -227,7 +227,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		Id: uint64(lastId),
 	}, nil
 }
-func (s *Server) RemoveDcoumentReference(ctx context.Context, req *RemoveDcoumentReferenceRequest) (*RemoveDcoumentReferenceResponse, error) {
+func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumentReferenceRequest) (*RemoveDocumentReferenceResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	var docIDs struct {
 		Source uint64
@@ -269,7 +269,7 @@ func (s *Server) RemoveDcoumentReference(ctx context.Context, req *RemoveDcoumen
 		return nil, err
 	}
 
-	resp := &RemoveDcoumentReferenceResponse{}
+	resp := &RemoveDocumentReferenceResponse{}
 	return resp, nil
 }
 func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error) {
@@ -302,7 +302,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		Id: uint64(lastId),
 	}, nil
 }
-func (s *Server) RemoveDcoumentRelation(ctx context.Context, req *RemoveDcoumentRelationRequest) (*RemoveDcoumentRelationResponse, error) {
+func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	var docID struct {
 		ID uint64
@@ -342,7 +342,7 @@ func (s *Server) RemoveDcoumentRelation(ctx context.Context, req *RemoveDcoument
 		return nil, err
 	}
 
-	resp := &RemoveDcoumentRelationResponse{}
+	resp := &RemoveDocumentRelationResponse{}
 
 	return resp, nil
 }

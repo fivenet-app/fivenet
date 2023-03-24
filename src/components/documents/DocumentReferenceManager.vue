@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 import { DocumentReference, Document } from '@arpanet/gen/resources/documents/documents_pb';
-import { FindDocumentsRequest, GetDocumentRequest, RemoveDcoumentReferenceRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { FindDocumentsRequest, GetDocumentRequest, RemoveDocumentReferenceRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import {
     Dialog,
     DialogPanel,
@@ -45,10 +45,10 @@ function findReferences(): void {
 }
 
 function removeReference(id: number): void {
-    const req = new RemoveDcoumentReferenceRequest();
+    const req = new RemoveDocumentReferenceRequest();
     req.setId(id);
 
-    getDocStoreClient().removeDcoumentReference(req, null).then(() => {
+    getDocStoreClient().removeDocumentReference(req, null).then(() => {
         findReferences();
     });
 }

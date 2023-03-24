@@ -1868,22 +1868,22 @@ var _ interface {
 	ErrorName() string
 } = AddDocumentReferenceResponseValidationError{}
 
-// Validate checks the field values on RemoveDcoumentReferenceRequest with the
+// Validate checks the field values on RemoveDocumentReferenceRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RemoveDcoumentReferenceRequest) Validate() error {
+func (m *RemoveDocumentReferenceRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RemoveDcoumentReferenceRequest with
+// ValidateAll checks the field values on RemoveDocumentReferenceRequest with
 // the rules defined in the proto definition for this message. If any rules
 // are violated, the result is a list of violation errors wrapped in
-// RemoveDcoumentReferenceRequestMultiError, or nil if none found.
-func (m *RemoveDcoumentReferenceRequest) ValidateAll() error {
+// RemoveDocumentReferenceRequestMultiError, or nil if none found.
+func (m *RemoveDocumentReferenceRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RemoveDcoumentReferenceRequest) validate(all bool) error {
+func (m *RemoveDocumentReferenceRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1893,19 +1893,19 @@ func (m *RemoveDcoumentReferenceRequest) validate(all bool) error {
 	// no validation rules for Id
 
 	if len(errors) > 0 {
-		return RemoveDcoumentReferenceRequestMultiError(errors)
+		return RemoveDocumentReferenceRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// RemoveDcoumentReferenceRequestMultiError is an error wrapping multiple
-// validation errors returned by RemoveDcoumentReferenceRequest.ValidateAll()
+// RemoveDocumentReferenceRequestMultiError is an error wrapping multiple
+// validation errors returned by RemoveDocumentReferenceRequest.ValidateAll()
 // if the designated constraints aren't met.
-type RemoveDcoumentReferenceRequestMultiError []error
+type RemoveDocumentReferenceRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RemoveDcoumentReferenceRequestMultiError) Error() string {
+func (m RemoveDocumentReferenceRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1914,12 +1914,12 @@ func (m RemoveDcoumentReferenceRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RemoveDcoumentReferenceRequestMultiError) AllErrors() []error { return m }
+func (m RemoveDocumentReferenceRequestMultiError) AllErrors() []error { return m }
 
-// RemoveDcoumentReferenceRequestValidationError is the validation error
-// returned by RemoveDcoumentReferenceRequest.Validate if the designated
+// RemoveDocumentReferenceRequestValidationError is the validation error
+// returned by RemoveDocumentReferenceRequest.Validate if the designated
 // constraints aren't met.
-type RemoveDcoumentReferenceRequestValidationError struct {
+type RemoveDocumentReferenceRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1927,24 +1927,24 @@ type RemoveDcoumentReferenceRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e RemoveDcoumentReferenceRequestValidationError) Field() string { return e.field }
+func (e RemoveDocumentReferenceRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RemoveDcoumentReferenceRequestValidationError) Reason() string { return e.reason }
+func (e RemoveDocumentReferenceRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RemoveDcoumentReferenceRequestValidationError) Cause() error { return e.cause }
+func (e RemoveDocumentReferenceRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RemoveDcoumentReferenceRequestValidationError) Key() bool { return e.key }
+func (e RemoveDocumentReferenceRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RemoveDcoumentReferenceRequestValidationError) ErrorName() string {
-	return "RemoveDcoumentReferenceRequestValidationError"
+func (e RemoveDocumentReferenceRequestValidationError) ErrorName() string {
+	return "RemoveDocumentReferenceRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e RemoveDcoumentReferenceRequestValidationError) Error() string {
+func (e RemoveDocumentReferenceRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1956,14 +1956,14 @@ func (e RemoveDcoumentReferenceRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRemoveDcoumentReferenceRequest.%s: %s%s",
+		"invalid %sRemoveDocumentReferenceRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RemoveDcoumentReferenceRequestValidationError{}
+var _ error = RemoveDocumentReferenceRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1971,24 +1971,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RemoveDcoumentReferenceRequestValidationError{}
+} = RemoveDocumentReferenceRequestValidationError{}
 
-// Validate checks the field values on RemoveDcoumentReferenceResponse with the
+// Validate checks the field values on RemoveDocumentReferenceResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RemoveDcoumentReferenceResponse) Validate() error {
+func (m *RemoveDocumentReferenceResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RemoveDcoumentReferenceResponse with
+// ValidateAll checks the field values on RemoveDocumentReferenceResponse with
 // the rules defined in the proto definition for this message. If any rules
 // are violated, the result is a list of violation errors wrapped in
-// RemoveDcoumentReferenceResponseMultiError, or nil if none found.
-func (m *RemoveDcoumentReferenceResponse) ValidateAll() error {
+// RemoveDocumentReferenceResponseMultiError, or nil if none found.
+func (m *RemoveDocumentReferenceResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RemoveDcoumentReferenceResponse) validate(all bool) error {
+func (m *RemoveDocumentReferenceResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1996,19 +1996,19 @@ func (m *RemoveDcoumentReferenceResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return RemoveDcoumentReferenceResponseMultiError(errors)
+		return RemoveDocumentReferenceResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// RemoveDcoumentReferenceResponseMultiError is an error wrapping multiple
-// validation errors returned by RemoveDcoumentReferenceResponse.ValidateAll()
+// RemoveDocumentReferenceResponseMultiError is an error wrapping multiple
+// validation errors returned by RemoveDocumentReferenceResponse.ValidateAll()
 // if the designated constraints aren't met.
-type RemoveDcoumentReferenceResponseMultiError []error
+type RemoveDocumentReferenceResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RemoveDcoumentReferenceResponseMultiError) Error() string {
+func (m RemoveDocumentReferenceResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -2017,12 +2017,12 @@ func (m RemoveDcoumentReferenceResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RemoveDcoumentReferenceResponseMultiError) AllErrors() []error { return m }
+func (m RemoveDocumentReferenceResponseMultiError) AllErrors() []error { return m }
 
-// RemoveDcoumentReferenceResponseValidationError is the validation error
-// returned by RemoveDcoumentReferenceResponse.Validate if the designated
+// RemoveDocumentReferenceResponseValidationError is the validation error
+// returned by RemoveDocumentReferenceResponse.Validate if the designated
 // constraints aren't met.
-type RemoveDcoumentReferenceResponseValidationError struct {
+type RemoveDocumentReferenceResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -2030,24 +2030,24 @@ type RemoveDcoumentReferenceResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e RemoveDcoumentReferenceResponseValidationError) Field() string { return e.field }
+func (e RemoveDocumentReferenceResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RemoveDcoumentReferenceResponseValidationError) Reason() string { return e.reason }
+func (e RemoveDocumentReferenceResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RemoveDcoumentReferenceResponseValidationError) Cause() error { return e.cause }
+func (e RemoveDocumentReferenceResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RemoveDcoumentReferenceResponseValidationError) Key() bool { return e.key }
+func (e RemoveDocumentReferenceResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RemoveDcoumentReferenceResponseValidationError) ErrorName() string {
-	return "RemoveDcoumentReferenceResponseValidationError"
+func (e RemoveDocumentReferenceResponseValidationError) ErrorName() string {
+	return "RemoveDocumentReferenceResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e RemoveDcoumentReferenceResponseValidationError) Error() string {
+func (e RemoveDocumentReferenceResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2059,14 +2059,14 @@ func (e RemoveDcoumentReferenceResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRemoveDcoumentReferenceResponse.%s: %s%s",
+		"invalid %sRemoveDocumentReferenceResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RemoveDcoumentReferenceResponseValidationError{}
+var _ error = RemoveDocumentReferenceResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -2074,7 +2074,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RemoveDcoumentReferenceResponseValidationError{}
+} = RemoveDocumentReferenceResponseValidationError{}
 
 // Validate checks the field values on AddDocumentRelationRequest with the
 // rules defined in the proto definition for this message. If any rules are
@@ -2312,22 +2312,22 @@ var _ interface {
 	ErrorName() string
 } = AddDocumentRelationResponseValidationError{}
 
-// Validate checks the field values on RemoveDcoumentRelationRequest with the
+// Validate checks the field values on RemoveDocumentRelationRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RemoveDcoumentRelationRequest) Validate() error {
+func (m *RemoveDocumentRelationRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RemoveDcoumentRelationRequest with
+// ValidateAll checks the field values on RemoveDocumentRelationRequest with
 // the rules defined in the proto definition for this message. If any rules
 // are violated, the result is a list of violation errors wrapped in
-// RemoveDcoumentRelationRequestMultiError, or nil if none found.
-func (m *RemoveDcoumentRelationRequest) ValidateAll() error {
+// RemoveDocumentRelationRequestMultiError, or nil if none found.
+func (m *RemoveDocumentRelationRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RemoveDcoumentRelationRequest) validate(all bool) error {
+func (m *RemoveDocumentRelationRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -2337,19 +2337,19 @@ func (m *RemoveDcoumentRelationRequest) validate(all bool) error {
 	// no validation rules for Id
 
 	if len(errors) > 0 {
-		return RemoveDcoumentRelationRequestMultiError(errors)
+		return RemoveDocumentRelationRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// RemoveDcoumentRelationRequestMultiError is an error wrapping multiple
-// validation errors returned by RemoveDcoumentRelationRequest.ValidateAll()
+// RemoveDocumentRelationRequestMultiError is an error wrapping multiple
+// validation errors returned by RemoveDocumentRelationRequest.ValidateAll()
 // if the designated constraints aren't met.
-type RemoveDcoumentRelationRequestMultiError []error
+type RemoveDocumentRelationRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RemoveDcoumentRelationRequestMultiError) Error() string {
+func (m RemoveDocumentRelationRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -2358,12 +2358,12 @@ func (m RemoveDcoumentRelationRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RemoveDcoumentRelationRequestMultiError) AllErrors() []error { return m }
+func (m RemoveDocumentRelationRequestMultiError) AllErrors() []error { return m }
 
-// RemoveDcoumentRelationRequestValidationError is the validation error
-// returned by RemoveDcoumentRelationRequest.Validate if the designated
+// RemoveDocumentRelationRequestValidationError is the validation error
+// returned by RemoveDocumentRelationRequest.Validate if the designated
 // constraints aren't met.
-type RemoveDcoumentRelationRequestValidationError struct {
+type RemoveDocumentRelationRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -2371,24 +2371,24 @@ type RemoveDcoumentRelationRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e RemoveDcoumentRelationRequestValidationError) Field() string { return e.field }
+func (e RemoveDocumentRelationRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RemoveDcoumentRelationRequestValidationError) Reason() string { return e.reason }
+func (e RemoveDocumentRelationRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RemoveDcoumentRelationRequestValidationError) Cause() error { return e.cause }
+func (e RemoveDocumentRelationRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RemoveDcoumentRelationRequestValidationError) Key() bool { return e.key }
+func (e RemoveDocumentRelationRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RemoveDcoumentRelationRequestValidationError) ErrorName() string {
-	return "RemoveDcoumentRelationRequestValidationError"
+func (e RemoveDocumentRelationRequestValidationError) ErrorName() string {
+	return "RemoveDocumentRelationRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e RemoveDcoumentRelationRequestValidationError) Error() string {
+func (e RemoveDocumentRelationRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2400,14 +2400,14 @@ func (e RemoveDcoumentRelationRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRemoveDcoumentRelationRequest.%s: %s%s",
+		"invalid %sRemoveDocumentRelationRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RemoveDcoumentRelationRequestValidationError{}
+var _ error = RemoveDocumentRelationRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -2415,24 +2415,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RemoveDcoumentRelationRequestValidationError{}
+} = RemoveDocumentRelationRequestValidationError{}
 
-// Validate checks the field values on RemoveDcoumentRelationResponse with the
+// Validate checks the field values on RemoveDocumentRelationResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RemoveDcoumentRelationResponse) Validate() error {
+func (m *RemoveDocumentRelationResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RemoveDcoumentRelationResponse with
+// ValidateAll checks the field values on RemoveDocumentRelationResponse with
 // the rules defined in the proto definition for this message. If any rules
 // are violated, the result is a list of violation errors wrapped in
-// RemoveDcoumentRelationResponseMultiError, or nil if none found.
-func (m *RemoveDcoumentRelationResponse) ValidateAll() error {
+// RemoveDocumentRelationResponseMultiError, or nil if none found.
+func (m *RemoveDocumentRelationResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RemoveDcoumentRelationResponse) validate(all bool) error {
+func (m *RemoveDocumentRelationResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -2440,19 +2440,19 @@ func (m *RemoveDcoumentRelationResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return RemoveDcoumentRelationResponseMultiError(errors)
+		return RemoveDocumentRelationResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// RemoveDcoumentRelationResponseMultiError is an error wrapping multiple
-// validation errors returned by RemoveDcoumentRelationResponse.ValidateAll()
+// RemoveDocumentRelationResponseMultiError is an error wrapping multiple
+// validation errors returned by RemoveDocumentRelationResponse.ValidateAll()
 // if the designated constraints aren't met.
-type RemoveDcoumentRelationResponseMultiError []error
+type RemoveDocumentRelationResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RemoveDcoumentRelationResponseMultiError) Error() string {
+func (m RemoveDocumentRelationResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -2461,12 +2461,12 @@ func (m RemoveDcoumentRelationResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RemoveDcoumentRelationResponseMultiError) AllErrors() []error { return m }
+func (m RemoveDocumentRelationResponseMultiError) AllErrors() []error { return m }
 
-// RemoveDcoumentRelationResponseValidationError is the validation error
-// returned by RemoveDcoumentRelationResponse.Validate if the designated
+// RemoveDocumentRelationResponseValidationError is the validation error
+// returned by RemoveDocumentRelationResponse.Validate if the designated
 // constraints aren't met.
-type RemoveDcoumentRelationResponseValidationError struct {
+type RemoveDocumentRelationResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -2474,24 +2474,24 @@ type RemoveDcoumentRelationResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e RemoveDcoumentRelationResponseValidationError) Field() string { return e.field }
+func (e RemoveDocumentRelationResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RemoveDcoumentRelationResponseValidationError) Reason() string { return e.reason }
+func (e RemoveDocumentRelationResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RemoveDcoumentRelationResponseValidationError) Cause() error { return e.cause }
+func (e RemoveDocumentRelationResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RemoveDcoumentRelationResponseValidationError) Key() bool { return e.key }
+func (e RemoveDocumentRelationResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RemoveDcoumentRelationResponseValidationError) ErrorName() string {
-	return "RemoveDcoumentRelationResponseValidationError"
+func (e RemoveDocumentRelationResponseValidationError) ErrorName() string {
+	return "RemoveDocumentRelationResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e RemoveDcoumentRelationResponseValidationError) Error() string {
+func (e RemoveDocumentRelationResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2503,14 +2503,14 @@ func (e RemoveDcoumentRelationResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRemoveDcoumentRelationResponse.%s: %s%s",
+		"invalid %sRemoveDocumentRelationResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RemoveDcoumentRelationResponseValidationError{}
+var _ error = RemoveDocumentRelationResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -2518,7 +2518,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RemoveDcoumentRelationResponseValidationError{}
+} = RemoveDocumentRelationResponseValidationError{}
 
 // Validate checks the field values on GetDocumentCommentsRequest with the
 // rules defined in the proto definition for this message. If any rules are

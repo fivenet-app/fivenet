@@ -786,7 +786,7 @@ func (x *AddDocumentReferenceResponse) GetId() uint64 {
 	return 0
 }
 
-type RemoveDcoumentReferenceRequest struct {
+type RemoveDocumentReferenceRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -794,8 +794,8 @@ type RemoveDcoumentReferenceRequest struct {
 	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-func (x *RemoveDcoumentReferenceRequest) Reset() {
-	*x = RemoveDcoumentReferenceRequest{}
+func (x *RemoveDocumentReferenceRequest) Reset() {
+	*x = RemoveDocumentReferenceRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_services_docstore_docstore_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -803,13 +803,13 @@ func (x *RemoveDcoumentReferenceRequest) Reset() {
 	}
 }
 
-func (x *RemoveDcoumentReferenceRequest) String() string {
+func (x *RemoveDocumentReferenceRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RemoveDcoumentReferenceRequest) ProtoMessage() {}
+func (*RemoveDocumentReferenceRequest) ProtoMessage() {}
 
-func (x *RemoveDcoumentReferenceRequest) ProtoReflect() protoreflect.Message {
+func (x *RemoveDocumentReferenceRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_docstore_docstore_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -821,26 +821,26 @@ func (x *RemoveDcoumentReferenceRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RemoveDcoumentReferenceRequest.ProtoReflect.Descriptor instead.
-func (*RemoveDcoumentReferenceRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use RemoveDocumentReferenceRequest.ProtoReflect.Descriptor instead.
+func (*RemoveDocumentReferenceRequest) Descriptor() ([]byte, []int) {
 	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *RemoveDcoumentReferenceRequest) GetId() uint64 {
+func (x *RemoveDocumentReferenceRequest) GetId() uint64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-type RemoveDcoumentReferenceResponse struct {
+type RemoveDocumentReferenceResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 }
 
-func (x *RemoveDcoumentReferenceResponse) Reset() {
-	*x = RemoveDcoumentReferenceResponse{}
+func (x *RemoveDocumentReferenceResponse) Reset() {
+	*x = RemoveDocumentReferenceResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_services_docstore_docstore_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -848,13 +848,13 @@ func (x *RemoveDcoumentReferenceResponse) Reset() {
 	}
 }
 
-func (x *RemoveDcoumentReferenceResponse) String() string {
+func (x *RemoveDocumentReferenceResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RemoveDcoumentReferenceResponse) ProtoMessage() {}
+func (*RemoveDocumentReferenceResponse) ProtoMessage() {}
 
-func (x *RemoveDcoumentReferenceResponse) ProtoReflect() protoreflect.Message {
+func (x *RemoveDocumentReferenceResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_docstore_docstore_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -866,8 +866,8 @@ func (x *RemoveDcoumentReferenceResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RemoveDcoumentReferenceResponse.ProtoReflect.Descriptor instead.
-func (*RemoveDcoumentReferenceResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use RemoveDocumentReferenceResponse.ProtoReflect.Descriptor instead.
+func (*RemoveDocumentReferenceResponse) Descriptor() ([]byte, []int) {
 	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{15}
 }
 
@@ -965,7 +965,7 @@ func (x *AddDocumentRelationResponse) GetId() uint64 {
 	return 0
 }
 
-type RemoveDcoumentRelationRequest struct {
+type RemoveDocumentRelationRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -973,8 +973,8 @@ type RemoveDcoumentRelationRequest struct {
 	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-func (x *RemoveDcoumentRelationRequest) Reset() {
-	*x = RemoveDcoumentRelationRequest{}
+func (x *RemoveDocumentRelationRequest) Reset() {
+	*x = RemoveDocumentRelationRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_services_docstore_docstore_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -982,13 +982,13 @@ func (x *RemoveDcoumentRelationRequest) Reset() {
 	}
 }
 
-func (x *RemoveDcoumentRelationRequest) String() string {
+func (x *RemoveDocumentRelationRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RemoveDcoumentRelationRequest) ProtoMessage() {}
+func (*RemoveDocumentRelationRequest) ProtoMessage() {}
 
-func (x *RemoveDcoumentRelationRequest) ProtoReflect() protoreflect.Message {
+func (x *RemoveDocumentRelationRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_docstore_docstore_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1000,26 +1000,26 @@ func (x *RemoveDcoumentRelationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RemoveDcoumentRelationRequest.ProtoReflect.Descriptor instead.
-func (*RemoveDcoumentRelationRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use RemoveDocumentRelationRequest.ProtoReflect.Descriptor instead.
+func (*RemoveDocumentRelationRequest) Descriptor() ([]byte, []int) {
 	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *RemoveDcoumentRelationRequest) GetId() uint64 {
+func (x *RemoveDocumentRelationRequest) GetId() uint64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-type RemoveDcoumentRelationResponse struct {
+type RemoveDocumentRelationResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 }
 
-func (x *RemoveDcoumentRelationResponse) Reset() {
-	*x = RemoveDcoumentRelationResponse{}
+func (x *RemoveDocumentRelationResponse) Reset() {
+	*x = RemoveDocumentRelationResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_services_docstore_docstore_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1027,13 +1027,13 @@ func (x *RemoveDcoumentRelationResponse) Reset() {
 	}
 }
 
-func (x *RemoveDcoumentRelationResponse) String() string {
+func (x *RemoveDocumentRelationResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RemoveDcoumentRelationResponse) ProtoMessage() {}
+func (*RemoveDocumentRelationResponse) ProtoMessage() {}
 
-func (x *RemoveDcoumentRelationResponse) ProtoReflect() protoreflect.Message {
+func (x *RemoveDocumentRelationResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_docstore_docstore_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1045,8 +1045,8 @@ func (x *RemoveDcoumentRelationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RemoveDcoumentRelationResponse.ProtoReflect.Descriptor instead.
-func (*RemoveDcoumentRelationResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use RemoveDocumentRelationResponse.ProtoReflect.Descriptor instead.
+func (*RemoveDocumentRelationResponse) Descriptor() ([]byte, []int) {
 	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{19}
 }
 
@@ -2079,10 +2079,10 @@ var file_services_docstore_docstore_proto_rawDesc = []byte{
 	0x1c, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x66, 0x65,
 	0x72, 0x65, 0x6e, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e, 0x0a,
 	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x02, 0x69, 0x64, 0x22, 0x30, 0x0a,
-	0x1e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x63, 0x6f, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52,
+	0x1e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52,
 	0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
 	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x02, 0x69, 0x64, 0x22,
-	0x21, 0x0a, 0x1f, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x63, 0x6f, 0x75, 0x6d, 0x65, 0x6e,
+	0x21, 0x0a, 0x1f, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e,
 	0x74, 0x52, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
 	0x73, 0x65, 0x22, 0x5f, 0x0a, 0x1a, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e,
 	0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
@@ -2093,10 +2093,10 @@ var file_services_docstore_docstore_proto_rawDesc = []byte{
 	0x69, 0x6f, 0x6e, 0x22, 0x2d, 0x0a, 0x1b, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65,
 	0x6e, 0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
 	0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x02,
-	0x69, 0x64, 0x22, 0x2f, 0x0a, 0x1d, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x63, 0x6f, 0x75,
+	0x69, 0x64, 0x22, 0x2f, 0x0a, 0x1d, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x6f, 0x63, 0x75,
 	0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52,
-	0x02, 0x69, 0x64, 0x22, 0x20, 0x0a, 0x1e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x63, 0x6f,
+	0x02, 0x69, 0x64, 0x22, 0x20, 0x0a, 0x1e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x6f, 0x63,
 	0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x8c, 0x01, 0x0a, 0x1a, 0x47, 0x65, 0x74, 0x44, 0x6f, 0x63,
 	0x75, 0x6d, 0x65, 0x6e, 0x74, 0x43, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x71,
@@ -2317,13 +2317,13 @@ var file_services_docstore_docstore_proto_rawDesc = []byte{
 	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x73, 0x74, 0x6f, 0x72,
 	0x65, 0x2e, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x66,
 	0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x80,
-	0x01, 0x0a, 0x17, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x63, 0x6f, 0x75, 0x6d, 0x65, 0x6e,
+	0x01, 0x0a, 0x17, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e,
 	0x74, 0x52, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x12, 0x31, 0x2e, 0x73, 0x65, 0x72,
 	0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x2e, 0x52,
-	0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x63, 0x6f, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x66,
+	0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x66,
 	0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x32, 0x2e,
 	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x73, 0x74, 0x6f, 0x72,
-	0x65, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x63, 0x6f, 0x75, 0x6d, 0x65, 0x6e, 0x74,
+	0x65, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
 	0x52, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
 	0x65, 0x12, 0x74, 0x0a, 0x13, 0x41, 0x64, 0x64, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
 	0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2d, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69,
@@ -2333,13 +2333,13 @@ var file_services_docstore_docstore_proto_rawDesc = []byte{
 	0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x2e, 0x41, 0x64, 0x64, 0x44,
 	0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52,
 	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x7d, 0x0a, 0x16, 0x52, 0x65, 0x6d, 0x6f, 0x76,
-	0x65, 0x44, 0x63, 0x6f, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f,
+	0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f,
 	0x6e, 0x12, 0x30, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63,
-	0x73, 0x74, 0x6f, 0x72, 0x65, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x63, 0x6f, 0x75,
+	0x73, 0x74, 0x6f, 0x72, 0x65, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x6f, 0x63, 0x75,
 	0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x1a, 0x31, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x64,
-	0x6f, 0x63, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x63,
-	0x6f, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65,
+	0x6f, 0x63, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x44, 0x6f,
+	0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65,
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x74, 0x0a, 0x13, 0x47, 0x65, 0x74, 0x44, 0x6f, 0x63,
 	0x75, 0x6d, 0x65, 0x6e, 0x74, 0x43, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x12, 0x2d, 0x2e,
 	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x64, 0x6f, 0x63, 0x73, 0x74, 0x6f, 0x72,
@@ -2420,12 +2420,12 @@ var file_services_docstore_docstore_proto_goTypes = []interface{}{
 	(*GetDocumentRelationsResponse)(nil),    // 12: services.docstore.GetDocumentRelationsResponse
 	(*AddDocumentReferenceRequest)(nil),     // 13: services.docstore.AddDocumentReferenceRequest
 	(*AddDocumentReferenceResponse)(nil),    // 14: services.docstore.AddDocumentReferenceResponse
-	(*RemoveDcoumentReferenceRequest)(nil),  // 15: services.docstore.RemoveDcoumentReferenceRequest
-	(*RemoveDcoumentReferenceResponse)(nil), // 16: services.docstore.RemoveDcoumentReferenceResponse
+	(*RemoveDocumentReferenceRequest)(nil),  // 15: services.docstore.RemoveDocumentReferenceRequest
+	(*RemoveDocumentReferenceResponse)(nil), // 16: services.docstore.RemoveDocumentReferenceResponse
 	(*AddDocumentRelationRequest)(nil),      // 17: services.docstore.AddDocumentRelationRequest
 	(*AddDocumentRelationResponse)(nil),     // 18: services.docstore.AddDocumentRelationResponse
-	(*RemoveDcoumentRelationRequest)(nil),   // 19: services.docstore.RemoveDcoumentRelationRequest
-	(*RemoveDcoumentRelationResponse)(nil),  // 20: services.docstore.RemoveDcoumentRelationResponse
+	(*RemoveDocumentRelationRequest)(nil),   // 19: services.docstore.RemoveDocumentRelationRequest
+	(*RemoveDocumentRelationResponse)(nil),  // 20: services.docstore.RemoveDocumentRelationResponse
 	(*GetDocumentCommentsRequest)(nil),      // 21: services.docstore.GetDocumentCommentsRequest
 	(*GetDocumentCommentsResponse)(nil),     // 22: services.docstore.GetDocumentCommentsResponse
 	(*PostDocumentCommentRequest)(nil),      // 23: services.docstore.PostDocumentCommentRequest
@@ -2493,9 +2493,9 @@ var file_services_docstore_docstore_proto_depIdxs = []int32{
 	9,  // 34: services.docstore.DocStoreService.GetDocumentReferences:input_type -> services.docstore.GetDocumentReferencesRequest
 	11, // 35: services.docstore.DocStoreService.GetDocumentRelations:input_type -> services.docstore.GetDocumentRelationsRequest
 	13, // 36: services.docstore.DocStoreService.AddDocumentReference:input_type -> services.docstore.AddDocumentReferenceRequest
-	15, // 37: services.docstore.DocStoreService.RemoveDcoumentReference:input_type -> services.docstore.RemoveDcoumentReferenceRequest
+	15, // 37: services.docstore.DocStoreService.RemoveDocumentReference:input_type -> services.docstore.RemoveDocumentReferenceRequest
 	17, // 38: services.docstore.DocStoreService.AddDocumentRelation:input_type -> services.docstore.AddDocumentRelationRequest
-	19, // 39: services.docstore.DocStoreService.RemoveDcoumentRelation:input_type -> services.docstore.RemoveDcoumentRelationRequest
+	19, // 39: services.docstore.DocStoreService.RemoveDocumentRelation:input_type -> services.docstore.RemoveDocumentRelationRequest
 	21, // 40: services.docstore.DocStoreService.GetDocumentComments:input_type -> services.docstore.GetDocumentCommentsRequest
 	23, // 41: services.docstore.DocStoreService.PostDocumentComment:input_type -> services.docstore.PostDocumentCommentRequest
 	25, // 42: services.docstore.DocStoreService.EditDocumentComment:input_type -> services.docstore.EditDocumentCommentRequest
@@ -2511,9 +2511,9 @@ var file_services_docstore_docstore_proto_depIdxs = []int32{
 	10, // 52: services.docstore.DocStoreService.GetDocumentReferences:output_type -> services.docstore.GetDocumentReferencesResponse
 	12, // 53: services.docstore.DocStoreService.GetDocumentRelations:output_type -> services.docstore.GetDocumentRelationsResponse
 	14, // 54: services.docstore.DocStoreService.AddDocumentReference:output_type -> services.docstore.AddDocumentReferenceResponse
-	16, // 55: services.docstore.DocStoreService.RemoveDcoumentReference:output_type -> services.docstore.RemoveDcoumentReferenceResponse
+	16, // 55: services.docstore.DocStoreService.RemoveDocumentReference:output_type -> services.docstore.RemoveDocumentReferenceResponse
 	18, // 56: services.docstore.DocStoreService.AddDocumentRelation:output_type -> services.docstore.AddDocumentRelationResponse
-	20, // 57: services.docstore.DocStoreService.RemoveDcoumentRelation:output_type -> services.docstore.RemoveDcoumentRelationResponse
+	20, // 57: services.docstore.DocStoreService.RemoveDocumentRelation:output_type -> services.docstore.RemoveDocumentRelationResponse
 	22, // 58: services.docstore.DocStoreService.GetDocumentComments:output_type -> services.docstore.GetDocumentCommentsResponse
 	24, // 59: services.docstore.DocStoreService.PostDocumentComment:output_type -> services.docstore.PostDocumentCommentResponse
 	26, // 60: services.docstore.DocStoreService.EditDocumentComment:output_type -> services.docstore.EditDocumentCommentResponse
@@ -2702,7 +2702,7 @@ func file_services_docstore_docstore_proto_init() {
 			}
 		}
 		file_services_docstore_docstore_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RemoveDcoumentReferenceRequest); i {
+			switch v := v.(*RemoveDocumentReferenceRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2714,7 +2714,7 @@ func file_services_docstore_docstore_proto_init() {
 			}
 		}
 		file_services_docstore_docstore_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RemoveDcoumentReferenceResponse); i {
+			switch v := v.(*RemoveDocumentReferenceResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2750,7 +2750,7 @@ func file_services_docstore_docstore_proto_init() {
 			}
 		}
 		file_services_docstore_docstore_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RemoveDcoumentRelationRequest); i {
+			switch v := v.(*RemoveDocumentRelationRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2762,7 +2762,7 @@ func file_services_docstore_docstore_proto_init() {
 			}
 		}
 		file_services_docstore_docstore_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RemoveDcoumentRelationResponse); i {
+			switch v := v.(*RemoveDocumentRelationResponse); i {
 			case 0:
 				return &v.state
 			case 1:

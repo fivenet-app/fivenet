@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DocumentRelation, DOC_RELATION } from '@arpanet/gen/resources/documents/documents_pb';
-import { GetDocumentRequest, RemoveDcoumentRelationRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { GetDocumentRequest, RemoveDocumentRelationRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import {
     Dialog,
     DialogPanel,
@@ -44,10 +44,10 @@ function findRelations(): void {
 }
 
 function removeRelation(id: number): void {
-    const req = new RemoveDcoumentRelationRequest();
+    const req = new RemoveDocumentRelationRequest();
     req.setId(id);
 
-    getDocStoreClient().removeDcoumentRelation(req, null).then(() => {
+    getDocStoreClient().removeDocumentRelation(req, null).then(() => {
         findRelations();
     });
 }

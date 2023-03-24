@@ -70,11 +70,11 @@ message AddDocumentReferenceResponse {
   uint64 id = 1;
 }
 
-message RemoveDcoumentReferenceRequest {
+message RemoveDocumentReferenceRequest {
   uint64 id = 1;
 }
 
-message RemoveDcoumentReferenceResponse {}
+message RemoveDocumentReferenceResponse {}
 
 message AddDocumentRelationRequest {
   resources.documents.DocumentRelation relation = 1;
@@ -84,11 +84,11 @@ message AddDocumentRelationResponse {
   uint64 id = 1;
 }
 
-message RemoveDcoumentRelationRequest {
+message RemoveDocumentRelationRequest {
   uint64 id = 1;
 }
 
-message RemoveDcoumentRelationResponse {}
+message RemoveDocumentRelationResponse {}
 
 message GetDocumentCommentsRequest {
   resources.common.database.PaginationResponse pagination = 1;
@@ -204,11 +204,11 @@ service DocStoreService {
   // @permission
   rpc AddDocumentReference(AddDocumentReferenceRequest) returns (AddDocumentReferenceResponse);
   // @permission: name=AddDocumentReference
-  rpc RemoveDcoumentReference(RemoveDcoumentReferenceRequest) returns (RemoveDcoumentReferenceResponse);
+  rpc RemoveDocumentReference(RemoveDocumentReferenceRequest) returns (RemoveDocumentReferenceResponse);
   // @permission
   rpc AddDocumentRelation(AddDocumentRelationRequest) returns (AddDocumentRelationResponse);
   // @permission: name=AddDocumentRelation
-  rpc RemoveDcoumentRelation(RemoveDcoumentRelationRequest) returns (RemoveDcoumentRelationResponse);
+  rpc RemoveDocumentRelation(RemoveDocumentRelationRequest) returns (RemoveDocumentRelationResponse);
 
   // @permission
   rpc GetDocumentComments(GetDocumentCommentsRequest) returns (GetDocumentCommentsResponse);

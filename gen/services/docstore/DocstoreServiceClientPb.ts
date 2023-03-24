@@ -426,47 +426,47 @@ export class DocStoreServiceClient {
     this.methodDescriptorAddDocumentReference);
   }
 
-  methodDescriptorRemoveDcoumentReference = new grpcWeb.MethodDescriptor(
-    '/services.docstore.DocStoreService/RemoveDcoumentReference',
+  methodDescriptorRemoveDocumentReference = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/RemoveDocumentReference',
     grpcWeb.MethodType.UNARY,
-    services_docstore_docstore_pb.RemoveDcoumentReferenceRequest,
-    services_docstore_docstore_pb.RemoveDcoumentReferenceResponse,
-    (request: services_docstore_docstore_pb.RemoveDcoumentReferenceRequest) => {
+    services_docstore_docstore_pb.RemoveDocumentReferenceRequest,
+    services_docstore_docstore_pb.RemoveDocumentReferenceResponse,
+    (request: services_docstore_docstore_pb.RemoveDocumentReferenceRequest) => {
       return request.serializeBinary();
     },
-    services_docstore_docstore_pb.RemoveDcoumentReferenceResponse.deserializeBinary
+    services_docstore_docstore_pb.RemoveDocumentReferenceResponse.deserializeBinary
   );
 
-  removeDcoumentReference(
-    request: services_docstore_docstore_pb.RemoveDcoumentReferenceRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.RemoveDcoumentReferenceResponse>;
+  removeDocumentReference(
+    request: services_docstore_docstore_pb.RemoveDocumentReferenceRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.RemoveDocumentReferenceResponse>;
 
-  removeDcoumentReference(
-    request: services_docstore_docstore_pb.RemoveDcoumentReferenceRequest,
+  removeDocumentReference(
+    request: services_docstore_docstore_pb.RemoveDocumentReferenceRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.RemoveDcoumentReferenceResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.RemoveDcoumentReferenceResponse>;
+               response: services_docstore_docstore_pb.RemoveDocumentReferenceResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.RemoveDocumentReferenceResponse>;
 
-  removeDcoumentReference(
-    request: services_docstore_docstore_pb.RemoveDcoumentReferenceRequest,
+  removeDocumentReference(
+    request: services_docstore_docstore_pb.RemoveDocumentReferenceRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.RemoveDcoumentReferenceResponse) => void) {
+               response: services_docstore_docstore_pb.RemoveDocumentReferenceResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.docstore.DocStoreService/RemoveDcoumentReference',
+          '/services.docstore.DocStoreService/RemoveDocumentReference',
         request,
         metadata || {},
-        this.methodDescriptorRemoveDcoumentReference,
+        this.methodDescriptorRemoveDocumentReference,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.docstore.DocStoreService/RemoveDcoumentReference',
+      '/services.docstore.DocStoreService/RemoveDocumentReference',
     request,
     metadata || {},
-    this.methodDescriptorRemoveDcoumentReference);
+    this.methodDescriptorRemoveDocumentReference);
   }
 
   methodDescriptorAddDocumentRelation = new grpcWeb.MethodDescriptor(
@@ -512,47 +512,47 @@ export class DocStoreServiceClient {
     this.methodDescriptorAddDocumentRelation);
   }
 
-  methodDescriptorRemoveDcoumentRelation = new grpcWeb.MethodDescriptor(
-    '/services.docstore.DocStoreService/RemoveDcoumentRelation',
+  methodDescriptorRemoveDocumentRelation = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/RemoveDocumentRelation',
     grpcWeb.MethodType.UNARY,
-    services_docstore_docstore_pb.RemoveDcoumentRelationRequest,
-    services_docstore_docstore_pb.RemoveDcoumentRelationResponse,
-    (request: services_docstore_docstore_pb.RemoveDcoumentRelationRequest) => {
+    services_docstore_docstore_pb.RemoveDocumentRelationRequest,
+    services_docstore_docstore_pb.RemoveDocumentRelationResponse,
+    (request: services_docstore_docstore_pb.RemoveDocumentRelationRequest) => {
       return request.serializeBinary();
     },
-    services_docstore_docstore_pb.RemoveDcoumentRelationResponse.deserializeBinary
+    services_docstore_docstore_pb.RemoveDocumentRelationResponse.deserializeBinary
   );
 
-  removeDcoumentRelation(
-    request: services_docstore_docstore_pb.RemoveDcoumentRelationRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.RemoveDcoumentRelationResponse>;
+  removeDocumentRelation(
+    request: services_docstore_docstore_pb.RemoveDocumentRelationRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.RemoveDocumentRelationResponse>;
 
-  removeDcoumentRelation(
-    request: services_docstore_docstore_pb.RemoveDcoumentRelationRequest,
+  removeDocumentRelation(
+    request: services_docstore_docstore_pb.RemoveDocumentRelationRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.RemoveDcoumentRelationResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.RemoveDcoumentRelationResponse>;
+               response: services_docstore_docstore_pb.RemoveDocumentRelationResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.RemoveDocumentRelationResponse>;
 
-  removeDcoumentRelation(
-    request: services_docstore_docstore_pb.RemoveDcoumentRelationRequest,
+  removeDocumentRelation(
+    request: services_docstore_docstore_pb.RemoveDocumentRelationRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: services_docstore_docstore_pb.RemoveDcoumentRelationResponse) => void) {
+               response: services_docstore_docstore_pb.RemoveDocumentRelationResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.docstore.DocStoreService/RemoveDcoumentRelation',
+          '/services.docstore.DocStoreService/RemoveDocumentRelation',
         request,
         metadata || {},
-        this.methodDescriptorRemoveDcoumentRelation,
+        this.methodDescriptorRemoveDocumentRelation,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.docstore.DocStoreService/RemoveDcoumentRelation',
+      '/services.docstore.DocStoreService/RemoveDocumentRelation',
     request,
     metadata || {},
-    this.methodDescriptorRemoveDcoumentRelation);
+    this.methodDescriptorRemoveDocumentRelation);
   }
 
   methodDescriptorGetDocumentComments = new grpcWeb.MethodDescriptor(
