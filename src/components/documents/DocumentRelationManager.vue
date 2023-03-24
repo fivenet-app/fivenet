@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
+import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 import { DOC_RELATION_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
-import { DocumentRelation, DOC_RELATION } from '@arpanet/gen/resources/documents/documents_pb';
+import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { GetDocumentRequest, RemoveDocumentRelationRequest, AddDocumentRelationRequest } from '@arpanet/gen/services/docstore/docstore_pb';
@@ -20,8 +20,7 @@ import {
 import {
     XMarkIcon,
     ArrowTopRightOnSquareIcon,
-    DocumentMinusIcon,
-    DocumentPlusIcon,
+    UserMinusIcon,
     UserPlusIcon,
     MagnifyingGlassIcon,
     ChatBubbleBottomCenterTextIcon,
@@ -202,9 +201,9 @@ function removeRelation(id: number): void {
                                                                             <div class="flex">
                                                                                 <button role="button"
                                                                                     @click="removeRelation(ref.getId())">
-                                                                                    <DocumentMinusIcon
+                                                                                    <UserMinusIcon
                                                                                         class="w-6 h-auto text-red-700 hover:text-red-500">
-                                                                                    </DocumentMinusIcon>
+                                                                                    </UserMinusIcon>
                                                                                 </button>
                                                                             </div>
                                                                         </div>

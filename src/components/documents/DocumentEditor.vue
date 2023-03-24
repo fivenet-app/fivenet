@@ -234,7 +234,7 @@ function submitForm(): void {
 
 function editForm(): void {
     const req = new UpdateDocumentRequest();
-    req.setDocumentId(9);
+    req.setDocumentId(props.id!);
     req.setTitle(title.value);
     req.setContent(content.value);
     req.setContentType(DOC_CONTENT_TYPE.HTML);
