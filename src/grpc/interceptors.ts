@@ -29,14 +29,14 @@ export class UnaryErrorHandlerInterceptor implements UnaryInterceptor<any, any> 
 }
 
 // Handle GRPC errors
-export function handleGRPCError(err: RpcError) {
+export async function handleGRPCError(err: RpcError) {
     switch (err.code) {
         case StatusCode.UNAUTHENTICATED:
-            store.dispatch('auth/doLogout');
+            await store.dispatch('auth/doLogout');
 
             dispatchNotification({ title: 'Please login again', content: 'You are not signed in anymore', type: 'warning' });
 
-            router.push({ path: '/login', query: { redirect: router.currentRoute.value.fullPath } });
+            await router.push({ path: '/login', query: { redirect: router.currentRoute.value.fullPath }, replace: true, force: true });
             break;
         case StatusCode.PERMISSION_DENIED:
             dispatchNotification({ title: 'Permission denied', content: err.message, type: 'error' });

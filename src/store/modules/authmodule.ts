@@ -47,27 +47,26 @@ const authModule: Module<AuthModuleState, RootState> = {
         },
     },
     actions: {
-        async doLogin({ commit }, loginData: LoginRequest) {
+        async doLogin({ commit }, req: LoginRequest) {
             commit('loginStart');
+            commit('updateActiveChar', null);
+            commit('updatePermissions', []);
 
             const client = new AuthServiceClient(config.apiProtoURL, null, null);
             return client
-                .login(loginData, null)
+                .login(req, null)
                 .then((response) => {
                     commit('loginStop', null);
                     commit('updateAccessToken', response.getToken());
-                    commit('updateActiveChar', null);
-                    commit('updatePermissions', []);
                 })
                 .catch((err: RpcError) => {
                     commit('loginStop', err.message);
                     commit('updateAccessToken', null);
-                    commit('updateActiveChar', null);
-                    commit('updatePermissions', []);
                 });
         },
         async doLogout({ commit }) {
             commit('loginStart');
+            commit('updateAccessToken', null);
             commit('updateActiveChar', null);
             commit('updatePermissions', []);
 
@@ -75,7 +74,6 @@ const authModule: Module<AuthModuleState, RootState> = {
                 .logout(new LogoutRequest(), null)
                 .then((response) => {
                     commit('loginStop', null);
-                    commit('updateAccessToken', null);
 
                     if (response.getSuccess()) {
                         return;
@@ -83,7 +81,6 @@ const authModule: Module<AuthModuleState, RootState> = {
                 })
                 .catch((err: RpcError) => {
                     commit('loginStop', err.message);
-                    commit('updateAccessToken', null);
                     dispatchNotification({ title: 'Error during logout!', content: err.message, type: 'error' });
                 });
         },

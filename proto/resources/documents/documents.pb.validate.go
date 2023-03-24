@@ -2120,67 +2120,7 @@ func (m *DocumentReference) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
-
-	if all {
-		switch v := interface{}(m.GetCreatedAt()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentReferenceValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentReferenceValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentReferenceValidationError{
-				field:  "CreatedAt",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	// no validation rules for SourceDocumentId
-
-	if all {
-		switch v := interface{}(m.GetSourceDocument()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentReferenceValidationError{
-					field:  "SourceDocument",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentReferenceValidationError{
-					field:  "SourceDocument",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetSourceDocument()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentReferenceValidationError{
-				field:  "SourceDocument",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
 
 	if _, ok := DOC_REFERENCE_name[int32(m.GetReference())]; !ok {
 		err := DocumentReferenceValidationError{
@@ -2226,33 +2166,107 @@ func (m *DocumentReference) validate(all bool) error {
 
 	// no validation rules for CreatorId
 
-	if all {
-		switch v := interface{}(m.GetCreator()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentReferenceValidationError{
-					field:  "Creator",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentReferenceValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentReferenceValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentReferenceValidationError{
+				return DocumentReferenceValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.SourceDocument != nil {
+
+		if all {
+			switch v := interface{}(m.GetSourceDocument()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentReferenceValidationError{
+						field:  "SourceDocument",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentReferenceValidationError{
+						field:  "SourceDocument",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSourceDocument()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentReferenceValidationError{
+					field:  "SourceDocument",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Creator != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreator()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentReferenceValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentReferenceValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentReferenceValidationError{
 					field:  "Creator",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentReferenceValidationError{
-				field:  "Creator",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -2357,67 +2371,7 @@ func (m *DocumentRelation) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
-
-	if all {
-		switch v := interface{}(m.GetCreatedAt()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentRelationValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentRelationValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentRelationValidationError{
-				field:  "CreatedAt",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	// no validation rules for DocumentId
-
-	if all {
-		switch v := interface{}(m.GetDocument()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentRelationValidationError{
-					field:  "Document",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentRelationValidationError{
-					field:  "Document",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentRelationValidationError{
-				field:  "Document",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
 
 	if m.GetSourceUserId() <= 0 {
 		err := DocumentRelationValidationError{
@@ -2428,35 +2382,6 @@ func (m *DocumentRelation) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetSourceUser()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentRelationValidationError{
-					field:  "SourceUser",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentRelationValidationError{
-					field:  "SourceUser",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetSourceUser()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentRelationValidationError{
-				field:  "SourceUser",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
 	}
 
 	if _, ok := DOC_RELATION_name[int32(m.GetRelation())]; !ok {
@@ -2481,33 +2406,140 @@ func (m *DocumentRelation) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if all {
-		switch v := interface{}(m.GetTargetUser()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentRelationValidationError{
-					field:  "TargetUser",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentRelationValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentRelationValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentRelationValidationError{
+				return DocumentRelationValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Document != nil {
+
+		if all {
+			switch v := interface{}(m.GetDocument()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentRelationValidationError{
+						field:  "Document",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentRelationValidationError{
+						field:  "Document",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentRelationValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.SourceUser != nil {
+
+		if all {
+			switch v := interface{}(m.GetSourceUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentRelationValidationError{
+						field:  "SourceUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentRelationValidationError{
+						field:  "SourceUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSourceUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentRelationValidationError{
+					field:  "SourceUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.TargetUser != nil {
+
+		if all {
+			switch v := interface{}(m.GetTargetUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentRelationValidationError{
+						field:  "TargetUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentRelationValidationError{
+						field:  "TargetUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetTargetUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentRelationValidationError{
 					field:  "TargetUser",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetTargetUser()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentRelationValidationError{
-				field:  "TargetUser",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {

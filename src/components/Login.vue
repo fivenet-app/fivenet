@@ -1,12 +1,21 @@
 <script lang="ts" setup>
 import { useStore } from '../store/store';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { LoginRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
+import { useRouter } from 'vue-router/auto';
 
 const store = useStore();
+const router = useRouter();
 
 const loginError = computed(() => store.state.auth?.loginError);
+const accesToken = computed(() => store.state.auth?.accessToken);
+
+watch(accesToken, () => {
+    if (accesToken) {
+        router.push({ name: 'Character Selector' });
+    }
+});
 
 const credentials = ref<{ username: string, password: string }>({ username: '', password: '' });
 
@@ -21,7 +30,7 @@ function loginSubmit() {
 <template>
     <div class="m-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form @submit.prevent="loginSubmit" class="space-y-6" action="#" method="POST">
+            <form @submit.prevent="loginSubmit" class="space-y-6" action="#">
                 <div>
                     <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
                     <div class="mt-2">

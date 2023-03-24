@@ -59,7 +59,7 @@ func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenManager, p perms.P
 // AuthFuncOverride is called instead of exampleAuthFunc
 func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
 	// Skip authentication for the login endpoint
-	if fullMethod == "/services.auth.AuthService/Login" {
+	if fullMethod == "/services.auth.AuthService/Login" || fullMethod == "/services.auth.AuthService/Logout" {
 		return ctx, nil
 	}
 

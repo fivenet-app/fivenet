@@ -134,15 +134,15 @@ enum DOC_REFERENCE {
 }
 
 message DocumentReference {
-  uint64 id = 1; // @gotags: alias:"id"
-  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  optional uint64 id = 1; // @gotags: alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   uint64 source_document_id = 3; // @gotags: alias:"source_document_id"
-  resources.documents.DocumentShort source_document = 4; // @gotags: alias:"source_document"
+  optional resources.documents.DocumentShort source_document = 4; // @gotags: alias:"source_document"
   DOC_REFERENCE reference = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"reference"
   uint64 target_document_id = 6; // @gotags: alias:"target_document_id"
   resources.documents.DocumentShort target_document = 7; // @gotags: alias:"target_document"
   int32 creator_id = 8; // @gotags: alias:"creator_id"
-  resources.users.UserShort creator = 9; // @gotags: alias:"ref_creator"
+  optional resources.users.UserShort creator = 9; // @gotags: alias:"ref_creator"
 }
 
 enum DOC_RELATION {
@@ -152,13 +152,13 @@ enum DOC_RELATION {
 }
 
 message DocumentRelation {
-  uint64 id = 1; // @gotags: alias:"id"
-  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  optional uint64 id = 1; // @gotags: alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   uint64 document_id = 3; // @gotags: alias:"document_id"
-  resources.documents.DocumentShort document = 4; // @gotags: alias:"document"
+  optional resources.documents.DocumentShort document = 4; // @gotags: alias:"document"
   int32 source_user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"source_user_id"
-  resources.users.UserShort source_user = 6; // @gotags: alias:"source_user"
+  optional resources.users.UserShort source_user = 6; // @gotags: alias:"source_user"
   DOC_RELATION relation = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"relation"
   int32 target_user_id = 8 [(validate.rules).int32.gt = 0]; // @gotags: alias:"target_user_id"
-  resources.users.UserShort target_user = 9; // @gotags: alias:"target_user"
+  optional resources.users.UserShort target_user = 9; // @gotags: alias:"target_user"
 }

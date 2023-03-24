@@ -543,6 +543,8 @@ export namespace DocumentUserAccess {
 export class DocumentReference extends jspb.Message {
   getId(): number;
   setId(value: number): DocumentReference;
+  hasId(): boolean;
+  clearId(): DocumentReference;
 
   getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
   setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentReference;
@@ -586,7 +588,7 @@ export class DocumentReference extends jspb.Message {
 
 export namespace DocumentReference {
   export type AsObject = {
-    id: number,
+    id?: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     sourceDocumentId: number,
     sourceDocument?: DocumentShort.AsObject,
@@ -596,11 +598,33 @@ export namespace DocumentReference {
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
+
+  export enum IdCase { 
+    _ID_NOT_SET = 0,
+    ID = 1,
+  }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum SourceDocumentCase { 
+    _SOURCE_DOCUMENT_NOT_SET = 0,
+    SOURCE_DOCUMENT = 4,
+  }
+
+  export enum CreatorCase { 
+    _CREATOR_NOT_SET = 0,
+    CREATOR = 9,
+  }
 }
 
 export class DocumentRelation extends jspb.Message {
   getId(): number;
   setId(value: number): DocumentRelation;
+  hasId(): boolean;
+  clearId(): DocumentRelation;
 
   getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
   setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentRelation;
@@ -644,7 +668,7 @@ export class DocumentRelation extends jspb.Message {
 
 export namespace DocumentRelation {
   export type AsObject = {
-    id: number,
+    id?: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     documentId: number,
     document?: DocumentShort.AsObject,
@@ -653,6 +677,31 @@ export namespace DocumentRelation {
     relation: DOC_RELATION,
     targetUserId: number,
     targetUser?: resources_users_users_pb.UserShort.AsObject,
+  }
+
+  export enum IdCase { 
+    _ID_NOT_SET = 0,
+    ID = 1,
+  }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum DocumentCase { 
+    _DOCUMENT_NOT_SET = 0,
+    DOCUMENT = 4,
+  }
+
+  export enum SourceUserCase { 
+    _SOURCE_USER_NOT_SET = 0,
+    SOURCE_USER = 6,
+  }
+
+  export enum TargetUserCase { 
+    _TARGET_USER_NOT_SET = 0,
+    TARGET_USER = 9,
   }
 }
 

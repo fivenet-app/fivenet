@@ -1,23 +1,23 @@
 <script lang="ts" setup>
 import Footer from '../components/partials/Footer.vue';
-import Login from '../components/Login.vue';
 import ContentWrapper from '../components/partials/ContentWrapper.vue';
 import NavPageHeader from '../components/partials/NavPageHeader.vue';
+import CharacterSelector from '../components/login/CharacterSelector.vue';
 </script>
 
 <route lang="json">
 {
-    "name": "Login",
+    "name": "Character Selector",
     "meta": {
-        "requiresAuth": false
+        "requiresAuth": true
     }
 }
 </route>
 
 <template>
-    <NavPageHeader title="Login" />
+    <NavPageHeader title="Character Selector" />
     <ContentWrapper>
-        <Login />
+        <CharacterSelector />
     </ContentWrapper>
     <Footer />
 </template>

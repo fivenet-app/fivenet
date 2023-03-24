@@ -22,7 +22,7 @@ router.beforeResolve((to, from) => {
                 const perm = slug(to.meta.permission as string);
                 if (store.state.auth?.permissions.includes(perm)) {
                     // User has permission
-                    return;
+                    return true;
                 } else {
                     dispatchNotification({
                         title: "You don't have permission!",

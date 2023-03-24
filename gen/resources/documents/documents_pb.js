@@ -4262,8 +4262,8 @@ proto.resources.documents.DocumentReference.prototype.serializeBinary = function
  */
 proto.resources.documents.DocumentReference.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getId();
-  if (f !== 0) {
+  f = /** @type {number} */ (jspb.Message.getField(message, 1));
+  if (f != null) {
     writer.writeUint64(
       1,
       f
@@ -4346,7 +4346,25 @@ proto.resources.documents.DocumentReference.prototype.getId = function() {
  * @return {!proto.resources.documents.DocumentReference} returns this
  */
 proto.resources.documents.DocumentReference.prototype.setId = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.documents.DocumentReference} returns this
+ */
+proto.resources.documents.DocumentReference.prototype.clearId = function() {
+  return jspb.Message.setField(this, 1, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.DocumentReference.prototype.hasId = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -4716,8 +4734,8 @@ proto.resources.documents.DocumentRelation.prototype.serializeBinary = function(
  */
 proto.resources.documents.DocumentRelation.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getId();
-  if (f !== 0) {
+  f = /** @type {number} */ (jspb.Message.getField(message, 1));
+  if (f != null) {
     writer.writeUint64(
       1,
       f
@@ -4800,7 +4818,25 @@ proto.resources.documents.DocumentRelation.prototype.getId = function() {
  * @return {!proto.resources.documents.DocumentRelation} returns this
  */
 proto.resources.documents.DocumentRelation.prototype.setId = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.documents.DocumentRelation} returns this
+ */
+proto.resources.documents.DocumentRelation.prototype.clearId = function() {
+  return jspb.Message.setField(this, 1, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.DocumentRelation.prototype.hasId = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
