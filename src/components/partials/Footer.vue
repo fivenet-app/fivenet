@@ -5,10 +5,10 @@ const navigation = {
 </script>
 
 <template>
-    <footer class="bg-gray-900">
-        <div class="mx-auto max-w-7xl overflow-hidden py-14 px-6 sm:py-14 lg:px-8">
-            <img class="h-14 mx-auto" :src="navigation.logo" alt="CIP Logo" />
-            <p class="mt-10 text-center text-xs leading-5 text-gray-500">
+    <footer class="bg-base-850">
+        <div class="py-6 sm:py-8 flex flex-row items-center mx-auto w-fit gap-5">
+            <img class="w-16 h-auto" :src="navigation.logo" alt="CIP Logo" />
+            <p class=" text-center text-s leading-5 text-neutral">
                 Copyright &copy; 2023 Galexrt All rights reserved.
             </p>
         </div>
