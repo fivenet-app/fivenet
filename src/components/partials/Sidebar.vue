@@ -95,9 +95,13 @@ onMounted(() => {
         ];
     }
 
-    const sidebarIndex = sidebarNavigation.findIndex(e => e.href.toLowerCase() === route.name.toLowerCase());
-    if (sidebarIndex !== -1) {
-        currSidebar.value = sidebarNavigation[sidebarIndex].name;
+    if (route.name) {
+        const sidebarIndex = sidebarNavigation.findIndex(e => e.href.toLowerCase() === route.name.toLowerCase());
+        if (sidebarIndex !== -1) {
+            currSidebar.value = sidebarNavigation[sidebarIndex].name;
+        } else {
+            currSidebar.value = sidebarNavigation[0].name;
+        }
     } else {
         currSidebar.value = sidebarNavigation[0].name;
     }
