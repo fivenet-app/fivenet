@@ -47,7 +47,7 @@ function toggleOrderBy(column: string): void {
     let orderBy: OrderBy;
     if (index > -1) {
         //@ts-ignore I just checked if it exists, so it should exist
-        orderBy = orderBys.at(index);
+        orderBy = orderBys.value.at(index);
         if (orderBy.getDesc()) {
             orderBys.value.splice(index);
         }
