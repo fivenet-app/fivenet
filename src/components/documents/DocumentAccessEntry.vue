@@ -156,13 +156,13 @@ watch(selectedAccessRole, () => {
                             <ListboxOption as="template" v-for="accessType in accessTypes" :key="accessType.id"
                                 :value="accessType" v-slot="{ active, selected }">
                                 <li
-                                    :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
+                                    :class="[active ? 'bg-indigo-600 text-neutral' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
                                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
                                         accessType.name
                                     }}</span>
 
                                     <span v-if="selected"
-                                        :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                        :class="[active ? 'text-neutral' : 'text-indigo-600', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
                                         <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -188,13 +188,13 @@ watch(selectedAccessRole, () => {
                             <ComboboxOption v-for="char in entriesChars" :key="char.getIdentifier()" :value="char" as="char"
                                 v-slot="{ active, selected }">
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-neutral' : 'text-gray-900']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ char.getFirstname() }} {{ char.getLastname() }}
                                     </span>
 
                                     <span v-if="selected"
-                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-neutral' : 'text-indigo-600']">
                                         <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -219,13 +219,13 @@ watch(selectedAccessRole, () => {
                             <ComboboxOption v-for="job in entriesJobs" :key="job.getName()" :value="job" as="job"
                                 v-slot="{ active, selected }">
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-neutral' : 'text-gray-900']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ job.getLabel() }}
                                     </span>
 
                                     <span v-if="selected"
-                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-neutral' : 'text-indigo-600']">
                                         <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -249,13 +249,13 @@ watch(selectedAccessRole, () => {
                             <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.getGrade()" :value="rank"
                                 as="minimumrank" v-slot="{ active, selected }">
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-neutral' : 'text-gray-900']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ rank.getLabel() }}
                                     </span>
 
                                     <span v-if="selected"
-                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-neutral' : 'text-indigo-600']">
                                         <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -280,13 +280,13 @@ watch(selectedAccessRole, () => {
                         <ComboboxOption v-for="role in entriesAccessRole" :key="role.id" :value="role" as="accessrole"
                             v-slot="{ active, selected }">
                             <li
-                                :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-neutral' : 'text-gray-900']">
                                 <span :class="['block truncate', selected && 'font-semibold']">
                                     {{ toTitleCase(role.value.toLowerCase()) }}
                                 </span>
 
                                 <span v-if="selected"
-                                    :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                    :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-neutral' : 'text-indigo-600']">
                                     <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                 </span>
                             </li>
@@ -297,7 +297,7 @@ watch(selectedAccessRole, () => {
         </div>
         <div class="flex-initial">
             <button type="button"
-                class="rounded-full bg-indigo-600 p-1.5 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                class="rounded-full bg-indigo-600 p-1.5 text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                 <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest', { id: props.init.id })" aria-hidden="true" />
             </button>
         </div>

@@ -19,7 +19,7 @@ defineProps({
 
 <template>
     <div>
-        <span v-if="relations.length == 0" class="text-white">No Document Relations found.</span>
+        <span v-if="relations.length == 0" class="text-neutral">No Document Relations found.</span>
         <!-- Relations list (smallest breakpoint only) -->
         <div v-if="relations.length > 0" class="shadow sm:hidden">
             <ul role="list" class="mt-2 divide-y divide-gray-200 overflow-hidden shadow sm:hidden">

@@ -61,7 +61,7 @@ onBeforeMount(() => {
                     <form @submit.prevent="findDocuments(0)">
                         <div class="grid grid-cols-5 gap-4">
                             <div class="col-span-4 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-white">Title Search</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Title Search</label>
                                 <div class="relative mt-2 flex items-center">
                                     <input v-model="search.title" ref="searchInput"
                                         type="text" name="search" id="search"
@@ -71,7 +71,7 @@ onBeforeMount(() => {
                             <div class="form-control">
                                 <div class="relative mt-2 flex items-center">
                                     <router-link :to="{ name: 'Documents: Create' }"
-                                        class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Create</router-link>
+                                        class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-neutral shadow-sm hover:bg-white/20">Create</router-link>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +83,7 @@ onBeforeMount(() => {
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <button v-if="documents.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                            <DocumentMagnifyingGlassIcon class="text-white mx-auto h-12 w-12" />
+                            <DocumentMagnifyingGlassIcon class="text-neutral mx-auto h-12 w-12" />
                             <span class="mt-2 block text-sm font-semibold text-gray-300">No Documents found! Either update
                                 your search
                                 query or create the first document using the above "Create"-button.</span>

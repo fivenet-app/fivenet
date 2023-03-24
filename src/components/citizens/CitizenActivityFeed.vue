@@ -35,7 +35,7 @@ onBeforeMount(() => {
 <template>
     <div>
         <span v-if="activities.length === 0">
-            <p class="text-sm font-medium text-white">
+            <p class="text-sm font-medium text-neutral">
                 No Citizen Activities found.
             </p>
         </span>
@@ -47,7 +47,7 @@ onBeforeMount(() => {
                     </div>
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-medium text-white">{{ activity.getSourceUser()?.getFirstname() }} {{
+                            <h3 class="text-sm font-medium text-neutral">{{ activity.getSourceUser()?.getFirstname() }} {{
                                 activity.getSourceUser()?.getLastname() }}</h3>
                             <p class="text-sm text-gray-400">{{ getDateRelativeString(activity.getCreatedAt()) }}</p>
                         </div>

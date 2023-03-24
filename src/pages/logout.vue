@@ -29,7 +29,7 @@ onBeforeMount(() => {
 
 <template>
     <HeroFull>
-        <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+        <h1 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
             Signed out
         </h1>
         <p class="mt-6 text-lg leading-8 text-gray-300">

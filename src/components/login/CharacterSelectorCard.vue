@@ -60,13 +60,13 @@ function chooseCharacter() {
                         class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
                             char.getJobLabel() }} (Rank: {{ char.getJobGradeLabel() }})</span>
                 </dd>
-                <dt class="text-sm text-white">Date of Birth</dt>
+                <dt class="text-sm text-neutral">Date of Birth</dt>
                 <dd class="text-sm text-gray-300">{{ char.getDateofbirth() }}</dd>
-                <dt class="text-sm text-white">Height</dt>
+                <dt class="text-sm text-neutral">Height</dt>
                 <dd class="text-sm text-gray-300">{{ char.getHeight() }}cm</dd>
-                <dt class="text-sm text-white">Visum</dt>
+                <dt class="text-sm text-neutral">Visum</dt>
                 <dd class="text-sm text-gray-300">{{ char.getVisum() }}</dd>
-                <dt class="text-sm text-white">Playtime</dt>
+                <dt class="text-sm text-neutral">Playtime</dt>
                 <dd class="text-sm text-gray-300">{{ getSecondsFormattedAsDuration(char.getPlaytime()) }}</dd>
             </dl>
         </div>
@@ -74,7 +74,7 @@ function chooseCharacter() {
             <div class="-mt-px flex">
                 <div class="flex w-0 flex-1">
                     <button @click="chooseCharacter()"
-                        class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-b-lg border border-transparent py-4 text-sm font-semibold text-white bg-base-700 hover:bg-base-600 transition-colors">
+                        class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-b-lg border border-transparent py-4 text-sm font-semibold text-neutral bg-base-700 hover:bg-base-600 transition-colors">
                         Choose
                     </button>
                 </div>

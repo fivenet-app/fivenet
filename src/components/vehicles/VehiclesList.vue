@@ -97,7 +97,7 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                     <form @submit.prevent="findVehicles(0)">
                         <div class="grid grid-cols-5 gap-4">
                             <div class="col-span-4 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-white">Plate</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Plate</label>
                                 <div class="relative mt-2 flex items-center">
                                     <input v-model="search.name" ref="searchInput"
                                         type="text" name="search" id="search"
@@ -113,7 +113,7 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <button v-if="vehicles.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                            <MagnifyingGlassIcon class="text-white mx-auto h-12 w-12" />
+                            <MagnifyingGlassIcon class="text-neutral mx-auto h-12 w-12" />
                             <span class="mt-2 block text-sm font-semibold text-gray-300">Use the search field
                                 above</span>
                         </button>
@@ -122,20 +122,20 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                 <thead>
                                     <tr>
                                         <th v-on:click="toggleOrderBy('plate')" scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
                                             Plate
                                         </th>
                                         <th v-on:click="toggleOrderBy('model')" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-white">Model
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Model
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">Type
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Type
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Owner
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Job
                                         </th>
                                         <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
@@ -150,20 +150,20 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                 <thead>
                                     <tr>
                                         <th v-on:click="toggleOrderBy('plate')" scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
                                             Plate
                                         </th>
                                         <th v-on:click="toggleOrderBy('model')" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-white">Model
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Model
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-white">Type
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Type
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Owner
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-white">
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Job
                                         </th>
                                         <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">

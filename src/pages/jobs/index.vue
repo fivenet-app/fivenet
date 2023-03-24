@@ -14,6 +14,6 @@ import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 
 <template>
     <ContentWrapper>
-        <h1 class="text-lg font-semibold leading-6 text-white">EMPLOYEE INFO AND MANAGEMENT SYSTEM</h1>
+        <h1 class="text-lg font-semibold leading-6 text-neutral">EMPLOYEE INFO AND MANAGEMENT SYSTEM</h1>
     </ContentWrapper>
 </template>

@@ -14,7 +14,7 @@ defineProps({
 
 <template>
     <div>
-        <span v-if="references.length == 0" class="text-white">No Document References found.</span>
+        <span v-if="references.length == 0" class="text-neutral">No Document References found.</span>
         <!-- Relations list (smallest breakpoint only) -->
         <div v-if="references.length > 0" class="shadow sm:hidden">
             <ul role="list" class="mt-2 divide-y divide-gray-200 overflow-hidden shadow sm:hidden">

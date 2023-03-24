@@ -37,7 +37,7 @@ onMounted(() => {
 
 <template>
     <span v-if="relations.length === 0">
-        <p class="text-sm font-medium text-white">
+        <p class="text-sm font-medium text-neutral">
             No Documents found.
         </p>
     </span>

@@ -314,13 +314,13 @@ function editForm(): void {
                         <ComboboxOption v-for="category in entriesCategory" :key="category.getId()" :value="category"
                             as="category" v-slot="{ active, selected }">
                             <li
-                                :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
+                                :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-neutral' : 'text-gray-900']">
                                 <span :class="['block truncate', selected && 'font-semibold']">
                                     {{ category.getName() }}
                                 </span>
 
                                 <span v-if="selected"
-                                    :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-white' : 'text-indigo-600']">
+                                    :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-neutral' : 'text-indigo-600']">
                                     <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                 </span>
                             </li>
@@ -355,13 +355,13 @@ function editForm(): void {
                             <ListboxOption as="template" v-for="type in openclose" :key="type.id" :value="type"
                                 v-slot="{ active, selected }">
                                 <li
-                                    :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
+                                    :class="[active ? 'bg-indigo-600 text-neutral' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
                                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
                                         type.label
                                     }}</span>
 
                                     <span v-if="selected"
-                                        :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                        :class="[active ? 'text-neutral' : 'text-indigo-600', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
                                         <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -378,11 +378,11 @@ function editForm(): void {
     <div class="flex flex-row" v-if="$props.id">
         <div class="flex-1">
             <button type="button"
-                class="rounded-bl-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="showRelationManager = true">Citizen Relations</button>
+                class="rounded-bl-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="showRelationManager = true">Citizen Relations</button>
         </div>
         <div class="flex-1">
             <button type="button"
-                class="rounded-br-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="showReferenceManager = true">Document References</button>
+                class="rounded-br-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="showReferenceManager = true">Document References</button>
         </div>
     </div>
     <div class="my-3">
@@ -392,13 +392,13 @@ function editForm(): void {
             @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
             @deleteRequest="removeAccessEntry($event)" />
         <button type="button"
-            class="rounded-full bg-indigo-600 p-2 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            class="rounded-full bg-indigo-600 p-2 text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             data-te-toggle="tooltip" title="Add Permission" @click="addAccessEntry()">
             <PlusIcon class="h-5 w-5" aria-hidden="true" />
         </button>
     </div>
     <button v-if="!props.id" @click="submitForm()"
-        class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Submit</button>
+        class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-neutral shadow-sm hover:bg-white/20">Submit</button>
     <button v-if="props.id" @click="editForm()"
-        class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Edit</button>
+        class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-neutral shadow-sm hover:bg-white/20">Edit</button>
 </template>
