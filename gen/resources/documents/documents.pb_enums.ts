@@ -22,7 +22,7 @@ export class DOC_CONTENT_TYPE_Util {
             case 1:
                 return enums.DOC_CONTENT_TYPE.PLAIN;
             }
-        return;
+        return enums.DOC_CONTENT_TYPE.HTML;
     }
 
     public static fromString(input: String): enums.DOC_CONTENT_TYPE {
@@ -64,7 +64,7 @@ export class DOC_ACCESS_Util {
             case 4:
                 return enums.DOC_ACCESS.EDIT;
             }
-        return;
+        return enums.DOC_ACCESS.BLOCKED;
     }
 
     public static fromString(input: String): enums.DOC_ACCESS {
@@ -112,7 +112,7 @@ export class DOC_REFERENCE_Util {
             case 3:
                 return enums.DOC_REFERENCE.DEPRECATES;
             }
-        return;
+        return enums.DOC_REFERENCE.LINKED;
     }
 
     public static fromString(input: String): enums.DOC_REFERENCE {
@@ -154,7 +154,7 @@ export class DOC_RELATION_Util {
             case 2:
                 return enums.DOC_RELATION.CAUSED;
             }
-        return;
+        return enums.DOC_RELATION.MENTIONED;
     }
 
     public static fromString(input: String): enums.DOC_RELATION {

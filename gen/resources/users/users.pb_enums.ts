@@ -25,7 +25,7 @@ export class USER_ACTIVITY_TYPE_Util {
             case 2:
                 return enums.USER_ACTIVITY_TYPE.CREATED;
             }
-        return;
+        return enums.USER_ACTIVITY_TYPE.CHANGED;
     }
 
     public static fromString(input: String): enums.USER_ACTIVITY_TYPE {

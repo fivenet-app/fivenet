@@ -216,7 +216,12 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 			docRef.TargetDocumentID,
 			docRef.CreatorID,
 		).
-		MODEL(req.Reference)
+		VALUES(
+			req.Reference.SourceDocumentId,
+			req.Reference.Reference,
+			req.Reference.TargetDocumentId,
+			req.Reference.CreatorId,
+		)
 
 	result, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
@@ -296,7 +301,12 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 			docRel.Relation,
 			docRel.TargetUserID,
 		).
-		MODEL(req.Relation)
+		VALUES(
+			req.Relation.DocumentId,
+			req.Relation.SourceUserId,
+			req.Relation.Relation,
+			req.Relation.TargetUserId,
+		)
 
 	result, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {

@@ -73,7 +73,10 @@ export class {{ .Descriptor.Name }}_Util {
                 return enums.{{ $enum.Descriptor.Name }}.{{ $val.Descriptor.Name }};
             {{ end -}}
         }
-        return;
+        {{- range $k, $val := .Values }}
+        return enums.{{ $enum.Descriptor.Name }}.{{ $val.Descriptor.Name }};
+        {{- break }}
+        {{- end }}
     }
 
     public static fromString(input: String): enums.{{ .Descriptor.Name }} {

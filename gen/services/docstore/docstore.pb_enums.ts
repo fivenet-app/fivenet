@@ -25,7 +25,7 @@ export class DOC_ACCESS_UPDATE_MODE_Util {
             case 2:
                 return enums.DOC_ACCESS_UPDATE_MODE.CLEAR;
             }
-        return;
+        return enums.DOC_ACCESS_UPDATE_MODE.UPDATE;
     }
 
     public static fromString(input: String): enums.DOC_ACCESS_UPDATE_MODE {
