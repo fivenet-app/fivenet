@@ -9,7 +9,7 @@ import "validate/validate.proto";
 message UserShort {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
   string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
-  string job = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  string job = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
   string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 job_grade = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"job_grade"
   string job_grade_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
@@ -20,7 +20,7 @@ message UserShort {
 message UserShortNI {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
   string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
-  string job = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  string job = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
   string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 job_grade = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"job_grade"
   string job_grade_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
@@ -31,7 +31,7 @@ message UserShortNI {
 message User {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
   string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
-  string job = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  string job = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
   string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 job_grade = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"job_grade"
   string job_grade_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"

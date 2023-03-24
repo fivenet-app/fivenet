@@ -52,16 +52,13 @@
     - [ ] Fire employees
 - [x] Permissions System
     - [x] Based on Job + Job Rank/ Grade
-- [ ] "Admin" panel for faction leaders
-    - [ ] Setting permission per rank
+- [ ] "Admin" access for server admins
+    - [ ] Use ESX user groups
 - [ ] Breadcrumbs
   - [ ] Use "page title" (e.g., when viewing an user or editing a document) it should be reflected in the breadcrumbs, instead of just relying on the path
   - [ ] Correctly make href based on breadcrumb
-
-### Future Ideas
-
-- [ ] Completor Service
-    - [ ] Use [Bleve search](https://blevesearch.com/)
+- [x] Completor Service
+    - [x] Use [Bleve search](https://blevesearch.com/)
 
 ## Development
 
@@ -109,4 +106,4 @@ You must use this forked version: [Github jrapoport/grpc-web-devtools](https://g
 
 ## Livemap
 
-Based upon https://gist.github.com/NelsonMinar/6600524#file-maketiles-sh and CopNet/ MedicNet code.
+Based upon https://gist.github.com/NelsonMinar/6600524#file-maketiles-sh and VPC's CopNet/ MedicNet livemap code.

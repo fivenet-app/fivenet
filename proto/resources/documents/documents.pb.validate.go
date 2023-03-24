@@ -70,10 +70,10 @@ func (m *DocumentCategory) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
 		err := DocumentCategoryValidationError{
 			field:  "Job",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -256,10 +256,10 @@ func (m *DocumentTemplate) validate(all bool) error {
 		}
 	}
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
 		err := DocumentTemplateValidationError{
 			field:  "Job",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -555,10 +555,10 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 		}
 	}
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
 		err := DocumentTemplateShortValidationError{
 			field:  "Job",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -1600,10 +1600,10 @@ func (m *DocumentJobAccess) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
 		err := DocumentJobAccessValidationError{
 			field:  "Job",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -1622,10 +1622,10 @@ func (m *DocumentJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetMinimumGrade() < 0 {
+	if m.GetMinimumGrade() <= 0 {
 		err := DocumentJobAccessValidationError{
 			field:  "MinimumGrade",
-			reason: "value must be greater than or equal to 0",
+			reason: "value must be greater than 0",
 		}
 		if !all {
 			return err

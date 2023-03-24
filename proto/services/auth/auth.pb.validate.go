@@ -914,3 +914,238 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = LogoutResponseValidationError{}
+
+// Validate checks the field values on SetJobRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SetJobRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetJobRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SetJobRequestMultiError, or
+// nil if none found.
+func (m *SetJobRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetJobRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetCharId() <= 0 {
+		err := SetJobRequestValidationError{
+			field:  "CharId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
+		err := SetJobRequestValidationError{
+			field:  "Job",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetJobGrade() <= 0 {
+		err := SetJobRequestValidationError{
+			field:  "JobGrade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return SetJobRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetJobRequestMultiError is an error wrapping multiple validation errors
+// returned by SetJobRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SetJobRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetJobRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetJobRequestMultiError) AllErrors() []error { return m }
+
+// SetJobRequestValidationError is the validation error returned by
+// SetJobRequest.Validate if the designated constraints aren't met.
+type SetJobRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetJobRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetJobRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetJobRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetJobRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetJobRequestValidationError) ErrorName() string { return "SetJobRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SetJobRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetJobRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetJobRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetJobRequestValidationError{}
+
+// Validate checks the field values on SetJobResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SetJobResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetJobResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SetJobResponseMultiError,
+// or nil if none found.
+func (m *SetJobResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetJobResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Token
+
+	if len(errors) > 0 {
+		return SetJobResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetJobResponseMultiError is an error wrapping multiple validation errors
+// returned by SetJobResponse.ValidateAll() if the designated constraints
+// aren't met.
+type SetJobResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetJobResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetJobResponseMultiError) AllErrors() []error { return m }
+
+// SetJobResponseValidationError is the validation error returned by
+// SetJobResponse.Validate if the designated constraints aren't met.
+type SetJobResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetJobResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetJobResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetJobResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetJobResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetJobResponseValidationError) ErrorName() string { return "SetJobResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SetJobResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetJobResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetJobResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetJobResponseValidationError{}

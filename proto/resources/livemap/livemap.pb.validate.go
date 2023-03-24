@@ -261,10 +261,10 @@ func (m *UserMarker) validate(all bool) error {
 
 	// no validation rules for Link
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
 		err := UserMarkerValidationError{
 			field:  "Job",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err

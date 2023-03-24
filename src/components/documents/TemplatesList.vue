@@ -27,7 +27,13 @@ function getTemplate(id: number): void {
     req.setTemplateId(id);
     req.setRender(true);
 
-    const data: any = { user: activeChar.value };
+    const data: any = { user: {
+        firstname: activeChar.value?.getFirstname(),
+        lastname: activeChar.value?.getLastname(),
+        sex: activeChar.value?.getSex(),
+        dateofbirth: activeChar.value?.getDateofbirth(),
+
+    } };
     req.setData(JSON.stringify(data));
 
     getDocStoreClient().
@@ -73,6 +79,12 @@ onBeforeMount(() => {
             </div>
         </div>
         <hr>
-        <span class="text-2xl text-white">{{ templateObj }}</span>
+        <div class="text-2xl text-white">
+            <h2 class="text-3xl">{{ templateObj?.getContentTitle() }}</h2>
+            <hr>
+            <p>
+                {{ templateObj?.getContent() }}
+            </p>
+        </div>
     </div>
 </template>

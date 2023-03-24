@@ -31,6 +31,7 @@ function loginSubmit() {
 <template>
     <div class="max-w-xl mx-auto">
         <div class="bg-base-850 py-8 px-4 rounded-lg sm:px-10">
+            <h2 class="text-white text-center text-3xl pb-4">Login</h2>
             <form @submit.prevent="loginSubmit" class="space-y-6 my-2" action="#">
                 <div>
                     <label for="username" class="sr-only">Username</label>

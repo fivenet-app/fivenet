@@ -36,6 +36,16 @@ message LogoutResponse {
   bool success = 1;
 }
 
+message SetJobRequest {
+  int32 char_id = 1 [(validate.rules).int32.gt = 0];
+  string job = 2 [(validate.rules).string.max_len = 50];
+  int32 job_grade = 3 [(validate.rules).int32.gt = 0];
+}
+
+message SetJobResponse {
+  string token = 1;
+}
+
 service AuthService {
   rpc Login(LoginRequest) returns (LoginResponse);
   // @permission
@@ -43,4 +53,6 @@ service AuthService {
   // @permission: name=GetCharacters
   rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
+  // @permission
+  rpc SetJob(SetJobRequest) returns (SetJobResponse);
 }

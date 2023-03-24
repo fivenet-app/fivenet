@@ -28,7 +28,7 @@ message UserMarker {
   string popup = 7;
   string link = 8;
 
-  string job = 9 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  string job = 9 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
   string jobLabel = 10;
   resources.users.UserShort user = 11; // @gotags: alias:"user"
 }

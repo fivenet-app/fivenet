@@ -6,7 +6,7 @@ option go_package = "github.com/galexrt/arpanet/proto/resources/jobs;jobs";
 import "validate/validate.proto";
 
 message Job {
-  string name = 1 [(validate.rules).string.max_len = 20]; // @gotags: sql:"primary_key" alias:"name"
+  string name = 1 [(validate.rules).string.max_len = 50]; // @gotags: sql:"primary_key" alias:"name"
   string label = 2 [(validate.rules).string.max_len = 50]; // @gotags: alias:"label"
   repeated JobGrade grades = 3;
 }

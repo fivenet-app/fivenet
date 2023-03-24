@@ -151,3 +151,47 @@ export namespace LogoutResponse {
   }
 }
 
+export class SetJobRequest extends jspb.Message {
+  getCharId(): number;
+  setCharId(value: number): SetJobRequest;
+
+  getJob(): string;
+  setJob(value: string): SetJobRequest;
+
+  getJobGrade(): number;
+  setJobGrade(value: number): SetJobRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SetJobRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: SetJobRequest): SetJobRequest.AsObject;
+  static serializeBinaryToWriter(message: SetJobRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SetJobRequest;
+  static deserializeBinaryFromReader(message: SetJobRequest, reader: jspb.BinaryReader): SetJobRequest;
+}
+
+export namespace SetJobRequest {
+  export type AsObject = {
+    charId: number,
+    job: string,
+    jobGrade: number,
+  }
+}
+
+export class SetJobResponse extends jspb.Message {
+  getToken(): string;
+  setToken(value: string): SetJobResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SetJobResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SetJobResponse): SetJobResponse.AsObject;
+  static serializeBinaryToWriter(message: SetJobResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SetJobResponse;
+  static deserializeBinaryFromReader(message: SetJobResponse, reader: jspb.BinaryReader): SetJobResponse;
+}
+
+export namespace SetJobResponse {
+  export type AsObject = {
+    token: string,
+  }
+}
+

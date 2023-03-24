@@ -80,10 +80,10 @@ func (m *UserShort) validate(all bool) error {
 
 	}
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
 		err := UserShortValidationError{
 			field:  "Job",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -268,10 +268,10 @@ func (m *UserShortNI) validate(all bool) error {
 
 	}
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
 		err := UserShortNIValidationError{
 			field:  "Job",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -455,10 +455,10 @@ func (m *User) validate(all bool) error {
 
 	}
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
 		err := UserValidationError{
 			field:  "Job",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err

@@ -201,12 +201,7 @@ func buildCharSearchIdentifier(license string) string {
 	return "char%:" + license
 }
 
-func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-
+func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, error) {
 	stmt := user.
 		SELECT(
 			user.ID,
@@ -228,7 +223,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 			),
 		).
 		WHERE(
-			user.ID.EQ(jet.Int32(req.CharId)),
+			user.ID.EQ(jet.Int32(charId)),
 		).
 		LIMIT(1)
 
@@ -237,6 +232,20 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		if errors.Is(qrm.ErrNoRows, err) {
 			return nil, NoCharacterFoundErr
 		}
+		return nil, err
+	}
+
+	return &char, nil
+}
+
+func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
+	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	char, err := s.getCharacter(ctx, req.CharId)
+	if err != nil {
 		return nil, err
 	}
 
@@ -251,7 +260,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	token, err := s.createTokenFromAccountAndChar(account, &char)
+	token, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
 		return nil, err
 	}
@@ -351,5 +360,35 @@ func (s *Server) ensureUserHasRole(userId int32, job string, jobGrade int32) err
 func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutResponse, error) {
 	return &LogoutResponse{
 		Success: true,
+	}, nil
+}
+
+func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobResponse, error) {
+	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	char, err := s.getCharacter(ctx, claims.ActiveCharID)
+	if err != nil {
+		return nil, err
+	}
+
+	char.Job = req.Job
+	char.JobGrade = req.JobGrade
+
+	// Load account data for token creation
+	account, err := s.getAccountFromDB(ctx, claims.Username)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := s.createTokenFromAccountAndChar(account, char)
+	if err != nil {
+		return nil, err
+	}
+
+	return &SetJobResponse{
+		Token: token,
 	}, nil
 }
