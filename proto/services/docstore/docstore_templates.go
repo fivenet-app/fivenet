@@ -1,10 +1,10 @@
 package docstore
 
 import (
+	"bytes"
 	context "context"
 	"encoding/json"
 	"html/template"
-	"os"
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/galexrt/arpanet/pkg/auth"
@@ -95,7 +95,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		return nil, err
 	}
 
-	if req.Process {
+	if req.Render != nil && *req.Render {
 		// Parse data as json for the templating process
 		var data map[string]interface{}
 		err := json.Unmarshal([]byte(req.Data), &data)
@@ -103,18 +103,19 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			return nil, err
 		}
 
-		resp.Template.Content, resp.Template.ContentTitle, err = s.renderDocumentTemplate(resp.Template, data)
+		resp.Template.ContentTitle, resp.Template.Content, err = s.renderDocumentTemplate(resp.Template, data)
 		if err != nil {
 			return nil, err
 		}
 
-		resp.Processed = true
+		resp.Rendered = true
 	}
 
 	return resp, nil
 }
 
-func (s *Server) renderDocumentTemplate(docTmpl *documents.DocumentTemplate, data map[string]interface{}) (out string, outTile string, err error) {
+func (s *Server) renderDocumentTemplate(docTmpl *documents.DocumentTemplate, data map[string]interface{}) (outTile string, out string, err error) {
+	// Render Title template
 	tmplTitle, err := template.
 		New("title").
 		Funcs(sprig.FuncMap()).
@@ -122,11 +123,14 @@ func (s *Server) renderDocumentTemplate(docTmpl *documents.DocumentTemplate, dat
 	if err != nil {
 		return
 	}
-	err = tmplTitle.Execute(os.Stdout, data)
+	buf := &bytes.Buffer{}
+	err = tmplTitle.Execute(buf, data)
 	if err != nil {
 		return
 	}
+	outTile = buf.String()
 
+	// Render Content Template
 	tmpl, err := template.
 		New("content").
 		Funcs(sprig.FuncMap()).
@@ -134,10 +138,13 @@ func (s *Server) renderDocumentTemplate(docTmpl *documents.DocumentTemplate, dat
 	if err != nil {
 		return
 	}
-	err = tmpl.Execute(os.Stdout, data)
+
+	buf.Reset()
+	err = tmpl.Execute(buf, data)
 	if err != nil {
 		return
 	}
+	out = buf.String()
 
 	return
 }

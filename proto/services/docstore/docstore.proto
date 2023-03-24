@@ -16,12 +16,12 @@ message ListTemplatesResponse {
 message GetTemplateRequest {
   uint64 template_id = 1;
   string data = 2 [(validate.rules).string.max_bytes = 1024];
-  bool process = 3;
+  optional bool render = 3;
 }
 
 message GetTemplateResponse {
   resources.documents.DocumentTemplate template = 1;
-  bool processed = 2;
+  bool rendered = 2;
 }
 
 message FindDocumentsRequest {

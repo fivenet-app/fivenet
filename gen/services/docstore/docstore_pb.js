@@ -1113,7 +1113,7 @@ proto.services.docstore.GetTemplateRequest.toObject = function(includeInstance, 
   var f, obj = {
     templateId: jspb.Message.getFieldWithDefault(msg, 1, 0),
     data: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    process: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
+    render: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
   };
 
   if (includeInstance) {
@@ -1160,7 +1160,7 @@ proto.services.docstore.GetTemplateRequest.deserializeBinaryFromReader = functio
       break;
     case 3:
       var value = /** @type {boolean} */ (reader.readBool());
-      msg.setProcess(value);
+      msg.setRender(value);
       break;
     default:
       reader.skipField();
@@ -1205,8 +1205,8 @@ proto.services.docstore.GetTemplateRequest.serializeBinaryToWriter = function(me
       f
     );
   }
-  f = message.getProcess();
-  if (f) {
+  f = /** @type {boolean} */ (jspb.Message.getField(message, 3));
+  if (f != null) {
     writer.writeBool(
       3,
       f
@@ -1252,10 +1252,10 @@ proto.services.docstore.GetTemplateRequest.prototype.setData = function(value) {
 
 
 /**
- * optional bool process = 3;
+ * optional bool render = 3;
  * @return {boolean}
  */
-proto.services.docstore.GetTemplateRequest.prototype.getProcess = function() {
+proto.services.docstore.GetTemplateRequest.prototype.getRender = function() {
   return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 3, false));
 };
 
@@ -1264,8 +1264,26 @@ proto.services.docstore.GetTemplateRequest.prototype.getProcess = function() {
  * @param {boolean} value
  * @return {!proto.services.docstore.GetTemplateRequest} returns this
  */
-proto.services.docstore.GetTemplateRequest.prototype.setProcess = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 3, value);
+proto.services.docstore.GetTemplateRequest.prototype.setRender = function(value) {
+  return jspb.Message.setField(this, 3, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.services.docstore.GetTemplateRequest} returns this
+ */
+proto.services.docstore.GetTemplateRequest.prototype.clearRender = function() {
+  return jspb.Message.setField(this, 3, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.docstore.GetTemplateRequest.prototype.hasRender = function() {
+  return jspb.Message.getField(this, 3) != null;
 };
 
 
@@ -1302,7 +1320,7 @@ proto.services.docstore.GetTemplateResponse.prototype.toObject = function(opt_in
 proto.services.docstore.GetTemplateResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     template: (f = msg.getTemplate()) && resources_documents_documents_pb.DocumentTemplate.toObject(includeInstance, f),
-    processed: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
+    rendered: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {
@@ -1346,7 +1364,7 @@ proto.services.docstore.GetTemplateResponse.deserializeBinaryFromReader = functi
       break;
     case 2:
       var value = /** @type {boolean} */ (reader.readBool());
-      msg.setProcessed(value);
+      msg.setRendered(value);
       break;
     default:
       reader.skipField();
@@ -1385,7 +1403,7 @@ proto.services.docstore.GetTemplateResponse.serializeBinaryToWriter = function(m
       resources_documents_documents_pb.DocumentTemplate.serializeBinaryToWriter
     );
   }
-  f = message.getProcessed();
+  f = message.getRendered();
   if (f) {
     writer.writeBool(
       2,
@@ -1433,10 +1451,10 @@ proto.services.docstore.GetTemplateResponse.prototype.hasTemplate = function() {
 
 
 /**
- * optional bool processed = 2;
+ * optional bool rendered = 2;
  * @return {boolean}
  */
-proto.services.docstore.GetTemplateResponse.prototype.getProcessed = function() {
+proto.services.docstore.GetTemplateResponse.prototype.getRendered = function() {
   return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
 };
 
@@ -1445,7 +1463,7 @@ proto.services.docstore.GetTemplateResponse.prototype.getProcessed = function() 
  * @param {boolean} value
  * @return {!proto.services.docstore.GetTemplateResponse} returns this
  */
-proto.services.docstore.GetTemplateResponse.prototype.setProcessed = function(value) {
+proto.services.docstore.GetTemplateResponse.prototype.setRendered = function(value) {
   return jspb.Message.setProto3BooleanField(this, 2, value);
 };
 

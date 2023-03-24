@@ -312,7 +312,9 @@ func (m *GetTemplateRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Process
+	if m.Render != nil {
+		// no validation rules for Render
+	}
 
 	if len(errors) > 0 {
 		return GetTemplateRequestMultiError(errors)
@@ -445,7 +447,7 @@ func (m *GetTemplateResponse) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Processed
+	// no validation rules for Rendered
 
 	if len(errors) > 0 {
 		return GetTemplateResponseMultiError(errors)

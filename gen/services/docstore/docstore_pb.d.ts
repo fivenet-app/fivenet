@@ -45,8 +45,10 @@ export class GetTemplateRequest extends jspb.Message {
   getData(): string;
   setData(value: string): GetTemplateRequest;
 
-  getProcess(): boolean;
-  setProcess(value: boolean): GetTemplateRequest;
+  getRender(): boolean;
+  setRender(value: boolean): GetTemplateRequest;
+  hasRender(): boolean;
+  clearRender(): GetTemplateRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetTemplateRequest.AsObject;
@@ -60,7 +62,12 @@ export namespace GetTemplateRequest {
   export type AsObject = {
     templateId: number,
     data: string,
-    process: boolean,
+    render?: boolean,
+  }
+
+  export enum RenderCase { 
+    _RENDER_NOT_SET = 0,
+    RENDER = 3,
   }
 }
 
@@ -70,8 +77,8 @@ export class GetTemplateResponse extends jspb.Message {
   hasTemplate(): boolean;
   clearTemplate(): GetTemplateResponse;
 
-  getProcessed(): boolean;
-  setProcessed(value: boolean): GetTemplateResponse;
+  getRendered(): boolean;
+  setRendered(value: boolean): GetTemplateResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetTemplateResponse.AsObject;
@@ -84,7 +91,7 @@ export class GetTemplateResponse extends jspb.Message {
 export namespace GetTemplateResponse {
   export type AsObject = {
     template?: resources_documents_documents_pb.DocumentTemplate.AsObject,
-    processed: boolean,
+    rendered: boolean,
   }
 }
 

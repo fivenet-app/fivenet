@@ -2,12 +2,14 @@ import { InjectionKey } from 'vue';
 import { createStore, useStore as baseUseStore, Store } from 'vuex';
 import VuexPersistence from 'vuex-persist';
 import authmodule, { AuthModuleState } from './modules/authmodule';
+import clipboardModule, { ClipboardModuleState } from './modules/clipboardmodule';
 import loadermodule, { LoaderModuleState } from './modules/loadermodule';
 
 export interface RootState {
     version: string;
     loader?: LoaderModuleState;
     auth?: AuthModuleState;
+    clipboard?: ClipboardModuleState;
 }
 
 const vuexPersist = new VuexPersistence<RootState>({
@@ -19,6 +21,7 @@ const vuexPersist = new VuexPersistence<RootState>({
             accessToken: state.auth?.accessToken,
             lastCharID: state.auth?.lastCharID,
         },
+        clipboard: {}
     }),
 });
 
@@ -28,6 +31,7 @@ export const store = createStore<RootState>({
     plugins: [vuexPersist.plugin],
     modules: {
         auth: authmodule,
+        clipboard: clipboardModule,
         loader: loadermodule,
     },
     state: {
