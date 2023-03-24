@@ -36,10 +36,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <span v-if="relations.length === 0">
+    <div class="mt-3">
+        <span v-if="relations.length === 0">
         <p class="text-sm font-medium text-neutral">
             No Documents found.
         </p>
     </span>
     <DocumentRelations v-else :showDocument="true" :relations="relations" />
+    </div>
 </template>

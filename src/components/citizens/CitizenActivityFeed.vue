@@ -33,7 +33,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div>
+    <div class="mt-3">
         <span v-if="activities.length === 0">
             <p class="text-sm font-medium text-neutral">
                 No Citizen Activities found.
