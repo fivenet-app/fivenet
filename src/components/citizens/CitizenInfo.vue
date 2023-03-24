@@ -25,7 +25,7 @@ defineProps({
 <template>
     <div class="sm:min-h-[52rem]">
         <div class="flex flex-row items-center gap-3">
-            <p class="text-xl font-bold text-neutral sm:text-3xl inline-flex">
+            <p class="text-xl font-bold text-neutral sm:text-4xl inline-flex">
                 {{ user?.getFirstname() }}, {{ user?.getLastname() }}
             </p>
             <span
