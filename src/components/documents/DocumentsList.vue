@@ -54,7 +54,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div class="py-2 sm:min-h-[63rem]">
+    <div class="py-2 sm:min-h-[66rem]">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
@@ -90,7 +90,7 @@ onBeforeMount(() => {
                         </button>
                         <div v-else>
                             <ul class="flex flex-col">
-                                <li v-for="doc in documents" :key="doc.getId()" class="flex-initial hover:bg-base-800 rounded-lg">
+                                <li v-for="doc in documents" :key="doc.getId()" class="flex-initial hover:bg-base-800 bg-base-850 rounded-lg my-1">
                                     <router-link :to="{ name: 'Documents: Info', params: { id: doc.getId() } }">
                                         <div class="mx-2 mt-1 mb-4">
                                             <div class="flex flex-row">
@@ -131,7 +131,7 @@ onBeforeMount(() => {
                             </ul>
 
                             <TablePagination :offset="offset" :entries="documents.length" :end="listEnd" :total="totalCount"
-                                :callback="findDocuments" />
+                                :callback="findDocuments" class="mt-2" />
                         </div>
                     </div>
                 </div>
