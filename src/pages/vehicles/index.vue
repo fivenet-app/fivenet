@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import Footer from '../../components/partials/Footer.vue';
 import VehiclesList from '../../components/vehicles/VehiclesList.vue';
 </script>
 
@@ -17,5 +16,4 @@ import VehiclesList from '../../components/vehicles/VehiclesList.vue';
     <div class="w-full">
         <VehiclesList />
     </div>
-    <Footer />
 </template>

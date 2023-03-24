@@ -18,7 +18,6 @@ export const useUserData = defineLoader(async (route: RouteLocationNormalizedLoa
 </script>
 
 <script lang="ts" setup>
-import Footer from '../../components/partials/Footer.vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
@@ -43,5 +42,4 @@ const { data: user } = useUserData();
             <CitizenInfo :user="user" />
         </div>
     </ContentWrapper>
-    <Footer />
 </template>

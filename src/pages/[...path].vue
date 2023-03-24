@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useStore } from '../store/store';
 import HeroFull from '../components/partials/HeroFull.vue';
-import Footer from '../components/partials/Footer.vue';
 import './herofull-pattern.css';
 import { computed } from 'vue';
 
@@ -26,5 +25,4 @@ const accessToken = computed(() => store.state.auth?.accessToken);
         <router-link v-if="accessToken" :to="{ name: 'Overview' }" class="btn btn-primary">Overview</router-link>
         <router-link v-else :to="{ name: 'Login' }" class="btn btn-primary">Login</router-link>
     </HeroFull>
-    <Footer />
 </template>

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import Footer from '../../components/partials/Footer.vue';
 import Livemap from '../../components/Livemap.vue';
 </script>
 
@@ -17,5 +16,4 @@ import Livemap from '../../components/Livemap.vue';
     <div class="w-full">
         <Livemap />
     </div>
-    <Footer />
 </template>

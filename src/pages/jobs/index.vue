@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-import Footer from '../../components/partials/Footer.vue';
 </script>
 
 <route lang="json">
@@ -17,5 +16,4 @@ import Footer from '../../components/partials/Footer.vue';
     <ContentWrapper>
         <h1 class="text-lg font-semibold leading-6 text-white">EMPLOYEE INFO AND MANAGEMENT SYSTEM</h1>
     </ContentWrapper>
-    <Footer />
 </template>

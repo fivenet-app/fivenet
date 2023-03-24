@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import ContentWrapper from '../../../components/partials/ContentWrapper.vue';
 import DocumentEditor from '../../../components/documents/DocumentEditor.vue';
-import Footer from '../../../components/partials/Footer.vue';
 import { useRoute } from 'vue-router/auto';
 
 const route = useRoute<'Documents: Edit'>();
@@ -21,5 +20,4 @@ const route = useRoute<'Documents: Edit'>();
     <ContentWrapper>
         <DocumentEditor :id="parseInt(route.params.id)" />
     </ContentWrapper>
-    <Footer />
 </template>

@@ -2,7 +2,6 @@
 import { onBeforeMount } from 'vue';
 import { useStore } from '../store/store';
 import { useRouter } from 'vue-router/auto';
-import Footer from '../components/partials/Footer.vue';
 import HeroFull from '../components/partials/HeroFull.vue';
 import './herofull-pattern.css';
 
@@ -37,5 +36,4 @@ onBeforeMount(() => {
             We will redirect you to the home page in a few seconds.
         </p>
     </HeroFull>
-    <Footer />
 </template>
