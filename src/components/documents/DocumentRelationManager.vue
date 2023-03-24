@@ -53,7 +53,7 @@ const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
     { name: 'Add new', icon: UserPlusIcon },
 ]);
 
-let entriesUsers = [] as User[];
+const entriesUsers = ref<User[]>([]);
 const queryChar = ref('');
 
 onMounted(async () => {
@@ -67,10 +67,9 @@ async function findUsers(): Promise<void> {
     const req = new FindUsersRequest();
     req.setPagination((new PaginationRequest()).setOffset(0));
     req.setSearchname(queryChar.value);
-    req.setOrderbyList([new OrderBy().setColumn('firstname')])
 
     const resp = await getCitizenStoreClient().findUsers(req, null)
-    entriesUsers = resp.getUsersList().filter(user => !relations.value.find(r => r.getTargetUserId() === user.getUserId()));
+    entriesUsers.value = resp.getUsersList().filter(user => !relations.value.find(r => r.getTargetUserId() === user.getUserId()));
 }
 
 async function findRelations(): Promise<void> {
