@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
@@ -10,7 +10,8 @@ import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 
-const search = ref<{ name: string, wanted: boolean }>({ name: '', wanted: false });
+const queryName = ref('');
+const queryWanted = ref(false);
 const orderBys = ref<Array<OrderBy>>([]);
 const offset = ref(0);
 const totalCount = ref(0);
@@ -22,8 +23,8 @@ function findUsers(pos: number) {
 
     const req = new FindUsersRequest();
     req.setPagination((new PaginationRequest()).setOffset(pos));
-    req.setSearchname(search.value.name);
-    req.setWanted(search.value.wanted);
+    req.setSearchname(queryName.value);
+    req.setWanted(queryWanted.value);
     req.setOrderbyList(orderBys.value);
 
     getCitizenStoreClient().
@@ -71,7 +72,8 @@ function focusSearch(): void {
     }
 }
 
-watchDebounced(search.value, () => findUsers(0), { debounce: 650, maxWait: 1500 });
+watch(queryWanted, () => findUsers(0));
+watchDebounced(queryName, () => findUsers(0), { debounce: 650, maxWait: 1500 });
 
 onMounted(() => {
     findUsers(0);
@@ -88,7 +90,7 @@ onMounted(() => {
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">Search</label>
                                 <div class="relative mt-2 flex items-center">
-                                    <input v-model="search.name" ref="focusSearch" type="text" name="search"
+                                    <input v-model="queryName" ref="focusSearch" type="text" name="search"
                                         id="search" placeholder="Citizen Name"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral shadow-sm placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
@@ -97,11 +99,11 @@ onMounted(() => {
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">Only
                                     Wanted</label>
                                 <div class="relative mt-3 flex items-center">
-                                    <Switch v-model="search.wanted"
-                                        :class="[search.wanted ? 'bg-error-500' : 'bg-base-700', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2']">
+                                    <Switch v-model="queryWanted"
+                                        :class="[queryWanted ? 'bg-error-500' : 'bg-base-700', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2']">
                                         <span class="sr-only">Wanted</span>
                                         <span aria-hidden="true"
-                                            :class="[search.wanted ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral shadow ring-0 transition duration-200 ease-in-out']" />
+                                            :class="[queryWanted ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral shadow ring-0 transition duration-200 ease-in-out']" />
                                     </Switch>
                                 </div>
                             </div>
