@@ -2,11 +2,10 @@ import config from '../config';
 import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
 import { CitizenStoreServiceClient } from '@arpanet/gen/services/citizenstore/CitizenstoreServiceClientPb';
 import { CompletorServiceClient } from '@arpanet/gen/services/completor/CompletorServiceClientPb';
-import { DispatcherServiceClient } from '@arpanet/gen/services/dispatcher/DispatcherServiceClientPb';
+import { DMVServiceClient } from '@arpanet/gen/services/dmv/VehiclesServiceClientPb';
 import { DocStoreServiceClient } from '@arpanet/gen/services/docstore/DocstoreServiceClientPb';
 import { JobsServiceClient } from '@arpanet/gen/services/jobs/JobsServiceClientPb';
 import { LivemapperServiceClient } from '@arpanet/gen/services/livemapper/LivemapServiceClientPb';
-import { DMVServiceClient } from '@arpanet/gen/services/dmv/VehiclesServiceClientPb';
 import { AuthInterceptor, UnaryErrorHandlerInterceptor } from './interceptors';
 
 const authInterceptor = new AuthInterceptor();
