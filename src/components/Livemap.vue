@@ -3,11 +3,15 @@ import { onMounted, onBeforeUnmount, onUnmounted } from 'vue';
 import { getLivemapperClient } from '../grpc/grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
+import { handleGRPCError } from '../grpc/interceptors';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { handleGRPCError } from '../grpc/interceptors';
+
+function round(num: number): number {
+    return Math.round(num * 100) / 1000;
+}
 
 // Latitude and Longitiude popup on mouse over
 let _latlng: HTMLDivElement;
@@ -17,12 +21,13 @@ const Position = L.Control.extend({
         position: 'bottomleft',
     },
     onAdd: function () {
-        const latlng = L.DomUtil.create('div', 'mouseposition');
+        const latlng = L.DomUtil.create('div', 'leaflet-control-attribution mouseposition');
         _latlng = latlng;
+        _latlng.innerHTML = '<b>Latitude</b>: 0.0 | <b>Longtiude</b>: 0.0';
         return latlng;
     },
     updateHTML: function (lat: number, lng: number) {
-        _latlng.innerHTML = 'Latitude: ' + lat + '   Longitiude: ' + lng;
+        _latlng.innerHTML = '<b>Latitude</b>: ' + round(lat) + ' | <b>Longtiude</b>: ' + round(lng);
     },
 });
 const position = new Position();
