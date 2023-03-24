@@ -27,6 +27,7 @@ import {
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
 import { useStore } from '../../store/store';
 import { useRoute, useRouter } from 'vue-router/auto';
+import { ArrayElement } from '../../utils/types';
 
 const store = useStore();
 const route = useRoute();
@@ -41,51 +42,45 @@ const sidebarNavigation = [
         href: 'Home',
         permission: '',
         icon: HomeIcon,
-        current: false,
     },
     {
         name: 'Overview',
         href: 'Overview',
         permission: 'Overview.View',
         icon: Square2StackIcon,
-        current: false,
     },
     {
         name: 'Citizens',
         href: 'Citizens',
         permission: 'CitizenStoreService.FindUsers',
         icon: UsersIcon,
-        current: false,
     },
     {
         name: 'Vehicles',
         href: 'Vehicles',
         permission: 'DMVService.FindVehicles',
         icon: TruckIcon,
-        current: false,
     },
     {
         name: 'Documents',
         href: 'Documents',
         permission: 'DocStoreService.FindDocuments',
         icon: DocumentTextIcon,
-        current: false,
     },
     {
         name: 'Job',
         href: 'Jobs',
         permission: 'Jobs.View',
         icon: BriefcaseIcon,
-        current: false,
     },
     {
         name: 'Livemap',
         href: 'Livemap',
         permission: 'LivemapperService.Stream',
         icon: MapIcon,
-        current: false,
     },
-] as { name: string, href: keyof RouteNamedMap, permission: string, icon: FunctionalComponent, current: boolean }[];
+] as { name: string, href: keyof RouteNamedMap, permission: string, icon: FunctionalComponent }[];
+const currSidebar = ref('')
 let userNavigation = [
     { name: 'Login', href: 'Login' }
 ] as { name: string, href: string }[];
@@ -93,17 +88,15 @@ const breadcrumbs = [] as { name: string, href: string, current: boolean }[];
 const mobileMenuOpen = ref(false);
 
 onMounted(() => {
-    if (route.name) {
-        const sidebarElement = sidebarNavigation.find(e => e.name.toLowerCase() === route.name.toLowerCase());
-        if (sidebarElement) {
-            const sidebarIndex = sidebarNavigation.indexOf(sidebarElement);
-            sidebarNavigation[sidebarIndex].current = true;
-        } else {
-            sidebarNavigation[0].current = true;
-        }
+    const sidebarIndex = sidebarNavigation.findIndex(e => e.href.toLowerCase() === route.name.toLowerCase());
+    console.debug("🔎 • file: Sidebar.vue:97 • onMounted • sidebarIndex:", sidebarIndex)
+
+    if (sidebarIndex !== -1) {
+        currSidebar.value = sidebarNavigation[sidebarIndex].name;
     } else {
-        sidebarNavigation[0].current = true;
+        currSidebar.value = sidebarNavigation[0].name;
     }
+    console.debug("🔎 • file: Sidebar.vue:97 • onMounted • sidebarIndex:", sidebarNavigation)
 
     if (accessToken)
         userNavigation = [
@@ -139,10 +132,10 @@ onMounted(() => {
                 <div class="flex-1 w-full px-2 mt-6 space-y-1">
                     <router-link v-for="item in sidebarNavigation" :key="item.name" :to="{ name: item.href }"
                         v-can="item.permission"
-                        :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
-                        :aria-current="item.current ? 'page' : undefined">
+                        :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
+                        :aria-current="currSidebar === item.name ? 'page' : undefined">
                         <component :is="item.icon"
-                            :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
+                            :class="[currSidebar === item.name ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true" />
                         <span class="mt-2">{{ item.name }}</span>
                     </router-link>
@@ -184,10 +177,10 @@ onMounted(() => {
                                 <nav class="flex flex-col h-full">
                                     <div class="space-y-1">
                                         <router-link v-for="item in sidebarNavigation" :key="item.name" :to="item.href"
-                                            :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
-                                            :aria-current="item.current ? 'page' : undefined">
+                                            :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
+                                            :aria-current="currSidebar === item.name ? 'page' : undefined">
                                             <component :is="item.icon"
-                                                :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'mr-3 h-6 w-6']"
+                                                :class="[currSidebar === item.name ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'mr-3 h-6 w-6']"
                                                 aria-hidden="true" />
                                             <span>{{ item.name }}</span>
                                         </router-link>
