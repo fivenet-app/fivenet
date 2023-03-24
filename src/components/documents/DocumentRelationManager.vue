@@ -28,6 +28,7 @@ import {
     ExclamationTriangleIcon,
     ShieldExclamationIcon,
 } from '@heroicons/vue/24/outline';
+import { watchDebounced } from '@vueuse/core';
 import { onMounted, ref, FunctionalComponent } from 'vue';
 import { useRouter } from 'vue-router/auto';
 import { getCitizenStoreClient, getDocStoreClient } from '../../grpc/grpc';
@@ -55,35 +56,31 @@ const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
 let entriesUsers = [] as User[];
 const queryChar = ref('');
 
-onMounted(() => {
-    findRelations();
-    findUsers();
+onMounted(async () => {
+    await findRelations();
+    await findUsers();
 });
 
-function findUsers() {
+watchDebounced(queryChar, async () => await findUsers(), { debounce: 750, maxWait: 2000 });
+
+async function findUsers(): Promise<void> {
     const req = new FindUsersRequest();
     req.setPagination((new PaginationRequest()).setOffset(0));
     req.setSearchname(queryChar.value);
     req.setOrderbyList([new OrderBy().setColumn('firstname')])
 
-    getCitizenStoreClient().
-        findUsers(req, null).
-        then((resp) => {
-            entriesUsers = resp.getUsersList();
-        });
+    const resp = await getCitizenStoreClient().findUsers(req, null)
+    entriesUsers = resp.getUsersList().filter(user => !relations.value.find(r => r.getTargetUserId() === user.getUserId()));
 }
 
-function findRelations(): void {
+async function findRelations(): Promise<void> {
     if (!props.document) return;
 
     const req = new GetDocumentRequest();
     req.setDocumentId(props.document);
 
-    getDocStoreClient().
-        getDocumentRelations(req, null).
-        then((resp) => {
-            relations.value = resp.getRelationsList();
-        });
+    const resp = await getDocStoreClient().getDocumentRelations(req, null)
+    relations.value = resp.getRelationsList();
 }
 
 function addRelation(user: User, relation: number): void {
@@ -96,8 +93,9 @@ function addRelation(user: User, relation: number): void {
     const req = new AddDocumentRelationRequest();
     req.setRelation(rel);
 
-    getDocStoreClient().addDocumentRelation(req, null).then(() => {
-        findRelations();
+    getDocStoreClient().addDocumentRelation(req, null).then(async () => {
+        await findRelations();
+        await findUsers();
     });
 }
 
@@ -220,6 +218,12 @@ function removeRelation(id: number): void {
                                             </div>
                                         </TabPanel>
                                         <TabPanel class="w-full">
+                                            <div>
+                                                <label for="name" class="sr-only">Name</label>
+                                                <input type="name" name="name" id="name"
+                                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    placeholder="Citizen Name" v-model="queryChar" />
+                                            </div>
                                             <div class="flow-root">
                                                 <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
@@ -258,21 +262,29 @@ function removeRelation(id: number): void {
                                                                         class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
-                                                                                <button role="button" @click="addRelation(user, 0)" data-te-toggle="tooltip" title="Mentioned">
+                                                                                <button role="button"
+                                                                                    @click="addRelation(user, 0)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    title="Mentioned">
                                                                                     <ChatBubbleBottomCenterTextIcon
                                                                                         class="w-6 h-auto text-green-700 hover:text-green-500">
                                                                                     </ChatBubbleBottomCenterTextIcon>
                                                                                 </button>
                                                                             </div>
                                                                             <div class="flex">
-                                                                                <button role="button" @click="addRelation(user, 1)" data-te-toggle="tooltip" title="Targets">
+                                                                                <button role="button"
+                                                                                    @click="addRelation(user, 1)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    title="Targets">
                                                                                     <ExclamationTriangleIcon
                                                                                         class="w-6 h-auto text-yellow-700 hover:text-yellow-500">
                                                                                     </ExclamationTriangleIcon>
                                                                                 </button>
                                                                             </div>
                                                                             <div class="flex">
-                                                                                <button role="button" @click="addRelation(user, 2)" data-te-toggle="tooltip" title="Caused">
+                                                                                <button role="button"
+                                                                                    @click="addRelation(user, 2)"
+                                                                                    data-te-toggle="tooltip" title="Caused">
                                                                                     <ShieldExclamationIcon
                                                                                         class="w-6 h-auto text-red-700 hover:text-red-500">
                                                                                     </ShieldExclamationIcon>
@@ -294,11 +306,10 @@ function removeRelation(id: number): void {
                                 <button type="button"
                                     class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                                     @click="emit('close')">Close</button>
-                            </div>
-                        </DialogPanel>
-                    </TransitionChild>
-                </div>
+                        </div>
+                    </DialogPanel>
+                </TransitionChild>
             </div>
-        </Dialog>
-    </TransitionRoot>
-</template>
+        </div>
+    </Dialog>
+</TransitionRoot></template>
