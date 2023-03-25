@@ -73,7 +73,7 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
             const idx = state.users.findIndex((o: ClipboardUser) => {
                 return o.id === id;
             });
-            if (idx > 0) {
+            if (idx > -1) {
                 state.users.splice(idx, 1);
             }
         },
@@ -93,7 +93,7 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
             const idx = state.vehicles.findIndex((o: ClipboardVehicle) => {
                 return o.plate === plate;
             });
-            if (idx > 0) {
+            if (idx > -1) {
                 state.vehicles.splice(idx, 1);
             }
         },

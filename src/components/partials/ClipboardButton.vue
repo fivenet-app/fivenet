@@ -9,6 +9,7 @@ import {
 } from '@headlessui/vue';
 import { ClipboardDocumentListIcon } from '@heroicons/vue/24/solid';
 import { useStore } from '../../store/store';
+import { TruckIcon, UsersIcon } from '@heroicons/vue/20/solid';
 
 const store = useStore();
 
@@ -47,10 +48,14 @@ function setIsOpen(value: boolean): void {
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">Your
                                         Clipboard Contents</DialogTitle>
                                     <div class="mt-2 text-white">
-                                        <h3 class="font-medium">Users</h3>
-                                        <span v-if="users?.length === 0">
-                                            No Users in Clipboard.
-                                        </span>
+                                        <h3 class="font-medium pt-1 pb-1">Users</h3>
+                                        <button v-if="users?.length == 0" type="button"
+                                            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+                                            disabled>
+                                            <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
+                                            <span class="block mt-2 text-sm font-semibold text-gray-300">No Users in
+                                                Clipboard.</span>
+                                        </button>
                                         <table v-else class="min-w-full divide-y divide-gray-700">
                                             <thead>
                                                 <tr>
@@ -77,23 +82,30 @@ function setIsOpen(value: boolean): void {
                                                     <td
                                                         class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                                         <button
-                                                            @click="store.dispatch('clipboard/removeUser')">Remove</button>
+                                                            @click="store.dispatch('clipboard/removeUser', user.id)">Remove</button>
                                                     </td>
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        <h3 class="font-medium">Vehicles</h3>
-                                        <span v-if="vehicles?.length === 0">
-                                            No Vehicles in Clipboard.
-                                        </span>
+                                        <h3 class="font-medium pt-2 pb-1">Vehicles</h3>
+                                        <button v-if="vehicles?.length == 0" type="button"
+                                            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+                                            disabled>
+                                            <TruckIcon class="w-12 h-12 mx-auto text-neutral" />
+                                            <span class="block mt-2 text-sm font-semibold text-gray-300">No Vehicles in
+                                                Clipboard.</span>
+                                        </button>
                                         <table v-else class="min-w-full divide-y divide-gray-700">
                                             <thead>
                                                 <tr>
                                                     <th scope="col"
                                                         class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
-                                                        Name</th>
+                                                        Plate</th>
                                                     <th scope="col"
-                                                        class="py-3.5 px-3 text-left text-sm font-semibold text-white">Job
+                                                        class="py-3.5 px-3 text-left text-sm font-semibold text-white">Model
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="py-3.5 px-3 text-left text-sm font-semibold text-white">Owner
                                                     </th>
                                                     <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                                         <span class="sr-only">Remove</span>
@@ -101,18 +113,21 @@ function setIsOpen(value: boolean): void {
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-gray-800">
-                                                <tr v-for="user in users" :key="user.id">
+                                                <tr v-for="vehicle in vehicles" :key="vehicle.plate">
                                                     <td
                                                         class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
-                                                        {{ user.firstname }}, {{ user.lastname }}
+                                                        {{ vehicle.plate }}
                                                     </td>
                                                     <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-300">
-                                                        {{ user.jobLabel }} (Rank: {{ user.jobGradeLabel }})
+                                                        {{ vehicle.model }}
+                                                    </td>
+                                                    <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-300">
+                                                        {{ vehicle.owner.firstname }}, {{ vehicle.owner.lastname }}
                                                     </td>
                                                     <td
                                                         class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                                         <button
-                                                            @click="store.dispatch('clipboard/removeVehicle')">Remove</button>
+                                                            @click="store.dispatch('clipboard/removeVehicle', vehicle.plate)">Remove</button>
                                                     </td>
                                                 </tr>
                                             </tbody>
