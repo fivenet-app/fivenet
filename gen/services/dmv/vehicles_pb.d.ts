@@ -18,6 +18,9 @@ export class FindVehiclesRequest extends jspb.Message {
   getSearch(): string;
   setSearch(value: string): FindVehiclesRequest;
 
+  getModel(): string;
+  setModel(value: string): FindVehiclesRequest;
+
   getType(): string;
   setType(value: string): FindVehiclesRequest;
 
@@ -37,6 +40,7 @@ export namespace FindVehiclesRequest {
     pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
     orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
     search: string,
+    model: string,
     type: string,
     userId: number,
   }

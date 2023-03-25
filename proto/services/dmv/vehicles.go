@@ -41,6 +41,10 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 			jet.RawArgs{"$search": req.Search},
 		)))
 	}
+	if req.Model != "" {
+		req.Type = strings.ReplaceAll(req.Model, "%", "") + "%"
+		condition = jet.AND(condition, jet.BoolExp(vehicle.Model.LIKE(jet.String(req.Model))))
+	}
 	if req.Type != "" {
 		req.Type = strings.ReplaceAll(req.Type, "%", "") + "%"
 		condition = jet.AND(condition, jet.BoolExp(vehicle.Type.LIKE(jet.String(req.Type))))

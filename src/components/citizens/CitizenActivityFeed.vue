@@ -6,6 +6,7 @@ import { GetUserActivityRequest } from '@arpanet/gen/services/citizenstore/citiz
 import { UserActivity } from '@arpanet/gen/resources/users/users_pb';
 import { getDateRelativeString } from '../../utils/time';
 import { USER_ACTIVITY_TYPE_Util } from '@arpanet/gen/resources/users/users.pb_enums';
+import { RectangleGroupIcon } from '@heroicons/vue/24/outline';
 
 const activities = ref<Array<UserActivity>>([]);
 const defaultIcon = UserCircleIcon;
@@ -34,11 +35,12 @@ onBeforeMount(() => {
 
 <template>
     <div class="mt-3">
-        <span v-if="activities.length === 0">
-            <p class="text-sm font-medium text-neutral">
-                No Citizen Activities found.
-            </p>
-        </span>
+        <button v-if="activities.length == 0" type="button"
+            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+            disabled>
+            <RectangleGroupIcon class="w-12 h-12 mx-auto text-neutral" />
+            <span class="block mt-2 text-sm font-semibold text-gray-300">No User Activity found</span>
+        </button>
         <ul role="list" class="divide-y divide-gray-200">
             <li v-for="activity in activities" :key="activity.getId()" class="py-4">
                 <div class="flex space-x-3">
@@ -51,8 +53,9 @@ onBeforeMount(() => {
                                 activity.getSourceUser()?.getLastname() }}</h3>
                             <p class="text-sm text-gray-400">{{ getDateRelativeString(activity.getCreatedAt()) }}</p>
                         </div>
-                        <p class="text-sm text-gray-300">{{ activity.getKey() }} <span class="font-bold">{{ USER_ACTIVITY_TYPE_Util.toEnumKey(activity.getType()) }}</span>: {{
-                            activity.getOldvalue() }} ⇒ {{ activity.getNewvalue() }}</p>
+                        <p class="text-sm text-gray-300">{{ activity.getKey() }} <span class="font-bold">{{
+                            USER_ACTIVITY_TYPE_Util.toEnumKey(activity.getType()) }}</span>: {{
+        activity.getOldvalue() }} ⇒ {{ activity.getNewvalue() }}</p>
                     </div>
                 </div>
             </li>

@@ -32,7 +32,7 @@ const props = defineProps({
     },
 });
 
-const search = ref<{ name: string, type: string }>({ name: '', type: '' });
+const search = ref<{ plate: string, model: string }>({ plate: '', model: '' });
 const orderBys = ref<Array<OrderBy>>([]);
 const offset = ref(0);
 const totalCount = ref(0);
@@ -47,8 +47,8 @@ function findVehicles(pos: number) {
     if (props.userId && props.userId > 0) {
         req.setUserId(props.userId);
     }
-    req.setSearch(search.value.name);
-    req.setType(search.value.type);
+    req.setSearch(search.value.plate);
+    req.setModel(search.value.model);
     req.setOrderbyList(orderBys.value);
 
     getDMVClient().
@@ -111,10 +111,18 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                     <form @submit.prevent="findVehicles(0)">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Search</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">License Plate</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="search.name" ref="searchInput" type="text" name="search" id="search"
+                                    <input v-model="search.plate" ref="searchInput" type="text"
                                         placeholder="License plate"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                            <div class="flex-1 form-control">
+                                <label for="model" class="block text-sm font-medium leading-6 text-neutral">Model</label>
+                                <div class="relative flex items-center mt-2">
+                                    <input v-model="search.model" ref="searchInput" type="text" name="model" id="model"
+                                        placeholder="Model"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>

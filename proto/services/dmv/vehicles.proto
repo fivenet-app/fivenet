@@ -12,8 +12,9 @@ message FindVehiclesRequest {
   repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
   // Search params
   string search = 3;
-  string type = 4;
-  int32 user_id = 5;
+  string model = 4;
+  string type = 5;
+  int32 user_id = 6;
 }
 
 message FindVehiclesResponse {
