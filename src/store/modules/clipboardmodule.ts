@@ -1,63 +1,114 @@
-import { Module, Store } from 'vuex';
+import { GetterTree, Module, Store } from 'vuex';
 import { RootState } from '../store';
 import { TemplateData } from '@arpanet/gen/resources/documents/templates/templates_pb';
-import { User } from '@arpanet/gen/resources/users/users_pb';
+import { User, UserShort } from '@arpanet/gen/resources/users/users_pb';
+import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
 
 export interface ClipboardModuleState {
-    usersList: ClipboardUser[];
+    users: ClipboardUser[];
+    vehicles: ClipboardVehicle[];
 }
 
+export type Getters = {
+    getTemplateData(state: ClipboardModuleState): TemplateData;
+};
+
+export const getters: GetterTree<ClipboardModuleState, RootState> & Getters = {
+    getTemplateData(state: ClipboardModuleState): TemplateData {
+        const data = new TemplateData();
+
+        if (state.users) {
+            const users = new Array<User>();
+            state.users.forEach((v: ClipboardUser) => {
+                users.push(getUser(v));
+            });
+            data.setUsersList(users);
+        }
+
+        return data;
+    },
+};
+
 export class ClipboardUser {
-    private id: number;
-    private data: {
-        sex: string;
-        dateofbirth: string;
-        job: string;
-        jobLabel: string;
-        jobGrade: number;
-        jobGradeLabel: string;
-        firstname: string;
-        lastname: string;
-    };
+    public id: number | undefined;
+    public job: string | undefined;
+    public jobLabel: string | undefined;
+    public jobGrade: number | undefined;
+    public jobGradeLabel: string | undefined;
+    public firstname: string | undefined;
+    public lastname: string | undefined;
+    public sex: string | undefined;
+    public dateofbirth: string | undefined;
 
-    constructor(user: User) {
-        this.id = user.getUserId();
-        this.data = {
-            sex: user.getSex(),
-            dateofbirth: user.getDateofbirth(),
-            job: user.getJob(),
-            jobLabel: user.getJobLabel(),
-            jobGrade: user.getJobGrade(),
-            jobGradeLabel: user.getJobGradeLabel(),
-            firstname: user.getFirstname(),
-            lastname: user.getLastname(),
-        };
+    setUser(u: User): ClipboardUser {
+        this.id = u.getUserId();
+        this.job = u.getJob();
+        this.jobLabel = u.getJobLabel();
+        this.jobGrade = u.getJobGrade();
+        this.jobGradeLabel = u.getJobGradeLabel();
+        this.firstname = u.getFirstname();
+        this.lastname = u.getLastname();
+        this.sex = u.getSex();
+        this.dateofbirth = u.getDateofbirth();
+
+        return this;
     }
 
-    getId(): number {
-        return this.id;
+    setUserShort(u: UserShort): ClipboardUser {
+        this.id = u.getUserId();
+        this.job = u.getJob();
+        this.jobLabel = u.getJobLabel();
+        this.jobGrade = u.getJobGrade();
+        this.jobGradeLabel = u.getJobGradeLabel();
+        this.firstname = u.getFirstname();
+        this.lastname = u.getLastname();
+
+        return this;
+    }
+}
+
+function getUser(obj: ClipboardUser): User {
+    const u = new User();
+    u.setUserId(obj['id']!);
+    u.setJob(obj['job']!);
+    u.setJobLabel(obj['jobLabel']!);
+    u.setJobGrade(obj['jobGrade']!);
+    u.setJobGradeLabel(obj['jobGradeLabel']!);
+    u.setFirstname(obj['firstname']!);
+    u.setLastname(obj['lastname']!);
+    if (obj['sex']) {
+        u.setSex(obj['sex']!);
+    }
+    if (obj['dateofbirth']) {
+        u.setDateofbirth(obj['dateofbirth']!);
     }
 
-    getUser(): User {
-        const user = new User();
-        user.setUserId(this.id);
-        user.setSex(this.data.sex);
-        user.setDateofbirth(this.data.dateofbirth);
-        user.setJob(this.data.job);
-        user.setJobLabel(this.data.jobLabel);
-        user.setJobGrade(this.data.jobGrade);
-        user.setJobGradeLabel(this.data.jobGradeLabel);
-        user.setFirstname(this.data.firstname);
-        user.setLastname(this.data.lastname);
+    return u;
+}
 
-        return user;
+export class ClipboardVehicle {
+    public plate: string;
+    public model: string;
+    public type: string;
+    public owner: ClipboardUser;
+
+    constructor(v: Vehicle) {
+        this.plate = v.getPlate();
+        this.model = v.getModel();
+        this.type = v.getType();
+        const owner = new ClipboardUser();
+        if (v.getOwner()) {
+            owner.setUserShort(v.getOwner()!);
+        }
+        this.owner = owner;
     }
 }
 
 const clipboardModule: Module<ClipboardModuleState, RootState> = {
     namespaced: true,
     state: {
-        usersList: [],
+        users: [],
+        vehicles: [],
     },
     actions: {
         addUser({ commit }, user: User) {
@@ -71,39 +122,48 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
         },
     },
     mutations: {
+        // Users
         addUser(state: ClipboardModuleState, user: User): void {
-            const charIdx = state.usersList.findIndex((o: ClipboardUser) => {
-                return o.getId() === user.getUserId();
+            const idx = state.users.findIndex((o: ClipboardUser) => {
+                return o.id === user.getUserId();
             });
-            if (charIdx === -1) {
-                state.usersList.push(new ClipboardUser(user));
+            if (idx === -1) {
+                state.users.push((new ClipboardUser()).setUser(user));
             }
         },
         removeUser(state: ClipboardModuleState, id: number): void {
-            const charIdx = state.usersList.findIndex((o: ClipboardUser) => {
-                return o.getId() === id;
+            const idx = state.users.findIndex((o: ClipboardUser) => {
+                return o.id === id;
             });
-            if (charIdx > 0) {
-                state.usersList.splice(charIdx, 1);
+            if (idx > 0) {
+                state.users.splice(idx, 1);
             }
         },
-        clearUsers(state: ClipboardModuleState) {
-            state.usersList.splice(0, state.usersList.length);
+        clearUsers(state: ClipboardModuleState): void {
+            state.users.splice(0, state.users.length);
         },
-    },
-    getters: {
-        getTemplateData(state: ClipboardModuleState, getters): TemplateData {
-            const data = new TemplateData();
-            if (state.usersList) {
-                const usersList = new Array<User>();
-                state.usersList.forEach((v: ClipboardUser) => {
-                    usersList.push(v.getUser());
-                });
-                data.setUsersList(usersList);
+        // Vehicles
+        addVehicle(state: ClipboardModuleState, vehicle: Vehicle): void {
+            const idx = state.vehicles.findIndex((o: ClipboardVehicle) => {
+                return o.plate === vehicle.getPlate();
+            });
+            if (idx === -1) {
+                state.vehicles.push(new ClipboardVehicle(vehicle));
             }
-            return data;
+        },
+        removeVehicle(state: ClipboardModuleState, plate: string): void {
+            const idx = state.vehicles.findIndex((o: ClipboardVehicle) => {
+                return o.plate === plate;
+            });
+            if (idx > 0) {
+                state.vehicles.splice(idx, 1);
+            }
+        },
+        clearVehicles(state: ClipboardModuleState): void {
+            state.vehicles.splice(0, state.vehicles.length);
         },
     },
+    getters: getters,
 };
 
 export default clipboardModule;
