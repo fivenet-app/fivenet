@@ -62,10 +62,16 @@ func NewCache(logger *zap.Logger, db *sql.DB) (*Cache, error) {
 		docCategoriesByJob: docCategoriesByJobCache,
 	}
 
-	// TODO this needs to be run every x minutes to refresh the cache data
-	if err := c.refreshCache(); err != nil {
-		return nil, err
-	}
+	go func() {
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(5 * time.Minute):
+			if err := c.refreshCache(); err != nil {
+				c.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
+			}
+		}
+	}()
 
 	var err error
 	c.searcher, err = NewSearcher(c)

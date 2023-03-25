@@ -32,8 +32,6 @@ var (
 	goodPing     = &pb_testproto.PingRequest{Value: "something", SleepTimeMs: 9999}
 )
 
-// TODO(mwitkow): Add auth from metadata client dialer, which requires TLS.
-
 func buildDummyAuthFunction(expectedScheme string, expectedToken string) func(ctx context.Context) (context.Context, error) {
 	return func(ctx context.Context) (context.Context, error) {
 		token, err := grpc_auth.AuthFromMD(ctx, expectedScheme)

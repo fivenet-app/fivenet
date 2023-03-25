@@ -20,13 +20,12 @@
 - [ ] Documents ("Akten")
     - [x] Each document is independent and has no direct parent or responses
         - [x] Users can leave Comments on documents
-    - [x] Documents can reference each other ("document activity feed"), e.g., DOJ asks for blood test on a patient, LSMD responds by creating the patient blood test result document and references the DOJ response
+    - [x] Documents can reference each other ("document activity feed"), e.g., DOJ asks for a blood test on a patient, LSMD responds by creating the patient blood test result document and references the DOJ response
     - [ ] Templates (e.g., Haftbefehl)
         - [ ] Editable templates by the leader of the jobs
     - [ ] Sharing
         - [ ] Sharing with the same job automatically
-        - [x] Sharing with users/ citizens (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ
-        - [ ] People can request access by link
+        - [x] Sharing with users/ citizens (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ)
     - [x] Category System (no directories/ paths)
         - [x] ~~Sub-categories~~  - One level of categories that is sorted by names
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
@@ -36,9 +35,10 @@
             - [x] With access modifications
             - [x] Set/ Update document category
             - [x] Set Access for Jobs and Users
-        - [ ] View Document Comments
-        - [ ] Post Document Comments
-        - [ ] Edit Document Comments
+        - [x] Document Comments
+            - [ ] View Document Comments
+            - [ ] Post Document Comments
+            - [ ] Edit Document Comments
 - [x] Livemap
     - [x] See your colleagues (for now using Copnet VPC Connector's data)
         - [x] Create table model for our own player location table

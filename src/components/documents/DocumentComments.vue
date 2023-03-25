@@ -5,7 +5,9 @@ const props = defineProps<{
     comments: DocumentComment[]
 }>();
 
-console.log(props.comments)
+console.log(props.comments);
+
+// TODO for adding/ editing a comment, use https://tailwindui.com/components/application-ui/forms/textareas#component-784309f82e9913989c2196a2d47eff4a
 </script>
 
 <template>

@@ -61,7 +61,7 @@ func TestAuthFromMD(t *testing.T) {
 			msg:     "bearer token must not be empty",
 		},
 	} {
-		ctx := metautils.NiceMD(run.md).ToIncoming(context.TODO())
+		ctx := metautils.NiceMD(run.md).ToIncoming(context.Background())
 		out, err := AuthFromMD(ctx, "bearer")
 		if run.errCode != codes.OK {
 			assert.Equal(t, run.errCode, status.Code(err), run.msg)
