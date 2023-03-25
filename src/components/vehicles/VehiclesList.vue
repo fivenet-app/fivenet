@@ -90,7 +90,7 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
 </script>
 
 <template>
-    <div :class="[$props.userId ? '' : 'sm:min-h-[67rem]', 'py-2']">
+    <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">

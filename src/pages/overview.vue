@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ContentWrapper from '../components/partials/ContentWrapper.vue';
+import ContentCenterWrapper from '../components/partials/ContentCenterWrapper.vue';
 import FeatureCards from '../components/FeatureCards.vue';
 </script>
 
@@ -14,7 +14,7 @@ import FeatureCards from '../components/FeatureCards.vue';
 </route>
 
 <template>
-    <ContentWrapper>
+    <ContentCenterWrapper>
         <FeatureCards />
-    </ContentWrapper>
+    </ContentCenterWrapper>
 </template>

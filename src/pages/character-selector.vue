@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ContentWrapper from '../components/partials/ContentWrapper.vue';
+import ContentCenterWrapper from '../components/partials/ContentCenterWrapper.vue';
 import CharacterSelector from '../components/login/CharacterSelector.vue';
 </script>
 
@@ -14,7 +14,7 @@ import CharacterSelector from '../components/login/CharacterSelector.vue';
 </route>
 
 <template>
-    <ContentWrapper>
+    <ContentCenterWrapper>
         <CharacterSelector />
-    </ContentWrapper>
+    </ContentCenterWrapper>
 </template>
