@@ -42,7 +42,7 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 		)))
 	}
 	if req.Model != "" {
-		req.Type = strings.ReplaceAll(req.Model, "%", "") + "%"
+		req.Model = strings.ReplaceAll(req.Model, "%", "") + "%"
 		condition = jet.AND(condition, jet.BoolExp(vehicle.Model.LIKE(jet.String(req.Model))))
 	}
 	if req.Type != "" {
