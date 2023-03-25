@@ -21,14 +21,14 @@ defineProps({
     <div>
         <span v-if="relations.length == 0" class="text-neutral">No Document Relations found.</span>
         <!-- Relations list (smallest breakpoint only) -->
-        <div v-if="relations.length > 0" class="shadow sm:hidden">
-            <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-200 shadow sm:hidden">
+        <div v-if="relations.length > 0" class="sm:hidden text-neutral">
+            <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
                 <li v-for="relation in relations" :key="relation.getId()">
-                    <a href="#" class="block px-4 py-4 hover:bg-gray-50">
+                    <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
                                 <ArrowsRightLeftIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
-                                <span class="flex flex-col text-sm truncate ">
+                                <span class="flex flex-col text-sm truncate">
                                     <span>{{ relation.getTargetUser()?.getFirstname() + ", " +
                                         relation.getTargetUser()?.getLastname() }}</span>
                                     <span class="font-medium ">{{
@@ -38,7 +38,7 @@ defineProps({
                                     <time datetime="">{{ getDateLocaleString(relation.getCreatedAt()) }}</time>
                                 </span>
                             </span>
-                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
+                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
                         </span>
                     </a>
                 </li>
