@@ -330,8 +330,7 @@ function editForm(): void {
                     </div>
                 </Combobox>
             </div>
-            <div
-                class="flex-1">
+            <div class="flex-1">
                 <input v-model="state" type="text" name="state"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     placeholder="Document State" />
@@ -380,12 +379,12 @@ function editForm(): void {
         <div class="flex-1">
             <button type="button"
                 class="rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="showRelationManager = true">Citizen Relations</button>
+                @click="showReferenceManager = true">Document References</button>
         </div>
         <div class="flex-1">
             <button type="button"
                 class="rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="showReferenceManager = true">Document References</button>
+                @click="showRelationManager = true">Citizen Relations</button>
         </div>
     </div>
     <div class="my-3">
@@ -400,8 +399,10 @@ function editForm(): void {
             <PlusIcon class="w-5 h-5" aria-hidden="true" />
         </button>
     </div>
-    <button v-if="!props.id" @click="submitForm()"
-        class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Submit</button>
-    <button v-if="props.id" @click="editForm()"
-        class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Edit</button>
+    <div class="sm:flex sm:flex-row-reverse">
+        <button v-if="!props.id" @click="submitForm()"
+            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Submit</button>
+        <button v-if="props.id" @click="editForm()"
+            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Edit</button>
+    </div>
 </template>

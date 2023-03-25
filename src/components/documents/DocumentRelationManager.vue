@@ -136,7 +136,8 @@ function removeRelation(id: number): void {
                             </DialogTitle>
                             <TabGroup>
                                 <TabList class="flex flex-row mb-4">
-                                    <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" class="flex-initial w-full">
+                                    <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }"
+                                        class="flex-initial w-full">
                                         <button
                                             :class="[selected ? 'border-primary-500 text-primary-500' : 'border-transparent text-base-300 hover:border-base-300 hover:text-base-200', 'group inline-flex items-center border-b-2 py-4 px-1 text-m font-medium w-full justify-center transition-colors']"
                                             :aria-current="selected ? 'page' : undefined">
@@ -152,21 +153,22 @@ function removeRelation(id: number): void {
                                         <TabPanel class="w-full">
                                             <div class="flow-root">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                                    <div class="inline-block min-w-full align-middle py-">
-                                                        <table class="min-w-full divide-y rounded-lg divide-base-500 text-neutral bg-base-800">
+                                                    <div class="inline-block min-w-full py-2 align-middle">
+                                                        <table
+                                                            class="min-w-full divide-y divide-base-200 text-neutral">
                                                             <thead>
                                                                 <tr>
                                                                     <th scope="col"
                                                                         class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold  sm:pl-6 lg:pl-8">
                                                                         Name</th>
                                                                     <th scope="col"
-                                                                        class="px-3 py-3.5 text-left text-sm font-semibold ">
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
                                                                         Creator</th>
                                                                     <th scope="col"
-                                                                        class="px-3 py-3.5 text-left text-sm font-semibold ">
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
                                                                         Relation</th>
                                                                     <th scope="col"
-                                                                        class="px-3 py-3.5 text-left text-sm font-semibold ">
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
                                                                         Actions</th>
                                                                 </tr>
                                                             </thead>
@@ -176,33 +178,33 @@ function removeRelation(id: number): void {
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
                                                                         {{ ref.getTargetUser()?.getFirstname() }} {{
                                                                             ref.getTargetUser()?.getLastname() }}</td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
                                                                             ref.getSourceUser()?.getFirstname() }}
                                                                         {{ ref.getSourceUser()?.getLastname() }}
                                                                     </td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
                                                                             toTitleCase(DOC_RELATION_Util.toEnumKey(ref.getRelation())!.toLowerCase())
                                                                             ?? ref.getRelation() }}</td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <a :href="router.resolve({ name: 'Citizens: Info', params: { id: ref.getTargetUserId() } }).href"
-                                                                                    target="_blank">
+                                                                                    target="_blank" data-te-toggle="tooltip"
+                                                                                    title="Open Citizen">
                                                                                     <ArrowTopRightOnSquareIcon
-                                                                                        class="w-6 h-auto text-primary-500 hover:text-primary-400">
+                                                                                        class="w-6 h-auto text-primary-500 hover:text-primary-300">
                                                                                     </ArrowTopRightOnSquareIcon>
                                                                                 </a>
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="removeRelation(ref.getId())">
+                                                                                    @click="removeRelation(ref.getId())"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    title="Remove Relation">
                                                                                     <UserMinusIcon
-                                                                                        class="w-6 h-auto text-error-400 hover:text-error-300">
+                                                                                        class="w-6 h-auto text-error-400 hover:text-error-200">
                                                                                     </UserMinusIcon>
                                                                                 </button>
                                                                             </div>
@@ -218,46 +220,43 @@ function removeRelation(id: number): void {
                                         <TabPanel class="w-full">
                                             <div>
                                                 <label for="name" class="sr-only">Name</label>
-                                                <input type="name" name="name" id="name"
-                                                    class="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                <input type="text" name="name" id="name"
+                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     placeholder="Citizen Name" v-model="queryChar" />
                                             </div>
-                                            <div class="flow-root">
+                                            <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
-                                                        <table class="min-w-full divide-y divide-gray-300">
+                                                        <table class="min-w-full divide-y divide-base-200">
                                                             <thead>
                                                                 <tr>
                                                                     <th scope="col"
-                                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold  sm:pl-6 lg:pl-8">
+                                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">
                                                                         Name</th>
                                                                     <th scope="col"
-                                                                        class="px-3 py-3.5 text-left text-sm font-semibold ">
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
                                                                         Job</th>
                                                                     <th scope="col"
-                                                                        class="px-3 py-3.5 text-left text-sm font-semibold ">
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
                                                                         Sex</th>
                                                                     <th scope="col"
-                                                                        class="px-3 py-3.5 text-left text-sm font-semibold ">
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
                                                                         Add Relation</th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody class="bg-white divide-y divide-gray-200">
-                                                                <tr v-for="user in entriesUsers" :key="user.getUserId()">
+                                                            <tbody class="divide-y divide-base-500">
+                                                                <tr v-for="user in entriesUsers.slice(0, 8)" :key="user.getUserId()">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
                                                                         {{ user.getFirstname() }} {{
                                                                             user.getLastname() }}</td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ user.getJobLabel() }}
                                                                     </td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ user.getSex() }}
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ user.getSex().toUpperCase() }}
                                                                     </td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button role="button"
@@ -265,7 +264,7 @@ function removeRelation(id: number): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     title="Mentioned">
                                                                                     <ChatBubbleBottomCenterTextIcon
-                                                                                        class="w-6 h-auto text-green-700 hover:text-green-500">
+                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300">
                                                                                     </ChatBubbleBottomCenterTextIcon>
                                                                                 </button>
                                                                             </div>
@@ -275,7 +274,7 @@ function removeRelation(id: number): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     title="Targets">
                                                                                     <ExclamationTriangleIcon
-                                                                                        class="w-6 h-auto text-yellow-700 hover:text-yellow-500">
+                                                                                        class="w-6 h-auto text-warn-400 hover:text-warn-200">
                                                                                     </ExclamationTriangleIcon>
                                                                                 </button>
                                                                             </div>
@@ -284,7 +283,7 @@ function removeRelation(id: number): void {
                                                                                     @click="addRelation(user, 2)"
                                                                                     data-te-toggle="tooltip" title="Caused">
                                                                                     <ShieldExclamationIcon
-                                                                                        class="w-6 h-auto text-red-700 hover:text-red-500">
+                                                                                        class="w-6 h-auto text-error-400 hover:text-error-200">
                                                                                     </ShieldExclamationIcon>
                                                                                 </button>
                                                                             </div>
@@ -302,12 +301,13 @@ function removeRelation(id: number): void {
                             </TabGroup>
                             <div class="gap-2 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                                 <button type="button"
-                                    class="inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                    class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                     @click="emit('close')">Close</button>
-                        </div>
-                    </DialogPanel>
-                </TransitionChild>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
             </div>
-        </div>
-    </Dialog>
-</TransitionRoot></template>
+        </Dialog>
+    </TransitionRoot>
+</template>
