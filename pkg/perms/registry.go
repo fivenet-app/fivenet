@@ -77,7 +77,7 @@ func (p *Perms) setupRoles() error {
 		SELECT(
 			j.Name,
 			j.Label,
-			jg.JobName.AS("job_name"),
+			jg.JobName.AS("jobname"),
 			jg.Grade,
 			jg.Name,
 			jg.Label,
@@ -87,7 +87,7 @@ func (p *Perms) setupRoles() error {
 				jg.JobName.EQ(j.Name),
 			))
 
-	var dest []jobs.Job
+	var dest []*jobs.Job
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		return err
 	}
