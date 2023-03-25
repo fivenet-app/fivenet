@@ -28,7 +28,7 @@ const authModule: Module<AuthModuleState, RootState> = {
         loggingIn: false as boolean,
         loginError: null as null | string,
         permissions: [] as Array<String>,
-    } as AuthModuleState,
+    },
     mutations: {
         loginStart: (state: AuthModuleState) => (state.loggingIn = true),
         loginStop: (state: AuthModuleState, errorMessage: string) => {

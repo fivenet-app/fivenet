@@ -5,17 +5,9 @@ import { getCitizenStoreClient } from '../../grpc/grpc';
 import { SetUserPropsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { dispatchNotification } from '../notification';
 import CharSexBadge from '../misc/CharSexBadge.vue';
-import { EllipsisVerticalIcon, KeyIcon } from '@heroicons/vue/20/solid';
-import {
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-} from '@headlessui/vue';
-import { useRoute } from 'vue-router/auto';
+import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
 
-const route = useRoute();
 const w = window;
 const clipboard = useClipboard();
 

@@ -72,6 +72,8 @@ onBeforeMount(() => {
                                 <div class="relative">
                                     <router-link :to="{ name: 'Documents: Create' }"
                                         class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Create</router-link>
+                                    <router-link :to="{ name: 'Documents: Templates' }"
+                                        class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Templates</router-link>
                                 </div>
                             </div>
                         </div>

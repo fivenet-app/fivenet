@@ -9,7 +9,7 @@ const loaderModule: Module<LoaderModuleState, RootState> = {
     namespaced: true,
     state: {
         loading: false,
-    } as LoaderModuleState,
+    },
     actions: {
         show({ commit }) {
             commit('show');

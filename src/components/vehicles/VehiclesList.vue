@@ -10,12 +10,12 @@ import VehiclesListEntry from './VehiclesListEntry.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
-    'userId': {
+    userId: {
         type: Number,
         required: false,
         default: 0,
     },
-    'hideOwner': {
+    hideOwner: {
         type: Boolean,
         required: false,
         default: false,

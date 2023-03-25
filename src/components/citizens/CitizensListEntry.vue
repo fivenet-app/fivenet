@@ -3,7 +3,7 @@ import { User } from '@arpanet/gen/resources/users/users_pb';
 import { EyeIcon } from '@heroicons/vue/24/solid';
 
 defineProps({
-    'user': {
+    user: {
         required: true,
         type: User,
     },

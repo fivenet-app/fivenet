@@ -4,11 +4,11 @@ import { EyeIcon } from '@heroicons/vue/24/solid';
 import { toTitleCase } from '../../utils/strings';
 
 defineProps({
-    'vehicle': {
+    vehicle: {
         required: true,
         type: Vehicle,
     },
-    'hideOwner': {
+    hideOwner: {
         type: Boolean,
         required: false,
         default: false,

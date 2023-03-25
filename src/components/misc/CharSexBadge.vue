@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 defineProps({
-    'sex': {
+    sex: {
         required: true,
         type: String,
     },

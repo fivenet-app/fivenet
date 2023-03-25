@@ -5,6 +5,7 @@ import { ref, onBeforeMount, computed } from 'vue';
 import { getDocStoreClient } from '../../grpc/grpc';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { useStore } from '../../store/store';
+import { getClipboardData } from '../../store/modules/clipboardmodule';
 
 const store = useStore();
 
@@ -27,13 +28,11 @@ function getTemplate(id: number): void {
     req.setTemplateId(id);
     req.setRender(true);
 
-    const data: any = { user: {
-        firstname: activeChar.value?.getFirstname(),
-        lastname: activeChar.value?.getLastname(),
-        sex: activeChar.value?.getSex(),
-        dateofbirth: activeChar.value?.getDateofbirth(),
+    const data = getClipboardData(store.state.clipboard!);
 
-    } };
+    console.log("TEMPLATE DATA:");
+    console.log(data);
+    console.log(JSON.stringify(data));
     req.setData(JSON.stringify(data));
 
     getDocStoreClient().

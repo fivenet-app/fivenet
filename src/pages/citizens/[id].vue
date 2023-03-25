@@ -1,5 +1,8 @@
 <script lang="ts">
 import { defineLoader, RouteLocationNormalizedLoaded } from 'vue-router/auto';
+import ClipboardButton from '../../components/ClipboardButton.vue';
+import { useStore } from '../../store/store';
+import { ClipboardItem } from '../../store/modules/clipboardmodule';
 
 export const useUserData = defineLoader(async (route: RouteLocationNormalizedLoaded) => {
     route = route as RouteLocationNormalizedLoaded<'Citizens: Info'>;
@@ -23,7 +26,26 @@ import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { getCitizenStoreClient } from '../../grpc/grpc';
 
+const store = useStore();
+
 const { data: user } = useUserData();
+
+function addUserToClipboard() {
+    const item = new ClipboardItem('Char', user.value?.getUserId()!, {
+        userId: user.value?.getUserId(),
+        firstname: user.value?.getFirstname(),
+        lastname: user.value?.getLastname(),
+        sex: user.value?.getSex(),
+        dateofbirth: user.value?.getDateofbirth(),
+        job: user.value?.getJob(),
+        jobGrade: user.value?.getJobGrade(),
+        height: user.value?.getHeight(),
+        phoneNumber: user.value?.getPhoneNumber(),
+    });
+
+    store.commit('clipboard/addItem', item);
+    console.log("ADDING USER " + user.value?.getUserId() + " TO CLIPBOARD");
+}
 </script>
 
 <route lang="json">
@@ -40,6 +62,7 @@ const { data: user } = useUserData();
     <ContentWrapper>
         <div v-if="user">
             <CitizenInfo :user="user" />
+            <ClipboardButton :callback="addUserToClipboard" />
         </div>
     </ContentWrapper>
 </template>
