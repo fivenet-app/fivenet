@@ -268,9 +268,6 @@ export class Document extends jspb.Message {
   getPublic(): boolean;
   setPublic(value: boolean): Document;
 
-  getCommentcount(): number;
-  setCommentcount(value: number): Document;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Document.AsObject;
   static toObject(includeInstance: boolean, msg: Document): Document.AsObject;
@@ -295,7 +292,6 @@ export namespace Document {
     state: string,
     closed: boolean,
     pb_public: boolean,
-    commentcount: number,
   }
 }
 

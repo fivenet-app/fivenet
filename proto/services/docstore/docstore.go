@@ -26,7 +26,7 @@ var (
 	user        = table.Users
 	uCreator    = user.AS("creator")
 	docs        = table.ArpanetDocuments.AS("document")
-	dComments   = table.ArpanetDocumentsComments
+	dComments   = table.ArpanetDocumentsComments.AS("documentcomment")
 	dUserAccess = table.ArpanetDocumentsUserAccess.AS("user_access")
 	dJobAccess  = table.ArpanetDocumentsJobAccess.AS("job_access")
 	dCategory   = table.ArpanetDocumentsCategories.AS("category")

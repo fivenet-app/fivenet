@@ -1083,8 +1083,6 @@ func (m *Document) validate(all bool) error {
 
 	// no validation rules for Public
 
-	// no validation rules for CommentCount
-
 	if len(errors) > 0 {
 		return DocumentMultiError(errors)
 	}

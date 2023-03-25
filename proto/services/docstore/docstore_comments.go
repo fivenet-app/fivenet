@@ -29,7 +29,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 
 	countStmt := dComments.
 		SELECT(
-			jet.COUNT(dComments.DocumentID).AS("datacount.totalcount"),
+			jet.COUNT(dComments.ID).AS("datacount.totalcount"),
 		).
 		FROM(
 			dComments,
@@ -54,17 +54,17 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 			dComments.ID,
 			dComments.Comment,
 			dComments.CreatorID,
-			user.ID,
-			user.Identifier,
-			user.Job,
-			user.JobGrade,
-			user.Firstname,
-			user.Lastname,
+			uCreator.ID,
+			uCreator.Identifier,
+			uCreator.Job,
+			uCreator.JobGrade,
+			uCreator.Firstname,
+			uCreator.Lastname,
 		).
 		FROM(
 			dComments.
-				LEFT_JOIN(user,
-					dComments.CreatorID.EQ(user.ID),
+				LEFT_JOIN(uCreator,
+					dComments.CreatorID.EQ(uCreator.ID),
 				),
 		).
 		WHERE(condition)
@@ -73,13 +73,17 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		return nil, err
 	}
 
+	//resp.Comments = dest
+
 	database.PaginationHelper(resp.Pagination,
 		count.TotalCount,
 		req.Pagination.Offset,
 		len(resp.Comments))
 
 	for i := 0; i < len(resp.Comments); i++ {
-		s.c.EnrichJobInfo(resp.Comments[i].Creator)
+		if resp.Comments[i].Creator != nil {
+			s.c.EnrichJobInfo(resp.Comments[i].Creator)
+		}
 	}
 
 	return resp, nil

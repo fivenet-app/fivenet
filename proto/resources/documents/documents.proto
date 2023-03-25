@@ -72,7 +72,6 @@ message Document {
   string state = 12 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 13; // @gotags: alias:"closed"
   bool public = 14; // @gotags: alias:"public"
-  int64 commentCount = 15; // @gotags: alias:"comment_count"
 }
 
 message DocumentShort {

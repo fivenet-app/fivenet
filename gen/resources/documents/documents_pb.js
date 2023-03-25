@@ -1913,8 +1913,7 @@ proto.resources.documents.Document.toObject = function(includeInstance, msg) {
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f),
     state: jspb.Message.getFieldWithDefault(msg, 12, ""),
     closed: jspb.Message.getBooleanFieldWithDefault(msg, 13, false),
-    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 14, false),
-    commentcount: jspb.Message.getFieldWithDefault(msg, 15, 0)
+    pb_public: jspb.Message.getBooleanFieldWithDefault(msg, 14, false)
   };
 
   if (includeInstance) {
@@ -2010,10 +2009,6 @@ proto.resources.documents.Document.deserializeBinaryFromReader = function(msg, r
     case 14:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setPublic(value);
-      break;
-    case 15:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setCommentcount(value);
       break;
     default:
       reader.skipField();
@@ -2143,13 +2138,6 @@ proto.resources.documents.Document.serializeBinaryToWriter = function(message, w
   if (f) {
     writer.writeBool(
       14,
-      f
-    );
-  }
-  f = message.getCommentcount();
-  if (f !== 0) {
-    writer.writeInt64(
-      15,
       f
     );
   }
@@ -2481,24 +2469,6 @@ proto.resources.documents.Document.prototype.getPublic = function() {
  */
 proto.resources.documents.Document.prototype.setPublic = function(value) {
   return jspb.Message.setProto3BooleanField(this, 14, value);
-};
-
-
-/**
- * optional int64 commentCount = 15;
- * @return {number}
- */
-proto.resources.documents.Document.prototype.getCommentcount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 15, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.resources.documents.Document} returns this
- */
-proto.resources.documents.Document.prototype.setCommentcount = function(value) {
-  return jspb.Message.setProto3IntField(this, 15, value);
 };
 
 
