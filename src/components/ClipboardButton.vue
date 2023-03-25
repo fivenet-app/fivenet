@@ -11,7 +11,7 @@ defineProps({
 
 <template>
     <button title="Actions" @click="callback()"
-        class="fixed z-90 bottom-10 right-8 bg-blue-600 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-blue-700 hover:drop-shadow-2xl">
-        <PlusIcon />
+        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-10 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400">
+        <PlusIcon class="w-10 h-auto" />
     </button>
 </template>
