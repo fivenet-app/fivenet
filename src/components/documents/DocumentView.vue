@@ -24,7 +24,7 @@ import {
 import DocumentRelations from './DocumentRelations.vue';
 import DocumentReferences from './DocumentReferences.vue';
 import { toTitleCase } from '../../utils/strings';
-import { PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
+import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 
 const document = ref<undefined | Document>(undefined)
 const access = ref<undefined | DocumentAccess>(undefined)

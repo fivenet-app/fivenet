@@ -43,6 +43,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 
 	resp := &GetDocumentCommentsResponse{
 		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
+		Comments:   []*documents.DocumentComment{},
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
