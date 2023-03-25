@@ -22,7 +22,8 @@ const vuexPersist = new VuexPersistence<RootState>({
             lastCharID: state.auth?.lastCharID,
         },
         clipboard: {
-            usersList: state.clipboard?.usersList,
+            users: state.clipboard?.users,
+            vehicles: state.clipboard?.vehicles,
         },
     }),
 });
