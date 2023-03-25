@@ -24,6 +24,7 @@ import {
 import DocumentRelations from './DocumentRelations.vue';
 import DocumentReferences from './DocumentReferences.vue';
 import { toTitleCase } from '../../utils/strings';
+import { PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 
 const document = ref<undefined | Document>(undefined)
 const access = ref<undefined | DocumentAccess>(undefined)
@@ -71,12 +72,13 @@ function getDocument(): void {
     // Document Comments
     const creq = new GetDocumentCommentsRequest();
     creq.setDocumentId(props.documentId);
+    creq.setPagination((new PaginationRequest()).setOffset(0));
 
     getDocStoreClient().
         getDocumentComments(creq, null).
         then((resp) => {
             comments.value = resp.getCommentsList();
-    });
+        });
 }
 onMounted(() => {
     getDocument();

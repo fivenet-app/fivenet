@@ -4,7 +4,7 @@ import { TemplateData } from '@arpanet/gen/resources/documents/templates/templat
 import { User } from '@arpanet/gen/resources/users/users_pb';
 
 export interface ClipboardModuleState {
-    usersList: Array<ClipboardUser>;
+    usersList: ClipboardUser[];
 }
 
 export class ClipboardUser {
@@ -57,7 +57,7 @@ export class ClipboardUser {
 const clipboardModule: Module<ClipboardModuleState, RootState> = {
     namespaced: true,
     state: {
-        usersList: new Array<ClipboardUser>(),
+        usersList: [],
     },
     actions: {
         addUser({ commit }, user: User) {
@@ -101,7 +101,6 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
                 });
                 data.setUsersList(usersList);
             }
-            console.log('GETTING TEMPLATE DATA 3');
             return data;
         },
     },

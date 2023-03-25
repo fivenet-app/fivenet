@@ -15,14 +15,11 @@ export interface RootState {
 const vuexPersist = new VuexPersistence<RootState>({
     key: 'arpanet',
     storage: window.localStorage,
-    modules: ['auth', 'clipboard'],
+    modules: ['auth'],
     reducer: (state: RootState) => ({
         auth: {
             accessToken: state.auth?.accessToken,
             lastCharID: state.auth?.lastCharID,
-        },
-        clipboard: {
-            usersList: state.clipboard?.usersList,
         },
     }),
 });

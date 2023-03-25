@@ -29,14 +29,12 @@ function getTemplate(id: number): void {
     req.setTemplateId(id);
     req.setRender(true);
 
-    const data = store.getters['clipboard/getTemplateData'];
-    data.setUsersList(data);
-    data.setActivechar(activeChar.value!)
-
-    console.log("TEMPLATE DATA:");
-    console.log(data);
-    console.log(JSON.stringify(data));
-    req.setData(JSON.stringify(data));
+    const data = store.getters['clipboard/getTemplateData'] as TemplateData;
+    data.setActivechar(activeChar.value!);
+    if (data.getUsersList().length == 0) {
+        data.setUsersList([activeChar.value!]);
+    }
+    req.setData(JSON.stringify(data.toObject()));
 
     getDocStoreClient().
         getTemplate(req, null).then((resp) => {

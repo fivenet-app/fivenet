@@ -416,8 +416,8 @@ export namespace RemoveDocumentRelationResponse {
 }
 
 export class GetDocumentCommentsRequest extends jspb.Message {
-  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
-  setPagination(value?: resources_common_database_database_pb.PaginationResponse): GetDocumentCommentsRequest;
+  getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationRequest): GetDocumentCommentsRequest;
   hasPagination(): boolean;
   clearPagination(): GetDocumentCommentsRequest;
 
@@ -434,7 +434,7 @@ export class GetDocumentCommentsRequest extends jspb.Message {
 
 export namespace GetDocumentCommentsRequest {
   export type AsObject = {
-    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
+    pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
     documentId: number,
   }
 }

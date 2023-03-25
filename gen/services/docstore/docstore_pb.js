@@ -3918,7 +3918,7 @@ proto.services.docstore.GetDocumentCommentsRequest.prototype.toObject = function
  */
 proto.services.docstore.GetDocumentCommentsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationResponse.toObject(includeInstance, f),
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f),
     documentId: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
@@ -3957,8 +3957,8 @@ proto.services.docstore.GetDocumentCommentsRequest.deserializeBinaryFromReader =
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_common_database_database_pb.PaginationResponse;
-      reader.readMessage(value,resources_common_database_database_pb.PaginationResponse.deserializeBinaryFromReader);
+      var value = new resources_common_database_database_pb.PaginationRequest;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationRequest.deserializeBinaryFromReader);
       msg.setPagination(value);
       break;
     case 2:
@@ -3999,7 +3999,7 @@ proto.services.docstore.GetDocumentCommentsRequest.serializeBinaryToWriter = fun
     writer.writeMessage(
       1,
       f,
-      resources_common_database_database_pb.PaginationResponse.serializeBinaryToWriter
+      resources_common_database_database_pb.PaginationRequest.serializeBinaryToWriter
     );
   }
   f = message.getDocumentId();
@@ -4013,17 +4013,17 @@ proto.services.docstore.GetDocumentCommentsRequest.serializeBinaryToWriter = fun
 
 
 /**
- * optional resources.common.database.PaginationResponse pagination = 1;
- * @return {?proto.resources.common.database.PaginationResponse}
+ * optional resources.common.database.PaginationRequest pagination = 1;
+ * @return {?proto.resources.common.database.PaginationRequest}
  */
 proto.services.docstore.GetDocumentCommentsRequest.prototype.getPagination = function() {
-  return /** @type{?proto.resources.common.database.PaginationResponse} */ (
-    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationResponse, 1));
+  return /** @type{?proto.resources.common.database.PaginationRequest} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationRequest, 1));
 };
 
 
 /**
- * @param {?proto.resources.common.database.PaginationResponse|undefined} value
+ * @param {?proto.resources.common.database.PaginationRequest|undefined} value
  * @return {!proto.services.docstore.GetDocumentCommentsRequest} returns this
 */
 proto.services.docstore.GetDocumentCommentsRequest.prototype.setPagination = function(value) {

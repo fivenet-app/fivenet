@@ -91,7 +91,7 @@ message RemoveDocumentRelationRequest {
 message RemoveDocumentRelationResponse {}
 
 message GetDocumentCommentsRequest {
-  resources.common.database.PaginationResponse pagination = 1;
+  resources.common.database.PaginationRequest pagination = 1;
   uint64 document_id = 2;
 }
 
