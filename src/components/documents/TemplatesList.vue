@@ -6,7 +6,6 @@ import { getDocStoreClient } from '../../grpc/grpc';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { useStore } from '../../store/store';
 import { TemplateData } from '@arpanet/gen/resources/documents/templates/templates_pb';
-import { User } from '@arpanet/gen/resources/users/users_pb';
 
 const store = useStore();
 
@@ -24,9 +23,9 @@ function findTemplates(): void {
         });
 }
 
-function getTemplate(id: number): void {
+function getTemplate(template: DocumentTemplateShort): void {
     const req = new GetTemplateRequest();
-    req.setTemplateId(id);
+    req.setTemplateId(template.getId());
     req.setRender(true);
 
     const data = store.getters['clipboard/getTemplateData'] as TemplateData;
@@ -61,7 +60,7 @@ onBeforeMount(() => {
                 :class="[templateIdx === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '', templateIdx === 1 ? 'sm:rounded-tr-lg' : '', templateIdx === templates.length - 2 ? 'sm:rounded-bl-lg' : '', templateIdx === templates.length - 1 ? 'rounded-bl-lg rounded-br-lg sm:rounded-bl-none' : '', 'group relative bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500']">
                 <div class="mt-8">
                     <h3 class="text-base font-semibold leading-6 text-gray-900">
-                        <button @click="getTemplate(template.getId())" class="focus:outline-none">
+                        <button @click="getTemplate(template)" class="focus:outline-none">
                             <!-- Extend touch target to entire panel -->
                             <span class="absolute inset-0" aria-hidden="true" />
                             {{ template.getTitle() }}

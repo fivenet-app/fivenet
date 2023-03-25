@@ -71,6 +71,7 @@ function getDocument(): void {
 
     // Document Comments
     const creq = new GetDocumentCommentsRequest();
+    creq.setPagination((new PaginationRequest()).setOffset(0));
     creq.setDocumentId(props.documentId);
 
     getDocStoreClient().

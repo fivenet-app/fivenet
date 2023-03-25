@@ -69,7 +69,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		).
 		WHERE(condition)
 
-	if err := stmt.QueryContext(ctx, s.db, resp.Comments); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Comments); err != nil {
 		return nil, err
 	}
 
