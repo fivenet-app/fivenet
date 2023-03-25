@@ -13,8 +13,8 @@ export class Vehicle extends jspb.Message {
   getType(): string;
   setType(value: string): Vehicle;
 
-  getOwner(): resources_users_users_pb.UserShortNI | undefined;
-  setOwner(value?: resources_users_users_pb.UserShortNI): Vehicle;
+  getOwner(): resources_users_users_pb.UserShort | undefined;
+  setOwner(value?: resources_users_users_pb.UserShort): Vehicle;
   hasOwner(): boolean;
   clearOwner(): Vehicle;
 
@@ -31,7 +31,7 @@ export namespace Vehicle {
     plate: string,
     model: string,
     type: string,
-    owner?: resources_users_users_pb.UserShortNI.AsObject,
+    owner?: resources_users_users_pb.UserShort.AsObject,
   }
 }
 

@@ -9,5 +9,5 @@ message Vehicle {
   string plate = 1; // @gotags: alias:"plate"
   string model = 2; // @gotags: alias:"model"
   string type = 3; // @gotags: alias:"type"
-  resources.users.UserShortNI owner = 4;
+  resources.users.UserShort owner = 4;
 }

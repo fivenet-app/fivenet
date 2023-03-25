@@ -80,7 +80,7 @@ proto.resources.vehicles.Vehicle.toObject = function(includeInstance, msg) {
     plate: jspb.Message.getFieldWithDefault(msg, 1, ""),
     model: jspb.Message.getFieldWithDefault(msg, 2, ""),
     type: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    owner: (f = msg.getOwner()) && resources_users_users_pb.UserShortNI.toObject(includeInstance, f)
+    owner: (f = msg.getOwner()) && resources_users_users_pb.UserShort.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -130,8 +130,8 @@ proto.resources.vehicles.Vehicle.deserializeBinaryFromReader = function(msg, rea
       msg.setType(value);
       break;
     case 4:
-      var value = new resources_users_users_pb.UserShortNI;
-      reader.readMessage(value,resources_users_users_pb.UserShortNI.deserializeBinaryFromReader);
+      var value = new resources_users_users_pb.UserShort;
+      reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setOwner(value);
       break;
     default:
@@ -189,7 +189,7 @@ proto.resources.vehicles.Vehicle.serializeBinaryToWriter = function(message, wri
     writer.writeMessage(
       4,
       f,
-      resources_users_users_pb.UserShortNI.serializeBinaryToWriter
+      resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
   }
 };
@@ -250,17 +250,17 @@ proto.resources.vehicles.Vehicle.prototype.setType = function(value) {
 
 
 /**
- * optional resources.users.UserShortNI owner = 4;
- * @return {?proto.resources.users.UserShortNI}
+ * optional resources.users.UserShort owner = 4;
+ * @return {?proto.resources.users.UserShort}
  */
 proto.resources.vehicles.Vehicle.prototype.getOwner = function() {
-  return /** @type{?proto.resources.users.UserShortNI} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShortNI, 4));
+  return /** @type{?proto.resources.users.UserShort} */ (
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 4));
 };
 
 
 /**
- * @param {?proto.resources.users.UserShortNI|undefined} value
+ * @param {?proto.resources.users.UserShort|undefined} value
  * @return {!proto.resources.vehicles.Vehicle} returns this
 */
 proto.resources.vehicles.Vehicle.prototype.setOwner = function(value) {

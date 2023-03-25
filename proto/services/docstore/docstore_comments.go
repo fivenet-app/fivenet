@@ -29,7 +29,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 
 	countStmt := dComments.
 		SELECT(
-			jet.COUNT(docs.ID).AS("datacount.totalcount"),
+			jet.COUNT(dComments.DocumentID).AS("datacount.totalcount"),
 		).
 		FROM(
 			dComments,
@@ -76,6 +76,10 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		count.TotalCount,
 		req.Pagination.Offset,
 		len(resp.Comments))
+
+	for i := 0; i < len(resp.Comments); i++ {
+		s.c.EnrichJobInfo(resp.Comments[i].Creator)
+	}
 
 	return resp, nil
 }

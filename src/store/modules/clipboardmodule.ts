@@ -1,120 +1,110 @@
-import { Module } from 'vuex';
+import { Module, Store } from 'vuex';
 import { RootState } from '../store';
+import { TemplateData } from '@arpanet/gen/resources/documents/templates/templates_pb';
+import { User } from '@arpanet/gen/resources/users/users_pb';
 
 export interface ClipboardModuleState {
-    documents: Array<ClipboardItem>;
-    users: Array<ClipboardItem>;
+    usersList: Array<ClipboardUser>;
 }
 
-export type ClipboardItemType = 'Char' | 'Document';
-
-export class ClipboardItem {
-    private type: ClipboardItemType;
+export class ClipboardUser {
     private id: number;
-    private data: Object;
+    private data: {
+        sex: string;
+        dateofbirth: string;
+        job: string;
+        jobLabel: string;
+        jobGrade: number;
+        jobGradeLabel: string;
+        firstname: string;
+        lastname: string;
+    };
 
-    constructor(type: ClipboardItemType, id: number, data: Object) {
-        this.type = type;
-        this.id = id;
-        this.data = data;
-    }
-
-    getType(): ClipboardItemType {
-        return this.type;
+    constructor(user: User) {
+        this.id = user.getUserId();
+        this.data = {
+            sex: user.getSex(),
+            dateofbirth: user.getDateofbirth(),
+            job: user.getJob(),
+            jobLabel: user.getJobLabel(),
+            jobGrade: user.getJobGrade(),
+            jobGradeLabel: user.getJobGradeLabel(),
+            firstname: user.getFirstname(),
+            lastname: user.getLastname(),
+        };
     }
 
     getId(): number {
         return this.id;
     }
 
-    getData(): Object {
-        return this.data;
+    getUser(): User {
+        const user = new User();
+        user.setUserId(this.id);
+        user.setSex(this.data.sex);
+        user.setDateofbirth(this.data.dateofbirth);
+        user.setJob(this.data.job);
+        user.setJobLabel(this.data.jobLabel);
+        user.setJobGrade(this.data.jobGrade);
+        user.setJobGradeLabel(this.data.jobGradeLabel);
+        user.setFirstname(this.data.firstname);
+        user.setLastname(this.data.lastname);
+
+        return user;
     }
 }
 
 const clipboardModule: Module<ClipboardModuleState, RootState> = {
     namespaced: true,
     state: {
-        documents: new Array<ClipboardItem>(),
-        users: new Array<ClipboardItem>(),
+        usersList: new Array<ClipboardUser>(),
     },
     actions: {
-        addItem({ commit }, data: ClipboardItem) {
-            commit('addItem', data);
+        addUser({ commit }, user: User) {
+            commit('addUser', user);
         },
-        removeItem({ commit }, key: { type: ClipboardItemType; id: number }) {
-            commit('removeItem', key);
+        removeUser({ commit }, id: number) {
+            commit('removeUser', id);
         },
-        clear({ commit }) {
-            commit('clear');
+        clearUsers({ commit }) {
+            commit('clearUsers');
         },
     },
     mutations: {
-        addItem(state: ClipboardModuleState, item: ClipboardItem ): void {
-            switch (item.getType()) {
-                case 'Char':
-                    const charIdx = state.users.findIndex((o: ClipboardItem) => {
-                        return o.getId() === item.getId();
-                    });
-                    if (charIdx === -1) {
-                        console.log("ADDING CHAR TO CLIPBOARD");
-                        state.users.push(item);
-                    }
-                    break;
-                case 'Document':
-                    const docIdx = state.documents.findIndex((o: ClipboardItem) => {
-                        return o.getId() === item.getId();
-                    });
-                    if (docIdx === -1) {
-                        state.documents.push(item);
-                    }
-                    break;
+        addUser(state: ClipboardModuleState, user: User): void {
+            const charIdx = state.usersList.findIndex((o: ClipboardUser) => {
+                return o.getId() === user.getUserId();
+            });
+            if (charIdx === -1) {
+                state.usersList.push(new ClipboardUser(user));
             }
         },
-        removeItem(state: ClipboardModuleState, item: { type: ClipboardItemType; id: number }): void {
-            switch (item.type) {
-                case 'Char':
-                    const charIdx = state.users.findIndex((o: ClipboardItem) => {
-                        return o.getId() === item.id;
-                    });
-                    if (charIdx > 0) {
-                        state.users.splice(charIdx, 1);
-                    }
-                    break;
-                case 'Document':
-                    const docIdx = state.documents.findIndex((o: ClipboardItem) => {
-                        return o.getId() === item.id;
-                    });
-                    if (docIdx > 0) {
-                        state.documents.splice(docIdx, 1);
-                    }
+        removeUser(state: ClipboardModuleState, id: number): void {
+            const charIdx = state.usersList.findIndex((o: ClipboardUser) => {
+                return o.getId() === id;
+            });
+            if (charIdx > 0) {
+                state.usersList.splice(charIdx, 1);
             }
         },
-        clear(state: ClipboardModuleState) {
-            state.users.length = 0;
-            state.documents.length = 0;
+        clearUsers(state: ClipboardModuleState) {
+            state.usersList.splice(0, state.usersList.length);
+        },
+    },
+    getters: {
+        getTemplateData(state: ClipboardModuleState, getters): TemplateData {
+            const data = new TemplateData();
+            if (state.usersList) {
+                const usersList = new Array<User>();
+                state.usersList.forEach((v: ClipboardUser) => {
+                    usersList.push(v.getUser());
+                });
+                data.setUsersList(usersList);
+            }
+            console.log('GETTING TEMPLATE DATA 3');
+            return data;
         },
     },
 };
 
 export default clipboardModule;
-
-export interface ClipboardData {
-    users: Array<Object>;
-    documents: Array<Object>;
-}
-
-export function getClipboardData(state: ClipboardModuleState): ClipboardData {
-    const data: ClipboardData = {
-        documents: [],
-        users: [],
-    };
-    state.documents.forEach((v) => {
-        data.documents.push(v.getData());
-    })
-    state.users.forEach((v) => {
-        data.users.push(v.getData());
-    })
-
-    return data;
-}

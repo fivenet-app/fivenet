@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { DocumentTemplate, DocumentTemplateShort } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetTemplateRequest, ListTemplatesRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { ref, onBeforeMount, computed } from 'vue';
+import { ref, onBeforeMount, computed, toRaw } from 'vue';
 import { getDocStoreClient } from '../../grpc/grpc';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { useStore } from '../../store/store';
-import { getClipboardData } from '../../store/modules/clipboardmodule';
+import { TemplateData } from '@arpanet/gen/resources/documents/templates/templates_pb';
+import { User } from '@arpanet/gen/resources/users/users_pb';
 
 const store = useStore();
 
@@ -28,7 +29,9 @@ function getTemplate(id: number): void {
     req.setTemplateId(id);
     req.setRender(true);
 
-    const data = getClipboardData(store.state.clipboard!);
+    const data = store.getters['clipboard/getTemplateData'];
+    data.setUsersList(data);
+    data.setActivechar(activeChar.value!)
 
     console.log("TEMPLATE DATA:");
     console.log(data);

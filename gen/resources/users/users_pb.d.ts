@@ -49,52 +49,6 @@ export namespace UserShort {
   }
 }
 
-export class UserShortNI extends jspb.Message {
-  getUserId(): number;
-  setUserId(value: number): UserShortNI;
-
-  getIdentifier(): string;
-  setIdentifier(value: string): UserShortNI;
-
-  getJob(): string;
-  setJob(value: string): UserShortNI;
-
-  getJobLabel(): string;
-  setJobLabel(value: string): UserShortNI;
-
-  getJobGrade(): number;
-  setJobGrade(value: number): UserShortNI;
-
-  getJobGradeLabel(): string;
-  setJobGradeLabel(value: string): UserShortNI;
-
-  getFirstname(): string;
-  setFirstname(value: string): UserShortNI;
-
-  getLastname(): string;
-  setLastname(value: string): UserShortNI;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): UserShortNI.AsObject;
-  static toObject(includeInstance: boolean, msg: UserShortNI): UserShortNI.AsObject;
-  static serializeBinaryToWriter(message: UserShortNI, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): UserShortNI;
-  static deserializeBinaryFromReader(message: UserShortNI, reader: jspb.BinaryReader): UserShortNI;
-}
-
-export namespace UserShortNI {
-  export type AsObject = {
-    userId: number,
-    identifier: string,
-    job: string,
-    jobLabel: string,
-    jobGrade: number,
-    jobGradeLabel: string,
-    firstname: string,
-    lastname: string,
-  }
-}
-
 export class User extends jspb.Message {
   getUserId(): number;
   setUserId(value: number): User;

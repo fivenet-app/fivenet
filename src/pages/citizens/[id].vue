@@ -2,7 +2,6 @@
 import { defineLoader, RouteLocationNormalizedLoaded } from 'vue-router/auto';
 import ClipboardButton from '../../components/ClipboardButton.vue';
 import { useStore } from '../../store/store';
-import { ClipboardItem } from '../../store/modules/clipboardmodule';
 
 export const useUserData = defineLoader(async (route: RouteLocationNormalizedLoaded) => {
     route = route as RouteLocationNormalizedLoaded<'Citizens: Info'>;
@@ -31,19 +30,7 @@ const store = useStore();
 const { data: user } = useUserData();
 
 function addUserToClipboard() {
-    const item = new ClipboardItem('Char', user.value?.getUserId()!, {
-        userId: user.value?.getUserId(),
-        firstname: user.value?.getFirstname(),
-        lastname: user.value?.getLastname(),
-        sex: user.value?.getSex(),
-        dateofbirth: user.value?.getDateofbirth(),
-        job: user.value?.getJob(),
-        jobGrade: user.value?.getJobGrade(),
-        height: user.value?.getHeight(),
-        phoneNumber: user.value?.getPhoneNumber(),
-    });
-
-    store.commit('clipboard/addItem', item);
+    store.commit('clipboard/addUser', user.value);
     console.log("ADDING USER " + user.value?.getUserId() + " TO CLIPBOARD");
 }
 </script>
