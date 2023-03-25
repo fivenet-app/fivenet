@@ -297,7 +297,7 @@ watch(selectedAccessRole, () => {
         </div>
         <div class="flex-initial">
             <button type="button"
-                class="rounded-full bg-primary-500 p-1.5 text-neutral shadow-sm hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                 <XMarkIcon class="w-6 h-6" @click="$emit('deleteRequest', { id: props.init.id })" aria-hidden="true" />
             </button>
         </div>

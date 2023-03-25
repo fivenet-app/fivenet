@@ -30,9 +30,9 @@ function loginSubmit() {
 
 <template>
     <div class="max-w-xl mx-auto">
-        <div class="bg-base-850 py-8 px-4 rounded-lg sm:px-10">
-            <h2 class="text-white text-center text-3xl pb-4">Login</h2>
-            <form @submit.prevent="loginSubmit" class="space-y-6 my-2" action="#">
+        <div class="px-4 py-8 rounded-lg bg-base-850 sm:px-10">
+            <h2 class="pb-4 text-3xl text-center text-white">Login</h2>
+            <form @submit.prevent="loginSubmit" class="my-2 space-y-6" action="#">
                 <div>
                     <label for="username" class="sr-only">Username</label>
                     <div>
@@ -52,15 +52,15 @@ function loginSubmit() {
 
                 <div>
                     <button type="submit"
-                        class="flex w-full justify-center rounded-md bg-primary-600 py-2 px-3 text-sm font-semibold text-neutral shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 transition-colors">Sign
+                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">Sign
                         in</button>
                 </div>
             </form>
 
-            <div v-if="loginError" class="mt-6 rounded-md bg-error-100 p-4">
+            <div v-if="loginError" class="p-4 mt-6 rounded-md bg-error-100">
                 <div class="flex">
                     <div class="flex-shrink-0">
-                        <XCircleIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
+                        <XCircleIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                     </div>
                     <div class="ml-3">
                         <h3 class="text-sm font-medium text-error-600">There was an error signing you in, please try again!

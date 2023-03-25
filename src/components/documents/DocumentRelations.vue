@@ -49,7 +49,7 @@ defineProps({
         <div v-if="relations.length > 0" class="hidden sm:block">
             <div>
                 <div class="flex flex-col mt-2">
-                    <div class="min-w-full overflow-hidden overflow-x-auto align-middle shadow sm:rounded-lg">
+                    <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
                         <table class="min-w-full bg-base-700 text-neutral">
                             <thead>
                                 <tr>

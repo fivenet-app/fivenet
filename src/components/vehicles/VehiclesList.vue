@@ -102,23 +102,23 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">Search</label>
-                                <div class="relative mt-2 flex items-center">
+                                <div class="relative flex items-center mt-2">
                                     <input v-model="search.name" ref="searchInput" type="text" name="search" id="search"
                                         placeholder="License plate"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral shadow-sm placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <div class="mt-2 flow-root">
-                <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="flow-root mt-2">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <button v-if="vehicles.length == 0" type="button" @click="focusSearch()"
-                            class="relative block w-full rounded-lg border-2 border-dashed border-base-300 p-12 text-center hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
-                            <MagnifyingGlassIcon class="text-neutral mx-auto h-12 w-12" />
-                            <span class="mt-2 block text-sm font-semibold text-gray-300">Use the search field
+                            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
+                            <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
+                            <span class="block mt-2 text-sm font-semibold text-gray-300">Use the search field
                                 above to search or update your query</span>
                         </button>
                         <div v-else>
@@ -151,7 +151,7 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                 <tbody class="divide-y divide-base-800">
                                     <VehiclesListEntry v-for="vehicle in vehicles" :key="vehicle.getPlate()"
                                         :vehicle="vehicle" :hide-owner="hideOwner"
-                                        class="hover:bg-neutral/5 transition-colors" />
+                                        class="transition-colors hover:bg-neutral/5" />
                                 </tbody>
                                 <thead>
                                     <tr>

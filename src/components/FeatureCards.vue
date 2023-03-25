@@ -55,7 +55,7 @@ const features = [
 
 <template>
     <div
-        class="overflow-hidden rounded-lg bg-base-900 shadow sm:grid sm:grid-cols-2 sm:gap-1 sm:max-w-6xl sm:mx-auto divide-y-4 divide-base-900 sm:divide-y-0">
+        class="overflow-hidden divide-y-4 rounded-lg bg-base-900 shadow-float sm:grid sm:grid-cols-2 sm:gap-1 sm:max-w-6xl sm:mx-auto divide-base-900 sm:divide-y-0">
         <div v-for="(feature, featureIdx) in features" v-can="feature.permission" :key="feature.title" :class="[
             featureIdx === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
             featureIdx === 1 ? 'sm:rounded-tr-lg' : '',
@@ -67,7 +67,7 @@ const features = [
             <div>
                 <span
                     :class="[feature.iconBackground, feature.iconForeground, 'inline-flex rounded-lg p-3']">
-                    <component :is="feature.icon" class="w-7 h-auto" aria-hidden="true" />
+                    <component :is="feature.icon" class="h-auto w-7" aria-hidden="true" />
                 </span>
             </div>
             <div class="mt-4">
@@ -80,9 +80,9 @@ const features = [
                 </h3>
                 <p class="mt-2 text-sm text-base-200">{{ feature.description }}</p>
             </div>
-            <span class="pointer-events-none absolute top-6 right-6 text-base-300 group-hover:text-base-200"
+            <span class="absolute pointer-events-none top-6 right-6 text-base-300 group-hover:text-base-200"
                 aria-hidden="true">
-                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M20 4h1a1 1 0 00-1-1v1zm-1 12a1 1 0 102 0h-2zM8 3a1 1 0 000 2V3zM3.293 19.293a1 1 0 101.414 1.414l-1.414-1.414zM19 4v12h2V4h-2zm1-1H8v2h12V3zm-.707.293l-16 16 1.414 1.414 16-16-1.414-1.414z" />
                 </svg>

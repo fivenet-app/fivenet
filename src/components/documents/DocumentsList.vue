@@ -59,65 +59,65 @@ onBeforeMount(() => {
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="findDocuments(0)">
-                        <label for="search" class="block text-sm font-medium leading-6 text-neutral mb-2">Search</label>
-                        <div class="flex flex-row gap-2 sm:mx-auto items-center">
+                        <label for="search" class="block mb-2 text-sm font-medium leading-6 text-neutral">Search</label>
+                        <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1 form-control">
                                 <input v-model="search.title" ref="searchInput" type="text" name="search" id="search"
                                     placeholder="Title"
-                                    class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral shadow-sm placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                    class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                             </div>
                             <div class="flex-initial form-control">
                                 <router-link :to="{ name: 'Documents: Create' }"
-                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Create</router-link>
+                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Create</router-link>
                             </div>
                             <div class="flex-initial">
                                 <router-link :to="{ name: 'Documents: Templates' }"
-                                    class="inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Templates</router-link>
+                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Templates</router-link>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <div class="mt-2 flow-root">
-                <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="flow-root mt-2">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <button v-if="documents.length == 0" type="button" @click="focusSearch()"
-                            class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                            <DocumentMagnifyingGlassIcon class="text-neutral mx-auto h-12 w-12" />
-                            <span class="mt-2 block text-sm font-semibold text-gray-300">No Documents found! Either update
+                            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            <DocumentMagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
+                            <span class="block mt-2 text-sm font-semibold text-gray-300">No Documents found! Either update
                                 your search
                                 query or create the first document using the above "Create"-button.</span>
                         </button>
                         <div v-else>
                             <ul class="flex flex-col">
                                 <li v-for="doc in documents" :key="doc.getId()"
-                                    class="flex-initial hover:bg-base-800 bg-base-850 rounded-lg my-1">
+                                    class="flex-initial my-1 rounded-lg hover:bg-base-800 bg-base-850">
                                     <router-link :to="{ name: 'Documents: Info', params: { id: doc.getId() } }">
                                         <div class="mx-2 mt-1 mb-4">
                                             <div class="flex flex-row">
                                                 <p class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
                                                     {{ doc.getTitle() }}
                                                 </p>
-                                                <p class="px-2 py-2 text-sm text-neutral ml-auto">
+                                                <p class="px-2 py-2 ml-auto text-sm text-neutral">
                                                 <p
-                                                    class="inline-flex rounded-full bg-primary-100 px-2 text-xs font-semibold leading-5 text-primary-700">
+                                                    class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700">
                                                     {{ doc.getState() }}</p>
                                                 </p>
                                             </div>
                                             <div class="flex flex-row gap-2 text-base-200">
-                                                <div class="flex flex-1 justify-start flex-row items-center">
+                                                <div class="flex flex-row items-center justify-start flex-1">
                                                     <UserIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
                                                     {{ doc.getCreator()?.getFirstname() }}, {{
                                                         doc.getCreator()?.getLastname()
                                                     }}
                                                 </div>
-                                                <div class="flex flex-1 justify-center flex-row items-center">
+                                                <div class="flex flex-row items-center justify-center flex-1">
                                                     <BriefcaseIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
                                                     {{ doc.getCreator()?.getJobLabel() }}
                                                 </div>
-                                                <div class="flex flex-1 justify-end flex-row items-center">
+                                                <div class="flex flex-row items-center justify-end flex-1">
                                                     <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
                                                     <p>
