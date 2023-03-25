@@ -233,8 +233,9 @@ onMounted(() => {
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
-                            <span v-if="activeChar" class="text-sm font-medium text-base-400">{{ activeChar.getFirstname() }}, {{
-                                activeChar.getLastname() }}</span>
+                            <span v-if="activeChar" class="text-sm font-medium text-base-400">{{ activeChar.getFirstname()
+                            }}, {{
+    activeChar.getLastname() }}</span>
                             <!-- Profile dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">
                                 <div>
@@ -267,17 +268,11 @@ onMounted(() => {
                 </div>
             </header>
 
-            <!-- Main content -->
-            <div class="flex flex-1 overflow-hidden items-center justify-center">
-                <main class="flex-1 overflow-y-auto">
-                    <!-- Primary column -->
-                    <section aria-labelledby="primary-heading" class="h-full min-w-0 lg:order-last">
-                        <slot></slot>
-                    </section>
-                </main>
-
-                <!-- <aside class="hidden overflow-y-auto border-l-8 w-96 border-base-850 bg-base-900 lg:block"></aside> -->
-            </div>
+            <main class="h-full">
+                <section aria-labelledby="primary-heading" class="h-full min-w-0 lg:order-last">
+                    <slot></slot>
+                </section>
+            </main>
         </div>
     </div>
 </template>
