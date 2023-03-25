@@ -20,9 +20,6 @@ import {
     DocumentMinusIcon,
     DocumentPlusIcon,
     MagnifyingGlassIcon,
-    ChatBubbleBottomCenterTextIcon,
-    ExclamationTriangleIcon,
-    ShieldExclamationIcon,
 } from '@heroicons/vue/24/outline';
 import { watchDebounced } from '@vueuse/core';
 import { onMounted, ref, FunctionalComponent } from 'vue';

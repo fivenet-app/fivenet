@@ -7,8 +7,8 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import { InboxStackIcon } from '@heroicons/vue/24/solid';
-import { useStore } from '../store/store';
+import { ClipboardDocumentListIcon } from '@heroicons/vue/24/solid';
+import { useStore } from '../../store/store';
 
 const store = useStore();
 
@@ -41,7 +41,7 @@ function setIsOpen(value: boolean): void {
                             class="relative transform overflow-hidden rounded-lg bg-gray-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                             <div>
                                 <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-                                    <InboxStackIcon class="h-6 w-6 text-indigo-600" aria-hidden="true" />
+                                    <ClipboardDocumentListIcon class="h-6 w-6 text-indigo-600" aria-hidden="true" />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">Your
@@ -137,6 +137,6 @@ function setIsOpen(value: boolean): void {
     <button title="Clipboard"
         class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-10 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
         @click="setIsOpen(true)">
-        <InboxStackIcon class="w-10 h-auto" />
+        <ClipboardDocumentListIcon class="w-10 h-auto" />
     </button>
 </template>

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import CitizensList from '../../components/citizens/CitizensList.vue';
+import ClipboardButton from '../../components/partials/ClipboardButton.vue';
 </script>
 
 <route lang="json">
@@ -15,5 +16,6 @@ import CitizensList from '../../components/citizens/CitizensList.vue';
 <template>
     <div class="w-full">
         <CitizensList />
+        <ClipboardButton />
     </div>
 </template>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import DocumentsList from '../../components/documents/DocumentsList.vue';
+import ClipboardButton from '../../components/partials/ClipboardButton.vue';
 </script>
 
 <route lang="json">
@@ -16,5 +17,6 @@ import DocumentsList from '../../components/documents/DocumentsList.vue';
 <template>
     <ContentWrapper>
         <DocumentsList />
+        <ClipboardButton />
     </ContentWrapper>
 </template>

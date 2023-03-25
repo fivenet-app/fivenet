@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineLoader, RouteLocationNormalizedLoaded } from 'vue-router/auto';
-import ClipboardButton from '../../components/ClipboardButton.vue';
+import ClipboardButton from '../../components/partials/ClipboardButton.vue';
 
 export const useUserData = defineLoader(async (route: RouteLocationNormalizedLoaded) => {
     route = route as RouteLocationNormalizedLoaded<'Citizens: Info'>;

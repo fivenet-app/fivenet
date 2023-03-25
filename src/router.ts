@@ -48,17 +48,21 @@ router.beforeResolve((to, from) => {
                     return true;
                 }
             } else {
+                // Only update the redirect query param if it isn't set already
+                const redirect = to.query.redirect ?? to.fullPath;
                 return {
                     name: 'Character Selector',
-                    query: { redirect: to.fullPath },
+                    query: { redirect: redirect },
                 };
             }
         }
 
+        // Only update the redirect query param if it isn't set already
+        const redirect = to.query.redirect ?? to.fullPath;
         return {
             name: 'Login',
             // save the location we were at to come back later
-            query: { redirect: to.fullPath },
+            query: { redirect: redirect },
         };
     }
 });

@@ -162,7 +162,11 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                         </th>
                                         <th v-if="!hideCitizenLink" scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Action
+                                            View
+                                        </th>
+                                        <th v-if="!hideCopy" scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
+                                            Copy
                                         </th>
                                     </tr>
                                 </thead>
@@ -194,6 +198,10 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                         <th v-if="!hideCitizenLink" scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
                                             Action
+                                        </th>
+                                        <th v-if="!hideCopy" scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
+                                            Copy
                                         </th>
                                     </tr>
                                 </thead>
