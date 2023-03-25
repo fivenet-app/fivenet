@@ -362,7 +362,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for AdditionalData
+	// no validation rules for Schema
 
 	// no validation rules for CreatorId
 
@@ -618,6 +618,8 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
+
+	// no validation rules for Schema
 
 	// no validation rules for CreatorId
 

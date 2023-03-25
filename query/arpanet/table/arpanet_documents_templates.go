@@ -17,19 +17,19 @@ type arpanetDocumentsTemplatesTable struct {
 	mysql.Table
 
 	//Columns
-	ID             mysql.ColumnInteger
-	CreatedAt      mysql.ColumnTimestamp
-	UpdatedAt      mysql.ColumnTimestamp
-	DeletedAt      mysql.ColumnTimestamp
-	Job            mysql.ColumnString
-	JobGrade       mysql.ColumnInteger
-	CategoryID     mysql.ColumnInteger
-	Title          mysql.ColumnString
-	Description    mysql.ColumnString
-	ContentTitle   mysql.ColumnString
-	Content        mysql.ColumnString
-	AdditionalData mysql.ColumnString
-	CreatorID      mysql.ColumnInteger
+	ID           mysql.ColumnInteger
+	CreatedAt    mysql.ColumnTimestamp
+	UpdatedAt    mysql.ColumnTimestamp
+	DeletedAt    mysql.ColumnTimestamp
+	Job          mysql.ColumnString
+	JobGrade     mysql.ColumnInteger
+	CategoryID   mysql.ColumnInteger
+	Title        mysql.ColumnString
+	Description  mysql.ColumnString
+	ContentTitle mysql.ColumnString
+	Content      mysql.ColumnString
+	Schema       mysql.ColumnString
+	CreatorID    mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -70,40 +70,40 @@ func newArpanetDocumentsTemplatesTable(schemaName, tableName, alias string) *Arp
 
 func newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) arpanetDocumentsTemplatesTable {
 	var (
-		IDColumn             = mysql.IntegerColumn("id")
-		CreatedAtColumn      = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn      = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn      = mysql.TimestampColumn("deleted_at")
-		JobColumn            = mysql.StringColumn("job")
-		JobGradeColumn       = mysql.IntegerColumn("job_grade")
-		CategoryIDColumn     = mysql.IntegerColumn("category_id")
-		TitleColumn          = mysql.StringColumn("title")
-		DescriptionColumn    = mysql.StringColumn("description")
-		ContentTitleColumn   = mysql.StringColumn("content_title")
-		ContentColumn        = mysql.StringColumn("content")
-		AdditionalDataColumn = mysql.StringColumn("additional_data")
-		CreatorIDColumn      = mysql.IntegerColumn("creator_id")
-		allColumns           = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AdditionalDataColumn, CreatorIDColumn}
-		mutableColumns       = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AdditionalDataColumn, CreatorIDColumn}
+		IDColumn           = mysql.IntegerColumn("id")
+		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
+		JobColumn          = mysql.StringColumn("job")
+		JobGradeColumn     = mysql.IntegerColumn("job_grade")
+		CategoryIDColumn   = mysql.IntegerColumn("category_id")
+		TitleColumn        = mysql.StringColumn("title")
+		DescriptionColumn  = mysql.StringColumn("description")
+		ContentTitleColumn = mysql.StringColumn("content_title")
+		ContentColumn      = mysql.StringColumn("content")
+		SchemaColumn       = mysql.StringColumn("schema")
+		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, SchemaColumn, CreatorIDColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, SchemaColumn, CreatorIDColumn}
 	)
 
 	return arpanetDocumentsTemplatesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:             IDColumn,
-		CreatedAt:      CreatedAtColumn,
-		UpdatedAt:      UpdatedAtColumn,
-		DeletedAt:      DeletedAtColumn,
-		Job:            JobColumn,
-		JobGrade:       JobGradeColumn,
-		CategoryID:     CategoryIDColumn,
-		Title:          TitleColumn,
-		Description:    DescriptionColumn,
-		ContentTitle:   ContentTitleColumn,
-		Content:        ContentColumn,
-		AdditionalData: AdditionalDataColumn,
-		CreatorID:      CreatorIDColumn,
+		ID:           IDColumn,
+		CreatedAt:    CreatedAtColumn,
+		UpdatedAt:    UpdatedAtColumn,
+		DeletedAt:    DeletedAtColumn,
+		Job:          JobColumn,
+		JobGrade:     JobGradeColumn,
+		CategoryID:   CategoryIDColumn,
+		Title:        TitleColumn,
+		Description:  DescriptionColumn,
+		ContentTitle: ContentTitleColumn,
+		Content:      ContentColumn,
+		Schema:       SchemaColumn,
+		CreatorID:    CreatorIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

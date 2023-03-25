@@ -78,8 +78,8 @@ export class DocumentTemplate extends jspb.Message {
   getContent(): string;
   setContent(value: string): DocumentTemplate;
 
-  getAdditionalData(): string;
-  setAdditionalData(value: string): DocumentTemplate;
+  getSchema(): string;
+  setSchema(value: string): DocumentTemplate;
 
   getCreatorId(): number;
   setCreatorId(value: number): DocumentTemplate;
@@ -109,7 +109,7 @@ export namespace DocumentTemplate {
     description: string,
     contentTitle: string,
     content: string,
-    additionalData: string,
+    schema: string,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
@@ -146,6 +146,9 @@ export class DocumentTemplateShort extends jspb.Message {
   getDescription(): string;
   setDescription(value: string): DocumentTemplateShort;
 
+  getSchema(): string;
+  setSchema(value: string): DocumentTemplateShort;
+
   getCreatorId(): number;
   setCreatorId(value: number): DocumentTemplateShort;
 
@@ -172,6 +175,7 @@ export namespace DocumentTemplateShort {
     category?: DocumentCategory.AsObject,
     title: string,
     description: string,
+    schema: string,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }

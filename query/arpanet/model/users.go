@@ -43,4 +43,5 @@ type Users struct {
 	CreatedAt    *time.Time `json:"created_at"`
 	LastSeen     *time.Time `json:"last_seen"`
 	Meta         *string    `json:"meta"`
+	Metadata     *string    `json:"metadata"`
 }

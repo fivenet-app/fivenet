@@ -31,6 +31,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 			dCategory.Job,
 			dTemplates.Title,
 			dTemplates.Description,
+			dTemplates.Schema,
 			dTemplates.CreatorID,
 		).
 		FROM(
@@ -73,7 +74,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			dTemplates.Description,
 			dTemplates.ContentTitle,
 			dTemplates.Content,
-			dTemplates.AdditionalData,
+			dTemplates.Schema,
 			dTemplates.CreatorID,
 		).
 		FROM(

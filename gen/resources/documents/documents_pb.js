@@ -551,7 +551,7 @@ proto.resources.documents.DocumentTemplate.toObject = function(includeInstance, 
     description: jspb.Message.getFieldWithDefault(msg, 8, ""),
     contentTitle: jspb.Message.getFieldWithDefault(msg, 9, ""),
     content: jspb.Message.getFieldWithDefault(msg, 10, ""),
-    additionalData: jspb.Message.getFieldWithDefault(msg, 11, ""),
+    schema: jspb.Message.getFieldWithDefault(msg, 11, ""),
     creatorId: jspb.Message.getFieldWithDefault(msg, 12, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f)
   };
@@ -635,7 +635,7 @@ proto.resources.documents.DocumentTemplate.deserializeBinaryFromReader = functio
       break;
     case 11:
       var value = /** @type {string} */ (reader.readString());
-      msg.setAdditionalData(value);
+      msg.setSchema(value);
       break;
     case 12:
       var value = /** @type {number} */ (reader.readInt32());
@@ -748,7 +748,7 @@ proto.resources.documents.DocumentTemplate.serializeBinaryToWriter = function(me
       f
     );
   }
-  f = message.getAdditionalData();
+  f = message.getSchema();
   if (f.length > 0) {
     writer.writeString(
       11,
@@ -1011,10 +1011,10 @@ proto.resources.documents.DocumentTemplate.prototype.setContent = function(value
 
 
 /**
- * optional string additional_data = 11;
+ * optional string schema = 11;
  * @return {string}
  */
-proto.resources.documents.DocumentTemplate.prototype.getAdditionalData = function() {
+proto.resources.documents.DocumentTemplate.prototype.getSchema = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 11, ""));
 };
 
@@ -1023,7 +1023,7 @@ proto.resources.documents.DocumentTemplate.prototype.getAdditionalData = functio
  * @param {string} value
  * @return {!proto.resources.documents.DocumentTemplate} returns this
  */
-proto.resources.documents.DocumentTemplate.prototype.setAdditionalData = function(value) {
+proto.resources.documents.DocumentTemplate.prototype.setSchema = function(value) {
   return jspb.Message.setProto3StringField(this, 11, value);
 };
 
@@ -1123,7 +1123,8 @@ proto.resources.documents.DocumentTemplateShort.toObject = function(includeInsta
     category: (f = msg.getCategory()) && proto.resources.documents.DocumentCategory.toObject(includeInstance, f),
     title: jspb.Message.getFieldWithDefault(msg, 7, ""),
     description: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    creatorId: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    schema: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    creatorId: jspb.Message.getFieldWithDefault(msg, 10, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f)
   };
 
@@ -1197,10 +1198,14 @@ proto.resources.documents.DocumentTemplateShort.deserializeBinaryFromReader = fu
       msg.setDescription(value);
       break;
     case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSchema(value);
+      break;
+    case 10:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorId(value);
       break;
-    case 10:
+    case 11:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setCreator(value);
@@ -1293,17 +1298,24 @@ proto.resources.documents.DocumentTemplateShort.serializeBinaryToWriter = functi
       f
     );
   }
+  f = message.getSchema();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
+      f
+    );
+  }
   f = message.getCreatorId();
   if (f !== 0) {
     writer.writeInt32(
-      9,
+      10,
       f
     );
   }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      10,
+      11,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -1513,11 +1525,29 @@ proto.resources.documents.DocumentTemplateShort.prototype.setDescription = funct
 
 
 /**
- * optional int32 creator_id = 9;
+ * optional string schema = 9;
+ * @return {string}
+ */
+proto.resources.documents.DocumentTemplateShort.prototype.getSchema = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.documents.DocumentTemplateShort} returns this
+ */
+proto.resources.documents.DocumentTemplateShort.prototype.setSchema = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional int32 creator_id = 10;
  * @return {number}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.getCreatorId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
 };
 
 
@@ -1526,17 +1556,17 @@ proto.resources.documents.DocumentTemplateShort.prototype.getCreatorId = functio
  * @return {!proto.resources.documents.DocumentTemplateShort} returns this
  */
 proto.resources.documents.DocumentTemplateShort.prototype.setCreatorId = function(value) {
-  return jspb.Message.setProto3IntField(this, 9, value);
+  return jspb.Message.setProto3IntField(this, 10, value);
 };
 
 
 /**
- * optional resources.users.UserShort creator = 10;
+ * optional resources.users.UserShort creator = 11;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.getCreator = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 10));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 11));
 };
 
 
@@ -1545,7 +1575,7 @@ proto.resources.documents.DocumentTemplateShort.prototype.getCreator = function(
  * @return {!proto.resources.documents.DocumentTemplateShort} returns this
 */
 proto.resources.documents.DocumentTemplateShort.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 10, value);
+  return jspb.Message.setWrapperField(this, 11, value);
 };
 
 
@@ -1563,7 +1593,7 @@ proto.resources.documents.DocumentTemplateShort.prototype.clearCreator = functio
  * @return {boolean}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 10) != null;
+  return jspb.Message.getField(this, 11) != null;
 };
 
 

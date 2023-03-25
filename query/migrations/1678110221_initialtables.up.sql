@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_templates` (
   `description` longtext NOT NULL,
   `content_title` longtext NOT NULL,
   `content` text NOT NULL,
-  `additional_data` longtext DEFAULT NULL,
+  `schema` longtext DEFAULT NULL,
   `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_arpanet_documents_templates_deleted_at` (`deleted_at`),
