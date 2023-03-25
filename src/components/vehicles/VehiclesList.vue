@@ -86,6 +86,10 @@ function focusSearch(): void {
     }
 }
 
+onMounted(() => {
+    if (props.userId) findVehicles(offset.value);
+});
+
 watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, maxWait: 1500 });
 </script>
 
@@ -176,11 +180,12 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                 </thead>
                             </table>
 
-                        <TablePagination :offset="offset" :entries="vehicles.length" :end="listEnd" :total="totalCount"
-                            :callback="findVehicles" />
+                            <TablePagination :offset="offset" :entries="vehicles.length" :end="listEnd" :total="totalCount"
+                                :callback="findVehicles" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div></template>
+</template>
