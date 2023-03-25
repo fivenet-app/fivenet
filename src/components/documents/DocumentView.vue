@@ -168,10 +168,10 @@ onMounted(() => {
                                     <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }"
                                         class="flex-initial w-full">
                                         <button
-                                            :class="[selected ? 'border-primary-500 text-primary-500' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-400', 'group inline-flex items-center border-b-2 py-4 px-1 text-m font-medium w-full justify-center transition-colors']"
+                                            :class="[selected ? 'border-primary-500 text-primary-500' : 'border-transparent text-base-300 hover:border-base-300 hover:text-base-200', 'group inline-flex items-center border-b-2 py-4 px-1 text-m font-medium w-full justify-center transition-colors']"
                                             :aria-current="selected ? 'page' : undefined">
                                             <component :is="tab.icon"
-                                                :class="[selected ? 'text-primary-500' : 'text-gray-500 group-hover:text-gray-400', '-ml-0.5 mr-2 h-5 w-5 transition-colors']"
+                                                :class="[selected ? 'text-primary-500' : 'text-base-300 group-hover:text-base-200', '-ml-0.5 mr-2 h-5 w-5 transition-colors']"
                                                 aria-hidden="true" />
                                             <span>{{ tab.name }}</span>
                                         </button>

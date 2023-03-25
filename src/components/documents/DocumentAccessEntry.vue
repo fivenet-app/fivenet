@@ -138,32 +138,32 @@ watch(selectedAccessRole, () => {
 
 <template>
     <div class="flex flex-row items-center my-2">
-        <div class="flex-initial w-60 mr-2">
+        <div class="flex-initial mr-2 w-60">
             <Listbox as="div" v-model="selectedAccessType">
                 <div class="relative">
                     <ListboxButton
-                        class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
                         <span class="block truncate">{{ selectedAccessType?.name }}</span>
-                        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                            <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
                         </span>
                     </ListboxButton>
 
-                    <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
+                    <transition leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100"
                         leave-to-class="opacity-0">
                         <ListboxOptions
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
                             <ListboxOption as="template" v-for="accessType in accessTypes" :key="accessType.id"
                                 :value="accessType" v-slot="{ active, selected }">
                                 <li
-                                    :class="[active ? 'bg-indigo-600 text-neutral' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
+                                    :class="[active ? 'bg-primary-500' : '', 'text-neutral relative cursor-default select-none py-2 pl-8 pr-4']">
                                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
                                         accessType.name
                                     }}</span>
 
                                     <span v-if="selected"
-                                        :class="[active ? 'text-neutral' : 'text-indigo-600', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
-                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ListboxOption>
@@ -178,24 +178,24 @@ watch(selectedAccessRole, () => {
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
-                                class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryChar = $event.target.value"
                                 :display-value="(char: any) => `${char?.getFirstname()} ${char?.getLastname()}`" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesChars.length > 0"
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
                             <ComboboxOption v-for="char in entriesChars" :key="char.getIdentifier()" :value="char" as="char"
                                 v-slot="{ active, selected }">
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-neutral' : 'text-gray-900']">
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ char.getFirstname() }} {{ char.getLastname() }}
                                     </span>
 
                                     <span v-if="selected"
-                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-neutral' : 'text-indigo-600']">
-                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -210,23 +210,23 @@ watch(selectedAccessRole, () => {
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
-                                class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryJob = $event.target.value" :display-value="(job: any) => job?.getLabel()" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesJobs.length > 0"
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
                             <ComboboxOption v-for="job in entriesJobs" :key="job.getName()" :value="job" as="job"
                                 v-slot="{ active, selected }">
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-neutral' : 'text-gray-900']">
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ job.getLabel() }}
                                     </span>
 
                                     <span v-if="selected"
-                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-neutral' : 'text-indigo-600']">
-                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -239,24 +239,24 @@ watch(selectedAccessRole, () => {
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
-                                class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryMinimumRank = $event.target.value"
                                 :display-value="(rank: any) => rank?.getLabel()" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesMinimumRank.length > 0"
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
                             <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.getGrade()" :value="rank"
                                 as="minimumrank" v-slot="{ active, selected }">
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-neutral' : 'text-gray-900']">
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ rank.getLabel() }}
                                     </span>
 
                                     <span v-if="selected"
-                                        :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-neutral' : 'text-indigo-600']">
-                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -265,29 +265,29 @@ watch(selectedAccessRole, () => {
                 </Combobox>
             </div>
         </div>
-        <div class="flex-inital w-60 mr-2">
+        <div class="mr-2 flex-inital w-60">
             <Combobox as="div" v-model="selectedAccessRole">
                 <div class="relative">
                     <ComboboxButton as="div">
                         <ComboboxInput
-                            class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @change="queryAccessRole = $event.target.value"
                             :display-value="(role: any) => toTitleCase(role.value?.toLowerCase())" />
                     </ComboboxButton>
 
                     <ComboboxOptions v-if="entriesAccessRole.length > 0"
-                        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
                         <ComboboxOption v-for="role in entriesAccessRole" :key="role.id" :value="role" as="accessrole"
                             v-slot="{ active, selected }">
                             <li
-                                :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-neutral' : 'text-gray-900']">
+                                :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                 <span :class="['block truncate', selected && 'font-semibold']">
                                     {{ toTitleCase(role.value.toLowerCase()) }}
                                 </span>
 
                                 <span v-if="selected"
-                                    :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-neutral' : 'text-indigo-600']">
-                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                    :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                    <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                 </span>
                             </li>
                         </ComboboxOption>
@@ -297,8 +297,8 @@ watch(selectedAccessRole, () => {
         </div>
         <div class="flex-initial">
             <button type="button"
-                class="rounded-full bg-indigo-600 p-1.5 text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                <XMarkIcon class="h-6 w-6" @click="$emit('deleteRequest', { id: props.init.id })" aria-hidden="true" />
+                class="rounded-full bg-primary-500 p-1.5 text-neutral shadow-sm hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                <XMarkIcon class="w-6 h-6" @click="$emit('deleteRequest', { id: props.init.id })" aria-hidden="true" />
             </button>
         </div>
     </div>

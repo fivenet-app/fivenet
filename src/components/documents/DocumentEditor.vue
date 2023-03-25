@@ -292,100 +292,99 @@ function editForm(): void {
 <template>
     <DocumentRelationManager :open="showRelationManager" :document="$props.id" @close="showRelationManager = false" />
     <DocumentReferenceManager :open="showReferenceManager" :document="$props.id" @close="showReferenceManager = false" />
-    <div
-        class="rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 bg-white">
-        <label for="name" class="block text-xs font-medium text-gray-900">Title</label>
-        <input v-model="title" type="text" name="name"
-            class="block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-            placeholder="Document Title" />
-    </div>
-    <div class="flex flex-row">
-        <div class="flex-1">
-            <!-- Category -->
-            <Combobox as="div" v-model="selectedCategory">
-                <div class="relative">
-                    <ComboboxButton as="div">
-                        <ComboboxInput
-                            class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            @change="queryCategory = $event.target.value"
-                            :display-value="(category: any) => category?.getName()" />
-                    </ComboboxButton>
-
-                    <ComboboxOptions v-if="entriesCategory.length > 0"
-                        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        <ComboboxOption v-for="category in entriesCategory" :key="category.getId()" :value="category"
-                            as="category" v-slot="{ active, selected }">
-                            <li
-                                :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-indigo-600 text-neutral' : 'text-gray-900']">
-                                <span :class="['block truncate', selected && 'font-semibold']">
-                                    {{ category.getName() }}
-                                </span>
-
-                                <span v-if="selected"
-                                    :class="['absolute inset-y-0 left-0 flex items-center pl-1.5', active ? 'text-neutral' : 'text-indigo-600']">
-                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                </span>
-                            </li>
-                        </ComboboxOption>
-                    </ComboboxOptions>
-                </div>
-            </Combobox>
+    <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
+        <div>
+            <label for="name" class="block font-medium sr-only text-s">Title</label>
+            <input v-model="title" type="text" name="name"
+                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                placeholder="Document Title" />
         </div>
-        <div
-            class="flex-1 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 bg-white">
-            <!-- State -->
-            <input v-model="state" type="text" name="state"
-                class="block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                placeholder="Document State" />
-        </div>
-        <div class="flex-1">
-            <!-- Open/Close -->
-            <Listbox as="div" v-model="closed">
-                <div class="relative">
-                    <ListboxButton
-                        class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        <span class="block truncate">{{ openclose.find(e => e.closed === closed.closed)?.label }}</span>
-                        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                            <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                        </span>
-                    </ListboxButton>
+        <div class="flex flex-row gap-2">
+            <div class="flex-1">
+                <Combobox as="div" v-model="selectedCategory">
+                    <div class="relative">
+                        <ComboboxButton as="div">
+                            <ComboboxInput
+                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                @change="queryCategory = $event.target.value"
+                                :display-value="(category: any) => category?.getName()" />
+                        </ComboboxButton>
 
-                    <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
-                        leave-to-class="opacity-0">
-                        <ListboxOptions
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            <ListboxOption as="template" v-for="type in openclose" :key="type.id" :value="type"
-                                v-slot="{ active, selected }">
+                        <ComboboxOptions v-if="entriesCategory.length > 0"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
+                            <ComboboxOption v-for="category in entriesCategory" :key="category.getId()" :value="category"
+                                as="category" v-slot="{ active, selected }">
                                 <li
-                                    :class="[active ? 'bg-indigo-600 text-neutral' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
-                                    <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                                        type.label
-                                    }}</span>
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                        {{ category.getName() }}
+                                    </span>
 
                                     <span v-if="selected"
-                                        :class="[active ? 'text-neutral' : 'text-indigo-600', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
-                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
-                            </ListboxOption>
-                        </ListboxOptions>
-                    </transition>
-                </div>
-            </Listbox>
+                            </ComboboxOption>
+                        </ComboboxOptions>
+                    </div>
+                </Combobox>
+            </div>
+            <div
+                class="flex-1">
+                <input v-model="state" type="text" name="state"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    placeholder="Document State" />
+            </div>
+            <div class="flex-1">
+                <!-- Open/Close -->
+                <Listbox as="div" v-model="closed">
+                    <div class="relative">
+                        <ListboxButton
+                            class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
+                            <span class="block truncate">{{ openclose.find(e => e.closed === closed.closed)?.label }}</span>
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
+                            </span>
+                        </ListboxButton>
+
+                        <transition leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100"
+                            leave-to-class="opacity-0">
+                            <ListboxOptions
+                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
+                                <ListboxOption as="template" v-for="type in openclose" :key="type.id" :value="type"
+                                    v-slot="{ active, selected }">
+                                    <li
+                                        :class="[active ? 'bg-primary-500' : '', 'text-neutral relative cursor-default select-none py-2 pl-8 pr-4']">
+                                        <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                                            type.label
+                                        }}</span>
+
+                                        <span v-if="selected"
+                                            :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        </span>
+                                    </li>
+                                </ListboxOption>
+                            </ListboxOptions>
+                        </transition>
+                    </div>
+                </Listbox>
+            </div>
         </div>
     </div>
-    <div class="bg-white">
+    <div class="bg-neutral">
         <QuillEditor v-model:content="content" contentType="html" toolbar="full" theme="snow" :modules="modules" />
     </div>
     <div class="flex flex-row" v-if="$props.id">
         <div class="flex-1">
             <button type="button"
-                class="rounded-bl-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                class="rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="showRelationManager = true">Citizen Relations</button>
         </div>
         <div class="flex-1">
             <button type="button"
-                class="rounded-br-md bg-indigo-600 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                class="rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral shadow-sm hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="showReferenceManager = true">Document References</button>
         </div>
     </div>
@@ -396,13 +395,13 @@ function editForm(): void {
             @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
             @deleteRequest="removeAccessEntry($event)" />
         <button type="button"
-            class="rounded-full bg-indigo-600 p-2 text-neutral shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            class="p-2 rounded-full shadow-sm bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
             data-te-toggle="tooltip" title="Add Permission" @click="addAccessEntry()">
-            <PlusIcon class="h-5 w-5" aria-hidden="true" />
+            <PlusIcon class="w-5 h-5" aria-hidden="true" />
         </button>
     </div>
     <button v-if="!props.id" @click="submitForm()"
-        class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-neutral shadow-sm hover:bg-white/20">Submit</button>
+        class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Submit</button>
     <button v-if="props.id" @click="editForm()"
-        class="rounded-md bg-white/10 py-2.5 px-3.5 text-sm font-semibold text-neutral shadow-sm hover:bg-white/20">Edit</button>
+        class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Edit</button>
 </template>
