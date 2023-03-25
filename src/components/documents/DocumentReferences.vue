@@ -23,13 +23,13 @@ defineProps({
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
                                 <ArrowsRightLeftIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                                <span class="flex flex-col truncate text-sm text-gray-500">
+                                <span class="flex flex-col truncate text-sm ">
                                     <span>
                                         {{ reference.getTargetDocument()?.getTitle() }}<span
                                             v-if="reference.getTargetDocument()?.getCategory()"> (Category: {{
                                                 reference.getTargetDocument()?.getCategory()?.getName() }})</span>
                                     </span>
-                                    <span class="font-medium text-gray-900">{{
+                                    <span class="font-medium ">{{
                                         DOC_REFERENCE_Util.toEnumKey(reference.getReference()) }}</span>
                                     <span class="truncate">
                                         {{ reference.getSourceDocument()?.getTitle() }}<span
@@ -48,28 +48,28 @@ defineProps({
 
         <!-- Relations table (small breakpoint and up) -->
         <div v-if="references.length > 0" class="hidden sm:block">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div>
                 <div class="mt-2 flex flex-col">
                     <div class="min-w-full overflow-hidden overflow-x-auto align-middle shadow sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
+                        <table class="min-w-full bg-base-700 text-neutral">
                             <thead>
                                 <tr>
-                                    <th class="bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900"
+                                    <th class="px-6 py-3 text-left text-sm font-semibold"
                                         scope="col">
                                         Target</th>
-                                    <th class="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900"
+                                    <th class="px-6 py-3 text-right text-sm font-semibold"
                                         scope="col">
                                         Relation</th>
-                                    <th class="hidden bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900 md:block"
+                                    <th class="hidden px-6 py-3 text-left text-sm font-semibold md:block"
                                         scope="col">Source</th>
-                                    <th class="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900"
+                                    <th class="px-6 py-3 text-right text-sm font-semibold"
                                         scope="col">
                                         Date</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr v-for="reference in references" :key="reference.getId()" class="bg-white">
-                                    <td class="px-6 py-4 text-sm text-gray-900">
+                            <tbody class="divide-y divide-base-600 bg-base-800 text-neutral">
+                                <tr v-for="reference in references" :key="reference.getId()">
+                                    <td class="px-6 py-4 text-sm ">
                                         <div class="flex">
                                             <router-link
                                                 :to="{ name: 'Documents: Info', params: { id: reference.getSourceDocumentId() } }"
@@ -80,11 +80,11 @@ defineProps({
                                             </router-link>
                                         </div>
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500">
-                                        <span class="font-medium text-gray-900">{{
+                                    <td class="whitespace-nowrap px-6 py-4 text-right text-sm ">
+                                        <span class="font-medium ">{{
                                             DOC_REFERENCE_Util.toEnumKey(reference.getReference()) }}</span>
                                     </td>
-                                    <td class="hidden whitespace-nowrap px-6 py-4 text-sm text-gray-900 md:block">
+                                    <td class="hidden whitespace-nowrap px-6 py-4 text-sm  md:block">
                                         <div class="flex">
                                             <router-link
                                                 :to="{ name: 'Documents: Info', params: { id: reference.getTargetDocumentId() } }"
@@ -95,7 +95,7 @@ defineProps({
                                             </router-link>
                                         </div>
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500">
+                                    <td class="whitespace-nowrap px-6 py-4 text-right text-sm ">
                                         <time datetime="">{{ getDateLocaleString(reference.getCreatedAt()) }}</time>
                                     </td>
                                 </tr>
