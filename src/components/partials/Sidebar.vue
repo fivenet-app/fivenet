@@ -214,14 +214,14 @@ onMounted(() => {
                                         <div>
                                             <router-link :to="{ path: accessToken ? '/overview' : '/' }"
                                                 class="text-base-400 hover:text-neutral hover:transition-colors">
-                                                <HomeIconSolid class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                                <HomeIconSolid class="flex-shrink-0 w-5 h-5" aria-hidden="true" />
                                                 <span class="sr-only">Home</span>
                                             </router-link>
                                         </div>
                                     </li>
                                     <li v-for="page in breadcrumbs" :key="page.name">
                                         <div class="flex items-center">
-                                            <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-base-400"
+                                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-400"
                                                 aria-hidden="true" />
                                             <router-link :to="{ path: page.href }"
                                                 class="ml-4 text-sm font-medium text-base-400 hover:text-neutral hover:transition-colors"
@@ -243,7 +243,7 @@ onMounted(() => {
                                         class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                         <span class="sr-only">Open user menu</span>
                                         <UserIcon
-                                            class="w-auto h-10 hover:transition-colors rounded-full text-base-300 bg-base-800 fill-base-300 hover:text-base-200 hover:fill-base-200" />
+                                            class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-200 hover:fill-base-200" />
                                     </MenuButton>
                                 </div>
                                 <transition enter-active-class="transition duration-100 ease-out"
@@ -268,7 +268,7 @@ onMounted(() => {
                 </div>
             </header>
 
-            <main class="h-full">
+            <main class="h-full overflow-y-auto">
                 <section aria-labelledby="primary-heading" class="h-full min-w-0 lg:order-last">
                     <slot></slot>
                 </section>

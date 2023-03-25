@@ -23,15 +23,15 @@ import {
 } from '@heroicons/vue/20/solid';
 import DocumentRelations from './DocumentRelations.vue';
 import DocumentReferences from './DocumentReferences.vue';
+import DocumentComments from './DocumentComments.vue';
 import { toTitleCase } from '../../utils/strings';
 import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 
-const document = ref<undefined | Document>(undefined)
-const access = ref<undefined | DocumentAccess>(undefined)
-const comments = ref<DocumentComment[]>([])
-const activeResponse = ref<undefined | Document>(undefined)
-const feedReferences = ref<DocumentReference[]>([])
-const feedRelations = ref<DocumentRelation[]>([])
+const document = ref<undefined | Document>(undefined);
+const access = ref<undefined | DocumentAccess>(undefined);
+const comments = ref<DocumentComment[]>([]);
+const feedReferences = ref<DocumentReference[]>([]);
+const feedRelations = ref<DocumentRelation[]>([]);
 const tabs = ref<{ name: string, icon: typeof LockOpenIcon }[]>([
     { name: 'References', icon: DocumentMagnifyingGlassIcon },
     { name: 'Relations', icon: UserIcon },
@@ -99,7 +99,7 @@ onMounted(() => {
                                     {{ ' ' }}
                                     <router-link
                                         :to="{ name: 'Citizens: Info', params: { id: document?.getCreator()?.getUserId() ?? 0 } }"
-                                        class="font-medium text-primary-400">
+                                        class="font-medium text-primary-400 hover:text-primary-300">
                                         {{ document?.getCreator()?.getFirstname() }}
                                         {{ document?.getCreator()?.getLastname() }}
                                     </router-link>
@@ -162,31 +162,7 @@ onMounted(() => {
                                 <p v-html="document?.getContent()"></p>
                             </div>
                         </div>
-                        <div v-if="activeResponse" class="mt-10">
-                            <div class="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b xl:pb-6">
-                                <div>
-                                    <h1 class="text-2xl font-bold text-gray-900">{{ activeResponse?.getTitle() }}
-                                    </h1>
-                                    <p class="mt-2 text-sm text-gray-500">
-                                        Reply by
-                                        {{ ' ' }}
-                                        <router-link
-                                            :to="{ name: 'Citizens: Info', params: { id: activeResponse?.getCreator()?.getUserId() ?? 0 } }"
-                                            class="font-medium text-gray-900">
-                                            {{ activeResponse?.getCreator()?.getFirstname() }}
-                                            {{ activeResponse?.getCreator()?.getLastname() }}
-                                        </router-link>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="py-3 xl:pt-6 xl:pb-0">
-                                <h2 class="sr-only">Description</h2>
-                                <div class="prose max-w-none">
-                                    <p v-html="activeResponse?.getContent()"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-2">
+                        <div>
                             <TabGroup>
                                 <TabList class="flex flex-row">
                                     <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }"
@@ -210,6 +186,10 @@ onMounted(() => {
                                     </TabPanel>
                                 </TabPanels>
                             </TabGroup>
+                        </div>
+                        <div class="mt-4" v-if="comments.length">
+                            <h2 class="text-lg font-semibold text-neutral">Comments</h2>
+                            <DocumentComments :comments="comments" />
                         </div>
                     </div>
                 </div>

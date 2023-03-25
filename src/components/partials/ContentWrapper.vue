@@ -1,6 +1,6 @@
 <template>
     <main>
-        <div class="mx-auto max-w-7xl p-2">
+        <div class="pt-8 mx-auto max-w-7xl">
             <slot />
         </div>
     </main>
