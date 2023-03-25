@@ -1,4 +1,4 @@
-import { GetterTree, Module, Store } from 'vuex';
+import { GetterTree, Module } from 'vuex';
 import { RootState } from '../store';
 import { TemplateData } from '@arpanet/gen/resources/documents/templates/templates_pb';
 import { User, UserShort } from '@arpanet/gen/resources/users/users_pb';
@@ -28,6 +28,83 @@ export const getters: GetterTree<ClipboardModuleState, RootState> & Getters = {
         return data;
     },
 };
+
+const clipboardModule: Module<ClipboardModuleState, RootState> = {
+    namespaced: true,
+    state: {
+        users: [],
+        vehicles: [],
+    },
+    actions: {
+        clear({ commit }) {
+            commit('clearUsers');
+            commit('clearVehicles');
+        },
+        addUser({ commit }, user: User) {
+            commit('addUser', user);
+        },
+        removeUser({ commit }, id: number) {
+            commit('removeUser', id);
+        },
+        clearUsers({ commit }) {
+            commit('clearUsers');
+        },
+        addVehicle({ commit }, user: User) {
+            commit('addVehicle', user);
+        },
+        removeVehicle({ commit }, id: number) {
+            commit('removeVehicle', id);
+        },
+        clearVehicles({ commit }) {
+            commit('clearVehicles');
+        },
+    },
+    mutations: {
+        // Users
+        addUser(state: ClipboardModuleState, user: User): void {
+            const idx = state.users.findIndex((o: ClipboardUser) => {
+                return o.id === user.getUserId();
+            });
+            if (idx === -1) {
+                state.users.push((new ClipboardUser()).setUser(user));
+            }
+        },
+        removeUser(state: ClipboardModuleState, id: number): void {
+            const idx = state.users.findIndex((o: ClipboardUser) => {
+                return o.id === id;
+            });
+            if (idx > 0) {
+                state.users.splice(idx, 1);
+            }
+        },
+        clearUsers(state: ClipboardModuleState): void {
+            state.users.splice(0, state.users.length);
+        },
+        // Vehicles
+        addVehicle(state: ClipboardModuleState, vehicle: Vehicle): void {
+            const idx = state.vehicles.findIndex((o: ClipboardVehicle) => {
+                return o.plate === vehicle.getPlate();
+            });
+            if (idx === -1) {
+                state.vehicles.push(new ClipboardVehicle(vehicle));
+            }
+        },
+        removeVehicle(state: ClipboardModuleState, plate: string): void {
+            const idx = state.vehicles.findIndex((o: ClipboardVehicle) => {
+                return o.plate === plate;
+            });
+            if (idx > 0) {
+                state.vehicles.splice(idx, 1);
+            }
+        },
+        clearVehicles(state: ClipboardModuleState): void {
+            state.vehicles.splice(0, state.vehicles.length);
+        },
+    },
+    getters: getters,
+};
+
+export default clipboardModule;
 
 export class ClipboardUser {
     public id: number | undefined;
@@ -103,67 +180,3 @@ export class ClipboardVehicle {
         this.owner = owner;
     }
 }
-
-const clipboardModule: Module<ClipboardModuleState, RootState> = {
-    namespaced: true,
-    state: {
-        users: [],
-        vehicles: [],
-    },
-    actions: {
-        addUser({ commit }, user: User) {
-            commit('addUser', user);
-        },
-        removeUser({ commit }, id: number) {
-            commit('removeUser', id);
-        },
-        clearUsers({ commit }) {
-            commit('clearUsers');
-        },
-    },
-    mutations: {
-        // Users
-        addUser(state: ClipboardModuleState, user: User): void {
-            const idx = state.users.findIndex((o: ClipboardUser) => {
-                return o.id === user.getUserId();
-            });
-            if (idx === -1) {
-                state.users.push((new ClipboardUser()).setUser(user));
-            }
-        },
-        removeUser(state: ClipboardModuleState, id: number): void {
-            const idx = state.users.findIndex((o: ClipboardUser) => {
-                return o.id === id;
-            });
-            if (idx > 0) {
-                state.users.splice(idx, 1);
-            }
-        },
-        clearUsers(state: ClipboardModuleState): void {
-            state.users.splice(0, state.users.length);
-        },
-        // Vehicles
-        addVehicle(state: ClipboardModuleState, vehicle: Vehicle): void {
-            const idx = state.vehicles.findIndex((o: ClipboardVehicle) => {
-                return o.plate === vehicle.getPlate();
-            });
-            if (idx === -1) {
-                state.vehicles.push(new ClipboardVehicle(vehicle));
-            }
-        },
-        removeVehicle(state: ClipboardModuleState, plate: string): void {
-            const idx = state.vehicles.findIndex((o: ClipboardVehicle) => {
-                return o.plate === plate;
-            });
-            if (idx > 0) {
-                state.vehicles.splice(idx, 1);
-            }
-        },
-        clearVehicles(state: ClipboardModuleState): void {
-            state.vehicles.splice(0, state.vehicles.length);
-        },
-    },
-    getters: getters,
-};
-
-export default clipboardModule;

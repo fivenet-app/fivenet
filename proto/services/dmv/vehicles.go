@@ -14,7 +14,7 @@ import (
 
 var (
 	vehicle = table.OwnedVehicles.AS("vehicle")
-	user    = table.Users.AS("usershortni")
+	user    = table.Users.AS("usershort")
 )
 
 type Server struct {

@@ -6,6 +6,8 @@ import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
 import CitizenActivityFeed from './CitizenActivityFeed.vue';
 import VehiclesList from '../vehicles/VehiclesList.vue';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
+import { useStore } from '../../store/store';
+import { PlusIcon } from '@heroicons/vue/24/solid';
 
 const tabs = [
     { name: 'Profile', icon: UserIcon, permission: 'CitizenStoreService.FindUsers' },
@@ -14,12 +16,18 @@ const tabs = [
     { name: 'Activity', icon: RectangleGroupIcon, permission: 'CitizenStoreService.GetUserActivity' },
 ];
 
-defineProps({
+const store = useStore();
+
+const props = defineProps({
     user: {
         required: true,
         type: User,
     },
 });
+
+function addToClipboard() {
+    store.commit('clipboard/addUser', props.user);
+}
 </script>
 
 <template>
@@ -53,7 +61,7 @@ defineProps({
                     <CitizenInfoProfile :user="user" />
                 </TabPanel>
                 <TabPanel>
-                    <VehiclesList :userId="user.getUserId()" :hide-owner="true" />
+                    <VehiclesList :userId="user.getUserId()" :hide-owner="true" :hide-citizen-link="true" />
                 </TabPanel>
                 <TabPanel>
                     <CitizenInfoDocuments :userId="user.getUserId()" />
@@ -64,4 +72,8 @@ defineProps({
             </TabPanels>
         </TabGroup>
     </div>
+    <button title="Add to Clipboard" @click="addToClipboard()"
+        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-24 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400">
+        <PlusIcon class="w-10 h-auto" />
+    </button>
 </template>

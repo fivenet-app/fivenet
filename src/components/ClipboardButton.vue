@@ -1,17 +1,142 @@
 <script lang="ts" setup>
-import { PlusIcon } from '@heroicons/vue/24/solid';
+import { ref } from 'vue';
+import {
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    TransitionChild,
+    TransitionRoot,
+} from '@headlessui/vue';
+import { InboxStackIcon } from '@heroicons/vue/24/solid';
+import { useStore } from '../store/store';
 
-defineProps({
-    callback: {
-        required: true,
-        type: Function,
-    }
-});
+const store = useStore();
+
+const users = store.state.clipboard?.users;
+const vehicles = store.state.clipboard?.vehicles;
+
+const open = ref(false);
+
+function setIsOpen(value: boolean): void {
+    open.value = value;
+}
 </script>
 
 <template>
-    <button title="Actions" @click="callback()"
-        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-10 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400">
-        <PlusIcon class="w-10 h-auto" />
+    <TransitionRoot as="template" :show="open">
+        <Dialog as="div" class="relative z-10" @close="open = false">
+            <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
+                leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            </TransitionChild>
+
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <TransitionChild as="template" enter="ease-out duration-300"
+                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200"
+                        leave-from="opacity-100 translate-y-0 sm:scale-100"
+                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                        <DialogPanel
+                            class="relative transform overflow-hidden rounded-lg bg-gray-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                            <div>
+                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                                    <InboxStackIcon class="h-6 w-6 text-indigo-600" aria-hidden="true" />
+                                </div>
+                                <div class="mt-3 text-center sm:mt-5">
+                                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">Your
+                                        Clipboard Contents</DialogTitle>
+                                    <div class="mt-2 text-white">
+                                        <h3 class="font-medium">Users</h3>
+                                        <span v-if="users?.length === 0">
+                                            No Users in Clipboard.
+                                        </span>
+                                        <table v-else class="min-w-full divide-y divide-gray-700">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
+                                                        Name</th>
+                                                    <th scope="col"
+                                                        class="py-3.5 px-3 text-left text-sm font-semibold text-white">Job
+                                                    </th>
+                                                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                                                        <span class="sr-only">Remove</span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-800">
+                                                <tr v-for="user in users" :key="user.id">
+                                                    <td
+                                                        class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
+                                                        {{ user.firstname }}, {{ user.lastname }}
+                                                    </td>
+                                                    <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-300">
+                                                        {{ user.jobLabel }} (Rank: {{ user.jobGradeLabel }})
+                                                    </td>
+                                                    <td
+                                                        class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                                                        <button
+                                                            @click="store.dispatch('clipboard/removeUser')">Remove</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <h3 class="font-medium">Vehicles</h3>
+                                        <span v-if="vehicles?.length === 0">
+                                            No Vehicles in Clipboard.
+                                        </span>
+                                        <table v-else class="min-w-full divide-y divide-gray-700">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
+                                                        Name</th>
+                                                    <th scope="col"
+                                                        class="py-3.5 px-3 text-left text-sm font-semibold text-white">Job
+                                                    </th>
+                                                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                                                        <span class="sr-only">Remove</span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-800">
+                                                <tr v-for="user in users" :key="user.id">
+                                                    <td
+                                                        class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
+                                                        {{ user.firstname }}, {{ user.lastname }}
+                                                    </td>
+                                                    <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-300">
+                                                        {{ user.jobLabel }} (Rank: {{ user.jobGradeLabel }})
+                                                    </td>
+                                                    <td
+                                                        class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                                                        <button
+                                                            @click="store.dispatch('clipboard/removeVehicle')">Remove</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                                <button type="button"
+                                    class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                                    @click="open = false" ref="cancelButtonRef">Close</button>
+                                <button type="button"
+                                    class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                                    @click="store.dispatch('clipboard/clear')">Clear Clipboard</button>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </div>
+        </Dialog>
+    </TransitionRoot>
+    <button title="Clipboard"
+        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-10 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
+        @click="setIsOpen(true)">
+        <InboxStackIcon class="w-10 h-auto" />
     </button>
 </template>

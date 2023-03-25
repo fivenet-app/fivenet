@@ -1,9 +1,12 @@
 <script lang="ts" setup>
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
 import { EyeIcon } from '@heroicons/vue/24/solid';
+import { useStore } from '../../store/store';
 import { toTitleCase } from '../../utils/strings';
 
-defineProps({
+const store = useStore();
+
+const props = defineProps({
     vehicle: {
         required: true,
         type: Vehicle,
@@ -13,7 +16,21 @@ defineProps({
         required: false,
         default: false,
     },
+    hideCitizenLink: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
+    hideCopy: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
 });
+
+function addToClipboard() {
+    store.commit('clipboard/addVehicle', props.vehicle);
+}
 </script>
 
 <template>
@@ -35,8 +52,14 @@ defineProps({
         </td>
         <td class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <div v-can="'CitizenStoreService.FindUsers'">
-                <router-link :to="{ name: 'Citizens: Info', params: { id: vehicle.getOwner()?.getUserId() ?? 0 } }"
-                    class="text-primary-500 hover:text-primary-400"><EyeIcon class="w-6 h-auto ml-auto mr-2.5" /></router-link>
+                <router-link v-if="!hideCitizenLink"
+                    :to="{ name: 'Citizens: Info', params: { id: vehicle.getOwner()?.getUserId() ?? 0 } }"
+                    class="text-primary-500 hover:text-primary-400">
+                    <EyeIcon class="w-6 h-auto ml-auto mr-2.5" />
+                </router-link>
+                <button v-if="!hideCopy" class="text-primary-500 hover:text-primary-400" @click="addToClipboard">
+                    COPY
+                </button>
             </div>
         </td>
     </tr>
