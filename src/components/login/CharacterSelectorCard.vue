@@ -41,10 +41,10 @@ function chooseCharacter() {
 </script>
 
 <template>
-    <div :key="char.getUserId()" class="flex flex-col divide-y rounded-lg bg-base-800">
-        <div class="flex flex-1 flex-col p-8">
-            <div class="flex flex-row mx-auto items-center gap-3">
-                <h2 class="text-2xl font-medium text-neutral text-center">
+    <div :key="char.getUserId()" class="flex flex-col divide-y rounded-lg bg-base-800 shadow-float">
+        <div class="flex flex-col flex-1 p-8">
+            <div class="flex flex-row items-center gap-3 mx-auto">
+                <h2 class="text-2xl font-medium text-center text-neutral">
                     {{ char.getFirstname() }}, {{ char.getLastname() }}
                 </h2>
                 <CharSexBadge :sex="char.getSex()" />
@@ -54,7 +54,7 @@ function chooseCharacter() {
                     </span>
                 </div>
             </div>
-            <dl class="flex flex-grow flex-col justify-between mt-2 text-center">
+            <dl class="flex flex-col justify-between flex-grow mt-2 text-center">
                 <dd class="mt-3">
                     <span
                         class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
@@ -71,10 +71,10 @@ function chooseCharacter() {
             </dl>
         </div>
         <div>
-            <div class="-mt-px flex">
-                <div class="flex w-0 flex-1">
+            <div class="flex -mt-px">
+                <div class="flex flex-1 w-0">
                     <button @click="chooseCharacter()"
-                        class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-b-lg border border-transparent py-4 text-sm font-semibold text-neutral bg-base-700 hover:bg-base-600 transition-colors">
+                        class="relative inline-flex items-center justify-center flex-1 w-0 py-4 text-sm font-semibold transition-colors border border-transparent rounded-b-lg gap-x-3 text-neutral bg-base-700 hover:bg-base-600">
                         Choose
                     </button>
                 </div>
