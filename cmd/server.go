@@ -154,12 +154,13 @@ func setupHTTPServer() *gin.Engine {
 	rs := routes.New(logger)
 	rs.Register(e)
 	// Register dist dir for assets and other static files
-	e.StaticFS("/dist", gin.Dir("./dist", false))
+	e.Static("/dist", "dist")
 
 	// Index.html helper for /
 	index := func(c *gin.Context) {
-		c.Request.URL.Path = "/dist/index.html"
-		e.HandleContext(c)
+		c.Status(http.StatusOK)
+		c.Header("Content-Type", "text/html")
+		c.File("dist/index.html")
 	}
 	e.GET("/", index)
 
@@ -171,8 +172,9 @@ func setupHTTPServer() *gin.Engine {
 	})
 
 	e.GET("favicon.ico", func(c *gin.Context) {
-		c.Request.URL.Path = "/dist/favicon.ico"
-		e.HandleContext(c)
+		c.Status(http.StatusOK)
+		c.Header("Content-Type", "image/x-icon")
+		c.File("dist/favicon.ico")
 	})
 
 	return e
