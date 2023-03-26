@@ -240,12 +240,16 @@ function submitForm(): void {
         createDocument(req, null).
         then((resp) => {
             referenceManagerData.value.forEach((ref) => {
+                ref.setSourceDocumentId(resp.getDocumentId());
+
                 const req = new AddDocumentReferenceRequest();
                 req.setReference(ref);
                 getDocStoreClient().addDocumentReference(req, null);
             });
 
             relationManagerData.value.forEach((rel) => {
+                rel.setDocumentId(resp.getDocumentId());
+
                 const req = new AddDocumentRelationRequest();
                 req.setRelation(rel);
                 getDocStoreClient().addDocumentRelation(req, null);
@@ -320,6 +324,7 @@ function editForm(): void {
 
             referenceManagerData.value.forEach((ref) => {
                 if (currentReferences.value.find(r => r.getId() === ref.getId())) return;
+                ref.setSourceDocumentId(resp.getDocumentId());
 
                 const req = new AddDocumentReferenceRequest();
                 req.setReference(ref);
@@ -328,6 +333,7 @@ function editForm(): void {
 
             relationManagerData.value.forEach((rel) => {
                 if (currentRelations.value.find(r => r.getId() === rel.getId())) return;
+                rel.setDocumentId(resp.getDocumentId());
 
                 const req = new AddDocumentRelationRequest();
                 req.setRelation(rel);
