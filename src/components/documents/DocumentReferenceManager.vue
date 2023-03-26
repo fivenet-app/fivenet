@@ -62,7 +62,7 @@ function findDocuments(): void {
     req.setSearch(queryDoc.value);
 
     getDocStoreClient().findDocuments(req, null).then((resp) => {
-        entriesDocuments.value = resp.getDocumentsList().filter(doc => !(Array.from(props.modelValue.values()).find(r => r.getSourceDocumentId() === doc.getId() || doc.getId() === props.document)));
+        entriesDocuments.value = resp.getDocumentsList().filter(doc => !(Array.from(props.modelValue.values()).find(r => r.getTargetDocumentId() === doc.getId() || doc.getId() === props.document)));
     });
 }
 
@@ -74,8 +74,8 @@ function addReference(doc: Document): void {
     ref.setId(key);
     ref.setCreatorId(store.state.auth!.activeChar!.getUserId());
     ref.setCreator(store.state.auth!.activeChar!)
-    ref.setSourceDocumentId(doc.getId());
-    ref.setSourceDocument(doc);
+    ref.setTargetDocumentId(doc.getId());
+    ref.setTargetDocument(doc);
 
     props.modelValue.set(key, ref);
     findDocuments();
@@ -155,18 +155,18 @@ function removeReference(id: number): void {
                                                                 <tr v-for="[key, ref] in $props.modelValue" :key="key">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
-                                                                        {{ ref.getSourceDocument()?.getTitle() }}</td>
+                                                                        {{ ref.getTargetDocument()?.getTitle() }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
                                                                             ref.getCreator()?.getFirstname() }}
                                                                         {{ ref.getCreator()?.getLastname() }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ ref.getSourceDocument()?.getState() }}</td>
+                                                                        {{ ref.getTargetDocument()?.getState() }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
-                                                                                <a :href="router.resolve({ name: 'Documents: Info', params: { id: ref.getSourceDocumentId() } }).href"
+                                                                                <a :href="router.resolve({ name: 'Documents: Info', params: { id: ref.getTargetDocumentId() } }).href"
                                                                                     target="_blank" data-te-toggle="tooltip"
                                                                                     title="Open Document">
                                                                                     <ArrowTopRightOnSquareIcon
