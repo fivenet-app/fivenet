@@ -311,3 +311,124 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = JobGradeValidationError{}
+
+// Validate checks the field values on JobProps with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *JobProps) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JobProps with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JobPropsMultiError, or nil
+// if none found.
+func (m *JobProps) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JobProps) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := JobPropsValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetTheme()) > 20 {
+		err := JobPropsValidationError{
+			field:  "Theme",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return JobPropsMultiError(errors)
+	}
+
+	return nil
+}
+
+// JobPropsMultiError is an error wrapping multiple validation errors returned
+// by JobProps.ValidateAll() if the designated constraints aren't met.
+type JobPropsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JobPropsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JobPropsMultiError) AllErrors() []error { return m }
+
+// JobPropsValidationError is the validation error returned by
+// JobProps.Validate if the designated constraints aren't met.
+type JobPropsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JobPropsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JobPropsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JobPropsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JobPropsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JobPropsValidationError) ErrorName() string { return "JobPropsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JobPropsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJobProps.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JobPropsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JobPropsValidationError{}

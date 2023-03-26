@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
 
@@ -104,6 +105,11 @@ export class ChooseCharacterResponse extends jspb.Message {
   clearPermissionsList(): ChooseCharacterResponse;
   addPermissions(value: string, index?: number): ChooseCharacterResponse;
 
+  getJobProps(): resources_jobs_jobs_pb.JobProps | undefined;
+  setJobProps(value?: resources_jobs_jobs_pb.JobProps): ChooseCharacterResponse;
+  hasJobProps(): boolean;
+  clearJobProps(): ChooseCharacterResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ChooseCharacterResponse.AsObject;
   static toObject(includeInstance: boolean, msg: ChooseCharacterResponse): ChooseCharacterResponse.AsObject;
@@ -116,6 +122,7 @@ export namespace ChooseCharacterResponse {
   export type AsObject = {
     token: string,
     permissionsList: Array<string>,
+    jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
   }
 }
 
@@ -181,6 +188,11 @@ export class SetJobResponse extends jspb.Message {
   getToken(): string;
   setToken(value: string): SetJobResponse;
 
+  getJobProps(): resources_jobs_jobs_pb.JobProps | undefined;
+  setJobProps(value?: resources_jobs_jobs_pb.JobProps): SetJobResponse;
+  hasJobProps(): boolean;
+  clearJobProps(): SetJobResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SetJobResponse.AsObject;
   static toObject(includeInstance: boolean, msg: SetJobResponse): SetJobResponse.AsObject;
@@ -192,6 +204,7 @@ export class SetJobResponse extends jspb.Message {
 export namespace SetJobResponse {
   export type AsObject = {
     token: string,
+    jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
   }
 }
 

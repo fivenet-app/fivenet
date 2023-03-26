@@ -18,5 +18,5 @@ Tested with GNU Bash (version `5.1.16`):
 ```console
 REASON="yourreasonhere"
 FILENAME_PREFIX="$(date +%s)_$REASON"
-touch FILENAME_PREFIX.{up,down}.sql
+touch "${FILENAME_PREFIX}.{up,down}.sql"
 ```

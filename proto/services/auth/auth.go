@@ -11,6 +11,7 @@ import (
 
 	"github.com/galexrt/arpanet/pkg/auth"
 	"github.com/galexrt/arpanet/pkg/perms"
+	"github.com/galexrt/arpanet/proto/resources/jobs"
 	users "github.com/galexrt/arpanet/proto/resources/users"
 	"github.com/galexrt/arpanet/query/arpanet/model"
 	"github.com/galexrt/arpanet/query/arpanet/table"
@@ -27,8 +28,9 @@ import (
 var (
 	account   = table.ArpanetAccounts
 	user      = table.Users.AS("user")
-	jobs      = table.Jobs
+	js        = table.Jobs
 	jobGrades = table.JobGrades
+	jobProps  = table.ArpanetJobProps
 )
 
 var (
@@ -157,7 +159,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 			user.ID,
 			user.Identifier,
 			user.Job,
-			jobs.Label.AS("user.job_label"),
+			js.Label.AS("user.job_label"),
 			user.JobGrade,
 			jobGrades.Label.AS("user.job_grade_label"),
 			user.Firstname,
@@ -170,8 +172,8 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 			user.Playtime,
 		).
 		FROM(user.
-			LEFT_JOIN(jobs,
-				jobs.Name.EQ(user.Job),
+			LEFT_JOIN(js,
+				js.Name.EQ(user.Job),
 			).
 			LEFT_JOIN(jobGrades,
 				jet.AND(
@@ -201,41 +203,49 @@ func buildCharSearchIdentifier(license string) string {
 	return "char%:" + license
 }
 
-func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, error) {
+func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, error) {
 	stmt := user.
 		SELECT(
 			user.ID,
 			user.Identifier,
 			user.Job,
 			user.JobGrade,
-			jobs.Label.AS("user.job_label"),
+			js.Label.AS("user.job_label"),
 			jobGrades.Label.AS("user.job_grade_label"),
+			jobProps.Theme,
 		).
-		FROM(user.
-			LEFT_JOIN(jobs,
-				jobs.Name.EQ(user.Job),
-			).
-			LEFT_JOIN(jobGrades,
-				jet.AND(
-					jobGrades.Grade.EQ(user.JobGrade),
-					jobGrades.JobName.EQ(user.Job),
+		FROM(
+			user.
+				LEFT_JOIN(js,
+					js.Name.EQ(user.Job),
+				).
+				LEFT_JOIN(jobGrades,
+					jet.AND(
+						jobGrades.Grade.EQ(user.JobGrade),
+						jobGrades.JobName.EQ(user.Job),
+					),
+				).
+				LEFT_JOIN(jobProps,
+					jobProps.Job.EQ(js.Name),
 				),
-			),
 		).
 		WHERE(
 			user.ID.EQ(jet.Int32(charId)),
 		).
 		LIMIT(1)
 
-	var char users.User
-	if err := stmt.QueryContext(ctx, s.db, &char); err != nil {
+	var dest struct {
+		users.User
+		JobProps jobs.JobProps
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
-			return nil, NoCharacterFoundErr
+			return nil, nil, NoCharacterFoundErr
 		}
-		return nil, err
+		return nil, nil, err
 	}
 
-	return &char, nil
+	return &dest.User, &dest.JobProps, nil
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
@@ -244,7 +254,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	char, err := s.getCharacter(ctx, req.CharId)
+	char, jProps, err := s.getCharacter(ctx, req.CharId)
 	if err != nil {
 		return nil, err
 	}
@@ -282,6 +292,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	return &ChooseCharacterResponse{
 		Token:       token,
 		Permissions: perms.GuardNames(),
+		JobProps:    jProps,
 	}, nil
 }
 
@@ -369,7 +380,7 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		return nil, err
 	}
 
-	char, err := s.getCharacter(ctx, claims.ActiveCharID)
+	char, jProps, err := s.getCharacter(ctx, claims.ActiveCharID)
 	if err != nil {
 		return nil, err
 	}
@@ -389,6 +400,7 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 	}
 
 	return &SetJobResponse{
-		Token: token,
+		Token:    token,
+		JobProps: jProps,
 	}, nil
 }

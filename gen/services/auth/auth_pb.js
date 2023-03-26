@@ -21,6 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
+var resources_jobs_jobs_pb = require('../../resources/jobs/jobs_pb.js');
+goog.object.extend(proto, resources_jobs_jobs_pb);
 var resources_users_users_pb = require('../../resources/users/users_pb.js');
 goog.object.extend(proto, resources_users_users_pb);
 goog.exportSymbol('proto.services.auth.ChooseCharacterRequest', null, global);
@@ -964,7 +966,8 @@ proto.services.auth.ChooseCharacterResponse.prototype.toObject = function(opt_in
 proto.services.auth.ChooseCharacterResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     token: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    permissionsList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f
+    permissionsList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f,
+    jobProps: (f = msg.getJobProps()) && resources_jobs_jobs_pb.JobProps.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1009,6 +1012,11 @@ proto.services.auth.ChooseCharacterResponse.deserializeBinaryFromReader = functi
       var value = /** @type {string} */ (reader.readString());
       msg.addPermissions(value);
       break;
+    case 3:
+      var value = new resources_jobs_jobs_pb.JobProps;
+      reader.readMessage(value,resources_jobs_jobs_pb.JobProps.deserializeBinaryFromReader);
+      msg.setJobProps(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1050,6 +1058,14 @@ proto.services.auth.ChooseCharacterResponse.serializeBinaryToWriter = function(m
     writer.writeRepeatedString(
       2,
       f
+    );
+  }
+  f = message.getJobProps();
+  if (f != null) {
+    writer.writeMessage(
+      3,
+      f,
+      resources_jobs_jobs_pb.JobProps.serializeBinaryToWriter
     );
   }
 };
@@ -1107,6 +1123,43 @@ proto.services.auth.ChooseCharacterResponse.prototype.addPermissions = function(
  */
 proto.services.auth.ChooseCharacterResponse.prototype.clearPermissionsList = function() {
   return this.setPermissionsList([]);
+};
+
+
+/**
+ * optional resources.jobs.JobProps job_props = 3;
+ * @return {?proto.resources.jobs.JobProps}
+ */
+proto.services.auth.ChooseCharacterResponse.prototype.getJobProps = function() {
+  return /** @type{?proto.resources.jobs.JobProps} */ (
+    jspb.Message.getWrapperField(this, resources_jobs_jobs_pb.JobProps, 3));
+};
+
+
+/**
+ * @param {?proto.resources.jobs.JobProps|undefined} value
+ * @return {!proto.services.auth.ChooseCharacterResponse} returns this
+*/
+proto.services.auth.ChooseCharacterResponse.prototype.setJobProps = function(value) {
+  return jspb.Message.setWrapperField(this, 3, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.auth.ChooseCharacterResponse} returns this
+ */
+proto.services.auth.ChooseCharacterResponse.prototype.clearJobProps = function() {
+  return this.setJobProps(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.auth.ChooseCharacterResponse.prototype.hasJobProps = function() {
+  return jspb.Message.getField(this, 3) != null;
 };
 
 
@@ -1563,7 +1616,8 @@ proto.services.auth.SetJobResponse.prototype.toObject = function(opt_includeInst
  */
 proto.services.auth.SetJobResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    token: jspb.Message.getFieldWithDefault(msg, 1, "")
+    token: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    jobProps: (f = msg.getJobProps()) && resources_jobs_jobs_pb.JobProps.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1604,6 +1658,11 @@ proto.services.auth.SetJobResponse.deserializeBinaryFromReader = function(msg, r
       var value = /** @type {string} */ (reader.readString());
       msg.setToken(value);
       break;
+    case 2:
+      var value = new resources_jobs_jobs_pb.JobProps;
+      reader.readMessage(value,resources_jobs_jobs_pb.JobProps.deserializeBinaryFromReader);
+      msg.setJobProps(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1640,6 +1699,14 @@ proto.services.auth.SetJobResponse.serializeBinaryToWriter = function(message, w
       f
     );
   }
+  f = message.getJobProps();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      resources_jobs_jobs_pb.JobProps.serializeBinaryToWriter
+    );
+  }
 };
 
 
@@ -1658,6 +1725,43 @@ proto.services.auth.SetJobResponse.prototype.getToken = function() {
  */
 proto.services.auth.SetJobResponse.prototype.setToken = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional resources.jobs.JobProps job_props = 2;
+ * @return {?proto.resources.jobs.JobProps}
+ */
+proto.services.auth.SetJobResponse.prototype.getJobProps = function() {
+  return /** @type{?proto.resources.jobs.JobProps} */ (
+    jspb.Message.getWrapperField(this, resources_jobs_jobs_pb.JobProps, 2));
+};
+
+
+/**
+ * @param {?proto.resources.jobs.JobProps|undefined} value
+ * @return {!proto.services.auth.SetJobResponse} returns this
+*/
+proto.services.auth.SetJobResponse.prototype.setJobProps = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.auth.SetJobResponse} returns this
+ */
+proto.services.auth.SetJobResponse.prototype.clearJobProps = function() {
+  return this.setJobProps(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.auth.SetJobResponse.prototype.hasJobProps = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 

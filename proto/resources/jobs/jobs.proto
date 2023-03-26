@@ -16,3 +16,8 @@ message JobGrade {
   int32 grade = 2 [(validate.rules).int32.gt = 0]; // @gotags: alias:"grade"
   string label = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"label"
 }
+
+message JobProps {
+  string job = 1 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  string theme = 2 [(validate.rules).string.max_len = 20]; // @gotags: alias:"theme"
+}

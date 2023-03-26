@@ -19,7 +19,7 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		destDir := "./query"
 
-		return genmysql.GenerateDSN(viper.GetString("mysqlDSN"), destDir, genTemplate())
+		return genmysql.GenerateDSN(viper.GetString("dsn"), destDir, genTemplate())
 	},
 }
 

@@ -56,3 +56,25 @@ export namespace JobGrade {
   }
 }
 
+export class JobProps extends jspb.Message {
+  getJob(): string;
+  setJob(value: string): JobProps;
+
+  getTheme(): string;
+  setTheme(value: string): JobProps;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): JobProps.AsObject;
+  static toObject(includeInstance: boolean, msg: JobProps): JobProps.AsObject;
+  static serializeBinaryToWriter(message: JobProps, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): JobProps;
+  static deserializeBinaryFromReader(message: JobProps, reader: jspb.BinaryReader): JobProps;
+}
+
+export namespace JobProps {
+  export type AsObject = {
+    job: string,
+    theme: string,
+  }
+}
+
