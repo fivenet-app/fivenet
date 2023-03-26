@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { BriefcaseIcon, DocumentTextIcon, UsersIcon, MapIcon, TruckIcon } from '@heroicons/vue/24/outline';
+import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
 
 const features = [
     {
@@ -82,10 +83,7 @@ const features = [
             </div>
             <span class="absolute pointer-events-none top-6 right-6 text-base-300 group-hover:text-base-200"
                 aria-hidden="true">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M20 4h1a1 1 0 00-1-1v1zm-1 12a1 1 0 102 0h-2zM8 3a1 1 0 000 2V3zM3.293 19.293a1 1 0 101.414 1.414l-1.414-1.414zM19 4v12h2V4h-2zm1-1H8v2h12V3zm-.707.293l-16 16 1.414 1.414 16-16-1.414-1.414z" />
-                </svg>
+                <ArrowUpRightIcon class="w-6 h-6" />
             </span>
         </div>
     </div>

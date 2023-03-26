@@ -4,7 +4,7 @@ import { useStore } from '../../store/store';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getCompletorClient, getDocStoreClient } from '../../grpc/grpc';
-import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentCategory, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { dispatchNotification } from '../notification';
 import {
@@ -12,7 +12,7 @@ import {
     ChevronDownIcon,
     CheckIcon,
 } from '@heroicons/vue/20/solid';
-import { useRouter } from 'vue-router/auto';
+import { useRoute, useRouter } from 'vue-router/auto';
 import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import {
@@ -32,9 +32,11 @@ import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_e
 import DocumentReferenceManager from './DocumentReferenceManager.vue';
 import DocumentRelationManager from './DocumentRelationManager.vue';
 import DocumentAccessEntry from './DocumentAccessEntry.vue';
+import { TemplateData } from '@arpanet/gen/resources/documents/templates/templates_pb';
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute<'Documents: Create'>();
 
 const props = defineProps({
     id: {
@@ -76,7 +78,26 @@ const modules = [] as Quill.Module[];
 onMounted(async () => {
     await findCategories();
 
-    if (props.id) {
+    if (route.query.templateId) {
+        const req = new GetTemplateRequest();
+        req.setTemplateId(parseInt(route.query.templateId as string));
+        req.setRender(true);
+
+        const data = store.getters['clipboard/getTemplateData'] as TemplateData;
+        data.setActivechar(activeChar.value!);
+        if (data.getUsersList().length == 0) {
+            data.setUsersList([activeChar.value!]);
+        }
+        req.setData(JSON.stringify(data.toObject()));
+
+        await getDocStoreClient().
+            getTemplate(req, null).then((resp) => {
+                const template = resp.getTemplate();
+                title.value = template?.getContentTitle()!;
+                content.value = template?.getContent()!;
+                selectedCategory.value = entriesCategory.find(e => e.getId() === template?.getCategory()?.getId());;
+            });
+    } else if (props.id) {
         const req = new GetDocumentRequest();
         req.setDocumentId(props.id);
 
@@ -345,14 +366,11 @@ function editForm(): void {
 }
 </script>
 
-<route lang="json">
-{
-    "name": "documents-new",
-    "meta": {
-        "requiresAuth": true
-    }
+<style>
+.ql-container {
+    border: none !important;
 }
-</route>
+</style>
 
 <template>
     <DocumentRelationManager v-model="relationManagerData" :open="relationManagerShow" :document="$props.id"
@@ -438,7 +456,7 @@ function editForm(): void {
             </div>
         </div>
     </div>
-    <div class="bg-neutral">
+    <div class="bg-neutral h-[32rem]">
         <QuillEditor v-model:content="content" contentType="html" toolbar="full" theme="snow" :modules="modules" />
     </div>
     <div class="flex flex-row">

@@ -49,6 +49,7 @@ const templatesOpen = ref(false);
 </script>
 
 <template>
+    <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" />
     <div class="w-full mx-auto max-w-7xl grow lg:flex xl:px-2">
         <div class="flex-1 xl:flex">
             <div class="px-2 py-3 xl:flex-1">
@@ -137,5 +138,4 @@ const templatesOpen = ref(false);
             </div>
         </div>
     </div>
-    <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" />
 </template>

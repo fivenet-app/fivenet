@@ -6,6 +6,7 @@ import { getDocStoreClient } from '../../grpc/grpc';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { useStore } from '../../store/store';
 import { TemplateData } from '@arpanet/gen/resources/documents/templates/templates_pb';
+import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
 
 const store = useStore();
 
@@ -24,24 +25,6 @@ function findTemplates(): void {
     getDocStoreClient().
         listTemplates(req, null).then((resp) => {
             templates.value = resp.getTemplatesList();
-        });
-}
-
-function getTemplate(template: DocumentTemplateShort): void {
-    const req = new GetTemplateRequest();
-    req.setTemplateId(template.getId());
-    req.setRender(true);
-
-    const data = store.getters['clipboard/getTemplateData'] as TemplateData;
-    data.setActivechar(activeChar.value!);
-    if (data.getUsersList().length == 0) {
-        data.setUsersList([activeChar.value!]);
-    }
-    req.setData(JSON.stringify(data.toObject()));
-
-    getDocStoreClient().
-        getTemplate(req, null).then((resp) => {
-            templateObj.value = resp.getTemplate();
         });
 }
 
@@ -71,14 +54,13 @@ onBeforeMount(() => {
                             {{ template.getTitle() }}
                         </button>
                     </h3>
-                    <p class="mt-2 text-sm text-gray-500">{{ template.getDescription() }}</p>
+                    <p class="mt-2 text-sm text-gray-500">
+                        {{ template.getDescription() }}
+                    </p>
                 </div>
                 <span class="absolute text-gray-300 pointer-events-none top-6 right-6 group-hover:text-gray-400"
                     aria-hidden="true">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M20 4h1a1 1 0 00-1-1v1zm-1 12a1 1 0 102 0h-2zM8 3a1 1 0 000 2V3zM3.293 19.293a1 1 0 101.414 1.414l-1.414-1.414zM19 4v12h2V4h-2zm1-1H8v2h12V3zm-.707.293l-16 16 1.414 1.414 16-16-1.414-1.414z" />
-                    </svg>
+                    <ArrowUpRightIcon class="w-6 h-6" />
                 </span>
             </div>
         </div>
