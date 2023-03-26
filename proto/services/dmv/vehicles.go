@@ -36,23 +36,21 @@ func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Serve
 func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*FindVehiclesResponse, error) {
 	condition := jet.Bool(true)
 	if req.Search != "" {
-		condition = jet.AND(condition, jet.BoolExp(jet.Raw(
-			"MATCH(plate) AGAINST ($search IN NATURAL LANGUAGE MODE)",
-			jet.RawArgs{"$search": req.Search},
-		)))
+		req.Search = strings.ReplaceAll(req.Search, "%", "") + "%"
+		condition = jet.AND(condition, vehicle.Plate.LIKE(jet.String(req.Search)))
 	}
 	if req.Model != "" {
 		req.Model = strings.ReplaceAll(req.Model, "%", "") + "%"
-		condition = jet.AND(condition, jet.BoolExp(vehicle.Model.LIKE(jet.String(req.Model))))
+		condition = jet.AND(condition, vehicle.Model.LIKE(jet.String(req.Model)))
 	}
 	if req.Type != "" {
 		req.Type = strings.ReplaceAll(req.Type, "%", "") + "%"
-		condition = jet.AND(condition, jet.BoolExp(vehicle.Type.LIKE(jet.String(req.Type))))
+		condition = jet.AND(condition, vehicle.Type.LIKE(jet.String(req.Type)))
 	}
 	userCondition := user.Identifier.EQ(vehicle.Owner)
 	if req.UserId != 0 {
 		condition = jet.AND(condition,
-			jet.BoolExp(user.Identifier.EQ(vehicle.Owner)),
+			user.Identifier.EQ(vehicle.Owner),
 			user.ID.EQ(jet.Int32(req.UserId)),
 		)
 		userCondition = jet.AND(userCondition, user.ID.EQ(jet.Int32(req.UserId)))
