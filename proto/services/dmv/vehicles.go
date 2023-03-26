@@ -116,11 +116,9 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 		len(resp.Vehicles))
 
 	for i := 0; i < len(resp.Vehicles); i++ {
-		if resp.Vehicles[i].Owner == nil {
-			continue
+		if resp.Vehicles[i].Owner != nil {
+			s.c.EnrichJobInfo(resp.Vehicles[i].Owner)
 		}
-
-		s.c.EnrichJobInfo(resp.Vehicles[i].Owner)
 	}
 
 	return resp, nil

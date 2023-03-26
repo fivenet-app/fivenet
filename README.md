@@ -29,16 +29,16 @@
     - [x] Category System (no directories/ paths)
         - [x] ~~Sub-categories~~  - One level of categories that is sorted by names
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
-    - [ ] Functionality
+    - [x] Functionality
         - [x] Create Documents with access
         - [x] Edit Documents
             - [x] With access modifications
             - [x] Set/ Update document category
             - [x] Set Access for Jobs and Users
         - [x] Document Comments
-            - [ ] View Document Comments
-            - [ ] Post Document Comments
-            - [ ] Edit Document Comments
+            - [x] View Document Comments
+            - [x] Post Document Comments
+            - [x] Edit Document Comments
 - [x] Livemap
     - [x] See your colleagues (for now using Copnet VPC Connector's data)
         - [x] Create table model for our own player location table

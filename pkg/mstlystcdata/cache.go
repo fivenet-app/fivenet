@@ -25,6 +25,7 @@ type Cache struct {
 	logger *zap.Logger
 	db     *sql.DB
 
+	ctx                context.Context
 	cancel             context.CancelFunc
 	jobs               *cache.Cache[string, *jobs.Job]
 	docCategories      *cache.Cache[uint64, *documents.DocumentCategory]
@@ -56,15 +57,28 @@ func NewCache(logger *zap.Logger, db *sql.DB) (*Cache, error) {
 		logger: logger,
 		db:     db,
 
+		ctx:                ctx,
 		cancel:             cancel,
 		jobs:               jobsCache,
 		docCategories:      docCategoriesCache,
 		docCategoriesByJob: docCategoriesByJobCache,
 	}
 
+	var err error
+	c.searcher, err = NewSearcher(c)
+	c.searcher.addDataToIndex()
+
+	return c, err
+}
+
+func (c *Cache) Start() {
+	if err := c.refreshCache(); err != nil {
+		c.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
+	}
+
 	go func() {
 		select {
-		case <-ctx.Done():
+		case <-c.ctx.Done():
 			return
 		case <-time.After(5 * time.Minute):
 			if err := c.refreshCache(); err != nil {
@@ -72,12 +86,6 @@ func NewCache(logger *zap.Logger, db *sql.DB) (*Cache, error) {
 			}
 		}
 	}()
-
-	var err error
-	c.searcher, err = NewSearcher(c)
-	c.searcher.addDataToIndex()
-
-	return c, err
 }
 
 func (c *Cache) GetSearcher() *Searcher {

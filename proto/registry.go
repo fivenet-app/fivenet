@@ -85,6 +85,8 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 	if err != nil {
 		logger.Fatal("failed to create mostly static data cache", zap.Error(err))
 	}
+	cache.Start()
+
 	// Data enricher helper
 	enricher := mstlystcdata.NewEnricher(cache)
 
