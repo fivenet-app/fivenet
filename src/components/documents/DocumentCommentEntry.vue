@@ -72,7 +72,7 @@ function deleteComment() {
                         </button>
                     </div>
                 </div>
-                <p class="text-sm">{{ comment.getComment() }}</p>
+                <p class="text-sm break-words">{{ comment.getComment() }}</p>
             </div>
         </div>
         <div v-else v-can="'DocStoreService.PostDocumentComment'" class="flex items-start space-x-4">
