@@ -22,7 +22,7 @@ import '@fontsource/inter/900.css';
 
 const app = createApp(App);
 
-await loadConfig();
+loadConfig();
 
 if (config.sentryDSN && import.meta.env.PROD) {
     Sentry.init({
