@@ -3,7 +3,8 @@ FROM docker.io/library/node:16.19-alpine3.16 AS nodebuilder
 WORKDIR /app
 COPY . ./
 ENV VITE_BASE="/dist"
-RUN yarn && yarn build
+RUN rm -rf ./dist && \
+    yarn && yarn build
 COPY ./public/tiles ./dist
 
 FROM docker.io/library/golang:1.20 AS gobuilder
