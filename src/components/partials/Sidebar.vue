@@ -96,7 +96,7 @@ onMounted(() => {
     }
 
     if (route.name) {
-        const sidebarIndex = sidebarNavigation.findIndex(e => e.href.toLowerCase() === route.name.toLowerCase());
+        const sidebarIndex = sidebarNavigation.findIndex(e => route.name.toLowerCase().includes(e.href.toLowerCase()));
         if (sidebarIndex !== -1) {
             currSidebar.value = sidebarNavigation[sidebarIndex].name;
         } else {
