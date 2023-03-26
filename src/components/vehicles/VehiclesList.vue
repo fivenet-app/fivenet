@@ -121,7 +121,7 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                             <div class="flex-1 form-control">
                                 <label for="model" class="block text-sm font-medium leading-6 text-neutral">Model</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="search.model" ref="searchInput" type="text" name="model" id="model"
+                                    <input v-model="search.model" type="text" name="model" id="model"
                                         placeholder="Model"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>

@@ -90,7 +90,7 @@ onMounted(() => {
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">Search</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="queryName" ref="focusSearch" type="text" name="search"
+                                    <input v-model="queryName" ref="searchInput" type="text" name="search"
                                         id="search" placeholder="Citizen Name"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
