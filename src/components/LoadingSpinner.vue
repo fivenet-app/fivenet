@@ -5,6 +5,8 @@ import { useStore } from '../store/store';
 
 const store = useStore();
 
+const loadingState = computed(() => store.state.loader?.loading);
+
 const loading = useLoading({
     isFullPage: true,
     canCancel: false,
@@ -14,7 +16,6 @@ const loading = useLoading({
 });
 
 const fullPage = ref(false);
-const loadingState = computed(() => store.state.loader?.loading);
 
 let loader: undefined | ActiveLoader = undefined;
 
