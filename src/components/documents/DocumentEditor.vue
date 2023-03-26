@@ -103,6 +103,8 @@ onMounted(async () => {
                 });
             }
         });
+    } else {
+        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: DOC_ACCESS.VIEW } })
     }
 });
 
@@ -336,7 +338,6 @@ function editForm(): void {
                     placeholder="Document State" />
             </div>
             <div class="flex-1">
-                <!-- Open/Close -->
                 <Listbox as="div" v-model="closed">
                     <div class="relative">
                         <ListboxButton
