@@ -3,7 +3,6 @@ import { onBeforeMount } from 'vue';
 import { useStore } from '../store/store';
 import { useRouter } from 'vue-router/auto';
 import HeroFull from '../components/partials/HeroFull.vue';
-import './herofull-pattern.css';
 
 const store = useStore();
 const router = useRouter();

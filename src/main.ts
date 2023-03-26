@@ -22,13 +22,15 @@ import '@fontsource/inter/900.css';
 
 const app = createApp(App);
 
-Sentry.init({
-    app,
-    dsn: config.sentryDSN,
-    tracesSampleRate: 0.0,
-    logErrors: true,
-    trackComponents: false,
-});
+if (import.meta.env.PROD) {
+    Sentry.init({
+        app,
+        dsn: config.sentryDSN,
+        tracesSampleRate: 0.0,
+        logErrors: true,
+        trackComponents: false,
+    });
+}
 
 app.use(store, key);
 app.use(LoadingPlugin);

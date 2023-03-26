@@ -3,7 +3,6 @@ import { computed } from 'vue';
 import { useStore } from '../store/store';
 import Footer from '../components/partials/Footer.vue';
 import HeroFull from '../components/partials/HeroFull.vue';
-import './herofull-pattern.css';
 
 const store = useStore();
 
@@ -21,7 +20,7 @@ const accessToken = computed(() => store.state.auth?.accessToken);
 
 <template>
     <HeroFull>
-        <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="CIP Logo" />
+        <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="aRPaNet Logo" />
         <h1 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">Welcome to aRPaNet!</h1>
         <p class="mt-6 text-lg leading-8 text-neutral">
             From searching the state's citizen and vehicles database, filling documents for investigations, court and a

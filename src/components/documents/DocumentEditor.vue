@@ -456,7 +456,7 @@ function editForm(): void {
             </div>
         </div>
     </div>
-    <div class="bg-neutral h-[32rem]">
+    <div class="bg-neutral min-h-[32rem]">
         <QuillEditor v-model:content="content" contentType="html" toolbar="full" theme="snow" :modules="modules" />
     </div>
     <div class="flex flex-row">

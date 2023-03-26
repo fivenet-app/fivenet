@@ -8,6 +8,9 @@ import CharSexBadge from '../misc/CharSexBadge.vue';
 import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
 import TemplatesModal from '../documents/TemplatesModal.vue';
+import { useStore } from '../../store/store';
+
+const store = useStore();
 
 const w = window;
 const clipboard = useClipboard();
@@ -46,6 +49,12 @@ function toggleWantedStatus(): void {
 }
 
 const templatesOpen = ref(false);
+
+function openTemplates() {
+    store.dispatch('clipboard/addUser', props.user);
+
+    templatesOpen.value = true;
+}
 </script>
 
 <template>
@@ -118,7 +127,7 @@ const templatesOpen = ref(false);
             <div class="flex-initial">
                 <button v-can="'DocStoreService.CreateDocument'" type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
-                    @click="templatesOpen = true">
+                    @click="openTemplates()">
                     Create New Document
                 </button>
             </div>

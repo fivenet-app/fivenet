@@ -2,13 +2,13 @@ import { Module } from 'vuex';
 import { RootState } from '../store';
 
 export interface LoaderModuleState {
-    loading: boolean,
+    loading: number,
 }
 
 const loaderModule: Module<LoaderModuleState, RootState> = {
     namespaced: true,
     state: {
-        loading: false,
+        loading: 0,
     },
     actions: {
         show({ commit }) {
@@ -20,10 +20,12 @@ const loaderModule: Module<LoaderModuleState, RootState> = {
     },
     mutations: {
         show(state: LoaderModuleState) {
-            state.loading = true;
+            state.loading++;
         },
         hide(state: LoaderModuleState) {
-            state.loading = false;
+            if (state.loading > 0) {
+                state.loading--;
+            }
         },
     },
 };

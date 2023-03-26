@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import Login from '../components/Login.vue';
 import ContentCenterWrapper from '../components/partials/ContentCenterWrapper.vue';
+import HeroFull from '../components/partials/HeroFull.vue';
 </script>
 
 <route lang="json">
@@ -13,7 +14,7 @@ import ContentCenterWrapper from '../components/partials/ContentCenterWrapper.vu
 </route>
 
 <template>
-    <ContentCenterWrapper>
+    <HeroFull>
         <Login />
-    </ContentCenterWrapper>
+    </HeroFull>
 </template>

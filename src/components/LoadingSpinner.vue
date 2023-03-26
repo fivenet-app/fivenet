@@ -25,11 +25,14 @@ function showLoader(): ActiveLoader {
     });
 }
 
-watch(loadingState, (newState) => {
-    if (newState) {
-        loader = showLoader();
-    } else {
-        loader?.hide();
+watch(loadingState, (newState: number | undefined) => {
+    if (newState !== undefined) {
+        if (newState > 0 && loader === undefined) {
+            loader = showLoader();
+        } else if (newState <= 0 && loader !== undefined) {
+            loader.hide();
+            loader = undefined;
+        }
     }
 });
 </script>

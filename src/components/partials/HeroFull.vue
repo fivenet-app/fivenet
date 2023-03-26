@@ -1,3 +1,7 @@
+<script lang="ts" setup>
+import '../../styles/herofull-pattern.css';
+</script>
+
 <template>
     <div class="relative isolate overflow-hidden bg-base-900 hero h-full">
         <div class="px-6 lg:px-8">

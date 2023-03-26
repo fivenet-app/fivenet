@@ -81,7 +81,7 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
                 return o.id === user.getUserId();
             });
             if (idx === -1) {
-                state.users.push((new ClipboardUser()).setUser(user));
+                state.users.unshift((new ClipboardUser()).setUser(user));
             }
         },
         removeUser(state: ClipboardModuleState, id: number): void {
@@ -101,7 +101,7 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
                 return o.id === document.getId();
             });
             if (idx === -1) {
-                state.documents.push(new ClipboardDocument(document));
+                state.documents.unshift(new ClipboardDocument(document));
             }
         },
         removeDocument(state: ClipboardModuleState, id: number): void {
@@ -121,7 +121,7 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
                 return o.plate === vehicle.getPlate();
             });
             if (idx === -1) {
-                state.vehicles.push(new ClipboardVehicle(vehicle));
+                state.vehicles.unshift(new ClipboardVehicle(vehicle));
             }
         },
         removeVehicle(state: ClipboardModuleState, plate: string): void {

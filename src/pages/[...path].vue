@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useStore } from '../store/store';
 import HeroFull from '../components/partials/HeroFull.vue';
-import './herofull-pattern.css';
 import { computed } from 'vue';
 
 const store = useStore();
