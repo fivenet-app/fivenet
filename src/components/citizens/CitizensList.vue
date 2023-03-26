@@ -140,7 +140,7 @@ onMounted(() => {
                                             Height
                                         </th>
                                         <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Action
+                                            Actions
                                         </th>
                                     </tr>
                                 </thead>
@@ -165,7 +165,7 @@ onMounted(() => {
                                             Height
                                         </th>
                                         <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Action
+                                            Actions
                                         </th>
                                     </tr>
                                 </thead>

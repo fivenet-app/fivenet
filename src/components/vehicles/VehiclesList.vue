@@ -148,7 +148,8 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                             Plate
                                         </th>
                                         <th v-on:click="toggleOrderBy('model')" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Model
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            Model
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Type
@@ -162,11 +163,7 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                         </th>
                                         <th v-if="!hideCitizenLink" scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            View
-                                        </th>
-                                        <th v-if="!hideCopy" scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Copy
+                                            Actions
                                         </th>
                                     </tr>
                                 </thead>
@@ -183,25 +180,23 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                             Plate
                                         </th>
                                         <th v-on:click="toggleOrderBy('model')" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Model
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            Model
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Type
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Owner
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            Owner
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Job
                                         </th>
-                                        <th v-if="!hideCitizenLink" scope="col"
+                                        <th v-if="!hideCitizenLink && !hideCopy" scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Action
-                                        </th>
-                                        <th v-if="!hideCopy" scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Copy
+                                            Actions
                                         </th>
                                     </tr>
                                 </thead>

@@ -50,19 +50,18 @@ function addToClipboard() {
         <td v-if="!hideOwner" class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
             {{ vehicle.getOwner()?.getJobLabel() }}
         </td>
-        <td v-if="!hideCitizenLink" class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-            <div v-can="'CitizenStoreService.FindUsers'">
-                <router-link
+        <td v-if="!hideCitizenLink && !hideCopy"
+            class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+            <div class="flex flex-row justify-end">
+                <router-link v-if="!hideCitizenLink" v-can="'CitizenStoreService.FindUsers'"
                     :to="{ name: 'Citizens: Info', params: { id: vehicle.getOwner()?.getUserId() ?? 0 } }"
-                    class="text-primary-500 hover:text-primary-400">
+                    class="flex-initial text-primary-500 hover:text-primary-400">
                     <EyeIcon class="w-6 h-auto ml-auto mr-2.5" />
                 </router-link>
+                <button v-if="!hideCopy" class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard()">
+                    <ClipboardDocumentIcon class="w-6 h-auto ml-auto mr-2.5" />
+                </button>
             </div>
-        </td>
-        <td v-if="!hideCopy" class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-            <button class="text-primary-500 hover:text-primary-400" @click="addToClipboard">
-                <ClipboardDocumentIcon class="w-6 h-auto ml-auto mr-2.5" />
-            </button>
         </td>
     </tr>
 </template>
