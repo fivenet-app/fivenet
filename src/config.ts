@@ -4,8 +4,26 @@ type ArpanetConfig = {
 };
 
 const config: ArpanetConfig = {
-    sentryDSN: 'https://b89664d1c451495e9c1974d2e28c43e5@glitchtip.edenmal.moe/1',
-    apiProtoURL: 'https://localhost:8181',
+    sentryDSN: '',
+    apiProtoURL: '',
 };
 
 export default config;
+
+export async function loadConfig() {
+    let url = '/api/config';
+    if (import.meta.env.DEV) {
+        url = 'http://localhost:8080/api/config';
+    }
+    await fetch(url, {
+        method: 'POST',
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            data = data as ArpanetConfig;
+            config.sentryDSN = data.sentryDSN;
+            config.apiProtoURL = data.apiProtoURL;
+        }).catch((err) => {
+            console.log("Failed to get aRPaNet config from server!");
+        });
+}

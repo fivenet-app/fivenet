@@ -44,6 +44,7 @@ type Config struct {
 type Sentry struct {
 	DSN         string `yaml:"dsn"`
 	Environment string `default:"dev" yaml:"environment"`
+	ClientDSN   string `default:"" yaml:"clientDSN"`
 }
 
 type HTTP struct {
@@ -52,7 +53,8 @@ type HTTP struct {
 }
 
 type GRPC struct {
-	Listen string `default:":9090" yaml:"listen"`
+	Listen    string `default:":9090" yaml:"listen"`
+	ClientURL string `default:":8181" yaml:"clientURL"`
 }
 
 type Sessions struct {

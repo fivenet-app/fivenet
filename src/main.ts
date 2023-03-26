@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import * as Sentry from '@sentry/vue';
-import config from './config';
+import config, { loadConfig } from './config';
 import { LoadingPlugin } from 'vue-loading-overlay';
 import { router } from './router';
 import { store, key } from './store/store';
@@ -22,7 +22,9 @@ import '@fontsource/inter/900.css';
 
 const app = createApp(App);
 
-if (import.meta.env.PROD) {
+await loadConfig();
+
+if (config.sentryDSN && import.meta.env.PROD) {
     Sentry.init({
         app,
         dsn: config.sentryDSN,
