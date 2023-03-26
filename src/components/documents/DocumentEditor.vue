@@ -42,8 +42,6 @@ const props = defineProps({
         type: Number
     },
 });
-console.debug("🔎 • file: DocumentEditor.vue:45 • props:", props)
-
 
 const activeChar = computed(() => store.state.auth?.activeChar);
 
