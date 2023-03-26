@@ -38,6 +38,15 @@ function addComment(comment: DocumentComment) {
     props.comments.unshift(comment);
 }
 
+function removedComment(comment: DocumentComment) {
+    const idx = props.comments.findIndex((c) => {
+        return c.getId() === comment.getId();
+    });
+    if (idx > -1) {
+        props.comments.splice(idx, 1);
+    }
+}
+
 onMounted(() => {
     if (props.documentId !== undefined && props.comments === undefined) {
         getDocumentComments();
@@ -51,7 +60,8 @@ onMounted(() => {
     </div>
     <div class="flow-root px-4 rounded-lg bg-base-800 text-neutral">
         <ul role="list" class="divide-y divide-gray-200">
-            <DocumentCommentEntry v-for="com in comments" :key="com.getId()" :comment="com" />
+            <DocumentCommentEntry v-for="com in comments" :key="com.getId()" :comment="com"
+                @removed="(c: DocumentComment) => removedComment(c)" />
         </ul>
     </div>
 </template>

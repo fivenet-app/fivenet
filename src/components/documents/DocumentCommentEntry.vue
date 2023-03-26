@@ -1,14 +1,18 @@
 <script lang="ts" setup>
 import { useStore } from '../../store/store';
 import { DocumentComment } from '@arpanet/gen/resources/documents/documents_pb';
-import { EditDocumentCommentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { PencilIcon } from '@heroicons/vue/20/solid';
+import { DeleteDocumentCommentRequest, EditDocumentCommentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { PencilIcon, TrashIcon } from '@heroicons/vue/20/solid';
 import { computed, ref } from 'vue';
 import { getDocStoreClient } from '../../grpc/grpc';
 
 const store = useStore();
 
 const activeCharId = computed(() => store.state.auth?.activeChar?.getUserId());
+
+const emit = defineEmits<{
+    (e: 'removed', comment: DocumentComment): void,
+}>();
 
 const props = defineProps({
     comment: {
@@ -35,6 +39,17 @@ function editComment() {
             editing.value = false;
         });
 }
+
+function deleteComment() {
+    const req = new DeleteDocumentCommentRequest();
+    req.setCommentId(props.comment.getId());
+
+    getDocStoreClient().
+        deleteDocumentComment(req, null).
+        then((resp) => {
+            emit('removed', props.comment);
+        });
+}
 </script>
 
 <template>
@@ -46,10 +61,16 @@ function editComment() {
                         class="text-sm font-medium text-primary-400 hover:text-primary-300">
                         {{ comment.getCreator()?.getFirstname() }} {{ comment.getCreator()?.getLastname() }}
                     </router-link>
-                    <button v-can="'DocStoreService.PostDocumentComment'" v-if="comment.getCreatorId() === activeCharId"
-                        @click="editing = true">
-                        <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
-                    </button>
+                    <div>
+                        <button v-can="'DocStoreService.PostDocumentComment'" v-if="comment.getCreatorId() === activeCharId"
+                            @click="editing = true">
+                            <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
+                        </button>
+                        <button v-can="'DocStoreService.DeleteDocumentComment'"
+                            v-if="comment.getCreatorId() === activeCharId" @click="deleteComment()">
+                            <TrashIcon class="w-5 h-auto ml-auto mr-2.5" />
+                        </button>
+                    </div>
                 </div>
                 <p class="text-sm">{{ comment.getComment() }}</p>
             </div>
