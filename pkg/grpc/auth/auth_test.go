@@ -41,6 +41,7 @@ func buildDummyAuthFunction(expectedScheme string, expectedToken string) func(ct
 		if token != expectedToken {
 			return nil, status.Errorf(codes.PermissionDenied, "buildDummyAuthFunction bad token")
 		}
+		//lint:ignore SA1029 ignore error about using a custom context type in the test file
 		return context.WithValue(ctx, authedMarker, "marker_exists"), nil
 	}
 }

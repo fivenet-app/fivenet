@@ -19,8 +19,8 @@ export class UnaryErrorHandlerInterceptor implements UnaryInterceptor<any, any> 
 
         // Add our basic grpc error handler
         return invoker(request)
-            .catch((err: RpcError) => {
-                handleGRPCError(err);
+            .catch(async (err: RpcError) => {
+                await handleGRPCError(err);
             })
             .finally(() => {
                 store.dispatch('loader/hide');
@@ -36,7 +36,9 @@ export async function handleGRPCError(err: RpcError) {
 
             dispatchNotification({ title: 'Please login again', content: 'You are not signed in anymore', type: 'warning' });
 
-            await router.push({ path: '/login', query: { redirect: router.currentRoute.value.fullPath }, replace: true, force: true });
+            // Only update the redirect query param if it isn't set already
+            const redirect = router.currentRoute.value.query.redirect ?? router.currentRoute.value.fullPath;
+            await router.push({ path: '/login', query: { redirect: redirect }, replace: true, force: true });
             break;
         case StatusCode.PERMISSION_DENIED:
             dispatchNotification({ title: 'Permission denied', content: err.message, type: 'error' });
@@ -44,8 +46,12 @@ export async function handleGRPCError(err: RpcError) {
         case StatusCode.INTERNAL:
             dispatchNotification({ title: 'Internal server error occured', content: err.message, type: 'error' });
             break;
-            case StatusCode.UNAVAILABLE:
-                dispatchNotification({ title: 'Unable to reach server', content: 'Unable to reach aRPaNet server, please check your internet connection.', type: 'error' });
+        case StatusCode.UNAVAILABLE:
+            dispatchNotification({
+                title: 'Unable to reach server',
+                content: 'Unable to reach aRPaNet server, please check your internet connection.',
+                type: 'error',
+            });
             break;
         default:
             dispatchNotification({ title: 'Unknown error occured', content: err.message, type: 'error' });
