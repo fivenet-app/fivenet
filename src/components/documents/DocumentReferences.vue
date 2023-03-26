@@ -52,17 +52,18 @@ defineProps({
                         <table class="min-w-full bg-base-700 text-neutral">
                             <thead>
                                 <tr>
-                                    <th class="px-6 py-3 text-sm font-semibold text-left"
-                                        scope="col">
-                                        Target</th>
-                                    <th class="px-6 py-3 text-sm font-semibold text-right"
-                                        scope="col">
-                                        Relation</th>
-                                    <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
-                                        scope="col">Source</th>
-                                    <th class="px-6 py-3 text-sm font-semibold text-right"
-                                        scope="col">
-                                        Date</th>
+                                    <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
+                                        Target
+                                    </th>
+                                    <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
+                                        Relation
+                                    </th>
+                                    <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
+                                        Creator
+                                    </th>
+                                    <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
+                                        Date
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-base-600 bg-base-800 text-neutral">

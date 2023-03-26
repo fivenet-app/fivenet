@@ -80,6 +80,7 @@ function getDocument(): void {
             comments.value = resp.getCommentsList();
         });
 }
+
 onMounted(() => {
     getDocument();
 });
@@ -187,9 +188,9 @@ onMounted(() => {
                                 </TabPanels>
                             </TabGroup>
                         </div>
-                        <div class="mt-4" v-if="comments.length">
+                        <div class="mt-4" v-can="'DocStoreService.GetDocumentComments'">
                             <h2 class="text-lg font-semibold text-neutral">Comments</h2>
-                            <DocumentComments :comments="comments" />
+                            <DocumentComments :document-id="documentId" :comments="comments" />
                         </div>
                     </div>
                 </div>

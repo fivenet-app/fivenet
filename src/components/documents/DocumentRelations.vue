@@ -53,30 +53,32 @@ defineProps({
                         <table class="min-w-full bg-base-700 text-neutral">
                             <thead>
                                 <tr>
-                                    <th v-if="showDocument"
-                                        class="px-6 py-3 text-sm font-semibold text-left "
-                                        scope="col">
-                                        Document</th>
-                                    <th class="px-6 py-3 text-sm font-semibold text-left "
-                                        scope="col">
-                                        Target</th>
-                                    <th class="px-6 py-3 text-sm font-semibold text-right "
-                                        scope="col">
-                                        Relation</th>
-                                    <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
-                                        scope="col">Source</th>
-                                    <th class="px-6 py-3 text-sm font-semibold text-right "
-                                        scope="col">
-                                        Date</th>
+                                    <th v-if="showDocument" class="px-6 py-3 text-sm font-semibold text-left " scope="col">
+                                        Document
+                                    </th>
+                                    <th class="px-6 py-3 text-sm font-semibold text-left " scope="col">
+                                        Target
+                                    </th>
+                                    <th class="px-6 py-3 text-sm font-semibold text-right " scope="col">
+                                        Relation
+                                    </th>
+                                    <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
+                                        Creator
+                                    </th>
+                                    <th class="px-6 py-3 text-sm font-semibold text-right " scope="col">
+                                        Date
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-600 bg-base-800 text-neutral">
                                 <tr v-for="relation in relations" :key="relation.getId()">
                                     <td v-if="showDocument" class="px-6 py-4 text-sm ">
-                                        <span class="">{{ relation.getDocument()?.getTitle() }}<span
+                                        <router-link
+                                            :to="{ name: 'Documents: Info', params: { id: relation.getDocumentId() } }">
+                                            {{ relation.getDocument()?.getTitle() }}<span
                                                 v-if="relation.getDocument()?.getCategory()"> (Category: {{
                                                     relation.getDocument()?.getCategory()?.getName() }})</span>
-                                        </span>
+                                        </router-link>
                                     </td>
                                     <td class="px-6 py-4 text-sm ">
                                         <div class="flex">

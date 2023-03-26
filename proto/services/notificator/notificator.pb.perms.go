@@ -26,13 +26,5 @@ func init() {
 			Key:  NotificatorServicePermKey,
 			Name: "GetNotifications",
 		},
-		{
-			Key:  NotificatorServicePermKey,
-			Name: "GetNotifications",
-		},
-		{
-			Key:  NotificatorServicePermKey,
-			Name: "GetNotifications",
-		},
 	})
 }

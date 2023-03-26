@@ -27,10 +27,6 @@ func init() {
 		},
 		{
 			Key:  AuthServicePermKey,
-			Name: "GetCharacters",
-		},
-		{
-			Key:  AuthServicePermKey,
 			Name: "SetJob",
 		},
 	})

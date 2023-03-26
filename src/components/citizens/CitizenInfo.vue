@@ -3,7 +3,7 @@ import { RectangleGroupIcon, UserIcon, TruckIcon, DocumentTextIcon } from '@hero
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import CitizenInfoProfile from './CitizenInfoProfile.vue';
 import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
-import CitizenActivityFeed from './CitizenActivityFeed.vue';
+import CitizenInfoActivityFeed from './CitizenInfoActivityFeed.vue';
 import VehiclesList from '../vehicles/VehiclesList.vue';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { useStore } from '../../store/store';
@@ -67,7 +67,7 @@ function addToClipboard() {
                     <CitizenInfoDocuments :userId="user.getUserId()" />
                 </TabPanel>
                 <TabPanel v-can="'CitizenStoreService.GetUserActivity'">
-                    <CitizenActivityFeed :userId="user.getUserId()" />
+                    <CitizenInfoActivityFeed :userId="user.getUserId()" />
                 </TabPanel>
             </TabPanels>
         </TabGroup>

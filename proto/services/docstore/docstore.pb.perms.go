@@ -40,10 +40,6 @@ func init() {
 		},
 		{
 			Key:  DocStoreServicePermKey,
-			Name: "PostDocumentComment",
-		},
-		{
-			Key:  DocStoreServicePermKey,
 			Name: "FindDocuments",
 		},
 		{
@@ -60,18 +56,6 @@ func init() {
 		},
 		{
 			Key:  DocStoreServicePermKey,
-			Name: "GetDocument",
-		},
-		{
-			Key:  DocStoreServicePermKey,
-			Name: "GetDocument",
-		},
-		{
-			Key:  DocStoreServicePermKey,
-			Name: "ListTemplates",
-		},
-		{
-			Key:  DocStoreServicePermKey,
 			Name: "GetUserDocuments",
 		},
 		{
@@ -81,14 +65,6 @@ func init() {
 		{
 			Key:  DocStoreServicePermKey,
 			Name: "PostDocumentComment",
-		},
-		{
-			Key:  DocStoreServicePermKey,
-			Name: "AddDocumentReference",
-		},
-		{
-			Key:  DocStoreServicePermKey,
-			Name: "AddDocumentRelation",
 		},
 		{
 			Key:  DocStoreServicePermKey,

@@ -22,6 +22,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view document comments!")
 	}
 
+	dComments := dComments.AS("documentcomment")
 	condition := jet.AND(
 		dComments.DocumentID.EQ(jet.Uint64(req.DocumentId)),
 		dComments.DeletedAt.IS_NULL(),
@@ -52,6 +53,9 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 	stmt := dComments.
 		SELECT(
 			dComments.ID,
+			dComments.DocumentID,
+			dComments.CreatedAt,
+			dComments.UpdatedAt,
 			dComments.Comment,
 			dComments.CreatorID,
 			uCreator.ID,
@@ -67,18 +71,24 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 					dComments.CreatorID.EQ(uCreator.ID),
 				),
 		).
-		WHERE(condition)
+		WHERE(condition).
+		OFFSET(
+			req.Pagination.Offset,
+		).
+		ORDER_BY(
+			dComments.CreatedAt.DESC(),
+		).
+		LIMIT(10)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Comments); err != nil {
 		return nil, err
 	}
 
-	//resp.Comments = dest
-
-	database.PaginationHelper(resp.Pagination,
+	database.PaginationHelperWithPageSize(resp.Pagination,
 		count.TotalCount,
 		req.Pagination.Offset,
-		len(resp.Comments))
+		len(resp.Comments),
+		10)
 
 	for i := 0; i < len(resp.Comments); i++ {
 		if resp.Comments[i].Creator != nil {
@@ -138,6 +148,17 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this comment!")
 	}
 
+	comment, err := s.getDocumentComment(ctx, req.Comment.Id)
+	if err != nil {
+		return nil, err
+	}
+	if comment.CreatorId != userId {
+		return nil, status.Error(codes.PermissionDenied, "You can't edit others document comments!")
+	}
+
+	// Clean comment from
+	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
+
 	stmt := dComments.
 		UPDATE().
 		SET(
@@ -156,4 +177,28 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 	}
 
 	return resp, nil
+}
+
+func (s *Server) getDocumentComment(ctx context.Context, id uint64) (*documents.DocumentComment, error) {
+	comment := &documents.DocumentComment{}
+
+	dComments := dComments.AS("documentcomment")
+	stmt := dComments.
+		SELECT(
+			dComments.ID,
+			dComments.CreatedAt,
+			dComments.UpdatedAt,
+			dComments.Comment,
+			dComments.CreatorID,
+		).
+		FROM(
+			dComments,
+		).
+		LIMIT(1)
+
+	if err := stmt.QueryContext(ctx, s.db, comment); err != nil {
+		return nil, err
+	}
+
+	return comment, nil
 }

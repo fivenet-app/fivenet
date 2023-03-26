@@ -113,6 +113,21 @@ export namespace DocumentTemplate {
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum UpdatedAtCase { 
+    _UPDATED_AT_NOT_SET = 0,
+    UPDATED_AT = 3,
+  }
+
+  export enum CreatorCase { 
+    _CREATOR_NOT_SET = 0,
+    CREATOR = 13,
+  }
 }
 
 export class DocumentTemplateShort extends jspb.Message {
@@ -179,11 +194,36 @@ export namespace DocumentTemplateShort {
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum UpdatedAtCase { 
+    _UPDATED_AT_NOT_SET = 0,
+    UPDATED_AT = 3,
+  }
+
+  export enum CreatorCase { 
+    _CREATOR_NOT_SET = 0,
+    CREATOR = 11,
+  }
 }
 
 export class DocumentComment extends jspb.Message {
   getId(): number;
   setId(value: number): DocumentComment;
+
+  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentComment;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): DocumentComment;
+
+  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentComment;
+  hasUpdatedAt(): boolean;
+  clearUpdatedAt(): DocumentComment;
 
   getDocumentId(): number;
   setDocumentId(value: number): DocumentComment;
@@ -210,10 +250,27 @@ export class DocumentComment extends jspb.Message {
 export namespace DocumentComment {
   export type AsObject = {
     id: number,
+    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     documentId: number,
     comment: string,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
+  }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum UpdatedAtCase { 
+    _UPDATED_AT_NOT_SET = 0,
+    UPDATED_AT = 3,
+  }
+
+  export enum CreatorCase { 
+    _CREATOR_NOT_SET = 0,
+    CREATOR = 7,
   }
 }
 

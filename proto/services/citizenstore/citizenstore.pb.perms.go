@@ -27,10 +27,6 @@ func init() {
 			Fields: []string{"Licenses", "UserProps"},
 		},
 		{
-			Key:  CitizenStoreServicePermKey,
-			Name: "FindUsers",
-		},
-		{
 			Key:    CitizenStoreServicePermKey,
 			Name:   "GetUserActivity",
 			Fields: []string{"SourceUser"},

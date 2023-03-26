@@ -1,28 +1,50 @@
 <script setup lang="ts">
+import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 import { DocumentComment } from '@arpanet/gen/resources/documents/documents_pb';
+import { GetDocumentCommentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { ref, onMounted } from 'vue';
+import { getDocStoreClient } from '../../grpc/grpc';
+import DocumentCommentNew from './DocumentCommentNew.vue';
+import DocumentCommentEntry from './DocumentCommentEntry.vue';
 
-const props = defineProps<{
-    comments: DocumentComment[]
-}>();
+const props = defineProps({
+    documentId: {
+        required: true,
+        type: Number,
+    },
+    comments: {
+        required: false,
+        type: Array<DocumentComment>,
+    }
+});
 
-console.log(props.comments);
+const comments = ref<DocumentComment[]>([]);
 
-// TODO for adding/ editing a comment, use https://tailwindui.com/components/application-ui/forms/textareas#component-784309f82e9913989c2196a2d47eff4a
+// Document Comments
+function getDocumentComments(): void {
+    const req = new GetDocumentCommentsRequest();
+    req.setPagination((new PaginationRequest()).setOffset(0));
+    req.setDocumentId(props.documentId!);
+
+    getDocStoreClient().
+        getDocumentComments(req, null).
+        then((resp) => {
+            comments.value = resp.getCommentsList();
+        });
+}
+
+onMounted(() => {
+    if (props.documentId !== undefined && props.comments === undefined) {
+        getDocumentComments();
+    }
+});
 </script>
 
 <template>
+    <DocumentCommentNew :document-id="documentId" @added="(c: DocumentComment) => comments.push(c)" />
     <div class="flow-root px-4 rounded-lg bg-base-800 text-neutral">
         <ul role="list" class="divide-y divide-gray-200">
-            <li v-for="comment in $props.comments" :key="comment.getId()" class="py-4">
-                <div class="flex space-x-3">
-                    <div class="flex-1 space-y-1">
-                        <div class="flex items-center justify-between">
-                            <router-link :to="{ name: 'Citizens: Info', params: { id: comment.getCreatorId() } }" class="text-sm font-medium text-primary-400 hover:text-primary-300">{{ comment.getCreator()?.getFirstname() }} {{ comment.getCreator()?.getLastname() }}</router-link>
-                        </div>
-                        <p class="text-sm">{{ comment.getComment() }}</p>
-                    </div>
-                </div>
-            </li>
+            <DocumentCommentEntry v-for="com in (props.comments ?? comments)" :key="com.getId()" :comment="com" />
         </ul>
     </div>
 </template>

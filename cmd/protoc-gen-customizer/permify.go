@@ -92,17 +92,21 @@ func (p *PermifyModule) generate(f pgs.File) {
 				}
 				if _, ok := data.PermissionRemap[remapServiceName][mName]; !ok {
 					data.PermissionRemap[remapServiceName][mName] = perm.Name
+					p.Debugf("Permission Remap added: %q -> %q\n", mName, perm.Name)
+				} else {
+					p.Debugf("Permission Remap already exists: %q -> %q\n", mName, perm.Name)
 				}
-				p.Debugf("Permission Remap added: %q -> %q\n", mName, perm.Name)
 			}
 
 			if _, ok := data.Permissions[sName]; !ok {
 				data.Permissions[sName] = map[string]*Perm{}
 			}
-			if _, ok := data.Permissions[sName][mName]; !ok {
-				data.Permissions[sName][mName] = perm
+			if _, ok := data.Permissions[sName][perm.Name]; !ok {
+				data.Permissions[sName][perm.Name] = perm
+				p.Debugf("Permission added: %q - %+v\n", mName, perm)
+			} else {
+				p.Debugf("Permission already in list: %q - %+v\n", mName, perm)
 			}
-			p.Debugf("Permission added: %q - %+v\n", mName, perm)
 		}
 	}
 

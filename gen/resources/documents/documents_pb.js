@@ -1630,9 +1630,11 @@ proto.resources.documents.DocumentComment.prototype.toObject = function(opt_incl
 proto.resources.documents.DocumentComment.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    documentId: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    comment: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    creatorId: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    createdAt: (f = msg.getCreatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    documentId: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    comment: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    creatorId: jspb.Message.getFieldWithDefault(msg, 6, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f)
   };
 
@@ -1675,18 +1677,28 @@ proto.resources.documents.DocumentComment.deserializeBinaryFromReader = function
       msg.setId(value);
       break;
     case 2:
+      var value = new resources_timestamp_timestamp_pb.Timestamp;
+      reader.readMessage(value,resources_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setCreatedAt(value);
+      break;
+    case 3:
+      var value = new resources_timestamp_timestamp_pb.Timestamp;
+      reader.readMessage(value,resources_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setUpdatedAt(value);
+      break;
+    case 4:
       var value = /** @type {number} */ (reader.readUint64());
       msg.setDocumentId(value);
       break;
-    case 3:
+    case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.setComment(value);
       break;
-    case 4:
+    case 6:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorId(value);
       break;
-    case 5:
+    case 7:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setCreator(value);
@@ -1727,31 +1739,47 @@ proto.resources.documents.DocumentComment.serializeBinaryToWriter = function(mes
       f
     );
   }
+  f = message.getCreatedAt();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getUpdatedAt();
+  if (f != null) {
+    writer.writeMessage(
+      3,
+      f,
+      resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
   f = message.getDocumentId();
   if (f !== 0) {
     writer.writeUint64(
-      2,
+      4,
       f
     );
   }
   f = message.getComment();
   if (f.length > 0) {
     writer.writeString(
-      3,
+      5,
       f
     );
   }
   f = message.getCreatorId();
   if (f !== 0) {
     writer.writeInt32(
-      4,
+      6,
       f
     );
   }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      5,
+      7,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -1778,46 +1806,84 @@ proto.resources.documents.DocumentComment.prototype.setId = function(value) {
 
 
 /**
- * optional uint64 document_id = 2;
+ * optional resources.timestamp.Timestamp created_at = 2;
+ * @return {?proto.resources.timestamp.Timestamp}
+ */
+proto.resources.documents.DocumentComment.prototype.getCreatedAt = function() {
+  return /** @type{?proto.resources.timestamp.Timestamp} */ (
+    jspb.Message.getWrapperField(this, resources_timestamp_timestamp_pb.Timestamp, 2));
+};
+
+
+/**
+ * @param {?proto.resources.timestamp.Timestamp|undefined} value
+ * @return {!proto.resources.documents.DocumentComment} returns this
+*/
+proto.resources.documents.DocumentComment.prototype.setCreatedAt = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.resources.documents.DocumentComment} returns this
+ */
+proto.resources.documents.DocumentComment.prototype.clearCreatedAt = function() {
+  return this.setCreatedAt(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.DocumentComment.prototype.hasCreatedAt = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * optional resources.timestamp.Timestamp updated_at = 3;
+ * @return {?proto.resources.timestamp.Timestamp}
+ */
+proto.resources.documents.DocumentComment.prototype.getUpdatedAt = function() {
+  return /** @type{?proto.resources.timestamp.Timestamp} */ (
+    jspb.Message.getWrapperField(this, resources_timestamp_timestamp_pb.Timestamp, 3));
+};
+
+
+/**
+ * @param {?proto.resources.timestamp.Timestamp|undefined} value
+ * @return {!proto.resources.documents.DocumentComment} returns this
+*/
+proto.resources.documents.DocumentComment.prototype.setUpdatedAt = function(value) {
+  return jspb.Message.setWrapperField(this, 3, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.resources.documents.DocumentComment} returns this
+ */
+proto.resources.documents.DocumentComment.prototype.clearUpdatedAt = function() {
+  return this.setUpdatedAt(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.DocumentComment.prototype.hasUpdatedAt = function() {
+  return jspb.Message.getField(this, 3) != null;
+};
+
+
+/**
+ * optional uint64 document_id = 4;
  * @return {number}
  */
 proto.resources.documents.DocumentComment.prototype.getDocumentId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.resources.documents.DocumentComment} returns this
- */
-proto.resources.documents.DocumentComment.prototype.setDocumentId = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional string comment = 3;
- * @return {string}
- */
-proto.resources.documents.DocumentComment.prototype.getComment = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.resources.documents.DocumentComment} returns this
- */
-proto.resources.documents.DocumentComment.prototype.setComment = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
-};
-
-
-/**
- * optional int32 creator_id = 4;
- * @return {number}
- */
-proto.resources.documents.DocumentComment.prototype.getCreatorId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
@@ -1826,18 +1892,54 @@ proto.resources.documents.DocumentComment.prototype.getCreatorId = function() {
  * @param {number} value
  * @return {!proto.resources.documents.DocumentComment} returns this
  */
-proto.resources.documents.DocumentComment.prototype.setCreatorId = function(value) {
+proto.resources.documents.DocumentComment.prototype.setDocumentId = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * optional resources.users.UserShort creator = 5;
+ * optional string comment = 5;
+ * @return {string}
+ */
+proto.resources.documents.DocumentComment.prototype.getComment = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.documents.DocumentComment} returns this
+ */
+proto.resources.documents.DocumentComment.prototype.setComment = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional int32 creator_id = 6;
+ * @return {number}
+ */
+proto.resources.documents.DocumentComment.prototype.getCreatorId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.resources.documents.DocumentComment} returns this
+ */
+proto.resources.documents.DocumentComment.prototype.setCreatorId = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
+};
+
+
+/**
+ * optional resources.users.UserShort creator = 7;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.documents.DocumentComment.prototype.getCreator = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 5));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 7));
 };
 
 
@@ -1846,7 +1948,7 @@ proto.resources.documents.DocumentComment.prototype.getCreator = function() {
  * @return {!proto.resources.documents.DocumentComment} returns this
 */
 proto.resources.documents.DocumentComment.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 5, value);
+  return jspb.Message.setWrapperField(this, 7, value);
 };
 
 
@@ -1864,7 +1966,7 @@ proto.resources.documents.DocumentComment.prototype.clearCreator = function() {
  * @return {boolean}
  */
 proto.resources.documents.DocumentComment.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 5) != null;
+  return jspb.Message.getField(this, 7) != null;
 };
 
 
