@@ -3,6 +3,40 @@ import * as jspb from 'google-protobuf'
 import * as resources_users_users_pb from '../../../resources/users/users_pb';
 
 
+export class TemplateSchema extends jspb.Message {
+  getRequirements(): TemplateRequirements | undefined;
+  setRequirements(value?: TemplateRequirements): TemplateSchema;
+  hasRequirements(): boolean;
+  clearRequirements(): TemplateSchema;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): TemplateSchema.AsObject;
+  static toObject(includeInstance: boolean, msg: TemplateSchema): TemplateSchema.AsObject;
+  static serializeBinaryToWriter(message: TemplateSchema, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): TemplateSchema;
+  static deserializeBinaryFromReader(message: TemplateSchema, reader: jspb.BinaryReader): TemplateSchema;
+}
+
+export namespace TemplateSchema {
+  export type AsObject = {
+    requirements?: TemplateRequirements.AsObject,
+  }
+}
+
+export class TemplateRequirements extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): TemplateRequirements.AsObject;
+  static toObject(includeInstance: boolean, msg: TemplateRequirements): TemplateRequirements.AsObject;
+  static serializeBinaryToWriter(message: TemplateRequirements, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): TemplateRequirements;
+  static deserializeBinaryFromReader(message: TemplateRequirements, reader: jspb.BinaryReader): TemplateRequirements;
+}
+
+export namespace TemplateRequirements {
+  export type AsObject = {
+  }
+}
+
 export class TemplateData extends jspb.Message {
   getActivechar(): resources_users_users_pb.User | undefined;
   setActivechar(value?: resources_users_users_pb.User): TemplateData;
