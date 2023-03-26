@@ -119,8 +119,8 @@ async function findCategories(): Promise<void> {
 }
 
 function addAccessEntry(): void {
-    if (access.value.size > 4) {
-        dispatchNotification({ title: 'Maximum amount of Access entries exceeded', content: 'There can only be a maximum of 5 access entries on a Document', type: 'error' })
+    if (access.value.size > 9) {
+        dispatchNotification({ title: 'Maximum amount of Access entries exceeded', content: 'There can only be a maximum of 10 access entries on a Document', type: 'error' })
         return;
     }
 
