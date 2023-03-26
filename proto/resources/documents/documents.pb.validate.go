@@ -782,10 +782,21 @@ func (m *DocumentComment) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
-	if len(m.GetComment()) > 4096 {
+	if utf8.RuneCountInString(m.GetComment()) < 3 {
 		err := DocumentCommentValidationError{
 			field:  "Comment",
-			reason: "value length must be at most 4096 bytes",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetComment()) > 2048 {
+		err := DocumentCommentValidationError{
+			field:  "Comment",
+			reason: "value length must be at most 2048 bytes",
 		}
 		if !all {
 			return err
