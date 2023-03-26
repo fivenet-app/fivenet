@@ -35,7 +35,7 @@ const position = new Position();
 let stream = null as null | ClientReadableStream<StreamResponse>;
 let map = {} as undefined | Livemap;
 
-const atlas = L.tileLayer('tiles/atlas/{z}/{x}/{y}.png', {
+const atlas = L.tileLayer('/dist/tiles/atlas/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -43,7 +43,7 @@ const atlas = L.tileLayer('tiles/atlas/{z}/{x}/{y}.png', {
     noWrap: false,
     tms: true,
 });
-const postal = L.tileLayer('tiles/postal/{z}/{x}/{y}.png', {
+const postal = L.tileLayer('/dist/tiles/postal/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -51,7 +51,7 @@ const postal = L.tileLayer('tiles/postal/{z}/{x}/{y}.png', {
     noWrap: false,
     tms: true,
 });
-const road = L.tileLayer('tiles/road/{z}/{x}/{y}.png', {
+const road = L.tileLayer('/dist/tiles/road/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -59,7 +59,7 @@ const road = L.tileLayer('tiles/road/{z}/{x}/{y}.png', {
     noWrap: false,
     tms: true,
 });
-const satelite = L.tileLayer('tiles/satelite/{z}/{x}/{y}.png', {
+const satelite = L.tileLayer('/dist/tiles/satelite/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
