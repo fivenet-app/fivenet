@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useStore } from '../../store/store';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getCompletorClient, getDocStoreClient } from '../../grpc/grpc';
 import { CreateDocumentRequest, GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { DocumentAccess, DocumentCategory, DocumentJobAccess, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
+import { DocumentAccess, DocumentCategory, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { dispatchNotification } from '../notification';
 import AccessEntry from './DocumentAccessEntry.vue';
 import {
@@ -57,8 +57,15 @@ const state = ref('');
 const isPublic = ref(false);
 const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }>>(new Map());
 
-const showRelationManager = ref<boolean>(false);
-const showReferenceManager = ref<boolean>(false);
+const relationManagerShow = ref<boolean>(false);
+const relationManagerData = ref<Map<number, DocumentRelation>>(new Map());
+const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
+watch(currentRelations, () => currentRelations.value.forEach(e => relationManagerData.value.set(e.getId(), e)))
+
+const referenceManagerShow = ref<boolean>(false);
+const referenceManagerData = ref<Map<number, DocumentReference>>(new Map());
+const currentReferences = ref<Readonly<DocumentReference>[]>([]);
+watch(currentReferences, () => currentReferences.value.forEach(e => referenceManagerData.value.set(e.getId(), e)))
 
 let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
@@ -73,7 +80,7 @@ onMounted(async () => {
         const req = new GetDocumentRequest();
         req.setDocumentId(props.id);
 
-        getDocStoreClient().getDocument(req, null).then((resp) => {
+        getDocStoreClient().getDocument(req, null).then(async (resp) => {
             const document = resp.getDocument();
             const docAccess = resp.getAccess();
 
@@ -82,9 +89,13 @@ onMounted(async () => {
                 content.value = document.getContent();
                 closed.value = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
                 selectedCategory.value = entriesCategory.find(e => e.getId() === document.getCategory()?.getId());
-                console.debug("🔎 • file: DocumentEditor.vue:81 • getDocStoreClient • document.getCategory()?.getId():", document.getCategory()?.getId())
                 state.value = document.getState();
                 isPublic.value = document.getPublic();
+
+                const refs = await getDocStoreClient().getDocumentReferences(req, null);
+                currentReferences.value = refs.getReferencesList();
+                const rels = await getDocStoreClient().getDocumentRelations(req, null);
+                currentRelations.value = rels.getRelationsList();
             };
 
             if (docAccess) {
@@ -290,8 +301,10 @@ function editForm(): void {
 </route>
 
 <template>
-    <DocumentRelationManager :open="showRelationManager" :document="$props.id" @close="showRelationManager = false" />
-    <DocumentReferenceManager :open="showReferenceManager" :document="$props.id" @close="showReferenceManager = false" />
+    <DocumentRelationManager v-model="relationManagerData" :open="relationManagerShow" :document="$props.id"
+        @close="relationManagerShow = false" />
+    <DocumentReferenceManager v-model="referenceManagerData" :open="referenceManagerShow" :document="$props.id"
+        @close="referenceManagerShow = false" />
     <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
         <div>
             <label for="name" class="block font-medium sr-only text-s">Title</label>
@@ -378,12 +391,12 @@ function editForm(): void {
         <div class="flex-1">
             <button type="button"
                 class="rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="showReferenceManager = true">Document References</button>
+                @click="referenceManagerShow = true">Document References</button>
         </div>
         <div class="flex-1">
             <button type="button"
                 class="rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="showRelationManager = true">Citizen Relations</button>
+                @click="relationManagerShow = true">Citizen Relations</button>
         </div>
     </div>
     <div class="my-3">

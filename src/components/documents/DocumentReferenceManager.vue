@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 import { Document, DocumentReference } from '@arpanet/gen/resources/documents/documents_pb';
-import { GetDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import {
     Dialog,
     DialogPanel,
@@ -33,14 +33,15 @@ const router = useRouter();
 
 const props = defineProps<{
     open: boolean,
-    document: number | undefined,
+    document?: number,
+    modelValue: Map<number, DocumentReference>,
 }>();
 
 const emit = defineEmits<{
     (e: 'close'): void,
+    (e: 'update:modelValue', payload: Map<number, DocumentReference>): void,
 }>();
 
-const references = ref<DocumentReference[]>([])
 const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
     { name: 'View current', icon: MagnifyingGlassIcon },
     { name: 'Add new', icon: DocumentPlusIcon },
@@ -49,54 +50,36 @@ const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
 const entriesDocuments = ref<Document[]>([]);
 const queryDoc = ref('');
 
-onMounted(async () => {
-    await findReferences();
-    await findDocuments();
+onMounted(() => {
+    findDocuments();
 });
 
 watchDebounced(queryDoc, async () => await findDocuments(), { debounce: 750, maxWait: 2000 });
 
-async function findDocuments(): Promise<void> {
+function findDocuments(): void {
     const req = new FindDocumentsRequest();
     req.setPagination((new PaginationRequest()).setOffset(0));
     req.setSearch(queryDoc.value);
 
-    const resp = await getDocStoreClient().findDocuments(req, null)
-    entriesDocuments.value = resp.getDocumentsList().filter(doc => !(references.value.find(r => r.getSourceDocumentId() === doc.getId() || doc.getId() === props.document)));
-}
-
-async function findReferences(): Promise<void> {
-    if (!props.document) return;
-
-    const req = new GetDocumentRequest();
-    req.setDocumentId(props.document);
-
-    const resp = await getDocStoreClient().getDocumentReferences(req, null)
-    references.value = resp.getReferencesList();
+    getDocStoreClient().findDocuments(req, null).then((resp) => {
+        entriesDocuments.value = resp.getDocumentsList().filter(doc => !(Array.from(props.modelValue.values()).find(r => r.getSourceDocumentId() === doc.getId() || doc.getId() === props.document)));
+    });
 }
 
 function addReference(doc: Document): void {
-    const rel = new DocumentReference();
-    rel.setCreatorId(store.state.auth!.lastCharID);
-    rel.setTargetDocumentId(props.document!);
-    rel.setSourceDocumentId(doc.getId());
+    const keys = Array.from(props.modelValue.keys());
+    const key = keys[keys.length - 1] + 1;
 
-    const req = new AddDocumentReferenceRequest();
-    req.setReference(rel);
+    const ref = new DocumentReference();
+    ref.setId(key);
+    ref.setCreatorId(store.state.auth!.lastCharID);
+    ref.setSourceDocumentId(doc.getId());
 
-    getDocStoreClient().addDocumentReference(req, null).then(async () => {
-        await findReferences();
-        await findDocuments();
-    });
+    props.modelValue.set(key, ref);
 }
 
 function removeReference(id: number): void {
-    const req = new RemoveDocumentReferenceRequest();
-    req.setId(id);
-
-    getDocStoreClient().removeDocumentReference(req, null).then(() => {
-        findReferences();
-    });
+    props.modelValue.delete(id);
 }
 </script>
 
@@ -129,7 +112,8 @@ function removeReference(id: number): void {
                             </DialogTitle>
                             <TabGroup>
                                 <TabList class="flex flex-row mb-4">
-                                    <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" class="flex-initial w-full">
+                                    <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }"
+                                        class="flex-initial w-full">
                                         <button
                                             :class="[selected ? 'border-primary-500 text-primary-500' : 'border-transparent text-base-300 hover:border-base-300 hover:text-base-200', 'group inline-flex items-center border-b-2 py-4 px-1 text-m font-medium w-full justify-center transition-colors']"
                                             :aria-current="selected ? 'page' : undefined">
@@ -164,21 +148,18 @@ function removeReference(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="ref in references" :key="ref.getId()">
+                                                                <tr v-for="[key, ref] in $props.modelValue" :key="key">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
                                                                         {{ ref.getSourceDocument()?.getTitle() }}</td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
                                                                             ref.getCreator()?.getFirstname() }}
                                                                         {{ ref.getCreator()?.getLastname() }}
                                                                     </td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ ref.getSourceDocument()?.getState() }}</td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <a :href="router.resolve({ name: 'Documents: Info', params: { id: ref.getSourceDocumentId() } }).href"
@@ -239,28 +220,25 @@ function removeReference(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="doc in entriesDocuments.slice(0, 8)" :key="doc.getId()">
+                                                                <tr v-for="doc in entriesDocuments.slice(0, 8)"
+                                                                    :key="doc.getId()">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
                                                                         {{ doc.getTitle() }}</td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ doc.getCreator()?.getFirstname() }} {{
                                                                             doc.getCreator()?.getLastname() }}
                                                                     </td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ doc.getState() }}
                                                                     </td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         Created <time
                                                                             :datetime="getDateLocaleString(doc.getCreatedAt())">{{
                                                                                 getDateRelativeString(doc.getCreatedAt())
                                                                             }}</time>
                                                                     </td>
-                                                                    <td
-                                                                        class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button role="button"

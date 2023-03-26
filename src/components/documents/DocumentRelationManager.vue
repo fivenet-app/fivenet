@@ -39,14 +39,15 @@ const router = useRouter();
 
 const props = defineProps<{
     open: boolean,
-    document: number | undefined,
+    document?: number,
+    modelValue: Map<number, DocumentRelation>,
 }>();
 
 const emit = defineEmits<{
     (e: 'close'): void,
+    (e: 'update:modelValue', payload: Map<number, DocumentRelation>): void,
 }>();
 
-const relations = ref<DocumentRelation[]>([])
 const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
     { name: 'View current', icon: MagnifyingGlassIcon },
     { name: 'Add new', icon: UserPlusIcon },
@@ -55,55 +56,38 @@ const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
 const entriesUsers = ref<User[]>([]);
 const queryChar = ref('');
 
-onMounted(async () => {
-    await findRelations();
-    await findUsers();
+onMounted(() => {
+    findUsers();
 });
 
 watchDebounced(queryChar, async () => await findUsers(), { debounce: 750, maxWait: 2000 });
 
-async function findUsers(): Promise<void> {
+function findUsers(): void {
     const req = new FindUsersRequest();
     req.setPagination((new PaginationRequest()).setOffset(0));
     req.setSearchname(queryChar.value);
 
-    const resp = await getCitizenStoreClient().findUsers(req, null)
-    entriesUsers.value = resp.getUsersList().filter(user => !relations.value.find(r => r.getTargetUserId() === user.getUserId()));
-}
-
-async function findRelations(): Promise<void> {
-    if (!props.document) return;
-
-    const req = new GetDocumentRequest();
-    req.setDocumentId(props.document);
-
-    const resp = await getDocStoreClient().getDocumentRelations(req, null)
-    relations.value = resp.getRelationsList();
+    getCitizenStoreClient().findUsers(req, null).then((resp) => {
+        entriesUsers.value = resp.getUsersList().filter(user => !Array.from(props.modelValue.values()).find(r => r.getTargetUserId() === user.getUserId()));
+    });
 }
 
 function addRelation(user: User, relation: number): void {
+    const keys = Array.from(props.modelValue.keys());
+    const key = keys[keys.length - 1] + 1;
+
     const rel = new DocumentRelation();
+    rel.setId(key);
     rel.setDocumentId(props.document!)
     rel.setSourceUserId(store.state.auth!.lastCharID)
     rel.setTargetUserId(user.getUserId())
     rel.setRelation(DOC_RELATION_Util.fromInt(relation));
 
-    const req = new AddDocumentRelationRequest();
-    req.setRelation(rel);
-
-    getDocStoreClient().addDocumentRelation(req, null).then(async () => {
-        await findRelations();
-        await findUsers();
-    });
+    props.modelValue.set(key, rel);
 }
 
 function removeRelation(id: number): void {
-    const req = new RemoveDocumentRelationRequest();
-    req.setId(id);
-
-    getDocStoreClient().removeDocumentRelation(req, null).then(() => {
-        findRelations();
-    });
+    props.modelValue.delete(id);
 }
 </script>
 
@@ -173,24 +157,24 @@ function removeRelation(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="ref in relations" :key="ref.getId()">
+                                                                <tr v-for="[key, rel] in $props.modelValue" :key="key">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
-                                                                        {{ ref.getTargetUser()?.getFirstname() }} {{
-                                                                            ref.getTargetUser()?.getLastname() }}</td>
+                                                                        {{ rel.getTargetUser()?.getFirstname() }} {{
+                                                                            rel.getTargetUser()?.getLastname() }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
-                                                                            ref.getSourceUser()?.getFirstname() }}
-                                                                        {{ ref.getSourceUser()?.getLastname() }}
+                                                                            rel.getSourceUser()?.getFirstname() }}
+                                                                        {{ rel.getSourceUser()?.getLastname() }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
-                                                                            toTitleCase(DOC_RELATION_Util.toEnumKey(ref.getRelation())!.toLowerCase())
-                                                                            ?? ref.getRelation() }}</td>
+                                                                            toTitleCase(DOC_RELATION_Util.toEnumKey(rel.getRelation())!.toLowerCase())
+                                                                            ?? rel.getRelation() }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
-                                                                                <a :href="router.resolve({ name: 'Citizens: Info', params: { id: ref.getTargetUserId() } }).href"
+                                                                                <a :href="router.resolve({ name: 'Citizens: Info', params: { id: rel.getTargetUserId() } }).href"
                                                                                     target="_blank" data-te-toggle="tooltip"
                                                                                     title="Open Citizen">
                                                                                     <ArrowTopRightOnSquareIcon
@@ -200,7 +184,7 @@ function removeRelation(id: number): void {
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="removeRelation(ref.getId())"
+                                                                                    @click="removeRelation(rel.getId())"
                                                                                     data-te-toggle="tooltip"
                                                                                     title="Remove Relation">
                                                                                     <UserMinusIcon
