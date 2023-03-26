@@ -54,7 +54,7 @@ onMounted(() => {
     findDocuments();
 });
 
-watchDebounced(queryDoc, async () => await findDocuments(), { debounce: 750, maxWait: 2000 });
+watchDebounced(queryDoc, async () => findDocuments(), { debounce: 750, maxWait: 2000 });
 
 function findDocuments(): void {
     const req = new FindDocumentsRequest();
@@ -68,18 +68,22 @@ function findDocuments(): void {
 
 function addReference(doc: Document): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = keys[keys.length - 1] + 1;
+    const key = !keys.length ? 1 : keys[keys.length - 1] + 1;
 
     const ref = new DocumentReference();
     ref.setId(key);
-    ref.setCreatorId(store.state.auth!.lastCharID);
+    ref.setCreatorId(store.state.auth!.activeChar!.getUserId());
+    ref.setCreator(store.state.auth!.activeChar!)
     ref.setSourceDocumentId(doc.getId());
+    ref.setSourceDocument(doc);
 
     props.modelValue.set(key, ref);
+    findDocuments();
 }
 
 function removeReference(id: number): void {
     props.modelValue.delete(id);
+    findDocuments();
 }
 </script>
 

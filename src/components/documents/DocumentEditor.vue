@@ -4,10 +4,9 @@ import { useStore } from '../../store/store';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getCompletorClient, getDocStoreClient } from '../../grpc/grpc';
-import { CreateDocumentRequest, GetDocumentRequest, UpdateDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentCategory, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { dispatchNotification } from '../notification';
-import AccessEntry from './DocumentAccessEntry.vue';
 import {
     PlusIcon,
     ChevronDownIcon,
@@ -32,6 +31,7 @@ import { watchDebounced } from '@vueuse/core';
 import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import DocumentReferenceManager from './DocumentReferenceManager.vue';
 import DocumentRelationManager from './DocumentRelationManager.vue';
+import DocumentAccessEntry from './DocumentAccessEntry.vue';
 
 const store = useStore();
 const router = useRouter();
@@ -239,6 +239,18 @@ function submitForm(): void {
     getDocStoreClient().
         createDocument(req, null).
         then((resp) => {
+            referenceManagerData.value.forEach((ref) => {
+                const req = new AddDocumentReferenceRequest();
+                req.setReference(ref);
+                getDocStoreClient().addDocumentReference(req, null);
+            });
+
+            relationManagerData.value.forEach((rel) => {
+                const req = new AddDocumentRelationRequest();
+                req.setRelation(rel);
+                getDocStoreClient().addDocumentRelation(req, null);
+            });
+
             dispatchNotification({ title: "Document created!", content: "Document has been created." });
             router.push('/documents/' + resp.getDocumentId());
         });
@@ -286,6 +298,42 @@ function editForm(): void {
     getDocStoreClient().
         updateDocument(req, null).
         then((resp) => {
+            const referencesToRemove: number[] = [];
+            currentReferences.value.forEach((ref) => {
+                if (!referenceManagerData.value.has(ref.getId())) referencesToRemove.push(ref.getId());
+            });
+            referencesToRemove.forEach((id) => {
+                const req = new RemoveDocumentReferenceRequest();
+                req.setId(id);
+                getDocStoreClient().removeDocumentReference(req, null);
+            });
+
+            const relationsToRemove: number[] = [];
+            currentRelations.value.forEach((rel) => {
+                if (!relationManagerData.value.has(rel.getId())) relationsToRemove.push(rel.getId());
+            });
+            relationsToRemove.forEach((id) => {
+                const req = new RemoveDocumentRelationRequest();
+                req.setId(id);
+                getDocStoreClient().removeDocumentRelation(req, null);
+            });
+
+            referenceManagerData.value.forEach((ref) => {
+                if (currentReferences.value.find(r => r.getId() === ref.getId())) return;
+
+                const req = new AddDocumentReferenceRequest();
+                req.setReference(ref);
+                getDocStoreClient().addDocumentReference(req, null);
+            });
+
+            relationManagerData.value.forEach((rel) => {
+                if (currentRelations.value.find(r => r.getId() === rel.getId())) return;
+
+                const req = new AddDocumentRelationRequest();
+                req.setRelation(rel);
+                getDocStoreClient().addDocumentRelation(req, null);
+            });
+
             dispatchNotification({ title: "Document updated!", content: "Document has been updated." });
         });
 }
@@ -401,7 +449,7 @@ function editForm(): void {
     </div>
     <div class="my-3">
         <h2 class="text-neutral">Access</h2>
-        <AccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry"
+        <DocumentAccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry"
             @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
             @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
             @deleteRequest="removeAccessEntry($event)" />

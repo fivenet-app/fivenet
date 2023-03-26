@@ -4,7 +4,6 @@ import { DOC_RELATION_Util } from '@arpanet/gen/resources/documents/documents.pb
 import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
-import { GetDocumentRequest, RemoveDocumentRelationRequest, AddDocumentRelationRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import {
     Dialog,
     DialogPanel,
@@ -74,20 +73,24 @@ function findUsers(): void {
 
 function addRelation(user: User, relation: number): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = keys[keys.length - 1] + 1;
+    const key = !keys.length ? 1 : keys[keys.length - 1] + 1;
 
     const rel = new DocumentRelation();
     rel.setId(key);
-    rel.setDocumentId(props.document!)
-    rel.setSourceUserId(store.state.auth!.lastCharID)
-    rel.setTargetUserId(user.getUserId())
+    rel.setDocumentId(props.document!);
+    rel.setSourceUserId(store.state.auth!.activeChar!.getUserId());
+    rel.setSourceUser(store.state.auth!.activeChar!);
+    rel.setTargetUserId(user.getUserId());
+    rel.setTargetUser(user);
     rel.setRelation(DOC_RELATION_Util.fromInt(relation));
 
     props.modelValue.set(key, rel);
+    findUsers();
 }
 
 function removeRelation(id: number): void {
     props.modelValue.delete(id);
+    findUsers();
 }
 </script>
 
