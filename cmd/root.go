@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"embed"
 	"fmt"
 	"os"
 
@@ -14,7 +13,6 @@ import (
 
 var (
 	logger *zap.Logger
-	assets embed.FS
 )
 
 var rootCmd = &cobra.Command{
@@ -46,8 +44,4 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func SetAssets(fs embed.FS) {
-	assets = fs
 }

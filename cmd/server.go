@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"io/fs"
 	"net/http"
 	"os"
 	"os/signal"
@@ -154,25 +153,13 @@ func setupHTTPServer() *gin.Engine {
 	// Register app routes
 	rs := routes.New(logger)
 	rs.Register(e)
-	// Register embed FS for assets and other static files
-	if gin.Mode() == gin.DebugMode {
-		e.StaticFS("/dist", gin.Dir("./dist", false))
-	} else {
-		distFs, err := fs.Sub(assets, "dist")
-		if err != nil {
-			logger.Fatal("failed to get dist dir in assets embed", zap.Error(err))
-		}
-		e.StaticFS("/dist", http.FS(distFs))
-	}
+	// Register dist dir for assets and other static files
+	e.StaticFS("/dist", gin.Dir("./dist", false))
 
 	// Index.html helper for /
 	index := func(c *gin.Context) {
-		file, _ := assets.ReadFile("dist/index.html")
-		c.Data(
-			http.StatusOK,
-			"text/html",
-			file,
-		)
+		c.Request.URL.Path = "/dist/index.html"
+		e.HandleContext(c)
 	}
 	e.GET("/", index)
 
@@ -184,12 +171,8 @@ func setupHTTPServer() *gin.Engine {
 	})
 
 	e.GET("favicon.ico", func(c *gin.Context) {
-		file, _ := assets.ReadFile("dist/favicon.ico")
-		c.Data(
-			http.StatusOK,
-			"image/x-icon",
-			file,
-		)
+		c.Request.URL.Path = "/dist/favicon.ico"
+		e.HandleContext(c)
 	})
 
 	return e
