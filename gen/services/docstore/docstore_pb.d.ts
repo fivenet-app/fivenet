@@ -537,6 +537,38 @@ export namespace EditDocumentCommentResponse {
   }
 }
 
+export class DeleteDocumentCommentRequest extends jspb.Message {
+  getCommentId(): number;
+  setCommentId(value: number): DeleteDocumentCommentRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteDocumentCommentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteDocumentCommentRequest): DeleteDocumentCommentRequest.AsObject;
+  static serializeBinaryToWriter(message: DeleteDocumentCommentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteDocumentCommentRequest;
+  static deserializeBinaryFromReader(message: DeleteDocumentCommentRequest, reader: jspb.BinaryReader): DeleteDocumentCommentRequest;
+}
+
+export namespace DeleteDocumentCommentRequest {
+  export type AsObject = {
+    commentId: number,
+  }
+}
+
+export class DeleteDocumentCommentResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteDocumentCommentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteDocumentCommentResponse): DeleteDocumentCommentResponse.AsObject;
+  static serializeBinaryToWriter(message: DeleteDocumentCommentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteDocumentCommentResponse;
+  static deserializeBinaryFromReader(message: DeleteDocumentCommentResponse, reader: jspb.BinaryReader): DeleteDocumentCommentResponse;
+}
+
+export namespace DeleteDocumentCommentResponse {
+  export type AsObject = {
+  }
+}
+
 export class CreateDocumentRequest extends jspb.Message {
   getCategoryId(): number;
   setCategoryId(value: number): CreateDocumentRequest;

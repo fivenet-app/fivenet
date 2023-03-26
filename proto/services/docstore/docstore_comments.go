@@ -202,3 +202,33 @@ func (s *Server) getDocumentComment(ctx context.Context, id uint64) (*documents.
 
 	return comment, nil
 }
+
+func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentCommentRequest) (*DeleteDocumentCommentResponse, error) {
+	userId := auth.GetUserIDFromContext(ctx)
+
+	comment, err := s.getDocumentComment(ctx, req.CommentId)
+	if err != nil {
+		return nil, err
+	}
+	if comment.CreatorId != userId {
+		return nil, status.Error(codes.PermissionDenied, "You can't delete others document comments!")
+	}
+
+	stmt := dComments.
+		UPDATE().
+		SET(
+			dComments.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+		).
+		WHERE(
+			jet.AND(
+				dComments.ID.EQ(jet.Uint64(req.CommentId)),
+				dComments.DeletedAt.IS_NULL(),
+			),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
+
+	return &DeleteDocumentCommentResponse{}, nil
+}

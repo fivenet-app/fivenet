@@ -114,6 +114,12 @@ message EditDocumentCommentRequest {
 
 message EditDocumentCommentResponse {}
 
+message DeleteDocumentCommentRequest {
+  uint64 comment_id = 1;
+}
+
+message DeleteDocumentCommentResponse {}
+
 message CreateDocumentRequest {
   optional uint64 category_id = 1; // @gotags: alias:"category_id"
   string title = 2 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
@@ -216,6 +222,8 @@ service DocStoreService {
   rpc PostDocumentComment(PostDocumentCommentRequest) returns (PostDocumentCommentResponse);
   // @permission: name=PostDocumentComment
   rpc EditDocumentComment(EditDocumentCommentRequest) returns (EditDocumentCommentResponse);
+  // @permission
+  rpc DeleteDocumentComment(DeleteDocumentCommentRequest) returns (DeleteDocumentCommentResponse);
 
   // @permission
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);

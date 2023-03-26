@@ -1,8 +1,13 @@
 <script lang="ts" setup>
 import { DocumentComment } from '@arpanet/gen/resources/documents/documents_pb';
 import { PostDocumentCommentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { getDocStoreClient } from '../../grpc/grpc';
+import { useStore } from '../../store/store';
+
+const store = useStore();
+
+const activeChar = computed(() => store.state.auth?.activeChar);
 
 const emit = defineEmits<{
     (e: 'added', comment: DocumentComment): void,
@@ -27,7 +32,10 @@ function addComment() {
     getDocStoreClient().
         postDocumentComment(req, null).
         then((resp) => {
+            com.setCreatorId(activeChar.value!.getUserId());
+            com.setCreator(activeChar.value!);
             com.setId(resp.getId());
+
             emit('added', com);
         });
 }
@@ -38,11 +46,11 @@ function addComment() {
         <div class="min-w-0 flex-1">
             <form @submit.prevent="addComment()" class="relative">
                 <div
-                    class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
+                    class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-indigo-600">
                     <label for="comment" class="sr-only">Add your comment</label>
                     <textarea rows="3" name="comment" id="comment"
-                        class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6" v-model="message"
-                        placeholder="Add your comment..." />
+                        class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
+                        v-model="message" placeholder="Add your comment..." />
 
                     <!-- Spacer element to match the height of the toolbar -->
                     <div class="py-2" aria-hidden="true">

@@ -684,6 +684,49 @@ export class DocStoreServiceClient {
     this.methodDescriptorEditDocumentComment);
   }
 
+  methodDescriptorDeleteDocumentComment = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/DeleteDocumentComment',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.DeleteDocumentCommentRequest,
+    services_docstore_docstore_pb.DeleteDocumentCommentResponse,
+    (request: services_docstore_docstore_pb.DeleteDocumentCommentRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.DeleteDocumentCommentResponse.deserializeBinary
+  );
+
+  deleteDocumentComment(
+    request: services_docstore_docstore_pb.DeleteDocumentCommentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.DeleteDocumentCommentResponse>;
+
+  deleteDocumentComment(
+    request: services_docstore_docstore_pb.DeleteDocumentCommentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.DeleteDocumentCommentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.DeleteDocumentCommentResponse>;
+
+  deleteDocumentComment(
+    request: services_docstore_docstore_pb.DeleteDocumentCommentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.DeleteDocumentCommentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/DeleteDocumentComment',
+        request,
+        metadata || {},
+        this.methodDescriptorDeleteDocumentComment,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/DeleteDocumentComment',
+    request,
+    metadata || {},
+    this.methodDescriptorDeleteDocumentComment);
+  }
+
   methodDescriptorGetDocumentAccess = new grpcWeb.MethodDescriptor(
     '/services.docstore.DocStoreService/GetDocumentAccess',
     grpcWeb.MethodType.UNARY,

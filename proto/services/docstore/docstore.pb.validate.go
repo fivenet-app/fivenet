@@ -3291,6 +3291,214 @@ var _ interface {
 	ErrorName() string
 } = EditDocumentCommentResponseValidationError{}
 
+// Validate checks the field values on DeleteDocumentCommentRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteDocumentCommentRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteDocumentCommentRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteDocumentCommentRequestMultiError, or nil if none found.
+func (m *DeleteDocumentCommentRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteDocumentCommentRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CommentId
+
+	if len(errors) > 0 {
+		return DeleteDocumentCommentRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteDocumentCommentRequestMultiError is an error wrapping multiple
+// validation errors returned by DeleteDocumentCommentRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DeleteDocumentCommentRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteDocumentCommentRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteDocumentCommentRequestMultiError) AllErrors() []error { return m }
+
+// DeleteDocumentCommentRequestValidationError is the validation error returned
+// by DeleteDocumentCommentRequest.Validate if the designated constraints
+// aren't met.
+type DeleteDocumentCommentRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteDocumentCommentRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteDocumentCommentRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteDocumentCommentRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteDocumentCommentRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteDocumentCommentRequestValidationError) ErrorName() string {
+	return "DeleteDocumentCommentRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteDocumentCommentRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteDocumentCommentRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteDocumentCommentRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteDocumentCommentRequestValidationError{}
+
+// Validate checks the field values on DeleteDocumentCommentResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteDocumentCommentResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteDocumentCommentResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DeleteDocumentCommentResponseMultiError, or nil if none found.
+func (m *DeleteDocumentCommentResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteDocumentCommentResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteDocumentCommentResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteDocumentCommentResponseMultiError is an error wrapping multiple
+// validation errors returned by DeleteDocumentCommentResponse.ValidateAll()
+// if the designated constraints aren't met.
+type DeleteDocumentCommentResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteDocumentCommentResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteDocumentCommentResponseMultiError) AllErrors() []error { return m }
+
+// DeleteDocumentCommentResponseValidationError is the validation error
+// returned by DeleteDocumentCommentResponse.Validate if the designated
+// constraints aren't met.
+type DeleteDocumentCommentResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteDocumentCommentResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteDocumentCommentResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteDocumentCommentResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteDocumentCommentResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteDocumentCommentResponseValidationError) ErrorName() string {
+	return "DeleteDocumentCommentResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteDocumentCommentResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteDocumentCommentResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteDocumentCommentResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteDocumentCommentResponseValidationError{}
+
 // Validate checks the field values on CreateDocumentRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

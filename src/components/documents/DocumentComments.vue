@@ -15,10 +15,9 @@ const props = defineProps({
     comments: {
         required: false,
         type: Array<DocumentComment>,
+        default: new Array<DocumentComment>(),
     }
 });
-
-const comments = ref<DocumentComment[]>([]);
 
 // Document Comments
 function getDocumentComments(): void {
@@ -29,8 +28,14 @@ function getDocumentComments(): void {
     getDocStoreClient().
         getDocumentComments(req, null).
         then((resp) => {
-            comments.value = resp.getCommentsList();
+            resp.getCommentsList().forEach((v) => {
+                props.comments.push(v);
+            });
         });
+}
+
+function addComment(comment: DocumentComment) {
+    props.comments.unshift(comment);
 }
 
 onMounted(() => {
@@ -41,10 +46,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <DocumentCommentNew :document-id="documentId" @added="(c: DocumentComment) => comments.push(c)" />
+    <div class="pb-2">
+        <DocumentCommentNew :document-id="documentId" @added="(c: DocumentComment) => addComment(c)" />
+    </div>
     <div class="flow-root px-4 rounded-lg bg-base-800 text-neutral">
         <ul role="list" class="divide-y divide-gray-200">
-            <DocumentCommentEntry v-for="com in (props.comments ?? comments)" :key="com.getId()" :comment="com" />
+            <DocumentCommentEntry v-for="com in comments" :key="com.getId()" :comment="com" />
         </ul>
     </div>
 </template>

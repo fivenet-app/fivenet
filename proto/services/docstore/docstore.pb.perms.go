@@ -40,6 +40,10 @@ func init() {
 		},
 		{
 			Key:  DocStoreServicePermKey,
+			Name: "DeleteDocumentComment",
+		},
+		{
+			Key:  DocStoreServicePermKey,
 			Name: "FindDocuments",
 		},
 		{

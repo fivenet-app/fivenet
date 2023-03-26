@@ -30,6 +30,7 @@ import { PaginationRequest } from '@arpanet/gen/resources/common/database/databa
 const document = ref<undefined | Document>(undefined);
 const access = ref<undefined | DocumentAccess>(undefined);
 const comments = ref<DocumentComment[]>([]);
+const commentCount = ref(0);
 const feedReferences = ref<DocumentReference[]>([]);
 const feedRelations = ref<DocumentRelation[]>([]);
 const tabs = ref<{ name: string, icon: typeof LockOpenIcon }[]>([
@@ -78,6 +79,7 @@ function getDocument(): void {
         getDocumentComments(creq, null).
         then((resp) => {
             comments.value = resp.getCommentsList();
+            commentCount.value = resp.getPagination()!.getTotalCount();
         });
 }
 
@@ -129,7 +131,7 @@ onMounted(() => {
                             <div
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500">
                                 <ChatBubbleLeftEllipsisIcon class="w-5 h-auto" aria-hidden="true" />
-                                <span class="text-sm font-medium text-primary-700">{{ comments.length }}
+                                <span class="text-sm font-medium text-primary-700">{{ commentCount }}
                                     comments</span>
                             </div>
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
