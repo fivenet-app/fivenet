@@ -5,7 +5,6 @@ COPY . ./
 ENV VITE_BASE="/dist"
 RUN rm -rf ./dist && \
     yarn && yarn build
-COPY ./public/tiles ./dist
 
 FROM docker.io/library/golang:1.20 AS gobuilder
 WORKDIR /go/src/github.com/galexrt/arpanet/
