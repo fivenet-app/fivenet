@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
 import {
     Dialog,
     DialogPanel,
@@ -16,16 +15,21 @@ const store = useStore();
 const users = store.state.clipboard?.users;
 const vehicles = store.state.clipboard?.vehicles;
 
-const open = ref(false);
+defineProps({
+    open: {
+        required: true,
+        type: Boolean,
+    },
+});
 
-function setIsOpen(value: boolean): void {
-    open.value = value;
-}
+defineEmits<{
+    (e: 'close'): void,
+}>();
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-10" @close="open = false">
+<TransitionRoot as="template" :show="open">
+        <Dialog as="div" class="relative z-10" @close="$emit('close')">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
                 leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
@@ -138,7 +142,7 @@ function setIsOpen(value: boolean): void {
                             <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                                 <button type="button"
                                     class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
-                                    @click="open = false" ref="cancelButtonRef">Close</button>
+                                    @click="$emit('close')" ref="cancelButtonRef">Close</button>
                                 <button type="button"
                                     class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
                                     @click="store.dispatch('clipboard/clear')">Clear Clipboard</button>
@@ -149,9 +153,4 @@ function setIsOpen(value: boolean): void {
             </div>
         </Dialog>
     </TransitionRoot>
-    <button title="Clipboard"
-        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-10 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
-        @click="setIsOpen(true)">
-        <ClipboardDocumentListIcon class="w-10 h-auto" />
-    </button>
 </template>

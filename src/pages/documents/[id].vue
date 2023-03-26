@@ -3,7 +3,7 @@ import { useRoute } from 'vue-router/auto';
 import { ref, onMounted } from 'vue';
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import DocumentView from '../../components/documents/DocumentView.vue';
-import ClipboardButton from '../../components/partials/ClipboardButton.vue';
+import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
 
 const route = useRoute<'Documents: Info'>();
 const documentId = ref(0);

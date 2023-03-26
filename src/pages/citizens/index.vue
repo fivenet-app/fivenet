@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import CitizensList from '../../components/citizens/CitizensList.vue';
-import ClipboardButton from '../../components/partials/ClipboardButton.vue';
+import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
 </script>
 
 <route lang="json">
