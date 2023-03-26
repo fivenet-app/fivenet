@@ -43,6 +43,6 @@ onMounted(() => {
             <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold text-gray-300">No User Documents found</span>
         </button>
-        <DocumentRelations v-else :showDocument="true" :relations="relations" />
+        <DocumentRelations v-else :relations="relations" />
     </div>
 </template>

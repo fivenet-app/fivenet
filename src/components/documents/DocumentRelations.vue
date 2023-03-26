@@ -12,7 +12,12 @@ defineProps({
     showDocument: {
         required: false,
         type: Boolean,
-        default: false,
+        default: true,
+    },
+    showSource: {
+        required: false,
+        type: Boolean,
+        default: true,
     },
 });
 </script>
@@ -29,11 +34,26 @@ defineProps({
                             <span class="flex flex-1 space-x-2 truncate">
                                 <ArrowsRightLeftIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
                                 <span class="flex flex-col text-sm truncate">
-                                    <span>{{ relation.getTargetUser()?.getFirstname() + ", " +
-                                        relation.getTargetUser()?.getLastname() }}</span>
+                                    <span v-if="showDocument">
+                                        <router-link
+                                            :to="{ name: 'Documents: Info', params: { id: relation.getDocumentId() } }">
+                                            {{ relation.getDocument()?.getTitle() }}<span
+                                                v-if="relation.getDocument()?.getCategory()"> (Category: {{
+                                                    relation.getDocument()?.getCategory()?.getName() }})</span>
+                                        </router-link>
+                                    </span>
+                                    <span>
+                                        <router-link
+                                            :to="{ name: 'Citizens: Info', params: { id: relation.getTargetUserId() } }"
+                                            class="inline-flex space-x-2 text-sm truncate group">
+                                            {{ relation.getTargetUser()?.getFirstname() + ", " +
+                                                relation.getTargetUser()?.getLastname() }}
+                                        </router-link>
+                                    </span>
                                     <span class="font-medium ">{{
                                         DOC_RELATION_Util.toEnumKey(relation.getRelation()) }}</span>
-                                    <span class="truncate">{{ relation.getSourceUser()?.getFirstname() + ", " +
+                                    <span v-if="showSource" class="truncate">{{ relation.getSourceUser()?.getFirstname() +
+                                        ", " +
                                         relation.getSourceUser()?.getLastname() }}</span>
                                     <time datetime="">{{ getDateLocaleString(relation.getCreatedAt()) }}</time>
                                 </span>
@@ -62,7 +82,8 @@ defineProps({
                                     <th class="px-6 py-3 text-sm font-semibold text-right " scope="col">
                                         Relation
                                     </th>
-                                    <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
+                                    <th v-if="showSource" class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
+                                        scope="col">
                                         Creator
                                     </th>
                                     <th class="px-6 py-3 text-sm font-semibold text-right " scope="col">
@@ -94,7 +115,7 @@ defineProps({
                                         <span class="font-medium ">{{
                                             DOC_RELATION_Util.toEnumKey(relation.getRelation()) }}</span>
                                     </td>
-                                    <td class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
+                                    <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
                                         <div class="flex">
                                             <router-link
                                                 :to="{ name: 'Citizens: Info', params: { id: relation.getSourceUserId() } }"

@@ -182,10 +182,10 @@ onMounted(() => {
                                 </TabList>
                                 <TabPanels>
                                     <TabPanel>
-                                        <DocumentReferences :references="feedReferences" />
+                                        <DocumentReferences :references="feedReferences" :show-source="false" />
                                     </TabPanel>
                                     <TabPanel>
-                                        <DocumentRelations :relations="feedRelations" />
+                                        <DocumentRelations :relations="feedRelations" :show-document="false" />
                                     </TabPanel>
                                 </TabPanels>
                             </TabGroup>

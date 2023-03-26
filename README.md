@@ -23,8 +23,8 @@
     - [x] Documents can reference each other ("document activity feed"), e.g., DOJ asks for a blood test on a patient, LSMD responds by creating the patient blood test result document and references the DOJ response
     - [ ] Templates (e.g., Haftbefehl)
         - [ ] Editable templates by the leader of the jobs
-    - [ ] Sharing
-        - [ ] Sharing with the same job automatically
+    - [x] Sharing
+        - [x] Sharing with the same job automatically
         - [x] Sharing with users/ citizens (e.g., Patientenbefund is shared with the Patient, the lawyer and the DOJ)
     - [x] Category System (no directories/ paths)
         - [x] ~~Sub-categories~~  - One level of categories that is sorted by names
@@ -52,8 +52,10 @@
     - [ ] Fire employees
 - [x] Permissions System
     - [x] Based on Job + Job Rank/ Grade
-- [ ] "Admin" access for server admins
-    - [ ] Use ESX user groups
+- [ ] "Content Moderation" access for server admins
+    - [ ] Use list of ESX user groups in config
+    - [ ] Allow them to switch jobs on the fly to always the highest job rank
+    - [ ] Allow them to edit/ delete any user content
 - [ ] Breadcrumbs
   - [ ] Use "page title" (e.g., when viewing an user or editing a document) it should be reflected in the breadcrumbs, instead of just relying on the path
   - [ ] Correctly make href based on breadcrumb

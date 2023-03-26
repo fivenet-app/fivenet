@@ -197,6 +197,10 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 
 func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	if req.Reference.SourceDocumentId == req.Reference.TargetDocumentId {
+		return nil, status.Error(codes.InvalidArgument, "You can't reference a document with itself!")
+	}
+
 	// Check if user has access to both documents
 	check, err := s.checkIfUserHasAccessToDocs(ctx, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT,
 		req.Reference.SourceDocumentId, req.Reference.TargetDocumentId)

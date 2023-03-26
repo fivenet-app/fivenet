@@ -27,9 +27,11 @@ func TestMain(m *testing.M) {
 func TestFullAuthFlow(t *testing.T) {
 	defer dbmanager.TestDBManager.Reset()
 
+	db := dbmanager.TestDBManager.DB()
+
 	tm := auth.NewTokenManager("")
 	p := mock.NewMock()
-	srv := NewServer(dbmanager.TestDBManager.DB(), auth.NewGRPCAuth(tm), tm, p)
+	srv := NewServer(db, auth.NewGRPCAuth(tm), tm, p)
 
 	client, _, cancel := NewTestAuthServiceClient(srv)
 	defer cancel()

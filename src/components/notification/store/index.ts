@@ -10,7 +10,7 @@ const actions = {
 	removeNotification(id: string) {
 		state.notifications = state.notifications.filter((notification) => notification.id !== id);
 	},
-	dispatchNotification({ title, content, type, autoClose = true, duration = 3000 }: NotificationConfig) {
+	dispatchNotification({ title, content, type, autoClose = true, duration = 5000 }: NotificationConfig) {
 		const id = uuidv4();
 		const notifications = [
 			{

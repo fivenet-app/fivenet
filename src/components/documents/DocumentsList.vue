@@ -8,6 +8,7 @@ import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/databa
 import TablePagination from '../partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { getDateLocaleString, getDateRelativeString } from '../../utils/time';
+import TemplatesModal from './TemplatesModal.vue';
 
 const search = ref({ title: '', });
 // TODO Implement order by for documents
@@ -46,6 +47,8 @@ function focusSearch(): void {
     }
 }
 
+const openTemplates = ref(false);
+
 watchDebounced(search.value, () => findDocuments(0), { debounce: 650, maxWait: 1500 });
 
 onBeforeMount(() => {
@@ -68,11 +71,15 @@ onBeforeMount(() => {
                             </div>
                             <div class="flex-initial form-control">
                                 <router-link :to="{ name: 'Documents: Create' }"
-                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Create</router-link>
+                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
+                                    Create
+                                </router-link>
                             </div>
                             <div class="flex-initial">
                                 <router-link :to="{ name: 'Documents: Templates' }"
-                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">Templates</router-link>
+                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
+                                    Templates
+                                </router-link>
                             </div>
                         </div>
                     </form>

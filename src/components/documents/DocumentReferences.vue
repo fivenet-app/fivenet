@@ -8,7 +8,12 @@ defineProps({
     references: {
         required: true,
         type: Array<DocumentReference>,
-    }
+    },
+    showSource: {
+        required: false,
+        type: Boolean,
+        default: true,
+    },
 });
 </script>
 
@@ -19,27 +24,35 @@ defineProps({
         <div v-if="references.length > 0" class="sm:hidden text-neutral">
             <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
                 <li v-for="reference in references" :key="reference.getId()">
-                    <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
+                    <router-link :to="{ name: 'Documents: Info', params: { id: reference.getTargetDocumentId() } }"
+                        class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
                                 <ArrowsRightLeftIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
                                 <span class="flex flex-col text-sm truncate">
                                     <span>
-                                        {{ reference.getSourceDocument()?.getTitle() }}
+                                        {{ reference.getTargetDocument()?.getTitle() }}<span
+                                                    v-if="reference.getTargetDocument()?.getCategory()">&nbsp;(Category: {{
+                                                        reference.getTargetDocument()?.getCategory()?.getName() }})</span>
                                     </span>
                                     <span class="font-medium ">{{
                                         DOC_REFERENCE_Util.toEnumKey(reference.getReference()) }}</span>
-                                    <span class="truncate">
+                                    <span v-if="showSource" class="truncate">
                                         {{ reference.getSourceDocument()?.getTitle() }}<span
-                                            v-if="reference.getTargetDocument()?.getCategory()"> (Category: {{
-                                                reference.getTargetDocument()?.getCategory()?.getName() }})</span>
+                                            v-if="reference.getSourceDocument()?.getCategory()"> (Category: {{
+                                                reference.getSourceDocument()?.getCategory()?.getName() }})</span>
+                                    </span>
+                                    <span>
+                                        <router-link :to="{ name: 'Citizens: Info', params: { id: reference.getCreatorId() }} ">
+                                            {{ reference.getCreator()?.getFirstname() }}, {{ reference.getCreator()?.getLastname() }}
+                                        </router-link>
                                     </span>
                                     <time datetime="">{{ getDateLocaleString(reference.getCreatedAt()) }}</time>
                                 </span>
                             </span>
                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
                         </span>
-                    </a>
+                    </router-link>
                 </li>
             </ul>
         </div>
@@ -58,6 +71,9 @@ defineProps({
                                     <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
                                         Relation
                                     </th>
+                                    <th v-if="showSource" class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
+                                        Source
+                                    </th>
                                     <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
                                         Creator
                                     </th>
@@ -71,10 +87,10 @@ defineProps({
                                     <td class="px-6 py-4 text-sm ">
                                         <div class="flex">
                                             <router-link
-                                                :to="{ name: 'Documents: Info', params: { id: reference.getSourceDocumentId() } }"
+                                                :to="{ name: 'Documents: Info', params: { id: reference.getTargetDocumentId() } }"
                                                 class="inline-flex space-x-2 text-sm truncate group">
-                                                {{ reference.getSourceDocument()?.getTitle() }}<span
-                                                    v-if="reference.getTargetDocument()?.getCategory()"> (Category: {{
+                                                {{ reference.getTargetDocument()?.getTitle() }}<span
+                                                    v-if="reference.getTargetDocument()?.getCategory()">&nbsp;(Category: {{
                                                         reference.getTargetDocument()?.getCategory()?.getName() }})</span>
                                             </router-link>
                                         </div>
@@ -83,14 +99,21 @@ defineProps({
                                         <span class="font-medium ">{{
                                             DOC_REFERENCE_Util.toEnumKey(reference.getReference()) }}</span>
                                     </td>
-                                    <td class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
+                                    <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
                                         <div class="flex">
                                             <router-link
-                                                :to="{ name: 'Documents: Info', params: { id: reference.getTargetDocumentId() } }"
+                                                :to="{ name: 'Documents: Info', params: { id: reference.getSourceDocumentId() } }"
                                                 class="inline-flex space-x-1 text-sm truncate group">
-                                                {{ reference.getTargetDocument()?.getTitle() }}<span
-                                                    v-if="reference.getTargetDocument()?.getCategory()"> (Category: {{
-                                                        reference.getTargetDocument()?.getCategory()?.getName() }})</span>
+                                                {{ reference.getSourceDocument()?.getTitle() }}<span
+                                                    v-if="reference.getSourceDocument()?.getCategory()">&nbsp;(Category: {{
+                                                        reference.getSourceDocument()?.getCategory()?.getName() }})</span>
+                                            </router-link>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
+                                        <div class="flex">
+                                            <router-link :to="{ name: 'Citizens: Info', params: { id: reference.getCreatorId() }} ">
+                                                {{ reference.getCreator()?.getFirstname() }}, {{ reference.getCreator()?.getLastname() }}
                                             </router-link>
                                         </div>
                                     </td>

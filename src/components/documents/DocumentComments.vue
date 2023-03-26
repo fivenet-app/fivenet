@@ -7,6 +7,7 @@ import { getDocStoreClient } from '../../grpc/grpc';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
 import { useStore } from '../../store/store';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/20/solid';
+import TablePagination from '../partials/TablePagination.vue';
 
 const store = useStore();
 
@@ -24,22 +25,26 @@ const props = defineProps({
     }
 });
 
-const message = ref('');
+const offset = ref(0);
+const totalCount = ref(0);
+const listEnd = ref(0);
 
 // Document Comments
-function getDocumentComments(): void {
+function getComments(): void {
     const req = new GetDocumentCommentsRequest();
     req.setPagination((new PaginationRequest()).setOffset(0));
     req.setDocumentId(props.documentId!);
 
     getDocStoreClient().
-        getDocumentComments(req, null).
-        then((resp) => {
-            resp.getCommentsList().forEach((v) => {
-                props.comments.push(v);
-            });
+    getDocumentComments(req, null).
+    then((resp) => {
+        resp.getCommentsList().forEach((v) => {
+            props.comments.push(v);
         });
+    });
+
 }
+const message = ref('');
 
 function addComment() {
     const req = new PostDocumentCommentRequest();
@@ -78,7 +83,7 @@ function focusComment(): void {
 
 onMounted(() => {
     if (props.documentId !== undefined && props.comments === undefined) {
-        getDocumentComments();
+        getComments();
     }
 });
 </script>
@@ -129,4 +134,6 @@ onMounted(() => {
             </ul>
         </div>
     </div>
+    <TablePagination v-if="comments.length > 0" :offset="offset" :entries="comments.length" :end="listEnd" :total="totalCount" :callback="getComments"
+        class="mt-2" />
 </template>
