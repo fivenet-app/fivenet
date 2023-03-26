@@ -161,7 +161,7 @@ onMounted(() => {
                         </div>
                         <div>
                             <h2 class="sr-only">Content</h2>
-                            <div class="p-2 mt-4 rounded-lg max-w-none text-neutral bg-base-800">
+                            <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
                                 <p v-html="document?.getContent()"></p>
                             </div>
                         </div>
