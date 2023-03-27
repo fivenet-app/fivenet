@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { GetDocumentCommentsRequest, GetDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentComment, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { getDocStoreClient } from '../../grpc/grpc';
-import { getDate } from '../../utils/time';
+import { toDate } from '../../utils/time';
 import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import {
     TabGroup,
@@ -198,6 +198,5 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-
     </div>
 </template>

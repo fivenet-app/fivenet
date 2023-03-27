@@ -63,13 +63,15 @@ onBeforeMount(() => {
                                     placeholder="Title"
                                     class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                             </div>
-                            <div class="flex-initial form-control">
+                            <div class="flex-initial form-control"
+                            v-can="'DocStoreService.CreateDocument'">
                                 <button @click="templatesOpen = true"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                     Create
                                 </button>
                             </div>
-                            <div class="flex-initial">
+                            <div class="flex-initial"
+                                v-can="'DocStoreService.ListTemplates'">
                                 <router-link :to="{ name: 'Documents: Templates' }"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                     Templates
