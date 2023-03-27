@@ -34,6 +34,7 @@ import DocumentReferenceManager from './DocumentReferenceManager.vue';
 import DocumentRelationManager from './DocumentRelationManager.vue';
 import DocumentAccessEntry from './DocumentAccessEntry.vue';
 import { TemplateData } from '@arpanet/gen/resources/documents/templates_pb';
+import { ArrowPathIcon } from '@heroicons/vue/24/solid';
 
 const store = useStore();
 const router = useRouter();
@@ -55,10 +56,12 @@ const openclose = [
     { id: 1, label: 'Closed', closed: true },
 ];
 
-const title = ref('');
-const content = ref('');
-const closed = ref(openclose[0]);
-const state = ref('');
+const doc = ref<{ title: string, content: string, closed: { id: number, label: string, closed: boolean }, state: string }>({
+    title: '',
+    content: '',
+    closed: openclose[0],
+    state: '',
+});
 const isPublic = ref(false);
 const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }>>(new Map());
 
@@ -93,8 +96,8 @@ onMounted(async () => {
         await getDocStoreClient().
             getTemplate(req, null).then((resp) => {
                 const template = resp.getTemplate();
-                title.value = template?.getContentTitle()!;
-                content.value = template?.getContent()!;
+                doc.value.title = template?.getContentTitle()!;
+                doc.value.content = template?.getContent()!;
                 selectedCategory.value = entriesCategory.find(e => e.getId() === template?.getCategory()?.getId());;
             });
     } else if (props.id) {
@@ -106,11 +109,11 @@ onMounted(async () => {
             const docAccess = resp.getAccess();
 
             if (document) {
-                title.value = document.getTitle();
-                content.value = document.getContent();
-                closed.value = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
+                doc.value.title = document.getTitle();
+                doc.value.content = document.getContent();
+                doc.value.closed = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
+                doc.value.state = document.getState();
                 selectedCategory.value = entriesCategory.find(e => e.getId() === document.getCategory()?.getId());
-                state.value = document.getState();
                 isPublic.value = document.getPublic();
 
                 const refs = await getDocStoreClient().getDocumentReferences(req, null);
@@ -135,10 +138,35 @@ onMounted(async () => {
 
         });
     } else {
+        if (store.state.documentEditor) {
+            doc.value.title = store.state.documentEditor?.title;
+            doc.value.content = store.state.documentEditor?.content;
+            doc.value.state = store.state.documentEditor?.state;
+            if (store.state.documentEditor?.closed) {
+                doc.value.closed = store.state.documentEditor?.closed;
+            }
+        }
+
         access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: DOC_ACCESS.EDIT } })
     }
     canEdit.value = true;
 });
+
+const saving = ref(false);
+
+function saveToStore(): void {
+    if (saving.value) {
+        return;
+    }
+    saving.value = true;
+
+    store.dispatch('documentEditor/save', doc.value);
+    setTimeout(() => {
+        saving.value = false;
+    }, 750);
+}
+
+watchDebounced(doc.value, () => saveToStore(), { debounce: 1000, maxWait: 3000 });
 
 watchDebounced(queryCategory, () => findCategories(), { debounce: 650, maxWait: 1500 });
 
@@ -224,11 +252,11 @@ function updateAccessEntryAccess(event: {
 
 function submitForm(): void {
     const req = new CreateDocumentRequest();
-    req.setTitle(title.value);
-    req.setContent(content.value);
+    req.setTitle(doc.value.title);
+    req.setContent(doc.value.content);
     req.setContentType(DOC_CONTENT_TYPE.HTML);
-    req.setClosed(closed.value.closed);
-    req.setState(state.value);
+    req.setClosed(doc.value.closed.closed);
+    req.setState(doc.value.state);
     req.setPublic(isPublic.value);
     if (selectedCategory.value != undefined)
         req.setCategoryId(selectedCategory.value.getId());
@@ -278,8 +306,9 @@ function submitForm(): void {
                 getDocStoreClient().addDocumentRelation(req, null);
             });
 
-            store.dispatch('clearActiveStack');
             dispatchNotification({ title: "Document created!", content: "Document has been created." });
+            store.dispatch('clipboard/clearActiveStack');
+            store.dispatch('documentEditor/clear', doc.value);
             router.push('/documents/' + resp.getDocumentId());
         });
 }
@@ -287,11 +316,11 @@ function submitForm(): void {
 function editForm(): void {
     const req = new UpdateDocumentRequest();
     req.setDocumentId(props.id!);
-    req.setTitle(title.value);
-    req.setContent(content.value);
+    req.setTitle(doc.value.title);
+    req.setContent(doc.value.content);
     req.setContentType(DOC_CONTENT_TYPE.HTML);
-    req.setClosed(closed.value.closed);
-    req.setState(state.value);
+    req.setClosed(doc.value.closed.closed);
+    req.setState(doc.value.state);
     req.setPublic(isPublic.value);
     if (selectedCategory.value != undefined)
         req.setCategoryId(selectedCategory.value.getId());
@@ -364,8 +393,9 @@ function editForm(): void {
                 getDocStoreClient().addDocumentRelation(req, null);
             });
 
-            store.dispatch('clearActiveStack');
             dispatchNotification({ title: "Document updated!", content: "Document has been updated." });
+            store.dispatch('documentEditor/clear', doc.value);
+            store.dispatch('clipboard/clearActiveStack');
             router.push('/documents/' + resp.getDocumentId());
         });
 }
@@ -385,7 +415,7 @@ function editForm(): void {
     <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
         <div>
             <label for="name" class="block font-medium sr-only text-s">Title</label>
-            <input v-model="title" type="text" name="name"
+            <input v-model="doc.title" type="text" name="name"
                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                 placeholder="Document Title" :disabled="!canEdit" />
         </div>
@@ -421,16 +451,17 @@ function editForm(): void {
                 </Combobox>
             </div>
             <div class="flex-1">
-                <input v-model="state" type="text" name="state"
+                <input v-model="doc.state" type="text" name="state"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     placeholder="Document State" :disabled="!canEdit" />
             </div>
             <div class="flex-1">
-                <Listbox as="div" v-model="closed">
+                <Listbox as="div" v-model="doc.closed">
                     <div class="relative">
                         <ListboxButton :disabled="!canEdit"
                             class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
-                            <span class="block truncate">{{ openclose.find(e => e.closed === closed.closed)?.label }}</span>
+                            <span class="block truncate">{{ openclose.find(e => e.closed === doc.closed.closed)?.label
+                            }}</span>
                             <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                 <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
                             </span>
@@ -462,8 +493,7 @@ function editForm(): void {
         </div>
     </div>
     <div class="bg-neutral min-h-[32rem]">
-        <QuillEditor v-model:content="content" contentType="html" toolbar="full" theme="snow" :modules="modules"
-            :enable="canEdit" />
+        <QuillEditor v-model:content="doc.content" contentType="html" toolbar="full" theme="snow" :modules="modules" />
     </div>
     <div class="flex flex-row">
         <div class="flex-1">
@@ -494,5 +524,9 @@ function editForm(): void {
             class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Submit</button>
         <button v-if="props.id" @click="editForm()" :disabled="!canEdit"
             class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Edit</button>
+        <div v-if="saving" class="text-gray-400 mr-4 flex flex-items">
+            <ArrowPathIcon class="w-6 h-auto ml-auto mr-2.5 animate-spin" />
+            <span class="mt-2">Saving...</span>
+        </div>
     </div>
 </template>

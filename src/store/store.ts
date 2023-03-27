@@ -4,18 +4,20 @@ import VuexPersistence from 'vuex-persist';
 import authmodule, { AuthModuleState } from './modules/authmodule';
 import clipboardModule, { ClipboardModuleState } from './modules/clipboardmodule';
 import loadermodule, { LoaderModuleState } from './modules/loadermodule';
+import documentEditorModule, { DocumentEditorModuleState } from './modules/documenteditormodule';
 
 export interface RootState {
     version: string;
     loader?: LoaderModuleState;
     auth?: AuthModuleState;
     clipboard?: ClipboardModuleState;
+    documentEditor?: DocumentEditorModuleState;
 }
 
 const vuexPersist = new VuexPersistence<RootState>({
     key: 'arpanet',
     storage: window.localStorage,
-    modules: ['auth', 'clipboard'],
+    modules: ['auth', 'clipboard', 'documentEditor'],
     reducer: (state: RootState) => ({
         auth: {
             accessToken: state.auth?.accessToken,
@@ -31,6 +33,12 @@ const vuexPersist = new VuexPersistence<RootState>({
                 vehicles: state.clipboard?.activeStack.vehicles,
             },
         },
+        documentEditor: {
+            title: state.documentEditor?.title,
+            content: state.documentEditor?.content,
+            closed: state.documentEditor?.closed,
+            state: state.documentEditor?.state,
+        },
     }),
 });
 
@@ -42,11 +50,11 @@ export const store = createStore<RootState>({
         auth: authmodule,
         clipboard: clipboardModule,
         loader: loadermodule,
+        documentEditor: documentEditorModule,
     },
     state: {
         version: '',
     },
-    mutations: {},
 });
 
 export function useStore() {
