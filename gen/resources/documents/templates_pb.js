@@ -798,7 +798,7 @@ proto.resources.documents.DocumentTemplateShort.toObject = function(includeInsta
     category: (f = msg.getCategory()) && resources_documents_category_pb.DocumentCategory.toObject(includeInstance, f),
     title: jspb.Message.getFieldWithDefault(msg, 7, ""),
     description: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    schema: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    schema: (f = msg.getSchema()) && proto.resources.documents.TemplateSchema.toObject(includeInstance, f),
     creatorId: jspb.Message.getFieldWithDefault(msg, 10, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f)
   };
@@ -873,7 +873,8 @@ proto.resources.documents.DocumentTemplateShort.deserializeBinaryFromReader = fu
       msg.setDescription(value);
       break;
     case 9:
-      var value = /** @type {string} */ (reader.readString());
+      var value = new proto.resources.documents.TemplateSchema;
+      reader.readMessage(value,proto.resources.documents.TemplateSchema.deserializeBinaryFromReader);
       msg.setSchema(value);
       break;
     case 10:
@@ -974,10 +975,11 @@ proto.resources.documents.DocumentTemplateShort.serializeBinaryToWriter = functi
     );
   }
   f = message.getSchema();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f != null) {
+    writer.writeMessage(
       9,
-      f
+      f,
+      proto.resources.documents.TemplateSchema.serializeBinaryToWriter
     );
   }
   f = message.getCreatorId();
@@ -1200,20 +1202,39 @@ proto.resources.documents.DocumentTemplateShort.prototype.setDescription = funct
 
 
 /**
- * optional string schema = 9;
- * @return {string}
+ * optional TemplateSchema schema = 9;
+ * @return {?proto.resources.documents.TemplateSchema}
  */
 proto.resources.documents.DocumentTemplateShort.prototype.getSchema = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+  return /** @type{?proto.resources.documents.TemplateSchema} */ (
+    jspb.Message.getWrapperField(this, proto.resources.documents.TemplateSchema, 9));
 };
 
 
 /**
- * @param {string} value
+ * @param {?proto.resources.documents.TemplateSchema|undefined} value
+ * @return {!proto.resources.documents.DocumentTemplateShort} returns this
+*/
+proto.resources.documents.DocumentTemplateShort.prototype.setSchema = function(value) {
+  return jspb.Message.setWrapperField(this, 9, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.resources.documents.DocumentTemplateShort} returns this
  */
-proto.resources.documents.DocumentTemplateShort.prototype.setSchema = function(value) {
-  return jspb.Message.setProto3StringField(this, 9, value);
+proto.resources.documents.DocumentTemplateShort.prototype.clearSchema = function() {
+  return this.setSchema(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.DocumentTemplateShort.prototype.hasSchema = function() {
+  return jspb.Message.getField(this, 9) != null;
 };
 
 

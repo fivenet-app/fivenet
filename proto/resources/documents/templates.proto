@@ -35,7 +35,7 @@ message DocumentTemplateShort {
   resources.documents.DocumentCategory category = 6; // @gotags: alias:"category"
   string title = 7 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   string description = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
-  string schema = 9; // @gotags: alias:"schema"
+  resources.documents.TemplateSchema schema = 9; // @gotags: alias:"schema"
   int32 creator_id = 10; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 11;
 }

@@ -64,7 +64,7 @@ watchDebounced(queryChar, async () => await findUsers(), { debounce: 750, maxWai
 function findUsers(): void {
     const req = new FindUsersRequest();
     req.setPagination((new PaginationRequest()).setOffset(0));
-    req.setSearchname(queryChar.value);
+    req.setSearchName(queryChar.value);
 
     getCitizenStoreClient().findUsers(req, null).then((resp) => {
         entriesUsers.value = resp.getUsersList().filter(user => !Array.from(props.modelValue.values()).find(r => r.getTargetUserId() === user.getUserId()));

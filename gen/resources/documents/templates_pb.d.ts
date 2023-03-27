@@ -129,8 +129,10 @@ export class DocumentTemplateShort extends jspb.Message {
   getDescription(): string;
   setDescription(value: string): DocumentTemplateShort;
 
-  getSchema(): string;
-  setSchema(value: string): DocumentTemplateShort;
+  getSchema(): TemplateSchema | undefined;
+  setSchema(value?: TemplateSchema): DocumentTemplateShort;
+  hasSchema(): boolean;
+  clearSchema(): DocumentTemplateShort;
 
   getCreatorId(): number;
   setCreatorId(value: number): DocumentTemplateShort;
@@ -158,7 +160,7 @@ export namespace DocumentTemplateShort {
     category?: resources_documents_category_pb.DocumentCategory.AsObject,
     title: string,
     description: string,
-    schema: string,
+    schema?: TemplateSchema.AsObject,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
