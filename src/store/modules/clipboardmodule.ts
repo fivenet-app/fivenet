@@ -64,6 +64,7 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
     },
     actions: {
         clear({ commit }) {
+            commit('clearActiveStack');
             commit('clearDocuments');
             commit('clearUsers');
             commit('clearVehicles');
@@ -100,6 +101,11 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
         },
     },
     mutations: {
+        clearActiveStack(state: ClipboardModuleState): void {
+            state.activeStack.documents.length = 0;
+            state.activeStack.users.length = 0;
+            state.activeStack.vehicles.length = 0;
+        },
         // Documents
         addDocument(state: ClipboardModuleState, document: Document): void {
             const idx = state.documents.findIndex((o: ClipboardDocument) => {

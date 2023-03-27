@@ -48,10 +48,12 @@ const props = defineProps({
 
 const activeChar = computed(() => store.state.auth?.activeChar);
 
+const canEdit = ref(false);
+
 const openclose = [
     { id: 0, label: 'Open', closed: false },
     { id: 1, label: 'Closed', closed: true },
-]
+];
 
 const title = ref('');
 const content = ref('');
@@ -130,13 +132,15 @@ onMounted(async () => {
                     accessId++;
                 });
             }
+
         });
     } else {
-        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: DOC_ACCESS.VIEW } })
+        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: DOC_ACCESS.EDIT } })
     }
+    canEdit.value = true;
 });
 
-watchDebounced(queryCategory, () => findCategories(), { debounce: 750, maxWait: 2000 });
+watchDebounced(queryCategory, () => findCategories(), { debounce: 650, maxWait: 1500 });
 
 async function findCategories(): Promise<void> {
     const req = new CompleteDocumentCategoryRequest();
@@ -274,6 +278,7 @@ function submitForm(): void {
                 getDocStoreClient().addDocumentRelation(req, null);
             });
 
+            store.dispatch('clearActiveStack');
             dispatchNotification({ title: "Document created!", content: "Document has been created." });
             router.push('/documents/' + resp.getDocumentId());
         });
@@ -359,7 +364,9 @@ function editForm(): void {
                 getDocStoreClient().addDocumentRelation(req, null);
             });
 
+            store.dispatch('clearActiveStack');
             dispatchNotification({ title: "Document updated!", content: "Document has been updated." });
+            router.push('/documents/' + resp.getDocumentId());
         });
 }
 </script>
@@ -379,12 +386,12 @@ function editForm(): void {
         <div>
             <label for="name" class="block font-medium sr-only text-s">Title</label>
             <input v-model="title" type="text" name="name"
-                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                placeholder="Document Title" />
+                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
+                placeholder="Document Title" :disabled="!canEdit" />
         </div>
         <div class="flex flex-row gap-2">
             <div class="flex-1">
-                <Combobox as="div" v-model="selectedCategory">
+                <Combobox as="div" v-model="selectedCategory" :disabled="!canEdit">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
@@ -416,12 +423,12 @@ function editForm(): void {
             <div class="flex-1">
                 <input v-model="state" type="text" name="state"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    placeholder="Document State" />
+                    placeholder="Document State" :disabled="!canEdit" />
             </div>
             <div class="flex-1">
                 <Listbox as="div" v-model="closed">
                     <div class="relative">
-                        <ListboxButton
+                        <ListboxButton :disabled="!canEdit"
                             class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
                             <span class="block truncate">{{ openclose.find(e => e.closed === closed.closed)?.label }}</span>
                             <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -455,16 +462,17 @@ function editForm(): void {
         </div>
     </div>
     <div class="bg-neutral min-h-[32rem]">
-        <QuillEditor v-model:content="content" contentType="html" toolbar="full" theme="snow" :modules="modules" />
+        <QuillEditor v-model:content="content" contentType="html" toolbar="full" theme="snow" :modules="modules"
+            :enable="canEdit" />
     </div>
     <div class="flex flex-row">
         <div class="flex-1">
-            <button type="button"
+            <button type="button" :disabled="!canEdit"
                 class="rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="referenceManagerShow = true">Document References</button>
         </div>
         <div class="flex-1">
-            <button type="button"
+            <button type="button" :disabled="!canEdit"
                 class="rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="relationManagerShow = true">Citizen Relations</button>
         </div>
@@ -475,16 +483,16 @@ function editForm(): void {
             @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
             @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
             @deleteRequest="removeAccessEntry($event)" />
-        <button type="button"
+        <button type="button" :disabled="!canEdit"
             class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
             data-te-toggle="tooltip" title="Add Permission" @click="addAccessEntry()">
             <PlusIcon class="w-5 h-5" aria-hidden="true" />
         </button>
     </div>
     <div class="sm:flex sm:flex-row-reverse">
-        <button v-if="!props.id" @click="submitForm()"
+        <button v-if="!props.id" @click="submitForm()" :disabled="!canEdit"
             class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Submit</button>
-        <button v-if="props.id" @click="editForm()"
+        <button v-if="props.id" @click="editForm()" :disabled="!canEdit"
             class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Edit</button>
     </div>
 </template>

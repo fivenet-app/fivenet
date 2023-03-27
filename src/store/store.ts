@@ -25,6 +25,11 @@ const vuexPersist = new VuexPersistence<RootState>({
             documents: state.clipboard?.documents,
             users: state.clipboard?.users,
             vehicles: state.clipboard?.vehicles,
+            activeStack: {
+                documents: state.clipboard?.activeStack.documents,
+                users: state.clipboard?.activeStack.users,
+                vehicles: state.clipboard?.activeStack.vehicles,
+            },
         },
     }),
 });
