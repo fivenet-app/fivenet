@@ -53,7 +53,7 @@
 - [ ] Breadcrumbs
   - [ ] Use "page title" (e.g., when viewing a user or editing a document) it should be reflected in the breadcrumbs, instead of just relying on the path
   - [ ] Correctly make href based on breadcrumb
-- [x] Completor Service
+- [x] "Completor" Service
     - [x] Use [Bleve search](https://blevesearch.com/)
 - [ ] "Faction Leader Control Panel"
     - [ ] Templates
@@ -69,7 +69,7 @@
 ### Future
 
 - [ ] Documents
-    - [ ] Add requirements for templates
+    - [x] Add requirements for templates
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
 - [ ] Employee Management
     - [ ] Create Notes and Warns for Employees ("Führungsregister")
