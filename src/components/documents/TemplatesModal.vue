@@ -11,10 +11,15 @@ import TemplatesList from './TemplatesList.vue';
 
 const router = useRouter();
 
-defineProps({
+const props = defineProps({
     open: {
         required: true,
         type: Boolean,
+    },
+    autoFill: {
+        required: false,
+        type: Boolean,
+        default: false,
     },
 });
 
@@ -40,6 +45,11 @@ const readyToCreate = ref(false);
 
 watch(reqStatus.value, (v) => {
     readyToCreate.value = (reqStatus.value.documents && reqStatus.value.users && reqStatus.value.vehicles);
+
+    // Auto redirect users when the requirements are matched
+    if (readyToCreate && props.autoFill) {
+        clipboardDialog();
+    }
 });
 
 function closeDialog() {
@@ -138,7 +148,7 @@ function clipboardDialog() {
                                         </button>
                                     </div>
                                 </div>
-                                <div v-else-if="steps.selectClipboard && template && reqs">
+                                <div v-else-if="!autoFill && steps.selectClipboard && template && reqs">
                                     <div
                                         class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
                                         <PencilIcon class="h-6 w-6 text-indigo-600" aria-hidden="true" />

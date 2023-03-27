@@ -58,7 +58,7 @@ function openTemplates() {
 </script>
 
 <template>
-    <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" />
+    <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" :auto-fill="true" />
     <div class="w-full mx-auto max-w-7xl grow lg:flex xl:px-2">
         <div class="flex-1 xl:flex">
             <div class="px-2 py-3 xl:flex-1">

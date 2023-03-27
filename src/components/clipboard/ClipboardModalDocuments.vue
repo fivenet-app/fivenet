@@ -81,6 +81,8 @@ watch(props, (newVal) => {
         if (store.state.clipboard) {
             store.state.clipboard.activeStack.documents.length = 0;
             selected.value.forEach((v) => store.state.clipboard?.activeStack.documents.push(v));
+        } else if (documents.value && documents.value.length === 1) {
+            selected.value.unshift(documents.value[0]);
         }
     }
 });
