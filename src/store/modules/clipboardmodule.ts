@@ -4,7 +4,7 @@ import { TemplateData } from '@arpanet/gen/resources/documents/templates_pb';
 import { User, UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
-import { getDateLocaleString } from '../../utils/time';
+import { toDateLocaleString } from '../../utils/time';
 
 export interface ClipboardData {
     documents: ClipboardDocument[];
@@ -233,12 +233,14 @@ export class ClipboardDocument {
     public id: number;
     public createdAt: string;
     public title: string;
+    public state: string;
     public creator: ClipboardUser;
 
     constructor(d: Document) {
         this.id = d.getId();
-        this.createdAt = getDateLocaleString(d.getCreatedAt())!;
+        this.createdAt = toDateLocaleString(d.getCreatedAt())!;
         this.title = d.getTitle();
+        this.state = d.getState();
         const creator = new ClipboardUser();
         if (d.getCreator()) {
             creator.setUserShort(d.getCreator()!);

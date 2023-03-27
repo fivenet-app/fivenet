@@ -2,7 +2,7 @@
 import { DOC_REFERENCE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import { DocumentReference } from '@arpanet/gen/resources/documents/documents_pb';
 import { ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
-import { getDateLocaleString } from '../../utils/time';
+import { toDateLocaleString } from '../../utils/time';
 
 defineProps({
     references: {
@@ -47,7 +47,7 @@ defineProps({
                                             {{ reference.getCreator()?.getFirstname() }}, {{ reference.getCreator()?.getLastname() }}
                                         </router-link>
                                     </span>
-                                    <time datetime="">{{ getDateLocaleString(reference.getCreatedAt()) }}</time>
+                                    <time datetime="">{{ toDateLocaleString(reference.getCreatedAt()) }}</time>
                                 </span>
                             </span>
                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
@@ -118,7 +118,7 @@ defineProps({
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
-                                        <time datetime="">{{ getDateLocaleString(reference.getCreatedAt()) }}</time>
+                                        <time datetime="">{{ toDateLocaleString(reference.getCreatedAt()) }}</time>
                                     </td>
                                 </tr>
                             </tbody>

@@ -137,8 +137,8 @@ onMounted(() => {
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700"><time
-                                        :datetime="getDate(document?.getCreatedAt())?.toLocaleString('de-DE')">{{
-                                            getDate(document?.getCreatedAt())?.toLocaleString('de-DE')
+                                        :datetime="toDate(document?.getCreatedAt())?.toLocaleString('de-DE')">{{
+                                            toDate(document?.getCreatedAt())?.toLocaleString('de-DE')
                                         }}</time></span>
                             </div>
                         </div>

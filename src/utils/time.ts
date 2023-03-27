@@ -5,7 +5,7 @@ import * as resources_timestamp_timestamp_pb from '@arpanet/gen/resources/timest
 TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo('en-US');
 
-export function getSecondsFormattedAsDuration(seconds: number): string {
+export function fromSecondsToFormattedDuration(seconds: number): string {
     var w = Math.floor(seconds / (7 * (3600 * 24)));
     var d = Math.floor(seconds / (3600 * 24));
     var h = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -20,21 +20,21 @@ export function getSecondsFormattedAsDuration(seconds: number): string {
     return dWeeks + dDisplay + hDisplay + mDisplay + sDisplay;
 }
 
-export function getDate(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | Date {
+export function toDate(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | Date {
     if (typeof ts === undefined) {
         return new Date();
     }
     return ts?.getTimestamp()?.toDate();
 }
 
-export function getDateLocaleString(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | string {
+export function toDateLocaleString(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | string {
     if (typeof ts === undefined) {
         return '-';
     }
     return ts?.getTimestamp()?.toDate().toLocaleString('de-DE');
 }
 
-export function getDateRelativeString(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | string {
+export function toDateRelativeString(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | string {
     if (typeof ts === undefined) {
         return '-';
     }

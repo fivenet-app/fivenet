@@ -20,13 +20,15 @@ import {
     DocumentMinusIcon,
     DocumentPlusIcon,
     MagnifyingGlassIcon,
+    ClipboardDocumentListIcon,
 } from '@heroicons/vue/24/outline';
+import { UsersIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
 import { onMounted, ref, FunctionalComponent } from 'vue';
 import { useRouter } from 'vue-router/auto';
 import { getDocStoreClient } from '../../grpc/grpc';
 import { useStore } from '../../store/store';
-import { getDateLocaleString, getDateRelativeString } from '../../utils/time';
+import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
 
 const store = useStore();
 const router = useRouter();
@@ -44,6 +46,7 @@ const emit = defineEmits<{
 
 const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
     { name: 'View current', icon: MagnifyingGlassIcon },
+    { name: 'Clipboard', icon: ClipboardDocumentListIcon },
     { name: 'Add new', icon: DocumentPlusIcon },
 ]);
 
@@ -66,7 +69,7 @@ function findDocuments(): void {
     });
 }
 
-function addReference(doc: Document): void {
+function addReference(docId: number): void {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1 : keys[keys.length - 1] + 1;
 
@@ -74,8 +77,7 @@ function addReference(doc: Document): void {
     ref.setId(key);
     ref.setCreatorId(store.state.auth!.activeChar!.getUserId());
     ref.setCreator(store.state.auth!.activeChar!)
-    ref.setTargetDocumentId(doc.getId());
-    ref.setTargetDocument(doc);
+    ref.setTargetDocumentId(docId);
 
     props.modelValue.set(key, ref);
     findDocuments();
@@ -194,6 +196,77 @@ function removeReference(id: number): void {
                                             </div>
                                         </TabPanel>
                                         <TabPanel class="w-full">
+                                            <div class="flow-root mt-2">
+                                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                    <div class="inline-block min-w-full py-2 align-middle">
+                                                        <button v-if="store.state.clipboard?.documents.length === 0" type="button"
+                                                            class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+                                                            disabled>
+                                                            <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
+                                                            <span class="block mt-2 text-sm font-semibold text-gray-300">
+                                                                No Users in Clipboard.
+                                                            </span>
+                                                        </button>
+                                                        <table v-else class="min-w-full divide-y divide-base-200">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col"
+                                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">
+                                                                        Title</th>
+                                                                    <th scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
+                                                                        Author</th>
+                                                                    <th scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
+                                                                        State</th>
+                                                                    <th scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
+                                                                        Created at</th>
+                                                                    <th scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
+                                                                        Add Reference</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-base-500">
+                                                                <tr v-for="doc in store.state.clipboard?.documents"
+                                                                    :key="doc.id">
+                                                                    <td
+                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
+                                                                        {{ doc.title }}</td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ doc.creator?.firstname }} {{
+                                                                            doc.creator?.lastname }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ doc.state }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        Created <time :datetime="doc.createdAt">{{
+                                                                            doc.createdAt
+                                                                        }}</time>
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        <div class="flex flex-row gap-2">
+                                                                            <div class="flex">
+                                                                                <button role="button"
+                                                                                    @click="addReference(doc.id)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    title="References">
+                                                                                    <DocumentPlusIcon
+                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300">
+                                                                                    </DocumentPlusIcon>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </TabPanel>
+                                        <TabPanel class="w-full">
                                             <div>
                                                 <label for="title" class="sr-only">Name</label>
                                                 <input type="text" name="title" id="title"
@@ -238,15 +311,15 @@ function removeReference(id: number): void {
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         Created <time
-                                                                            :datetime="getDateLocaleString(doc.getCreatedAt())">{{
-                                                                                getDateRelativeString(doc.getCreatedAt())
+                                                                            :datetime="toDateLocaleString(doc.getCreatedAt())">{{
+                                                                                toDateRelativeString(doc.getCreatedAt())
                                                                             }}</time>
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addReference(doc)"
+                                                                                    @click="addReference(doc.getId())"
                                                                                     data-te-toggle="tooltip"
                                                                                     title="References">
                                                                                     <DocumentPlusIcon

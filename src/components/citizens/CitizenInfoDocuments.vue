@@ -41,7 +41,9 @@ onMounted(() => {
         <button v-if="relations.length == 0" type="button"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2" disabled>
             <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />
-            <span class="block mt-2 text-sm font-semibold text-gray-300">No User Documents found</span>
+            <span class="block mt-2 text-sm font-semibold text-gray-300">
+                No User Documents found.
+            </span>
         </button>
         <DocumentRelations v-else :relations="relations" />
     </div>

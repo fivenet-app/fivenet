@@ -25,6 +25,7 @@ import {
     ChatBubbleBottomCenterTextIcon,
     ExclamationTriangleIcon,
     ShieldExclamationIcon,
+ClipboardDocumentListIcon,
 } from '@heroicons/vue/24/outline';
 import { watchDebounced } from '@vueuse/core';
 import { onMounted, ref, FunctionalComponent } from 'vue';
@@ -49,6 +50,7 @@ const emit = defineEmits<{
 
 const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
     { name: 'View current', icon: MagnifyingGlassIcon },
+    { name: 'Clipboard', icon: ClipboardDocumentListIcon },
     { name: 'Add new', icon: UserPlusIcon },
 ]);
 
@@ -71,7 +73,7 @@ function findUsers(): void {
     });
 }
 
-function addRelation(user: User, relation: number): void {
+function addRelation(userId: number, relation: number): void {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1 : keys[keys.length - 1] + 1;
 
@@ -80,8 +82,7 @@ function addRelation(user: User, relation: number): void {
     rel.setDocumentId(props.document!);
     rel.setSourceUserId(store.state.auth!.activeChar!.getUserId());
     rel.setSourceUser(store.state.auth!.activeChar!);
-    rel.setTargetUserId(user.getUserId());
-    rel.setTargetUser(user);
+    rel.setTargetUserId(userId);
     rel.setRelation(DOC_RELATION_Util.fromInt(relation));
 
     props.modelValue.set(key, rel);
@@ -213,6 +214,86 @@ function removeRelation(id: number): void {
                                             </div>
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                    <div class="inline-block min-w-full py-2 align-middle"><button v-if="store.state.clipboard?.users.length === 0" type="button"
+                                                            class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+                                                            disabled>
+                                                            <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
+                                                            <span class="block mt-2 text-sm font-semibold text-gray-300">
+                                                                No Users in Clipboard.
+                                                            </span>
+                                                        </button>
+                                                        <table v-else class="min-w-full divide-y divide-base-200">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col"
+                                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">
+                                                                        Name</th>
+                                                                    <th scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
+                                                                        Job</th>
+                                                                    <th scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
+                                                                        Sex</th>
+                                                                    <th scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
+                                                                        Add Relation</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-base-500">
+                                                                <tr v-for="user in store.state.clipboard?.users" :key="user.id">
+                                                                    <td
+                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
+                                                                        {{ user.firstname }} {{
+                                                                            user.lastname }}</td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ user.jobLabel }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ user.sex!.toUpperCase() }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        <div class="flex flex-row gap-2">
+                                                                            <div class="flex">
+                                                                                <button role="button"
+                                                                                    @click="addRelation(user.id!, 0)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    title="Mentioned">
+                                                                                    <ChatBubbleBottomCenterTextIcon
+                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300">
+                                                                                    </ChatBubbleBottomCenterTextIcon>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="flex">
+                                                                                <button role="button"
+                                                                                    @click="addRelation(user.id!, 1)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    title="Targets">
+                                                                                    <ExclamationTriangleIcon
+                                                                                        class="w-6 h-auto text-warn-400 hover:text-warn-200">
+                                                                                    </ExclamationTriangleIcon>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="flex">
+                                                                                <button role="button"
+                                                                                    @click="addRelation(user.id!, 2)"
+                                                                                    data-te-toggle="tooltip" title="Caused">
+                                                                                    <ShieldExclamationIcon
+                                                                                        class="w-6 h-auto text-error-400 hover:text-error-200">
+                                                                                    </ShieldExclamationIcon>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </TabPanel>
+                                        <TabPanel class="w-full">
+                                            <div class="flow-root mt-2">
+                                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
                                                         <table class="min-w-full divide-y divide-base-200">
                                                             <thead>
@@ -247,7 +328,7 @@ function removeRelation(id: number): void {
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addRelation(user, 0)"
+                                                                                    @click="addRelation(user.getUserId(), 0)"
                                                                                     data-te-toggle="tooltip"
                                                                                     title="Mentioned">
                                                                                     <ChatBubbleBottomCenterTextIcon
@@ -257,7 +338,7 @@ function removeRelation(id: number): void {
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addRelation(user, 1)"
+                                                                                    @click="addRelation(user.getUserId(), 1)"
                                                                                     data-te-toggle="tooltip"
                                                                                     title="Targets">
                                                                                     <ExclamationTriangleIcon
@@ -267,7 +348,7 @@ function removeRelation(id: number): void {
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addRelation(user, 2)"
+                                                                                    @click="addRelation(user.getUserId(), 2)"
                                                                                     data-te-toggle="tooltip" title="Caused">
                                                                                     <ShieldExclamationIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200">

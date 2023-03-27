@@ -7,7 +7,7 @@ import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
-import { getDateLocaleString, getDateRelativeString } from '../../utils/time';
+import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
 import TemplatesModal from './TemplatesModal.vue';
 
 const search = ref({ title: '', });
@@ -122,8 +122,8 @@ onBeforeMount(() => {
                                                     <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
                                                     <p>
-                                                        Created <time :datetime="getDateLocaleString(doc.getCreatedAt())">{{
-                                                            getDateRelativeString(doc.getCreatedAt()) }}</time>
+                                                        Created <time :datetime="toDateLocaleString(doc.getCreatedAt())">{{
+                                                            toDateRelativeString(doc.getCreatedAt()) }}</time>
                                                     </p>
                                                 </div>
                                             </div>

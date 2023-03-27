@@ -7,7 +7,7 @@ import { ChooseCharacterRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { parseQuery } from 'vue-router/auto';
 import CharSexBadge from '../misc/CharSexBadge.vue';
-import { getSecondsFormattedAsDuration } from '../../utils/time';
+import { fromSecondsToFormattedDuration } from '../../utils/time';
 
 const store = useStore();
 const route = useRoute();
@@ -67,7 +67,7 @@ function chooseCharacter() {
                 <dt class="text-sm text-neutral">Visum</dt>
                 <dd class="text-sm text-gray-300">{{ char.getVisum() }}</dd>
                 <dt class="text-sm text-neutral">Playtime</dt>
-                <dd class="text-sm text-gray-300">{{ getSecondsFormattedAsDuration(char.getPlaytime()) }}</dd>
+                <dd class="text-sm text-gray-300">{{ fromSecondsToFormattedDuration(char.getPlaytime()) }}</dd>
             </dl>
         </div>
         <div>
