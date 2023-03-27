@@ -11,7 +11,9 @@ var json = jsoniter.ConfigCompatibleWithStandardLibrary
 func (x *TemplateSchema) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
-		return json.Unmarshal([]byte(t), &x)
+		return json.Unmarshal([]byte(t), x)
+	case []byte:
+		return json.Unmarshal(t, x)
 	}
 	return nil
 }

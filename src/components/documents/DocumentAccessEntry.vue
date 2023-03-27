@@ -36,7 +36,7 @@ const emit = defineEmits<{
     (e: 'rankChange', payload: { id: number, rank: JobGrade }): void,
     (e: 'accessChange', payload: { id: number, access: DOC_ACCESS }): void,
     (e: 'deleteRequest', payload: { id: number }): void,
-}>()
+}>();
 
 const accessTypes = [
     { id: 0, name: 'Citizen' },

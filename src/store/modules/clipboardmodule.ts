@@ -4,11 +4,16 @@ import { TemplateData } from '@arpanet/gen/resources/documents/templates_pb';
 import { User, UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
+import { getDateLocaleString } from '../../utils/time';
 
-export interface ClipboardModuleState {
-    users: ClipboardUser[];
+export interface ClipboardData {
     documents: ClipboardDocument[];
+    users: ClipboardUser[];
     vehicles: ClipboardVehicle[];
+}
+
+export interface ClipboardModuleState extends ClipboardData {
+    activeStack: ClipboardData;
 }
 
 export type Getters = {
@@ -19,12 +24,26 @@ export const getters: GetterTree<ClipboardModuleState, RootState> & Getters = {
     getTemplateData(state: ClipboardModuleState): TemplateData {
         const data = new TemplateData();
 
-        if (state.users) {
+        if (state.activeStack.documents) {
+            const documents = new Array<Document>();
+            state.activeStack.documents.forEach((v: ClipboardDocument) => {
+                documents.push(v.getDocument());
+            });
+            data.setDocumentsList(documents);
+        }
+        if (state.activeStack.users) {
             const users = new Array<User>();
-            state.users.forEach((v: ClipboardUser) => {
+            state.activeStack.users.forEach((v: ClipboardUser) => {
                 users.push(getUser(v));
             });
             data.setUsersList(users);
+        }
+        if (state.activeStack.vehicles) {
+            const vehicles = new Array<Vehicle>();
+            state.activeStack.vehicles.forEach((v: ClipboardVehicle) => {
+                vehicles.push(v.getVehicle());
+            });
+            data.setVehiclesList(vehicles);
         }
 
         return data;
@@ -37,21 +56,17 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
         users: [],
         documents: [],
         vehicles: [],
+        activeStack: {
+            users: [],
+            documents: [],
+            vehicles: [],
+        },
     },
     actions: {
         clear({ commit }) {
+            commit('clearDocuments');
             commit('clearUsers');
             commit('clearVehicles');
-        },
-        // Users
-        addUser({ commit }, user: User) {
-            commit('addUser', user);
-        },
-        removeUser({ commit }, id: number) {
-            commit('removeUser', id);
-        },
-        clearUsers({ commit }) {
-            commit('clearUsers');
         },
         // Documents
         addDocument({ commit }, user: Document) {
@@ -62,6 +77,16 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
         },
         clearDocuments({ commit }) {
             commit('clearDocuments');
+        },
+        // Users
+        addUser({ commit }, user: User) {
+            commit('addUser', user);
+        },
+        removeUser({ commit }, id: number) {
+            commit('removeUser', id);
+        },
+        clearUsers({ commit }) {
+            commit('clearUsers');
         },
         // Vehicles
         addVehicle({ commit }, user: User) {
@@ -75,26 +100,6 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
         },
     },
     mutations: {
-        // Users
-        addUser(state: ClipboardModuleState, user: User): void {
-            const idx = state.users.findIndex((o: ClipboardUser) => {
-                return o.id === user.getUserId();
-            });
-            if (idx === -1) {
-                state.users.unshift((new ClipboardUser()).setUser(user));
-            }
-        },
-        removeUser(state: ClipboardModuleState, id: number): void {
-            const idx = state.users.findIndex((o: ClipboardUser) => {
-                return o.id === id;
-            });
-            if (idx > -1) {
-                state.users.splice(idx, 1);
-            }
-        },
-        clearUsers(state: ClipboardModuleState): void {
-            state.users.splice(0, state.users.length);
-        },
         // Documents
         addDocument(state: ClipboardModuleState, document: Document): void {
             const idx = state.documents.findIndex((o: ClipboardDocument) => {
@@ -114,6 +119,26 @@ const clipboardModule: Module<ClipboardModuleState, RootState> = {
         },
         clearDocuments(state: ClipboardModuleState): void {
             state.documents.splice(0, state.documents.length);
+        },
+        // Users
+        addUser(state: ClipboardModuleState, user: User): void {
+            const idx = state.users.findIndex((o: ClipboardUser) => {
+                return o.id === user.getUserId();
+            });
+            if (idx === -1) {
+                state.users.unshift(new ClipboardUser().setUser(user));
+            }
+        },
+        removeUser(state: ClipboardModuleState, id: number): void {
+            const idx = state.users.findIndex((o: ClipboardUser) => {
+                return o.id === id;
+            });
+            if (idx > -1) {
+                state.users.splice(idx, 1);
+            }
+        },
+        clearUsers(state: ClipboardModuleState): void {
+            state.users.splice(0, state.users.length);
         },
         // Vehicles
         addVehicle(state: ClipboardModuleState, vehicle: Vehicle): void {
@@ -200,17 +225,27 @@ function getUser(obj: ClipboardUser): User {
 
 export class ClipboardDocument {
     public id: number;
+    public createdAt: string;
     public title: string;
     public creator: ClipboardUser;
 
     constructor(d: Document) {
         this.id = d.getId();
+        this.createdAt = getDateLocaleString(d.getCreatedAt())!;
         this.title = d.getTitle();
         const creator = new ClipboardUser();
         if (d.getCreator()) {
             creator.setUserShort(d.getCreator()!);
         }
         this.creator = creator;
+    }
+
+    getDocument(): Document {
+        const d = new Document();
+        d.setTitle(this.title);
+        d.setCreator(getUser(this.creator));
+
+        return d;
     }
 }
 
@@ -229,5 +264,15 @@ export class ClipboardVehicle {
             owner.setUserShort(v.getOwner()!);
         }
         this.owner = owner;
+    }
+
+    getVehicle(): Vehicle {
+        const v = new Vehicle();
+        v.setPlate(this.plate);
+        v.setModel(this.model);
+        v.setType(this.type);
+        v.setOwner(getUser(this.owner));
+
+        return v;
     }
 }

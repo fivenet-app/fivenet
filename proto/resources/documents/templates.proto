@@ -45,16 +45,15 @@ message TemplateSchema {
 }
 
 message TemplateRequirements {
-  ObjectSpecs activeChar = 1;
-  ObjectSpecs documents = 2;
-  ObjectSpecs users = 3;
-  ObjectSpecs vehicles = 4;
+  optional ObjectSpecs documents = 1;
+  optional ObjectSpecs users = 2;
+  optional ObjectSpecs vehicles = 3;
 }
 
 message ObjectSpecs {
-  bool required =1;
-  int64 min = 2;
-  int64 max = 3;
+  bool required = 1;
+  optional int64 min = 2;
+  optional int64 max = 3;
 }
 
 message TemplateData {

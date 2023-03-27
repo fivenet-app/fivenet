@@ -1476,7 +1476,6 @@ proto.resources.documents.TemplateRequirements.prototype.toObject = function(opt
  */
 proto.resources.documents.TemplateRequirements.toObject = function(includeInstance, msg) {
   var f, obj = {
-    activechar: (f = msg.getActivechar()) && proto.resources.documents.ObjectSpecs.toObject(includeInstance, f),
     documents: (f = msg.getDocuments()) && proto.resources.documents.ObjectSpecs.toObject(includeInstance, f),
     users: (f = msg.getUsers()) && proto.resources.documents.ObjectSpecs.toObject(includeInstance, f),
     vehicles: (f = msg.getVehicles()) && proto.resources.documents.ObjectSpecs.toObject(includeInstance, f)
@@ -1519,19 +1518,14 @@ proto.resources.documents.TemplateRequirements.deserializeBinaryFromReader = fun
     case 1:
       var value = new proto.resources.documents.ObjectSpecs;
       reader.readMessage(value,proto.resources.documents.ObjectSpecs.deserializeBinaryFromReader);
-      msg.setActivechar(value);
+      msg.setDocuments(value);
       break;
     case 2:
       var value = new proto.resources.documents.ObjectSpecs;
       reader.readMessage(value,proto.resources.documents.ObjectSpecs.deserializeBinaryFromReader);
-      msg.setDocuments(value);
-      break;
-    case 3:
-      var value = new proto.resources.documents.ObjectSpecs;
-      reader.readMessage(value,proto.resources.documents.ObjectSpecs.deserializeBinaryFromReader);
       msg.setUsers(value);
       break;
-    case 4:
+    case 3:
       var value = new proto.resources.documents.ObjectSpecs;
       reader.readMessage(value,proto.resources.documents.ObjectSpecs.deserializeBinaryFromReader);
       msg.setVehicles(value);
@@ -1565,7 +1559,7 @@ proto.resources.documents.TemplateRequirements.prototype.serializeBinary = funct
  */
 proto.resources.documents.TemplateRequirements.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getActivechar();
+  f = message.getDocuments();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -1573,7 +1567,7 @@ proto.resources.documents.TemplateRequirements.serializeBinaryToWriter = functio
       proto.resources.documents.ObjectSpecs.serializeBinaryToWriter
     );
   }
-  f = message.getDocuments();
+  f = message.getUsers();
   if (f != null) {
     writer.writeMessage(
       2,
@@ -1581,18 +1575,10 @@ proto.resources.documents.TemplateRequirements.serializeBinaryToWriter = functio
       proto.resources.documents.ObjectSpecs.serializeBinaryToWriter
     );
   }
-  f = message.getUsers();
-  if (f != null) {
-    writer.writeMessage(
-      3,
-      f,
-      proto.resources.documents.ObjectSpecs.serializeBinaryToWriter
-    );
-  }
   f = message.getVehicles();
   if (f != null) {
     writer.writeMessage(
-      4,
+      3,
       f,
       proto.resources.documents.ObjectSpecs.serializeBinaryToWriter
     );
@@ -1601,10 +1587,10 @@ proto.resources.documents.TemplateRequirements.serializeBinaryToWriter = functio
 
 
 /**
- * optional ObjectSpecs activeChar = 1;
+ * optional ObjectSpecs documents = 1;
  * @return {?proto.resources.documents.ObjectSpecs}
  */
-proto.resources.documents.TemplateRequirements.prototype.getActivechar = function() {
+proto.resources.documents.TemplateRequirements.prototype.getDocuments = function() {
   return /** @type{?proto.resources.documents.ObjectSpecs} */ (
     jspb.Message.getWrapperField(this, proto.resources.documents.ObjectSpecs, 1));
 };
@@ -1614,45 +1600,8 @@ proto.resources.documents.TemplateRequirements.prototype.getActivechar = functio
  * @param {?proto.resources.documents.ObjectSpecs|undefined} value
  * @return {!proto.resources.documents.TemplateRequirements} returns this
 */
-proto.resources.documents.TemplateRequirements.prototype.setActivechar = function(value) {
-  return jspb.Message.setWrapperField(this, 1, value);
-};
-
-
-/**
- * Clears the message field making it undefined.
- * @return {!proto.resources.documents.TemplateRequirements} returns this
- */
-proto.resources.documents.TemplateRequirements.prototype.clearActivechar = function() {
-  return this.setActivechar(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.resources.documents.TemplateRequirements.prototype.hasActivechar = function() {
-  return jspb.Message.getField(this, 1) != null;
-};
-
-
-/**
- * optional ObjectSpecs documents = 2;
- * @return {?proto.resources.documents.ObjectSpecs}
- */
-proto.resources.documents.TemplateRequirements.prototype.getDocuments = function() {
-  return /** @type{?proto.resources.documents.ObjectSpecs} */ (
-    jspb.Message.getWrapperField(this, proto.resources.documents.ObjectSpecs, 2));
-};
-
-
-/**
- * @param {?proto.resources.documents.ObjectSpecs|undefined} value
- * @return {!proto.resources.documents.TemplateRequirements} returns this
-*/
 proto.resources.documents.TemplateRequirements.prototype.setDocuments = function(value) {
-  return jspb.Message.setWrapperField(this, 2, value);
+  return jspb.Message.setWrapperField(this, 1, value);
 };
 
 
@@ -1670,17 +1619,17 @@ proto.resources.documents.TemplateRequirements.prototype.clearDocuments = functi
  * @return {boolean}
  */
 proto.resources.documents.TemplateRequirements.prototype.hasDocuments = function() {
-  return jspb.Message.getField(this, 2) != null;
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
 /**
- * optional ObjectSpecs users = 3;
+ * optional ObjectSpecs users = 2;
  * @return {?proto.resources.documents.ObjectSpecs}
  */
 proto.resources.documents.TemplateRequirements.prototype.getUsers = function() {
   return /** @type{?proto.resources.documents.ObjectSpecs} */ (
-    jspb.Message.getWrapperField(this, proto.resources.documents.ObjectSpecs, 3));
+    jspb.Message.getWrapperField(this, proto.resources.documents.ObjectSpecs, 2));
 };
 
 
@@ -1689,7 +1638,7 @@ proto.resources.documents.TemplateRequirements.prototype.getUsers = function() {
  * @return {!proto.resources.documents.TemplateRequirements} returns this
 */
 proto.resources.documents.TemplateRequirements.prototype.setUsers = function(value) {
-  return jspb.Message.setWrapperField(this, 3, value);
+  return jspb.Message.setWrapperField(this, 2, value);
 };
 
 
@@ -1707,17 +1656,17 @@ proto.resources.documents.TemplateRequirements.prototype.clearUsers = function()
  * @return {boolean}
  */
 proto.resources.documents.TemplateRequirements.prototype.hasUsers = function() {
-  return jspb.Message.getField(this, 3) != null;
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
 /**
- * optional ObjectSpecs vehicles = 4;
+ * optional ObjectSpecs vehicles = 3;
  * @return {?proto.resources.documents.ObjectSpecs}
  */
 proto.resources.documents.TemplateRequirements.prototype.getVehicles = function() {
   return /** @type{?proto.resources.documents.ObjectSpecs} */ (
-    jspb.Message.getWrapperField(this, proto.resources.documents.ObjectSpecs, 4));
+    jspb.Message.getWrapperField(this, proto.resources.documents.ObjectSpecs, 3));
 };
 
 
@@ -1726,7 +1675,7 @@ proto.resources.documents.TemplateRequirements.prototype.getVehicles = function(
  * @return {!proto.resources.documents.TemplateRequirements} returns this
 */
 proto.resources.documents.TemplateRequirements.prototype.setVehicles = function(value) {
-  return jspb.Message.setWrapperField(this, 4, value);
+  return jspb.Message.setWrapperField(this, 3, value);
 };
 
 
@@ -1744,7 +1693,7 @@ proto.resources.documents.TemplateRequirements.prototype.clearVehicles = functio
  * @return {boolean}
  */
 proto.resources.documents.TemplateRequirements.prototype.hasVehicles = function() {
-  return jspb.Message.getField(this, 4) != null;
+  return jspb.Message.getField(this, 3) != null;
 };
 
 
@@ -1867,15 +1816,15 @@ proto.resources.documents.ObjectSpecs.serializeBinaryToWriter = function(message
       f
     );
   }
-  f = message.getMin();
-  if (f !== 0) {
+  f = /** @type {number} */ (jspb.Message.getField(message, 2));
+  if (f != null) {
     writer.writeInt64(
       2,
       f
     );
   }
-  f = message.getMax();
-  if (f !== 0) {
+  f = /** @type {number} */ (jspb.Message.getField(message, 3));
+  if (f != null) {
     writer.writeInt64(
       3,
       f
@@ -1916,7 +1865,25 @@ proto.resources.documents.ObjectSpecs.prototype.getMin = function() {
  * @return {!proto.resources.documents.ObjectSpecs} returns this
  */
 proto.resources.documents.ObjectSpecs.prototype.setMin = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.documents.ObjectSpecs} returns this
+ */
+proto.resources.documents.ObjectSpecs.prototype.clearMin = function() {
+  return jspb.Message.setField(this, 2, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.ObjectSpecs.prototype.hasMin = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
@@ -1934,7 +1901,25 @@ proto.resources.documents.ObjectSpecs.prototype.getMax = function() {
  * @return {!proto.resources.documents.ObjectSpecs} returns this
  */
 proto.resources.documents.ObjectSpecs.prototype.setMax = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
+  return jspb.Message.setField(this, 3, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.documents.ObjectSpecs} returns this
+ */
+proto.resources.documents.ObjectSpecs.prototype.clearMax = function() {
+  return jspb.Message.setField(this, 3, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.ObjectSpecs.prototype.hasMax = function() {
+  return jspb.Message.getField(this, 3) != null;
 };
 
 

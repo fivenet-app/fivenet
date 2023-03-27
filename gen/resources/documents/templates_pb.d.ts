@@ -202,11 +202,6 @@ export namespace TemplateSchema {
 }
 
 export class TemplateRequirements extends jspb.Message {
-  getActivechar(): ObjectSpecs | undefined;
-  setActivechar(value?: ObjectSpecs): TemplateRequirements;
-  hasActivechar(): boolean;
-  clearActivechar(): TemplateRequirements;
-
   getDocuments(): ObjectSpecs | undefined;
   setDocuments(value?: ObjectSpecs): TemplateRequirements;
   hasDocuments(): boolean;
@@ -232,10 +227,24 @@ export class TemplateRequirements extends jspb.Message {
 
 export namespace TemplateRequirements {
   export type AsObject = {
-    activechar?: ObjectSpecs.AsObject,
     documents?: ObjectSpecs.AsObject,
     users?: ObjectSpecs.AsObject,
     vehicles?: ObjectSpecs.AsObject,
+  }
+
+  export enum DocumentsCase { 
+    _DOCUMENTS_NOT_SET = 0,
+    DOCUMENTS = 1,
+  }
+
+  export enum UsersCase { 
+    _USERS_NOT_SET = 0,
+    USERS = 2,
+  }
+
+  export enum VehiclesCase { 
+    _VEHICLES_NOT_SET = 0,
+    VEHICLES = 3,
   }
 }
 
@@ -245,9 +254,13 @@ export class ObjectSpecs extends jspb.Message {
 
   getMin(): number;
   setMin(value: number): ObjectSpecs;
+  hasMin(): boolean;
+  clearMin(): ObjectSpecs;
 
   getMax(): number;
   setMax(value: number): ObjectSpecs;
+  hasMax(): boolean;
+  clearMax(): ObjectSpecs;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ObjectSpecs.AsObject;
@@ -260,8 +273,18 @@ export class ObjectSpecs extends jspb.Message {
 export namespace ObjectSpecs {
   export type AsObject = {
     required: boolean,
-    min: number,
-    max: number,
+    min?: number,
+    max?: number,
+  }
+
+  export enum MinCase { 
+    _MIN_NOT_SET = 0,
+    MIN = 2,
+  }
+
+  export enum MaxCase { 
+    _MAX_NOT_SET = 0,
+    MAX = 3,
   }
 }
 

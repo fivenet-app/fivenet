@@ -9,7 +9,6 @@ import TablePagination from '../partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { getDateLocaleString, getDateRelativeString } from '../../utils/time';
 import TemplatesModal from './TemplatesModal.vue';
-import { RpcError } from 'grpc-web';
 
 const search = ref({ title: '', });
 // TODO Implement order by for documents
@@ -30,8 +29,6 @@ function findDocuments(pos: number) {
         then((resp) => {
             pagination.value = resp.getPagination();
             documents.value = resp.getDocumentsList();
-        }).catch((err: RpcError) => {
-            console.log(err);
         });
 }
 

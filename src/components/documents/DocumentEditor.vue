@@ -5,7 +5,8 @@ import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getCompletorClient, getDocStoreClient } from '../../grpc/grpc';
 import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { DocumentAccess, DocumentCategory, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
+import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
+import { DocumentCategory } from '@arpanet/gen/resources/documents/category_pb';
 import { dispatchNotification } from '../notification';
 import {
     PlusIcon,
@@ -85,9 +86,6 @@ onMounted(async () => {
 
         const data = store.getters['clipboard/getTemplateData'] as TemplateData;
         data.setActivechar(activeChar.value!);
-        if (data.getUsersList().length == 0) {
-            data.setUsersList([activeChar.value!]);
-        }
         req.setData(JSON.stringify(data.toObject()));
 
         await getDocStoreClient().

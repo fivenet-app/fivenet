@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DocumentTemplateShort } from '@arpanet/gen/resources/documents/documents_pb';
+import { DocumentTemplateShort } from '@arpanet/gen/resources/documents/templates_pb';
 import { ListTemplatesRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { ref, onBeforeMount } from 'vue';
 import { getDocStoreClient } from '../../grpc/grpc';

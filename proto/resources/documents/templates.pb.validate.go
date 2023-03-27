@@ -822,120 +822,103 @@ func (m *TemplateRequirements) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetActiveChar()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, TemplateRequirementsValidationError{
-					field:  "ActiveChar",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, TemplateRequirementsValidationError{
-					field:  "ActiveChar",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetActiveChar()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return TemplateRequirementsValidationError{
-				field:  "ActiveChar",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	if m.Documents != nil {
 
-	if all {
-		switch v := interface{}(m.GetDocuments()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, TemplateRequirementsValidationError{
+		if all {
+			switch v := interface{}(m.GetDocuments()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TemplateRequirementsValidationError{
+						field:  "Documents",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TemplateRequirementsValidationError{
+						field:  "Documents",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDocuments()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TemplateRequirementsValidationError{
 					field:  "Documents",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, TemplateRequirementsValidationError{
-					field:  "Documents",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetDocuments()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return TemplateRequirementsValidationError{
-				field:  "Documents",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
-	if all {
-		switch v := interface{}(m.GetUsers()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, TemplateRequirementsValidationError{
+	if m.Users != nil {
+
+		if all {
+			switch v := interface{}(m.GetUsers()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TemplateRequirementsValidationError{
+						field:  "Users",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TemplateRequirementsValidationError{
+						field:  "Users",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TemplateRequirementsValidationError{
 					field:  "Users",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, TemplateRequirementsValidationError{
-					field:  "Users",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return TemplateRequirementsValidationError{
-				field:  "Users",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
-	if all {
-		switch v := interface{}(m.GetVehicles()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, TemplateRequirementsValidationError{
-					field:  "Vehicles",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Vehicles != nil {
+
+		if all {
+			switch v := interface{}(m.GetVehicles()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TemplateRequirementsValidationError{
+						field:  "Vehicles",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TemplateRequirementsValidationError{
+						field:  "Vehicles",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetVehicles()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, TemplateRequirementsValidationError{
+				return TemplateRequirementsValidationError{
 					field:  "Vehicles",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetVehicles()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return TemplateRequirementsValidationError{
-				field:  "Vehicles",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -1042,9 +1025,13 @@ func (m *ObjectSpecs) validate(all bool) error {
 
 	// no validation rules for Required
 
-	// no validation rules for Min
+	if m.Min != nil {
+		// no validation rules for Min
+	}
 
-	// no validation rules for Max
+	if m.Max != nil {
+		// no validation rules for Max
+	}
 
 	if len(errors) > 0 {
 		return ObjectSpecsMultiError(errors)
