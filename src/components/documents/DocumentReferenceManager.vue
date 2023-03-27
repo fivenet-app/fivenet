@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
+import { DOC_REFERENCE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import { Document, DocumentReference } from '@arpanet/gen/resources/documents/documents_pb';
 import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import {
@@ -22,11 +23,12 @@ import {
     MagnifyingGlassIcon,
     ClipboardDocumentListIcon,
 } from '@heroicons/vue/24/outline';
-import { UsersIcon } from '@heroicons/vue/24/solid';
+import { ChevronDoubleUpIcon, DocumentCheckIcon, DocumentTextIcon, LockClosedIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
 import { onMounted, ref, FunctionalComponent } from 'vue';
 import { useRouter } from 'vue-router/auto';
 import { getDocStoreClient } from '../../grpc/grpc';
+import { ClipboardDocument, getDocument } from '../../store/modules/clipboardmodule';
 import { useStore } from '../../store/store';
 import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
 
@@ -69,7 +71,7 @@ function findDocuments(): void {
     });
 }
 
-function addReference(docId: number): void {
+function addReference(doc: Document, reference: number): void {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1 : keys[keys.length - 1] + 1;
 
@@ -77,10 +79,16 @@ function addReference(docId: number): void {
     ref.setId(key);
     ref.setCreatorId(store.state.auth!.activeChar!.getUserId());
     ref.setCreator(store.state.auth!.activeChar!)
-    ref.setTargetDocumentId(docId);
+    ref.setTargetDocumentId(doc.getId());
+    ref.setTargetDocument(doc);
+    ref.setReference(DOC_REFERENCE_Util.fromInt(reference));
 
     props.modelValue.set(key, ref);
     findDocuments();
+}
+
+function addReferenceClipboard(doc: ClipboardDocument, reference: number): void {
+    addReference(getDocument(doc), reference);
 }
 
 function removeReference(id: number): void {
@@ -199,12 +207,13 @@ function removeReference(id: number): void {
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
-                                                        <button v-if="store.state.clipboard?.documents.length === 0" type="button"
+                                                        <button v-if="store.state.clipboard?.documents.length === 0"
+                                                            type="button"
                                                             class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
                                                             disabled>
-                                                            <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
+                                                            <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />
                                                             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                                                No Users in Clipboard.
+                                                                No Documents in Clipboard.
                                                             </span>
                                                         </button>
                                                         <table v-else class="min-w-full divide-y divide-base-200">
@@ -249,12 +258,29 @@ function removeReference(id: number): void {
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addReference(doc.id)"
-                                                                                    data-te-toggle="tooltip"
-                                                                                    title="References">
+                                                                                    @click="addReferenceClipboard(doc, 0)"
+                                                                                    data-te-toggle="tooltip" title="Links">
                                                                                     <DocumentPlusIcon
-                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300">
-                                                                                    </DocumentPlusIcon>
+                                                                                        class="w-6 h-auto text-info-500 hover:text-info-300" />
+                                                                                </button>
+                                                                                <button role="button"
+                                                                                    @click="addReferenceClipboard(doc, 1)"
+                                                                                    data-te-toggle="tooltip" title="Solves">
+                                                                                    <DocumentCheckIcon
+                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300" />
+                                                                                </button>
+                                                                                <button role="button"
+                                                                                    @click="addReferenceClipboard(doc, 2)"
+                                                                                    data-te-toggle="tooltip" title="Closes">
+                                                                                    <LockClosedIcon
+                                                                                        class="w-6 h-auto text-error-500 hover:text-error-300" />
+                                                                                </button>
+                                                                                <button role="button"
+                                                                                    @click="addReferenceClipboard(doc, 3)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    title="Deprecates">
+                                                                                    <ChevronDoubleUpIcon
+                                                                                        class="w-6 h-auto text-warn-500 hover:text-warn-300" />
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -319,12 +345,29 @@ function removeReference(id: number): void {
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addReference(doc.getId())"
-                                                                                    data-te-toggle="tooltip"
-                                                                                    title="References">
+                                                                                    @click="addReference(doc, 0)"
+                                                                                    data-te-toggle="tooltip" title="Links">
                                                                                     <DocumentPlusIcon
-                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300">
-                                                                                    </DocumentPlusIcon>
+                                                                                        class="w-6 h-auto text-info-500 hover:text-info-300" />
+                                                                                </button>
+                                                                                <button role="button"
+                                                                                    @click="addReference(doc, 1)"
+                                                                                    data-te-toggle="tooltip" title="Solves">
+                                                                                    <DocumentCheckIcon
+                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300" />
+                                                                                </button>
+                                                                                <button role="button"
+                                                                                    @click="addReference(doc, 2)"
+                                                                                    data-te-toggle="tooltip" title="Closes">
+                                                                                    <LockClosedIcon
+                                                                                        class="w-6 h-auto text-error-500 hover:text-error-300" />
+                                                                                </button>
+                                                                                <button role="button"
+                                                                                    @click="addReference(doc, 3)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    title="Deprecates">
+                                                                                    <ChevronDoubleUpIcon
+                                                                                        class="w-6 h-auto text-warn-500 hover:text-warn-300" />
                                                                                 </button>
                                                                             </div>
                                                                         </div>

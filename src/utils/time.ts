@@ -44,3 +44,7 @@ export function toDateRelativeString(ts: resources_timestamp_timestamp_pb.Timest
 
     return timeAgo.format(date, 'round');
 }
+
+export function fromString(time: string): undefined | Date{
+    return new Date(Date.parse(time));
+}

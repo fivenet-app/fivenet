@@ -26,6 +26,10 @@ import DocumentReferences from './DocumentReferences.vue';
 import DocumentComments from './DocumentComments.vue';
 import { toTitleCase } from '../../utils/strings';
 import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
+import { useStore } from '../../store/store';
+import { PlusIcon } from '@heroicons/vue/24/solid';
+
+const store = useStore();
 
 const document = ref<undefined | Document>(undefined);
 const access = ref<undefined | DocumentAccess>(undefined);
@@ -81,6 +85,12 @@ function getDocument(): void {
             comments.value = resp.getCommentsList();
             commentCount.value = resp.getPagination()!.getTotalCount();
         });
+}
+
+function addToClipboard() {
+    if (document.value) {
+        store.dispatch('clipboard/addDocument', document.value);
+    }
 }
 
 onMounted(() => {
@@ -199,4 +209,8 @@ onMounted(() => {
             </div>
         </div>
     </div>
+    <button title="Add to Clipboard" @click="addToClipboard()"
+        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-24 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400">
+        <PlusIcon class="w-10 h-auto" />
+    </button>
 </template>

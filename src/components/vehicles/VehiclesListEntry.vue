@@ -29,7 +29,7 @@ const props = defineProps({
 });
 
 function addToClipboard() {
-    store.commit('clipboard/addVehicle', props.vehicle);
+    store.dispatch('clipboard/addVehicle', props.vehicle);
 }
 </script>
 

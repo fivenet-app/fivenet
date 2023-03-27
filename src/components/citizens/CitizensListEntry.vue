@@ -13,7 +13,7 @@ const props = defineProps({
 });
 
 function addToClipboard() {
-    store.commit('clipboard/addUser', props.user);
+    store.dispatch('clipboard/addUser', props.user);
 }
 </script>
 

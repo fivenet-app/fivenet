@@ -4,7 +4,9 @@ import { TemplateData } from '@arpanet/gen/resources/documents/templates_pb';
 import { User, UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
-import { toDateLocaleString } from '../../utils/time';
+import { fromString, toDateLocaleString } from '../../utils/time';
+import { Timestamp } from '@arpanet/gen/resources/timestamp/timestamp_pb';
+import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
 export interface ClipboardData {
     documents: ClipboardDocument[];
@@ -27,7 +29,7 @@ export const getters: GetterTree<ClipboardModuleState, RootState> & Getters = {
         if (state.activeStack.documents) {
             const documents = new Array<Document>();
             state.activeStack.documents.forEach((v: ClipboardDocument) => {
-                documents.push(v.getDocument());
+                documents.push(getDocument(v));
             });
             data.setDocumentsList(documents);
         }
@@ -247,14 +249,22 @@ export class ClipboardDocument {
         }
         this.creator = creator;
     }
+}
 
-    getDocument(): Document {
-        const d = new Document();
-        d.setTitle(this.title);
-        d.setCreator(getUser(this.creator));
+export function getDocument(obj: ClipboardDocument): Document {
+    const tts = new google_protobuf_timestamp_pb.Timestamp();
+    tts.fromDate(fromString(obj.createdAt)!);
+    const ts = new Timestamp();
+    ts.setTimestamp(tts);
 
-        return d;
-    }
+    const d = new Document();
+    d.setId(obj.id);
+    d.setCreatedAt(ts);
+    d.setTitle(obj.title);
+    d.setState(obj.state);
+    d.setCreator(getUser(obj.creator));
+
+    return d;
 }
 
 export class ClipboardVehicle {

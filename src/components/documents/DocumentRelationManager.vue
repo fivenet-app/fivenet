@@ -27,6 +27,7 @@ import {
     ShieldExclamationIcon,
 ClipboardDocumentListIcon,
 } from '@heroicons/vue/24/outline';
+import { UsersIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
 import { onMounted, ref, FunctionalComponent } from 'vue';
 import { useRouter } from 'vue-router/auto';
