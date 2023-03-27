@@ -1,3 +1,5 @@
+VERSION := $(shell cat VERSION)
+
 VALIDATE_VERSION ?= v0.10.1
 
 .DEFAULT: run-server
@@ -11,9 +13,13 @@ clean:
 watch:
 	yarn dev
 
-.PHONY: build-docker
-build-docker:
+.PHONY: build-container
+build-container:
 	docker build -t galexrt/arpanet:latest .
+
+.PHONY: release
+release:
+	docker tag galexrt/arpanet:latest galexrt/arpanet:$(VERSION)
 
 .PHONY: build-go
 build-go:
