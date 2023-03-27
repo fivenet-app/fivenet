@@ -113,8 +113,7 @@ proto.services.dmv.FindVehiclesRequest.toObject = function(includeInstance, msg)
     resources_common_database_database_pb.OrderBy.toObject, includeInstance),
     search: jspb.Message.getFieldWithDefault(msg, 3, ""),
     model: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    type: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    userId: jspb.Message.getFieldWithDefault(msg, 6, 0)
+    userId: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
   if (includeInstance) {
@@ -170,10 +169,6 @@ proto.services.dmv.FindVehiclesRequest.deserializeBinaryFromReader = function(ms
       msg.setModel(value);
       break;
     case 5:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setType(value);
-      break;
-    case 6:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setUserId(value);
       break;
@@ -236,17 +231,10 @@ proto.services.dmv.FindVehiclesRequest.serializeBinaryToWriter = function(messag
       f
     );
   }
-  f = message.getType();
-  if (f.length > 0) {
-    writer.writeString(
-      5,
-      f
-    );
-  }
   f = message.getUserId();
   if (f !== 0) {
     writer.writeInt32(
-      6,
+      5,
       f
     );
   }
@@ -365,29 +353,11 @@ proto.services.dmv.FindVehiclesRequest.prototype.setModel = function(value) {
 
 
 /**
- * optional string type = 5;
- * @return {string}
- */
-proto.services.dmv.FindVehiclesRequest.prototype.getType = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.services.dmv.FindVehiclesRequest} returns this
- */
-proto.services.dmv.FindVehiclesRequest.prototype.setType = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
-};
-
-
-/**
- * optional int32 user_id = 6;
+ * optional int32 user_id = 5;
  * @return {number}
  */
 proto.services.dmv.FindVehiclesRequest.prototype.getUserId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
 
@@ -396,7 +366,7 @@ proto.services.dmv.FindVehiclesRequest.prototype.getUserId = function() {
  * @return {!proto.services.dmv.FindVehiclesRequest} returns this
  */
 proto.services.dmv.FindVehiclesRequest.prototype.setUserId = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 

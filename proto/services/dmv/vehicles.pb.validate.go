@@ -146,8 +146,6 @@ func (m *FindVehiclesRequest) validate(all bool) error {
 
 	// no validation rules for Model
 
-	// no validation rules for Type
-
 	// no validation rules for UserId
 
 	if len(errors) > 0 {

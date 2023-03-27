@@ -13,8 +13,7 @@ message FindVehiclesRequest {
   // Search params
   string search = 3;
   string model = 4;
-  string type = 5;
-  int32 user_id = 6;
+  int32 user_id = 5;
 }
 
 message FindVehiclesResponse {

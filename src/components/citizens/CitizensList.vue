@@ -110,8 +110,9 @@ onMounted(() => {
                         <button v-if="users.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
-                            <span class="block mt-2 text-sm font-semibold text-gray-300">Use the search field
-                                above to search or update your query</span>
+                            <span class="block mt-2 text-sm font-semibold text-gray-300">
+                                Use the search field above to search or update your query.
+                            </span>
                         </button>
                         <div v-else>
                             <table class="min-w-full divide-y divide-base-600">

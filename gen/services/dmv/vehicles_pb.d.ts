@@ -21,9 +21,6 @@ export class FindVehiclesRequest extends jspb.Message {
   getModel(): string;
   setModel(value: string): FindVehiclesRequest;
 
-  getType(): string;
-  setType(value: string): FindVehiclesRequest;
-
   getUserId(): number;
   setUserId(value: number): FindVehiclesRequest;
 
@@ -41,7 +38,6 @@ export namespace FindVehiclesRequest {
     orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
     search: string,
     model: string,
-    type: string,
     userId: number,
   }
 }
