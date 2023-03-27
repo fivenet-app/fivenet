@@ -21,8 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
-var resources_documents_documents_pb = require('../../resources/documents/documents_pb.js');
-goog.object.extend(proto, resources_documents_documents_pb);
+var resources_documents_category_pb = require('../../resources/documents/category_pb.js');
+goog.object.extend(proto, resources_documents_category_pb);
 var resources_jobs_jobs_pb = require('../../resources/jobs/jobs_pb.js');
 goog.object.extend(proto, resources_jobs_jobs_pb);
 var resources_users_users_pb = require('../../resources/users/users_pb.js');
@@ -909,7 +909,7 @@ proto.services.completor.CompleteDocumentCategoryResponse.prototype.toObject = f
 proto.services.completor.CompleteDocumentCategoryResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     categoriesList: jspb.Message.toObjectList(msg.getCategoriesList(),
-    resources_documents_documents_pb.DocumentCategory.toObject, includeInstance)
+    resources_documents_category_pb.DocumentCategory.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -947,8 +947,8 @@ proto.services.completor.CompleteDocumentCategoryResponse.deserializeBinaryFromR
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_documents_documents_pb.DocumentCategory;
-      reader.readMessage(value,resources_documents_documents_pb.DocumentCategory.deserializeBinaryFromReader);
+      var value = new resources_documents_category_pb.DocumentCategory;
+      reader.readMessage(value,resources_documents_category_pb.DocumentCategory.deserializeBinaryFromReader);
       msg.addCategories(value);
       break;
     default:
@@ -985,7 +985,7 @@ proto.services.completor.CompleteDocumentCategoryResponse.serializeBinaryToWrite
     writer.writeRepeatedMessage(
       1,
       f,
-      resources_documents_documents_pb.DocumentCategory.serializeBinaryToWriter
+      resources_documents_category_pb.DocumentCategory.serializeBinaryToWriter
     );
   }
 };
@@ -997,7 +997,7 @@ proto.services.completor.CompleteDocumentCategoryResponse.serializeBinaryToWrite
  */
 proto.services.completor.CompleteDocumentCategoryResponse.prototype.getCategoriesList = function() {
   return /** @type{!Array<!proto.resources.documents.DocumentCategory>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentCategory, 1));
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_category_pb.DocumentCategory, 1));
 };
 
 

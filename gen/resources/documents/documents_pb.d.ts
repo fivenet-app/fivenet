@@ -1,215 +1,9 @@
 import * as jspb from 'google-protobuf'
 
+import * as resources_documents_category_pb from '../../resources/documents/category_pb';
 import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
-
-export class DocumentCategory extends jspb.Message {
-  getId(): number;
-  setId(value: number): DocumentCategory;
-
-  getName(): string;
-  setName(value: string): DocumentCategory;
-
-  getDescription(): string;
-  setDescription(value: string): DocumentCategory;
-  hasDescription(): boolean;
-  clearDescription(): DocumentCategory;
-
-  getJob(): string;
-  setJob(value: string): DocumentCategory;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): DocumentCategory.AsObject;
-  static toObject(includeInstance: boolean, msg: DocumentCategory): DocumentCategory.AsObject;
-  static serializeBinaryToWriter(message: DocumentCategory, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): DocumentCategory;
-  static deserializeBinaryFromReader(message: DocumentCategory, reader: jspb.BinaryReader): DocumentCategory;
-}
-
-export namespace DocumentCategory {
-  export type AsObject = {
-    id: number,
-    name: string,
-    description?: string,
-    job: string,
-  }
-
-  export enum DescriptionCase { 
-    _DESCRIPTION_NOT_SET = 0,
-    DESCRIPTION = 3,
-  }
-}
-
-export class DocumentTemplate extends jspb.Message {
-  getId(): number;
-  setId(value: number): DocumentTemplate;
-
-  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentTemplate;
-  hasCreatedAt(): boolean;
-  clearCreatedAt(): DocumentTemplate;
-
-  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentTemplate;
-  hasUpdatedAt(): boolean;
-  clearUpdatedAt(): DocumentTemplate;
-
-  getJob(): string;
-  setJob(value: string): DocumentTemplate;
-
-  getJobGrade(): number;
-  setJobGrade(value: number): DocumentTemplate;
-
-  getCategory(): DocumentCategory | undefined;
-  setCategory(value?: DocumentCategory): DocumentTemplate;
-  hasCategory(): boolean;
-  clearCategory(): DocumentTemplate;
-
-  getTitle(): string;
-  setTitle(value: string): DocumentTemplate;
-
-  getDescription(): string;
-  setDescription(value: string): DocumentTemplate;
-
-  getContentTitle(): string;
-  setContentTitle(value: string): DocumentTemplate;
-
-  getContent(): string;
-  setContent(value: string): DocumentTemplate;
-
-  getSchema(): string;
-  setSchema(value: string): DocumentTemplate;
-
-  getCreatorId(): number;
-  setCreatorId(value: number): DocumentTemplate;
-
-  getCreator(): resources_users_users_pb.UserShort | undefined;
-  setCreator(value?: resources_users_users_pb.UserShort): DocumentTemplate;
-  hasCreator(): boolean;
-  clearCreator(): DocumentTemplate;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): DocumentTemplate.AsObject;
-  static toObject(includeInstance: boolean, msg: DocumentTemplate): DocumentTemplate.AsObject;
-  static serializeBinaryToWriter(message: DocumentTemplate, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): DocumentTemplate;
-  static deserializeBinaryFromReader(message: DocumentTemplate, reader: jspb.BinaryReader): DocumentTemplate;
-}
-
-export namespace DocumentTemplate {
-  export type AsObject = {
-    id: number,
-    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    job: string,
-    jobGrade: number,
-    category?: DocumentCategory.AsObject,
-    title: string,
-    description: string,
-    contentTitle: string,
-    content: string,
-    schema: string,
-    creatorId: number,
-    creator?: resources_users_users_pb.UserShort.AsObject,
-  }
-
-  export enum CreatedAtCase { 
-    _CREATED_AT_NOT_SET = 0,
-    CREATED_AT = 2,
-  }
-
-  export enum UpdatedAtCase { 
-    _UPDATED_AT_NOT_SET = 0,
-    UPDATED_AT = 3,
-  }
-
-  export enum CreatorCase { 
-    _CREATOR_NOT_SET = 0,
-    CREATOR = 13,
-  }
-}
-
-export class DocumentTemplateShort extends jspb.Message {
-  getId(): number;
-  setId(value: number): DocumentTemplateShort;
-
-  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentTemplateShort;
-  hasCreatedAt(): boolean;
-  clearCreatedAt(): DocumentTemplateShort;
-
-  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentTemplateShort;
-  hasUpdatedAt(): boolean;
-  clearUpdatedAt(): DocumentTemplateShort;
-
-  getJob(): string;
-  setJob(value: string): DocumentTemplateShort;
-
-  getCategoryId(): number;
-  setCategoryId(value: number): DocumentTemplateShort;
-
-  getCategory(): DocumentCategory | undefined;
-  setCategory(value?: DocumentCategory): DocumentTemplateShort;
-  hasCategory(): boolean;
-  clearCategory(): DocumentTemplateShort;
-
-  getTitle(): string;
-  setTitle(value: string): DocumentTemplateShort;
-
-  getDescription(): string;
-  setDescription(value: string): DocumentTemplateShort;
-
-  getSchema(): string;
-  setSchema(value: string): DocumentTemplateShort;
-
-  getCreatorId(): number;
-  setCreatorId(value: number): DocumentTemplateShort;
-
-  getCreator(): resources_users_users_pb.UserShort | undefined;
-  setCreator(value?: resources_users_users_pb.UserShort): DocumentTemplateShort;
-  hasCreator(): boolean;
-  clearCreator(): DocumentTemplateShort;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): DocumentTemplateShort.AsObject;
-  static toObject(includeInstance: boolean, msg: DocumentTemplateShort): DocumentTemplateShort.AsObject;
-  static serializeBinaryToWriter(message: DocumentTemplateShort, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): DocumentTemplateShort;
-  static deserializeBinaryFromReader(message: DocumentTemplateShort, reader: jspb.BinaryReader): DocumentTemplateShort;
-}
-
-export namespace DocumentTemplateShort {
-  export type AsObject = {
-    id: number,
-    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    job: string,
-    categoryId: number,
-    category?: DocumentCategory.AsObject,
-    title: string,
-    description: string,
-    schema: string,
-    creatorId: number,
-    creator?: resources_users_users_pb.UserShort.AsObject,
-  }
-
-  export enum CreatedAtCase { 
-    _CREATED_AT_NOT_SET = 0,
-    CREATED_AT = 2,
-  }
-
-  export enum UpdatedAtCase { 
-    _UPDATED_AT_NOT_SET = 0,
-    UPDATED_AT = 3,
-  }
-
-  export enum CreatorCase { 
-    _CREATOR_NOT_SET = 0,
-    CREATOR = 11,
-  }
-}
 
 export class DocumentComment extends jspb.Message {
   getId(): number;
@@ -291,8 +85,8 @@ export class Document extends jspb.Message {
   getCategoryId(): number;
   setCategoryId(value: number): Document;
 
-  getCategory(): DocumentCategory | undefined;
-  setCategory(value?: DocumentCategory): Document;
+  getCategory(): resources_documents_category_pb.DocumentCategory | undefined;
+  setCategory(value?: resources_documents_category_pb.DocumentCategory): Document;
   hasCategory(): boolean;
   clearCategory(): Document;
 
@@ -339,7 +133,7 @@ export namespace Document {
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     categoryId: number,
-    category?: DocumentCategory.AsObject,
+    category?: resources_documents_category_pb.DocumentCategory.AsObject,
     title: string,
     contentType: DOC_CONTENT_TYPE,
     content: string,
@@ -369,8 +163,8 @@ export class DocumentShort extends jspb.Message {
   getCategoryId(): number;
   setCategoryId(value: number): DocumentShort;
 
-  getCategory(): DocumentCategory | undefined;
-  setCategory(value?: DocumentCategory): DocumentShort;
+  getCategory(): resources_documents_category_pb.DocumentCategory | undefined;
+  setCategory(value?: resources_documents_category_pb.DocumentCategory): DocumentShort;
   hasCategory(): boolean;
   clearCategory(): DocumentShort;
 
@@ -405,7 +199,7 @@ export namespace DocumentShort {
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     categoryId: number,
-    category?: DocumentCategory.AsObject,
+    category?: resources_documents_category_pb.DocumentCategory.AsObject,
     title: string,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,

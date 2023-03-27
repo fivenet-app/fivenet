@@ -2,6 +2,7 @@ import * as jspb from 'google-protobuf'
 
 import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
 import * as resources_documents_documents_pb from '../../resources/documents/documents_pb';
+import * as resources_documents_templates_pb from '../../resources/documents/templates_pb';
 
 
 export class ListTemplatesRequest extends jspb.Message {
@@ -19,10 +20,10 @@ export namespace ListTemplatesRequest {
 }
 
 export class ListTemplatesResponse extends jspb.Message {
-  getTemplatesList(): Array<resources_documents_documents_pb.DocumentTemplateShort>;
-  setTemplatesList(value: Array<resources_documents_documents_pb.DocumentTemplateShort>): ListTemplatesResponse;
+  getTemplatesList(): Array<resources_documents_templates_pb.DocumentTemplateShort>;
+  setTemplatesList(value: Array<resources_documents_templates_pb.DocumentTemplateShort>): ListTemplatesResponse;
   clearTemplatesList(): ListTemplatesResponse;
-  addTemplates(value?: resources_documents_documents_pb.DocumentTemplateShort, index?: number): resources_documents_documents_pb.DocumentTemplateShort;
+  addTemplates(value?: resources_documents_templates_pb.DocumentTemplateShort, index?: number): resources_documents_templates_pb.DocumentTemplateShort;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ListTemplatesResponse.AsObject;
@@ -34,7 +35,7 @@ export class ListTemplatesResponse extends jspb.Message {
 
 export namespace ListTemplatesResponse {
   export type AsObject = {
-    templatesList: Array<resources_documents_documents_pb.DocumentTemplateShort.AsObject>,
+    templatesList: Array<resources_documents_templates_pb.DocumentTemplateShort.AsObject>,
   }
 }
 
@@ -72,8 +73,8 @@ export namespace GetTemplateRequest {
 }
 
 export class GetTemplateResponse extends jspb.Message {
-  getTemplate(): resources_documents_documents_pb.DocumentTemplate | undefined;
-  setTemplate(value?: resources_documents_documents_pb.DocumentTemplate): GetTemplateResponse;
+  getTemplate(): resources_documents_templates_pb.DocumentTemplate | undefined;
+  setTemplate(value?: resources_documents_templates_pb.DocumentTemplate): GetTemplateResponse;
   hasTemplate(): boolean;
   clearTemplate(): GetTemplateResponse;
 
@@ -90,7 +91,7 @@ export class GetTemplateResponse extends jspb.Message {
 
 export namespace GetTemplateResponse {
   export type AsObject = {
-    template?: resources_documents_documents_pb.DocumentTemplate.AsObject,
+    template?: resources_documents_templates_pb.DocumentTemplate.AsObject,
     rendered: boolean,
   }
 }

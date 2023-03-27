@@ -25,6 +25,8 @@ var resources_common_database_database_pb = require('../../resources/common/data
 goog.object.extend(proto, resources_common_database_database_pb);
 var resources_documents_documents_pb = require('../../resources/documents/documents_pb.js');
 goog.object.extend(proto, resources_documents_documents_pb);
+var resources_documents_templates_pb = require('../../resources/documents/templates_pb.js');
+goog.object.extend(proto, resources_documents_templates_pb);
 goog.exportSymbol('proto.services.docstore.AddDocumentReferenceRequest', null, global);
 goog.exportSymbol('proto.services.docstore.AddDocumentReferenceResponse', null, global);
 goog.exportSymbol('proto.services.docstore.AddDocumentRelationRequest', null, global);
@@ -1003,7 +1005,7 @@ proto.services.docstore.ListTemplatesResponse.prototype.toObject = function(opt_
 proto.services.docstore.ListTemplatesResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     templatesList: jspb.Message.toObjectList(msg.getTemplatesList(),
-    resources_documents_documents_pb.DocumentTemplateShort.toObject, includeInstance)
+    resources_documents_templates_pb.DocumentTemplateShort.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -1041,8 +1043,8 @@ proto.services.docstore.ListTemplatesResponse.deserializeBinaryFromReader = func
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_documents_documents_pb.DocumentTemplateShort;
-      reader.readMessage(value,resources_documents_documents_pb.DocumentTemplateShort.deserializeBinaryFromReader);
+      var value = new resources_documents_templates_pb.DocumentTemplateShort;
+      reader.readMessage(value,resources_documents_templates_pb.DocumentTemplateShort.deserializeBinaryFromReader);
       msg.addTemplates(value);
       break;
     default:
@@ -1079,7 +1081,7 @@ proto.services.docstore.ListTemplatesResponse.serializeBinaryToWriter = function
     writer.writeRepeatedMessage(
       1,
       f,
-      resources_documents_documents_pb.DocumentTemplateShort.serializeBinaryToWriter
+      resources_documents_templates_pb.DocumentTemplateShort.serializeBinaryToWriter
     );
   }
 };
@@ -1091,7 +1093,7 @@ proto.services.docstore.ListTemplatesResponse.serializeBinaryToWriter = function
  */
 proto.services.docstore.ListTemplatesResponse.prototype.getTemplatesList = function() {
   return /** @type{!Array<!proto.resources.documents.DocumentTemplateShort>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_documents_documents_pb.DocumentTemplateShort, 1));
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_templates_pb.DocumentTemplateShort, 1));
 };
 
 
@@ -1363,7 +1365,7 @@ proto.services.docstore.GetTemplateResponse.prototype.toObject = function(opt_in
  */
 proto.services.docstore.GetTemplateResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    template: (f = msg.getTemplate()) && resources_documents_documents_pb.DocumentTemplate.toObject(includeInstance, f),
+    template: (f = msg.getTemplate()) && resources_documents_templates_pb.DocumentTemplate.toObject(includeInstance, f),
     rendered: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
@@ -1402,8 +1404,8 @@ proto.services.docstore.GetTemplateResponse.deserializeBinaryFromReader = functi
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_documents_documents_pb.DocumentTemplate;
-      reader.readMessage(value,resources_documents_documents_pb.DocumentTemplate.deserializeBinaryFromReader);
+      var value = new resources_documents_templates_pb.DocumentTemplate;
+      reader.readMessage(value,resources_documents_templates_pb.DocumentTemplate.deserializeBinaryFromReader);
       msg.setTemplate(value);
       break;
     case 2:
@@ -1444,7 +1446,7 @@ proto.services.docstore.GetTemplateResponse.serializeBinaryToWriter = function(m
     writer.writeMessage(
       1,
       f,
-      resources_documents_documents_pb.DocumentTemplate.serializeBinaryToWriter
+      resources_documents_templates_pb.DocumentTemplate.serializeBinaryToWriter
     );
   }
   f = message.getRendered();
@@ -1463,7 +1465,7 @@ proto.services.docstore.GetTemplateResponse.serializeBinaryToWriter = function(m
  */
 proto.services.docstore.GetTemplateResponse.prototype.getTemplate = function() {
   return /** @type{?proto.resources.documents.DocumentTemplate} */ (
-    jspb.Message.getWrapperField(this, resources_documents_documents_pb.DocumentTemplate, 1));
+    jspb.Message.getWrapperField(this, resources_documents_templates_pb.DocumentTemplate, 1));
 };
 
 

@@ -3,46 +3,10 @@ syntax = "proto3";
 package resources.documents;
 option go_package = "github.com/galexrt/arpanet/proto/resources/documents;documents";
 
+import "resources/documents/category.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
-
-message DocumentCategory {
-  uint64 id = 1; // @gotags: alias:"id"
-  string name = 2 [(validate.rules).string = {min_len: 3, max_len: 128}]; // @gotags: alias:"name"
-  optional string description = 3 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
-  string job = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
-}
-
-message DocumentTemplate {
-  uint64 id = 1; // @gotags: alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  string job = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
-  int32 job_grade = 5 [(validate.rules).int32.gte = 0]; // @gotags: alias:"job_grade"
-  DocumentCategory category = 6; // @gotags: alias:"category"
-  string title = 7 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-  string description = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
-  string content_title = 9 [(validate.rules).string.min_len = 3]; // @gotags: alias:"content_title"
-  string content = 10 [(validate.rules).string = {min_len: 12, max_bytes: 12288}]; // @gotags: alias:"content"
-  string schema = 11; // @gotags: alias:"schema"
-  int32 creator_id = 12; // @gotags: alias:"creator_id"
-  optional resources.users.UserShort creator = 13;
-}
-
-message DocumentTemplateShort {
-  uint64 id = 1; // @gotags: alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  string job = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
-  uint64 category_id = 5; // @gotags: alias:"category_id"
-  DocumentCategory category = 6; // @gotags: alias:"category"
-  string title = 7 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-  string description = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
-  string schema = 9; // @gotags: alias:"schema"
-  int32 creator_id = 10; // @gotags: alias:"creator_id"
-  optional resources.users.UserShort creator = 11;
-}
 
 message DocumentComment {
   uint64 id = 1; // @gotags: alias:"id"
@@ -64,7 +28,7 @@ message Document {
   resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   uint64 category_id = 4; // @gotags: alias:"category_id"
-  DocumentCategory category = 5; // @gotags: alias:"category"
+  resources.documents.DocumentCategory category = 5; // @gotags: alias:"category"
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   DOC_CONTENT_TYPE content_type = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   string content = 8 [(validate.rules).string = {min_len: 30, max_bytes: 12288}]; // @gotags: alias:"content"
@@ -81,7 +45,7 @@ message DocumentShort {
   resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   uint64 category_id = 4; // @gotags: alias:"category_id"
-  DocumentCategory category = 5; // @gotags: alias:"category"
+  resources.documents.DocumentCategory category = 5; // @gotags: alias:"category"
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   int32 creator_id = 7; // @gotags: alias:"creator_id"
   resources.users.UserShort creator = 8; // @gotags: alias:"creator"

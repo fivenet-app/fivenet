@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package resources.documents;
+option go_package = "github.com/galexrt/arpanet/proto/resources/documents;documents";
+
+import "resources/documents/category.proto";
+import "resources/documents/documents.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "resources/vehicles/vehicles.proto";
+import "validate/validate.proto";
+
+message DocumentTemplate {
+  uint64 id = 1; // @gotags: alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  string job = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
+  int32 job_grade = 5 [(validate.rules).int32.gte = 0]; // @gotags: alias:"job_grade"
+  resources.documents.DocumentCategory category = 6; // @gotags: alias:"category"
+  string title = 7 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  string description = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
+  string content_title = 9 [(validate.rules).string.min_len = 3]; // @gotags: alias:"content_title"
+  string content = 10 [(validate.rules).string = {min_len: 12, max_bytes: 12288}]; // @gotags: alias:"content"
+  resources.documents.TemplateSchema schema = 11; // @gotags: alias:"schema"
+  int32 creator_id = 12; // @gotags: alias:"creator_id"
+  optional resources.users.UserShort creator = 13;
+}
+
+message DocumentTemplateShort {
+  uint64 id = 1; // @gotags: alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  string job = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
+  uint64 category_id = 5; // @gotags: alias:"category_id"
+  resources.documents.DocumentCategory category = 6; // @gotags: alias:"category"
+  string title = 7 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  string description = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
+  string schema = 9; // @gotags: alias:"schema"
+  int32 creator_id = 10; // @gotags: alias:"creator_id"
+  optional resources.users.UserShort creator = 11;
+}
+
+message TemplateSchema {
+  TemplateRequirements requirements = 1;
+}
+
+message TemplateRequirements {
+  ObjectSpecs activeChar = 1;
+  ObjectSpecs documents = 2;
+  ObjectSpecs users = 3;
+  ObjectSpecs vehicles = 4;
+}
+
+message ObjectSpecs {
+  bool required =1;
+  int64 min = 2;
+  int64 max = 3;
+}
+
+message TemplateData {
+  resources.users.User activeChar = 1;
+  repeated resources.documents.DocumentShort documents = 2 [(validate.rules).repeated.max_items = 5];
+  repeated resources.users.User users = 3 [(validate.rules).repeated.max_items = 5];
+  repeated resources.vehicles.Vehicle vehicles = 4 [(validate.rules).repeated.max_items = 5];
+}

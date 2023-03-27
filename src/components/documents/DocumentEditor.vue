@@ -32,7 +32,7 @@ import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_e
 import DocumentReferenceManager from './DocumentReferenceManager.vue';
 import DocumentRelationManager from './DocumentRelationManager.vue';
 import DocumentAccessEntry from './DocumentAccessEntry.vue';
-import { TemplateData } from '@arpanet/gen/resources/documents/templates/templates_pb';
+import { TemplateData } from '@arpanet/gen/resources/documents/templates_pb';
 
 const store = useStore();
 const router = useRouter();

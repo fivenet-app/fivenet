@@ -1,19 +1,12 @@
 <script lang="ts" setup>
-import { DocumentTemplate, DocumentTemplateShort } from '@arpanet/gen/resources/documents/documents_pb';
-import { GetTemplateRequest, ListTemplatesRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { ref, onBeforeMount, computed } from 'vue';
+import { DocumentTemplateShort } from '@arpanet/gen/resources/documents/documents_pb';
+import { ListTemplatesRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { ref, onBeforeMount } from 'vue';
 import { getDocStoreClient } from '../../grpc/grpc';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
-import { useStore } from '../../store/store';
-import { TemplateData } from '@arpanet/gen/resources/documents/templates/templates_pb';
 import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
 
-const store = useStore();
-
 const templates = ref<Array<DocumentTemplateShort>>([]);
-const templateObj = ref<undefined | DocumentTemplate>(undefined);
-
-const activeChar = computed(() => store.state.auth?.activeChar);
 
 defineEmits<{
     (e: 'selected', t: DocumentTemplateShort): void,

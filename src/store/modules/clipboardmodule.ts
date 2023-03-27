@@ -1,6 +1,6 @@
 import { GetterTree, Module } from 'vuex';
 import { RootState } from '../store';
-import { TemplateData } from '@arpanet/gen/resources/documents/templates/templates_pb';
+import { TemplateData } from '@arpanet/gen/resources/documents/templates_pb';
 import { User, UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
