@@ -29,7 +29,7 @@ message FindDocumentsRequest {
   repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
   // Search param
   string search = 3;
-  string category = 4;
+  repeated uint64 category_ids = 4;
 }
 
 message FindDocumentsResponse {

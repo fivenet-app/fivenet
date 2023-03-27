@@ -1518,7 +1518,7 @@ proto.services.docstore.GetTemplateResponse.prototype.setRendered = function(val
  * @private {!Array<number>}
  * @const
  */
-proto.services.docstore.FindDocumentsRequest.repeatedFields_ = [2];
+proto.services.docstore.FindDocumentsRequest.repeatedFields_ = [2,4];
 
 
 
@@ -1555,7 +1555,7 @@ proto.services.docstore.FindDocumentsRequest.toObject = function(includeInstance
     orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
     resources_common_database_database_pb.OrderBy.toObject, includeInstance),
     search: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    category: jspb.Message.getFieldWithDefault(msg, 4, "")
+    categoryIdsList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -1607,8 +1607,10 @@ proto.services.docstore.FindDocumentsRequest.deserializeBinaryFromReader = funct
       msg.setSearch(value);
       break;
     case 4:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setCategory(value);
+      var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedUint64() : [reader.readUint64()]);
+      for (var i = 0; i < values.length; i++) {
+        msg.addCategoryIds(values[i]);
+      }
       break;
     default:
       reader.skipField();
@@ -1662,9 +1664,9 @@ proto.services.docstore.FindDocumentsRequest.serializeBinaryToWriter = function(
       f
     );
   }
-  f = message.getCategory();
+  f = message.getCategoryIdsList();
   if (f.length > 0) {
-    writer.writeString(
+    writer.writePackedUint64(
       4,
       f
     );
@@ -1766,20 +1768,39 @@ proto.services.docstore.FindDocumentsRequest.prototype.setSearch = function(valu
 
 
 /**
- * optional string category = 4;
- * @return {string}
+ * repeated uint64 category_ids = 4;
+ * @return {!Array<number>}
  */
-proto.services.docstore.FindDocumentsRequest.prototype.getCategory = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+proto.services.docstore.FindDocumentsRequest.prototype.getCategoryIdsList = function() {
+  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 4));
 };
 
 
 /**
- * @param {string} value
+ * @param {!Array<number>} value
  * @return {!proto.services.docstore.FindDocumentsRequest} returns this
  */
-proto.services.docstore.FindDocumentsRequest.prototype.setCategory = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
+proto.services.docstore.FindDocumentsRequest.prototype.setCategoryIdsList = function(value) {
+  return jspb.Message.setField(this, 4, value || []);
+};
+
+
+/**
+ * @param {number} value
+ * @param {number=} opt_index
+ * @return {!proto.services.docstore.FindDocumentsRequest} returns this
+ */
+proto.services.docstore.FindDocumentsRequest.prototype.addCategoryIds = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 4, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.docstore.FindDocumentsRequest} returns this
+ */
+proto.services.docstore.FindDocumentsRequest.prototype.clearCategoryIdsList = function() {
+  return this.setCategoryIdsList([]);
 };
 
 

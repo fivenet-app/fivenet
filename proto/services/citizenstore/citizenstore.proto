@@ -11,7 +11,7 @@ message FindUsersRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
   // Search params
-  string searchName = 3 [(validate.rules).string.max_len = 50];
+  string search_name = 3 [(validate.rules).string.max_len = 50];
   bool wanted = 4;
 }
 

@@ -19,7 +19,8 @@ import (
 )
 
 const (
-	DocShortContentLength = 250
+	DocsDefaultPageLimit  = 10
+	DocShortContentLength = 200
 )
 
 var (
@@ -72,7 +73,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 	}
 
 	resp := &FindDocumentsResponse{
-		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
+		Pagination: database.EmptyPaginationResponseWithPageSize(req.Pagination.Offset, DocsDefaultPageLimit),
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -90,10 +91,11 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		s.c.EnrichJobInfo(resp.Documents[i].Creator)
 	}
 
-	database.PaginationHelper(resp.Pagination,
+	database.PaginationHelperWithPageSize(resp.Pagination,
 		count.TotalCount,
 		req.Pagination.Offset,
 		len(resp.Documents),
+		DocsDefaultPageLimit,
 	)
 
 	return resp, nil

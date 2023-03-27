@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
+import { PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 import { DocumentComment } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { computed, ref, onMounted } from 'vue';
@@ -25,23 +25,22 @@ const props = defineProps({
     }
 });
 
-const offset = ref(0);
-const totalCount = ref(0);
-const listEnd = ref(0);
+const pagination = ref<PaginationResponse>();
 
 // Document Comments
-function getComments(): void {
+function getComments(pos: number): void {
     const req = new GetDocumentCommentsRequest();
-    req.setPagination((new PaginationRequest()).setOffset(0));
+    req.setPagination((new PaginationRequest()).setOffset(pos));
     req.setDocumentId(props.documentId!);
 
     getDocStoreClient().
-    getDocumentComments(req, null).
-    then((resp) => {
-        resp.getCommentsList().forEach((v) => {
-            props.comments.push(v);
+        getDocumentComments(req, null).
+        then((resp) => {
+            resp.getCommentsList().forEach((v) => {
+                pagination.value = resp.getPagination();
+                props.comments.push(v);
+            });
         });
-    });
 
 }
 const message = ref('');
@@ -83,7 +82,7 @@ function focusComment(): void {
 
 onMounted(() => {
     if (props.documentId !== undefined && props.comments === undefined) {
-        getComments();
+        getComments(0);
     }
 });
 </script>
@@ -134,6 +133,5 @@ onMounted(() => {
             </ul>
         </div>
     </div>
-    <TablePagination v-if="comments.length > 0" :offset="offset" :entries="comments.length" :end="listEnd" :total="totalCount" :callback="getComments"
-        class="mt-2" />
+    <TablePagination v-if="comments.length > 0" :pagination="pagination!" :callback="getComments" class="mt-2" />
 </template>

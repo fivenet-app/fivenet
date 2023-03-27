@@ -4,7 +4,6 @@ import (
 	context "context"
 	"errors"
 
-	database "github.com/galexrt/arpanet/proto/resources/common/database"
 	"github.com/galexrt/arpanet/proto/resources/documents"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -104,7 +103,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		ORDER_BY(
 			docs.CreatedAt.DESC(),
 		).
-		LIMIT(database.DefaultPageLimit)
+		LIMIT(DocsDefaultPageLimit)
 }
 
 func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS) (bool, error) {

@@ -4,18 +4,17 @@ import { watchDebounced } from '@vueuse/shared';
 import { getDocStoreClient } from '../../grpc/grpc';
 import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
-import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
+import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { getDateLocaleString, getDateRelativeString } from '../../utils/time';
 import TemplatesModal from './TemplatesModal.vue';
+import { RpcError } from 'grpc-web';
 
 const search = ref({ title: '', });
 // TODO Implement order by for documents
 const orderBys = ref<Array<OrderBy>>([]);
-const offset = ref(0);
-const totalCount = ref(0);
-const listEnd = ref(0);
+const pagination = ref<PaginationResponse>();
 const documents = ref<Array<Document>>([]);
 
 function findDocuments(pos: number) {
@@ -23,19 +22,16 @@ function findDocuments(pos: number) {
 
     const req = new FindDocumentsRequest();
     req.setPagination((new PaginationRequest()).setOffset(pos));
-    req.setSearch(search.value.title);
     req.setOrderbyList([]);
+    req.setSearch(search.value.title);
 
     getDocStoreClient().
         findDocuments(req, null).
         then((resp) => {
-            const pag = resp.getPagination();
-            if (pag !== undefined) {
-                totalCount.value = pag.getTotalCount();
-                offset.value = pag.getOffset();
-                listEnd.value = pag.getEnd();
-            }
+            pagination.value = resp.getPagination();
             documents.value = resp.getDocumentsList();
+        }).catch((err: RpcError) => {
+            console.log(err);
         });
 }
 
@@ -139,8 +135,7 @@ onBeforeMount(() => {
                                 </li>
                             </ul>
 
-                            <TablePagination :offset="offset" :entries="documents.length" :end="listEnd" :total="totalCount"
-                                :callback="findDocuments" class="mt-2" />
+                            <TablePagination :pagination="pagination!" :callback="findDocuments" class="mt-2" />
                         </div>
                     </div>
                 </div>

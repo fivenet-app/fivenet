@@ -243,7 +243,7 @@ proto.services.citizenstore.FindUsersRequest.toObject = function(includeInstance
     pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f),
     orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
     resources_common_database_database_pb.OrderBy.toObject, includeInstance),
-    searchname: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    searchName: jspb.Message.getFieldWithDefault(msg, 3, ""),
     wanted: jspb.Message.getBooleanFieldWithDefault(msg, 4, false)
   };
 
@@ -293,7 +293,7 @@ proto.services.citizenstore.FindUsersRequest.deserializeBinaryFromReader = funct
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setSearchname(value);
+      msg.setSearchName(value);
       break;
     case 4:
       var value = /** @type {boolean} */ (reader.readBool());
@@ -344,7 +344,7 @@ proto.services.citizenstore.FindUsersRequest.serializeBinaryToWriter = function(
       resources_common_database_database_pb.OrderBy.serializeBinaryToWriter
     );
   }
-  f = message.getSearchname();
+  f = message.getSearchName();
   if (f.length > 0) {
     writer.writeString(
       3,
@@ -437,10 +437,10 @@ proto.services.citizenstore.FindUsersRequest.prototype.clearOrderbyList = functi
 
 
 /**
- * optional string searchName = 3;
+ * optional string search_name = 3;
  * @return {string}
  */
-proto.services.citizenstore.FindUsersRequest.prototype.getSearchname = function() {
+proto.services.citizenstore.FindUsersRequest.prototype.getSearchName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -449,7 +449,7 @@ proto.services.citizenstore.FindUsersRequest.prototype.getSearchname = function(
  * @param {string} value
  * @return {!proto.services.citizenstore.FindUsersRequest} returns this
  */
-proto.services.citizenstore.FindUsersRequest.prototype.setSearchname = function(value) {
+proto.services.citizenstore.FindUsersRequest.prototype.setSearchName = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 

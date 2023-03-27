@@ -29,7 +29,7 @@ import {
 import { watchDebounced } from '@vueuse/core';
 import { onMounted, ref, FunctionalComponent } from 'vue';
 import { useRouter } from 'vue-router/auto';
-import { getCitizenStoreClient, getDocStoreClient } from '../../grpc/grpc';
+import { getCitizenStoreClient } from '../../grpc/grpc';
 import { useStore } from '../../store/store';
 import { toTitleCase } from '../../utils/strings';
 

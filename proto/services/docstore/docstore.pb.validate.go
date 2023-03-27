@@ -638,8 +638,6 @@ func (m *FindDocumentsRequest) validate(all bool) error {
 
 	// no validation rules for Search
 
-	// no validation rules for Category
-
 	if len(errors) > 0 {
 		return FindDocumentsRequestMultiError(errors)
 	}

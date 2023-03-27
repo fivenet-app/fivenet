@@ -12,6 +12,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	CommentsDefaultPageLimit = 5
+)
+
 func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, true, documents.DOC_ACCESS_VIEW)
@@ -43,7 +47,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 	}
 
 	resp := &GetDocumentCommentsResponse{
-		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
+		Pagination: database.EmptyPaginationResponseWithPageSize(req.Pagination.Offset, CommentsDefaultPageLimit),
 		Comments:   []*documents.DocumentComment{},
 	}
 	if count.TotalCount <= 0 {
@@ -78,7 +82,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		ORDER_BY(
 			dComments.CreatedAt.DESC(),
 		).
-		LIMIT(10)
+		LIMIT(CommentsDefaultPageLimit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Comments); err != nil {
 		return nil, err
@@ -88,7 +92,8 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		count.TotalCount,
 		req.Pagination.Offset,
 		len(resp.Comments),
-		10)
+		CommentsDefaultPageLimit,
+	)
 
 	for i := 0; i < len(resp.Comments); i++ {
 		if resp.Comments[i].Creator != nil {

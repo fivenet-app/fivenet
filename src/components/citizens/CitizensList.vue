@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
+import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
 import { getCitizenStoreClient } from '../../grpc/grpc';
 import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
@@ -13,9 +13,7 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 const queryName = ref('');
 const queryWanted = ref(false);
 const orderBys = ref<Array<OrderBy>>([]);
-const offset = ref(0);
-const totalCount = ref(0);
-const listEnd = ref(0);
+const pagination = ref<PaginationResponse>();
 const users = ref<Array<User>>([]);
 
 function findUsers(pos: number) {
@@ -23,19 +21,14 @@ function findUsers(pos: number) {
 
     const req = new FindUsersRequest();
     req.setPagination((new PaginationRequest()).setOffset(pos));
-    req.setSearchname(queryName.value);
-    req.setWanted(queryWanted.value);
     req.setOrderbyList(orderBys.value);
+    req.setSearchName(queryName.value);
+    req.setWanted(queryWanted.value);
 
     getCitizenStoreClient().
         findUsers(req, null).
         then((resp) => {
-            const pag = resp.getPagination();
-            if (pag !== undefined) {
-                totalCount.value = pag.getTotalCount();
-                offset.value = pag.getOffset();
-                listEnd.value = pag.getEnd();
-            }
+            pagination.value = resp.getPagination();
             users.value = resp.getUsersList();
         });
 }
@@ -61,7 +54,7 @@ function toggleOrderBy(column: string): void {
         orderBy.setDesc(false);
         orderBys.value.push(orderBy);
     }
-    findUsers(offset.value);
+    findUsers(pagination.value?.getOffset()!);
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -90,8 +83,8 @@ onMounted(() => {
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">Search</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="queryName" ref="searchInput" type="text" name="search"
-                                        id="search" placeholder="Citizen Name"
+                                    <input v-model="queryName" ref="searchInput" type="text" name="search" id="search"
+                                        placeholder="Citizen Name"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
@@ -125,58 +118,63 @@ onMounted(() => {
                                 <thead>
                                     <tr>
                                         <th v-on:click="toggleOrderBy('firstname')" scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">Name
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                                            Name
                                         </th>
                                         <th v-on:click="toggleOrderBy('job')" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Job
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Sex
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Date
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            Date
                                             of
                                             Birth
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Height
                                         </th>
-                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
+                                        <th scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
                                             Actions
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <CitizenListEntry v-for="user in users" :key="user.getUserId()" :user="user" class="transition-colors hover:bg-neutral/5" />
+                                    <CitizenListEntry v-for="user in users" :key="user.getUserId()" :user="user"
+                                        class="transition-colors hover:bg-neutral/5" />
                                 </tbody>
                                 <thead>
                                     <tr>
                                         <th v-on:click="toggleOrderBy('firstname')" scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">Name
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                                            Name
                                         </th>
                                         <th v-on:click="toggleOrderBy('job')" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Job
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Sex
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Date
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            Date
                                             of
                                             Birth
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Height
                                         </th>
-                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
+                                        <th scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
                                             Actions
                                         </th>
                                     </tr>
                                 </thead>
                             </table>
 
-                            <TablePagination :offset="offset" :entries="users.length" :end="listEnd" :total="totalCount"
-                                :callback="findUsers" />
+                            <TablePagination :pagination="pagination!" :callback="findUsers" />
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
-</template>
+</div></template>

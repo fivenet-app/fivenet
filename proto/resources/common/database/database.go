@@ -1,7 +1,7 @@
 package database
 
 const (
-	DefaultPageLimit int64 = 20
+	DefaultPageLimit int64 = 15
 )
 
 type DataCount struct {
@@ -9,11 +9,15 @@ type DataCount struct {
 }
 
 func EmptyPaginationResponse(offset int64) *PaginationResponse {
+	return EmptyPaginationResponseWithPageSize(offset, DefaultPageLimit)
+}
+
+func EmptyPaginationResponseWithPageSize(offset int64, pageSize int64) *PaginationResponse {
 	return &PaginationResponse{
 		TotalCount: 0,
 		Offset:     offset,
 		End:        0,
-		PageSize:   DefaultPageLimit,
+		PageSize:   pageSize,
 	}
 }
 

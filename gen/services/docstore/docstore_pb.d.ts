@@ -109,8 +109,10 @@ export class FindDocumentsRequest extends jspb.Message {
   getSearch(): string;
   setSearch(value: string): FindDocumentsRequest;
 
-  getCategory(): string;
-  setCategory(value: string): FindDocumentsRequest;
+  getCategoryIdsList(): Array<number>;
+  setCategoryIdsList(value: Array<number>): FindDocumentsRequest;
+  clearCategoryIdsList(): FindDocumentsRequest;
+  addCategoryIds(value: number, index?: number): FindDocumentsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindDocumentsRequest.AsObject;
@@ -125,7 +127,7 @@ export namespace FindDocumentsRequest {
     pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
     orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
     search: string,
-    category: string,
+    categoryIdsList: Array<number>,
   }
 }
 

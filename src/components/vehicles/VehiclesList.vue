@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
-import { OrderBy, PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
+import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
 import { getDMVClient } from '../../grpc/grpc';
 import { FindVehiclesRequest } from '@arpanet/gen/services/dmv/vehicles_pb';
@@ -34,9 +34,7 @@ const props = defineProps({
 
 const search = ref<{ plate: string, model: string }>({ plate: '', model: '' });
 const orderBys = ref<Array<OrderBy>>([]);
-const offset = ref(0);
-const totalCount = ref(0);
-const listEnd = ref(0);
+const pagination = ref<PaginationResponse>();
 const vehicles = ref<Array<Vehicle>>([]);
 
 function findVehicles(pos: number) {
@@ -55,11 +53,7 @@ function findVehicles(pos: number) {
         findVehicles(req, null).
         then((resp) => {
             const pag = resp.getPagination();
-            if (pag !== undefined) {
-                totalCount.value = pag.getTotalCount();
-                offset.value = pag.getOffset();
-                listEnd.value = pag.getEnd();
-            }
+            pagination.value = resp.getPagination();
             vehicles.value = resp.getVehiclesList();
         });
 }
@@ -85,7 +79,7 @@ function toggleOrderBy(column: string): void {
         orderBy.setDesc(false);
         orderBys.value.push(orderBy);
     }
-    findVehicles(offset.value);
+    findVehicles(pagination.value?.getOffset()!);
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -97,10 +91,10 @@ function focusSearch(): void {
 }
 
 onMounted(() => {
-    if (props.userId) findVehicles(offset.value);
+    if (props.userId) findVehicles(pagination.value?.getOffset()!);
 });
 
-watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, maxWait: 1500 });
+watchDebounced(search.value, () => findVehicles(pagination.value?.getOffset()!), { debounce: 650, maxWait: 1500 });
 </script>
 
 <template>
@@ -111,18 +105,17 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                     <form @submit.prevent="findVehicles(0)">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">License Plate</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">License
+                                    Plate</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="search.plate" ref="searchInput" type="text"
-                                        placeholder="License plate"
+                                    <input v-model="search.plate" ref="searchInput" type="text" placeholder="License plate"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
                             <div class="flex-1 form-control">
                                 <label for="model" class="block text-sm font-medium leading-6 text-neutral">Model</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="search.model" type="text" name="model" id="model"
-                                        placeholder="Model"
+                                    <input v-model="search.model" type="text" name="model" id="model" placeholder="Model"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
@@ -154,7 +147,8 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Type
                                         </th>
-                                        <th v-if="!hideOwner" scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th v-if="!hideOwner" scope="col"
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Owner
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
@@ -169,9 +163,8 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
                                     <VehiclesListEntry v-for="vehicle in vehicles" :key="vehicle.getPlate()"
-                                        :vehicle="vehicle" :hide-owner="hideOwner"
-                                        :hide-citizen-link="hideCitizenLink" :hide-copy="hideCopy"
-                                        class="transition-colors hover:bg-neutral/5" />
+                                        :vehicle="vehicle" :hide-owner="hideOwner" :hide-citizen-link="hideCitizenLink"
+                                        :hide-copy="hideCopy" class="transition-colors hover:bg-neutral/5" />
                                 </tbody>
                                 <thead>
                                     <tr>
@@ -202,8 +195,7 @@ watchDebounced(search.value, () => findVehicles(offset.value), { debounce: 650, 
                                 </thead>
                             </table>
 
-                            <TablePagination :offset="offset" :entries="vehicles.length" :end="listEnd" :total="totalCount"
-                                :callback="findVehicles" />
+                            <TablePagination :pagination="pagination!" :callback="findVehicles" />
                         </div>
                     </div>
                 </div>
