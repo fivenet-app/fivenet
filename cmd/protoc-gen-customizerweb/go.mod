@@ -3,7 +3,7 @@ module github.com/galexrt/arpanet/cmd/protoc-gen-customizerweb
 go 1.20
 
 require (
-	github.com/lyft/protoc-gen-star/v2 v2.0.1
+	github.com/lyft/protoc-gen-star/v2 v2.0.3
 	google.golang.org/protobuf v1.30.0
 )
 
