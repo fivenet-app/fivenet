@@ -112,9 +112,9 @@ gen-tiles: gdal2tiles-leaflet
 
 .PHONY: optimize-tiles
 optimize-tiles:
-	find -iname '*.png' -print0 | xargs -n1 -P6 -0 optipng -strip all -clobber -fix -o9
+	find ./public/tiles -iname '*.png' -print0 | xargs -n1 -P6 -0 optipng -strip all -clobber -fix -o9
 
 .PHONY: tiles
 tiles:
-	$(MAKE) generate-tiles
+	$(MAKE) gen-tiles
 	$(MAKE) optimize-tiles
