@@ -107,7 +107,12 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
-		time.Sleep(3 * time.Second)
+
+		select {
+		case <-srv.Context().Done():
+			return nil
+		case <-time.After(3 * time.Second):
+		}
 	}
 }
 
