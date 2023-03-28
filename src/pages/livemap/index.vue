@@ -12,6 +12,12 @@ import Livemap from '../../components/Livemap.vue';
 }
 </route>
 
+<style>
+#map {
+    height: 94vh;
+}
+</style>
+
 <template>
     <div class="w-full">
         <Livemap />

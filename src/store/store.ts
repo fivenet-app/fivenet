@@ -19,6 +19,7 @@ const vuexPersist = new VuexPersistence<RootState>({
     storage: window.localStorage,
     modules: ['auth', 'clipboard', 'documentEditor'],
     reducer: (state: RootState) => ({
+        version: state.version,
         auth: {
             accessToken: state.auth?.accessToken,
             lastCharID: state.auth?.lastCharID,
@@ -53,8 +54,9 @@ export const store = createStore<RootState>({
         documentEditor: documentEditorModule,
     },
     state: {
-        version: '',
+        version: __APP_VERSION__,
     },
+    strict: import.meta.env.DEV,
 });
 
 export function useStore() {

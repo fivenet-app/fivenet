@@ -25,6 +25,9 @@ export class GenericMarker extends jspb.Message {
   getIcon(): string;
   setIcon(value: string): GenericMarker;
 
+  getIconColor(): string;
+  setIconColor(value: string): GenericMarker;
+
   getPopup(): string;
   setPopup(value: string): GenericMarker;
 
@@ -47,6 +50,7 @@ export namespace GenericMarker {
     id: number,
     name: string,
     icon: string,
+    iconColor: string,
     popup: string,
     link: string,
   }
@@ -73,17 +77,8 @@ export class UserMarker extends jspb.Message {
   getIcon(): string;
   setIcon(value: string): UserMarker;
 
-  getPopup(): string;
-  setPopup(value: string): UserMarker;
-
-  getLink(): string;
-  setLink(value: string): UserMarker;
-
-  getJob(): string;
-  setJob(value: string): UserMarker;
-
-  getJoblabel(): string;
-  setJoblabel(value: string): UserMarker;
+  getIconColor(): string;
+  setIconColor(value: string): UserMarker;
 
   getUser(): resources_users_users_pb.UserShort | undefined;
   setUser(value?: resources_users_users_pb.UserShort): UserMarker;
@@ -106,10 +101,7 @@ export namespace UserMarker {
     id: number,
     name: string,
     icon: string,
-    popup: string,
-    link: string,
-    job: string,
-    joblabel: string,
+    iconColor: string,
     user?: resources_users_users_pb.UserShort.AsObject,
   }
 }

@@ -1,5 +1,5 @@
 import { GenericMarker } from '@arpanet/gen/resources/livemap/livemap_pb';
-import L, { popup } from 'leaflet';
+import L from 'leaflet';
 
 import { AnimatedMarker } from './AnimatedMarker';
 import { Hash } from './Hash';
@@ -16,12 +16,19 @@ export class Livemap extends L.Map {
     public markers: Map<number, AnimatedMarker> = new Map();
     public popups: Map<number, L.Popup> = new Map();
     private prevMarkerLists: Map<MarkerType, Array<GenericMarker.AsObject>> = new Map();
+    private defaultIcon: L.Icon;
 
     private element: HTMLElement;
 
     constructor(element: string | HTMLElement, options?: L.MapOptions | undefined) {
         super(element, options);
         this.element = typeof element === 'string' ? (document.getElementById(element) as HTMLElement) : element;
+
+        this.defaultIcon = new L.Icon({
+            iconUrl: import.meta.env.BASE_URL + 'images/livemap/markers/user-default.svg',
+            iconSize: [48, 48],
+            iconAnchor: [48, 48],
+        });
 
         this.on('load', () => (this.hasLoaded = true));
         this.on('baselayerchange', (context) => this.updateBackground(context.name));
@@ -63,7 +70,7 @@ export class Livemap extends L.Map {
             if (options?.icon) marker.setIcon(options.icon);
             if (options?.opacity) marker.setOpacity(options.opacity);
         } else {
-            options.icon = options?.icon ? options.icon : new L.Icon.Default();
+            options.icon = options?.icon ? options.icon : this.defaultIcon;
             options.icon.options.shadowSize = [0, 0];
 
             const marker = new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(this);
@@ -89,17 +96,17 @@ export class Livemap extends L.Map {
     public parseMarkerlist(type: MarkerType, list: Array<GenericMarker>): void {
         let options: L.MarkerOptions = {};
         switch (type) {
-            case MarkerType.player: {
-                options = {};
-            }
-            break;
+            case MarkerType.player:
+                {
+                    options = {};
+                }
+                break;
 
-            case MarkerType.dispatch: {
-                options = {
-                    icon: L.icon({iconUrl: "https://em-content.zobj.net/thumbs/120/sony/336/large-red-circle_1f534.png"}),
-                };
-            }
-            break;
+            case MarkerType.dispatch:
+                {
+                    options = {};
+                }
+                break;
         }
 
         const previousList = this.prevMarkerLists.get(type);
@@ -111,13 +118,49 @@ export class Livemap extends L.Map {
         }
 
         list.forEach((marker) => {
-            this.addMarker(marker.getId(), marker.getY(), marker.getX(), marker.getPopup(), options);
+            if (marker.getIcon() || marker.getIconColor()) {
+                options.icon = this.getIcon(type, marker.getIcon(), marker.getIconColor());
+            }
+            this.addMarker(marker.getId(), marker.getY(), marker.getX(), marker.getPopup ? marker.getPopup() : "", options);
         });
 
         this.prevMarkerLists.set(
             type,
             list.map((e) => e.toObject())
         );
+    }
+
+    public getIcon(type: MarkerType, icon: string, iconColor: string): L.DivIcon {
+        let html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full mx-auto">
+          <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+        </svg>`;
+        switch (type) {
+            case MarkerType.player:
+                {
+                    html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${
+                        iconColor ? '#' + iconColor : 'currentColor'
+                    }" class="w-full h-full">
+                  <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                </svg>`;
+                }
+                break;
+
+            case MarkerType.dispatch:
+                {
+                    html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${
+                        iconColor ? '#' + iconColor : 'currentColor'
+                    }" class="w-full h-full">
+                  <path fill-rule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clip-rule="evenodd" />
+                </svg>`;
+                }
+                break;
+        }
+
+        return new L.DivIcon({
+            html: '<div class="place-content-center">' + html + '</div>',
+            iconSize: [42, 42],
+            iconAnchor: [21, 12],
+        });
     }
 }
 

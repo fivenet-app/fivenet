@@ -14,8 +14,9 @@ message GenericMarker {
   int32 id = 4 [(validate.rules).int32.gt = 0];
   string name = 5;
   string icon = 6;
-  string popup = 7;
-  string link = 8;
+  string icon_color = 7;
+  string popup = 8;
+  string link = 9;
 }
 
 message UserMarker {
@@ -25,10 +26,7 @@ message UserMarker {
   int32 id = 4 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
   string name = 5;
   string icon = 6;
-  string popup = 7;
-  string link = 8;
+  string icon_color = 7;
 
-  string job = 9 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
-  string jobLabel = 10;
-  resources.users.UserShort user = 11; // @gotags: alias:"user"
+  resources.users.UserShort user = 8; // @gotags: alias:"user"
 }

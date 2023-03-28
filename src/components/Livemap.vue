@@ -35,7 +35,7 @@ const position = new Position();
 let stream = null as null | ClientReadableStream<StreamResponse>;
 let map = {} as undefined | Livemap;
 
-const atlas = L.tileLayer('/dist/tiles/atlas/{z}/{x}/{y}.png', {
+const atlas = L.tileLayer(import.meta.env.BASE_URL + 'tiles/atlas/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -43,7 +43,7 @@ const atlas = L.tileLayer('/dist/tiles/atlas/{z}/{x}/{y}.png', {
     noWrap: false,
     tms: true,
 });
-const postal = L.tileLayer('/dist/tiles/postal/{z}/{x}/{y}.png', {
+const postal = L.tileLayer(import.meta.env.BASE_URL + 'tiles/postal/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -51,7 +51,7 @@ const postal = L.tileLayer('/dist/tiles/postal/{z}/{x}/{y}.png', {
     noWrap: false,
     tms: true,
 });
-const road = L.tileLayer('/dist/tiles/road/{z}/{x}/{y}.png', {
+const road = L.tileLayer(import.meta.env.BASE_URL + 'tiles/road/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -59,7 +59,7 @@ const road = L.tileLayer('/dist/tiles/road/{z}/{x}/{y}.png', {
     noWrap: false,
     tms: true,
 });
-const satelite = L.tileLayer('/dist/tiles/satelite/{z}/{x}/{y}.png', {
+const satelite = L.tileLayer(import.meta.env.BASE_URL + 'tiles/satelite/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -127,12 +127,19 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped>
-#map {
-    height: 94vh;
+<style>
+.leaflet-div-icon {
+    background: none;
+    border: none;
+}
+
+.leaflet-div-icon svg path {
+    stroke: #000000;
+    stroke-width: 1.75px;
+    stroke-linejoin: round;
 }
 </style>
 
 <template>
-    <div class="w-full z-0" id="map"></div>
+    <div id="map" class="w-full z-0"></div>
 </template>

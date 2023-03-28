@@ -107,8 +107,9 @@ proto.resources.livemap.GenericMarker.toObject = function(includeInstance, msg) 
     id: jspb.Message.getFieldWithDefault(msg, 4, 0),
     name: jspb.Message.getFieldWithDefault(msg, 5, ""),
     icon: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    popup: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    link: jspb.Message.getFieldWithDefault(msg, 8, "")
+    iconColor: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    popup: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    link: jspb.Message.getFieldWithDefault(msg, 9, "")
   };
 
   if (includeInstance) {
@@ -172,9 +173,13 @@ proto.resources.livemap.GenericMarker.deserializeBinaryFromReader = function(msg
       break;
     case 7:
       var value = /** @type {string} */ (reader.readString());
-      msg.setPopup(value);
+      msg.setIconColor(value);
       break;
     case 8:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPopup(value);
+      break;
+    case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setLink(value);
       break;
@@ -250,17 +255,24 @@ proto.resources.livemap.GenericMarker.serializeBinaryToWriter = function(message
       f
     );
   }
-  f = message.getPopup();
+  f = message.getIconColor();
   if (f.length > 0) {
     writer.writeString(
       7,
       f
     );
   }
-  f = message.getLink();
+  f = message.getPopup();
   if (f.length > 0) {
     writer.writeString(
       8,
+      f
+    );
+  }
+  f = message.getLink();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
       f
     );
   }
@@ -395,10 +407,10 @@ proto.resources.livemap.GenericMarker.prototype.setIcon = function(value) {
 
 
 /**
- * optional string popup = 7;
+ * optional string icon_color = 7;
  * @return {string}
  */
-proto.resources.livemap.GenericMarker.prototype.getPopup = function() {
+proto.resources.livemap.GenericMarker.prototype.getIconColor = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
@@ -407,16 +419,16 @@ proto.resources.livemap.GenericMarker.prototype.getPopup = function() {
  * @param {string} value
  * @return {!proto.resources.livemap.GenericMarker} returns this
  */
-proto.resources.livemap.GenericMarker.prototype.setPopup = function(value) {
+proto.resources.livemap.GenericMarker.prototype.setIconColor = function(value) {
   return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
 /**
- * optional string link = 8;
+ * optional string popup = 8;
  * @return {string}
  */
-proto.resources.livemap.GenericMarker.prototype.getLink = function() {
+proto.resources.livemap.GenericMarker.prototype.getPopup = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
@@ -425,8 +437,26 @@ proto.resources.livemap.GenericMarker.prototype.getLink = function() {
  * @param {string} value
  * @return {!proto.resources.livemap.GenericMarker} returns this
  */
-proto.resources.livemap.GenericMarker.prototype.setLink = function(value) {
+proto.resources.livemap.GenericMarker.prototype.setPopup = function(value) {
   return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional string link = 9;
+ * @return {string}
+ */
+proto.resources.livemap.GenericMarker.prototype.getLink = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.livemap.GenericMarker} returns this
+ */
+proto.resources.livemap.GenericMarker.prototype.setLink = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 
@@ -468,10 +498,7 @@ proto.resources.livemap.UserMarker.toObject = function(includeInstance, msg) {
     id: jspb.Message.getFieldWithDefault(msg, 4, 0),
     name: jspb.Message.getFieldWithDefault(msg, 5, ""),
     icon: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    popup: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    link: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    job: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    joblabel: jspb.Message.getFieldWithDefault(msg, 10, ""),
+    iconColor: jspb.Message.getFieldWithDefault(msg, 7, ""),
     user: (f = msg.getUser()) && resources_users_users_pb.UserShort.toObject(includeInstance, f)
   };
 
@@ -536,21 +563,9 @@ proto.resources.livemap.UserMarker.deserializeBinaryFromReader = function(msg, r
       break;
     case 7:
       var value = /** @type {string} */ (reader.readString());
-      msg.setPopup(value);
+      msg.setIconColor(value);
       break;
     case 8:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setLink(value);
-      break;
-    case 9:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setJob(value);
-      break;
-    case 10:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setJoblabel(value);
-      break;
-    case 11:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setUser(value);
@@ -627,38 +642,17 @@ proto.resources.livemap.UserMarker.serializeBinaryToWriter = function(message, w
       f
     );
   }
-  f = message.getPopup();
+  f = message.getIconColor();
   if (f.length > 0) {
     writer.writeString(
       7,
       f
     );
   }
-  f = message.getLink();
-  if (f.length > 0) {
-    writer.writeString(
-      8,
-      f
-    );
-  }
-  f = message.getJob();
-  if (f.length > 0) {
-    writer.writeString(
-      9,
-      f
-    );
-  }
-  f = message.getJoblabel();
-  if (f.length > 0) {
-    writer.writeString(
-      10,
-      f
-    );
-  }
   f = message.getUser();
   if (f != null) {
     writer.writeMessage(
-      11,
+      8,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -794,10 +788,10 @@ proto.resources.livemap.UserMarker.prototype.setIcon = function(value) {
 
 
 /**
- * optional string popup = 7;
+ * optional string icon_color = 7;
  * @return {string}
  */
-proto.resources.livemap.UserMarker.prototype.getPopup = function() {
+proto.resources.livemap.UserMarker.prototype.getIconColor = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
@@ -806,72 +800,18 @@ proto.resources.livemap.UserMarker.prototype.getPopup = function() {
  * @param {string} value
  * @return {!proto.resources.livemap.UserMarker} returns this
  */
-proto.resources.livemap.UserMarker.prototype.setPopup = function(value) {
+proto.resources.livemap.UserMarker.prototype.setIconColor = function(value) {
   return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
 /**
- * optional string link = 8;
- * @return {string}
- */
-proto.resources.livemap.UserMarker.prototype.getLink = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.resources.livemap.UserMarker} returns this
- */
-proto.resources.livemap.UserMarker.prototype.setLink = function(value) {
-  return jspb.Message.setProto3StringField(this, 8, value);
-};
-
-
-/**
- * optional string job = 9;
- * @return {string}
- */
-proto.resources.livemap.UserMarker.prototype.getJob = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.resources.livemap.UserMarker} returns this
- */
-proto.resources.livemap.UserMarker.prototype.setJob = function(value) {
-  return jspb.Message.setProto3StringField(this, 9, value);
-};
-
-
-/**
- * optional string jobLabel = 10;
- * @return {string}
- */
-proto.resources.livemap.UserMarker.prototype.getJoblabel = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.resources.livemap.UserMarker} returns this
- */
-proto.resources.livemap.UserMarker.prototype.setJoblabel = function(value) {
-  return jspb.Message.setProto3StringField(this, 10, value);
-};
-
-
-/**
- * optional resources.users.UserShort user = 11;
+ * optional resources.users.UserShort user = 8;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.livemap.UserMarker.prototype.getUser = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 11));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 8));
 };
 
 
@@ -880,7 +820,7 @@ proto.resources.livemap.UserMarker.prototype.getUser = function() {
  * @return {!proto.resources.livemap.UserMarker} returns this
 */
 proto.resources.livemap.UserMarker.prototype.setUser = function(value) {
-  return jspb.Message.setWrapperField(this, 11, value);
+  return jspb.Message.setWrapperField(this, 8, value);
 };
 
 
@@ -898,7 +838,7 @@ proto.resources.livemap.UserMarker.prototype.clearUser = function() {
  * @return {boolean}
  */
 proto.resources.livemap.UserMarker.prototype.hasUser = function() {
-  return jspb.Message.getField(this, 11) != null;
+  return jspb.Message.getField(this, 8) != null;
 };
 
 

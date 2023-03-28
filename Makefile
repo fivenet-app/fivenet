@@ -28,7 +28,7 @@ build-go:
 .PHONY: build-yarn
 build-yarn:
 	rm -rf ./dist/
-	VITE_BASE="/dist" \
+	VITE_BASE="/dist/" \
 		yarn build
 
 .PHONY: run-server

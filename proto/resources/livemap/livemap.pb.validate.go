@@ -105,6 +105,8 @@ func (m *GenericMarker) validate(all bool) error {
 
 	// no validation rules for Icon
 
+	// no validation rules for IconColor
+
 	// no validation rules for Popup
 
 	// no validation rules for Link
@@ -257,22 +259,7 @@ func (m *UserMarker) validate(all bool) error {
 
 	// no validation rules for Icon
 
-	// no validation rules for Popup
-
-	// no validation rules for Link
-
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
-		err := UserMarkerValidationError{
-			field:  "Job",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for JobLabel
+	// no validation rules for IconColor
 
 	if all {
 		switch v := interface{}(m.GetUser()).(type) {

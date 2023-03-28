@@ -73,6 +73,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			users.JobGrade,
 			users.Firstname,
 			users.Lastname,
+			jet.String("5C7AFF").AS("usermarker.icon_color"),
 		).
 		FROM(
 			locs.
@@ -145,13 +146,24 @@ func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.G
 		x, _ := strconv.ParseFloat(gpsSplit[0], 32)
 		y, _ := strconv.ParseFloat(gpsSplit[1], 32)
 
+		var icon string
+		var iconColor string
+		if v.Owner == 0 {
+			icon = "dispatch-open.svg"
+			iconColor = "96E6B3"
+		} else {
+			icon = "dispatch-closed.svg"
+			iconColor = "DA3E52"
+		}
+
 		ds[i] = &livemap.GenericMarker{
-			X:     float32(x),
-			Y:     float32(y),
-			Id:    v.ID,
-			Icon:  "https://em-content.zobj.net/thumbs/120/sony/336/large-red-circle_1f534.png",
-			Name:  *v.Name,
-			Popup: *v.Message,
+			X:         float32(x),
+			Y:         float32(y),
+			Id:        v.ID,
+			Icon:      icon,
+			IconColor: iconColor,
+			Name:      *v.Name,
+			Popup:     *v.Message,
 		}
 	}
 

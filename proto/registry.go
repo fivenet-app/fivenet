@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/arpanet/pkg/mstlystcdata"
 	"github.com/galexrt/arpanet/pkg/perms"
 	"github.com/getsentry/sentry-go"
+	"github.com/gin-gonic/gin"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
@@ -98,9 +99,13 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(logger.Named("grpc_livemap"), db, p)
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
-	go livemapper.GenerateRandomUserMarker()
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p))
 	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher))
+
+	// Only run the livemapper random user marker generator in debug mode
+	if config.C.Mode == gin.DebugMode {
+		go livemapper.GenerateRandomUserMarker()
+	}
 
 	return grpcServer, lis
 }
