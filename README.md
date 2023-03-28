@@ -1,4 +1,4 @@
-# arpanet
+# aRPaNet
 
 ## Features
 
@@ -24,6 +24,15 @@
         - [ ] Create Categories
         - [ ] Edit Categories
         - [ ] Delete categories
+
+### Future
+
+- [ ] Documents
+    - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
+- [ ] Employee Management
+    - [ ] Create Notes and Warns for Employees ("Führungsregister")
+    - [ ] Promote and Demote Employees
+    - [ ] Fire employees
 
 ### Completed
 
@@ -72,15 +81,6 @@
             - [x] Edit Document Comments
 - [x] "Completor" Service
     - [x] Use [Bleve search](https://blevesearch.com/)
-
-### Future
-
-- [ ] Documents
-    - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
-- [ ] Employee Management
-    - [ ] Create Notes and Warns for Employees ("Führungsregister")
-    - [ ] Promote and Demote Employees
-    - [ ] Fire employees
 
 ## Development
 
