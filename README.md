@@ -4,7 +4,7 @@
 
 - [ ] FiveM Integration plugin
     - [ ] Authentication
-        - [ ] Create in-game "register" command to set username and password
+        - [ ] Create in-game "register" command to get a token with which one can then set their username and password
     - [ ] Livemap
         - [ ] Write a FiveM plugin that writes player positions into our location table
 - [ ] "Content Moderation" access for server admins
