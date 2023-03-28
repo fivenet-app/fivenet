@@ -124,14 +124,18 @@ func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.D
 			d.Owner,
 			d.Jobm,
 			d.Anon,
-			d.Time,
 		).
 		FROM(
 			d,
 		).
 		WHERE(
-			d.Jobm.REGEXP_LIKE(jet.String("\\[\"(" + strings.Join(jobs, "|") + ")\"\\]")),
-		)
+			jet.AND(
+				d.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(jobs, "|")+")\"\\]")),
+				d.Time.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE))),
+			),
+		).
+		ORDER_BY(d.Time.DESC()).
+		LIMIT(50)
 
 	var dest []*model.GksphoneJobMessage
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
