@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, onUnmounted } from 'vue';
+import { onMounted, onBeforeUnmount, onUnmounted, ref } from 'vue';
 import { getLivemapperClient } from '../grpc/grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
 import { handleGRPCError } from '../grpc/interceptors';
+import { XCircleIcon } from '@heroicons/vue/20/solid';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import L from 'leaflet';
@@ -32,7 +33,6 @@ const Position = L.Control.extend({
 });
 const position = new Position();
 
-let stream = null as null | ClientReadableStream<StreamResponse>;
 let map = {} as undefined | Livemap;
 
 const atlas = L.tileLayer(import.meta.env.BASE_URL + 'tiles/atlas/{z}/{x}/{y}.png', {
@@ -68,29 +68,40 @@ const satelite = L.tileLayer(import.meta.env.BASE_URL + 'tiles/satelite/{z}/{x}/
     tms: true,
 });
 
-function start() {
+let stream = undefined as undefined | ClientReadableStream<StreamResponse>;
+const error = ref();
+
+async function start() {
+    if (stream !== undefined) {
+        return;
+    }
+
     console.log('starting livemap data stream');
     const request = new StreamRequest();
 
-    stream = getLivemapperClient()
-        .stream(request)
-        .on('error', (err: RpcError) => {
+    stream = getLivemapperClient().
+        stream(request).
+        on('error', (err: RpcError) => {
             handleGRPCError(err);
-        })
-        .on('data', function (resp) {
+            error.value = err;
+            stop();
+        }).
+        on('data', function (resp) {
+            error.value = null;
+
             map?.parseMarkerlist(MarkerType.dispatch, resp.getDispatchesList());
             map?.parseMarkerlist(MarkerType.player, resp.getUsersList());
-        })
-        .on('end', function () {
+        }).
+        on('end', function () {
             console.log('livemap data stream ended');
         });
 }
 
 function stop() {
     console.log('stopping livemap data stream');
-    if (stream) {
+    if (stream !== undefined) {
         stream.cancel();
-        stream = null;
+        stream = undefined;
     }
 }
 
@@ -101,7 +112,7 @@ onMounted(() => {
 
     const markersLayer = new L.LayerGroup().addTo(map as L.Map);
     L.control
-        .layers({ Satelite: satelite, Atlas: atlas, Road: road, Postal: postal }, { Markers: markersLayer })
+        .layers({ Atlas: atlas, Road: road, Satelite: satelite, Postal: postal }, { Markers: markersLayer })
         .addTo(map as L.Map);
     postal.bringToFront();
 
@@ -142,4 +153,30 @@ onUnmounted(() => {
 
 <template>
     <div id="map" class="w-full z-0"></div>
+    <div v-if="!stream || error" class="absolute inset-0 flex justify-center items-center z-10"
+        style="background-color: rgba(62, 60, 62, 0.5)">
+        <div v-if="error" class="rounded-md bg-red-50 p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <XCircleIcon class="h-5 w-5 text-red-400" aria-hidden="true" />
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Failed to stream Livemap data</h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        <p>
+                            Please wait a few seconds and try again.
+                        </p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="-mx-2 -my-1.5 flex">
+                            <button type="button"
+                                class="rounded-md bg-red-50 px-2 py-1.5 text-sm font-medium text-red-800 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-50" @click="start()">
+                                Retry
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
