@@ -1,4 +1,4 @@
-import { GenericMarker } from '@arpanet/gen/resources/livemap/livemap_pb';
+import { IMarker } from '@arpanet/gen/resources/livemap/livemap';
 import L from 'leaflet';
 
 import { AnimatedMarker } from './AnimatedMarker';
@@ -15,7 +15,7 @@ export class Livemap extends L.Map {
 
     public markers: Map<number, AnimatedMarker> = new Map();
     public popups: Map<number, L.Popup> = new Map();
-    private prevMarkerLists: Map<MarkerType, Array<GenericMarker.AsObject>> = new Map();
+    private prevMarkerLists: Map<MarkerType, Array<IMarker.AsObject>> = new Map();
     private defaultIcon: L.Icon;
 
     private element: HTMLElement;
@@ -93,7 +93,7 @@ export class Livemap extends L.Map {
         return this.markers.delete(id);
     }
 
-    public parseMarkerlist(type: MarkerType, list: Array<GenericMarker>): void {
+    public parseMarkerlist(type: MarkerType, list: Array<IMarker>): void {
         let options: L.MarkerOptions = {};
         switch (type) {
             case MarkerType.player:
@@ -121,7 +121,7 @@ export class Livemap extends L.Map {
             if (marker.getIcon() || marker.getIconColor()) {
                 options.icon = this.getIcon(type, marker.getIcon(), marker.getIconColor());
             }
-            this.addMarker(marker.getId(), marker.getY(), marker.getX(), marker.getPopup ? marker.getPopup() : "", options);
+            this.addMarker(marker.getId(), marker.getY(), marker.getX(), '', options);
         });
 
         this.prevMarkerLists.set(

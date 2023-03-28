@@ -35,22 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on GenericMarker with the rules defined in
+// Validate checks the field values on DispatchMarker with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *GenericMarker) Validate() error {
+func (m *DispatchMarker) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GenericMarker with the rules defined
+// ValidateAll checks the field values on DispatchMarker with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in GenericMarkerMultiError, or
-// nil if none found.
-func (m *GenericMarker) ValidateAll() error {
+// result is a list of violation errors wrapped in DispatchMarkerMultiError,
+// or nil if none found.
+func (m *DispatchMarker) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GenericMarker) validate(all bool) error {
+func (m *DispatchMarker) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -65,7 +65,7 @@ func (m *GenericMarker) validate(all bool) error {
 		switch v := interface{}(m.GetUpdatedAt()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GenericMarkerValidationError{
+				errors = append(errors, DispatchMarkerValidationError{
 					field:  "UpdatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -73,7 +73,7 @@ func (m *GenericMarker) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, GenericMarkerValidationError{
+				errors = append(errors, DispatchMarkerValidationError{
 					field:  "UpdatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -82,7 +82,7 @@ func (m *GenericMarker) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return GenericMarkerValidationError{
+			return DispatchMarkerValidationError{
 				field:  "UpdatedAt",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -91,7 +91,7 @@ func (m *GenericMarker) validate(all bool) error {
 	}
 
 	if m.GetId() <= 0 {
-		err := GenericMarkerValidationError{
+		err := DispatchMarkerValidationError{
 			field:  "Id",
 			reason: "value must be greater than 0",
 		}
@@ -112,19 +112,19 @@ func (m *GenericMarker) validate(all bool) error {
 	// no validation rules for Link
 
 	if len(errors) > 0 {
-		return GenericMarkerMultiError(errors)
+		return DispatchMarkerMultiError(errors)
 	}
 
 	return nil
 }
 
-// GenericMarkerMultiError is an error wrapping multiple validation errors
-// returned by GenericMarker.ValidateAll() if the designated constraints
+// DispatchMarkerMultiError is an error wrapping multiple validation errors
+// returned by DispatchMarker.ValidateAll() if the designated constraints
 // aren't met.
-type GenericMarkerMultiError []error
+type DispatchMarkerMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GenericMarkerMultiError) Error() string {
+func (m DispatchMarkerMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -133,11 +133,11 @@ func (m GenericMarkerMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GenericMarkerMultiError) AllErrors() []error { return m }
+func (m DispatchMarkerMultiError) AllErrors() []error { return m }
 
-// GenericMarkerValidationError is the validation error returned by
-// GenericMarker.Validate if the designated constraints aren't met.
-type GenericMarkerValidationError struct {
+// DispatchMarkerValidationError is the validation error returned by
+// DispatchMarker.Validate if the designated constraints aren't met.
+type DispatchMarkerValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -145,22 +145,22 @@ type GenericMarkerValidationError struct {
 }
 
 // Field function returns field value.
-func (e GenericMarkerValidationError) Field() string { return e.field }
+func (e DispatchMarkerValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GenericMarkerValidationError) Reason() string { return e.reason }
+func (e DispatchMarkerValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GenericMarkerValidationError) Cause() error { return e.cause }
+func (e DispatchMarkerValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GenericMarkerValidationError) Key() bool { return e.key }
+func (e DispatchMarkerValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GenericMarkerValidationError) ErrorName() string { return "GenericMarkerValidationError" }
+func (e DispatchMarkerValidationError) ErrorName() string { return "DispatchMarkerValidationError" }
 
 // Error satisfies the builtin error interface
-func (e GenericMarkerValidationError) Error() string {
+func (e DispatchMarkerValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -172,14 +172,14 @@ func (e GenericMarkerValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGenericMarker.%s: %s%s",
+		"invalid %sDispatchMarker.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GenericMarkerValidationError{}
+var _ error = DispatchMarkerValidationError{}
 
 var _ interface {
 	Field() string
@@ -187,7 +187,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GenericMarkerValidationError{}
+} = DispatchMarkerValidationError{}
 
 // Validate checks the field values on UserMarker with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

@@ -111,7 +111,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 }
 
-func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.GenericMarker, error) {
+func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.DispatchMarker, error) {
 	d := table.GksphoneJobMessage
 	stmt := d.
 		SELECT(
@@ -138,7 +138,7 @@ func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.G
 		return nil, err
 	}
 
-	ds := make([]*livemap.GenericMarker, len(dest))
+	ds := make([]*livemap.DispatchMarker, len(dest))
 
 	for i, v := range dest {
 		gps, _ := strings.CutPrefix(*v.Gps, "GPS: ")
@@ -156,7 +156,7 @@ func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.G
 			iconColor = "DA3E52"
 		}
 
-		ds[i] = &livemap.GenericMarker{
+		ds[i] = &livemap.DispatchMarker{
 			X:         float32(x),
 			Y:         float32(y),
 			Id:        v.ID,

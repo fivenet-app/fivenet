@@ -4,45 +4,45 @@ import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/tim
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
 
-export class GenericMarker extends jspb.Message {
+export class DispatchMarker extends jspb.Message {
   getX(): number;
-  setX(value: number): GenericMarker;
+  setX(value: number): DispatchMarker;
 
   getY(): number;
-  setY(value: number): GenericMarker;
+  setY(value: number): DispatchMarker;
 
   getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): GenericMarker;
+  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DispatchMarker;
   hasUpdatedAt(): boolean;
-  clearUpdatedAt(): GenericMarker;
+  clearUpdatedAt(): DispatchMarker;
 
   getId(): number;
-  setId(value: number): GenericMarker;
+  setId(value: number): DispatchMarker;
 
   getName(): string;
-  setName(value: string): GenericMarker;
+  setName(value: string): DispatchMarker;
 
   getIcon(): string;
-  setIcon(value: string): GenericMarker;
+  setIcon(value: string): DispatchMarker;
 
   getIconColor(): string;
-  setIconColor(value: string): GenericMarker;
+  setIconColor(value: string): DispatchMarker;
 
   getPopup(): string;
-  setPopup(value: string): GenericMarker;
+  setPopup(value: string): DispatchMarker;
 
   getLink(): string;
-  setLink(value: string): GenericMarker;
+  setLink(value: string): DispatchMarker;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GenericMarker.AsObject;
-  static toObject(includeInstance: boolean, msg: GenericMarker): GenericMarker.AsObject;
-  static serializeBinaryToWriter(message: GenericMarker, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GenericMarker;
-  static deserializeBinaryFromReader(message: GenericMarker, reader: jspb.BinaryReader): GenericMarker;
+  toObject(includeInstance?: boolean): DispatchMarker.AsObject;
+  static toObject(includeInstance: boolean, msg: DispatchMarker): DispatchMarker.AsObject;
+  static serializeBinaryToWriter(message: DispatchMarker, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DispatchMarker;
+  static deserializeBinaryFromReader(message: DispatchMarker, reader: jspb.BinaryReader): DispatchMarker;
 }
 
-export namespace GenericMarker {
+export namespace DispatchMarker {
   export type AsObject = {
     x: number,
     y: number,
