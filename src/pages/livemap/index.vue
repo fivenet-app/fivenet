@@ -14,7 +14,7 @@ import Livemap from '../../components/Livemap.vue';
 
 <style>
 #map {
-    height: 94vh;
+    height: 94.75vh;
 }
 </style>
 
