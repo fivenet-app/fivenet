@@ -19,16 +19,16 @@ const fullPage = ref(false);
 
 let loader: undefined | ActiveLoader = undefined;
 
-function showLoader(): ActiveLoader {
+async function showLoader(): Promise<ActiveLoader> {
     return loading.show({
         isFullPage: fullPage.value,
     });
 }
 
-watch(loadingState, (newState: number | undefined) => {
+watch(loadingState, async (newState: number | undefined) => {
     if (newState !== undefined) {
         if (newState > 0 && loader === undefined) {
-            loader = showLoader();
+            loader = await showLoader();
         } else if (newState <= 0 && loader !== undefined) {
             loader.hide();
             loader = undefined;
