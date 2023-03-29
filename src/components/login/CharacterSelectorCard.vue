@@ -2,12 +2,13 @@
 import { computed } from 'vue';
 import { useStore } from '../../store/store';
 import { useRoute, useRouter } from 'vue-router/auto';
-import { getAuthClient } from '../../grpc/grpc';
+import { getAuthClient, handleRPCError } from '../../grpc/grpc';
 import { ChooseCharacterRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { parseQuery } from 'vue-router/auto';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { fromSecondsToFormattedDuration } from '../../utils/time';
+import { RpcError } from 'grpc-web';
 
 const store = useStore();
 const route = useRoute();
@@ -22,21 +23,24 @@ const props = defineProps({
     },
 });
 
-function chooseCharacter() {
+async function chooseCharacter() {
     const req = new ChooseCharacterRequest();
     req.setCharId(props.char.getUserId());
 
-    getAuthClient()
-        .chooseCharacter(req, null)
-        .then((resp) => {
-            store.dispatch('auth/updateAccessToken', resp.getToken());
-            store.dispatch('auth/updateActiveChar', props.char);
-            store.dispatch('auth/updatePermissions', resp.getPermissionsList());
-            console.log("Char Permissions: " + resp.getPermissionsList());
-            const path = route.query.redirect?.toString() || "/overview";
-            const url = new URL("https://example.com" + path);
-            router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
-        });
+    try {
+        const resp = await getAuthClient()
+            .chooseCharacter(req, null);
+
+        store.dispatch('auth/updateAccessToken', resp.getToken());
+        store.dispatch('auth/updateActiveChar', props.char);
+        store.dispatch('auth/updatePermissions', resp.getPermissionsList());
+        console.log("Char Permissions: " + resp.getPermissionsList());
+        const path = route.query.redirect?.toString() || "/overview";
+        const url = new URL("https://example.com" + path);
+        router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
+    } catch (e) {
+        handleRPCError(e as RpcError);
+    }
 }
 </script>
 
@@ -49,7 +53,8 @@ function chooseCharacter() {
                 </h2>
                 <CharSexBadge :sex="char.getSex()" />
                 <div v-if="lastCharID == char.getUserId()">
-                    <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
+                    <span
+                        class="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
                         Last Used
                     </span>
                 </div>

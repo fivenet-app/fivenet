@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 import { DocumentComment } from '@arpanet/gen/resources/documents/documents_pb';
-import { GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { DeleteDocumentCommentRequest, GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { computed, ref, onMounted } from 'vue';
-import { getDocStoreClient } from '../../grpc/grpc';
+import { getDocStoreClient, handleRPCError } from '../../grpc/grpc';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
 import { useStore } from '../../store/store';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/20/solid';
 import TablePagination from '../partials/TablePagination.vue';
+import { RpcError } from 'grpc-web';
 
 const store = useStore();
 
@@ -28,47 +29,66 @@ const props = defineProps({
 const pagination = ref<PaginationResponse>();
 
 // Document Comments
-function getComments(pos: number): void {
+async function getComments(pos: number): Promise<void> {
     const req = new GetDocumentCommentsRequest();
     req.setPagination((new PaginationRequest()).setOffset(pos));
     req.setDocumentId(props.documentId!);
 
-    getDocStoreClient().
-        getDocumentComments(req, null).
-        then((resp) => {
-            resp.getCommentsList().forEach((v) => {
-                pagination.value = resp.getPagination();
-                props.comments.push(v);
-            });
-        });
+    try {
+        const resp = await getDocStoreClient().
+            getDocumentComments(req, null);
 
+        resp.getCommentsList().forEach((v) => {
+            pagination.value = resp.getPagination();
+            props.comments.push(v);
+        });
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
+    }
 }
 const message = ref('');
 
-function addComment() {
+async function addComment(): Promise<void> {
     const req = new PostDocumentCommentRequest();
     const com = new DocumentComment();
     com.setDocumentId(props.documentId);
     com.setComment(message.value);
     req.setComment(com);
 
-    getDocStoreClient().
-        postDocumentComment(req, null).
-        then((resp) => {
-            com.setCreatorId(activeChar.value!.getUserId());
-            com.setCreator(activeChar.value!);
-            com.setId(resp.getId());
+    try {
+        const resp = await getDocStoreClient().
+            postDocumentComment(req, null);
 
-            props.comments.unshift(com);
-        });
+        com.setId(resp.getId());
+        com.setCreatorId(activeChar.value!.getUserId());
+        com.setCreator(activeChar.value!);
+
+        props.comments.unshift(com);
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
+    }
 }
 
-function removedComment(comment: DocumentComment) {
+async function removeComment(comment: DocumentComment): Promise<void> {
     const idx = props.comments.findIndex((c) => {
         return c.getId() === comment.getId();
     });
-    if (idx > -1) {
-        props.comments.splice(idx, 1);
+
+    const req = new DeleteDocumentCommentRequest();
+    req.setCommentId(comment.getId());
+
+    try {
+        await getDocStoreClient().
+            deleteDocumentComment(req, null);
+
+        if (idx > -1) {
+            props.comments.splice(idx, 1);
+        }
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
     }
 }
 
@@ -80,7 +100,7 @@ function focusComment(): void {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     if (props.documentId !== undefined && props.comments === undefined) {
         getComments(0);
     }
@@ -129,7 +149,7 @@ onMounted(() => {
         <div v-else class="flow-root px-4 rounded-lg text-neutral">
             <ul role="list" class="divide-y divide-gray-200">
                 <DocumentCommentEntry v-for="com in comments" :key="com.getId()" :comment="com"
-                    @removed="(c: DocumentComment) => removedComment(c)" />
+                    @removed="(c: DocumentComment) => removeComment(c)" />
             </ul>
         </div>
     </div>

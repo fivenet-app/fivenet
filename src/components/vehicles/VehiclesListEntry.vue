@@ -58,7 +58,8 @@ function addToClipboard() {
                     class="flex-initial text-primary-500 hover:text-primary-400">
                     <EyeIcon class="w-6 h-auto ml-auto mr-2.5" />
                 </router-link>
-                <button v-if="!hideCopy" class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard()">
+                <button v-if="!hideCopy" class="flex-initial text-primary-500 hover:text-primary-400"
+                    @click="addToClipboard()">
                     <ClipboardDocumentIcon class="w-6 h-auto ml-auto mr-2.5" />
                 </button>
             </div>

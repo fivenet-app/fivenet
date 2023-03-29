@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { ref, onBeforeMount } from 'vue';
 import { UserCircleIcon } from '@heroicons/vue/20/solid'
-import { getCitizenStoreClient } from '../../grpc/grpc';
+import { getCitizenStoreClient, handleRPCError } from '../../grpc/grpc';
 import { GetUserActivityRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@arpanet/gen/resources/users/users_pb';
 import { toDateRelativeString } from '../../utils/time';
 import { USER_ACTIVITY_TYPE_Util } from '@arpanet/gen/resources/users/users.pb_enums';
 import { RectangleGroupIcon } from '@heroicons/vue/24/outline';
+import { RpcError } from 'grpc-web';
 
 const activities = ref<Array<UserActivity>>([]);
 const defaultIcon = UserCircleIcon;
@@ -23,7 +24,9 @@ function getUserActivity() {
     req.setUserId(props.userId);
 
     getCitizenStoreClient().
-        getUserActivity(req, null).then((resp) => {
+        getUserActivity(req, null).
+        catch((e: RpcError) => handleRPCError(e)).
+        then((resp) => {
             activities.value = resp.getActivityList();
         });
 }

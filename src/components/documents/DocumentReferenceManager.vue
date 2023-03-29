@@ -25,9 +25,10 @@ import {
 } from '@heroicons/vue/24/outline';
 import { ChevronDoubleUpIcon, DocumentCheckIcon, DocumentTextIcon, LockClosedIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
+import { RpcError } from 'grpc-web';
 import { onMounted, ref, FunctionalComponent } from 'vue';
 import { useRouter } from 'vue-router/auto';
-import { getDocStoreClient } from '../../grpc/grpc';
+import { getDocStoreClient, handleRPCError } from '../../grpc/grpc';
 import { ClipboardDocument, getDocument } from '../../store/modules/clipboardmodule';
 import { useStore } from '../../store/store';
 import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
@@ -55,20 +56,28 @@ const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
 const entriesDocuments = ref<Document[]>([]);
 const queryDoc = ref('');
 
-onMounted(() => {
+onMounted(async () => {
     findDocuments();
 });
 
 watchDebounced(queryDoc, async () => findDocuments(), { debounce: 750, maxWait: 2000 });
 
-function findDocuments(): void {
+async function findDocuments(): Promise<void> {
     const req = new FindDocumentsRequest();
     req.setPagination((new PaginationRequest()).setOffset(0));
     req.setSearch(queryDoc.value);
 
-    getDocStoreClient().findDocuments(req, null).then((resp) => {
-        entriesDocuments.value = resp.getDocumentsList().filter(doc => !(Array.from(props.modelValue.values()).find(r => r.getTargetDocumentId() === doc.getId() || doc.getId() === props.document)));
-    });
+    try {
+        const resp = await getDocStoreClient().
+            findDocuments(req, null);
+
+        entriesDocuments.value = resp.getDocumentsList().
+            filter(doc => !(Array.from(props.modelValue.values()).
+            find(r => r.getTargetDocumentId() === doc.getId() || doc.getId() === props.document)));
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
+    }
 }
 
 function addReference(doc: Document, reference: number): void {

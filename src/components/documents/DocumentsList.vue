@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, onBeforeMount } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
-import { getDocStoreClient } from '../../grpc/grpc';
+import { getDocStoreClient, handleRPCError } from '../../grpc/grpc';
 import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
@@ -9,6 +9,7 @@ import TablePagination from '../partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
 import TemplatesModal from './TemplatesModal.vue';
+import { RpcError } from 'grpc-web';
 
 const search = ref({ title: '', });
 // TODO Implement order by for documents
@@ -16,7 +17,7 @@ const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
 const documents = ref<Array<Document>>([]);
 
-function findDocuments(pos: number) {
+async function findDocuments(pos: number): Promise<void> {
     if (pos < 0) pos = 0;
 
     const req = new FindDocumentsRequest();
@@ -24,12 +25,16 @@ function findDocuments(pos: number) {
     req.setOrderbyList([]);
     req.setSearch(search.value.title);
 
-    getDocStoreClient().
-        findDocuments(req, null).
-        then((resp) => {
-            pagination.value = resp.getPagination();
-            documents.value = resp.getDocumentsList();
-        });
+    try {
+        const resp = await getDocStoreClient().
+            findDocuments(req, null);
+
+        pagination.value = resp.getPagination();
+        documents.value = resp.getDocumentsList();
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
+    }
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -42,9 +47,9 @@ function focusSearch(): void {
 
 const templatesOpen = ref(false);
 
-watchDebounced(search.value, () => findDocuments(0), { debounce: 650, maxWait: 1500 });
+watchDebounced(search.value, async () => findDocuments(0), { debounce: 650, maxWait: 1500 });
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
     findDocuments(0);
 });
 </script>
@@ -63,15 +68,13 @@ onBeforeMount(() => {
                                     placeholder="Title"
                                     class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                             </div>
-                            <div class="flex-initial form-control"
-                            v-can="'DocStoreService.CreateDocument'">
+                            <div class="flex-initial form-control" v-can="'DocStoreService.CreateDocument'">
                                 <button @click="templatesOpen = true"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                     Create
                                 </button>
                             </div>
-                            <div class="flex-initial"
-                                v-can="'DocStoreService.ListTemplates'">
+                            <div class="flex-initial" v-can="'DocStoreService.ListTemplates'">
                                 <router-link :to="{ name: 'Documents: Templates' }"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                     Templates

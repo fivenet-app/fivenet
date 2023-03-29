@@ -39,8 +39,8 @@ const end = computed(() => props.pagination.getEnd()!);
             </p>
         </div>
         <div class="flex justify-between flex-1 sm:justify-end">
-            <button :class="[offset <= 0 ? 'disabled' : '']" :disabled="offset <= 0" v-on:click="callback(offset - pageSize)"
-                type="button"
+            <button :class="[offset <= 0 ? 'disabled' : '']" :disabled="offset <= 0"
+                v-on:click="callback(offset - pageSize)" type="button"
                 class="relative inline-flex items-center px-3 py-2 text-sm font-semibold rounded-md cursor-pointer bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Previous</button>
             <button :class="[offset >= total ? 'disabled' : '']" :disabled="(end + offset) >= total"
                 v-on:click="callback(end)" type="button"

@@ -2,9 +2,10 @@
 import { DocumentTemplateShort } from '@arpanet/gen/resources/documents/templates_pb';
 import { ListTemplatesRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { ref, onBeforeMount } from 'vue';
-import { getDocStoreClient } from '../../grpc/grpc';
+import { getDocStoreClient, handleRPCError } from '../../grpc/grpc';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
+import { RpcError } from 'grpc-web';
 
 const templates = ref<Array<DocumentTemplateShort>>([]);
 
@@ -12,16 +13,21 @@ defineEmits<{
     (e: 'selected', t: DocumentTemplateShort): void,
 }>();
 
-function findTemplates(): void {
+async function findTemplates(): Promise<void> {
     const req = new ListTemplatesRequest();
 
-    getDocStoreClient().
-        listTemplates(req, null).then((resp) => {
-            templates.value = resp.getTemplatesList();
-        });
+    try {
+        const resp = await getDocStoreClient().
+            listTemplates(req, null);
+
+        templates.value = resp.getTemplatesList();
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
+    }
 }
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
     findTemplates();
 });
 </script>

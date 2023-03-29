@@ -19,7 +19,7 @@ async function fetchCharacters() {
         });
 }
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
     store.dispatch('auth/updateActiveChar', null);
 
     // Fetch user's characters

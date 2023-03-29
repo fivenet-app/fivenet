@@ -56,6 +56,7 @@ function closeDialog() {
     template.value = undefined;
     steps.value.selectTemplate = true;
     steps.value.selectClipboard = false;
+
     emit('close');
 }
 

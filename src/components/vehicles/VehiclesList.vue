@@ -14,6 +14,7 @@ import { CompleteCharNamesRequest } from '@arpanet/gen/services/completor/comple
 import {
     CheckIcon,
 } from '@heroicons/vue/20/solid';
+import { RpcError } from 'grpc-web';
 
 const props = defineProps({
     userId: {
@@ -47,7 +48,7 @@ const entriesChars = ref<UserShort[]>([]);
 const queryChar = ref('');
 const selectedChar = ref<undefined | UserShort>(undefined);
 
-function findVehicles(pos: number) {
+async function findVehicles(pos: number): Promise<void> {
     if (pos < 0) pos = 0;
 
     const req = new FindVehiclesRequest();
@@ -61,14 +62,16 @@ function findVehicles(pos: number) {
     req.setModel(search.value.model);
     req.setOrderbyList(orderBys.value);
 
-    getDMVClient().
-        findVehicles(req, null).
-        then((resp) => {
-            const pag = resp.getPagination();
-            pagination.value = resp.getPagination();
-            vehicles.value = resp.getVehiclesList();
-        }).
-        catch((err) => handleRPCError(err));
+    try {
+        const resp = await getDMVClient().
+            findVehicles(req, null);
+
+        pagination.value = resp.getPagination();
+        vehicles.value = resp.getVehiclesList();
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
+    }
 }
 
 async function findChars(): Promise<void> {
@@ -85,7 +88,7 @@ async function findChars(): Promise<void> {
     entriesChars.value = resp.getUsersList();
 }
 
-function toggleOrderBy(column: string): void {
+async function toggleOrderBy(column: string): Promise<void> {
     const index = orderBys.value.findIndex((o) => {
         return o.getColumn() == column;
     });
@@ -99,13 +102,13 @@ function toggleOrderBy(column: string): void {
         else {
             orderBy.setDesc(true);
         }
-    }
-    else {
+    } else {
         orderBy = new OrderBy();
         orderBy.setColumn(column);
         orderBy.setDesc(false);
         orderBys.value.push(orderBy);
     }
+
     findVehicles(pagination.value?.getOffset()!);
 }
 
@@ -129,7 +132,7 @@ watch(selectedChar, () => {
         search.value.user_id = 0;
     }
 });
-watchDebounced(search.value, () => findVehicles(pagination.value?.getOffset()!), { debounce: 650, maxWait: 1500 });
+watchDebounced(search.value, async () => findVehicles(pagination.value?.getOffset()!), { debounce: 650, maxWait: 1500 });
 </script>
 
 <template>

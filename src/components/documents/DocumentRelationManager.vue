@@ -25,13 +25,14 @@ import {
     ChatBubbleBottomCenterTextIcon,
     ExclamationTriangleIcon,
     ShieldExclamationIcon,
-ClipboardDocumentListIcon,
+    ClipboardDocumentListIcon,
 } from '@heroicons/vue/24/outline';
 import { UsersIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
+import { RpcError } from 'grpc-web';
 import { onMounted, ref, FunctionalComponent } from 'vue';
 import { useRouter } from 'vue-router/auto';
-import { getCitizenStoreClient } from '../../grpc/grpc';
+import { getCitizenStoreClient, handleRPCError } from '../../grpc/grpc';
 import { useStore } from '../../store/store';
 import { toTitleCase } from '../../utils/strings';
 
@@ -58,20 +59,26 @@ const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
 const entriesUsers = ref<User[]>([]);
 const queryChar = ref('');
 
-onMounted(() => {
+onMounted(async () => {
     findUsers();
 });
 
 watchDebounced(queryChar, async () => await findUsers(), { debounce: 750, maxWait: 2000 });
 
-function findUsers(): void {
+async function findUsers(): Promise<void> {
     const req = new FindUsersRequest();
     req.setPagination((new PaginationRequest()).setOffset(0));
     req.setSearchName(queryChar.value);
 
-    getCitizenStoreClient().findUsers(req, null).then((resp) => {
+    try {
+        const resp = await getCitizenStoreClient().
+            findUsers(req, null);
+
         entriesUsers.value = resp.getUsersList().filter(user => !Array.from(props.modelValue.values()).find(r => r.getTargetUserId() === user.getUserId()));
-    });
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
+    }
 }
 
 function addRelation(userId: number, relation: number): void {
@@ -143,8 +150,7 @@ function removeRelation(id: number): void {
                                             <div class="flow-root">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
-                                                        <table
-                                                            class="min-w-full divide-y divide-base-200 text-neutral">
+                                                        <table class="min-w-full divide-y divide-base-200 text-neutral">
                                                             <thead>
                                                                 <tr>
                                                                     <th scope="col"
@@ -215,7 +221,8 @@ function removeRelation(id: number): void {
                                             </div>
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                                    <div class="inline-block min-w-full py-2 align-middle"><button v-if="store.state.clipboard?.users.length === 0" type="button"
+                                                    <div class="inline-block min-w-full py-2 align-middle"><button
+                                                            v-if="store.state.clipboard?.users.length === 0" type="button"
                                                             class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
                                                             disabled>
                                                             <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
@@ -241,7 +248,8 @@ function removeRelation(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="user in store.state.clipboard?.users" :key="user.id">
+                                                                <tr v-for="user in store.state.clipboard?.users"
+                                                                    :key="user.id">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
                                                                         {{ user.firstname }} {{
@@ -314,7 +322,8 @@ function removeRelation(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="user in entriesUsers.slice(0, 8)" :key="user.getUserId()">
+                                                                <tr v-for="user in entriesUsers.slice(0, 8)"
+                                                                    :key="user.getUserId()">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
                                                                         {{ user.getFirstname() }} {{

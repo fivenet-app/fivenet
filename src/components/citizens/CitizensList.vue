@@ -3,12 +3,13 @@ import { ref, onMounted, watch } from 'vue';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
-import { getCitizenStoreClient } from '../../grpc/grpc';
+import { getCitizenStoreClient, handleRPCError } from '../../grpc/grpc';
 import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
+import { RpcError } from 'grpc-web';
 
 const queryName = ref('');
 const queryWanted = ref(false);
@@ -16,7 +17,7 @@ const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
 const users = ref<Array<User>>([]);
 
-function findUsers(pos: number) {
+async function findUsers(pos: number): Promise<void> {
     if (pos < 0) pos = 0;
 
     const req = new FindUsersRequest();
@@ -25,15 +26,18 @@ function findUsers(pos: number) {
     req.setSearchName(queryName.value);
     req.setWanted(queryWanted.value);
 
-    getCitizenStoreClient().
-        findUsers(req, null).
-        then((resp) => {
-            pagination.value = resp.getPagination();
-            users.value = resp.getUsersList();
-        });
+    try {
+        const resp = await getCitizenStoreClient().
+            findUsers(req, null);
+        pagination.value = resp.getPagination();
+        users.value = resp.getUsersList();
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
+    }
 }
 
-function toggleOrderBy(column: string): void {
+async function toggleOrderBy(column: string): Promise<void> {
     const index = orderBys.value.findIndex((o: OrderBy) => {
         return o.getColumn() == column;
     });
@@ -68,7 +72,7 @@ function focusSearch(): void {
 watch(queryWanted, () => findUsers(0));
 watchDebounced(queryName, () => findUsers(0), { debounce: 650, maxWait: 1500 });
 
-onMounted(() => {
+onMounted(async () => {
     findUsers(0);
 });
 </script>
@@ -175,7 +179,8 @@ onMounted(() => {
                             <TablePagination :pagination="pagination!" :callback="findUsers" />
                         </div>
                     </div>
+                </div>
             </div>
         </div>
     </div>
-</div></template>
+</template>

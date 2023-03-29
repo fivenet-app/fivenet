@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { User, UserProps } from '@arpanet/gen/resources/users/users_pb';
-import { getCitizenStoreClient } from '../../grpc/grpc';
+import { getCitizenStoreClient, handleRPCError } from '../../grpc/grpc';
 import { SetUserPropsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { dispatchNotification } from '../notification';
 import CharSexBadge from '../misc/CharSexBadge.vue';
@@ -9,6 +9,7 @@ import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
 import TemplatesModal from '../documents/TemplatesModal.vue';
 import { useStore } from '../../store/store';
+import { RpcError } from 'grpc-web';
 
 const store = useStore();
 
@@ -24,7 +25,7 @@ const props = defineProps({
 
 const wantedState = ref(props.user.getProps() ? props.user.getProps()?.getWanted() : false);
 
-function toggleWantedStatus(): void {
+async function toggleWantedStatus(): Promise<void> {
     if (!props.user) return;
 
     wantedState.value = !props.user.getProps()?.getWanted();
@@ -41,11 +42,14 @@ function toggleWantedStatus(): void {
     userProps?.setWanted(wantedState.value);
     req.setProps(userProps);
 
-    getCitizenStoreClient().
-        setUserProps(req, null)
-        .then((resp) => {
-            dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
-        });
+    try {
+        await getCitizenStoreClient().
+            setUserProps(req, null);
+        dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
+    }
 }
 
 const templatesOpen = ref(false);
