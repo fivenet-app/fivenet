@@ -34,18 +34,18 @@ export class Livemap extends L.Map {
         this.on('baselayerchange', (context) => this.updateBackground(context.name));
     }
 
-    public addHash(): void {
+    public async addHash(): Promise<void> {
         this.hash = new Hash(this, this.element);
     }
 
-    public removeHash(): boolean {
+    public async removeHash(): Promise<boolean> {
         if (!this.hash) return false;
 
         this.hash.remove();
         return true;
     }
 
-    public updateBackground(layer: string): void {
+    public async updateBackground(layer: string): Promise<void> {
         switch (layer) {
             case 'Atlas':
                 this.element.style.backgroundColor = '#0fa8d2';
@@ -62,7 +62,7 @@ export class Livemap extends L.Map {
         }
     }
 
-    public addMarker(id: number, latitude: number, longitude: number, popupContent: string, options: L.MarkerOptions): void {
+    public async addMarker(id: number, latitude: number, longitude: number, popupContent: string, options: L.MarkerOptions): Promise<void> {
         const marker = this.markers.get(id);
 
         if (marker) {
@@ -85,7 +85,7 @@ export class Livemap extends L.Map {
         }
     }
 
-    public removeMarker(id: number): boolean {
+    public async removeMarker(id: number): Promise<boolean> {
         const marker = this.markers.get(id);
         if (!marker) return false;
 
@@ -93,7 +93,7 @@ export class Livemap extends L.Map {
         return this.markers.delete(id);
     }
 
-    public parseMarkerlist(type: MarkerType, list: Array<IMarker>): void {
+    public async parseMarkerlist(type: MarkerType, list: Array<IMarker>): Promise<void> {
         let options: L.MarkerOptions = {};
         switch (type) {
             case MarkerType.player:
@@ -117,11 +117,9 @@ export class Livemap extends L.Map {
             });
         }
 
-        list.forEach((marker) => {
-            if (marker.getIcon() || marker.getIconColor()) {
-                options.icon = this.getIcon(type, marker.getIcon(), marker.getIconColor());
-            }
-            this.addMarker(marker.getId(), marker.getY(), marker.getX(), '', options);
+        list.forEach(async (marker) => {
+            if (marker.getIcon() || marker.getIconColor()) options.icon = await this.getIcon(type, marker.getIcon(), marker.getIconColor());
+            await this.addMarker(marker.getId(), marker.getY(), marker.getX(), '', options);
         });
 
         this.prevMarkerLists.set(
@@ -130,7 +128,7 @@ export class Livemap extends L.Map {
         );
     }
 
-    public getIcon(type: MarkerType, icon: string, iconColor: string): L.DivIcon {
+    public async getIcon(type: MarkerType, icon: string, iconColor: string): Promise<L.DivIcon> {
         let html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full mx-auto">
           <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
         </svg>`;

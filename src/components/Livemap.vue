@@ -32,7 +32,7 @@ const Position = L.Control.extend({
 });
 const position = new Position();
 
-let map = {} as undefined | Livemap;
+let map: Livemap | undefined = undefined;
 
 const atlas = L.tileLayer(import.meta.env.BASE_URL + 'tiles/atlas/{z}/{x}/{y}.png', {
     attribution:
@@ -67,44 +67,42 @@ const satelite = L.tileLayer(import.meta.env.BASE_URL + 'tiles/satelite/{z}/{x}/
     tms: true,
 });
 
-let stream = undefined as undefined | ClientReadableStream<StreamResponse>;
+let stream: ClientReadableStream<StreamResponse> | undefined = undefined;
 const error = ref();
 
-async function start() {
-    if (stream !== undefined) {
-        return;
-    }
+async function start(): Promise<void> {
+    if (stream !== undefined) return;
 
-    console.log('starting livemap data stream');
+    console.debug('Starting Livemap Data Stream');
     const request = new StreamRequest();
 
     stream = getLivemapperClient().
         stream(request).
-        on('error', (err: RpcError) => {
+        on('error', async (err: RpcError) => {
             handleRPCError(err);
             error.value = err;
             stop();
         }).
-        on('data', function (resp) {
+        on('data', async (resp) => {
             error.value = null;
 
             map?.parseMarkerlist(MarkerType.dispatch, resp.getDispatchesList());
             map?.parseMarkerlist(MarkerType.player, resp.getUsersList());
         }).
         on('end', function () {
-            console.log('livemap data stream ended');
+            console.log('Livemap Data Stream Ended');
         });
 }
 
-function stop() {
-    console.log('stopping livemap data stream');
+async function stop(): Promise<void> {
+    console.log('Stopping Livemap Data Stream');
     if (stream !== undefined) {
         stream.cancel();
         stream = undefined;
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     map = new Livemap('map', { layers: [postal], crs: customCRS });
     map.addHash();
     map.setView([0, 0], 2);
@@ -115,7 +113,7 @@ onMounted(() => {
         .addTo(map as L.Map);
     postal.bringToFront();
 
-    map.updateBackground('Postal');
+    await map.updateBackground('Postal');
     map.on('baselayerchange', (event: L.LayersControlEvent) => map?.updateBackground(event.name));
 
     map.addControl(position);
