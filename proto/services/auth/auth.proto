@@ -55,6 +55,7 @@ message SetJobRequest {
 message SetJobResponse {
   string token = 1;
   resources.jobs.JobProps job_props = 2;
+  resources.users.User char = 3;
 }
 
 service AuthService {

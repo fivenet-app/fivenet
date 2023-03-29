@@ -1952,7 +1952,8 @@ proto.services.auth.SetJobResponse.prototype.toObject = function(opt_includeInst
 proto.services.auth.SetJobResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     token: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    jobProps: (f = msg.getJobProps()) && resources_jobs_jobs_pb.JobProps.toObject(includeInstance, f)
+    jobProps: (f = msg.getJobProps()) && resources_jobs_jobs_pb.JobProps.toObject(includeInstance, f),
+    pb_char: (f = msg.getChar()) && resources_users_users_pb.User.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1998,6 +1999,11 @@ proto.services.auth.SetJobResponse.deserializeBinaryFromReader = function(msg, r
       reader.readMessage(value,resources_jobs_jobs_pb.JobProps.deserializeBinaryFromReader);
       msg.setJobProps(value);
       break;
+    case 3:
+      var value = new resources_users_users_pb.User;
+      reader.readMessage(value,resources_users_users_pb.User.deserializeBinaryFromReader);
+      msg.setChar(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2040,6 +2046,14 @@ proto.services.auth.SetJobResponse.serializeBinaryToWriter = function(message, w
       2,
       f,
       resources_jobs_jobs_pb.JobProps.serializeBinaryToWriter
+    );
+  }
+  f = message.getChar();
+  if (f != null) {
+    writer.writeMessage(
+      3,
+      f,
+      resources_users_users_pb.User.serializeBinaryToWriter
     );
   }
 };
@@ -2097,6 +2111,43 @@ proto.services.auth.SetJobResponse.prototype.clearJobProps = function() {
  */
 proto.services.auth.SetJobResponse.prototype.hasJobProps = function() {
   return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * optional resources.users.User char = 3;
+ * @return {?proto.resources.users.User}
+ */
+proto.services.auth.SetJobResponse.prototype.getChar = function() {
+  return /** @type{?proto.resources.users.User} */ (
+    jspb.Message.getWrapperField(this, resources_users_users_pb.User, 3));
+};
+
+
+/**
+ * @param {?proto.resources.users.User|undefined} value
+ * @return {!proto.services.auth.SetJobResponse} returns this
+*/
+proto.services.auth.SetJobResponse.prototype.setChar = function(value) {
+  return jspb.Message.setWrapperField(this, 3, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.auth.SetJobResponse} returns this
+ */
+proto.services.auth.SetJobResponse.prototype.clearChar = function() {
+  return this.setChar(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.auth.SetJobResponse.prototype.hasChar = function() {
+  return jspb.Message.getField(this, 3) != null;
 };
 
 

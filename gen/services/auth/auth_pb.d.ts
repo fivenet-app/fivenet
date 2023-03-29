@@ -233,6 +233,11 @@ export class SetJobResponse extends jspb.Message {
   hasJobProps(): boolean;
   clearJobProps(): SetJobResponse;
 
+  getChar(): resources_users_users_pb.User | undefined;
+  setChar(value?: resources_users_users_pb.User): SetJobResponse;
+  hasChar(): boolean;
+  clearChar(): SetJobResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SetJobResponse.AsObject;
   static toObject(includeInstance: boolean, msg: SetJobResponse): SetJobResponse.AsObject;
@@ -245,6 +250,7 @@ export namespace SetJobResponse {
   export type AsObject = {
     token: string,
     jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
+    pb_char?: resources_users_users_pb.User.AsObject,
   }
 }
 

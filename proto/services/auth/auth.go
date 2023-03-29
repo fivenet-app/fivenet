@@ -446,5 +446,6 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 	return &SetJobResponse{
 		Token:    token,
 		JobProps: jProps,
+		Char:     char,
 	}, nil
 }

@@ -27,6 +27,7 @@ import {
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
 import { useStore } from '../../store/store';
 import { useRoute, useRouter } from 'vue-router/auto';
+import SidebarJobSwitcher from './SidebarJobSwitcher.vue';
 
 const store = useStore();
 const route = useRoute();
@@ -236,9 +237,13 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
-                            <span v-if="activeChar" class="text-sm font-medium text-base-400">{{ activeChar.getFirstname()
-                            }}, {{
-    activeChar.getLastname() }}</span>
+                            <div v-can="'AuthService.SetJob'">
+                                <SidebarJobSwitcher v-if="activeChar" />
+                            </div>
+                            <span v-if="activeChar" class="text-sm font-medium text-base-400">
+                                {{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}
+                                ({{ activeChar.getJobLabel() }})
+                            </span>
                             <!-- Profile dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">
                                 <div>

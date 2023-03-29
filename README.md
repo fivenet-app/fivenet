@@ -9,7 +9,7 @@
         - [ ] Write a FiveM plugin that writes player positions into our location table
 - [ ] "Content Moderation" access for server admins
     - [x] Use a list of ESX user groups in the config
-    - [ ] Allow them to switch jobs on the fly to always the highest job rank
+    - [x] Allow them to switch jobs on the fly to always the highest job rank
     - [ ] Allow them to edit/ delete any user content
 - [ ] Breadcrumbs
   - [ ] Use "page title" (e.g., when viewing a user or editing a document) it should be reflected in the breadcrumbs, instead of just relying on the path
