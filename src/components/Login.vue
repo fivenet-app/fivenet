@@ -4,7 +4,7 @@ import { computed, ref, watch } from 'vue';
 import { CreateAccountRequest, LoginRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 import { useRoute, useRouter } from 'vue-router/auto';
-import { getUnAuthClient } from '../grpc/grpc';
+import { getUnAuthClient, handleRPCError } from '../grpc/grpc';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from './notification';
 
@@ -44,9 +44,8 @@ function createAccount() {
 
     getUnAuthClient().
         createAccount(req, null).
-        catch((err: RpcError) => {
-            console.log(err);
-        }).then((resp) => {
+        catch((e: RpcError) => handleRPCError(e)).
+        then((resp) => {
             createAccountForm.value = false;
             dispatchNotification({ title: 'Account created successfully!', content: '', type: 'success' });
         });

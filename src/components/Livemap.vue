@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { onMounted, onBeforeUnmount, onUnmounted, ref } from 'vue';
-import { getLivemapperClient } from '../grpc/grpc';
+import { getLivemapperClient, handleRPCError } from '../grpc/grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
-import { handleRPCError } from '../grpc/interceptors';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
