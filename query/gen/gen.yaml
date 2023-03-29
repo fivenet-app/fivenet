@@ -4,11 +4,10 @@ excludeTables:
   - "arpanet_zschema_migrations"
 includeTables:
   - "arpanet_*"
+  - "gksphone_job_message"
   - "job_grades"
   - "jobs"
-  - "owned_vehicles"
   - "licenses"
+  - "owned_vehicles"
   - "user_licenses"
   - "users"
-  - "vpcLS"
-  - "gksphone_job_message"

@@ -73,5 +73,6 @@ type JWT struct {
 }
 
 type FiveM struct {
+	SuperuserGroups    []string `yaml:"superuserGroups"`
 	PermissionRoleJobs []string `yaml:"permissionRoleJobs"`
 }

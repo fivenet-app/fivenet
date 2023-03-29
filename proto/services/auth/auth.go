@@ -34,10 +34,12 @@ var (
 )
 
 var (
-	InvalidLoginErr       = status.Error(codes.NotFound, "Wrong username or password")
-	NoCharacterFoundErr   = status.Error(codes.NotFound, "No character found for your account")
-	GenericLoginErr       = status.Error(codes.Internal, "Failed to login you in")
-	UnableToChooseCharErr = status.Error(codes.PermissionDenied, "You don't have permission to select this character!")
+	AccountCreateFailedErr = status.Error(codes.InvalidArgument, "Please check the token you have typed in!")
+	InvalidLoginErr        = status.Error(codes.InvalidArgument, "Wrong username or password.")
+	NoPasswordErr          = status.Error(codes.InvalidArgument, "You need to use your registration token to create an account first.")
+	NoCharacterFoundErr    = status.Error(codes.NotFound, "No character(s) found for your account.")
+	GenericLoginErr        = status.Error(codes.Internal, "Failed to login you in, please try again.")
+	UnableToChooseCharErr  = status.Error(codes.PermissionDenied, "You don't have permission to select this character!")
 )
 
 type Server struct {
@@ -60,8 +62,10 @@ func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenManager, p perms.P
 
 // AuthFuncOverride is called instead of exampleAuthFunc
 func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
-	// Skip authentication for the login endpoint
-	if fullMethod == "/services.auth.AuthService/Login" || fullMethod == "/services.auth.AuthService/Logout" {
+	// Skip authentication for the anon accessible endpoints
+	if fullMethod == "/services.auth.AuthService/CreateAccount" ||
+		fullMethod == "/services.auth.AuthService/Login" ||
+		fullMethod == "/services.auth.AuthService/Logout" {
 		return ctx, nil
 	}
 
@@ -102,7 +106,42 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 	return s.tm.NewWithClaims(claims)
 }
 
-func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.ArpanetAccounts, error) {
+func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {
+	acc, err := s.getAccountFromDB(ctx, jet.AND(
+		account.Password.IS_NULL(),
+		account.RegToken.EQ(jet.String(req.RegToken)),
+	))
+	if err != nil {
+		return nil, AccountCreateFailedErr
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 14)
+	if err != nil {
+		return nil, AccountCreateFailedErr
+	}
+
+	stmt := account.
+		UPDATE().
+		SET(
+			account.Username.SET(jet.String(req.Username)),
+			account.Password.SET(jet.String(string(hashedPassword))),
+		).
+		WHERE(
+			jet.AND(
+				account.ID.EQ(jet.Uint64(acc.ID)),
+				account.Password.IS_NULL(),
+				account.RegToken.EQ(jet.String(req.RegToken)),
+			),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, AccountCreateFailedErr
+	}
+
+	return &CreateAccountResponse{}, nil
+}
+
+func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpression) (*model.ArpanetAccounts, error) {
 	stmt := account.
 		SELECT(
 			account.AllColumns,
@@ -110,20 +149,20 @@ func (s *Server) getAccountFromDB(ctx context.Context, username string) (*model.
 		FROM(account).
 		WHERE(
 			account.Enabled.IS_TRUE().
-				AND(account.Username.EQ(jet.String(username))),
+				AND(condition),
 		).
 		LIMIT(1)
 
-	var account model.ArpanetAccounts
-	if err := stmt.QueryContext(ctx, s.db, &account); err != nil {
+	var acc model.ArpanetAccounts
+	if err := stmt.QueryContext(ctx, s.db, &acc); err != nil {
 		return nil, err
 	}
 
-	return &account, nil
+	return &acc, nil
 }
 
 func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error) {
-	account, err := s.getAccountFromDB(ctx, req.Username)
+	account, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(req.Username)))
 	if err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
 			return nil, InvalidLoginErr
@@ -132,8 +171,13 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 		return nil, err
 	}
 
+	// No password set
+	if account.Password == nil {
+		return nil, NoPasswordErr
+	}
+
 	// Password check logic
-	if err := bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(req.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(*account.Password), []byte(req.Password)); err != nil {
 		return nil, InvalidLoginErr
 	}
 
@@ -265,7 +309,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, claims.Username)
+	account, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(claims.Username)))
 	if err != nil {
 		return nil, err
 	}
@@ -389,7 +433,7 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 	char.JobGrade = req.JobGrade
 
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, claims.Username)
+	account, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(claims.Username)))
 	if err != nil {
 		return nil, err
 	}

@@ -23,6 +23,9 @@ database:
 jwt:
   secret: "your_generated_jwt_secret"
 fivem:
+  superuserGroups:
+    - projektleiter
+    - teamleitung
   permissionRoleJobs:
     - ambulance
     - doj

@@ -24,6 +24,7 @@ type arpanetAccountsTable struct {
 	Username  mysql.ColumnString
 	Password  mysql.ColumnString
 	License   mysql.ColumnString
+	RegToken  mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -71,8 +72,9 @@ func newArpanetAccountsTableImpl(schemaName, tableName, alias string) arpanetAcc
 		UsernameColumn  = mysql.StringColumn("username")
 		PasswordColumn  = mysql.StringColumn("password")
 		LicenseColumn   = mysql.StringColumn("license")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn}
+		RegTokenColumn  = mysql.StringColumn("reg_token")
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn}
 	)
 
 	return arpanetAccountsTable{
@@ -86,6 +88,7 @@ func newArpanetAccountsTableImpl(schemaName, tableName, alias string) arpanetAcc
 		Username:  UsernameColumn,
 		Password:  PasswordColumn,
 		License:   LicenseColumn,
+		RegToken:  RegTokenColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

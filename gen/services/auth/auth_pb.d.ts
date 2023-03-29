@@ -44,6 +44,46 @@ export namespace LoginResponse {
   }
 }
 
+export class CreateAccountRequest extends jspb.Message {
+  getRegToken(): string;
+  setRegToken(value: string): CreateAccountRequest;
+
+  getUsername(): string;
+  setUsername(value: string): CreateAccountRequest;
+
+  getPassword(): string;
+  setPassword(value: string): CreateAccountRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CreateAccountRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateAccountRequest): CreateAccountRequest.AsObject;
+  static serializeBinaryToWriter(message: CreateAccountRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateAccountRequest;
+  static deserializeBinaryFromReader(message: CreateAccountRequest, reader: jspb.BinaryReader): CreateAccountRequest;
+}
+
+export namespace CreateAccountRequest {
+  export type AsObject = {
+    regToken: string,
+    username: string,
+    password: string,
+  }
+}
+
+export class CreateAccountResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CreateAccountResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateAccountResponse): CreateAccountResponse.AsObject;
+  static serializeBinaryToWriter(message: CreateAccountResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateAccountResponse;
+  static deserializeBinaryFromReader(message: CreateAccountResponse, reader: jspb.BinaryReader): CreateAccountResponse;
+}
+
+export namespace CreateAccountResponse {
+  export type AsObject = {
+  }
+}
+
 export class GetCharactersRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetCharactersRequest.AsObject;

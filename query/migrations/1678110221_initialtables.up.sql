@@ -7,12 +7,14 @@ CREATE TABLE IF NOT EXISTS `arpanet_accounts` (
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `enabled` tinyint(1) DEFAULT 0,
   `username` varchar(24) NOT NULL,
-  `password` varchar(64) NOT NULL,
+  `password` varchar(60) NULL,
   `license` varchar(64) NOT NULL,
+  `reg_token` char(6) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_arpanet_accounts_username` (`username`),
   UNIQUE KEY `idx_arpanet_accounts_license` (`license`),
   UNIQUE KEY `idx_arpanet_accounts_username_license` (`username`, `license`)
+  UNIQUE KEY `idx_arpanet_accounts_reg_token` (`reg_token`),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: arpanet_documents_categories

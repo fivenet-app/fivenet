@@ -39,6 +39,49 @@ export class AuthServiceClient {
     this.options_ = options;
   }
 
+  methodDescriptorCreateAccount = new grpcWeb.MethodDescriptor(
+    '/services.auth.AuthService/CreateAccount',
+    grpcWeb.MethodType.UNARY,
+    services_auth_auth_pb.CreateAccountRequest,
+    services_auth_auth_pb.CreateAccountResponse,
+    (request: services_auth_auth_pb.CreateAccountRequest) => {
+      return request.serializeBinary();
+    },
+    services_auth_auth_pb.CreateAccountResponse.deserializeBinary
+  );
+
+  createAccount(
+    request: services_auth_auth_pb.CreateAccountRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_auth_auth_pb.CreateAccountResponse>;
+
+  createAccount(
+    request: services_auth_auth_pb.CreateAccountRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_auth_auth_pb.CreateAccountResponse) => void): grpcWeb.ClientReadableStream<services_auth_auth_pb.CreateAccountResponse>;
+
+  createAccount(
+    request: services_auth_auth_pb.CreateAccountRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_auth_auth_pb.CreateAccountResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.auth.AuthService/CreateAccount',
+        request,
+        metadata || {},
+        this.methodDescriptorCreateAccount,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.auth.AuthService/CreateAccount',
+    request,
+    metadata || {},
+    this.methodDescriptorCreateAccount);
+  }
+
   methodDescriptorLogin = new grpcWeb.MethodDescriptor(
     '/services.auth.AuthService/Login',
     grpcWeb.MethodType.UNARY,

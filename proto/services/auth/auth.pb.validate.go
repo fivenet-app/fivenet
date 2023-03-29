@@ -79,6 +79,17 @@ func (m *LoginRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if len(m.GetPassword()) > 70 {
+		err := LoginRequestValidationError{
+			field:  "Password",
+			reason: "value length must be at most 70 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return LoginRequestMultiError(errors)
 	}
@@ -257,6 +268,255 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = LoginResponseValidationError{}
+
+// Validate checks the field values on CreateAccountRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateAccountRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateAccountRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateAccountRequestMultiError, or nil if none found.
+func (m *CreateAccountRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateAccountRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetRegToken()) != 6 {
+		err := CreateAccountRequestValidationError{
+			field:  "RegToken",
+			reason: "value length must be 6 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if l := utf8.RuneCountInString(m.GetUsername()); l < 3 || l > 24 {
+		err := CreateAccountRequestValidationError{
+			field:  "Username",
+			reason: "value length must be between 3 and 24 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetPassword()) < 6 {
+		err := CreateAccountRequestValidationError{
+			field:  "Password",
+			reason: "value length must be at least 6 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetPassword()) > 70 {
+		err := CreateAccountRequestValidationError{
+			field:  "Password",
+			reason: "value length must be at most 70 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CreateAccountRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateAccountRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateAccountRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateAccountRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateAccountRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateAccountRequestMultiError) AllErrors() []error { return m }
+
+// CreateAccountRequestValidationError is the validation error returned by
+// CreateAccountRequest.Validate if the designated constraints aren't met.
+type CreateAccountRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateAccountRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateAccountRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateAccountRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateAccountRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateAccountRequestValidationError) ErrorName() string {
+	return "CreateAccountRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateAccountRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateAccountRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateAccountRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateAccountRequestValidationError{}
+
+// Validate checks the field values on CreateAccountResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateAccountResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateAccountResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateAccountResponseMultiError, or nil if none found.
+func (m *CreateAccountResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateAccountResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return CreateAccountResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateAccountResponseMultiError is an error wrapping multiple validation
+// errors returned by CreateAccountResponse.ValidateAll() if the designated
+// constraints aren't met.
+type CreateAccountResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateAccountResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateAccountResponseMultiError) AllErrors() []error { return m }
+
+// CreateAccountResponseValidationError is the validation error returned by
+// CreateAccountResponse.Validate if the designated constraints aren't met.
+type CreateAccountResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateAccountResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateAccountResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateAccountResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateAccountResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateAccountResponseValidationError) ErrorName() string {
+	return "CreateAccountResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateAccountResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateAccountResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateAccountResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateAccountResponseValidationError{}
 
 // Validate checks the field values on GetCharactersRequest with the rules
 // defined in the proto definition for this message. If any rules are
