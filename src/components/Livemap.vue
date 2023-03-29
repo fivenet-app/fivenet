@@ -90,12 +90,12 @@ async function start(): Promise<void> {
             map?.parseMarkerlist(MarkerType.player, resp.getUsersList());
         }).
         on('end', function () {
-            console.log('Livemap Data Stream Ended');
+            console.debug('Livemap Data Stream Ended');
         });
 }
 
 async function stop(): Promise<void> {
-    console.log('Stopping Livemap Data Stream');
+    console.debug('Stopping Livemap Data Stream');
     if (stream !== undefined) {
         stream.cancel();
         stream = undefined;
