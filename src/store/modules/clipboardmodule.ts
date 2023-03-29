@@ -182,24 +182,8 @@ export class ClipboardUser {
     public jobGradeLabel: string | undefined;
     public firstname: string | undefined;
     public lastname: string | undefined;
-    public sex: string | undefined;
-    public dateofbirth: string | undefined;
 
-    setUser(u: User): ClipboardUser {
-        this.id = u.getUserId();
-        this.job = u.getJob();
-        this.jobLabel = u.getJobLabel();
-        this.jobGrade = u.getJobGrade();
-        this.jobGradeLabel = u.getJobGradeLabel();
-        this.firstname = u.getFirstname();
-        this.lastname = u.getLastname();
-        this.sex = u.getSex();
-        this.dateofbirth = u.getDateofbirth();
-
-        return this;
-    }
-
-    setUserShort(u: UserShort): ClipboardUser {
+    setUser(u: UserShort | User): ClipboardUser {
         this.id = u.getUserId();
         this.job = u.getJob();
         this.jobLabel = u.getJobLabel();
@@ -221,12 +205,6 @@ function getUser(obj: ClipboardUser): User {
     u.setJobGradeLabel(obj['jobGradeLabel']!);
     u.setFirstname(obj['firstname']!);
     u.setLastname(obj['lastname']!);
-    if (obj['sex']) {
-        u.setSex(obj['sex']!);
-    }
-    if (obj['dateofbirth']) {
-        u.setDateofbirth(obj['dateofbirth']!);
-    }
 
     return u;
 }
@@ -245,7 +223,7 @@ export class ClipboardDocument {
         this.state = d.getState();
         const creator = new ClipboardUser();
         if (d.getCreator()) {
-            creator.setUserShort(d.getCreator()!);
+            creator.setUser(d.getCreator()!);
         }
         this.creator = creator;
     }
@@ -279,7 +257,7 @@ export class ClipboardVehicle {
         this.type = v.getType();
         const owner = new ClipboardUser();
         if (v.getOwner()) {
-            owner.setUserShort(v.getOwner()!);
+            owner.setUser(v.getOwner()!);
         }
         this.owner = owner;
     }
