@@ -156,14 +156,15 @@ watchDebounced(search.value, () => findVehicles(pagination.value?.getOffset()!),
                             </div>
                             <div class="flex-1 form-control" v-if="!props.userId">
                                 <label for="owner" class="block text-sm font-medium leading-6 text-neutral">Owner</label>
-                                <div class="relative flex items-center mt-2">
+                                <div class="relative items-center mt-2">
                                     <Combobox as="div" v-model="selectedChar" nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     @change="queryChar = $event.target.value"
-                                                    :display-value="(char: any) => char ? `${char?.getFirstname()} ${char?.getLastname()}` : ''" />
+                                                    :display-value="(char: any) => char ? `${char?.getFirstname()} ${char?.getLastname()}` : ''"
+                                                    placeholder="Owner" />
                                             </ComboboxButton>
 
                                             <ComboboxOptions v-if="entriesChars.length > 0"
