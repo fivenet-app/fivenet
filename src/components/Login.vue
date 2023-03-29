@@ -25,7 +25,7 @@ const createAccountForm = ref(false);
 
 const credentials = ref<{ username: string, password: string, }>({ username: '', password: '', });
 
-function login() {
+async function login(): Promise<void> {
     const req = new LoginRequest();
     req.setUsername(credentials.value.username);
     req.setPassword(credentials.value.password);
@@ -36,19 +36,20 @@ const accountInfo = ref<{ regToken: string, username: string, password: string, 
     regToken: '', username: '', password: '',
 });
 
-function createAccount() {
+async function createAccount(): Promise<void> {
     const req = new CreateAccountRequest();
     req.setRegToken(accountInfo.value?.regToken);
     req.setUsername(accountInfo.value?.username);
     req.setPassword(accountInfo.value?.password);
 
-    getUnAuthClient().
-        createAccount(req, null).
-        catch((e: RpcError) => handleRPCError(e)).
-        then((resp) => {
-            createAccountForm.value = false;
-            dispatchNotification({ title: 'Account created successfully!', content: '', type: 'success' });
-        });
+    try {
+        await getUnAuthClient().createAccount(req, null)
+        createAccountForm.value = false;
+        dispatchNotification({ title: 'Account created successfully!', content: '', type: 'success' });
+    } catch (e) {
+        handleRPCError(e as RpcError);
+        return;
+    }
 }
 </script>
 
