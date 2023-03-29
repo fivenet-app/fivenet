@@ -4,6 +4,7 @@ import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { DocumentTextIcon } from '@heroicons/vue/20/solid';
 import { ClipboardDocument } from '../../store/modules/clipboardmodule';
+
 const store = useStore();
 
 const documents = computed(() => store.state.clipboard?.documents);
@@ -37,7 +38,7 @@ const props = defineProps({
 
 const selected = ref<ClipboardDocument[]>([]);
 
-function select(item: ClipboardDocument) {
+async function select(item: ClipboardDocument): Promise<void> {
     const idx = selected.value.indexOf(item);
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
@@ -57,16 +58,16 @@ function select(item: ClipboardDocument) {
     }
 }
 
-function remove(item: ClipboardDocument) {
+async function remove(item: ClipboardDocument): Promise<void> {
     const idx = selected.value.indexOf(item);
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
     }
 
-    store.dispatch('clipboard/removeDocument', item.id);
+    await store.dispatch('clipboard/removeDocument', item.id);
 }
 
-function removeAll() {
+async function removeAll(): Promise<void> {
     while (selected.value.length > 0) {
         selected.value.forEach((v) => {
             remove(v);
@@ -76,7 +77,7 @@ function removeAll() {
     emit('statisfied', false);
 }
 
-watch(props, (newVal) => {
+watch(props, async (newVal) => {
     if (newVal.submit) {
         if (store.state.clipboard) {
             store.state.clipboard.activeStack.documents.length = 0;

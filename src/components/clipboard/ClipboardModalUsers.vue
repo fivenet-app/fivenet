@@ -38,7 +38,7 @@ const props = defineProps({
 
 const selected = ref<ClipboardUser[]>([]);
 
-function select(item: ClipboardUser) {
+async function select(item: ClipboardUser): Promise<void> {
     const idx = selected.value.indexOf(item);
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
@@ -58,16 +58,16 @@ function select(item: ClipboardUser) {
     }
 }
 
-function remove(item: ClipboardUser) {
+async function remove(item: ClipboardUser): Promise<void> {
     const idx = selected.value.indexOf(item);
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
     }
 
-    store.dispatch('clipboard/removeUser', item.id);
+    await store.dispatch('clipboard/removeUser', item.id);
 }
 
-function removeAll() {
+async function removeAll(): Promise<void> {
     while (selected.value.length > 0) {
         selected.value.forEach((v) => {
             remove(v);
@@ -77,7 +77,7 @@ function removeAll() {
     emit('statisfied', false);
 }
 
-watch(props, (newVal) => {
+watch(props, async (newVal) => {
     if (newVal.submit) {
         if (store.state.clipboard) {
             store.state.clipboard.activeStack.users.length = 0;

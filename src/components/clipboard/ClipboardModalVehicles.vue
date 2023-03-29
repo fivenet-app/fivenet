@@ -38,7 +38,7 @@ const props = defineProps({
 
 const selected = ref<ClipboardVehicle[]>([]);
 
-function select(item: ClipboardVehicle) {
+async function select(item: ClipboardVehicle): Promise<void> {
     const idx = selected.value.indexOf(item);
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
@@ -58,7 +58,7 @@ function select(item: ClipboardVehicle) {
     }
 }
 
-function remove(item: ClipboardVehicle) {
+async function remove(item: ClipboardVehicle): Promise<void> {
     const idx = selected.value.indexOf(item);
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
@@ -67,7 +67,7 @@ function remove(item: ClipboardVehicle) {
     store.dispatch('clipboard/removeVehicle', item.plate);
 }
 
-function removeAll() {
+async function removeAll(): Promise<void> {
     while (selected.value.length > 0) {
         selected.value.forEach((v) => {
             remove(v);
