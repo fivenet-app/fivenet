@@ -3,7 +3,7 @@ import { onMounted, onBeforeUnmount, onUnmounted, ref } from 'vue';
 import { getLivemapperClient } from '../grpc/grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
-import { handleGRPCError } from '../grpc/interceptors';
+import { handleRPCError } from '../grpc/interceptors';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 // Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
@@ -82,7 +82,7 @@ async function start() {
     stream = getLivemapperClient().
         stream(request).
         on('error', (err: RpcError) => {
-            handleGRPCError(err);
+            handleRPCError(err);
             error.value = err;
             stop();
         }).

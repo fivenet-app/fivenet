@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineLoader, RouteLocationNormalizedLoaded } from 'vue-router/auto';
 import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
+import { RpcError } from 'grpc-web';
 
 export const useUserData = defineLoader(async (route: RouteLocationNormalizedLoaded) => {
     route = route as RouteLocationNormalizedLoaded<'Citizens: Info'>;
@@ -9,10 +10,11 @@ export const useUserData = defineLoader(async (route: RouteLocationNormalizedLoa
     req.setUserId(parseInt(route.params.id));
 
     try {
-        const resp = await getCitizenStoreClient()
-            .getUser(req, null);
+        const resp = await getCitizenStoreClient().
+            getUser(req, null);
         return resp.getUser();
     } catch (e) {
+        handleRPCError(e as RpcError);
         return;
     }
 });
@@ -22,7 +24,7 @@ export const useUserData = defineLoader(async (route: RouteLocationNormalizedLoa
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
-import { getCitizenStoreClient } from '../../grpc/grpc';
+import { getCitizenStoreClient, handleRPCError } from '../../grpc/grpc';
 
 const { data: user } = useUserData();
 </script>

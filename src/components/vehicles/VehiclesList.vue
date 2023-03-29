@@ -3,7 +3,7 @@ import { ref, onMounted, watch } from 'vue';
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
-import { getCompletorClient, getDMVClient } from '../../grpc/grpc';
+import { getCompletorClient, getDMVClient, handleRPCError } from '../../grpc/grpc';
 import { FindVehiclesRequest } from '@arpanet/gen/services/dmv/vehicles_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import VehiclesListEntry from './VehiclesListEntry.vue';
@@ -55,7 +55,6 @@ function findVehicles(pos: number) {
     if (props.userId && props.userId > 0) {
         req.setUserId(props.userId);
     } else {
-        console.log("USERID: " + search.value.user_id);
         req.setUserId(search.value.user_id);
     }
     req.setSearch(search.value.plate);
@@ -68,7 +67,8 @@ function findVehicles(pos: number) {
             const pag = resp.getPagination();
             pagination.value = resp.getPagination();
             vehicles.value = resp.getVehiclesList();
-        });
+        }).
+        catch((err) => handleRPCError(err));
 }
 
 async function findChars(): Promise<void> {

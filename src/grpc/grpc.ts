@@ -6,10 +6,45 @@ import { DMVServiceClient } from '@arpanet/gen/services/dmv/VehiclesServiceClien
 import { DocStoreServiceClient } from '@arpanet/gen/services/docstore/DocstoreServiceClientPb';
 import { JobsServiceClient } from '@arpanet/gen/services/jobs/JobsServiceClientPb';
 import { LivemapperServiceClient } from '@arpanet/gen/services/livemapper/LivemapServiceClientPb';
-import { AuthInterceptor, UnaryErrorHandlerInterceptor } from './interceptors';
+import { AuthInterceptor, UnaryLoaderInterceptor } from './interceptors';
+import { RpcError, StatusCode } from 'grpc-web';
+import { dispatchNotification } from '../components/notification';
+import { store } from '../store/store';
+import { router } from '../router';
+
+// Handle GRPC errors
+export async function handleRPCError(err: RpcError) {
+    switch (err.code) {
+        case StatusCode.UNAUTHENTICATED:
+            await store.dispatch('auth/doLogout');
+
+            dispatchNotification({ title: 'Please login again', content: 'You are not signed in anymore', type: 'warning' });
+
+            // Only update the redirect query param if it isn't set already
+            const redirect = router.currentRoute.value.query.redirect ?? router.currentRoute.value.fullPath;
+            await router.push({ path: '/login', query: { redirect: redirect }, replace: true, force: true });
+            break;
+        case StatusCode.PERMISSION_DENIED:
+            dispatchNotification({ title: 'Permission denied', content: err.message, type: 'error' });
+            break;
+        case StatusCode.INTERNAL:
+            dispatchNotification({ title: 'Internal server error occured', content: err.message, type: 'error' });
+            break;
+        case StatusCode.UNAVAILABLE:
+            dispatchNotification({
+                title: 'Unable to reach server',
+                content: 'Unable to reach aRPaNet server, please check your internet connection.',
+                type: 'error',
+            });
+            break;
+        default:
+            dispatchNotification({ title: 'Unknown error occured', content: err.message, type: 'error' });
+            break;
+    }
+}
 
 const authInterceptor = new AuthInterceptor();
-export const unaryErrorHandlerInterceptor = new UnaryErrorHandlerInterceptor();
+export const unaryErrorHandlerInterceptor = new UnaryLoaderInterceptor();
 
 // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
 export const grpcClientOptions = {
