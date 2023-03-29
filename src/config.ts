@@ -11,10 +11,8 @@ const config: ArpanetConfig = {
 export default config;
 
 export async function loadConfig(): Promise<void> {
-    let url = import.meta.env.DEV ? 'http://localhost:8080/api/config' : '/api/config';
-
     try {
-        const response = await fetch(url, {
+        const response = await fetch('/api/config', {
             method: 'POST',
         });
         const data = (await response.json()) as ArpanetConfig;
