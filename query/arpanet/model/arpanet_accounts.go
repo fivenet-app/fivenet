@@ -16,7 +16,7 @@ type ArpanetAccounts struct {
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	Enabled   *bool      `json:"enabled"`
-	Username  string     `json:"username"`
+	Username  *string    `json:"username"`
 	Password  *string    `json:"password"`
 	License   string     `json:"license"`
 	RegToken  string     `json:"reg_token"`

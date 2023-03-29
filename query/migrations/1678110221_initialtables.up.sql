@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `arpanet_accounts` (
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `enabled` tinyint(1) DEFAULT 0,
-  `username` varchar(24) NOT NULL,
+  `username` varchar(24) NULL,
   `password` varchar(60) NULL,
   `license` varchar(64) NOT NULL,
   `reg_token` char(6) NOT NULL,

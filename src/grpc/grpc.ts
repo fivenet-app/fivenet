@@ -9,10 +9,11 @@ import { LivemapperServiceClient } from '@arpanet/gen/services/livemapper/Livema
 import { AuthInterceptor, UnaryErrorHandlerInterceptor } from './interceptors';
 
 const authInterceptor = new AuthInterceptor();
+export const unaryErrorHandlerInterceptor = new UnaryErrorHandlerInterceptor();
 
 // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
 export const grpcClientOptions = {
-    unaryInterceptors: [authInterceptor, new UnaryErrorHandlerInterceptor()],
+    unaryInterceptors: [authInterceptor, unaryErrorHandlerInterceptor],
     streamInterceptors: [authInterceptor],
 } as { [index: string]: any };
 
@@ -26,7 +27,18 @@ if (devInterceptors) {
 }
 
 // GRPC Clients ===============================================================
-// Account / Auth - Only the authorized client is kept here
+// Account / Auth - Unauthorized and authorized clients
+let unAuthClient: AuthServiceClient;
+export function getUnAuthClient(): AuthServiceClient {
+    if (!unAuthClient) {
+        unAuthClient = new AuthServiceClient(config.apiProtoURL, null, {
+            unaryInterceptors: [unaryErrorHandlerInterceptor],
+        });
+    }
+
+    return unAuthClient;
+}
+
 let authClient: AuthServiceClient;
 export function getAuthClient(): AuthServiceClient {
     if (!authClient) {

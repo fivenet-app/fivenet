@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import Login from '../components/Login.vue';
-import ContentCenterWrapper from '../components/partials/ContentCenterWrapper.vue';
 import HeroFull from '../components/partials/HeroFull.vue';
 </script>
 

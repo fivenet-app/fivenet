@@ -2,7 +2,7 @@ import { RpcError } from 'grpc-web';
 import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
 import { LoginRequest, LogoutRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { getAuthClient } from '../../grpc/grpc';
+import { getAuthClient, getUnAuthClient } from '../../grpc/grpc';
 import config from '../../config';
 import { dispatchNotification } from '../../components/notification';
 import { RootState } from '../store';
@@ -52,12 +52,11 @@ const authModule: Module<AuthModuleState, RootState> = {
             commit('updateActiveChar', null);
             commit('updatePermissions', []);
 
-            const client = new AuthServiceClient(config.apiProtoURL, null, null);
-            return client
+            return getUnAuthClient()
                 .login(req, null)
-                .then((response) => {
+                .then((resp) => {
                     commit('loginStop', null);
-                    commit('updateAccessToken', response.getToken());
+                    commit('updateAccessToken', resp.getToken());
                 })
                 .catch((err: RpcError) => {
                     commit('loginStop', err.message);
@@ -72,10 +71,10 @@ const authModule: Module<AuthModuleState, RootState> = {
 
             return getAuthClient()
                 .logout(new LogoutRequest(), null)
-                .then((response) => {
+                .then((resp) => {
                     commit('loginStop', null);
 
-                    if (response.getSuccess()) {
+                    if (resp.getSuccess()) {
                         return;
                     }
                 })

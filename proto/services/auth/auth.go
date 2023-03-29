@@ -80,7 +80,7 @@ func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.Una
 func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, activeChar *users.User) (string, error) {
 	claims := &auth.CitizenInfoClaims{
 		AccountID: account.ID,
-		Username:  account.Username,
+		Username:  *account.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// A usual scenario is to set the expiration time relative to the current time
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(10 * time.Hour)),
