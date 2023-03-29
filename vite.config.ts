@@ -29,6 +29,10 @@ export default defineConfig(({ command, mode }) => {
             }),
             vue(),
         ],
+        base: env.VITE_BASE ?? '/',
+        define: {
+            __APP_VERSION__: '"' + version + '"',
+        },
         optimizeDeps: {
             esbuildOptions: {
                 plugins: [esbuildCommonjs()],
@@ -40,12 +44,11 @@ export default defineConfig(({ command, mode }) => {
             },
             manifest: true,
         },
-        base: env.VITE_BASE ?? '/',
         server: {
             https: true,
-        },
-        define: {
-            __APP_VERSION__: '"' + version + '"',
+            proxy: {
+                '/api': 'http://localhost:8080',
+            },
         },
     };
 });

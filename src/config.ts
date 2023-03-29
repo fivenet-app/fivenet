@@ -12,9 +12,6 @@ export default config;
 
 export async function loadConfig() {
     let url = '/api/config';
-    if (import.meta.env.DEV) {
-        url = 'https://localhost:8080/api/config';
-    }
     await fetch(url, {
         method: 'POST',
     })
