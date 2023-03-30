@@ -24,14 +24,18 @@ const app = createApp(App);
 
 await loadConfig();
 
-if (config.sentryDSN && import.meta.env.PROD) {
-    Sentry.init({
-        app,
-        dsn: config.sentryDSN,
-        tracesSampleRate: 0.0,
-        logErrors: true,
-        trackComponents: false,
-    });
+if (import.meta.env.PROD) {
+    if (config.sentryDSN) {
+        Sentry.init({
+            app,
+            dsn: config.sentryDSN,
+            tracesSampleRate: 0.0,
+            logErrors: true,
+            trackComponents: false,
+        });
+    }
+} else if (import.meta.env.DEV) {
+    app.config.performance = true;
 }
 
 app.use(store, key);
