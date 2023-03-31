@@ -144,12 +144,12 @@ onMounted(async () => {
 
         });
     } else {
-        if (documentStore.document) {
-            doc.value.title = documentStore.document.title;
-            doc.value.content = documentStore.document.content;
-            doc.value.state = documentStore.document.state;
-            if (documentStore.document.closed) {
-                doc.value.closed = documentStore.document.closed;
+        if (documentStore.$state) {
+            doc.value.title = documentStore.$state.title;
+            doc.value.content = documentStore.$state.content;
+            doc.value.state = documentStore.$state.state;
+            if (documentStore.$state.closed) {
+                doc.value.closed = documentStore.$state.closed;
             }
         }
 
