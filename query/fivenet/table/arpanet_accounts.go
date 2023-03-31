@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetAccounts = newArpanetAccountsTable("", "arpanet_accounts", "")
+var ArpanetAccounts = newArpanetAccountsTable("", "fivenet_accounts", "")
 
-type arpanetAccountsTable struct {
+type fivenetAccountsTable struct {
 	mysql.Table
 
 	//Columns
@@ -31,9 +31,9 @@ type arpanetAccountsTable struct {
 }
 
 type ArpanetAccountsTable struct {
-	arpanetAccountsTable
+	fivenetAccountsTable
 
-	NEW arpanetAccountsTable
+	NEW fivenetAccountsTable
 }
 
 // AS creates new ArpanetAccountsTable with assigned alias
@@ -58,12 +58,12 @@ func (a ArpanetAccountsTable) WithSuffix(suffix string) *ArpanetAccountsTable {
 
 func newArpanetAccountsTable(schemaName, tableName, alias string) *ArpanetAccountsTable {
 	return &ArpanetAccountsTable{
-		arpanetAccountsTable: newArpanetAccountsTableImpl(schemaName, tableName, alias),
+		fivenetAccountsTable: newArpanetAccountsTableImpl(schemaName, tableName, alias),
 		NEW:                  newArpanetAccountsTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetAccountsTableImpl(schemaName, tableName, alias string) arpanetAccountsTable {
+func newArpanetAccountsTableImpl(schemaName, tableName, alias string) fivenetAccountsTable {
 	var (
 		IDColumn        = mysql.IntegerColumn("id")
 		CreatedAtColumn = mysql.TimestampColumn("created_at")
@@ -77,7 +77,7 @@ func newArpanetAccountsTableImpl(schemaName, tableName, alias string) arpanetAcc
 		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn}
 	)
 
-	return arpanetAccountsTable{
+	return fivenetAccountsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

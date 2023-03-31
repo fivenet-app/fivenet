@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetDocumentsTemplates = newArpanetDocumentsTemplatesTable("", "arpanet_documents_templates", "")
+var ArpanetDocumentsTemplates = newArpanetDocumentsTemplatesTable("", "fivenet_documents_templates", "")
 
-type arpanetDocumentsTemplatesTable struct {
+type fivenetDocumentsTemplatesTable struct {
 	mysql.Table
 
 	//Columns
@@ -36,9 +36,9 @@ type arpanetDocumentsTemplatesTable struct {
 }
 
 type ArpanetDocumentsTemplatesTable struct {
-	arpanetDocumentsTemplatesTable
+	fivenetDocumentsTemplatesTable
 
-	NEW arpanetDocumentsTemplatesTable
+	NEW fivenetDocumentsTemplatesTable
 }
 
 // AS creates new ArpanetDocumentsTemplatesTable with assigned alias
@@ -63,12 +63,12 @@ func (a ArpanetDocumentsTemplatesTable) WithSuffix(suffix string) *ArpanetDocume
 
 func newArpanetDocumentsTemplatesTable(schemaName, tableName, alias string) *ArpanetDocumentsTemplatesTable {
 	return &ArpanetDocumentsTemplatesTable{
-		arpanetDocumentsTemplatesTable: newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias),
+		fivenetDocumentsTemplatesTable: newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias),
 		NEW:                            newArpanetDocumentsTemplatesTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) arpanetDocumentsTemplatesTable {
+func newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) fivenetDocumentsTemplatesTable {
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
@@ -87,7 +87,7 @@ func newArpanetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, SchemaColumn, CreatorIDColumn}
 	)
 
-	return arpanetDocumentsTemplatesTable{
+	return fivenetDocumentsTemplatesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

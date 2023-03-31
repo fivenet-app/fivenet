@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { DocumentTemplateShort } from '@arpanet/gen/resources/documents/templates_pb';
-import { ListTemplatesRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { DocumentTemplateShort } from '@fivenet/gen/resources/documents/templates_pb';
+import { ListTemplatesRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { ref, onBeforeMount } from 'vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';

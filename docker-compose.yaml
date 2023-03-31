@@ -24,9 +24,9 @@ services:
       - "--innodb-ft-max-token-size=40"
     environment:
       MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-secret-pw-for-root-user}
-      MYSQL_USER: ${MYSQL_USER:-arpanet}
+      MYSQL_USER: ${MYSQL_USER:-fivenet}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-arpanet}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-fivenet}
     volumes:
        - mysql:/var/lib/mysql
     ports:

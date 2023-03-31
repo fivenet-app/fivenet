@@ -2,8 +2,8 @@
 import { onBeforeMount } from 'vue';
 import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
-import { GetCharactersRequest } from '@arpanet/gen/services/auth/auth_pb';
-import { User } from '@arpanet/gen/resources/users/users_pb';
+import { GetCharactersRequest } from '@fivenet/gen/services/auth/auth_pb';
+import { User } from '@fivenet/gen/resources/users/users_pb';
 import { useAuthStore } from '../../store/auth';
 import { RpcError } from 'grpc-web';
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';

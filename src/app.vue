@@ -13,7 +13,7 @@ useHead({
         class: 'h-full overflow-hidden',
     },
     titleTemplate: (titleChunk) => {
-        return titleChunk ? `${titleChunk} - aRPaNet` : 'aRPaNet';
+        return titleChunk ? `${titleChunk} - FiveNet` : 'FiveNet';
     },
 });
 

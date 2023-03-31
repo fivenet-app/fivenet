@@ -8,8 +8,8 @@ import (
 
 	"github.com/blevesearch/bleve"
 	"github.com/blevesearch/bleve/search/query"
-	"github.com/galexrt/arpanet/proto/resources/documents"
-	"github.com/galexrt/arpanet/proto/resources/jobs"
+	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/proto/resources/jobs"
 )
 
 type Searcher struct {

@@ -7,17 +7,17 @@ RUN rm -rf ./dist && \
     yarn && yarn build
 
 FROM docker.io/library/golang:1.20 AS gobuilder
-WORKDIR /go/src/github.com/galexrt/arpanet/
+WORKDIR /go/src/github.com/galexrt/fivenet/
 COPY . ./
-RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o arpanet .
+RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o fivenet .
 
 FROM docker.io/library/alpine:3.17.2
 RUN apk --no-cache add ca-certificates
 WORKDIR /app
 COPY --from=nodebuilder /app/dist ./dist
-COPY --from=gobuilder /go/src/github.com/galexrt/arpanet/arpanet /usr/local/bin
+COPY --from=gobuilder /go/src/github.com/galexrt/fivenet/fivenet /usr/local/bin
 
 EXPOSE 8080/tcp
 EXPOSE 9090/tcp
 
-CMD ["arpanet", "server"]
+CMD ["fivenet", "server"]

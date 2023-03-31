@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package services.auth;
-option go_package = "github.com/galexrt/arpanet/proto/services/auth;auth";
+option go_package = "github.com/galexrt/fivenet/proto/services/auth;auth";
 
 import "resources/jobs/jobs.proto";
 import "resources/users/users.proto";

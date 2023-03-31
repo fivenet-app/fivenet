@@ -4,8 +4,8 @@ import (
 	context "context"
 	"errors"
 
-	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/proto/resources/documents"
+	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/proto/resources/documents"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

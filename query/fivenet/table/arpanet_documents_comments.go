@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetDocumentsComments = newArpanetDocumentsCommentsTable("", "arpanet_documents_comments", "")
+var ArpanetDocumentsComments = newArpanetDocumentsCommentsTable("", "fivenet_documents_comments", "")
 
-type arpanetDocumentsCommentsTable struct {
+type fivenetDocumentsCommentsTable struct {
 	mysql.Table
 
 	//Columns
@@ -30,9 +30,9 @@ type arpanetDocumentsCommentsTable struct {
 }
 
 type ArpanetDocumentsCommentsTable struct {
-	arpanetDocumentsCommentsTable
+	fivenetDocumentsCommentsTable
 
-	NEW arpanetDocumentsCommentsTable
+	NEW fivenetDocumentsCommentsTable
 }
 
 // AS creates new ArpanetDocumentsCommentsTable with assigned alias
@@ -57,12 +57,12 @@ func (a ArpanetDocumentsCommentsTable) WithSuffix(suffix string) *ArpanetDocumen
 
 func newArpanetDocumentsCommentsTable(schemaName, tableName, alias string) *ArpanetDocumentsCommentsTable {
 	return &ArpanetDocumentsCommentsTable{
-		arpanetDocumentsCommentsTable: newArpanetDocumentsCommentsTableImpl(schemaName, tableName, alias),
+		fivenetDocumentsCommentsTable: newArpanetDocumentsCommentsTableImpl(schemaName, tableName, alias),
 		NEW:                           newArpanetDocumentsCommentsTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetDocumentsCommentsTableImpl(schemaName, tableName, alias string) arpanetDocumentsCommentsTable {
+func newArpanetDocumentsCommentsTableImpl(schemaName, tableName, alias string) fivenetDocumentsCommentsTable {
 	var (
 		IDColumn         = mysql.IntegerColumn("id")
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
@@ -75,7 +75,7 @@ func newArpanetDocumentsCommentsTableImpl(schemaName, tableName, alias string) a
 		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, CommentColumn, CreatorIDColumn}
 	)
 
-	return arpanetDocumentsCommentsTable{
+	return fivenetDocumentsCommentsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

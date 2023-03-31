@@ -3,9 +3,9 @@ package perms
 import (
 	"errors"
 
-	"github.com/galexrt/arpanet/pkg/dbutils"
-	"github.com/galexrt/arpanet/pkg/perms/collections"
-	"github.com/galexrt/arpanet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/pkg/dbutils"
+	"github.com/galexrt/fivenet/pkg/perms/collections"
+	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-sql-driver/mysql"
 )

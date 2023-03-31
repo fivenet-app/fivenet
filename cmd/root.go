@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/galexrt/arpanet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/prometheus/common/version"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -16,8 +16,8 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "arpanet",
-	Version: version.Print("arpanet"),
+	Use:     "fivenet",
+	Version: version.Print("fivenet"),
 }
 
 func init() {

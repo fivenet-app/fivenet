@@ -1,7 +1,7 @@
 package collections
 
 import (
-	"github.com/galexrt/arpanet/query/arpanet/model"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 )
 
 // Roles provides methods for you to manage array data more easily.

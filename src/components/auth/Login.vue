@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useAuthStore } from '../../store/auth';
 import { computed, ref, watch } from 'vue';
-import { CreateAccountRequest, LoginRequest, LoginResponse } from '@arpanet/gen/services/auth/auth_pb';
+import { CreateAccountRequest, LoginRequest, LoginResponse } from '@fivenet/gen/services/auth/auth_pb';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
 import { dispatchNotification } from '../notification';
@@ -72,7 +72,7 @@ async function createAccount(): Promise<void> {
 <template>
     <div class="max-w-xl mx-auto">
         <div class="px-4 py-8 rounded-lg bg-base-850 sm:px-10">
-            <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="aRPaNet Logo" />
+            <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="FiveNet Logo" />
 
             <div v-if="!createAccountForm">
                 <h2 class="pb-4 text-3xl text-center text-white">Login</h2>

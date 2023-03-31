@@ -9,11 +9,11 @@ This folder contains base data for tests related to querying, creating, updating
 ### Documents
 
 ```console
-mysqldump -h 127.0.0.1 -u arpanet -pchangeme --no-create-info --skip-triggers arpanet arpanet_documents arpanet_documents_categories arpanet_documents_comments arpanet_documents_job_access arpanet_documents_references arpanet_documents_relations arpanet_documents_templates arpanet_documents_user_access > base_010_documents.sql
+mysqldump -h 127.0.0.1 -u fivenet -pchangeme --no-create-info --skip-triggers fivenet fivenet_documents fivenet_documents_categories fivenet_documents_comments fivenet_documents_job_access fivenet_documents_references fivenet_documents_relations fivenet_documents_templates fivenet_documents_user_access > base_010_documents.sql
 ```
 
 ### RBAC
 
 ```console
-mysqldump -h 127.0.0.1 -u arpanet -pchangeme --no-create-info --skip-triggers arpanet arpanet_permissions arpanet_role_permissions arpanet_roles arpanet_user_permissions arpanet_user_roles > base_000_rbac.sql
+mysqldump -h 127.0.0.1 -u fivenet -pchangeme --no-create-info --skip-triggers fivenet fivenet_permissions fivenet_role_permissions fivenet_roles fivenet_user_permissions fivenet_user_roles > base_000_rbac.sql
 ```

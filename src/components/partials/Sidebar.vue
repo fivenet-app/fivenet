@@ -156,7 +156,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
         <div class="hidden overflow-y-auto bg-accent-600 w-28 md:block">
             <div class="flex flex-col items-center w-full py-6">
                 <div class="flex items-center flex-shrink-0">
-                    <img class="w-auto h-12" src="/images/logo.png" alt="aRPaNet Logo" :title="'aRPaNet' + appVersion" />
+                    <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo" :title="'FiveNet' + appVersion" />
                 </div>
                 <div class="flex-1 w-full px-2 mt-6 space-y-1">
                     <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href" v-can="item.permission"
@@ -199,7 +199,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                 </div>
                             </TransitionChild>
                             <div class="flex items-center flex-shrink-0 px-4">
-                                <img class="w-auto h-12" src="/images/logo.png" alt="aRPaNet Logo" />
+                                <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo" />
                             </div>
                             <div class="flex-1 h-0 px-2 mt-5 overflow-y-auto">
                                 <nav class="flex flex-col h-full">

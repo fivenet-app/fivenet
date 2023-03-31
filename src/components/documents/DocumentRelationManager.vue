@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
-import { DOC_RELATION_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
-import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
-import { User } from '@arpanet/gen/resources/users/users_pb';
-import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
+import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
+import { DOC_RELATION_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
+import { DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb';
+import { User } from '@fivenet/gen/resources/users/users_pb';
+import { FindUsersRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import {
     Dialog,
     DialogPanel,

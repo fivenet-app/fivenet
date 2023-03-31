@@ -7,8 +7,8 @@ import (
 
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
-	"github.com/galexrt/arpanet/pkg/perms/collections"
-	"github.com/galexrt/arpanet/query/arpanet/table"
+	"github.com/galexrt/fivenet/pkg/perms/collections"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 )
 
 var (

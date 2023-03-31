@@ -3,10 +3,10 @@ package mock
 import (
 	"strings"
 
-	"github.com/galexrt/arpanet/pkg/perms"
-	"github.com/galexrt/arpanet/pkg/perms/collections"
-	"github.com/galexrt/arpanet/pkg/perms/helpers"
-	"github.com/galexrt/arpanet/query/arpanet/model"
+	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/perms/collections"
+	"github.com/galexrt/fivenet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 )
 
 type PermCounter struct {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
+import { PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { computed } from 'vue';
 
 const props = defineProps({

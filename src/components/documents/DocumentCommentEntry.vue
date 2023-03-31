@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useAuthStore } from '../../store/auth';
-import { DocumentComment } from '@arpanet/gen/resources/documents/documents_pb';
-import { DeleteDocumentCommentRequest, EditDocumentCommentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
+import { DeleteDocumentCommentRequest, EditDocumentCommentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { PencilIcon, TrashIcon } from '@heroicons/vue/20/solid';
 import { computed, ref } from 'vue';
 import { RpcError } from 'grpc-web';

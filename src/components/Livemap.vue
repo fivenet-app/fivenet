@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, onBeforeUnmount, onUnmounted, ref, nextTick } from 'vue';
 import { ClientReadableStream, RpcError } from 'grpc-web';
-import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
+import { StreamRequest, StreamResponse } from '@fivenet/gen/services/livemapper/livemap_pb';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import L from 'leaflet';

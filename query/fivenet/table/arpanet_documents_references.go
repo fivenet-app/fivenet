@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetDocumentsReferences = newArpanetDocumentsReferencesTable("", "arpanet_documents_references", "")
+var ArpanetDocumentsReferences = newArpanetDocumentsReferencesTable("", "fivenet_documents_references", "")
 
-type arpanetDocumentsReferencesTable struct {
+type fivenetDocumentsReferencesTable struct {
 	mysql.Table
 
 	//Columns
@@ -30,9 +30,9 @@ type arpanetDocumentsReferencesTable struct {
 }
 
 type ArpanetDocumentsReferencesTable struct {
-	arpanetDocumentsReferencesTable
+	fivenetDocumentsReferencesTable
 
-	NEW arpanetDocumentsReferencesTable
+	NEW fivenetDocumentsReferencesTable
 }
 
 // AS creates new ArpanetDocumentsReferencesTable with assigned alias
@@ -57,12 +57,12 @@ func (a ArpanetDocumentsReferencesTable) WithSuffix(suffix string) *ArpanetDocum
 
 func newArpanetDocumentsReferencesTable(schemaName, tableName, alias string) *ArpanetDocumentsReferencesTable {
 	return &ArpanetDocumentsReferencesTable{
-		arpanetDocumentsReferencesTable: newArpanetDocumentsReferencesTableImpl(schemaName, tableName, alias),
+		fivenetDocumentsReferencesTable: newArpanetDocumentsReferencesTableImpl(schemaName, tableName, alias),
 		NEW:                             newArpanetDocumentsReferencesTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetDocumentsReferencesTableImpl(schemaName, tableName, alias string) arpanetDocumentsReferencesTable {
+func newArpanetDocumentsReferencesTableImpl(schemaName, tableName, alias string) fivenetDocumentsReferencesTable {
 	var (
 		IDColumn               = mysql.IntegerColumn("id")
 		CreatedAtColumn        = mysql.TimestampColumn("created_at")
@@ -75,7 +75,7 @@ func newArpanetDocumentsReferencesTableImpl(schemaName, tableName, alias string)
 		mutableColumns         = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, SourceDocumentIDColumn, ReferenceColumn, TargetDocumentIDColumn, CreatorIDColumn}
 	)
 
-	return arpanetDocumentsReferencesTable{
+	return fivenetDocumentsReferencesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

@@ -1,4 +1,4 @@
-import { User } from '@arpanet/gen/resources/users/users_pb';
+import { User } from '@fivenet/gen/resources/users/users_pb';
 import { defineStore } from 'pinia';
 
 export interface AuthState {

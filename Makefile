@@ -15,15 +15,15 @@ watch:
 
 .PHONY: build-container
 build-container:
-	docker build -t galexrt/arpanet:latest .
+	docker build -t galexrt/fivenet:latest .
 
 .PHONY: release
 release:
-	docker tag galexrt/arpanet:latest galexrt/arpanet:$(VERSION)
+	docker tag galexrt/fivenet:latest galexrt/fivenet:$(VERSION)
 
 .PHONY: build-go
 build-go:
-	go build -o arpanet .
+	go build -o fivenet .
 
 .PHONY: build-yarn
 build-yarn:
@@ -44,7 +44,7 @@ gen-sql:
 	go run ./query/gen/
 
 	# Remove schema/database name from the generated table code, so it uses the currently selected database
-	find ./query/arpanet/table -type f -iname '*.go' -exec sed -i 's~("arpanet", ~("", ~g' {} \;
+	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
 
 protoc-gen-validate:
 	if test ! -d validate/; then \
@@ -94,7 +94,7 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-customizerweb
 	find ./gen -type f \( -iname '*.js' -o -iname '*.ts' \) -exec sed -i '/validate_pb/d' {} +
 
 	# Update local yarn package
-	yarn upgrade '@arpanet/gen@file:./gen'
+	yarn upgrade '@fivenet/gen@file:./gen'
 
 gdal2tiles-leaflet:
 	if test ! -d gdal2tiles-leaflet/; then \

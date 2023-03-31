@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
-import { User } from '@arpanet/gen/resources/users/users_pb';
-import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
+import { User } from '@fivenet/gen/resources/users/users_pb';
+import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
-import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
+import { FindUsersRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';

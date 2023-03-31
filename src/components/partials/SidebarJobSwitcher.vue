@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { useAuthStore } from '../../store/auth';
 import { computed, ref, onMounted } from 'vue';
-import { Job } from '@arpanet/gen/resources/jobs/jobs_pb';
+import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/20/solid';
-import { CompleteJobNamesRequest } from '@arpanet/gen/services/completor/completor_pb';
+import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/shared';
-import { SetJobRequest } from '@arpanet/gen/services/auth/auth_pb';
+import { SetJobRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();

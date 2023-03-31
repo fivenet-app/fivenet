@@ -1,6 +1,6 @@
 -- MariaDB dump 10.19  Distrib 10.10.3-MariaDB, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database: arpanet
+-- Host: 127.0.0.1    Database: fivenet
 -- ------------------------------------------------------
 -- Server version	10.11.2-MariaDB-1:10.11.2+maria~ubu2204
 
@@ -15,12 +15,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping data for table `arpanet_permissions`
+-- Dumping data for table `fivenet_permissions`
 --
 
-LOCK TABLES `arpanet_permissions` WRITE;
-/*!40000 ALTER TABLE `arpanet_permissions` DISABLE KEYS */;
-INSERT INTO `arpanet_permissions` VALUES
+LOCK TABLES `fivenet_permissions` WRITE;
+/*!40000 ALTER TABLE `fivenet_permissions` DISABLE KEYS */;
+INSERT INTO `fivenet_permissions` VALUES
 (1,'2023-03-18 16:37:43.273',NULL,'AuthService.GetCharacters','authservice-getcharacters',''),
 (3,'2023-03-18 16:37:43.290',NULL,'CitizenStoreService.FindUsers','citizenstoreservice-findusers',''),
 (4,'2023-03-18 16:37:43.299',NULL,'CitizenStoreService.FindUsers.Licenses','citizenstoreservice-findusers-licenses',''),
@@ -55,16 +55,16 @@ INSERT INTO `arpanet_permissions` VALUES
 (41,'2023-03-18 16:37:43.585',NULL,'NotificatorService.GetNotifications','notificatorservice-getnotifications',''),
 (44,'2023-03-18 16:37:43.594',NULL,'Overview.View','overview-view',''),
 (45,'2023-03-18 18:00:58.866',NULL,'CompletorService.CompleteCharNames','completorservice-completecharnames','');
-/*!40000 ALTER TABLE `arpanet_permissions` ENABLE KEYS */;
+/*!40000 ALTER TABLE `fivenet_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Dumping data for table `arpanet_role_permissions`
+-- Dumping data for table `fivenet_role_permissions`
 --
 
-LOCK TABLES `arpanet_role_permissions` WRITE;
-/*!40000 ALTER TABLE `arpanet_role_permissions` DISABLE KEYS */;
-INSERT INTO `arpanet_role_permissions` VALUES
+LOCK TABLES `fivenet_role_permissions` WRITE;
+/*!40000 ALTER TABLE `fivenet_role_permissions` DISABLE KEYS */;
+INSERT INTO `fivenet_role_permissions` VALUES
 (1,1),
 (1,3),
 (1,4),
@@ -178,43 +178,43 @@ INSERT INTO `arpanet_role_permissions` VALUES
 (5,26),
 (5,41),
 (5,44);
-/*!40000 ALTER TABLE `arpanet_role_permissions` ENABLE KEYS */;
+/*!40000 ALTER TABLE `fivenet_role_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Dumping data for table `arpanet_roles`
+-- Dumping data for table `fivenet_roles`
 --
 
-LOCK TABLES `arpanet_roles` WRITE;
-/*!40000 ALTER TABLE `arpanet_roles` DISABLE KEYS */;
-INSERT INTO `arpanet_roles` VALUES
+LOCK TABLES `fivenet_roles` WRITE;
+/*!40000 ALTER TABLE `fivenet_roles` DISABLE KEYS */;
+INSERT INTO `fivenet_roles` VALUES
 (1,'2023-03-18 14:45:32.988',NULL,'masterofdisaster','masterofdisaster',''),
 (2,'2023-03-18 14:45:33.015',NULL,'job-ambulance-1','job-ambulance-1','Role for ambulance Job (Rank: 1)'),
 (3,'2023-03-18 14:45:33.185',NULL,'job-doj-1','job-doj-1','Role for doj Job (Rank: 1)'),
 (4,'2023-03-18 14:45:33.368',NULL,'job-police-1','job-police-1','Role for police Job (Rank: 1)'),
 (5,'2023-03-18 14:45:33.590',NULL,'job-unemployed-1','job-unemployed-1','Role for unemployed Job (Rank: 1)');
-/*!40000 ALTER TABLE `arpanet_roles` ENABLE KEYS */;
+/*!40000 ALTER TABLE `fivenet_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Dumping data for table `arpanet_user_permissions`
+-- Dumping data for table `fivenet_user_permissions`
 --
 
-LOCK TABLES `arpanet_user_permissions` WRITE;
-/*!40000 ALTER TABLE `arpanet_user_permissions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `arpanet_user_permissions` ENABLE KEYS */;
+LOCK TABLES `fivenet_user_permissions` WRITE;
+/*!40000 ALTER TABLE `fivenet_user_permissions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `fivenet_user_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Dumping data for table `arpanet_user_roles`
+-- Dumping data for table `fivenet_user_roles`
 --
 
-LOCK TABLES `arpanet_user_roles` WRITE;
-/*!40000 ALTER TABLE `arpanet_user_roles` DISABLE KEYS */;
-INSERT INTO `arpanet_user_roles` VALUES
+LOCK TABLES `fivenet_user_roles` WRITE;
+/*!40000 ALTER TABLE `fivenet_user_roles` DISABLE KEYS */;
+INSERT INTO `fivenet_user_roles` VALUES
 (1,2),
 (2,2);
-/*!40000 ALTER TABLE `arpanet_user_roles` ENABLE KEYS */;
+/*!40000 ALTER TABLE `fivenet_user_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

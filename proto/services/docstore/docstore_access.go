@@ -5,9 +5,9 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/proto/resources/documents"
-	"github.com/galexrt/arpanet/query/arpanet/table"
+	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"golang.org/x/exp/slices"

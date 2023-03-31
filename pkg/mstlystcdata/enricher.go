@@ -3,8 +3,8 @@ package mstlystcdata
 import (
 	"strconv"
 
-	"github.com/galexrt/arpanet/proto/resources/common"
-	"github.com/galexrt/arpanet/proto/resources/documents"
+	"github.com/galexrt/fivenet/proto/resources/common"
+	"github.com/galexrt/fivenet/proto/resources/documents"
 )
 
 type Enricher struct {

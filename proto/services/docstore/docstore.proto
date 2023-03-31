@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package services.docstore;
-option go_package = "github.com/galexrt/arpanet/proto/services/docstore;docstore";
+option go_package = "github.com/galexrt/fivenet/proto/services/docstore;docstore";
 
 import "resources/common/database/database.proto";
 import "resources/documents/documents.proto";

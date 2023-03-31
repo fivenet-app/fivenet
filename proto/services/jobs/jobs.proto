@@ -1,6 +1,6 @@
 syntax = "proto3";
 
 package services.jobs;
-option go_package = "github.com/galexrt/arpanet/proto/services/jobs;jobs";
+option go_package = "github.com/galexrt/fivenet/proto/services/jobs;jobs";
 
 service JobsService {}

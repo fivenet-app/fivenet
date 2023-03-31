@@ -19,6 +19,6 @@ export async function loadConfig(): Promise<void> {
         config.sentryDSN = data.sentryDSN;
         config.apiProtoURL = data.apiProtoURL;
     } catch (_) {
-        console.error('Failed to get aRPaNet config from server');
+        console.error('Failed to get FiveNet config from server');
     }
 }

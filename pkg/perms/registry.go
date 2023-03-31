@@ -5,9 +5,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/galexrt/arpanet/pkg/config"
-	"github.com/galexrt/arpanet/proto/resources/jobs"
-	"github.com/galexrt/arpanet/query/arpanet/table"
+	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/proto/resources/jobs"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	"golang.org/x/exp/slices"
 )
 

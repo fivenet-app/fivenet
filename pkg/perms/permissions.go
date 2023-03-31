@@ -1,9 +1,9 @@
 package perms
 
 import (
-	"github.com/galexrt/arpanet/pkg/dbutils"
-	"github.com/galexrt/arpanet/pkg/perms/collections"
-	"github.com/galexrt/arpanet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/pkg/dbutils"
+	"github.com/galexrt/fivenet/pkg/perms/collections"
+	"github.com/galexrt/fivenet/pkg/perms/helpers"
 )
 
 func (p *Perms) CreatePermission(name string, description string) error {

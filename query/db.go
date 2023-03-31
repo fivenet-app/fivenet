@@ -5,7 +5,7 @@ import (
 	"embed"
 	"errors"
 
-	"github.com/galexrt/arpanet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
@@ -48,7 +48,7 @@ func MigrateDB(logger *zap.Logger, dsn string) error {
 		return err
 	}
 	driver, err := mysql.WithInstance(db, &mysql.Config{
-		MigrationsTable: "arpanet_zschema_migrations",
+		MigrationsTable: "fivenet_zschema_migrations",
 	})
 	if err != nil {
 		return err

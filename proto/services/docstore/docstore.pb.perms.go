@@ -3,7 +3,7 @@
 
 package docstore
 
-import "github.com/galexrt/arpanet/pkg/perms"
+import "github.com/galexrt/fivenet/pkg/perms"
 
 var PermsRemap = map[string]string{
 	// Service: DocStoreService

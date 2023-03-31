@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/perms"
-	"github.com/galexrt/arpanet/proto/resources/jobs"
-	users "github.com/galexrt/arpanet/proto/resources/users"
-	"github.com/galexrt/arpanet/query/arpanet/model"
-	"github.com/galexrt/arpanet/query/arpanet/table"
+	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/proto/resources/jobs"
+	users "github.com/galexrt/fivenet/proto/resources/users"
+	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/golang-jwt/jwt/v5"
@@ -86,10 +86,10 @@ func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, a
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(10 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
-			Issuer:    "arpanet",
+			Issuer:    "fivenet",
 			Subject:   account.License,
 			ID:        strconv.FormatUint(uint64(account.ID), 10),
-			Audience:  []string{"arpanet"},
+			Audience:  []string{"fivenet"},
 		},
 	}
 

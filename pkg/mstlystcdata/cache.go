@@ -9,9 +9,9 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lfu"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
-	"github.com/galexrt/arpanet/proto/resources/documents"
-	"github.com/galexrt/arpanet/proto/resources/jobs"
-	"github.com/galexrt/arpanet/query/arpanet/table"
+	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/proto/resources/jobs"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	"go.uber.org/zap"
 )
 

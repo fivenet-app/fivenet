@@ -3,7 +3,7 @@ package collections
 import (
 	"strings"
 
-	"github.com/galexrt/arpanet/query/arpanet/model"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 )
 
 // Permissions provides methods for you to manage array data more easily.

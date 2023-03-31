@@ -1,6 +1,6 @@
 package common
 
-import "github.com/galexrt/arpanet/proto/resources/documents"
+import "github.com/galexrt/fivenet/proto/resources/documents"
 
 type IJobInfo interface {
 	GetJob() string

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { ref, onBeforeMount } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
-import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { Document } from '@arpanet/gen/resources/documents/documents_pb';
-import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
+import { FindDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { Document } from '@fivenet/gen/resources/documents/documents_pb';
+import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { toDateLocaleString, toDateRelativeString } from '../../utils/time';

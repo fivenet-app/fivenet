@@ -1,4 +1,4 @@
-module github.com/galexrt/arpanet/cmd/protoc-gen-customizerweb
+module github.com/galexrt/fivenet/cmd/protoc-gen-customizerweb
 
 go 1.20
 

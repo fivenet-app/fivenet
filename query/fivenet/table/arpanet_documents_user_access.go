@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetDocumentsUserAccess = newArpanetDocumentsUserAccessTable("", "arpanet_documents_user_access", "")
+var ArpanetDocumentsUserAccess = newArpanetDocumentsUserAccessTable("", "fivenet_documents_user_access", "")
 
-type arpanetDocumentsUserAccessTable struct {
+type fivenetDocumentsUserAccessTable struct {
 	mysql.Table
 
 	//Columns
@@ -30,9 +30,9 @@ type arpanetDocumentsUserAccessTable struct {
 }
 
 type ArpanetDocumentsUserAccessTable struct {
-	arpanetDocumentsUserAccessTable
+	fivenetDocumentsUserAccessTable
 
-	NEW arpanetDocumentsUserAccessTable
+	NEW fivenetDocumentsUserAccessTable
 }
 
 // AS creates new ArpanetDocumentsUserAccessTable with assigned alias
@@ -57,12 +57,12 @@ func (a ArpanetDocumentsUserAccessTable) WithSuffix(suffix string) *ArpanetDocum
 
 func newArpanetDocumentsUserAccessTable(schemaName, tableName, alias string) *ArpanetDocumentsUserAccessTable {
 	return &ArpanetDocumentsUserAccessTable{
-		arpanetDocumentsUserAccessTable: newArpanetDocumentsUserAccessTableImpl(schemaName, tableName, alias),
+		fivenetDocumentsUserAccessTable: newArpanetDocumentsUserAccessTableImpl(schemaName, tableName, alias),
 		NEW:                             newArpanetDocumentsUserAccessTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetDocumentsUserAccessTableImpl(schemaName, tableName, alias string) arpanetDocumentsUserAccessTable {
+func newArpanetDocumentsUserAccessTableImpl(schemaName, tableName, alias string) fivenetDocumentsUserAccessTable {
 	var (
 		IDColumn         = mysql.IntegerColumn("id")
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
@@ -75,7 +75,7 @@ func newArpanetDocumentsUserAccessTableImpl(schemaName, tableName, alias string)
 		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn, CreatorIDColumn}
 	)
 
-	return arpanetDocumentsUserAccessTable{
+	return fivenetDocumentsUserAccessTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

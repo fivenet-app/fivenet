@@ -1,4 +1,4 @@
-import { IMarker } from '@arpanet/gen/resources/livemap/livemap';
+import { IMarker } from '@fivenet/gen/resources/livemap/livemap';
 import L from 'leaflet';
 
 import { AnimatedMarker } from './AnimatedMarker';

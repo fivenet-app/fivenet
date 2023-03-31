@@ -18,7 +18,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/anypb"
 
-	documents "github.com/galexrt/arpanet/proto/resources/documents"
+	documents "github.com/galexrt/fivenet/proto/resources/documents"
 )
 
 // ensure the imports are used

@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
-import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
-import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
+import { Vehicle } from '@fivenet/gen/resources/vehicles/vehicles_pb';
+import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
-import { FindVehiclesRequest } from '@arpanet/gen/services/dmv/vehicles_pb';
+import { FindVehiclesRequest } from '@fivenet/gen/services/dmv/vehicles_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import VehiclesListEntry from './VehiclesListEntry.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { UserShort } from '@arpanet/gen/resources/users/users_pb';
-import { CompleteCharNamesRequest } from '@arpanet/gen/services/completor/completor_pb';
+import { UserShort } from '@fivenet/gen/resources/users/users_pb';
+import { CompleteCharNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
 import {
     CheckIcon,
 } from '@heroicons/vue/20/solid';

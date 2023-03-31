@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { useAuthStore } from '../../store/auth';
-import { ChooseCharacterRequest } from '@arpanet/gen/services/auth/auth_pb';
-import { User } from '@arpanet/gen/resources/users/users_pb';
+import { ChooseCharacterRequest } from '@fivenet/gen/services/auth/auth_pb';
+import { User } from '@fivenet/gen/resources/users/users_pb';
 import CharSexBadge from '../citizens/CharSexBadge.vue';
 import { fromSecondsToFormattedDuration } from '../../utils/time';
 import { RpcError } from 'grpc-web';

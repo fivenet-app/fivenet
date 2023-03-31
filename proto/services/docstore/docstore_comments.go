@@ -3,10 +3,10 @@ package docstore
 import (
 	context "context"
 
-	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/htmlsanitizer"
-	database "github.com/galexrt/arpanet/proto/resources/common/database"
-	"github.com/galexrt/arpanet/proto/resources/documents"
+	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
+	database "github.com/galexrt/fivenet/proto/resources/common/database"
+	"github.com/galexrt/fivenet/proto/resources/documents"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

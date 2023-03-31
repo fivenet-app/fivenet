@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetDocuments = newArpanetDocumentsTable("", "arpanet_documents", "")
+var ArpanetDocuments = newArpanetDocumentsTable("", "fivenet_documents", "")
 
-type arpanetDocumentsTable struct {
+type fivenetDocumentsTable struct {
 	mysql.Table
 
 	//Columns
@@ -37,9 +37,9 @@ type arpanetDocumentsTable struct {
 }
 
 type ArpanetDocumentsTable struct {
-	arpanetDocumentsTable
+	fivenetDocumentsTable
 
-	NEW arpanetDocumentsTable
+	NEW fivenetDocumentsTable
 }
 
 // AS creates new ArpanetDocumentsTable with assigned alias
@@ -64,12 +64,12 @@ func (a ArpanetDocumentsTable) WithSuffix(suffix string) *ArpanetDocumentsTable 
 
 func newArpanetDocumentsTable(schemaName, tableName, alias string) *ArpanetDocumentsTable {
 	return &ArpanetDocumentsTable{
-		arpanetDocumentsTable: newArpanetDocumentsTableImpl(schemaName, tableName, alias),
+		fivenetDocumentsTable: newArpanetDocumentsTableImpl(schemaName, tableName, alias),
 		NEW:                   newArpanetDocumentsTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetDocumentsTableImpl(schemaName, tableName, alias string) arpanetDocumentsTable {
+func newArpanetDocumentsTableImpl(schemaName, tableName, alias string) fivenetDocumentsTable {
 	var (
 		IDColumn          = mysql.IntegerColumn("id")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
@@ -89,7 +89,7 @@ func newArpanetDocumentsTableImpl(schemaName, tableName, alias string) arpanetDo
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn}
 	)
 
-	return arpanetDocumentsTable{
+	return fivenetDocumentsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

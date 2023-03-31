@@ -1,4 +1,4 @@
-module github.com/galexrt/arpanet
+module github.com/galexrt/fivenet
 
 go 1.20
 

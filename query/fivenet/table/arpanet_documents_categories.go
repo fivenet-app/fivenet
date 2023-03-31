@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetDocumentsCategories = newArpanetDocumentsCategoriesTable("", "arpanet_documents_categories", "")
+var ArpanetDocumentsCategories = newArpanetDocumentsCategoriesTable("", "fivenet_documents_categories", "")
 
-type arpanetDocumentsCategoriesTable struct {
+type fivenetDocumentsCategoriesTable struct {
 	mysql.Table
 
 	//Columns
@@ -27,9 +27,9 @@ type arpanetDocumentsCategoriesTable struct {
 }
 
 type ArpanetDocumentsCategoriesTable struct {
-	arpanetDocumentsCategoriesTable
+	fivenetDocumentsCategoriesTable
 
-	NEW arpanetDocumentsCategoriesTable
+	NEW fivenetDocumentsCategoriesTable
 }
 
 // AS creates new ArpanetDocumentsCategoriesTable with assigned alias
@@ -54,12 +54,12 @@ func (a ArpanetDocumentsCategoriesTable) WithSuffix(suffix string) *ArpanetDocum
 
 func newArpanetDocumentsCategoriesTable(schemaName, tableName, alias string) *ArpanetDocumentsCategoriesTable {
 	return &ArpanetDocumentsCategoriesTable{
-		arpanetDocumentsCategoriesTable: newArpanetDocumentsCategoriesTableImpl(schemaName, tableName, alias),
+		fivenetDocumentsCategoriesTable: newArpanetDocumentsCategoriesTableImpl(schemaName, tableName, alias),
 		NEW:                             newArpanetDocumentsCategoriesTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetDocumentsCategoriesTableImpl(schemaName, tableName, alias string) arpanetDocumentsCategoriesTable {
+func newArpanetDocumentsCategoriesTableImpl(schemaName, tableName, alias string) fivenetDocumentsCategoriesTable {
 	var (
 		IDColumn          = mysql.IntegerColumn("id")
 		NameColumn        = mysql.StringColumn("name")
@@ -69,7 +69,7 @@ func newArpanetDocumentsCategoriesTableImpl(schemaName, tableName, alias string)
 		mutableColumns    = mysql.ColumnList{NameColumn, DescriptionColumn, JobColumn}
 	)
 
-	return arpanetDocumentsCategoriesTable{
+	return fivenetDocumentsCategoriesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

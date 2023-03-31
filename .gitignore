@@ -28,7 +28,7 @@ target/
 
 # Golang relevant files
 __debug_bin
-/arpanet
+/fivenet
 
 /config.yaml
 /.env

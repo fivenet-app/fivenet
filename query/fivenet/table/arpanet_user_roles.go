@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetUserRoles = newArpanetUserRolesTable("", "arpanet_user_roles", "")
+var ArpanetUserRoles = newArpanetUserRolesTable("", "fivenet_user_roles", "")
 
-type arpanetUserRolesTable struct {
+type fivenetUserRolesTable struct {
 	mysql.Table
 
 	//Columns
@@ -25,9 +25,9 @@ type arpanetUserRolesTable struct {
 }
 
 type ArpanetUserRolesTable struct {
-	arpanetUserRolesTable
+	fivenetUserRolesTable
 
-	NEW arpanetUserRolesTable
+	NEW fivenetUserRolesTable
 }
 
 // AS creates new ArpanetUserRolesTable with assigned alias
@@ -52,12 +52,12 @@ func (a ArpanetUserRolesTable) WithSuffix(suffix string) *ArpanetUserRolesTable 
 
 func newArpanetUserRolesTable(schemaName, tableName, alias string) *ArpanetUserRolesTable {
 	return &ArpanetUserRolesTable{
-		arpanetUserRolesTable: newArpanetUserRolesTableImpl(schemaName, tableName, alias),
+		fivenetUserRolesTable: newArpanetUserRolesTableImpl(schemaName, tableName, alias),
 		NEW:                   newArpanetUserRolesTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetUserRolesTableImpl(schemaName, tableName, alias string) arpanetUserRolesTable {
+func newArpanetUserRolesTableImpl(schemaName, tableName, alias string) fivenetUserRolesTable {
 	var (
 		UserIDColumn   = mysql.IntegerColumn("user_id")
 		RoleIDColumn   = mysql.IntegerColumn("role_id")
@@ -65,7 +65,7 @@ func newArpanetUserRolesTableImpl(schemaName, tableName, alias string) arpanetUs
 		mutableColumns = mysql.ColumnList{}
 	)
 
-	return arpanetUserRolesTable{
+	return fivenetUserRolesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

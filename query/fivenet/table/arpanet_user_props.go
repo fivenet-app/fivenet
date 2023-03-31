@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetUserProps = newArpanetUserPropsTable("", "arpanet_user_props", "")
+var ArpanetUserProps = newArpanetUserPropsTable("", "fivenet_user_props", "")
 
-type arpanetUserPropsTable struct {
+type fivenetUserPropsTable struct {
 	mysql.Table
 
 	//Columns
@@ -25,9 +25,9 @@ type arpanetUserPropsTable struct {
 }
 
 type ArpanetUserPropsTable struct {
-	arpanetUserPropsTable
+	fivenetUserPropsTable
 
-	NEW arpanetUserPropsTable
+	NEW fivenetUserPropsTable
 }
 
 // AS creates new ArpanetUserPropsTable with assigned alias
@@ -52,12 +52,12 @@ func (a ArpanetUserPropsTable) WithSuffix(suffix string) *ArpanetUserPropsTable 
 
 func newArpanetUserPropsTable(schemaName, tableName, alias string) *ArpanetUserPropsTable {
 	return &ArpanetUserPropsTable{
-		arpanetUserPropsTable: newArpanetUserPropsTableImpl(schemaName, tableName, alias),
+		fivenetUserPropsTable: newArpanetUserPropsTableImpl(schemaName, tableName, alias),
 		NEW:                   newArpanetUserPropsTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetUserPropsTableImpl(schemaName, tableName, alias string) arpanetUserPropsTable {
+func newArpanetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUserPropsTable {
 	var (
 		UserIDColumn   = mysql.IntegerColumn("user_id")
 		WantedColumn   = mysql.BoolColumn("wanted")
@@ -65,7 +65,7 @@ func newArpanetUserPropsTableImpl(schemaName, tableName, alias string) arpanetUs
 		mutableColumns = mysql.ColumnList{UserIDColumn, WantedColumn}
 	)
 
-	return arpanetUserPropsTable{
+	return fivenetUserPropsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

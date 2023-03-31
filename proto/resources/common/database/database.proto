@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package resources.common.database;
-option go_package = "github.com/galexrt/arpanet/proto/resources/common/database;database";
+option go_package = "github.com/galexrt/fivenet/proto/resources/common/database;database";
 
 import "validate/validate.proto";
 

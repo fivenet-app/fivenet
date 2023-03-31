@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { GetDocumentCommentsRequest, GetDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { Document, DocumentAccess, DocumentComment, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
+import { GetDocumentCommentsRequest, GetDocumentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { Document, DocumentAccess, DocumentComment, DocumentReference, DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb';
 import { toDate } from '../../utils/time';
-import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
+import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import {
     TabGroup,
     TabList,
@@ -24,7 +24,7 @@ import DocumentRelations from './DocumentRelations.vue';
 import DocumentReferences from './DocumentReferences.vue';
 import DocumentComments from './DocumentComments.vue';
 import { toTitleCase } from '../../utils/strings';
-import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
+import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
 import { useClipboardStore } from '../../store/clipboard';
 import { PlusIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from 'grpc-web';

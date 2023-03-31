@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetNotifications = newArpanetNotificationsTable("", "arpanet_notifications", "")
+var ArpanetNotifications = newArpanetNotificationsTable("", "fivenet_notifications", "")
 
-type arpanetNotificationsTable struct {
+type fivenetNotificationsTable struct {
 	mysql.Table
 
 	//Columns
@@ -31,9 +31,9 @@ type arpanetNotificationsTable struct {
 }
 
 type ArpanetNotificationsTable struct {
-	arpanetNotificationsTable
+	fivenetNotificationsTable
 
-	NEW arpanetNotificationsTable
+	NEW fivenetNotificationsTable
 }
 
 // AS creates new ArpanetNotificationsTable with assigned alias
@@ -58,12 +58,12 @@ func (a ArpanetNotificationsTable) WithSuffix(suffix string) *ArpanetNotificatio
 
 func newArpanetNotificationsTable(schemaName, tableName, alias string) *ArpanetNotificationsTable {
 	return &ArpanetNotificationsTable{
-		arpanetNotificationsTable: newArpanetNotificationsTableImpl(schemaName, tableName, alias),
+		fivenetNotificationsTable: newArpanetNotificationsTableImpl(schemaName, tableName, alias),
 		NEW:                       newArpanetNotificationsTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetNotificationsTableImpl(schemaName, tableName, alias string) arpanetNotificationsTable {
+func newArpanetNotificationsTableImpl(schemaName, tableName, alias string) fivenetNotificationsTable {
 	var (
 		IDColumn        = mysql.IntegerColumn("id")
 		CreatedAtColumn = mysql.TimestampColumn("created_at")
@@ -77,7 +77,7 @@ func newArpanetNotificationsTableImpl(schemaName, tableName, alias string) arpan
 		mutableColumns  = mysql.ColumnList{CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, TypeColumn, ContentColumn, DataColumn}
 	)
 
-	return arpanetNotificationsTable{
+	return fivenetNotificationsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

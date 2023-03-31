@@ -8,7 +8,7 @@ package users
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/galexrt/arpanet/proto/resources/timestamp"
+	timestamp "github.com/galexrt/fivenet/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -193,7 +193,7 @@ type User struct {
 	PhoneNumber   string     `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty" alias:"phone_number"`        // @gotags: alias:"phone_number"
 	Visum         *int32     `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty" alias:"visum"`                                // @gotags: alias:"visum"
 	Playtime      *int32     `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty" alias:"playtime"`                          // @gotags: alias:"playtime"
-	Props         *UserProps `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"arpanet_user_props"`                                       // @gotags: alias:"arpanet_user_props"
+	Props         *UserProps `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`                                       // @gotags: alias:"fivenet_user_props"
 	Licenses      []*License `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"`                                 // @gotags: alias:"user_licenses"
 }
 
@@ -456,14 +456,14 @@ type UserActivity struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"arpanet_user_activity.id"`                                             // @gotags: alias:"arpanet_user_activity.id"
-	Type       USER_ACTIVITY_TYPE   `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.USER_ACTIVITY_TYPE" json:"type,omitempty" alias:"arpanet_user_activity.type"` // @gotags: alias:"arpanet_user_activity.type"
-	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"arpanet_user_activity.created_at"`               // @gotags: alias:"arpanet_user_activity.created_at"
+	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"fivenet_user_activity.id"`                                             // @gotags: alias:"fivenet_user_activity.id"
+	Type       USER_ACTIVITY_TYPE   `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.USER_ACTIVITY_TYPE" json:"type,omitempty" alias:"fivenet_user_activity.type"` // @gotags: alias:"fivenet_user_activity.type"
+	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"fivenet_user_activity.created_at"`               // @gotags: alias:"fivenet_user_activity.created_at"
 	SourceUser *UserShort           `protobuf:"bytes,4,opt,name=source_user,json=sourceUser,proto3" json:"source_user,omitempty" alias:"source_user"`            // @gotags: alias:"source_user"
 	TargetUser *UserShort           `protobuf:"bytes,5,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty" alias:"target_user"`            // @gotags: alias:"target_user"
-	Key        string               `protobuf:"bytes,6,opt,name=key,proto3" json:"key,omitempty" alias:"arpanet_user_activity.key"`                                            // @gotags: alias:"arpanet_user_activity.key"
-	OldValue   string               `protobuf:"bytes,7,opt,name=oldValue,proto3" json:"oldValue,omitempty" alias:"arpanet_user_activity.old_value"`                                  // @gotags: alias:"arpanet_user_activity.old_value"
-	NewValue   string               `protobuf:"bytes,8,opt,name=newValue,proto3" json:"newValue,omitempty" alias:"arpanet_user_activity.new_value"`                                  // @gotags: alias:"arpanet_user_activity.new_value"
+	Key        string               `protobuf:"bytes,6,opt,name=key,proto3" json:"key,omitempty" alias:"fivenet_user_activity.key"`                                            // @gotags: alias:"fivenet_user_activity.key"
+	OldValue   string               `protobuf:"bytes,7,opt,name=oldValue,proto3" json:"oldValue,omitempty" alias:"fivenet_user_activity.old_value"`                                  // @gotags: alias:"fivenet_user_activity.old_value"
+	NewValue   string               `protobuf:"bytes,8,opt,name=newValue,proto3" json:"newValue,omitempty" alias:"fivenet_user_activity.new_value"`                                  // @gotags: alias:"fivenet_user_activity.new_value"
 }
 
 func (x *UserActivity) Reset() {
@@ -663,7 +663,7 @@ var file_resources_users_users_proto_rawDesc = []byte{
 	0x47, 0x45, 0x44, 0x10, 0x00, 0x12, 0x0d, 0x0a, 0x09, 0x4d, 0x45, 0x4e, 0x54, 0x49, 0x4f, 0x4e,
 	0x45, 0x44, 0x10, 0x01, 0x12, 0x0b, 0x0a, 0x07, 0x43, 0x52, 0x45, 0x41, 0x54, 0x45, 0x44, 0x10,
 	0x02, 0x42, 0x38, 0x5a, 0x36, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
-	0x67, 0x61, 0x6c, 0x65, 0x78, 0x72, 0x74, 0x2f, 0x61, 0x72, 0x70, 0x61, 0x6e, 0x65, 0x74, 0x2f,
+	0x67, 0x61, 0x6c, 0x65, 0x78, 0x72, 0x74, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2f,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2f,
 	0x75, 0x73, 0x65, 0x72, 0x73, 0x3b, 0x75, 0x73, 0x65, 0x72, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x33,

@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetDocumentsRelations = newArpanetDocumentsRelationsTable("", "arpanet_documents_relations", "")
+var ArpanetDocumentsRelations = newArpanetDocumentsRelationsTable("", "fivenet_documents_relations", "")
 
-type arpanetDocumentsRelationsTable struct {
+type fivenetDocumentsRelationsTable struct {
 	mysql.Table
 
 	//Columns
@@ -30,9 +30,9 @@ type arpanetDocumentsRelationsTable struct {
 }
 
 type ArpanetDocumentsRelationsTable struct {
-	arpanetDocumentsRelationsTable
+	fivenetDocumentsRelationsTable
 
-	NEW arpanetDocumentsRelationsTable
+	NEW fivenetDocumentsRelationsTable
 }
 
 // AS creates new ArpanetDocumentsRelationsTable with assigned alias
@@ -57,12 +57,12 @@ func (a ArpanetDocumentsRelationsTable) WithSuffix(suffix string) *ArpanetDocume
 
 func newArpanetDocumentsRelationsTable(schemaName, tableName, alias string) *ArpanetDocumentsRelationsTable {
 	return &ArpanetDocumentsRelationsTable{
-		arpanetDocumentsRelationsTable: newArpanetDocumentsRelationsTableImpl(schemaName, tableName, alias),
+		fivenetDocumentsRelationsTable: newArpanetDocumentsRelationsTableImpl(schemaName, tableName, alias),
 		NEW:                            newArpanetDocumentsRelationsTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetDocumentsRelationsTableImpl(schemaName, tableName, alias string) arpanetDocumentsRelationsTable {
+func newArpanetDocumentsRelationsTableImpl(schemaName, tableName, alias string) fivenetDocumentsRelationsTable {
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
@@ -75,7 +75,7 @@ func newArpanetDocumentsRelationsTableImpl(schemaName, tableName, alias string) 
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, SourceUserIDColumn, RelationColumn, TargetUserIDColumn}
 	)
 
-	return arpanetDocumentsRelationsTable{
+	return fivenetDocumentsRelationsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

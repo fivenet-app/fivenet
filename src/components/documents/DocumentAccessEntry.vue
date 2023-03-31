@@ -17,13 +17,13 @@ import {
     XMarkIcon,
 } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/core';
-import { CompleteCharNamesRequest, CompleteJobNamesRequest } from '@arpanet/gen/services/completor/completor_pb';
-import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
-import { UserShort } from '@arpanet/gen/resources/users/users_pb';
-import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
+import { CompleteCharNamesRequest, CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { UserShort } from '@fivenet/gen/resources/users/users_pb';
+import { DOC_ACCESS } from '@fivenet/gen/resources/documents/documents_pb';
 import { toTitleCase } from '../../utils/strings';
 import { ArrayElement } from '../../utils/types';
-import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
+import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 
 const { $grpc } = useNuxtApp();
 

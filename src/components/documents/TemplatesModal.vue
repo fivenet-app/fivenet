@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DocumentTemplateShort, TemplateRequirements } from '@arpanet/gen/resources/documents/templates_pb';
+import { DocumentTemplateShort, TemplateRequirements } from '@fivenet/gen/resources/documents/templates_pb';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { PencilIcon } from '@heroicons/vue/24/solid';
 import { ref, watch } from 'vue';

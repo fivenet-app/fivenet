@@ -20,12 +20,12 @@ const accessToken = computed(() => store.$state.accessToken);
 <template>
     <div class="h-full">
         <HeroFull>
-            <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="aRPaNet Logo" />
-            <h1 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">Welcome to aRPaNet!</h1>
+            <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="FiveNet Logo" />
+            <h1 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">Welcome to FiveNet!</h1>
             <p class="mt-6 text-lg leading-8 text-neutral">
                 From searching the state's citizen and vehicles database, filling documents for investigations, court and a
                 livemap of your colleagues and dispatches.
-                <br />All that and more, is (mostly) ready in this net, the aRPaNet.
+                <br />All that and more, is (mostly) ready in this net, the FiveNet.
             </p>
             <div class="flex items-center justify-center mt-4 gap-x-6">
                 <NuxtLink v-if="accessToken" :to="{ name: 'overview' }"

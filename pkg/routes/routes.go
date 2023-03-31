@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	"github.com/galexrt/arpanet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package resources.jobs;
-option go_package = "github.com/galexrt/arpanet/proto/resources/jobs;jobs";
+option go_package = "github.com/galexrt/fivenet/proto/resources/jobs;jobs";
 
 import "validate/validate.proto";
 

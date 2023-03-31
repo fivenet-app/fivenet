@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/galexrt/arpanet/query"
+	"github.com/galexrt/fivenet/query"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
@@ -50,9 +50,9 @@ func (m *DBManager) Setup() {
 			Tag:        "10.11.2-jammy",
 			Env: []string{
 				"MYSQL_ROOT_PASSWORD=secret",
-				"MYSQL_USER=arpanet",
+				"MYSQL_USER=fivenet",
 				"MYSQL_PASSWORD=changeme",
-				"MYSQL_DATABASE=arpanettest",
+				"MYSQL_DATABASE=fivenettest",
 			},
 			Cmd: []string{
 				"mariadbd",
@@ -98,7 +98,7 @@ func (m *DBManager) DB() *sql.DB {
 }
 
 func (m *DBManager) getDSN() string {
-	return fmt.Sprintf("arpanet:changeme@(localhost:%s)/arpanettest?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local", m.resource.GetPort("3306/tcp"))
+	return fmt.Sprintf("fivenet:changeme@(localhost:%s)/fivenettest?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local", m.resource.GetPort("3306/tcp"))
 }
 
 func (m *DBManager) prepareDBForFirstUse() {
@@ -160,13 +160,13 @@ func (m *DBManager) Stop() {
 	}
 }
 
-// Reset truncates all `arpanet_*` tables and loads the base test data
+// Reset truncates all `fivenet_*` tables and loads the base test data
 func (m *DBManager) Reset() {
 	initDB := m.getMultiStatementDB()
 
-	rows, err := initDB.Query("SHOW TABLES LIKE 'arpanet_%';")
+	rows, err := initDB.Query("SHOW TABLES LIKE 'fivenet_%';")
 	if err != nil {
-		log.Fatalf("Failed to list arpanet tables in test database: %s", err)
+		log.Fatalf("Failed to list fivenet tables in test database: %s", err)
 	}
 
 	for rows.Next() {

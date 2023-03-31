@@ -11,12 +11,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/config"
-	"github.com/galexrt/arpanet/pkg/perms"
-	"github.com/galexrt/arpanet/pkg/routes"
-	"github.com/galexrt/arpanet/proto"
-	"github.com/galexrt/arpanet/query"
+	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/routes"
+	"github.com/galexrt/fivenet/proto"
+	"github.com/galexrt/fivenet/query"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -142,7 +142,7 @@ func setupHTTPServer() *gin.Engine {
 		HttpOnly: true,
 		Secure:   false,
 	})
-	e.Use(sessions.SessionsMany([]string{"arpanet_"}, sessStore))
+	e.Use(sessions.SessionsMany([]string{"fivenet_"}, sessStore))
 
 	// GZIP
 	e.Use(gzip.Gzip(gzip.DefaultCompression))

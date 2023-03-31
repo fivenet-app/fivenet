@@ -5,17 +5,17 @@ import { useDocumentEditorStore } from '../../store/documenteditor';
 import { useClipboardStore } from '../../store/clipboard';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
-import { DocumentCategory } from '@arpanet/gen/resources/documents/category_pb';
+import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@fivenet/gen/resources/documents/documents_pb';
+import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
 import { dispatchNotification } from '../notification';
 import {
     PlusIcon,
     ChevronDownIcon,
     CheckIcon,
 } from '@heroicons/vue/20/solid';
-import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
-import { UserShort } from '@arpanet/gen/resources/users/users_pb';
+import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { UserShort } from '@fivenet/gen/resources/users/users_pb';
 import {
     Listbox,
     ListboxButton,
@@ -27,9 +27,9 @@ import {
     ComboboxOption,
     ComboboxOptions
 } from '@headlessui/vue';
-import { CompleteDocumentCategoryRequest } from '@arpanet/gen/services/completor/completor_pb';
+import { CompleteDocumentCategoryRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/core';
-import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
+import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import DocumentReferenceManager from './DocumentReferenceManager.vue';
 import DocumentRelationManager from './DocumentRelationManager.vue';
 import DocumentAccessEntry from './DocumentAccessEntry.vue';

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
-import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
+import { GetUserRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import { RpcError } from 'grpc-web';
 import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
-import { User } from '@arpanet/gen/resources/users/users_pb';
+import { User } from '@fivenet/gen/resources/users/users_pb';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({

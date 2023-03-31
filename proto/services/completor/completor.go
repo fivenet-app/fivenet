@@ -6,10 +6,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/mstlystcdata"
-	"github.com/galexrt/arpanet/pkg/perms"
-	"github.com/galexrt/arpanet/query/arpanet/table"
+	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/mstlystcdata"
+	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetUserActivity = newArpanetUserActivityTable("", "arpanet_user_activity", "")
+var ArpanetUserActivity = newArpanetUserActivityTable("", "fivenet_user_activity", "")
 
-type arpanetUserActivityTable struct {
+type fivenetUserActivityTable struct {
 	mysql.Table
 
 	//Columns
@@ -31,9 +31,9 @@ type arpanetUserActivityTable struct {
 }
 
 type ArpanetUserActivityTable struct {
-	arpanetUserActivityTable
+	fivenetUserActivityTable
 
-	NEW arpanetUserActivityTable
+	NEW fivenetUserActivityTable
 }
 
 // AS creates new ArpanetUserActivityTable with assigned alias
@@ -58,12 +58,12 @@ func (a ArpanetUserActivityTable) WithSuffix(suffix string) *ArpanetUserActivity
 
 func newArpanetUserActivityTable(schemaName, tableName, alias string) *ArpanetUserActivityTable {
 	return &ArpanetUserActivityTable{
-		arpanetUserActivityTable: newArpanetUserActivityTableImpl(schemaName, tableName, alias),
+		fivenetUserActivityTable: newArpanetUserActivityTableImpl(schemaName, tableName, alias),
 		NEW:                      newArpanetUserActivityTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetUserActivityTableImpl(schemaName, tableName, alias string) arpanetUserActivityTable {
+func newArpanetUserActivityTableImpl(schemaName, tableName, alias string) fivenetUserActivityTable {
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
@@ -77,7 +77,7 @@ func newArpanetUserActivityTableImpl(schemaName, tableName, alias string) arpane
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
 	)
 
-	return arpanetUserActivityTable{
+	return fivenetUserActivityTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

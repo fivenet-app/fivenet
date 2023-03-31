@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetUserLocations = newArpanetUserLocationsTable("", "arpanet_user_locations", "")
+var ArpanetUserLocations = newArpanetUserLocationsTable("", "fivenet_user_locations", "")
 
-type arpanetUserLocationsTable struct {
+type fivenetUserLocationsTable struct {
 	mysql.Table
 
 	//Columns
@@ -29,9 +29,9 @@ type arpanetUserLocationsTable struct {
 }
 
 type ArpanetUserLocationsTable struct {
-	arpanetUserLocationsTable
+	fivenetUserLocationsTable
 
-	NEW arpanetUserLocationsTable
+	NEW fivenetUserLocationsTable
 }
 
 // AS creates new ArpanetUserLocationsTable with assigned alias
@@ -56,12 +56,12 @@ func (a ArpanetUserLocationsTable) WithSuffix(suffix string) *ArpanetUserLocatio
 
 func newArpanetUserLocationsTable(schemaName, tableName, alias string) *ArpanetUserLocationsTable {
 	return &ArpanetUserLocationsTable{
-		arpanetUserLocationsTable: newArpanetUserLocationsTableImpl(schemaName, tableName, alias),
+		fivenetUserLocationsTable: newArpanetUserLocationsTableImpl(schemaName, tableName, alias),
 		NEW:                       newArpanetUserLocationsTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetUserLocationsTableImpl(schemaName, tableName, alias string) arpanetUserLocationsTable {
+func newArpanetUserLocationsTableImpl(schemaName, tableName, alias string) fivenetUserLocationsTable {
 	var (
 		UserIDColumn    = mysql.IntegerColumn("user_id")
 		JobColumn       = mysql.StringColumn("job")
@@ -73,7 +73,7 @@ func newArpanetUserLocationsTableImpl(schemaName, tableName, alias string) arpan
 		mutableColumns  = mysql.ColumnList{JobColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn}
 	)
 
-	return arpanetUserLocationsTable{
+	return fivenetUserLocationsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

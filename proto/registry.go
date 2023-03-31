@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"net"
 
-	"github.com/galexrt/arpanet/pkg/auth"
-	"github.com/galexrt/arpanet/pkg/config"
-	grpc_auth "github.com/galexrt/arpanet/pkg/grpc/auth"
-	grpc_permission "github.com/galexrt/arpanet/pkg/grpc/permission"
-	"github.com/galexrt/arpanet/pkg/mstlystcdata"
-	"github.com/galexrt/arpanet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/config"
+	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/auth"
+	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/permission"
+	"github.com/galexrt/fivenet/pkg/mstlystcdata"
+	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -24,14 +24,14 @@ import (
 	"google.golang.org/grpc/status"
 
 	// GRPC Services
-	pbauth "github.com/galexrt/arpanet/proto/services/auth"
-	pbcitizenstore "github.com/galexrt/arpanet/proto/services/citizenstore"
-	pbcompletor "github.com/galexrt/arpanet/proto/services/completor"
-	pbdmv "github.com/galexrt/arpanet/proto/services/dmv"
-	pbdocstore "github.com/galexrt/arpanet/proto/services/docstore"
-	pbjobs "github.com/galexrt/arpanet/proto/services/jobs"
-	pblivemapper "github.com/galexrt/arpanet/proto/services/livemapper"
-	pbnotificator "github.com/galexrt/arpanet/proto/services/notificator"
+	pbauth "github.com/galexrt/fivenet/proto/services/auth"
+	pbcitizenstore "github.com/galexrt/fivenet/proto/services/citizenstore"
+	pbcompletor "github.com/galexrt/fivenet/proto/services/completor"
+	pbdmv "github.com/galexrt/fivenet/proto/services/dmv"
+	pbdocstore "github.com/galexrt/fivenet/proto/services/docstore"
+	pbjobs "github.com/galexrt/fivenet/proto/services/jobs"
+	pblivemapper "github.com/galexrt/fivenet/proto/services/livemapper"
+	pbnotificator "github.com/galexrt/fivenet/proto/services/notificator"
 )
 
 func init() {

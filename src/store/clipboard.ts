@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
-import { TemplateData } from '@arpanet/gen/resources/documents/templates_pb';
-import { User, UserShort } from '@arpanet/gen/resources/users/users_pb';
-import { Document } from '@arpanet/gen/resources/documents/documents_pb';
-import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
+import { TemplateData } from '@fivenet/gen/resources/documents/templates_pb';
+import { User, UserShort } from '@fivenet/gen/resources/users/users_pb';
+import { Document } from '@fivenet/gen/resources/documents/documents_pb';
+import { Vehicle } from '@fivenet/gen/resources/vehicles/vehicles_pb';
 import { fromString, toDateLocaleString } from '../utils/time';
-import { Timestamp } from '@arpanet/gen/resources/timestamp/timestamp_pb';
+import { Timestamp } from '@fivenet/gen/resources/timestamp/timestamp_pb';
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
 export interface ClipboardData {

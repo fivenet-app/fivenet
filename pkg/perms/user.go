@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	cache "github.com/Code-Hex/go-generics-cache"
-	"github.com/galexrt/arpanet/pkg/perms/collections"
-	"github.com/galexrt/arpanet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/pkg/perms/collections"
+	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
-import { DocumentComment } from '@arpanet/gen/resources/documents/documents_pb';
-import { DeleteDocumentCommentRequest, GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
+import { DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
+import { DeleteDocumentCommentRequest, GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { computed, ref, onMounted } from 'vue';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
 import { useAuthStore } from '../../store/auth';

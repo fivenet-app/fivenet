@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { DOC_RELATION_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
-import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
+import { DOC_RELATION_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
+import { DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb';
 import { ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
 import { toDateLocaleString } from '../../utils/time';
 

@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/galexrt/arpanet/cmd"
+	"github.com/galexrt/fivenet/cmd"
 )
 
 func main() {

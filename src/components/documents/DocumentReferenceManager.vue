@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
-import { DOC_REFERENCE_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
-import { Document, DocumentReference } from '@arpanet/gen/resources/documents/documents_pb';
-import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
+import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
+import { DOC_REFERENCE_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
+import { Document, DocumentReference } from '@fivenet/gen/resources/documents/documents_pb';
+import { FindDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import {
     Dialog,
     DialogPanel,

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { LogoutRequest } from '@arpanet/gen/services/auth/auth_pb';
+import { LogoutRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
 import { onBeforeMount } from 'vue';
 import { dispatchNotification } from '~~/src/components/notification';

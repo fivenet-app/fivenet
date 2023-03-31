@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetJobProps = newArpanetJobPropsTable("", "arpanet_job_props", "")
+var ArpanetJobProps = newArpanetJobPropsTable("", "fivenet_job_props", "")
 
-type arpanetJobPropsTable struct {
+type fivenetJobPropsTable struct {
 	mysql.Table
 
 	//Columns
@@ -25,9 +25,9 @@ type arpanetJobPropsTable struct {
 }
 
 type ArpanetJobPropsTable struct {
-	arpanetJobPropsTable
+	fivenetJobPropsTable
 
-	NEW arpanetJobPropsTable
+	NEW fivenetJobPropsTable
 }
 
 // AS creates new ArpanetJobPropsTable with assigned alias
@@ -52,12 +52,12 @@ func (a ArpanetJobPropsTable) WithSuffix(suffix string) *ArpanetJobPropsTable {
 
 func newArpanetJobPropsTable(schemaName, tableName, alias string) *ArpanetJobPropsTable {
 	return &ArpanetJobPropsTable{
-		arpanetJobPropsTable: newArpanetJobPropsTableImpl(schemaName, tableName, alias),
+		fivenetJobPropsTable: newArpanetJobPropsTableImpl(schemaName, tableName, alias),
 		NEW:                  newArpanetJobPropsTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetJobPropsTableImpl(schemaName, tableName, alias string) arpanetJobPropsTable {
+func newArpanetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJobPropsTable {
 	var (
 		JobColumn      = mysql.StringColumn("job")
 		ThemeColumn    = mysql.StringColumn("theme")
@@ -65,7 +65,7 @@ func newArpanetJobPropsTableImpl(schemaName, tableName, alias string) arpanetJob
 		mutableColumns = mysql.ColumnList{JobColumn, ThemeColumn}
 	)
 
-	return arpanetJobPropsTable{
+	return fivenetJobPropsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

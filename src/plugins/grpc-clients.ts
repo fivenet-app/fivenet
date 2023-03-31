@@ -1,12 +1,12 @@
 import { useAuthStore } from '../store/auth';
 import config from '../config';
-import { AuthServiceClient } from '@arpanet/gen/services/auth/AuthServiceClientPb';
-import { CitizenStoreServiceClient } from '@arpanet/gen/services/citizenstore/CitizenstoreServiceClientPb';
-import { CompletorServiceClient } from '@arpanet/gen/services/completor/CompletorServiceClientPb';
-import { DMVServiceClient } from '@arpanet/gen/services/dmv/VehiclesServiceClientPb';
-import { DocStoreServiceClient } from '@arpanet/gen/services/docstore/DocstoreServiceClientPb';
-import { JobsServiceClient } from '@arpanet/gen/services/jobs/JobsServiceClientPb';
-import { LivemapperServiceClient } from '@arpanet/gen/services/livemapper/LivemapServiceClientPb';
+import { AuthServiceClient } from '@fivenet/gen/services/auth/AuthServiceClientPb';
+import { CitizenStoreServiceClient } from '@fivenet/gen/services/citizenstore/CitizenstoreServiceClientPb';
+import { CompletorServiceClient } from '@fivenet/gen/services/completor/CompletorServiceClientPb';
+import { DMVServiceClient } from '@fivenet/gen/services/dmv/VehiclesServiceClientPb';
+import { DocStoreServiceClient } from '@fivenet/gen/services/docstore/DocstoreServiceClientPb';
+import { JobsServiceClient } from '@fivenet/gen/services/jobs/JobsServiceClientPb';
+import { LivemapperServiceClient } from '@fivenet/gen/services/livemapper/LivemapServiceClientPb';
 import { UnaryInterceptor, UnaryResponse } from 'grpc-web';
 import { useLoaderStore } from '../store/loader';
 import { RpcError, StatusCode } from 'grpc-web';
@@ -70,7 +70,7 @@ export class GRPCClients {
             case StatusCode.UNAVAILABLE:
                 dispatchNotification({
                     title: 'Unable to reach server',
-                    content: 'Unable to reach aRPaNet server, please check your internet connection.',
+                    content: 'Unable to reach FiveNet server, please check your internet connection.',
                     type: 'error',
                 });
                 break;

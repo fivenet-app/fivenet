@@ -8,7 +8,7 @@ package notifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/galexrt/arpanet/proto/resources/timestamp"
+	timestamp "github.com/galexrt/fivenet/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -27,10 +27,10 @@ type Notification struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"arpanet_notifications.id"`                               // @gotags: alias:"arpanet_notifications.id"
-	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"arpanet_notifications.created_at"` // @gotags: alias:"arpanet_notifications.created_at"
-	ReadAt    *timestamp.Timestamp `protobuf:"bytes,3,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty" alias:"arpanet_notifications.read_at"`          // @gotags: alias:"arpanet_notifications.read_at"
-	UserId    int32                `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"arpanet_notifications.user_id"`         // @gotags: alias:"arpanet_notifications.user_id"
+	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"fivenet_notifications.id"`                               // @gotags: alias:"fivenet_notifications.id"
+	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"fivenet_notifications.created_at"` // @gotags: alias:"fivenet_notifications.created_at"
+	ReadAt    *timestamp.Timestamp `protobuf:"bytes,3,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty" alias:"fivenet_notifications.read_at"`          // @gotags: alias:"fivenet_notifications.read_at"
+	UserId    int32                `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"fivenet_notifications.user_id"`         // @gotags: alias:"fivenet_notifications.user_id"
 	Title     string               `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                          // @gotags: alias:"title"
 	Type      string               `protobuf:"bytes,6,opt,name=type,proto3" json:"type,omitempty" alias:"type"`                            // @gotags: alias:"type"
 	Content   string               `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty" alias:"content"`                      // @gotags: alias:"content"
@@ -156,8 +156,8 @@ var file_resources_notifications_notifications_proto_rawDesc = []byte{
 	0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x12, 0x1c, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61,
 	0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x72, 0x03, 0x28, 0x80, 0x04,
 	0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x42, 0x48, 0x5a, 0x46, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62,
-	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x61, 0x6c, 0x65, 0x78, 0x72, 0x74, 0x2f, 0x61, 0x72, 0x70,
-	0x61, 0x6e, 0x65, 0x74, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75,
+	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x61, 0x6c, 0x65, 0x78, 0x72, 0x74, 0x2f, 0x66, 0x69, 0x76,
+	0x65, 0x6e, 0x65, 0x74, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75,
 	0x72, 0x63, 0x65, 0x73, 0x2f, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
 	0x6e, 0x73, 0x3b, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73,
 	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,

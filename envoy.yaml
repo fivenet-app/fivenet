@@ -22,7 +22,7 @@ static_resources:
                     routes:
                       - match: { prefix: "/" }
                         route:
-                          cluster: arpanet_service
+                          cluster: fivenet_service
                           timeout: 0s
                           idle_timeout: 0s
                           max_stream_duration:
@@ -58,7 +58,7 @@ static_resources:
                   trusted_ca:
                     filename: /certs/rootCA.pem
   clusters:
-    - name: arpanet_service
+    - name: fivenet_service
       connect_timeout: 0.25s
       type: logical_dns
       http2_protocol_options: {}

@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetUserPermissions = newArpanetUserPermissionsTable("", "arpanet_user_permissions", "")
+var ArpanetUserPermissions = newArpanetUserPermissionsTable("", "fivenet_user_permissions", "")
 
-type arpanetUserPermissionsTable struct {
+type fivenetUserPermissionsTable struct {
 	mysql.Table
 
 	//Columns
@@ -25,9 +25,9 @@ type arpanetUserPermissionsTable struct {
 }
 
 type ArpanetUserPermissionsTable struct {
-	arpanetUserPermissionsTable
+	fivenetUserPermissionsTable
 
-	NEW arpanetUserPermissionsTable
+	NEW fivenetUserPermissionsTable
 }
 
 // AS creates new ArpanetUserPermissionsTable with assigned alias
@@ -52,12 +52,12 @@ func (a ArpanetUserPermissionsTable) WithSuffix(suffix string) *ArpanetUserPermi
 
 func newArpanetUserPermissionsTable(schemaName, tableName, alias string) *ArpanetUserPermissionsTable {
 	return &ArpanetUserPermissionsTable{
-		arpanetUserPermissionsTable: newArpanetUserPermissionsTableImpl(schemaName, tableName, alias),
+		fivenetUserPermissionsTable: newArpanetUserPermissionsTableImpl(schemaName, tableName, alias),
 		NEW:                         newArpanetUserPermissionsTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetUserPermissionsTableImpl(schemaName, tableName, alias string) arpanetUserPermissionsTable {
+func newArpanetUserPermissionsTableImpl(schemaName, tableName, alias string) fivenetUserPermissionsTable {
 	var (
 		UserIDColumn       = mysql.IntegerColumn("user_id")
 		PermissionIDColumn = mysql.IntegerColumn("permission_id")
@@ -65,7 +65,7 @@ func newArpanetUserPermissionsTableImpl(schemaName, tableName, alias string) arp
 		mutableColumns     = mysql.ColumnList{}
 	)
 
-	return arpanetUserPermissionsTable{
+	return fivenetUserPermissionsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

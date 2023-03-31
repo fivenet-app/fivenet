@@ -1,7 +1,7 @@
 BEGIN;
 
--- Table: arpanet_accounts
-CREATE TABLE IF NOT EXISTS `arpanet_accounts` (
+-- Table: fivenet_accounts
+CREATE TABLE IF NOT EXISTS `fivenet_accounts` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -11,25 +11,25 @@ CREATE TABLE IF NOT EXISTS `arpanet_accounts` (
   `license` varchar(64) NOT NULL,
   `reg_token` char(6) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_arpanet_accounts_username` (`username`),
-  UNIQUE KEY `idx_arpanet_accounts_license` (`license`),
-  UNIQUE KEY `idx_arpanet_accounts_username_license` (`username`, `license`)
-  UNIQUE KEY `idx_arpanet_accounts_reg_token` (`reg_token`),
+  UNIQUE KEY `idx_fivenet_accounts_username` (`username`),
+  UNIQUE KEY `idx_fivenet_accounts_license` (`license`),
+  UNIQUE KEY `idx_fivenet_accounts_username_license` (`username`, `license`)
+  UNIQUE KEY `idx_fivenet_accounts_reg_token` (`reg_token`),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: arpanet_documents_categories
-CREATE TABLE IF NOT EXISTS `arpanet_documents_categories` (
+-- Table: fivenet_documents_categories
+CREATE TABLE IF NOT EXISTS `fivenet_documents_categories` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
   `description` longtext DEFAULT NULL,
   `job` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_documents_categories_job` (`job`)
+  KEY `idx_fivenet_documents_categories_job` (`job`)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: arpanet_documents_templates
-CREATE TABLE IF NOT EXISTS `arpanet_documents_templates` (
+-- Table: fivenet_documents_templates
+CREATE TABLE IF NOT EXISTS `fivenet_documents_templates` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT current_timestamp(3),
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE current_timestamp(3),
@@ -44,15 +44,15 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_templates` (
   `schema` longtext DEFAULT NULL,
   `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_documents_templates_deleted_at` (`deleted_at`),
-  KEY `idx_arpanet_documents_templates_category_id` (`category_id`),
-  KEY `idx_arpanet_documents_templates_job_job_grade` (`job`, `job_grade`),
-  CONSTRAINT `fk_arpanet_documents_templates_categories` FOREIGN KEY (`category_id`) REFERENCES `arpanet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_arpanet_documents_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
+  KEY `idx_fivenet_documents_templates_deleted_at` (`deleted_at`),
+  KEY `idx_fivenet_documents_templates_category_id` (`category_id`),
+  KEY `idx_fivenet_documents_templates_job_job_grade` (`job`, `job_grade`),
+  CONSTRAINT `fk_fivenet_documents_templates_categories` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `fk_fivenet_documents_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: arpanet_documents
-CREATE TABLE IF NOT EXISTS `arpanet_documents` (
+-- Table: fivenet_documents
+CREATE TABLE IF NOT EXISTS `fivenet_documents` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -68,17 +68,17 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents` (
   `closed` tinyint(1) DEFAULT 0,
   `public` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_documents_deleted_at` (`deleted_at`),
-  KEY `idx_arpanet_documents_category_id` (`category_id`),
-  KEY `idx_arpanet_documents_creator_id` (`creator_id`),
-  FULLTEXT KEY `idx_arpanet_documents_title` (`title`),
-  FULLTEXT KEY `idx_arpanet_documents_content` (`content`),
-  CONSTRAINT `fk_arpanet_documents_categories` FOREIGN KEY (`category_id`) REFERENCES `arpanet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_arpanet_documents_categories_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
+  KEY `idx_fivenet_documents_deleted_at` (`deleted_at`),
+  KEY `idx_fivenet_documents_category_id` (`category_id`),
+  KEY `idx_fivenet_documents_creator_id` (`creator_id`),
+  FULLTEXT KEY `idx_fivenet_documents_title` (`title`),
+  FULLTEXT KEY `idx_fivenet_documents_content` (`content`),
+  CONSTRAINT `fk_fivenet_documents_categories` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `fk_fivenet_documents_categories_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table:arpanet_documents_comments
-CREATE TABLE IF NOT EXISTS `arpanet_documents_comments` (
+-- Table:fivenet_documents_comments
+CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT current_timestamp(3),
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -87,14 +87,14 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_comments` (
   `comment` longtext,
   `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_documents_comments_document_id` (`document_id`),
-  KEY `idx_arpanet_documents_comments_creator_id` (`creator_id`),
-  CONSTRAINT `fk_arpanet_documents_comments_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_arpanet_documents_comments_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
+  KEY `idx_fivenet_documents_comments_document_id` (`document_id`),
+  KEY `idx_fivenet_documents_comments_creator_id` (`creator_id`),
+  CONSTRAINT `fk_fivenet_documents_comments_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_documents_comments_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: arpanet_documents_job_access
-CREATE TABLE IF NOT EXISTS `arpanet_documents_job_access` (
+-- Table: fivenet_documents_job_access
+CREATE TABLE IF NOT EXISTS `fivenet_documents_job_access` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -105,15 +105,15 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_job_access` (
   `access` smallint(2) NOT NULL,
   `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_arpanet_documents_job_access` (`document_id`, `job`),
-  KEY `idx_arpanet_documents_job_access_deleted_at` (`deleted_at`),
-  KEY `idx_arpanet_documents_job_access_document_id` (`document_id`),
-  CONSTRAINT `fk_arpanet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_arpanet_documents_job_access_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
+  UNIQUE KEY `idx_fivenet_documents_job_access` (`document_id`, `job`),
+  KEY `idx_fivenet_documents_job_access_deleted_at` (`deleted_at`),
+  KEY `idx_fivenet_documents_job_access_document_id` (`document_id`),
+  CONSTRAINT `fk_fivenet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_documents_job_access_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: arpanet_documents_references
-CREATE TABLE IF NOT EXISTS `arpanet_documents_references` (
+-- Table: fivenet_documents_references
+CREATE TABLE IF NOT EXISTS `fivenet_documents_references` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT current_timestamp(3),
   `deleted_at` datetime(3) DEFAULT NULL,
@@ -122,18 +122,18 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_references` (
   `target_document_id` bigint(20) unsigned NOT NULL,
   `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_arpanet_documents_references_unique` (`source_document_id`, `reference`, `target_document_id`, `creator_id`),
-  KEY `idx_arpanet_documents_references_deleted_at` (`deleted_at`),
-  KEY `idx_arpanet_documents_references_source_document_id` (`source_document_id`),
-  KEY `idx_arpanet_documents_references_target_document_id` (`target_document_id`),
-  KEY `idx_arpanet_documents_references_creator_id` (`creator_id`),
-  CONSTRAINT `fk_arpanet_documents_references_source_document_id` FOREIGN KEY (`source_document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_arpanet_documents_references_target_document_id` FOREIGN KEY (`target_document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_arpanet_documents_references_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
+  UNIQUE KEY `idx_fivenet_documents_references_unique` (`source_document_id`, `reference`, `target_document_id`, `creator_id`),
+  KEY `idx_fivenet_documents_references_deleted_at` (`deleted_at`),
+  KEY `idx_fivenet_documents_references_source_document_id` (`source_document_id`),
+  KEY `idx_fivenet_documents_references_target_document_id` (`target_document_id`),
+  KEY `idx_fivenet_documents_references_creator_id` (`creator_id`),
+  CONSTRAINT `fk_fivenet_documents_references_source_document_id` FOREIGN KEY (`source_document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_documents_references_target_document_id` FOREIGN KEY (`target_document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_documents_references_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: arpanet_documents_relations
-CREATE TABLE IF NOT EXISTS `arpanet_documents_relations` (
+-- Table: fivenet_documents_relations
+CREATE TABLE IF NOT EXISTS `fivenet_documents_relations` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` datetime(3) DEFAULT NULL,
@@ -142,18 +142,18 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_relations` (
   `relation` smallint(2) NOT NULL,
   `target_user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_arpanet_documents_relations_unique` (`source_user_id`, `relation`, `target_user_id`),
-  KEY `idx_arpanet_documents_relations_deleted_at` (`deleted_at`),
-  KEY `idx_arpanet_documents_relations_document_id` (`document_id`),
-  KEY `idx_arpanet_documents_relations_source_user_id` (`source_user_id`),
-  KEY `idx_arpanet_documents_relations_target_user_id` (`target_user_id`),
-  CONSTRAINT `fk_arpanet_documents_relations_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_arpanet_documents_relations_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `fk_arpanet_documents_relations_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`)
+  UNIQUE KEY `idx_fivenet_documents_relations_unique` (`source_user_id`, `relation`, `target_user_id`),
+  KEY `idx_fivenet_documents_relations_deleted_at` (`deleted_at`),
+  KEY `idx_fivenet_documents_relations_document_id` (`document_id`),
+  KEY `idx_fivenet_documents_relations_source_user_id` (`source_user_id`),
+  KEY `idx_fivenet_documents_relations_target_user_id` (`target_user_id`),
+  CONSTRAINT `fk_fivenet_documents_relations_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_documents_relations_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_fivenet_documents_relations_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: arpanet_documents_user_access
-CREATE TABLE IF NOT EXISTS `arpanet_documents_user_access` (
+-- Table: fivenet_documents_user_access
+CREATE TABLE IF NOT EXISTS `fivenet_documents_user_access` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` datetime(3) DEFAULT NULL,
@@ -162,17 +162,17 @@ CREATE TABLE IF NOT EXISTS `arpanet_documents_user_access` (
   `access` smallint(2) NOT NULL,
   `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_arpanet_documents_user_access` (`document_id`, `user_id`),
-  KEY `idx_arpanet_documents_users_access_deleted_at` (`deleted_at`),
-  KEY `idx_arpanet_documents_user_access_document_id` (`document_id`),
-  KEY `idx_arpanet_documents_user_access_user_id` (`user_id`),
-  CONSTRAINT `fk_arpanet_documents_user_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `arpanet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_arpanet_documents_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `fk_arpanet_documents_user_access_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
+  UNIQUE KEY `idx_fivenet_documents_user_access` (`document_id`, `user_id`),
+  KEY `idx_fivenet_documents_users_access_deleted_at` (`deleted_at`),
+  KEY `idx_fivenet_documents_user_access_document_id` (`document_id`),
+  KEY `idx_fivenet_documents_user_access_user_id` (`user_id`),
+  CONSTRAINT `fk_fivenet_documents_user_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_documents_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_fivenet_documents_user_access_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: arpanet_user_activity
-CREATE TABLE IF NOT EXISTS `arpanet_user_activity` (
+-- Table: fivenet_user_activity
+CREATE TABLE IF NOT EXISTS `fivenet_user_activity` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `source_user_id` int(11) NOT NULL,
@@ -182,14 +182,14 @@ CREATE TABLE IF NOT EXISTS `arpanet_user_activity` (
   `old_value` varchar(255) DEFAULT NULL,
   `new_value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_arpanet_user_activity_source_user_id` (`source_user_id`),
-  KEY `idx_arpanet_user_activity_target_user_id` (`target_user_id`),
-  CONSTRAINT `fk_arpanet_user_activity_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `fk_arpanet_user_activity_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`)
+  KEY `idx_fivenet_user_activity_source_user_id` (`source_user_id`),
+  KEY `idx_fivenet_user_activity_target_user_id` (`target_user_id`),
+  CONSTRAINT `fk_fivenet_user_activity_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_fivenet_user_activity_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: arpanet_user_locations
-CREATE TABLE IF NOT EXISTS `arpanet_user_locations` (
+-- Table: fivenet_user_locations
+CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
   `user_id` int(11) NOT NULL,
   `job` varchar(20) DEFAULT NULL,
   `x` decimal(24,14) DEFAULT NULL,
@@ -197,17 +197,17 @@ CREATE TABLE IF NOT EXISTS `arpanet_user_locations` (
   `hidden` tinyint(1) DEFAULT NULL,
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`),
-  KEY `idx_arpanet_user_locations_job` (`job`),
-  CONSTRAINT `fk_arpanet_user_locations_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `idx_fivenet_user_locations_job` (`job`),
+  CONSTRAINT `fk_fivenet_user_locations_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: arpanet_user_props
-CREATE TABLE IF NOT EXISTS `arpanet_user_props` (
+-- Table: fivenet_user_props
+CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
   `user_id` int(11) NOT NULL,
   `wanted` tinyint(1) NOT NULL DEFAULT 0,
-  UNIQUE KEY `idx_arpanet_user_props_unique` (`user_id`),
-  KEY `idx_arpanet_user_props_wanted` (`wanted`),
-  CONSTRAINT `fk_arpanet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  UNIQUE KEY `idx_fivenet_user_props_unique` (`user_id`),
+  KEY `idx_fivenet_user_props_wanted` (`wanted`),
+  CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 COMMIT;

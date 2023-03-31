@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var ArpanetDocumentsJobAccess = newArpanetDocumentsJobAccessTable("", "arpanet_documents_job_access", "")
+var ArpanetDocumentsJobAccess = newArpanetDocumentsJobAccessTable("", "fivenet_documents_job_access", "")
 
-type arpanetDocumentsJobAccessTable struct {
+type fivenetDocumentsJobAccessTable struct {
 	mysql.Table
 
 	//Columns
@@ -32,9 +32,9 @@ type arpanetDocumentsJobAccessTable struct {
 }
 
 type ArpanetDocumentsJobAccessTable struct {
-	arpanetDocumentsJobAccessTable
+	fivenetDocumentsJobAccessTable
 
-	NEW arpanetDocumentsJobAccessTable
+	NEW fivenetDocumentsJobAccessTable
 }
 
 // AS creates new ArpanetDocumentsJobAccessTable with assigned alias
@@ -59,12 +59,12 @@ func (a ArpanetDocumentsJobAccessTable) WithSuffix(suffix string) *ArpanetDocume
 
 func newArpanetDocumentsJobAccessTable(schemaName, tableName, alias string) *ArpanetDocumentsJobAccessTable {
 	return &ArpanetDocumentsJobAccessTable{
-		arpanetDocumentsJobAccessTable: newArpanetDocumentsJobAccessTableImpl(schemaName, tableName, alias),
+		fivenetDocumentsJobAccessTable: newArpanetDocumentsJobAccessTableImpl(schemaName, tableName, alias),
 		NEW:                            newArpanetDocumentsJobAccessTableImpl("", "new", ""),
 	}
 }
 
-func newArpanetDocumentsJobAccessTableImpl(schemaName, tableName, alias string) arpanetDocumentsJobAccessTable {
+func newArpanetDocumentsJobAccessTableImpl(schemaName, tableName, alias string) fivenetDocumentsJobAccessTable {
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
@@ -79,7 +79,7 @@ func newArpanetDocumentsJobAccessTableImpl(schemaName, tableName, alias string) 
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, JobColumn, MinimumGradeColumn, AccessColumn, CreatorIDColumn}
 	)
 
-	return arpanetDocumentsJobAccessTable{
+	return fivenetDocumentsJobAccessTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RectangleGroupIcon, UserIcon, TruckIcon, DocumentTextIcon } from '@heroicons/vue/20/solid'
-import { User } from '@arpanet/gen/resources/users/users_pb';
+import { User } from '@fivenet/gen/resources/users/users_pb';
 import CitizenInfoProfile from './CitizenInfoProfile.vue';
 import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
 import CitizenInfoActivityFeed from './CitizenInfoActivityFeed.vue';
