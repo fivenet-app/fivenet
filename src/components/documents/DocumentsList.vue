@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref, onBeforeMount } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
-import { getDocStoreClient, handleRPCError } from '../../grpc/grpc';
 import { FindDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document } from '@arpanet/gen/resources/documents/documents_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
@@ -10,6 +9,8 @@ import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } fr
 import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
 import TemplatesModal from './TemplatesModal.vue';
 import { RpcError } from 'grpc-web';
+
+const { $grpc } = useNuxtApp();
 
 const search = ref({ title: '', });
 // TODO Implement order by for documents
@@ -26,13 +27,13 @@ async function findDocuments(pos: number): Promise<void> {
     req.setSearch(search.value.title);
 
     try {
-        const resp = await getDocStoreClient().
+        const resp = await $grpc.getDocStoreClient().
             findDocuments(req, null);
 
         pagination.value = resp.getPagination();
         documents.value = resp.getDocumentsList();
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
@@ -75,10 +76,10 @@ onBeforeMount(async () => {
                                 </button>
                             </div>
                             <div class="flex-initial" v-can="'DocStoreService.ListTemplates'">
-                                <router-link :to="{ name: 'Documents: Templates' }"
+                                <NuxtLink :to="{ name: 'documents-templates' }"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                     Templates
-                                </router-link>
+                                </NuxtLink>
                             </div>
                         </div>
                     </form>
@@ -98,7 +99,7 @@ onBeforeMount(async () => {
                             <ul class="flex flex-col">
                                 <li v-for="doc in documents" :key="doc.getId()"
                                     class="flex-initial my-1 rounded-lg hover:bg-base-800 bg-base-850">
-                                    <router-link :to="{ name: 'Documents: Info', params: { id: doc.getId() } }">
+                                    <NuxtLink :to="{ name: 'documents-id', params: { id: doc.getId() } }">
                                         <div class="mx-2 mt-1 mb-4">
                                             <div class="flex flex-row">
                                                 <p class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
@@ -133,7 +134,7 @@ onBeforeMount(async () => {
                                                 </div>
                                             </div>
                                         </div>
-                                    </router-link>
+                                    </NuxtLink>
                                 </li>
                             </ul>
 

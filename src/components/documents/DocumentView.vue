@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue';
 import { GetDocumentCommentsRequest, GetDocumentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentComment, DocumentReference, DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
-import { getDocStoreClient } from '../../grpc/grpc';
 import { toDate } from '../../utils/time';
 import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
 import {
@@ -26,10 +25,12 @@ import DocumentReferences from './DocumentReferences.vue';
 import DocumentComments from './DocumentComments.vue';
 import { toTitleCase } from '../../utils/strings';
 import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
-import { useStore } from '../../store/store';
+import { useClipboardStore } from '../../store/clipboard';
 import { PlusIcon } from '@heroicons/vue/24/solid';
+import { RpcError } from 'grpc-web';
 
-const store = useStore();
+const { $grpc } = useNuxtApp();
+const clipboardStore = useClipboardStore();
 
 const document = ref<undefined | Document>(undefined);
 const access = ref<undefined | DocumentAccess>(undefined);
@@ -49,47 +50,47 @@ const props = defineProps({
     },
 });
 
-function getDocument(): void {
+async function getDocument(): Promise<void> {
     const req = new GetDocumentRequest();
     req.setDocumentId(props.documentId);
 
-    getDocStoreClient().
+    $grpc.getDocStoreClient().
         getDocument(req, null).
         then((resp) => {
             document.value = resp.getDocument();
             access.value = resp.getAccess();
-        });
+        }).catch((err: RpcError) => $grpc.handleRPCError(err));
 
     // Document References
-    getDocStoreClient().
+    $grpc.getDocStoreClient().
         getDocumentReferences(req, null).
         then((resp) => {
             feedReferences.value = resp.getReferencesList();
-        });
+        }).catch((err: RpcError) => $grpc.handleRPCError(err));
 
     // Document Relations
-    getDocStoreClient().
+    $grpc.getDocStoreClient().
         getDocumentRelations(req, null).
         then((resp) => {
             feedRelations.value = resp.getRelationsList();
-        });
+        }).catch((err: RpcError) => $grpc.handleRPCError(err));
 
     // Document Comments
     const creq = new GetDocumentCommentsRequest();
     creq.setPagination((new PaginationRequest()).setOffset(0));
     creq.setDocumentId(props.documentId);
 
-    getDocStoreClient().
+    $grpc.getDocStoreClient().
         getDocumentComments(creq, null).
         then((resp) => {
             comments.value = resp.getCommentsList();
             commentCount.value = resp.getPagination()!.getTotalCount();
-        });
+        }).catch((err: RpcError) => $grpc.handleRPCError(err));
 }
 
 function addToClipboard() {
     if (document.value) {
-        store.dispatch('clipboard/addDocument', document.value);
+        clipboardStore.addDocument(document.value);
     }
 }
 
@@ -110,22 +111,22 @@ onMounted(() => {
                                 <p class="text-sm text-base-300">
                                     Created by
                                     {{ ' ' }}
-                                    <router-link
-                                        :to="{ name: 'Citizens: Info', params: { id: document?.getCreator()?.getUserId() ?? 0 } }"
+                                    <NuxtLink
+                                        :to="{ name: 'citizens-id', params: { id: document?.getCreator()?.getUserId() ?? 0 } }"
                                         class="font-medium text-primary-400 hover:text-primary-300">
                                         {{ document?.getCreator()?.getFirstname() }}
                                         {{ document?.getCreator()?.getLastname() }}
-                                    </router-link>
+                                    </NuxtLink>
                                 </p>
                             </div>
                             <div class="flex mt-4 space-x-3 md:mt-0">
-                                <router-link :to="{ name: 'Documents: Edit', params: { id: document?.getId() ?? 0 } }"
+                                <NuxtLink :to="{ name: 'documents-edit-id', params: { id: document?.getId() ?? 0 } }"
                                     type="button"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     v-can="'DocStoreService.CreateDocument'">
                                     <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     Edit
-                                </router-link>
+                                </NuxtLink>
                             </div>
                         </div>
                         <div class="flex flex-row gap-2">

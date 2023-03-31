@@ -37,8 +37,15 @@ __debug_bin
 localhost.*
 
 # Map tiles
-public/tiles/*/
+src/public/tiles/*/
 
 # Repo checkouts
 /gdal2tiles-leaflet/
 /validate/
+
+# Nuxt
+.nuxt
+.nitro
+.cache
+.output
+.env

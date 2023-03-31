@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed, ref, FunctionalComponent, onMounted } from 'vue';
-import { RouteNamedMap } from 'vue-router/auto/routes';
 import { toTitleCase } from '../../utils/strings';
 import {
     Dialog,
@@ -25,65 +24,65 @@ import {
     TruckIcon,
 } from '@heroicons/vue/24/outline';
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
-import { useStore } from '../../store/store';
-import { useRoute, useRouter } from 'vue-router/auto';
+import { useAuthStore } from '../../store/auth';
 import SidebarJobSwitcher from './SidebarJobSwitcher.vue';
+import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
-const store = useStore();
+const store = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 
-const accessToken = computed(() => store.state.auth?.accessToken);
-const activeChar = computed(() => store.state.auth?.activeChar);
+const accessToken = computed(() => store.$state.accessToken);
+const activeChar = computed(() => store.$state.activeChar);
 
 const sidebarNavigation = [
     {
         name: 'Home',
-        href: 'Home',
+        href: { name: 'index' },
         permission: '',
         icon: HomeIcon,
     },
     {
         name: 'Overview',
-        href: 'Overview',
+        href: { name: 'overview' },
         permission: 'Overview.View',
         icon: Square2StackIcon,
     },
     {
         name: 'Citizens',
-        href: 'Citizens',
+        href: { name: 'citizens' },
         permission: 'CitizenStoreService.FindUsers',
         icon: UsersIcon,
     },
     {
         name: 'Vehicles',
-        href: 'Vehicles',
+        href: { name: 'vehicles' },
         permission: 'DMVService.FindVehicles',
         icon: TruckIcon,
     },
     {
         name: 'Documents',
-        href: 'Documents',
+        href: { name: 'documents' },
         permission: 'DocStoreService.FindDocuments',
         icon: DocumentTextIcon,
     },
     {
         name: 'Job',
-        href: 'Jobs',
+        href: { name: 'jobs' },
         permission: 'Jobs.View',
         icon: BriefcaseIcon,
     },
     {
         name: 'Livemap',
-        href: 'Livemap',
+        href: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
         icon: MapIcon,
     },
-] as { name: string, href: keyof RouteNamedMap, permission: string, icon: FunctionalComponent }[];
-const currSidebar = ref('')
+] as { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent }[];
 let userNavigation = [
-    { name: 'Login', href: 'Login' }
-] as { name: string, href: keyof RouteNamedMap }[];
+    { name: 'Login', href: { name: 'auth-login' } }
+] as { name: string, href: RoutesNamedLocations }[];
+const currSidebar = ref('')
 const breadcrumbs = [] as { name: string, href: string, current: boolean }[];
 const mobileMenuOpen = ref(false);
 
@@ -91,13 +90,13 @@ onMounted(() => {
     if (accessToken.value && activeChar.value) {
         sidebarNavigation.shift();
         userNavigation = [
-            { name: 'Change Character', href: 'Character Selector' },
-            { name: 'Sign out', href: 'Logout' }
+            { name: 'Change Character', href: { name: 'auth-character-selector' } },
+            { name: 'Sign out', href: { name: 'auth-logout' } }
         ];
     }
 
     if (route.name) {
-        const sidebarIndex = sidebarNavigation.findIndex(e => route.name.toLowerCase().includes(e.href.toLowerCase()));
+        const sidebarIndex = sidebarNavigation.findIndex(e => route.name.toLowerCase().includes(e.href.name.toLowerCase()));
         if (sidebarIndex !== -1) {
             currSidebar.value = sidebarNavigation[sidebarIndex].name;
         } else {
@@ -135,15 +134,14 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                     <img class="w-auto h-12" src="/images/logo.png" alt="aRPaNet Logo" :title="'aRPaNet' + appVersion" />
                 </div>
                 <div class="flex-1 w-full px-2 mt-6 space-y-1">
-                    <router-link v-for="item in sidebarNavigation" :key="item.name" :to="{ name: item.href }"
-                        v-can="item.permission"
+                    <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href" v-can="item.permission"
                         :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="currSidebar === item.name ? 'page' : undefined">
                         <component :is="item.icon"
                             :class="[currSidebar === item.name ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true" />
                         <span class="mt-2">{{ item.name }}</span>
-                    </router-link>
+                    </NuxtLink>
                 </div>
             </div>
         </div>
@@ -181,7 +179,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                             <div class="flex-1 h-0 px-2 mt-5 overflow-y-auto">
                                 <nav class="flex flex-col h-full">
                                     <div class="space-y-1">
-                                        <router-link v-for="item in sidebarNavigation" :key="item.name" :to="item.href"
+                                        <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href"
                                             v-can="item.permission"
                                             :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
                                             :aria-current="currSidebar === item.name ? 'page' : undefined">
@@ -189,7 +187,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                                 :class="[currSidebar === item.name ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'mr-3 h-6 w-6']"
                                                 aria-hidden="true" />
                                             <span>{{ item.name }}</span>
-                                        </router-link>
+                                        </NuxtLink>
                                     </div>
                                 </nav>
                             </div>
@@ -216,21 +214,21 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                 <ol role="list" class="flex items-center space-x-4">
                                     <li>
                                         <div>
-                                            <router-link :to="{ path: accessToken ? '/overview' : '/' }"
+                                            <NuxtLink :to="{ path: accessToken ? '/overview' : '/' }"
                                                 class="text-base-400 hover:text-neutral hover:transition-colors">
                                                 <HomeIconSolid class="flex-shrink-0 w-5 h-5" aria-hidden="true" />
                                                 <span class="sr-only">Home</span>
-                                            </router-link>
+                                            </NuxtLink>
                                         </div>
                                     </li>
                                     <li v-for="page in breadcrumbs" :key="page.name">
                                         <div class="flex items-center">
                                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-400"
                                                 aria-hidden="true" />
-                                            <router-link :to="{ path: page.href }"
+                                            <NuxtLink :to="{ path: page.href }"
                                                 class="ml-4 text-sm font-medium text-base-400 hover:text-neutral hover:transition-colors"
                                                 :aria-current="page.current ? 'page' : undefined">{{ page.name
-                                                }}</router-link>
+                                                }}</NuxtLink>
                                         </div>
                                     </li>
                                 </ol>
@@ -263,10 +261,10 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                     <MenuItems
                                         class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
                                         <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
-                                        <router-link :to="{ name: item.href }"
+                                        <NuxtLink :to="item.href"
                                             :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral hover:transition-colors']">
                                             {{ item.name }}
-                                        </router-link>
+                                        </NuxtLink>
                                         </MenuItem>
                                     </MenuItems>
                                 </transition>

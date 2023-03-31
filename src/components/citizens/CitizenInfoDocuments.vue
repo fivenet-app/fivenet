@@ -2,11 +2,12 @@
 import { ref, onMounted } from 'vue';
 import { DocumentRelation } from '@arpanet/gen/resources/documents/documents_pb';
 import { GetUserDocumentsRequest } from '@arpanet/gen/services/docstore/docstore_pb';
-import { getDocStoreClient, handleRPCError } from '../../grpc/grpc';
 import { PaginationRequest } from '@arpanet/gen/resources/common/database/database_pb';
 import DocumentRelations from '../documents/DocumentRelations.vue';
 import { DocumentTextIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
+
+const { $grpc } = useNuxtApp();
 
 const relations = ref<Array<DocumentRelation>>([]);
 
@@ -26,11 +27,12 @@ async function getUserDocuments(pos: number): Promise<void> {
     req.setUserId(props.userId);
 
     try {
-        const resp = await getDocStoreClient().
+        const resp = await $grpc.getDocStoreClient().
             getUserDocuments(req, null);
+
         relations.value = resp.getRelationsList();
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }

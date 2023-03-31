@@ -4,7 +4,13 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
     mode: 'jit',
-    content: ['./public/**/*.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+    content: [
+        './src/components/**/*.{js,vue,ts}',
+        './src/layouts/**/*.vue',
+        './src/pages/**/*.vue',
+        './src/plugins/**/*.{js,ts}',
+        './nuxt.config.{js,ts}',
+    ],
     plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
     theme: {
         extend: {

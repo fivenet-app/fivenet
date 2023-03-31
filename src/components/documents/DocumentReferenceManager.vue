@@ -27,13 +27,14 @@ import { ChevronDoubleUpIcon, DocumentCheckIcon, DocumentTextIcon, LockClosedIco
 import { watchDebounced } from '@vueuse/core';
 import { RpcError } from 'grpc-web';
 import { onMounted, ref, FunctionalComponent } from 'vue';
-import { useRouter } from 'vue-router/auto';
-import { getDocStoreClient, handleRPCError } from '../../grpc/grpc';
-import { ClipboardDocument, getDocument } from '../../store/modules/clipboardmodule';
-import { useStore } from '../../store/store';
+import { ClipboardDocument, getDocument } from '../../store/clipboard';
+import { useAuthStore } from '../../store/auth';
 import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
+import { useClipboardStore } from '../../store/clipboard';
 
-const store = useStore();
+const { $grpc } = useNuxtApp();
+const authStore = useAuthStore();
+const clipboard = useClipboardStore();
 const router = useRouter();
 
 const props = defineProps<{
@@ -68,14 +69,14 @@ async function findDocuments(): Promise<void> {
     req.setSearch(queryDoc.value);
 
     try {
-        const resp = await getDocStoreClient().
+        const resp = await $grpc.getDocStoreClient().
             findDocuments(req, null);
 
         entriesDocuments.value = resp.getDocumentsList().
             filter(doc => !(Array.from(props.modelValue.values()).
             find(r => r.getTargetDocumentId() === doc.getId() || doc.getId() === props.document)));
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
@@ -86,8 +87,8 @@ function addReference(doc: Document, reference: number): void {
 
     const ref = new DocumentReference();
     ref.setId(key);
-    ref.setCreatorId(store.state.auth!.activeChar!.getUserId());
-    ref.setCreator(store.state.auth!.activeChar!)
+    ref.setCreatorId(authStore.data.activeChar!.getUserId());
+    ref.setCreator(authStore.data.activeChar!)
     ref.setTargetDocumentId(doc.getId());
     ref.setTargetDocument(doc);
     ref.setReference(DOC_REFERENCE_Util.fromInt(reference));
@@ -185,7 +186,7 @@ function removeReference(id: number): void {
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
-                                                                                <a :href="router.resolve({ name: 'Documents: Info', params: { id: ref.getTargetDocumentId() } }).href"
+                                                                                <a :href="router.resolve({ name: 'documents-id', params: { id: ref.getTargetDocumentId() } }).href"
                                                                                     target="_blank" data-te-toggle="tooltip"
                                                                                     title="Open Document">
                                                                                     <ArrowTopRightOnSquareIcon
@@ -216,7 +217,7 @@ function removeReference(id: number): void {
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
-                                                        <button v-if="store.state.clipboard?.documents.length === 0"
+                                                        <button v-if="clipboard.state.documents.length === 0"
                                                             type="button"
                                                             class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
                                                             disabled>
@@ -246,7 +247,7 @@ function removeReference(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="doc in store.state.clipboard?.documents"
+                                                                <tr v-for="doc in clipboard.state.documents"
                                                                     :key="doc.id">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">

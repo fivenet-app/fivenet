@@ -6,7 +6,7 @@ import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
 import CitizenInfoActivityFeed from './CitizenInfoActivityFeed.vue';
 import VehiclesList from '../vehicles/VehiclesList.vue';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-import { useStore } from '../../store/store';
+import { useClipboardStore } from '../../store/clipboard';
 import { PlusIcon } from '@heroicons/vue/24/solid';
 
 const tabs = [
@@ -16,7 +16,7 @@ const tabs = [
     { name: 'Activity', icon: RectangleGroupIcon, permission: 'CitizenStoreService.GetUserActivity' },
 ];
 
-const store = useStore();
+const store = useClipboardStore();
 
 const props = defineProps({
     user: {
@@ -26,7 +26,7 @@ const props = defineProps({
 });
 
 function addToClipboard() {
-    store.dispatch('clipboard/addUser', props.user);
+    store.addUser(props.user);
 }
 </script>
 

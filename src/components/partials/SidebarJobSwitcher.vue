@@ -1,17 +1,18 @@
 <script lang="ts" setup>
-import { useStore } from '../../store/store';
+import { useAuthStore } from '../../store/auth';
 import { computed, ref, onMounted } from 'vue';
 import { Job } from '@arpanet/gen/resources/jobs/jobs_pb';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { CompleteJobNamesRequest } from '@arpanet/gen/services/completor/completor_pb';
-import { getCompletorClient, getAuthClient } from '../../grpc/grpc';
 import { watchDebounced } from '@vueuse/shared';
 import { SetJobRequest } from '@arpanet/gen/services/auth/auth_pb';
+import { RpcError } from 'grpc-web';
 
-const store = useStore();
+const { $grpc } = useNuxtApp();
+const store = useAuthStore();
 
-const activeChar = computed(() => store.state.auth?.activeChar);
+const activeChar = computed(() => store.$state.activeChar);
 
 let entriesJobs = [] as Job[];
 const queryJob = ref('');
@@ -21,9 +22,15 @@ async function findJobs(): Promise<void> {
     const req = new CompleteJobNamesRequest();
     req.setSearch(queryJob.value);
 
-    const resp = await getCompletorClient().
-        completeJobNames(req, null)
-    entriesJobs = resp.getJobsList();
+    try {
+        const resp = await $grpc.getCompletorClient().
+            completeJobNames(req, null)
+
+        entriesJobs = resp.getJobsList();
+    } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
+        return;
+    }
 }
 
 onMounted(async () => {
@@ -37,11 +44,16 @@ async function setJob(): Promise<void> {
     const grades = selectedJob.value?.getGradesList()!;
     req.setJobGrade(grades[grades.length - 1].getGrade());
 
-    const resp = await getAuthClient().
-        setJob(req, null);
+    try {
+        const resp = await $grpc.getAuthClient().
+            setJob(req, null);
 
-    await store.dispatch('auth/updateAccessToken', resp.getToken());
-    await store.dispatch('auth/updateActiveChar', resp.getChar());
+        await store.updateAccessToken(resp.getToken());
+        await store.updateActiveChar(resp.getChar()!);
+    } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
+        return;
+    }
 }
 
 watchDebounced(selectedJob, () => setJob());

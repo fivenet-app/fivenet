@@ -1,17 +1,15 @@
 <script lang="ts" setup>
 import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
 import VehiclesList from '../../components/vehicles/VehiclesList.vue';
-</script>
 
-<route lang="json">
-{
-    "name": "Vehicles",
-    "meta": {
-        "requiresAuth": true,
-        "permission": "DMVService.FindVehicles"
-    }
-}
-</route>
+useHead({
+    title: 'Vehicles',
+});
+definePageMeta({
+    requiresAuth: true,
+    permission: 'DMVService.FindVehicles',
+});
+</script>
 
 <template>
     <div class="w-full">

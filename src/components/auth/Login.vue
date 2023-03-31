@@ -1,35 +1,49 @@
 <script lang="ts" setup>
-import { useStore } from '../store/store';
+import { useAuthStore } from '../../store/auth';
 import { computed, ref, watch } from 'vue';
-import { CreateAccountRequest, LoginRequest } from '@arpanet/gen/services/auth/auth_pb';
+import { CreateAccountRequest, LoginRequest, LoginResponse } from '@arpanet/gen/services/auth/auth_pb';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
-import { useRoute, useRouter } from 'vue-router/auto';
-import { getUnAuthClient, handleRPCError } from '../grpc/grpc';
 import { RpcError } from 'grpc-web';
-import { dispatchNotification } from './notification';
+import { dispatchNotification } from '../notification';
 
-const store = useStore();
+const { $grpc } = useNuxtApp();
+const store = useAuthStore();
 const router = useRouter();
 const route = useRoute();
 
-const loginError = computed(() => store.state.auth?.loginError);
-const accesToken = computed(() => store.state.auth?.accessToken);
+const loginError = computed(() => store.$state.loginError);
+const accesToken = computed(() => store.$state.accessToken);
 
 watch(accesToken, () => {
     if (accesToken) {
-        router.push({ name: 'Character Selector', query: route.query });
+        router.push({ name: 'auth-character-selector', query: route.query });
     }
 });
 
 const createAccountForm = ref(false);
-
 const credentials = ref<{ username: string, password: string, }>({ username: '', password: '', });
 
 async function login(): Promise<void> {
     const req = new LoginRequest();
     req.setUsername(credentials.value.username);
     req.setPassword(credentials.value.password);
-    store.dispatch('auth/doLogin', req);
+
+    // Start login
+    store.loginStart();
+    store.updateActiveChar(null);
+    store.updatePermissions([]);
+
+    try {
+        const resp = await $grpc.getUnAuthClient()
+            .login(req, null);
+
+        store.loginStop(null);
+        store.updateAccessToken(resp.getToken());
+    } catch (e) {
+        store.loginStop((e as RpcError).message);
+        store.updateAccessToken(null);
+        return;
+    }
 }
 
 const accountInfo = ref<{ regToken: string, username: string, password: string, }>({
@@ -43,11 +57,13 @@ async function createAccount(): Promise<void> {
     req.setPassword(accountInfo.value?.password);
 
     try {
-        await getUnAuthClient().createAccount(req, null)
+        await $grpc.getUnAuthClient().
+            createAccount(req, null);
+
         createAccountForm.value = false;
         dispatchNotification({ title: 'Account created successfully!', content: '', type: 'success' });
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }

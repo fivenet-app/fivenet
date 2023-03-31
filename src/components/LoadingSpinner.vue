@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue'
 import { useLoading, ActiveLoader } from 'vue-loading-overlay'
-import { useStore } from '../store/store';
+import { useLoaderStore } from '../store/loader';
+import 'vue-loading-overlay/dist/css/index.css';
 
-const store = useStore();
+const store = useLoaderStore();
 
-const loadingState = computed(() => store.state.loader?.loading);
+const loadingState = computed(() => store.loading);
 
 const loading = useLoading({
     isFullPage: true,

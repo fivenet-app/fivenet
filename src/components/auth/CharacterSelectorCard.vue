@@ -1,20 +1,19 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useStore } from '../../store/store';
-import { useRoute, useRouter } from 'vue-router/auto';
-import { getAuthClient, handleRPCError } from '../../grpc/grpc';
+import { useAuthStore } from '../../store/auth';
 import { ChooseCharacterRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import { parseQuery } from 'vue-router/auto';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { fromSecondsToFormattedDuration } from '../../utils/time';
 import { RpcError } from 'grpc-web';
+import { parseQuery } from 'vue-router';
 
-const store = useStore();
+const { $grpc } = useNuxtApp();
+const store = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 
-const lastCharID = computed(() => store.state.auth?.lastCharID);
+const lastCharID = computed(() => store.$state.lastCharID);
 
 const props = defineProps({
     char: {
@@ -28,18 +27,20 @@ async function chooseCharacter() {
     req.setCharId(props.char.getUserId());
 
     try {
-        const resp = await getAuthClient()
+        const resp = await $grpc.getAuthClient()
             .chooseCharacter(req, null);
 
-        store.dispatch('auth/updateAccessToken', resp.getToken());
-        store.dispatch('auth/updateActiveChar', props.char);
-        store.dispatch('auth/updatePermissions', resp.getPermissionsList());
+        store.updateAccessToken(resp.getToken());
+        store.updateActiveChar(props.char);
+        store.updatePermissions(resp.getPermissionsList());
         console.log("Char Permissions: " + resp.getPermissionsList());
+
         const path = route.query.redirect?.toString() || "/overview";
         const url = new URL("https://example.com" + path);
         router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
+        return;
     }
 }
 </script>

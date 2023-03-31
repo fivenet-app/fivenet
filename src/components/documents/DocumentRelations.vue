@@ -35,20 +35,20 @@ defineProps({
                                 <ArrowsRightLeftIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
                                 <span class="flex flex-col text-sm truncate">
                                     <span v-if="showDocument">
-                                        <router-link
-                                            :to="{ name: 'Documents: Info', params: { id: relation.getDocumentId() } }">
+                                        <NuxtLink
+                                            :to="{ name: 'documents-id', params: { id: relation.getDocumentId() } }">
                                             {{ relation.getDocument()?.getTitle() }}<span
                                                 v-if="relation.getDocument()?.getCategory()"> (Category: {{
                                                     relation.getDocument()?.getCategory()?.getName() }})</span>
-                                        </router-link>
+                                        </NuxtLink>
                                     </span>
                                     <span>
-                                        <router-link
-                                            :to="{ name: 'Citizens: Info', params: { id: relation.getTargetUserId() } }"
+                                        <NuxtLink
+                                            :to="{ name: 'citizens-id', params: { id: relation.getTargetUserId() } }"
                                             class="inline-flex space-x-2 text-sm truncate group">
                                             {{ relation.getTargetUser()?.getFirstname() + ", " +
                                                 relation.getTargetUser()?.getLastname() }}
-                                        </router-link>
+                                        </NuxtLink>
                                     </span>
                                     <span class="font-medium ">{{
                                         DOC_RELATION_Util.toEnumKey(relation.getRelation()) }}</span>
@@ -94,21 +94,21 @@ defineProps({
                             <tbody class="divide-y divide-gray-600 bg-base-800 text-neutral">
                                 <tr v-for="relation in relations" :key="relation.getId()">
                                     <td v-if="showDocument" class="px-6 py-4 text-sm ">
-                                        <router-link
-                                            :to="{ name: 'Documents: Info', params: { id: relation.getDocumentId() } }">
+                                        <NuxtLink
+                                            :to="{ name: 'documents-id', params: { id: relation.getDocumentId() } }">
                                             {{ relation.getDocument()?.getTitle() }}<span
                                                 v-if="relation.getDocument()?.getCategory()"> (Category: {{
                                                     relation.getDocument()?.getCategory()?.getName() }})</span>
-                                        </router-link>
+                                        </NuxtLink>
                                     </td>
                                     <td class="px-6 py-4 text-sm ">
                                         <div class="flex">
-                                            <router-link
-                                                :to="{ name: 'Citizens: Info', params: { id: relation.getTargetUserId() } }"
+                                            <NuxtLink
+                                                :to="{ name: 'citizens-id', params: { id: relation.getTargetUserId() } }"
                                                 class="inline-flex space-x-2 text-sm truncate group">
                                                 {{ relation.getTargetUser()?.getFirstname() + ", " +
                                                     relation.getTargetUser()?.getLastname() }}
-                                            </router-link>
+                                            </NuxtLink>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
@@ -117,12 +117,12 @@ defineProps({
                                     </td>
                                     <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
                                         <div class="flex">
-                                            <router-link
-                                                :to="{ name: 'Citizens: Info', params: { id: relation.getSourceUserId() } }"
+                                            <NuxtLink
+                                                :to="{ name: 'citizens-id', params: { id: relation.getSourceUserId() } }"
                                                 class="inline-flex space-x-2 text-sm truncate group">
                                                 {{ relation.getSourceUser()?.getFirstname() + ", " +
                                                     relation.getSourceUser()?.getLastname() }}
-                                            </router-link>
+                                            </NuxtLink>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">

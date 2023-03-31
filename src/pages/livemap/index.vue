@@ -1,16 +1,14 @@
 <script lang="ts" setup>
 import Livemap from '../../components/Livemap.vue';
-</script>
 
-<route lang="json">
-{
-    "name": "Livemap",
-    "meta": {
-        "requiresAuth": true,
-        "permission": "LivemapperService.Stream"
-    }
-}
-</route>
+useHead({
+    title: 'Livemap',
+});
+definePageMeta({
+    requiresAuth: true,
+    permission: 'LivemapperService.Stream',
+});
+</script>
 
 <style>
 #map {

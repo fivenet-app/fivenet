@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue';
-import { useStore } from '../../store/store';
+import { useAuthStore } from '../../store/auth';
+import { useDocumentEditorStore } from '../../store/documenteditor';
+import { useClipboardStore } from '../../store/clipboard';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { getCompletorClient, getDocStoreClient } from '../../grpc/grpc';
 import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@arpanet/gen/resources/documents/documents_pb';
 import { DocumentCategory } from '@arpanet/gen/resources/documents/category_pb';
@@ -13,7 +14,6 @@ import {
     ChevronDownIcon,
     CheckIcon,
 } from '@heroicons/vue/20/solid';
-import { useRoute, useRouter } from 'vue-router/auto';
 import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import {
@@ -33,12 +33,16 @@ import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_e
 import DocumentReferenceManager from './DocumentReferenceManager.vue';
 import DocumentRelationManager from './DocumentRelationManager.vue';
 import DocumentAccessEntry from './DocumentAccessEntry.vue';
-import { TemplateData } from '@arpanet/gen/resources/documents/templates_pb';
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
+import { RpcError } from 'grpc-web';
 
-const store = useStore();
+const { $grpc } = useNuxtApp();
+const authStore = useAuthStore();
+const clipboardStore = useClipboardStore();
+const documentStore = useDocumentEditorStore();
+
 const router = useRouter();
-const route = useRoute<'Documents: Create'>();
+const route = useRoute();
 
 const props = defineProps({
     id: {
@@ -47,7 +51,7 @@ const props = defineProps({
     },
 });
 
-const activeChar = computed(() => store.state.auth?.activeChar);
+const activeChar = computed(() => authStore.data.activeChar);
 
 const canEdit = ref(false);
 
@@ -89,22 +93,24 @@ onMounted(async () => {
         req.setTemplateId(parseInt(route.query.templateId as string));
         req.setRender(true);
 
-        const data = store.getters['clipboard/getTemplateData'] as TemplateData;
+        const data = clipboardStore.getTemplateData();
         data.setActivechar(activeChar.value!);
         req.setData(JSON.stringify(data.toObject()));
 
-        await getDocStoreClient().
+        await $grpc.getDocStoreClient().
             getTemplate(req, null).then((resp) => {
                 const template = resp.getTemplate();
                 doc.value.title = template?.getContentTitle()!;
                 doc.value.content = template?.getContent()!;
                 selectedCategory.value = entriesCategory.find(e => e.getId() === template?.getCategory()?.getId());;
+            }).catch((err: RpcError) => {
+                $grpc.handleRPCError(err);
             });
     } else if (props.id) {
         const req = new GetDocumentRequest();
         req.setDocumentId(props.id);
 
-        getDocStoreClient().getDocument(req, null).then(async (resp) => {
+        $grpc.getDocStoreClient().getDocument(req, null).then(async (resp) => {
             const document = resp.getDocument();
             const docAccess = resp.getAccess();
 
@@ -116,9 +122,9 @@ onMounted(async () => {
                 selectedCategory.value = entriesCategory.find(e => e.getId() === document.getCategory()?.getId());
                 isPublic.value = document.getPublic();
 
-                const refs = await getDocStoreClient().getDocumentReferences(req, null);
+                const refs = await $grpc.getDocStoreClient().getDocumentReferences(req, null);
                 currentReferences.value = refs.getReferencesList();
-                const rels = await getDocStoreClient().getDocumentRelations(req, null);
+                const rels = await $grpc.getDocStoreClient().getDocumentRelations(req, null);
                 currentRelations.value = rels.getRelationsList();
             };
 
@@ -138,12 +144,12 @@ onMounted(async () => {
 
         });
     } else {
-        if (store.state.documentEditor) {
-            doc.value.title = store.state.documentEditor?.title;
-            doc.value.content = store.state.documentEditor?.content;
-            doc.value.state = store.state.documentEditor?.state;
-            if (store.state.documentEditor?.closed) {
-                doc.value.closed = store.state.documentEditor?.closed;
+        if (documentStore.document) {
+            doc.value.title = documentStore.document.title;
+            doc.value.content = documentStore.document.content;
+            doc.value.state = documentStore.document.state;
+            if (documentStore.document.closed) {
+                doc.value.closed = documentStore.document.closed;
             }
         }
 
@@ -160,7 +166,7 @@ function saveToStore(): void {
     }
     saving.value = true;
 
-    store.dispatch('documentEditor/save', doc.value);
+    documentStore.save(doc.value);
     setTimeout(() => {
         saving.value = false;
     }, 750);
@@ -174,7 +180,7 @@ async function findCategories(): Promise<void> {
     const req = new CompleteDocumentCategoryRequest();
     req.setSearch(queryCategory.value);
 
-    const resp = await getCompletorClient().completeDocumentCategory(req, null)
+    const resp = await $grpc.getCompletorClient().completeDocumentCategory(req, null)
     entriesCategory = resp.getCategoriesList();
 }
 
@@ -287,7 +293,7 @@ function submitForm(): void {
     });
     req.setAccess(reqAccess);
 
-    getDocStoreClient().
+    $grpc.getDocStoreClient().
         createDocument(req, null).
         then((resp) => {
             referenceManagerData.value.forEach((ref) => {
@@ -295,7 +301,7 @@ function submitForm(): void {
 
                 const req = new AddDocumentReferenceRequest();
                 req.setReference(ref);
-                getDocStoreClient().addDocumentReference(req, null);
+                $grpc.getDocStoreClient().addDocumentReference(req, null);
             });
 
             relationManagerData.value.forEach((rel) => {
@@ -303,12 +309,12 @@ function submitForm(): void {
 
                 const req = new AddDocumentRelationRequest();
                 req.setRelation(rel);
-                getDocStoreClient().addDocumentRelation(req, null);
+                $grpc.getDocStoreClient().addDocumentRelation(req, null);
             });
 
-            dispatchNotification({ title: "Document created!", content: "Document has been created." });
-            store.dispatch('clipboard/clearActiveStack');
-            store.dispatch('documentEditor/clear', doc.value);
+            dispatchNotification({ title: 'Document created!', content: 'Document has been created.' });
+            clipboardStore.clearActiveStack();
+            documentStore.clear();
             router.push('/documents/' + resp.getDocumentId());
         });
 }
@@ -352,7 +358,7 @@ function editForm(): void {
     });
     req.setAccess(reqAccess);
 
-    getDocStoreClient().
+    $grpc.getDocStoreClient().
         updateDocument(req, null).
         then((resp) => {
             const referencesToRemove: number[] = [];
@@ -362,7 +368,7 @@ function editForm(): void {
             referencesToRemove.forEach((id) => {
                 const req = new RemoveDocumentReferenceRequest();
                 req.setId(id);
-                getDocStoreClient().removeDocumentReference(req, null);
+                $grpc.getDocStoreClient().removeDocumentReference(req, null);
             });
 
             const relationsToRemove: number[] = [];
@@ -372,7 +378,7 @@ function editForm(): void {
             relationsToRemove.forEach((id) => {
                 const req = new RemoveDocumentRelationRequest();
                 req.setId(id);
-                getDocStoreClient().removeDocumentRelation(req, null);
+                $grpc.getDocStoreClient().removeDocumentRelation(req, null);
             });
 
             referenceManagerData.value.forEach((ref) => {
@@ -381,7 +387,7 @@ function editForm(): void {
 
                 const req = new AddDocumentReferenceRequest();
                 req.setReference(ref);
-                getDocStoreClient().addDocumentReference(req, null);
+                $grpc.getDocStoreClient().addDocumentReference(req, null);
             });
 
             relationManagerData.value.forEach((rel) => {
@@ -390,12 +396,12 @@ function editForm(): void {
 
                 const req = new AddDocumentRelationRequest();
                 req.setRelation(rel);
-                getDocStoreClient().addDocumentRelation(req, null);
+                $grpc.getDocStoreClient().addDocumentRelation(req, null);
             });
 
-            dispatchNotification({ title: "Document updated!", content: "Document has been updated." });
-            store.dispatch('documentEditor/clear', doc.value);
-            store.dispatch('clipboard/clearActiveStack');
+            dispatchNotification({ title: 'Document updated!', content: 'Document has been updated.' });
+            clipboardStore.clearActiveStack();
+            documentStore.clear();
             router.push('/documents/' + resp.getDocumentId());
         });
 }

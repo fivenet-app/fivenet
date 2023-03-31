@@ -3,7 +3,6 @@ import { ref, onMounted, watch } from 'vue';
 import { Vehicle } from '@arpanet/gen/resources/vehicles/vehicles_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
-import { getCompletorClient, getDMVClient, handleRPCError } from '../../grpc/grpc';
 import { FindVehiclesRequest } from '@arpanet/gen/services/dmv/vehicles_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import VehiclesListEntry from './VehiclesListEntry.vue';
@@ -15,6 +14,8 @@ import {
     CheckIcon,
 } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
+
+const { $grpc } = useNuxtApp();
 
 const props = defineProps({
     userId: {
@@ -63,13 +64,13 @@ async function findVehicles(pos: number): Promise<void> {
     req.setOrderbyList(orderBys.value);
 
     try {
-        const resp = await getDMVClient().
+        const resp = await $grpc.getDMVClient().
             findVehicles(req, null);
 
         pagination.value = resp.getPagination();
         vehicles.value = resp.getVehiclesList();
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
@@ -82,7 +83,7 @@ async function findChars(): Promise<void> {
     const req = new CompleteCharNamesRequest();
     req.setSearch(queryChar.value);
 
-    const resp = await getCompletorClient().
+    const resp = await $grpc.getCompletorClient().
         completeCharNames(req, null);
 
     entriesChars.value = resp.getUsersList();
@@ -109,7 +110,7 @@ async function toggleOrderBy(column: string): Promise<void> {
         orderBys.value.push(orderBy);
     }
 
-    findVehicles(pagination.value?.getOffset()!);
+    return findVehicles(pagination.value?.getOffset()!);
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -120,7 +121,7 @@ function focusSearch(): void {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     if (props.userId) findVehicles(pagination.value?.getOffset()!);
 });
 

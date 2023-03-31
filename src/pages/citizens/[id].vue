@@ -1,43 +1,47 @@
-<script lang="ts">
-import { defineLoader, RouteLocationNormalizedLoaded } from 'vue-router/auto';
-import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
-import { RpcError } from 'grpc-web';
-
-export const useUserData = defineLoader(async (route: RouteLocationNormalizedLoaded) => {
-    route = route as RouteLocationNormalizedLoaded<'Citizens: Info'>;
-
-    const req = new GetUserRequest();
-    req.setUserId(parseInt(route.params.id));
-
-    try {
-        const resp = await getCitizenStoreClient().
-            getUser(req, null);
-        return resp.getUser();
-    } catch (e) {
-        handleRPCError(e as RpcError);
-        return;
-    }
-});
-</script>
-
 <script lang="ts" setup>
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
 import CitizenInfo from '../../components/citizens/CitizenInfo.vue';
 import { GetUserRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
-import { getCitizenStoreClient, handleRPCError } from '../../grpc/grpc';
+import { RpcError } from 'grpc-web';
+import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
+import { User } from '@arpanet/gen/resources/users/users_pb';
+import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
-const { data: user } = useUserData();
-</script>
+useHead({
+    title: 'Citizens: Info',
+});
+definePageMeta({
+    requiresAuth: true,
+    permission: 'CitizenStoreService.FindUsers',
+    validate: async (route) => {
+        route = route as TypedRouteFromName<'citizens-id'>;
+        // Check if the id is made up of digits
+        return /^\d+$/.test(route.params.id);
+    },
+});
 
-<route lang="json">
-{
-    "name": "Citizens: Info",
-    "meta": {
-        "requiresAuth": true,
-        "permission": "CitizenStoreService.FindUsers"
+const { $grpc } = useNuxtApp();
+const route = useRoute('citizens-id');
+
+const user = ref<User>();
+
+async function getUser(): Promise<void> {
+    const req = new GetUserRequest();
+    req.setUserId(parseInt(route.params.id));
+
+    try {
+        const resp = await $grpc.getCitizenStoreClient().
+            getUser(req, null);
+
+        user.value = resp.getUser();
+    } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
+        return;
     }
 }
-</route>
+
+onBeforeMount(async () => getUser());
+</script>
 
 <template>
     <ContentWrapper>

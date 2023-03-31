@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { BriefcaseIcon, DocumentTextIcon, UsersIcon, MapIcon, TruckIcon } from '@heroicons/vue/24/outline';
 import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
+import { FunctionalComponent } from 'vue';
+import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
 const features = [
     {
         title: 'Citizen Search',
         description:
             'Search and find information about Citizens, including basic info, their licenses and related documents.',
-        href: '/citizens',
+        href: { name: 'citizens' },
         permission: 'CitizenStoreService.FindUsers',
         icon: UsersIcon,
         iconForeground: 'text-purple-900',
@@ -17,7 +19,7 @@ const features = [
         title: 'Vehicles',
         description:
             'Search and find information about Vehicles.',
-        href: '/vehicles',
+        href: { name: 'vehicles' },
         permission: 'DMVService.FindVehicles',
         icon: TruckIcon,
         iconForeground: 'text-zinc-900',
@@ -27,7 +29,7 @@ const features = [
         title: 'Documents',
         description:
             'Search and find information about Citizens, including basic info, their licenses and related documents.',
-        href: '/documents',
+        href: { name: 'documents' },
         permission: 'DocStoreService.FindDocuments',
         icon: DocumentTextIcon,
         iconForeground: 'text-sky-900',
@@ -36,7 +38,7 @@ const features = [
     {
         title: 'Job',
         description: 'Infos about your job and employee management. Coming soon',
-        href: '/job',
+        href: { name: 'jobs' },
         permission: 'Jobs.View',
         icon: BriefcaseIcon,
         iconForeground: 'text-yellow-900',
@@ -45,13 +47,13 @@ const features = [
     {
         title: 'Livemap',
         description: 'Live position of dispatches and your colleagues.',
-        href: '/livemap',
+        href: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
         icon: MapIcon,
         iconForeground: 'text-teal-900',
         iconBackground: 'bg-teal-50',
     },
-]
+] as { title: string, description: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, iconForeground: string, iconBackground: string }[];
 </script>
 
 <template>
@@ -66,18 +68,17 @@ const features = [
             'group relative bg-base-700 p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-neutral',
         ]">
             <div>
-                <span
-                    :class="[feature.iconBackground, feature.iconForeground, 'inline-flex rounded-lg p-3']">
+                <span :class="[feature.iconBackground, feature.iconForeground, 'inline-flex rounded-lg p-3']">
                     <component :is="feature.icon" class="h-auto w-7" aria-hidden="true" />
                 </span>
             </div>
             <div class="mt-4">
                 <h3 class="text-base font-semibold leading-6 text-neutral">
-                    <router-link :to="feature.href" class="focus:outline-none">
+                    <NuxtLink :to="feature.href" class="focus:outline-none">
                         <!-- Extend touch target to entire panel -->
                         <span class="absolute inset-0" aria-hidden="true" />
                         {{ feature.title }}
-                    </router-link>
+                    </NuxtLink>
                 </h3>
                 <p class="mt-2 text-sm text-base-200">{{ feature.description }}</p>
             </div>

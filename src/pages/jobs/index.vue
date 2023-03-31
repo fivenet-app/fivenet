@@ -1,16 +1,14 @@
 <script lang="ts" setup>
 import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-</script>
 
-<route lang="json">
-{
-    "name": "Jobs",
-    "meta": {
-        "requiresAuth": true,
-        "permission": "Jobs.View"
-    }
-}
-</route>
+useHead({
+    title: 'Jobs',
+});
+definePageMeta({
+    requiresAuth: true,
+    permission: 'Jobs.View',
+});
+</script>
 
 <template>
     <ContentWrapper>

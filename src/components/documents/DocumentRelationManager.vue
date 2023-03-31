@@ -31,12 +31,13 @@ import { UsersIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
 import { RpcError } from 'grpc-web';
 import { onMounted, ref, FunctionalComponent } from 'vue';
-import { useRouter } from 'vue-router/auto';
-import { getCitizenStoreClient, handleRPCError } from '../../grpc/grpc';
-import { useStore } from '../../store/store';
+import { useClipboardStore } from '~~/src/store/clipboard';
+import { useAuthStore } from '../../store/auth';
 import { toTitleCase } from '../../utils/strings';
 
-const store = useStore();
+const { $grpc } = useNuxtApp();
+const store = useAuthStore();
+const clipboard = useClipboardStore();
 const router = useRouter();
 
 const props = defineProps<{
@@ -71,12 +72,12 @@ async function findUsers(): Promise<void> {
     req.setSearchName(queryChar.value);
 
     try {
-        const resp = await getCitizenStoreClient().
+        const resp = await $grpc.getCitizenStoreClient().
             findUsers(req, null);
 
         entriesUsers.value = resp.getUsersList().filter(user => !Array.from(props.modelValue.values()).find(r => r.getTargetUserId() === user.getUserId()));
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
@@ -88,8 +89,8 @@ function addRelation(userId: number, relation: number): void {
     const rel = new DocumentRelation();
     rel.setId(key);
     rel.setDocumentId(props.document!);
-    rel.setSourceUserId(store.state.auth!.activeChar!.getUserId());
-    rel.setSourceUser(store.state.auth!.activeChar!);
+    rel.setSourceUserId(store.$state.activeChar!.getUserId());
+    rel.setSourceUser(store.$state.activeChar!);
     rel.setTargetUserId(userId);
     rel.setRelation(DOC_RELATION_Util.fromInt(relation));
 
@@ -185,7 +186,7 @@ function removeRelation(id: number): void {
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
-                                                                                <a :href="router.resolve({ name: 'Citizens: Info', params: { id: rel.getTargetUserId() } }).href"
+                                                                                <a :href="router.resolve({ name: 'citizens-id', params: { id: rel.getTargetUserId() } }).href"
                                                                                     target="_blank" data-te-toggle="tooltip"
                                                                                     title="Open Citizen">
                                                                                     <ArrowTopRightOnSquareIcon
@@ -222,7 +223,7 @@ function removeRelation(id: number): void {
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle"><button
-                                                            v-if="store.state.clipboard?.users.length === 0" type="button"
+                                                            v-if="clipboard.state.users.length === 0" type="button"
                                                             class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
                                                             disabled>
                                                             <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
@@ -241,14 +242,11 @@ function removeRelation(id: number): void {
                                                                         Job</th>
                                                                     <th scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                                        Sex</th>
-                                                                    <th scope="col"
-                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
                                                                         Add Relation</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="user in store.state.clipboard?.users"
+                                                                <tr v-for="user in clipboard.state.users"
                                                                     :key="user.id">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
@@ -256,9 +254,6 @@ function removeRelation(id: number): void {
                                                                             user.lastname }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ user.jobLabel }}
-                                                                    </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ user.sex!.toUpperCase() }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
@@ -315,9 +310,6 @@ function removeRelation(id: number): void {
                                                                         Job</th>
                                                                     <th scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                                        Sex</th>
-                                                                    <th scope="col"
-                                                                        class="px-3 py-3.5 text-left text-sm font-semibold">
                                                                         Add Relation</th>
                                                                 </tr>
                                                             </thead>
@@ -330,9 +322,6 @@ function removeRelation(id: number): void {
                                                                             user.getLastname() }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ user.getJobLabel() }}
-                                                                    </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ user.getSex().toUpperCase() }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">

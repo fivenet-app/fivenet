@@ -3,13 +3,14 @@ import { ref, onMounted, watch } from 'vue';
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
-import { getCitizenStoreClient, handleRPCError } from '../../grpc/grpc';
 import { FindUsersRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import TablePagination from '../partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
+
+const { $grpc } = useNuxtApp();
 
 const queryName = ref('');
 const queryWanted = ref(false);
@@ -27,12 +28,13 @@ async function findUsers(pos: number): Promise<void> {
     req.setWanted(queryWanted.value);
 
     try {
-        const resp = await getCitizenStoreClient().
+        const resp = await $grpc.getCitizenStoreClient().
             findUsers(req, null);
+
         pagination.value = resp.getPagination();
         users.value = resp.getUsersList();
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
@@ -51,14 +53,14 @@ async function toggleOrderBy(column: string): Promise<void> {
         else {
             orderBy.setDesc(true);
         }
-    }
-    else {
+    } else {
         orderBy = new OrderBy();
         orderBy.setColumn(column);
         orderBy.setDesc(false);
         orderBys.value.push(orderBy);
     }
-    findUsers(pagination.value?.getOffset()!);
+
+    return findUsers(pagination.value?.getOffset()!);
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);

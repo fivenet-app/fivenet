@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { useStore } from '../../store/store';
+import { useClipboardStore } from '../../store/clipboard';
 import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { DocumentTextIcon } from '@heroicons/vue/20/solid';
-import { ClipboardDocument } from '../../store/modules/clipboardmodule';
+import { ClipboardDocument } from '../../store/clipboard';
 
-const store = useStore();
+const store = useClipboardStore();
 
-const documents = computed(() => store.state.clipboard?.documents);
+const documents = computed(() => store.state.documents);
 
 const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void,
@@ -64,7 +64,7 @@ async function remove(item: ClipboardDocument): Promise<void> {
         selected.value.splice(idx, 1);
     }
 
-    await store.dispatch('clipboard/removeDocument', item.id);
+    await store.removeDocument(item.id);
 }
 
 async function removeAll(): Promise<void> {
@@ -79,9 +79,9 @@ async function removeAll(): Promise<void> {
 
 watch(props, async (newVal) => {
     if (newVal.submit) {
-        if (store.state.clipboard) {
-            store.state.clipboard.activeStack.documents.length = 0;
-            selected.value.forEach((v) => store.state.clipboard?.activeStack.documents.push(v));
+        if (store.state) {
+            store.activeStack.documents.length = 0;
+            selected.value.forEach((v) => store.activeStack.documents.push(v));
         } else if (documents.value && documents.value.length === 1) {
             selected.value.unshift(documents.value[0]);
         }

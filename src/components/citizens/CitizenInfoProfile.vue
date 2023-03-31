@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { User, UserProps } from '@arpanet/gen/resources/users/users_pb';
-import { getCitizenStoreClient, handleRPCError } from '../../grpc/grpc';
 import { SetUserPropsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { dispatchNotification } from '../notification';
 import CharSexBadge from '../misc/CharSexBadge.vue';
 import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
 import TemplatesModal from '../documents/TemplatesModal.vue';
-import { useStore } from '../../store/store';
+import { useClipboardStore } from '../../store/clipboard';
 import { RpcError } from 'grpc-web';
 
-const store = useStore();
+const { $grpc } = useNuxtApp();
+const clipboardStore = useClipboardStore();
 
 const w = window;
 const clipboard = useClipboard();
@@ -43,11 +43,12 @@ async function toggleWantedStatus(): Promise<void> {
     req.setProps(userProps);
 
     try {
-        await getCitizenStoreClient().
+        await $grpc.getCitizenStoreClient().
             setUserProps(req, null);
+
         dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
@@ -55,7 +56,7 @@ async function toggleWantedStatus(): Promise<void> {
 const templatesOpen = ref(false);
 
 function openTemplates() {
-    store.dispatch('clipboard/addUser', props.user);
+    clipboardStore.addUser(props.user);
 
     templatesOpen.value = true;
 }

@@ -1,14 +1,15 @@
 <script lang="ts" setup>
-import { useStore } from '../../store/store';
+import { useAuthStore } from '../../store/auth';
 import { DocumentComment } from '@arpanet/gen/resources/documents/documents_pb';
 import { DeleteDocumentCommentRequest, EditDocumentCommentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { PencilIcon, TrashIcon } from '@heroicons/vue/20/solid';
 import { computed, ref } from 'vue';
-import { getDocStoreClient } from '../../grpc/grpc';
+import { RpcError } from 'grpc-web';
 
-const store = useStore();
+const { $grpc } = useNuxtApp();
+const store = useAuthStore();
 
-const activeCharId = computed(() => store.state.auth?.activeChar?.getUserId());
+const activeCharId = computed(() => store.$state.activeChar?.getUserId());
 
 const emit = defineEmits<{
     (e: 'removed', comment: DocumentComment): void,
@@ -24,7 +25,7 @@ const props = defineProps({
 const editing = ref(false);
 const message = ref(props.comment.getComment());
 
-function editComment() {
+async function editComment(): Promise<void> {
     const req = new EditDocumentCommentRequest();
     const c = new DocumentComment();
     c.setId(props.comment.getId());
@@ -32,23 +33,31 @@ function editComment() {
     c.setComment(message.value);
     req.setComment(c);
 
-    getDocStoreClient().
-        editDocumentComment(req, null).
-        then((resp) => {
-            props.comment.setComment(message.value);
-            editing.value = false;
-        });
+    try {
+        const resp = await $grpc.getDocStoreClient().
+            editDocumentComment(req, null);
+
+        props.comment.setComment(message.value);
+        editing.value = false;
+    } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
+        return;
+    }
 }
 
-function deleteComment() {
+async function deleteComment(): Promise<void> {
     const req = new DeleteDocumentCommentRequest();
     req.setCommentId(props.comment.getId());
 
-    getDocStoreClient().
-        deleteDocumentComment(req, null).
-        then((resp) => {
-            emit('removed', props.comment);
-        });
+    try {
+        await $grpc.getDocStoreClient().
+            deleteDocumentComment(req, null);
+
+        emit('removed', props.comment);
+    } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
+        return;
+    }
 }
 </script>
 
@@ -57,10 +66,10 @@ function deleteComment() {
         <div v-if="!editing" class="flex space-x-3">
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <router-link :to="{ name: 'Citizens: Info', params: { id: comment.getCreatorId() } }"
+                    <NuxtLink :to="{ name: 'citizens-id', params: { id: comment.getCreatorId() } }"
                         class="text-sm font-medium text-primary-400 hover:text-primary-300">
                         {{ comment.getCreator()?.getFirstname() }} {{ comment.getCreator()?.getLastname() }}
-                    </router-link>
+                    </NuxtLink>
                     <div>
                         <button v-can="'DocStoreService.PostDocumentComment'" v-if="comment.getCreatorId() === activeCharId"
                             @click="editing = true">

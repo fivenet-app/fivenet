@@ -3,7 +3,6 @@ import { DocumentTemplateShort, TemplateRequirements } from '@arpanet/gen/resour
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { PencilIcon } from '@heroicons/vue/24/solid';
 import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router/auto';
 import ClipboardModalDocuments from '../clipboard/ClipboardModalDocuments.vue';
 import ClipboardModalUsers from '../clipboard/ClipboardModalUsers.vue';
 import ClipboardModalVehicles from '../clipboard/ClipboardModalVehicles.vue';
@@ -132,10 +131,10 @@ function clipboardDialog() {
                                                 Document Templates
                                             </DialogTitle>
                                             <div class="mt-2 text-white">
-                                                <router-link :to="{ name: 'Documents: Create' }" type="button"
+                                                <NuxtLink :to="{ name: 'Documents: Create' }" type="button"
                                                     class="mb-5 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0">
                                                     No Template
-                                                </router-link>
+                                                </NuxtLink>
                                                 <TemplatesList
                                                     @selected="(t: DocumentTemplateShort) => templateSelected(t)" />
                                             </div>

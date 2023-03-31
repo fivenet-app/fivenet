@@ -18,13 +18,14 @@ import {
 } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/core';
 import { CompleteCharNamesRequest, CompleteJobNamesRequest } from '@arpanet/gen/services/completor/completor_pb';
-import { getCompletorClient } from '../../grpc/grpc';
 import { Job, JobGrade } from '@arpanet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@arpanet/gen/resources/users/users_pb';
 import { DOC_ACCESS } from '@arpanet/gen/resources/documents/documents_pb';
 import { toTitleCase } from '../../utils/strings';
 import { ArrayElement } from '../../utils/types';
 import { DOC_ACCESS_Util } from '@arpanet/gen/resources/documents/documents.pb_enums';
+
+const { $grpc } = useNuxtApp();
 
 const props = defineProps<{
     init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }
@@ -64,7 +65,7 @@ async function findJobs(): Promise<void> {
     const req = new CompleteJobNamesRequest();
     req.setSearch(queryJob.value);
 
-    const resp = await getCompletorClient().completeJobNames(req, null)
+    const resp = await $grpc.getCompletorClient().completeJobNames(req, null)
     entriesJobs = resp.getJobsList();
 }
 
@@ -72,7 +73,7 @@ async function findChars(): Promise<void> {
     const req = new CompleteCharNamesRequest();
     req.setSearch(queryChar.value);
 
-    const resp = await getCompletorClient().completeCharNames(req, null)
+    const resp = await $grpc.getCompletorClient().completeCharNames(req, null)
     entriesChars = resp.getUsersList();
 }
 

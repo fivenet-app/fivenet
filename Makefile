@@ -6,7 +6,7 @@ VALIDATE_VERSION ?= v0.10.1
 
 .PHONY: clean
 clean:
-	rm -rf ./dist/ ./public/tiles/*/
+	rm -rf ./dist/ ./src/public/tiles/*/
 	rm -rf gdal2tiles-leaflet
 
 .PHONY: watch
@@ -28,7 +28,7 @@ build-go:
 .PHONY: build-yarn
 build-yarn:
 	rm -rf ./dist/
-	VITE_BASE="/dist/" \
+	NUXT_APP_BASE_URL="/dist/" \
 		yarn build
 
 .PHONY: run-server
@@ -105,14 +105,14 @@ gdal2tiles-leaflet:
 
 .PHONY: gen-tiles
 gen-tiles: gdal2tiles-leaflet
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ATLAS_8192x8192.jpg ./public/tiles/atlas
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_POSTAL_8192x8192.jpg ./public/tiles/postal
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ROAD_8192x8192.jpg ./public/tiles/road
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_SATELITE_8192x8192.jpg ./public/tiles/satelite
+	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ATLAS_8192x8192.jpg ./src/public/tiles/atlas
+	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_POSTAL_8192x8192.jpg ./src/public/tiles/postal
+	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ROAD_8192x8192.jpg ./src/public/tiles/road
+	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_SATELITE_8192x8192.jpg ./src/public/tiles/satelite
 
 .PHONY: optimize-tiles
 optimize-tiles:
-	find ./public/tiles -iname '*.png' -print0 | xargs -n1 -P6 -0 optipng -strip all -clobber -fix -o9
+	find ./src/public/tiles -iname '*.png' -print0 | xargs -n1 -P6 -0 optipng -strip all -clobber -fix -o9
 
 .PHONY: tiles
 tiles:

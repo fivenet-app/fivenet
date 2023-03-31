@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { onMounted, onBeforeUnmount, onUnmounted, ref } from 'vue';
-import { getLivemapperClient, handleRPCError } from '../grpc/grpc';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
@@ -8,6 +7,8 @@ import { XCircleIcon } from '@heroicons/vue/20/solid';
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+
+const { $grpc } = useNuxtApp();
 
 function round(num: number): number {
     return Math.round(num * 100) / 1000;
@@ -76,10 +77,10 @@ async function start(): Promise<void> {
     console.debug('Starting Livemap Data Stream');
     const request = new StreamRequest();
 
-    stream = getLivemapperClient().
+    stream = $grpc.getLivemapperClient().
         stream(request).
         on('error', async (err: RpcError) => {
-            handleRPCError(err);
+            $grpc.handleRPCError(err);
             error.value = err;
             stop();
         }).

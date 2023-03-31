@@ -1,13 +1,12 @@
 <script lang="ts" setup>
-import { useStore } from '../../store/store';
+import { useClipboardStore, ClipboardUser } from '../../store/clipboard';
 import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { UsersIcon } from '@heroicons/vue/20/solid';
-import { ClipboardUser } from '../../store/modules/clipboardmodule';
 
-const store = useStore();
+const store = useClipboardStore();
 
-const users = computed(() => store.state.clipboard?.users);
+const users = computed(() => store.state.users);
 
 const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void,
@@ -64,7 +63,7 @@ async function remove(item: ClipboardUser): Promise<void> {
         selected.value.splice(idx, 1);
     }
 
-    await store.dispatch('clipboard/removeUser', item.id);
+    await store.removeUser(item.id!);
 }
 
 async function removeAll(): Promise<void> {
@@ -79,9 +78,9 @@ async function removeAll(): Promise<void> {
 
 watch(props, async (newVal) => {
     if (newVal.submit) {
-        if (store.state.clipboard) {
-            store.state.clipboard.activeStack.users.length = 0;
-            selected.value.forEach((v) => store.state.clipboard?.activeStack.users.push(v));
+        if (store.activeStack) {
+            store.activeStack.users.length = 0;
+            selected.value.forEach((v) => store.activeStack.users.push(v));
         } else if (users.value && users.value.length === 1) {
             selected.value.unshift(users.value[0]);
         }

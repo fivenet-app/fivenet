@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { User } from '@arpanet/gen/resources/users/users_pb';
 import { ClipboardDocumentIcon, EyeIcon } from '@heroicons/vue/24/solid';
-import { useStore } from '../../store/store';
+import { useClipboardStore } from '../../store/clipboard';
 
-const store = useStore();
+const store = useClipboardStore();
 
 const props = defineProps({
     user: {
@@ -13,7 +13,7 @@ const props = defineProps({
 });
 
 function addToClipboard() {
-    store.dispatch('clipboard/addUser', props.user);
+    store.addUser(props.user);
 }
 </script>
 
@@ -38,11 +38,11 @@ function addToClipboard() {
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
             <div class="flex flex-row justify-end">
-                <router-link v-can="'CitizenStoreService.FindUsers'"
-                    :to="{ name: 'Citizens: Info', params: { id: user.getUserId() ?? 0 } }"
+                <NuxtLink v-can="'CitizenStoreService.FindUsers'"
+                    :to="{ name: 'citizens-id', params: { id: user.getUserId() ?? 0 } }"
                     class="flex-initial text-primary-500 hover:text-primary-400">
                     <EyeIcon class="w-6 h-auto ml-auto mr-2.5" />
-                </router-link>
+                </NuxtLink>
                 <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">
                     <ClipboardDocumentIcon class="w-6 h-auto ml-auto mr-2.5" />
                 </button>

@@ -1,17 +1,15 @@
 <script lang="ts" setup>
 import CitizensList from '../../components/citizens/CitizensList.vue';
 import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
-</script>
 
-<route lang="json">
-{
-    "name": "Citizens",
-    "meta": {
-        "requiresAuth": true,
-        "permission": "CitizenStoreService.FindUsers"
-    }
-}
-</route>
+useHead({
+    title: 'Citizens',
+});
+definePageMeta({
+    requiresAuth: true,
+    permission: 'CitizenStoreService.FindUsers',
+});
+</script>
 
 <template>
     <div class="w-full">

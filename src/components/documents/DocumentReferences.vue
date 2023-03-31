@@ -24,7 +24,7 @@ defineProps({
         <div v-if="references.length > 0" class="sm:hidden text-neutral">
             <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
                 <li v-for="reference in references" :key="reference.getId()">
-                    <router-link :to="{ name: 'Documents: Info', params: { id: reference.getTargetDocumentId() } }"
+                    <NuxtLink :to="{ name: 'documents-id', params: { id: reference.getTargetDocumentId() } }"
                         class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
@@ -43,16 +43,16 @@ defineProps({
                                                 reference.getSourceDocument()?.getCategory()?.getName() }})</span>
                                     </span>
                                     <span>
-                                        <router-link :to="{ name: 'Citizens: Info', params: { id: reference.getCreatorId() }} ">
+                                        <NuxtLink :to="{ name: 'citizens-id', params: { id: reference.getCreatorId() }} ">
                                             {{ reference.getCreator()?.getFirstname() }}, {{ reference.getCreator()?.getLastname() }}
-                                        </router-link>
+                                        </NuxtLink>
                                     </span>
                                     <time datetime="">{{ toDateLocaleString(reference.getCreatedAt()) }}</time>
                                 </span>
                             </span>
                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
                         </span>
-                    </router-link>
+                    </NuxtLink>
                 </li>
             </ul>
         </div>
@@ -86,13 +86,13 @@ defineProps({
                                 <tr v-for="reference in references" :key="reference.getId()">
                                     <td class="px-6 py-4 text-sm ">
                                         <div class="flex">
-                                            <router-link
-                                                :to="{ name: 'Documents: Info', params: { id: reference.getTargetDocumentId() } }"
+                                            <NuxtLink
+                                                :to="{ name: 'documents-id', params: { id: reference.getTargetDocumentId() } }"
                                                 class="inline-flex space-x-2 text-sm truncate group">
                                                 {{ reference.getTargetDocument()?.getTitle() }}<span
                                                     v-if="reference.getTargetDocument()?.getCategory()">&nbsp;(Category: {{
                                                         reference.getTargetDocument()?.getCategory()?.getName() }})</span>
-                                            </router-link>
+                                            </NuxtLink>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
@@ -101,20 +101,20 @@ defineProps({
                                     </td>
                                     <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
                                         <div class="flex">
-                                            <router-link
-                                                :to="{ name: 'Documents: Info', params: { id: reference.getSourceDocumentId() } }"
+                                            <NuxtLink
+                                                :to="{ name: 'documents-id', params: { id: reference.getSourceDocumentId() } }"
                                                 class="inline-flex space-x-1 text-sm truncate group">
                                                 {{ reference.getSourceDocument()?.getTitle() }}<span
                                                     v-if="reference.getSourceDocument()?.getCategory()">&nbsp;(Category: {{
                                                         reference.getSourceDocument()?.getCategory()?.getName() }})</span>
-                                            </router-link>
+                                            </NuxtLink>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
                                         <div class="flex">
-                                            <router-link :to="{ name: 'Citizens: Info', params: { id: reference.getCreatorId() }} ">
+                                            <NuxtLink :to="{ name: 'citizens-id', params: { id: reference.getCreatorId() }} ">
                                                 {{ reference.getCreator()?.getFirstname() }}, {{ reference.getCreator()?.getLastname() }}
-                                            </router-link>
+                                            </NuxtLink>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">

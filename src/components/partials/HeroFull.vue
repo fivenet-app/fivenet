@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import '../../styles/herofull-pattern.css';
+import '~/assets/css/herofull-pattern.css';
 </script>
 
 <template>

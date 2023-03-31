@@ -2,10 +2,11 @@
 import { DocumentTemplateShort } from '@arpanet/gen/resources/documents/templates_pb';
 import { ListTemplatesRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { ref, onBeforeMount } from 'vue';
-import { getDocStoreClient, handleRPCError } from '../../grpc/grpc';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from 'grpc-web';
+
+const { $grpc } = useNuxtApp();
 
 const templates = ref<Array<DocumentTemplateShort>>([]);
 
@@ -17,12 +18,12 @@ async function findTemplates(): Promise<void> {
     const req = new ListTemplatesRequest();
 
     try {
-        const resp = await getDocStoreClient().
+        const resp = await $grpc.getDocStoreClient().
             listTemplates(req, null);
 
         templates.value = resp.getTemplatesList();
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }

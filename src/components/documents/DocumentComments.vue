@@ -3,16 +3,16 @@ import { PaginationRequest, PaginationResponse } from '@arpanet/gen/resources/co
 import { DocumentComment } from '@arpanet/gen/resources/documents/documents_pb';
 import { DeleteDocumentCommentRequest, GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@arpanet/gen/services/docstore/docstore_pb';
 import { computed, ref, onMounted } from 'vue';
-import { getDocStoreClient, handleRPCError } from '../../grpc/grpc';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
-import { useStore } from '../../store/store';
+import { useAuthStore } from '../../store/auth';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/20/solid';
 import TablePagination from '../partials/TablePagination.vue';
 import { RpcError } from 'grpc-web';
 
-const store = useStore();
+const { $grpc } = useNuxtApp();
+const store = useAuthStore();
 
-const activeChar = computed(() => store.state.auth?.activeChar);
+const activeChar = computed(() => store.$state.activeChar);
 
 const props = defineProps({
     documentId: {
@@ -35,7 +35,7 @@ async function getComments(pos: number): Promise<void> {
     req.setDocumentId(props.documentId!);
 
     try {
-        const resp = await getDocStoreClient().
+        const resp = await $grpc.getDocStoreClient().
             getDocumentComments(req, null);
 
         resp.getCommentsList().forEach((v) => {
@@ -43,7 +43,7 @@ async function getComments(pos: number): Promise<void> {
             props.comments.push(v);
         });
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
@@ -57,7 +57,7 @@ async function addComment(): Promise<void> {
     req.setComment(com);
 
     try {
-        const resp = await getDocStoreClient().
+        const resp = await $grpc.getDocStoreClient().
             postDocumentComment(req, null);
 
         com.setId(resp.getId());
@@ -66,7 +66,7 @@ async function addComment(): Promise<void> {
 
         props.comments.unshift(com);
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
@@ -80,14 +80,14 @@ async function removeComment(comment: DocumentComment): Promise<void> {
     req.setCommentId(comment.getId());
 
     try {
-        await getDocStoreClient().
+        await $grpc.getDocStoreClient().
             deleteDocumentComment(req, null);
 
         if (idx > -1) {
             props.comments.splice(idx, 1);
         }
     } catch (e) {
-        handleRPCError(e as RpcError);
+        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
