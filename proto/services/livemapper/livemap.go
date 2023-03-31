@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	locs  = table.ArpanetUserLocations
+	locs  = table.FivenetUserLocations
 	users = table.Users.AS("user")
 )
 
@@ -189,7 +189,7 @@ func (s *Server) GenerateRandomUserMarker() {
 		16235,
 	}
 
-	markers := make([]*model.ArpanetUserLocations, len(userIds))
+	markers := make([]*model.FivenetUserLocations, len(userIds))
 
 	resetMarkers := func() {
 		xMin := -3300
@@ -202,7 +202,7 @@ func (s *Server) GenerateRandomUserMarker() {
 
 			job := "ambulance"
 			hidden := false
-			markers[i] = &model.ArpanetUserLocations{
+			markers[i] = &model.FivenetUserLocations{
 				UserID: userIds[i],
 				Job:    &job,
 				Hidden: &hidden,

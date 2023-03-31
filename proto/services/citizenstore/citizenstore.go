@@ -25,8 +25,8 @@ var (
 	userLicenses = table.UserLicenses
 	licenses     = table.Licenses
 
-	userProps = table.ArpanetUserProps
-	userAct   = table.ArpanetUserActivity
+	userProps = table.FivenetUserProps
+	userAct   = table.FivenetUserActivity
 )
 
 type Server struct {
@@ -321,7 +321,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	newValue := strconv.FormatBool(req.Props.Wanted)
 	oldValue := strconv.FormatBool(!req.Props.Wanted)
 	if err := s.addUserAcitvity(ctx, tx,
-		&model.ArpanetUserActivity{
+		&model.FivenetUserActivity{
 			SourceUserID: userId,
 			TargetUserID: req.Props.UserId,
 			Type:         int16(users.USER_ACTIVITY_TYPE_CHANGED),
@@ -340,7 +340,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	return &SetUserPropsResponse{}, nil
 }
 
-func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, activity *model.ArpanetUserActivity) error {
+func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, activity *model.FivenetUserActivity) error {
 	stmt := userAct.
 		INSERT(
 			userAct.SourceUserID,

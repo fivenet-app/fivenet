@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	dTemplates = table.ArpanetDocumentsTemplates.AS("documenttemplateshort")
+	dTemplates = table.FivenetDocumentsTemplates.AS("documenttemplateshort")
 )
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {

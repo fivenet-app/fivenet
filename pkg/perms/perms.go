@@ -12,11 +12,11 @@ import (
 )
 
 var (
-	ap  = table.ArpanetPermissions
-	ar  = table.ArpanetRoles
-	arp = table.ArpanetRolePermissions
-	aup = table.ArpanetUserPermissions
-	aur = table.ArpanetUserRoles
+	ap  = table.FivenetPermissions
+	ar  = table.FivenetRoles
+	arp = table.FivenetRolePermissions
+	aup = table.FivenetUserPermissions
+	aur = table.FivenetUserRoles
 )
 
 type Permissions interface {

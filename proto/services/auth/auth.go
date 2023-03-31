@@ -26,17 +26,17 @@ import (
 )
 
 var (
-	account   = table.ArpanetAccounts
+	account   = table.FivenetAccounts
 	user      = table.Users.AS("user")
 	js        = table.Jobs
 	jobGrades = table.JobGrades
-	jobProps  = table.ArpanetJobProps
+	jobProps  = table.FivenetJobProps
 )
 
 var (
 	AccountCreateFailedErr = status.Error(codes.InvalidArgument, "Please check the token you have typed in!")
 	InvalidLoginErr        = status.Error(codes.InvalidArgument, "Wrong username or password.")
-	NoPasswordErr          = status.Error(codes.InvalidArgument, "You need to use your registration token to create an account first.")
+	NoAccountErr           = status.Error(codes.InvalidArgument, "You need to use your registration token to create an account first.")
 	NoCharacterFoundErr    = status.Error(codes.NotFound, "No character(s) found for your account.")
 	GenericLoginErr        = status.Error(codes.Internal, "Failed to login you in, please try again.")
 	UnableToChooseCharErr  = status.Error(codes.PermissionDenied, "You don't have permission to select this character!")
@@ -77,7 +77,7 @@ func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.Una
 	return ctx, nil
 }
 
-func (s *Server) createTokenFromAccountAndChar(account *model.ArpanetAccounts, activeChar *users.User) (string, error) {
+func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, activeChar *users.User) (string, error) {
 	claims := &auth.CitizenInfoClaims{
 		AccountID: account.ID,
 		Username:  *account.Username,
@@ -142,7 +142,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 	return &CreateAccountResponse{}, nil
 }
 
-func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpression) (*model.ArpanetAccounts, error) {
+func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpression) (*model.FivenetAccounts, error) {
 	stmt := account.
 		SELECT(
 			account.AllColumns,
@@ -154,7 +154,7 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 		).
 		LIMIT(1)
 
-	var acc model.ArpanetAccounts
+	var acc model.FivenetAccounts
 	if err := stmt.QueryContext(ctx, s.db, &acc); err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 
 	// No password set
 	if account.Password == nil {
-		return nil, NoPasswordErr
+		return nil, NoAccountErr
 	}
 
 	// Password check logic
@@ -195,7 +195,16 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {
 	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
 	if err != nil {
-		return nil, err
+		return nil, GenericLoginErr
+	}
+
+	// Load account to make sure it (still) exists
+	acc, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(claims.Username)))
+	if err != nil {
+		return nil, GenericLoginErr
+	}
+	if acc.ID == 0 {
+		return nil, GenericLoginErr
 	}
 
 	// Load chars from database
@@ -301,7 +310,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 
 	char, jProps, err := s.getCharacter(ctx, req.CharId)
 	if err != nil {
-		return nil, err
+		return nil, NoCharacterFoundErr
 	}
 
 	// Make sure the user isn't sending us a different char ID than their own
@@ -312,22 +321,22 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(claims.Username)))
 	if err != nil {
-		return nil, err
+		return nil, NoCharacterFoundErr
 	}
 
 	token, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
-		return nil, err
+		return nil, GenericLoginErr
 	}
 
 	if err := s.ensureUserHasRole(char.UserId, char.Job, char.JobGrade); err != nil {
-		return nil, err
+		return nil, GenericLoginErr
 	}
 
 	// Load permissions of user
 	perms, err := s.p.GetAllPermissionsOfUser(char.UserId)
 	if err != nil {
-		return nil, err
+		return nil, GenericLoginErr
 	}
 
 	if len(perms) == 0 {

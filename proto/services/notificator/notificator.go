@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	nots = table.ArpanetNotifications
+	nots = table.FivenetNotifications
 )
 
 type Server struct {

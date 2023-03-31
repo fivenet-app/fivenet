@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_accounts` (
   `username` varchar(24) NULL,
   `password` varchar(60) NULL,
   `license` varchar(64) NOT NULL,
-  `reg_token` char(6) NOT NULL,
+  `reg_token` char(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_accounts_username` (`username`),
   UNIQUE KEY `idx_fivenet_accounts_license` (`license`),

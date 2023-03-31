@@ -225,7 +225,7 @@ func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.Docume
 }
 
 func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*documents.DocumentAccess, error) {
-	dJobAccess := table.ArpanetDocumentsJobAccess.AS("documentjobaccess")
+	dJobAccess := table.FivenetDocumentsJobAccess.AS("documentjobaccess")
 	jobStmt := dJobAccess.
 		SELECT(
 			dJobAccess.AllColumns,
@@ -257,7 +257,7 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 	}
 
 	user := user.AS("usershort")
-	dUserAccess := table.ArpanetDocumentsUserAccess.AS("documentuseraccess")
+	dUserAccess := table.FivenetDocumentsUserAccess.AS("documentuseraccess")
 	userStmt := dUserAccess.
 		SELECT(
 			dUserAccess.AllColumns,
@@ -311,7 +311,7 @@ func (s *Server) createDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	if access.Jobs != nil {
 		for k := 0; k < len(access.Jobs); k++ {
 			// Create document job access
-			dJobAccess := table.ArpanetDocumentsJobAccess
+			dJobAccess := table.FivenetDocumentsJobAccess
 			stmt := dJobAccess.
 				INSERT(
 					dJobAccess.DocumentID,
@@ -337,7 +337,7 @@ func (s *Server) createDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	if access.Users != nil {
 		for k := 0; k < len(access.Users); k++ {
 			// Create document user access
-			dUserAccess := table.ArpanetDocumentsUserAccess
+			dUserAccess := table.FivenetDocumentsUserAccess
 			stmt := dUserAccess.
 				INSERT(
 					dUserAccess.DocumentID,
@@ -369,7 +369,7 @@ func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	if access.Jobs != nil {
 		for k := 0; k < len(access.Jobs); k++ {
 			// Create document job access
-			dJobAccess := table.ArpanetDocumentsJobAccess
+			dJobAccess := table.FivenetDocumentsJobAccess
 			stmt := dJobAccess.
 				UPDATE(
 					dJobAccess.DocumentID,
@@ -398,7 +398,7 @@ func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	if access.Users != nil {
 		for k := 0; k < len(access.Users); k++ {
 			// Create document user access
-			dUserAccess := table.ArpanetDocumentsUserAccess
+			dUserAccess := table.FivenetDocumentsUserAccess
 			stmt := dUserAccess.
 				UPDATE(
 					dUserAccess.DocumentID,
@@ -439,7 +439,7 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 			jobIds = append(jobIds, jet.Uint64(access.Jobs[i].Id))
 		}
 
-		dJobAccess := table.ArpanetDocumentsJobAccess
+		dJobAccess := table.FivenetDocumentsJobAccess
 		jobStmt := dJobAccess.
 			DELETE().
 			WHERE(
@@ -464,7 +464,7 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 			uaIds = append(uaIds, jet.Uint64(access.Users[i].Id))
 		}
 
-		dUserAccess := table.ArpanetDocumentsUserAccess
+		dUserAccess := table.FivenetDocumentsUserAccess
 		userStmt := dUserAccess.
 			DELETE().
 			WHERE(

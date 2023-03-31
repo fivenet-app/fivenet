@@ -14,8 +14,8 @@ import (
 )
 
 var (
-	docRef = table.ArpanetDocumentsReferences.AS("documentreference")
-	docRel = table.ArpanetDocumentsRelations.AS("documentrelation")
+	docRef = table.FivenetDocumentsReferences.AS("documentreference")
+	docRel = table.FivenetDocumentsRelations.AS("documentrelation")
 )
 
 func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
@@ -213,7 +213,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 
 	req.Reference.CreatorId = userId
 
-	docRef := table.ArpanetDocumentsReferences
+	docRef := table.FivenetDocumentsReferences
 	stmt := docRef.
 		INSERT(
 			docRef.SourceDocumentID,
@@ -299,7 +299,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	req.Relation.SourceUserId = userId
 
-	docRel := table.ArpanetDocumentsRelations
+	docRel := table.FivenetDocumentsRelations
 	stmt := docRel.
 		INSERT(
 			docRel.DocumentID,

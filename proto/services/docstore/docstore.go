@@ -26,11 +26,11 @@ const (
 var (
 	user        = table.Users
 	uCreator    = user.AS("creator")
-	docs        = table.ArpanetDocuments.AS("document")
-	dComments   = table.ArpanetDocumentsComments
-	dUserAccess = table.ArpanetDocumentsUserAccess.AS("user_access")
-	dJobAccess  = table.ArpanetDocumentsJobAccess.AS("job_access")
-	dCategory   = table.ArpanetDocumentsCategories.AS("category")
+	docs        = table.FivenetDocuments.AS("document")
+	dComments   = table.FivenetDocumentsComments
+	dUserAccess = table.FivenetDocumentsUserAccess.AS("user_access")
+	dJobAccess  = table.FivenetDocumentsJobAccess.AS("job_access")
+	dCategory   = table.FivenetDocumentsCategories.AS("category")
 )
 
 type Server struct {
@@ -162,7 +162,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	docs := table.ArpanetDocuments
+	docs := table.FivenetDocuments
 	stmt := docs.
 		INSERT(
 			docs.CategoryID,

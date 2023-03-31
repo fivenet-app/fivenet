@@ -81,7 +81,7 @@ func (p *PermsMock) GetAllPermissions() (collections.Permissions, error) {
 	for _, v := range p.UserPerms {
 		for k := range v {
 			if _, ok := track[k]; !ok {
-				ps = append(ps, &model.ArpanetPermissions{
+				ps = append(ps, &model.FivenetPermissions{
 					ID:        uint64(i),
 					Name:      k,
 					GuardName: k,
@@ -110,7 +110,7 @@ func (p *PermsMock) GetAllPermissionsOfUser(userId int32) (collections.Permissio
 	i := 0
 	for k := range p.UserPerms[userId] {
 		if _, ok := track[k]; !ok {
-			ps = append(ps, &model.ArpanetPermissions{
+			ps = append(ps, &model.FivenetPermissions{
 				ID:        uint64(i),
 				Name:      k,
 				GuardName: k,
@@ -152,7 +152,7 @@ func (p *PermsMock) GetRoles(prefix string) (collections.Roles, error) {
 	for _, v := range p.UserRoles {
 		for k := range v {
 			if _, ok := track[k]; !ok {
-				r = append(r, &model.ArpanetRoles{
+				r = append(r, &model.FivenetRoles{
 					ID:        uint64(i),
 					Name:      k,
 					GuardName: k,
@@ -176,7 +176,7 @@ func (p *PermsMock) GetUserRoles(userId int32) (collections.Roles, error) {
 
 	i := 0
 	for k := range uRoles {
-		r = append(r, &model.ArpanetRoles{
+		r = append(r, &model.FivenetRoles{
 			ID:        uint64(i),
 			Name:      k,
 			GuardName: k,

@@ -18,7 +18,7 @@ import (
 var (
 	j   = table.Jobs.AS("job")
 	jg  = table.JobGrades.AS("job_grade")
-	adc = table.ArpanetDocumentsCategories.AS("documentcategory")
+	adc = table.FivenetDocumentsCategories.AS("documentcategory")
 )
 
 type Cache struct {
