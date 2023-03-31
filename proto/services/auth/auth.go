@@ -125,6 +125,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		SET(
 			account.Username.SET(jet.String(req.Username)),
 			account.Password.SET(jet.String(string(hashedPassword))),
+			account.RegToken.SET(jet.StringExp(jet.NULL)),
 		).
 		WHERE(
 			jet.AND(
