@@ -2,10 +2,10 @@
 import { onMounted, onBeforeUnmount, onUnmounted, ref, nextTick } from 'vue';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@fivenet/gen/services/livemapper/livemap_pb';
-import { XCircleIcon } from '@heroicons/vue/20/solid';
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import DataErrorBlock from './partials/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -160,30 +160,7 @@ onUnmounted(() => {
         <div id="map" ref="mapContainer" class="w-full z-0"></div>
         <div v-if="!stream || error" class="absolute inset-0 flex justify-center items-center z-10"
             style="background-color: rgba(62, 60, 62, 0.5)">
-            <div v-if="error" class="rounded-md bg-red-50 p-4">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <XCircleIcon class="h-5 w-5 text-red-400" aria-hidden="true" />
-                    </div>
-                    <div class="ml-3">
-                        <h3 class="text-sm font-medium text-red-800">Failed to stream Livemap data</h3>
-                        <div class="mt-2 text-sm text-red-700">
-                            <p>
-                                Please wait a few seconds and try again.
-                            </p>
-                        </div>
-                        <div class="mt-4">
-                            <div class="-mx-2 -my-1.5 flex">
-                                <button type="button"
-                                    class="rounded-md bg-red-50 px-2 py-1.5 text-sm font-medium text-red-800 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-50"
-                                    @click="start()">
-                                    Retry
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <DataErrorBlock title="Failed to stream Livemap data!" :retry="start" />
         </div>
     </div>
 </template>

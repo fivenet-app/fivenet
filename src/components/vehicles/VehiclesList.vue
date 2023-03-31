@@ -14,6 +14,9 @@ import {
     CheckIcon,
 } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
+import { rejects } from 'assert';
+import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataPendingBlock from '../partials/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -40,40 +43,9 @@ const props = defineProps({
     },
 });
 
-const search = ref<{ plate: string, model: string, user_id: number }>({ plate: '', model: '', user_id: 0 });
-const orderBys = ref<Array<OrderBy>>([]);
-const pagination = ref<PaginationResponse>();
-const vehicles = ref<Array<Vehicle>>([]);
-
 const entriesChars = ref<UserShort[]>([]);
 const queryChar = ref('');
 const selectedChar = ref<undefined | UserShort>(undefined);
-
-async function findVehicles(pos: number): Promise<void> {
-    if (pos < 0) pos = 0;
-
-    const req = new FindVehiclesRequest();
-    req.setPagination((new PaginationRequest()).setOffset(pos));
-    if (props.userId && props.userId > 0) {
-        req.setUserId(props.userId);
-    } else {
-        req.setUserId(search.value.user_id);
-    }
-    req.setSearch(search.value.plate);
-    req.setModel(search.value.model);
-    req.setOrderbyList(orderBys.value);
-
-    try {
-        const resp = await $grpc.getDMVClient().
-            findVehicles(req, null);
-
-        pagination.value = resp.getPagination();
-        vehicles.value = resp.getVehiclesList();
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
-}
 
 async function findChars(): Promise<void> {
     if (queryChar.value === "") {
@@ -87,6 +59,39 @@ async function findChars(): Promise<void> {
         completeCharNames(req, null);
 
     entriesChars.value = resp.getUsersList();
+}
+
+const { data: vehicles, pending, refresh, error } = await useLazyAsyncData('citizens', () => findVehicles());
+
+const search = ref<{ plate: string, model: string, user_id: number }>({ plate: '', model: '', user_id: 0 });
+const orderBys = ref<Array<OrderBy>>([]);
+const pagination = ref<PaginationResponse>();
+const offset = ref(0);
+
+async function findVehicles(): Promise<Array<Vehicle>> {
+    return new Promise(async (res, rej) => {
+        const req = new FindVehiclesRequest();
+        req.setPagination((new PaginationRequest()).setOffset(offset.value));
+        if (props.userId && props.userId > 0) {
+            req.setUserId(props.userId);
+        } else {
+            req.setUserId(search.value.user_id);
+        }
+        req.setSearch(search.value.plate);
+        req.setModel(search.value.model);
+        req.setOrderbyList(orderBys.value);
+
+        try {
+            const resp = await $grpc.getDMVClient().
+                findVehicles(req, null);
+
+            pagination.value = resp.getPagination();
+            return res(resp.getVehiclesList());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function toggleOrderBy(column: string): Promise<void> {
@@ -110,11 +115,10 @@ async function toggleOrderBy(column: string): Promise<void> {
         orderBys.value.push(orderBy);
     }
 
-    return findVehicles(pagination.value?.getOffset()!);
+    return refresh();
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
-
 function focusSearch(): void {
     if (searchInput.value) {
         searchInput.value.focus();
@@ -122,9 +126,11 @@ function focusSearch(): void {
 }
 
 onMounted(async () => {
-    if (props.userId) findVehicles(pagination.value?.getOffset()!);
+    if (props.userId) findVehicles();
 });
 
+watch(offset, () => refresh());
+watchDebounced(search.value, async () => refresh(), { debounce: 650, maxWait: 1500 });
 watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWait: 1250 });
 watch(selectedChar, () => {
     if (selectedChar && selectedChar.value?.getUserId()) {
@@ -133,7 +139,6 @@ watch(selectedChar, () => {
         search.value.user_id = 0;
     }
 });
-watchDebounced(search.value, async () => findVehicles(pagination.value?.getOffset()!), { debounce: 650, maxWait: 1500 });
 </script>
 
 <template>
@@ -141,7 +146,7 @@ watchDebounced(search.value, async () => findVehicles(pagination.value?.getOffse
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <form @submit.prevent="findVehicles(0)">
+                    <form @submit.prevent="findVehicles()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">License
@@ -199,7 +204,9 @@ watchDebounced(search.value, async () => findVehicles(pagination.value?.getOffse
             <div class="flow-root mt-2">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <button v-if="vehicles.length == 0" type="button" @click="focusSearch()"
+                        <DataPendingBlock v-if="pending" message="Loading vehicles..." />
+                        <DataErrorBlock v-else-if="error" title="Unable to load vehicles!" :retry="refresh" />
+                        <button v-else-if="vehicles && vehicles.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
@@ -269,7 +276,7 @@ watchDebounced(search.value, async () => findVehicles(pagination.value?.getOffse
                                 </thead>
                             </table>
 
-                            <TablePagination :pagination="pagination!" :callback="findVehicles" />
+                            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
                         </div>
                     </div>
                 </div>

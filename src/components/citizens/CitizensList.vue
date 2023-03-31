@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref } from 'vue';
 import { User } from '@fivenet/gen/resources/users/users_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
@@ -9,6 +9,8 @@ import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
+import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataPendingBlock from '../partials/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -16,27 +18,29 @@ const queryName = ref('');
 const queryWanted = ref(false);
 const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
-const users = ref<Array<User>>([]);
+const offset = ref(0);
 
-async function findUsers(pos: number): Promise<void> {
-    if (pos < 0) pos = 0;
+const { data: users, pending, refresh, error } = await useLazyAsyncData('citizens', () => findUsers());
 
-    const req = new FindUsersRequest();
-    req.setPagination((new PaginationRequest()).setOffset(pos));
-    req.setOrderbyList(orderBys.value);
-    req.setSearchName(queryName.value);
-    req.setWanted(queryWanted.value);
+async function findUsers(): Promise<Array<User>> {
+    return new Promise(async (res, rej) => {
+        const req = new FindUsersRequest();
+        req.setPagination((new PaginationRequest()).setOffset(offset.value));
+        req.setOrderbyList(orderBys.value);
+        req.setSearchName(queryName.value);
+        req.setWanted(queryWanted.value);
 
-    try {
-        const resp = await $grpc.getCitizenStoreClient().
-            findUsers(req, null);
+        try {
+            const resp = await $grpc.getCitizenStoreClient().
+                findUsers(req, null);
 
-        pagination.value = resp.getPagination();
-        users.value = resp.getUsersList();
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            pagination.value = resp.getPagination();
+            return res(resp.getUsersList());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function toggleOrderBy(column: string): Promise<void> {
@@ -60,23 +64,19 @@ async function toggleOrderBy(column: string): Promise<void> {
         orderBys.value.push(orderBy);
     }
 
-    return findUsers(pagination.value?.getOffset()!);
+    return refresh();
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
-
 function focusSearch(): void {
     if (searchInput.value) {
         searchInput.value.focus();
     }
 }
 
-watch(queryWanted, () => findUsers(0));
-watchDebounced(queryName, () => findUsers(0), { debounce: 650, maxWait: 1500 });
-
-onMounted(async () => {
-    findUsers(0);
-});
+watch(offset, () => refresh());
+watchDebounced(queryWanted, () => refresh(), { debounce: 150, maxWait: 350 });
+watchDebounced(queryName, () => refresh(), { debounce: 650, maxWait: 1500 });
 </script>
 
 <template>
@@ -84,7 +84,7 @@ onMounted(async () => {
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <form @submit.prevent="findUsers(0)">
+                    <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">Search</label>
@@ -113,7 +113,9 @@ onMounted(async () => {
             <div class="flow-root mt-2">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <button v-if="users.length == 0" type="button" @click="focusSearch()"
+                        <DataPendingBlock v-if="pending" message="Loading citizens..." />
+                        <DataErrorBlock v-else-if="error" title="Unable to load citizens!" :retry="refresh" />
+                        <button v-else-if="users && users.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
@@ -178,7 +180,7 @@ onMounted(async () => {
                                 </thead>
                             </table>
 
-                            <TablePagination :pagination="pagination!" :callback="findUsers" />
+                            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
                         </div>
                     </div>
                 </div>

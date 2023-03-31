@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onBeforeMount } from 'vue';
+import { ref } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
 import { FindDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Document } from '@fivenet/gen/resources/documents/documents_pb';
@@ -9,33 +9,37 @@ import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } fr
 import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
 import TemplatesModal from './TemplatesModal.vue';
 import { RpcError } from 'grpc-web';
+import DataPendingBlock from '../partials/DataPendingBlock.vue';
+import DataErrorBlock from '../partials/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
+
+const { data: documents, pending, refresh, error } = await useLazyAsyncData('citizens', () => findDocuments());
 
 const search = ref({ title: '', });
 // TODO Implement order by for documents
 const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
-const documents = ref<Array<Document>>([]);
+const offset = ref(0);
 
-async function findDocuments(pos: number): Promise<void> {
-    if (pos < 0) pos = 0;
+async function findDocuments(): Promise<Array<Document>> {
+    return new Promise(async (res, rej) => {
+        const req = new FindDocumentsRequest();
+        req.setPagination((new PaginationRequest()).setOffset(offset.value));
+        req.setOrderbyList([]);
+        req.setSearch(search.value.title);
 
-    const req = new FindDocumentsRequest();
-    req.setPagination((new PaginationRequest()).setOffset(pos));
-    req.setOrderbyList([]);
-    req.setSearch(search.value.title);
+        try {
+            const resp = await $grpc.getDocStoreClient().
+                findDocuments(req, null);
 
-    try {
-        const resp = await $grpc.getDocStoreClient().
-            findDocuments(req, null);
-
-        pagination.value = resp.getPagination();
-        documents.value = resp.getDocumentsList();
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            pagination.value = resp.getPagination();
+            return res(resp.getDocumentsList());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -48,11 +52,8 @@ function focusSearch(): void {
 
 const templatesOpen = ref(false);
 
-watchDebounced(search.value, async () => findDocuments(0), { debounce: 650, maxWait: 1500 });
-
-onBeforeMount(async () => {
-    findDocuments(0);
-});
+watch(offset, () => refresh());
+watchDebounced(search.value, async () => refresh(), { debounce: 650, maxWait: 1500 });
 </script>
 
 <template>
@@ -61,7 +62,7 @@ onBeforeMount(async () => {
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <form @submit.prevent="findDocuments(0)">
+                    <form @submit.prevent="refresh()">
                         <label for="search" class="block mb-2 text-sm font-medium leading-6 text-neutral">Search</label>
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1 form-control">
@@ -88,12 +89,15 @@ onBeforeMount(async () => {
             <div class="flow-root mt-2">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <button v-if="documents.length == 0" type="button" @click="focusSearch()"
+                        <DataPendingBlock v-if="pending" message="Loading documents..." />
+                        <DataErrorBlock v-else-if="error" title="Unable to load documents!" :retry="refresh" />
+                        <button v-else-if="documents && documents.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                             <DocumentMagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
-                            <span class="block mt-2 text-sm font-semibold text-gray-300">No Documents found! Either update
-                                your search
-                                query or create the first document using the above "Create"-button.</span>
+                            <span class="block mt-2 text-sm font-semibold text-gray-300">
+                                No Documents found. Either update your search
+                                query or create the first document using the above "Create"-button.
+                            </span>
                         </button>
                         <div v-else>
                             <ul class="flex flex-col">
