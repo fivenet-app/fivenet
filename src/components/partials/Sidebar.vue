@@ -86,7 +86,6 @@ onMounted(() => {
         ];
     }
 
-    console.log("INIT BREADCRUMBS: " + router.currentRoute.value.name);
     updateActiveItem();
     updateBread();
 });

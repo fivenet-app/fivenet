@@ -21,17 +21,15 @@ export default defineNuxtPlugin(() => {
 });
 
 export class GRPCClients {
-    private authInterceptor;
-    private unaryErrorHandlerInterceptor: UnaryLoaderInterceptor;
+    private authInterceptor: AuthInterceptor;
     private grpcClientOptions: { [index: string]: any };
 
     constructor() {
         this.authInterceptor = new AuthInterceptor();
-        this.unaryErrorHandlerInterceptor = new UnaryLoaderInterceptor();
 
         // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
         this.grpcClientOptions = {
-            unaryInterceptors: [this.authInterceptor, this.unaryErrorHandlerInterceptor],
+            unaryInterceptors: [this.authInterceptor],
             streamInterceptors: [this.authInterceptor],
         };
 
@@ -176,23 +174,5 @@ export class AuthInterceptor implements UnaryInterceptor<any, any> {
             metadata.Authorization = 'Bearer ' + this.store.$state.accessToken;
         }
         return invoker(request);
-    }
-}
-
-export class UnaryLoaderInterceptor implements UnaryInterceptor<any, any> {
-    private loader;
-
-    constructor() {
-        this.loader = useLoaderStore();
-    }
-
-    intercept(request: any, invoker: any): Promise<UnaryResponse<any, any>> {
-        this.loader.show();
-
-        return invoker(request).finally(() => {
-            setTimeout(() => {
-                this.loader.hide();
-            }, 250);
-        });
     }
 }

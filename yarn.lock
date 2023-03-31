@@ -434,10 +434,10 @@
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.12.tgz#963b2eb2f548278c49f2d1e67f0a4a84f54078da"
   integrity sha512-IV0k1I2I8Bj37HljFF231Y9cpldfiucf+inMCxA/VPoQT6UTxo0N/rb78CrogBxXNfsPxKmz3y/nlv+eRz6zvg==
 
-"@heroicons/vue@^2.0.16":
-  version "2.0.16"
-  resolved "https://registry.yarnpkg.com/@heroicons/vue/-/vue-2.0.16.tgz#eb21f6ab32605570fa21a0172da4a6ab02670834"
-  integrity sha512-saVAExLlGu6epqmS543qeWd/UOJUxpTJyK9aXeFGqS3VIW8X7yyJQmUGT40A38gBEAxMOdTdH9jFSh8sjPFM7A==
+"@heroicons/vue@^2.0.17":
+  version "2.0.17"
+  resolved "https://registry.yarnpkg.com/@heroicons/vue/-/vue-2.0.17.tgz#4c23f26a715c2931c0d4fd5d2e77f8ede7a6a77b"
+  integrity sha512-M5P6Y9tmctbtv/IC1dO5vTw9xqppYxm/5BKuL4hGlxxLvaxbnTmMAoxTIzezSdYAaLh63emgOCBMa+mxphRxUQ==
 
 "@ioredis/commands@^1.1.1":
   version "1.2.0"
@@ -5739,7 +5739,37 @@ tailwind-config-viewer@^1.7.2:
     portfinder "^1.0.26"
     replace-in-file "^6.1.0"
 
-tailwindcss@^3.3.0, tailwindcss@~3.3.0:
+tailwindcss@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.3.1.tgz#b6662fab6a9b704779e48d083a9fef5a81d2b81e"
+  integrity sha512-Vkiouc41d4CEq0ujXl6oiGFQ7bA3WEhUZdTgXAhtKxSy49OmKs8rEfQmupsfF0IGW8fv2iQkp1EVUuapCFrZ9g==
+  dependencies:
+    arg "^5.0.2"
+    chokidar "^3.5.3"
+    color-name "^1.1.4"
+    didyoumean "^1.2.2"
+    dlv "^1.1.3"
+    fast-glob "^3.2.12"
+    glob-parent "^6.0.2"
+    is-glob "^4.0.3"
+    jiti "^1.17.2"
+    lilconfig "^2.0.6"
+    micromatch "^4.0.5"
+    normalize-path "^3.0.0"
+    object-hash "^3.0.0"
+    picocolors "^1.0.0"
+    postcss "^8.0.9"
+    postcss-import "^14.1.0"
+    postcss-js "^4.0.0"
+    postcss-load-config "^3.1.4"
+    postcss-nested "6.0.0"
+    postcss-selector-parser "^6.0.11"
+    postcss-value-parser "^4.2.0"
+    quick-lru "^5.1.1"
+    resolve "^1.22.1"
+    sucrase "^3.29.0"
+
+tailwindcss@~3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.3.0.tgz#8cab40e5a10a10648118c0859ba8bfbc744a761e"
   integrity sha512-hOXlFx+YcklJ8kXiCAfk/FMyr4Pm9ck477G0m/us2344Vuj355IpoEDB5UmGAsSpTBmr+4ZhjzW04JuFXkb/fw==
@@ -5933,10 +5963,10 @@ type-is@^1.6.16:
     media-typer "0.3.0"
     mime-types "~2.1.24"
 
-typescript@^5.0.2:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.0.2.tgz#891e1a90c5189d8506af64b9ef929fca99ba1ee5"
-  integrity sha512-wVORMBGO/FAs/++blGNeAVdbNKtIh1rbBL2EyQ1+J9lClJ93KiiKe8PmFIVdXhHcyv44SL9oglmfeSsndo0jRw==
+typescript@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.0.3.tgz#fe976f0c826a88d0a382007681cbb2da44afdedf"
+  integrity sha512-xv8mOEDnigb/tN9PSMTwSEqAnUvkoXMQlicOb0IUVDBSQCgBSaAAROUZYy2IcUy5qU6XajK5jjjO7TMWqBTKZA==
 
 ufo@^1.0.0, ufo@^1.1.0, ufo@^1.1.1:
   version "1.1.1"
@@ -6129,10 +6159,10 @@ vite-plugin-checker@^0.5.6:
     vscode-languageserver-textdocument "^1.0.1"
     vscode-uri "^3.0.2"
 
-vite-plugin-mkcert@^1.13.4:
-  version "1.13.4"
-  resolved "https://registry.yarnpkg.com/vite-plugin-mkcert/-/vite-plugin-mkcert-1.13.4.tgz#ca9885f20016a2a076d78cc1558b3a7d37c6fc4b"
-  integrity sha512-sBk/VOoqJijXG0yBir4nqdwktGqhkl6sm260wJLh27KEHPi1wz+dAHs2OfcJszfMbFXKcVzMZKoXwRrKze+NYg==
+vite-plugin-mkcert@^1.14.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-mkcert/-/vite-plugin-mkcert-1.14.0.tgz#e3b09c6cc3d177f969626412076eddda0403c762"
+  integrity sha512-TXLqRYeKKv2kGIpDVMXPLAlTQLXfZ5/VtC4VVhV0ky2vKt5W/TDvFKpmelQPmn0IB7uz9KXvQj8Op+pkT9Ln9A==
   dependencies:
     "@octokit/rest" "^19.0.5"
     axios "^1.2.2"
@@ -6211,11 +6241,6 @@ vue-devtools-stub@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/vue-devtools-stub/-/vue-devtools-stub-0.1.0.tgz#a65b9485edecd4273cedcb8102c739b83add2c81"
   integrity sha512-RutnB7X8c5hjq39NceArgXg28WZtZpGc3+J16ljMiYnFhKvd8hITxSWQSQ5bvldxMDU6gG5mkxl1MTQLXckVSQ==
-
-vue-loading-overlay@^6.0.3:
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/vue-loading-overlay/-/vue-loading-overlay-6.0.3.tgz#37b2e45d5a5e207fda69c01dac0dba059cc05173"
-  integrity sha512-Ab0hqnVKasVS2mNUo8Wkm95mSbk5fXp/karZmMou5yP0hTUOox/kZuBLNwgzJ4kFP829wFJl7O7FN1Dr0kRaVQ==
 
 vue-router@^4.1.6:
   version "4.1.6"
