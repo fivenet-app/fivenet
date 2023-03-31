@@ -83,9 +83,7 @@ export class GRPCClients {
     private unAuthClient: undefined | AuthServiceClient;
     getUnAuthClient(): AuthServiceClient {
         if (!this.unAuthClient) {
-            this.unAuthClient = new AuthServiceClient(config.apiProtoURL, null, {
-                unaryInterceptors: [this.unaryErrorHandlerInterceptor],
-            });
+            this.unAuthClient = new AuthServiceClient(config.apiProtoURL, null, null);
         }
 
         return this.unAuthClient;

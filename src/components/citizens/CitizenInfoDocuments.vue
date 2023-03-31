@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb';
 import { GetUserDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
 import DocumentRelations from '../documents/DocumentRelations.vue';
 import { DocumentTextIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
+import DataPendingBlock from '../partials/DataPendingBlock.vue';
+import DataErrorBlock from '../partials/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
-
-const relations = ref<Array<DocumentRelation>>([]);
 
 const props = defineProps({
     userId: {
@@ -18,33 +18,34 @@ const props = defineProps({
     },
 });
 
-async function getUserDocuments(pos: number): Promise<void> {
-    if (!props.userId) return;
-    if (pos < 0) pos = 0;
+const { data: relations, pending, refresh, error } = await useLazyAsyncData(`citizeninfo-documents-${props.userId}`, () => getUserDocuments());
 
-    const req = new GetUserDocumentsRequest();
-    req.setPagination((new PaginationRequest()).setOffset(pos))
-    req.setUserId(props.userId);
+const offset = ref(0);
 
-    try {
-        const resp = await $grpc.getDocStoreClient().
-            getUserDocuments(req, null);
+async function getUserDocuments(): Promise<Array<DocumentRelation>> {
+    return new Promise(async (res, rej) => {
+        const req = new GetUserDocumentsRequest();
+        req.setPagination((new PaginationRequest()).setOffset(offset.value))
+        req.setUserId(props.userId);
 
-        relations.value = resp.getRelationsList();
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+        try {
+            const resp = await $grpc.getDocStoreClient().
+                getUserDocuments(req, null);
+
+            return res(resp.getRelationsList());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return;
+        }
+    });
 }
-
-onMounted(async () => {
-    getUserDocuments(0);
-});
 </script>
 
 <template>
     <div class="mt-3">
-        <button v-if="relations.length == 0" type="button"
+        <DataPendingBlock v-if="pending" message="Loading user documents..." />
+        <DataErrorBlock v-else-if="error" title="Unable to load user documents!" :retry="refresh" />
+        <button v-else-if="relations && relations.length == 0" type="button"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
             disabled>
             <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />
@@ -52,6 +53,6 @@ onMounted(async () => {
                 No User Documents found.
             </span>
         </button>
-        <DocumentRelations v-else :relations="relations" />
+        <DocumentRelations v-else-if="relations" :relations="relations" />
     </div>
 </template>

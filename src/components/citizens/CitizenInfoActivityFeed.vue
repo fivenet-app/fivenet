@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref, onBeforeMount } from 'vue';
 import { UserCircleIcon } from '@heroicons/vue/20/solid'
 import { GetUserActivityRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@fivenet/gen/resources/users/users_pb';
@@ -7,10 +6,11 @@ import { toDateRelativeString } from '../../utils/time';
 import { USER_ACTIVITY_TYPE_Util } from '@fivenet/gen/resources/users/users.pb_enums';
 import { RectangleGroupIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
+import DataPendingBlock from '../partials/DataPendingBlock.vue';
+import DataErrorBlock from '../partials/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
-const activities = ref<Array<UserActivity>>([]);
 const defaultIcon = UserCircleIcon;
 
 const props = defineProps({
@@ -20,29 +20,31 @@ const props = defineProps({
     },
 });
 
-async function getUserActivity() {
-    const req = new GetUserActivityRequest();
-    req.setUserId(props.userId);
+const { data: activities, pending, refresh, error } = await useLazyAsyncData(`citizeninfo-activity-${props.userId}`, () => getUserActivity());
 
-    try {
-        const resp = await $grpc.getCitizenStoreClient().
-            getUserActivity(req, null);
+async function getUserActivity(): Promise<Array<UserActivity>> {
+    return new Promise(async (res, rej) => {
+        const req = new GetUserActivityRequest();
+        req.setUserId(props.userId);
 
-        activities.value = resp.getActivityList();
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+        try {
+            const resp = await $grpc.getCitizenStoreClient().
+                getUserActivity(req, null);
+
+            return res(resp.getActivityList());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
-
-onBeforeMount(async () => {
-    getUserActivity();
-});
 </script>
 
 <template>
     <div class="mt-3">
-        <button v-if="activities.length == 0" type="button"
+        <DataPendingBlock v-if="pending" message="Loading user activity..." />
+        <DataErrorBlock v-else-if="error" title="Unable to load user activity!" :retry="refresh" />
+        <button v-else-if="activities && activities.length == 0" type="button"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
             disabled>
             <RectangleGroupIcon class="w-12 h-12 mx-auto text-neutral" />
@@ -50,7 +52,7 @@ onBeforeMount(async () => {
                 No User Activity found.
             </span>
         </button>
-        <ul role="list" class="divide-y divide-gray-200">
+        <ul v-else role="list" class="divide-y divide-gray-200">
             <li v-for="activity in activities" :key="activity.getId()" class="py-4">
                 <div class="flex space-x-3">
                     <div class="h-6 w-6 rounded-full flex items-center justify-center bg-white">

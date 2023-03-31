@@ -20,7 +20,7 @@ const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-const { data: users, pending, refresh, error } = await useLazyAsyncData('citizens', () => findUsers());
+const { data: users, pending, refresh, error } = await useLazyAsyncData(`citizens-${offset.value}`, () => findUsers());
 
 async function findUsers(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {
@@ -74,7 +74,7 @@ function focusSearch(): void {
     }
 }
 
-watch(offset, () => refresh());
+watch(offset, async () => refresh());
 watchDebounced(queryWanted, () => refresh(), { debounce: 150, maxWait: 350 });
 watchDebounced(queryName, () => refresh(), { debounce: 650, maxWait: 1500 });
 </script>

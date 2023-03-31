@@ -14,13 +14,13 @@ import DataErrorBlock from '../partials/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
-const { data: documents, pending, refresh, error } = await useLazyAsyncData('citizens', () => findDocuments());
-
 const search = ref({ title: '', });
 // TODO Implement order by for documents
 const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
+
+const { data: documents, pending, refresh, error } = await useLazyAsyncData(`documents-${offset.value}`, () => findDocuments());
 
 async function findDocuments(): Promise<Array<Document>> {
     return new Promise(async (res, rej) => {
@@ -43,7 +43,6 @@ async function findDocuments(): Promise<Array<Document>> {
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
-
 function focusSearch(): void {
     if (searchInput.value) {
         searchInput.value.focus();
@@ -52,7 +51,7 @@ function focusSearch(): void {
 
 const templatesOpen = ref(false);
 
-watch(offset, () => refresh());
+watch(offset, async () => refresh());
 watchDebounced(search.value, async () => refresh(), { debounce: 650, maxWait: 1500 });
 </script>
 
@@ -142,7 +141,7 @@ watchDebounced(search.value, async () => refresh(), { debounce: 650, maxWait: 15
                                 </li>
                             </ul>
 
-                            <TablePagination :pagination="pagination!" :callback="findDocuments" class="mt-2" />
+                            <TablePagination :pagination="pagination" @offset-change="offset = $event" class="mt-2" />
                         </div>
                     </div>
                 </div>

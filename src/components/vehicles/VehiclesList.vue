@@ -61,12 +61,12 @@ async function findChars(): Promise<void> {
     entriesChars.value = resp.getUsersList();
 }
 
-const { data: vehicles, pending, refresh, error } = await useLazyAsyncData('citizens', () => findVehicles());
-
 const search = ref<{ plate: string, model: string, user_id: number }>({ plate: '', model: '', user_id: 0 });
 const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
+
+const { data: vehicles, pending, refresh, error } = await useLazyAsyncData(`vehicles-${offset.value}`, () => findVehicles());
 
 async function findVehicles(): Promise<Array<Vehicle>> {
     return new Promise(async (res, rej) => {
@@ -101,7 +101,7 @@ async function toggleOrderBy(column: string): Promise<void> {
     let orderBy: OrderBy;
     if (index > -1) {
         //@ts-ignore I just checked if it exists, so it should exist
-        orderBy = orderBys.at(index);
+        orderBy = orderBys.value.at(index);
         if (orderBy.getDesc()) {
             orderBys.value.splice(index);
         }
@@ -125,11 +125,7 @@ function focusSearch(): void {
     }
 }
 
-onMounted(async () => {
-    if (props.userId) findVehicles();
-});
-
-watch(offset, () => refresh());
+watch(offset, async () => refresh());
 watchDebounced(search.value, async () => refresh(), { debounce: 650, maxWait: 1500 });
 watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWait: 1250 });
 watch(selectedChar, () => {
@@ -163,7 +159,7 @@ watch(selectedChar, () => {
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control" v-if="!props.userId">
+                            <div class="flex-1 form-control" v-if="!userId">
                                 <label for="owner" class="block text-sm font-medium leading-6 text-neutral">Owner</label>
                                 <div class="relative items-center mt-2">
                                     <Combobox as="div" v-model="selectedChar" nullable>

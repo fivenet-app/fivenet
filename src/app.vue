@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { loadConfig } from './config';
-import LoadingSpinner from './components/LoadingSpinner.vue';
 import { NotificationProvider } from './components/notification';
 import Sidebar from './components/partials/Sidebar.vue';
 
@@ -22,7 +21,6 @@ await loadConfig();
 
 <template>
     <NotificationProvider>
-        <LoadingSpinner />
         <Sidebar>
             <NuxtLayout>
                 <NuxtPage :transition="{

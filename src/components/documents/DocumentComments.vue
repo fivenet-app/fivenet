@@ -27,11 +27,12 @@ const props = defineProps({
 });
 
 const pagination = ref<PaginationResponse>();
+const offset = ref(0);
 
 // Document Comments
-async function getComments(pos: number): Promise<void> {
+async function getDocumentComments(): Promise<void> {
     const req = new GetDocumentCommentsRequest();
-    req.setPagination((new PaginationRequest()).setOffset(pos));
+    req.setPagination((new PaginationRequest()).setOffset(offset.value));
     req.setDocumentId(props.documentId!);
 
     try {
@@ -93,16 +94,16 @@ async function removeComment(comment: DocumentComment): Promise<void> {
 }
 
 const commentInput = ref<HTMLInputElement | null>(null);
-
 function focusComment(): void {
     if (commentInput.value) {
         commentInput.value.focus();
     }
 }
 
+watch(offset, async () => getDocumentComments());
 onMounted(async () => {
     if (props.documentId !== undefined && props.comments === undefined) {
-        getComments(0);
+        getDocumentComments();
     }
 });
 </script>
@@ -153,5 +154,5 @@ onMounted(async () => {
             </ul>
         </div>
     </div>
-    <TablePagination v-if="comments.length > 0" :pagination="pagination!" :callback="getComments" class="mt-2" />
+    <TablePagination v-if="comments.length > 0" :pagination="pagination" @offset-change="offset = $event" class="mt-2" />
 </template>
