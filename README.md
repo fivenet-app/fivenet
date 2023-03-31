@@ -40,6 +40,8 @@
     - [ ] Create Notes and Warns for Employees ("Führungsregister")
     - [ ] Promote and Demote Employees
     - [ ] Fire employees
+- [ ] Discord integration
+    - [ ] Automatic Role assignal
 
 ### Completed
 
