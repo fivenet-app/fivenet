@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { useAuthStore } from '../../store/auth';
 import { ChooseCharacterRequest } from '@arpanet/gen/services/auth/auth_pb';
 import { User } from '@arpanet/gen/resources/users/users_pb';
-import CharSexBadge from '../misc/CharSexBadge.vue';
+import CharSexBadge from '../citizens/CharSexBadge.vue';
 import { fromSecondsToFormattedDuration } from '../../utils/time';
 import { RpcError } from 'grpc-web';
 import { parseQuery } from 'vue-router';

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { User, UserProps } from '@arpanet/gen/resources/users/users_pb';
 import { SetUserPropsRequest } from '@arpanet/gen/services/citizenstore/citizenstore_pb';
 import { dispatchNotification } from '../notification';
-import CharSexBadge from '../misc/CharSexBadge.vue';
+import CharSexBadge from '../citizens/CharSexBadge.vue';
 import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
 import TemplatesModal from '../documents/TemplatesModal.vue';
