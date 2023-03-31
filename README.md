@@ -1,4 +1,4 @@
-![FiveNet Logo](src/public/images/logo.png|width=250px)
+<img alt="FiveNet Logo" src="src/public/images/logo.png" width="250">
 
 # FiveNet
 
