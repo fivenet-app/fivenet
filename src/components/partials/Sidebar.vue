@@ -23,6 +23,7 @@ import {
     HomeIcon,
     UserIcon,
     TruckIcon,
+QuestionMarkCircleIcon,
 } from '@heroicons/vue/24/outline';
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
 import SidebarJobSwitcher from './SidebarJobSwitcher.vue';
@@ -39,38 +40,51 @@ const sidebarNavigation = [
         href: { name: 'overview' },
         permission: 'Overview.View',
         icon: HomeIcon,
+        position: 'top',
     },
     {
         name: 'Citizens',
         href: { name: 'citizens' },
         permission: 'CitizenStoreService.FindUsers',
         icon: UsersIcon,
+        position: 'top',
     },
     {
         name: 'Vehicles',
         href: { name: 'vehicles' },
         permission: 'DMVService.FindVehicles',
         icon: TruckIcon,
+        position: 'top',
     },
     {
         name: 'Documents',
         href: { name: 'documents' },
         permission: 'DocStoreService.FindDocuments',
         icon: DocumentTextIcon,
+        position: 'top',
     },
     {
         name: 'Job',
         href: { name: 'jobs' },
         permission: 'Jobs.View',
         icon: BriefcaseIcon,
+        position: 'top',
     },
     {
         name: 'Livemap',
         href: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
         icon: MapIcon,
+        position: 'top',
     },
-] as { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent }[];
+    {
+        name: 'About',
+        href: { name: 'about' },
+        permission: '',
+        icon: QuestionMarkCircleIcon,
+        position: 'bottom',
+    },
+] as { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, position: 'top' | 'bottom' }[];
 const userNavigation = ref<{ name: string, href: RoutesNamedLocations }[]>([{ name: 'Login', href: { name: 'auth-login' } }]);
 const currSidebar = ref('')
 const breadcrumbs = ref<{ name: string, href: string, current: boolean }[]>([]);
@@ -155,12 +169,22 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
     <div class="flex h-screen">
         <!-- Sidebar -->
         <div class="hidden overflow-y-auto bg-accent-600 w-28 md:block">
-            <div class="flex flex-col items-center w-full py-6">
+            <div class="flex flex-col items-center w-full py-6 h-full">
                 <div class="flex items-center flex-shrink-0">
                     <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo" :title="'FiveNet' + appVersion" />
                 </div>
-                <div class="flex-1 w-full px-2 mt-6 space-y-1">
-                    <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href" v-can="item.permission"
+                <div class="flex-grow w-full px-2 mt-6 space-y-1">
+                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')" :key="item.name" :to="item.href" v-can="item.permission"
+                        :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
+                        :aria-current="currSidebar === item.name ? 'page' : undefined">
+                        <component :is="item.icon"
+                            :class="[currSidebar === item.name ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
+                            aria-hidden="true" />
+                        <span class="mt-2">{{ item.name }}</span>
+                    </NuxtLink>
+                </div>
+                <div class="flex-initial w-full px-2 space-y-1">
+                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'bottom')" :key="item.name" :to="item.href" v-can="item.permission"
                         :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="currSidebar === item.name ? 'page' : undefined">
                         <component :is="item.icon"
