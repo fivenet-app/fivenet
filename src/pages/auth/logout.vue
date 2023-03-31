@@ -4,7 +4,7 @@ import { RpcError } from 'grpc-web';
 import { onBeforeMount } from 'vue';
 import { dispatchNotification } from '~~/src/components/notification';
 import { useAuthStore } from '../../store/auth';
-import HeroFull from '../components/partials/HeroFull.vue';
+import HeroFull from '../../components/partials/HeroFull.vue';
 
 useHead({
     title: 'Logout',

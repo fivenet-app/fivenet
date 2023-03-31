@@ -38,7 +38,10 @@ const config = defineNuxtConfig({
             manifest: true,
         },
         server: {
-            https: true,
+            hmr: {
+                protocol: 'ws',
+            },
+            https: false,
             proxy: {
                 '/api': 'http://localhost:8080',
             },

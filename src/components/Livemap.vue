@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, onUnmounted, ref } from 'vue';
+import { onMounted, onBeforeUnmount, onUnmounted, ref, nextTick } from 'vue';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@arpanet/gen/services/livemapper/livemap_pb';
 import { XCircleIcon } from '@heroicons/vue/20/solid';
-// Leaflet and Livemap custom parts
 import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -35,7 +34,7 @@ const position = new Position();
 
 let map: Livemap | undefined = undefined;
 
-const atlas = L.tileLayer(import.meta.env.BASE_URL + 'tiles/atlas/{z}/{x}/{y}.png', {
+const atlas = L.tileLayer('/tiles/atlas/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -43,7 +42,7 @@ const atlas = L.tileLayer(import.meta.env.BASE_URL + 'tiles/atlas/{z}/{x}/{y}.pn
     noWrap: false,
     tms: true,
 });
-const postal = L.tileLayer(import.meta.env.BASE_URL + 'tiles/postal/{z}/{x}/{y}.png', {
+const postal = L.tileLayer('/tiles/postal/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -51,7 +50,7 @@ const postal = L.tileLayer(import.meta.env.BASE_URL + 'tiles/postal/{z}/{x}/{y}.
     noWrap: false,
     tms: true,
 });
-const road = L.tileLayer(import.meta.env.BASE_URL + 'tiles/road/{z}/{x}/{y}.png', {
+const road = L.tileLayer('/tile/road/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -59,7 +58,7 @@ const road = L.tileLayer(import.meta.env.BASE_URL + 'tiles/road/{z}/{x}/{y}.png'
     noWrap: false,
     tms: true,
 });
-const satelite = L.tileLayer(import.meta.env.BASE_URL + 'tiles/satelite/{z}/{x}/{y}.png', {
+const satelite = L.tileLayer('/tile/satelite/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -103,28 +102,35 @@ async function stop(): Promise<void> {
     }
 }
 
-onMounted(async () => {
-    map = new Livemap('map', { layers: [postal], crs: customCRS });
-    map.addHash();
-    map.setView([0, 0], 2);
+const mapContainer = ref<HTMLDivElement | null>();
 
-    const markersLayer = new L.LayerGroup().addTo(map as L.Map);
-    L.control
-        .layers({ Atlas: atlas, Road: road, Satelite: satelite, Postal: postal }, { Markers: markersLayer })
-        .addTo(map as L.Map);
-    postal.bringToFront();
+onMounted(() => {
+    setTimeout(() => {
+        if (!mapContainer.value) {
+            return;
+        }
+        map = new Livemap(mapContainer.value, { layers: [postal], crs: customCRS });
+        map.addHash();
+        map.setView([0, 0], 2);
 
-    await map.updateBackground('Postal');
-    map.on('baselayerchange', (event: L.LayersControlEvent) => map?.updateBackground(event.name));
+        const markersLayer = new L.LayerGroup().addTo(map as L.Map);
+        L.control
+            .layers({ Atlas: atlas, Road: road, Satelite: satelite, Postal: postal }, { Markers: markersLayer })
+            .addTo(map as L.Map);
+        postal.bringToFront();
 
-    map.addControl(position);
-    map.addEventListener('mousemove', (event: L.LeafletMouseEvent) => {
-        const lat = Math.round(event.latlng.lat * 100000) / 100000;
-        const lng = Math.round(event.latlng.lng * 100000) / 100000;
-        position.updateHTML(lat, lng);
-    });
+        map.updateBackground('Postal');
+        map.on('baselayerchange', (event: L.LayersControlEvent) => map?.updateBackground(event.name));
 
-    start();
+        map.addControl(position);
+        map.addEventListener('mousemove', (event: L.LeafletMouseEvent) => {
+            const lat = Math.round(event.latlng.lat * 100000) / 100000;
+            const lng = Math.round(event.latlng.lng * 100000) / 100000;
+            position.updateHTML(lat, lng);
+        });
+
+        start();
+    }, 100);
 });
 
 onBeforeUnmount(() => {
@@ -151,7 +157,7 @@ onUnmounted(() => {
 
 <template>
     <div class="relative">
-        <div id="map" class="w-full z-0"></div>
+        <div id="map" ref="mapContainer" class="w-full z-0"></div>
         <div v-if="!stream || error" class="absolute inset-0 flex justify-center items-center z-10"
             style="background-color: rgba(62, 60, 62, 0.5)">
             <div v-if="error" class="rounded-md bg-red-50 p-4">

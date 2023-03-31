@@ -20,9 +20,9 @@ export class Livemap extends L.Map {
 
     private element: HTMLElement;
 
-    constructor(element: string | HTMLElement, options?: L.MapOptions | undefined) {
+    constructor(element: HTMLElement, options: L.MapOptions) {
         super(element, options);
-        this.element = typeof element === 'string' ? (document.getElementById(element) as HTMLElement) : element;
+        this.element = element;
 
         this.defaultIcon = new L.Icon({
             iconUrl: import.meta.env.BASE_URL + 'images/livemap/markers/user-default.svg',
@@ -162,10 +162,10 @@ export class Livemap extends L.Map {
     }
 }
 
-export const centerX = 117.3;
-export const centerY = 172.8;
-export const scaleX = 0.02072;
-export const scaleY = 0.0205;
+const centerX = 117.3;
+const centerY = 172.8;
+const scaleX = 0.02072;
+const scaleY = 0.0205;
 
 export const customCRS = L.extend({}, L.CRS.Simple, {
     projection: L.Projection.LonLat,
