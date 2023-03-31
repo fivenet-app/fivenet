@@ -24,7 +24,7 @@ import {
     UserIcon,
     TruckIcon,
 } from '@heroicons/vue/24/outline';
-import { ChevronRightIcon } from '@heroicons/vue/20/solid';
+import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
 import SidebarJobSwitcher from './SidebarJobSwitcher.vue';
 
 const store = useAuthStore();
@@ -238,6 +238,15 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                         <div class="flex flex-1">
                             <nav class="flex" aria-label="Breadcrumb">
                                 <ol v-if="activeChar" role="list" class="flex items-center space-x-4">
+                                    <li>
+                                        <div>
+                                            <NuxtLink :to="{ name: accessToken ? 'overview' : 'index' }"
+                                                class="text-base-400 hover:text-neutral hover:transition-colors">
+                                                <HomeIconSolid class="flex-shrink-0 w-5 h-5" aria-hidden="true" />
+                                                <span class="sr-only">Home</span>
+                                            </NuxtLink>
+                                        </div>
+                                    </li>
                                     <li v-for="page in breadcrumbs" :key="page.name">
                                         <div class="flex items-center">
                                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-400"

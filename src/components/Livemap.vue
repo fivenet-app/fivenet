@@ -71,7 +71,9 @@ let stream: ClientReadableStream<StreamResponse> | undefined = undefined;
 const error = ref();
 
 async function start(): Promise<void> {
-    if (stream !== undefined) return;
+    if (stream !== undefined) {
+        return;
+    }
 
     console.debug('Starting Livemap Data Stream');
     const request = new StreamRequest();
@@ -158,7 +160,7 @@ onUnmounted(() => {
 <template>
     <div class="relative">
         <div id="map" ref="mapContainer" class="w-full z-0"></div>
-        <div v-if="!stream || error" class="absolute inset-0 flex justify-center items-center z-10"
+        <div v-if="error || !stream" class="absolute inset-0 flex justify-center items-center z-10"
             style="background-color: rgba(62, 60, 62, 0.5)">
             <DataErrorBlock title="Failed to stream Livemap data!" :retry="start" />
         </div>
