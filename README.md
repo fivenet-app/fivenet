@@ -28,6 +28,9 @@
 - [ ] Better error handling
     - [ ] Backend: use predefined errors
     - [ ] Frontend: use form validation before it is sent to the server
+- [ ] Final polishing pass before release of version 1.0.0
+    - [ ] Unify the design
+    - [ ] Clean up Code
 
 ### Future
 
