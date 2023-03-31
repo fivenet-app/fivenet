@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, FunctionalComponent, onMounted } from 'vue';
+import { useAuthStore } from '../../store/auth';
+import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import { toTitleCase } from '../../utils/strings';
 import {
     Dialog,
@@ -22,10 +24,8 @@ import {
     UserIcon,
     TruckIcon,
 } from '@heroicons/vue/24/outline';
-import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
-import { useAuthStore } from '../../store/auth';
+import { ChevronRightIcon } from '@heroicons/vue/20/solid';
 import SidebarJobSwitcher from './SidebarJobSwitcher.vue';
-import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
 const store = useAuthStore();
 const router = useRouter();
@@ -71,24 +71,25 @@ const sidebarNavigation = [
         icon: MapIcon,
     },
 ] as { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent }[];
-let userNavigation = [
-    { name: 'Login', href: { name: 'auth-login' } }
-] as { name: string, href: RoutesNamedLocations }[];
+const userNavigation = ref<{ name: string, href: RoutesNamedLocations }[]>([{ name: 'Login', href: { name: 'auth-login' } }]);
 const currSidebar = ref('')
 const breadcrumbs = ref<{ name: string, href: string, current: boolean }[]>([]);
 const mobileMenuOpen = ref(false);
 
 onMounted(() => {
+    updateUserNav();
+    updateActiveItem();
+    updateBread();
+});
+
+function updateUserNav() {
     if (accessToken.value && activeChar.value) {
-        userNavigation = [
+        userNavigation.value = [
             { name: 'Change Character', href: { name: 'auth-character-selector' } },
             { name: 'Sign out', href: { name: 'auth-logout' } }
         ];
     }
-
-    updateActiveItem();
-    updateBread();
-});
+}
 
 function updateActiveItem() {
     const route = router.currentRoute.value;
@@ -141,6 +142,9 @@ function updateBread() {
     }
 }
 
+watch(accessToken, () => updateUserNav());
+watch(activeChar, () => updateUserNav());
+
 watch(router.currentRoute, () => {
     updateActiveItem();
     updateBread();
@@ -158,7 +162,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                     <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo" :title="'FiveNet' + appVersion" />
                 </div>
                 <div class="flex-1 w-full px-2 mt-6 space-y-1">
-                    <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href" v-can="item.permission"
+                    <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href" :v-can="item.permission"
                         :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="currSidebar === item.name ? 'page' : undefined">
                         <component :is="item.icon"
@@ -202,7 +206,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                             </div>
                             <div class="flex-1 h-0 px-2 mt-5 overflow-y-auto">
                                 <nav class="flex flex-col h-full">
-                                    <div class="space-y-1">
+                                    <div class="space-y-1" v-if="activeChar">
                                         <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href"
                                             v-can="item.permission"
                                             :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
@@ -235,16 +239,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                     <div class="flex justify-between flex-1 px-4 sm:px-6">
                         <div class="flex flex-1">
                             <nav class="flex" aria-label="Breadcrumb">
-                                <ol role="list" class="flex items-center space-x-4">
-                                    <li>
-                                        <div>
-                                            <NuxtLink :to="{ name: accessToken ? 'overview' : 'index' }"
-                                                class="text-base-400 hover:text-neutral hover:transition-colors">
-                                                <HomeIconSolid class="flex-shrink-0 w-5 h-5" aria-hidden="true" />
-                                                <span class="sr-only">Home</span>
-                                            </NuxtLink>
-                                        </div>
-                                    </li>
+                                <ol v-if="activeChar" role="list" class="flex items-center space-x-4">
                                     <li v-for="page in breadcrumbs" :key="page.name">
                                         <div class="flex items-center">
                                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-400"

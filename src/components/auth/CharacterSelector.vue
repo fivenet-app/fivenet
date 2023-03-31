@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { onBeforeMount } from 'vue';
 import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { GetCharactersRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { User } from '@fivenet/gen/resources/users/users_pb';
@@ -28,7 +27,8 @@ async function fetchCharacters(): Promise<Array<User>> {
 }
 
 onBeforeMount(async () => {
-    store.updateActiveChar(null);
+    await store.updateActiveChar(null);
+    await store.updatePermissions([]);
 });
 </script>
 
