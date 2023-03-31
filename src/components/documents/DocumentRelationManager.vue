@@ -223,7 +223,7 @@ function removeRelation(id: number): void {
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle"><button
-                                                            v-if="clipboard.state.users.length === 0" type="button"
+                                                            v-if="clipboard.$state.users.length === 0" type="button"
                                                             class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
                                                             disabled>
                                                             <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
@@ -246,7 +246,7 @@ function removeRelation(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="user in clipboard.state.users"
+                                                                <tr v-for="user in clipboard.$state.users"
                                                                     :key="user.id">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
