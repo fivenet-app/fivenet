@@ -6,6 +6,7 @@ import { customCRS, Livemap, MarkerType } from '../class/Livemap';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import DataErrorBlock from './partials/DataErrorBlock.vue';
+import DataPendingBlock from './partials/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -162,7 +163,8 @@ onUnmounted(() => {
         <div id="map" ref="mapContainer" class="w-full z-0"></div>
         <div v-if="error || !stream" class="absolute inset-0 flex justify-center items-center z-10"
             style="background-color: rgba(62, 60, 62, 0.5)">
-            <DataErrorBlock title="Failed to stream Livemap data!" :retry="start" />
+            <DataPendingBlock v-if="!stream" message="Starting Livemap data stream..." />
+            <DataErrorBlock v-if="error" title="Failed to stream Livemap data!" :retry="start" />
         </div>
     </div>
 </template>

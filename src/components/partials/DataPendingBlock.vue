@@ -2,10 +2,6 @@
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
 
 defineProps({
-    error: {
-        type: String,
-        required: false,
-    },
     message: {
         type: String,
         required: false,

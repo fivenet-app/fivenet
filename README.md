@@ -83,7 +83,7 @@
 - [x] "Completor" Service
     - [x] Use [Bleve search](https://blevesearch.com/)
 - [x] Breadcrumbs
-    - [x] Use closest thing to "page title" (e.g., when viewing a user or editing a document) to build the breadcrumbs
+    - [x] Use the closest thing to a page title (e.g., when viewing a user or editing a document) to build the breadcrumbs
 
 ## Development
 
@@ -118,17 +118,6 @@ Copied from and for more information on "why you should do this", see: https://v
 
 You must use this forked version: [Github jrapoport/grpc-web-devtools](https://github.com/jrapoport/grpc-web-devtools).
 
-## Database
-
-### Indexes for existing Tables
-
-* `users`
-    * Indexes
-        * `firstname` and `lastname` Columns:
-            * `CREATE FULLTEXT INDEX IF NOT EXISTS idx_users_firstname_lastname ON s4_fivem.users (firstname, lastname);`
-        * `job` and `job_grade` Spalten:
-            * `CREATE INDEX IF NOT EXISTS users_job_grade_IDX USING BTREE ON s4_fivem.users (job_grade, job);`
-
-## Livemap
+## Credits
 
 Based upon https://gist.github.com/NelsonMinar/6600524#file-maketiles-sh and VPC's CopNet/ MedicNet livemap code.
