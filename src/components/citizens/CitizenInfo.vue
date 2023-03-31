@@ -45,7 +45,7 @@ function addToClipboard() {
         </div>
         <TabGroup>
             <TabList class="border-b border-base-200 flex flex-row">
-                <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" :v-can="tab.permission" class="flex-1">
+                <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" v-can="tab.permission" class="flex-1">
                     <button
                         :class="[selected ? 'border-primary-400 text-primary-500' : 'border-transparent text-base-500 hover:border-base-300 hover:text-base-300', 'w-full justify-center group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium transition-colors']"
                         :aria-current="selected ? 'page' : undefined">

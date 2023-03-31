@@ -160,7 +160,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                     <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo" :title="'FiveNet' + appVersion" />
                 </div>
                 <div class="flex-1 w-full px-2 mt-6 space-y-1">
-                    <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href" :v-can="item.permission"
+                    <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href" v-can="item.permission"
                         :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="currSidebar === item.name ? 'page' : undefined">
                         <component :is="item.icon"
@@ -206,7 +206,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                 <nav class="flex flex-col h-full">
                                     <div class="space-y-1" v-if="activeChar">
                                         <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href"
-                                            :v-can="item.permission"
+                                            v-can="item.permission"
                                             :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
                                             :aria-current="currSidebar === item.name ? 'page' : undefined">
                                             <component :is="item.icon"
@@ -252,7 +252,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
-                            <div :v-can="'AuthService.SetJob'">
+                            <div v-can="'AuthService.SetJob'">
                                 <SidebarJobSwitcher v-if="activeChar" />
                             </div>
                             <span v-if="activeChar" class="text-sm font-medium text-base-400">

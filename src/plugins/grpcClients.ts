@@ -7,8 +7,7 @@ import { DMVServiceClient } from '@fivenet/gen/services/dmv/VehiclesServiceClien
 import { DocStoreServiceClient } from '@fivenet/gen/services/docstore/DocstoreServiceClientPb';
 import { JobsServiceClient } from '@fivenet/gen/services/jobs/JobsServiceClientPb';
 import { LivemapperServiceClient } from '@fivenet/gen/services/livemapper/LivemapServiceClientPb';
-import { UnaryInterceptor, UnaryResponse } from 'grpc-web';
-import { useLoaderStore } from '../store/loader';
+import { UnaryInterceptor } from 'grpc-web';
 import { RpcError, StatusCode } from 'grpc-web';
 import { dispatchNotification } from '../components/notification';
 
