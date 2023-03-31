@@ -7,6 +7,7 @@ useHead({
     title: 'Documents: Create',
 });
 definePageMeta({
+    title: 'Documents: Create',
     requiresAuth: true,
     permission: 'DocStoreService.CreateDocument',
 });

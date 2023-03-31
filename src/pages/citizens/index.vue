@@ -6,6 +6,7 @@ useHead({
     title: 'Citizens',
 });
 definePageMeta({
+    title: 'Citizens',
     requiresAuth: true,
     permission: 'CitizenStoreService.FindUsers',
 });

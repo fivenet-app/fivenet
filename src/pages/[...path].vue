@@ -7,6 +7,7 @@ useHead({
     title: '404 Not Found',
 });
 definePageMeta({
+    title: '404 Not Found',
     requiresAuth: false,
 });
 

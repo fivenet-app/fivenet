@@ -7,6 +7,7 @@ useHead({
     title: 'Documents',
 });
 definePageMeta({
+    title: 'Documents',
     requiresAuth: true,
     permission: 'DocStoreService.FindDocuments',
 });

@@ -19,7 +19,6 @@ import {
     BriefcaseIcon,
     MapIcon,
     HomeIcon,
-    Square2StackIcon,
     UserIcon,
     TruckIcon,
 } from '@heroicons/vue/24/outline';
@@ -29,7 +28,6 @@ import SidebarJobSwitcher from './SidebarJobSwitcher.vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
 const store = useAuthStore();
-const route = useRoute();
 const router = useRouter();
 
 const accessToken = computed(() => store.$state.accessToken);
@@ -37,16 +35,10 @@ const activeChar = computed(() => store.$state.activeChar);
 
 const sidebarNavigation = [
     {
-        name: 'Home',
-        href: { name: 'index' },
-        permission: '',
-        icon: HomeIcon,
-    },
-    {
         name: 'Overview',
         href: { name: 'overview' },
         permission: 'Overview.View',
-        icon: Square2StackIcon,
+        icon: HomeIcon,
     },
     {
         name: 'Citizens',
@@ -83,18 +75,24 @@ let userNavigation = [
     { name: 'Login', href: { name: 'auth-login' } }
 ] as { name: string, href: RoutesNamedLocations }[];
 const currSidebar = ref('')
-const breadcrumbs = [] as { name: string, href: string, current: boolean }[];
+const breadcrumbs = ref<{ name: string, href: string, current: boolean }[]>([]);
 const mobileMenuOpen = ref(false);
 
 onMounted(() => {
     if (accessToken.value && activeChar.value) {
-        sidebarNavigation.shift();
         userNavigation = [
             { name: 'Change Character', href: { name: 'auth-character-selector' } },
             { name: 'Sign out', href: { name: 'auth-logout' } }
         ];
     }
 
+    console.log("INIT BREADCRUMBS: " + router.currentRoute.value.name);
+    updateActiveItem();
+    updateBread();
+});
+
+function updateActiveItem() {
+    const route = router.currentRoute.value;
     if (route.name) {
         const sidebarIndex = sidebarNavigation.findIndex(e => route.name.toLowerCase().includes(e.href.name.toLowerCase()));
         if (sidebarIndex !== -1) {
@@ -105,21 +103,48 @@ onMounted(() => {
     } else {
         currSidebar.value = sidebarNavigation[0].name;
     }
+}
 
-    const pathSplit = route.path.split('/').filter(e => e !== '');
+function updateBread() {
+    // Clear current breadcrumbs
+    breadcrumbs.value.length = 0;
+    const currentRoute = router.currentRoute.value;
+
+    const pathSplit = currentRoute.path.split('/').filter(e => e !== '');
     pathSplit.forEach(breadcrumb => {
         const route = router.getRoutes().find(r => r.name?.toString().toLowerCase() === breadcrumb.toLowerCase());
-
         if (route === undefined) {
             return;
         }
 
-        breadcrumbs.push({
+        if (route.name?.toString().toLowerCase() === currentRoute.name.toLowerCase()) {
+            return;
+        }
+
+        breadcrumbs.value.push({
             name: toTitleCase(breadcrumb),
-            href: route ? route.path : '/',
-            current: route.name?.toString().toLowerCase() === breadcrumb.toLowerCase()
-        })
+            href: route.path,
+            current: false,
+        });
+    });
+
+    const breadcrumbIdx = breadcrumbs.value.findIndex((b) => {
+        return b.href === currentRoute.path;
     })
+    if (breadcrumbIdx === -1) {
+        if (currentRoute.name !== 'index' && currentRoute.name !== 'overview') {
+            breadcrumbs.value.push({
+                name: toTitleCase(currentRoute.meta.title ?? currentRoute.name),
+                href: '#',
+                current: true,
+            });
+        }
+    }
+}
+
+watch(router.currentRoute, () => {
+    updateActiveItem();
+    updateBread();
 });
 
 const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ? '-dev' : '-prod')) : '';
@@ -214,7 +239,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                 <ol role="list" class="flex items-center space-x-4">
                                     <li>
                                         <div>
-                                            <NuxtLink :to="{ path: accessToken ? '/overview' : '/' }"
+                                            <NuxtLink :to="{ name: accessToken ? 'overview' : 'index' }"
                                                 class="text-base-400 hover:text-neutral hover:transition-colors">
                                                 <HomeIconSolid class="flex-shrink-0 w-5 h-5" aria-hidden="true" />
                                                 <span class="sr-only">Home</span>
@@ -226,7 +251,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-400"
                                                 aria-hidden="true" />
                                             <NuxtLink :to="{ path: page.href }"
-                                                class="ml-4 text-sm font-medium text-base-400 hover:text-neutral hover:transition-colors"
+                                                :class="[page.current ? 'font-bold text-base-200' : 'font-medium text-base-400', 'ml-4 text-sm hover:text-neutral hover:transition-colors']"
                                                 :aria-current="page.current ? 'page' : undefined">{{ page.name
                                                 }}</NuxtLink>
                                         </div>

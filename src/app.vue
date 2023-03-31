@@ -14,7 +14,7 @@ useHead({
     },
     titleTemplate: (titleChunk) => {
         return titleChunk ? `${titleChunk} - aRPaNet` : 'aRPaNet';
-    }
+    },
 });
 
 await loadConfig();

@@ -10,6 +10,7 @@ useHead({
     title: 'Logout',
 });
 definePageMeta({
+    title: 'Logout',
     requiresAuth: true,
 });
 

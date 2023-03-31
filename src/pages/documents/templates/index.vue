@@ -6,6 +6,7 @@ useHead({
     title: 'Documents: Templates',
 });
 definePageMeta({
+    title: 'Documents: Templates',
     requiresAuth: true,
     permission: 'DocStoreService.FindDocuments',
 });

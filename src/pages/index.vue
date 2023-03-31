@@ -8,6 +8,7 @@ useHead({
     title: 'Home',
 });
 definePageMeta({
+    title: 'Home',
     requiresAuth: false,
 });
 

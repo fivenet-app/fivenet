@@ -5,6 +5,7 @@ useHead({
     title: 'Jobs',
 });
 definePageMeta({
+    title: 'Jobs',
     requiresAuth: true,
     permission: 'Jobs.View',
 });

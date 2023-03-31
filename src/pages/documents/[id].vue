@@ -9,6 +9,7 @@ useHead({
     title: 'Documents: View',
 });
 definePageMeta({
+    title: 'Documents: View',
     requiresAuth: true,
     permission: 'DocStoreService.GetDocument',
     validate: async (route) => {

@@ -7,6 +7,7 @@ useHead({
     title: 'Documents: Edit',
 });
 definePageMeta({
+    title: 'Documents: Edit',
     requiresAuth: true,
     permission: 'DocStoreService.CreateDocument',
     validate: async (route) => {

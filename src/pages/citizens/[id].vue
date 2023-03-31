@@ -11,6 +11,7 @@ useHead({
     title: 'Citizens: Info',
 });
 definePageMeta({
+    title: 'Citizens: Info',
     requiresAuth: true,
     permission: 'CitizenStoreService.FindUsers',
     validate: async (route) => {

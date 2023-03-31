@@ -6,6 +6,7 @@ useHead({
     title: 'Vehicles',
 });
 definePageMeta({
+    title: 'Vehicles',
     requiresAuth: true,
     permission: 'DMVService.FindVehicles',
 });

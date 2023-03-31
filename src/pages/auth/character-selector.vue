@@ -6,6 +6,7 @@ useHead({
     title: 'Character Selector',
 });
 definePageMeta({
+    title: 'Character Selector',
     requiresAuth: true,
     authOnlyToken: true,
 });

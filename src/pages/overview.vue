@@ -6,6 +6,7 @@ useHead({
     title: 'Overview',
 });
 definePageMeta({
+    title: 'Overview',
     requiresAuth: true,
     permission: 'Overview.View',
 });

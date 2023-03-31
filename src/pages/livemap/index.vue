@@ -5,6 +5,7 @@ useHead({
     title: 'Livemap',
 });
 definePageMeta({
+    title: 'Livemap',
     requiresAuth: true,
     permission: 'LivemapperService.Stream',
 });
