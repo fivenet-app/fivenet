@@ -6,7 +6,7 @@ import { TruckIcon } from '@heroicons/vue/20/solid';
 
 const store = useClipboardStore();
 
-const vehicles = computed(() => store.state.vehicles);
+const vehicles = computed(() => store.$state.vehicles);
 
 const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void,

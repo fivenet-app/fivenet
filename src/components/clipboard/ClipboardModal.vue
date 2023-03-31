@@ -12,7 +12,7 @@ import ClipboardModalUsers from './ClipboardModalUsers.vue';
 import ClipboardModalDocuments from './ClipboardModalDocuments.vue';
 import ClipboardModalVehicles from './ClipboardModalVehicles.vue';
 
-const store = useClipboardStore();
+const clipboardStore = useClipboardStore();
 
 defineProps({
     open: {
@@ -64,7 +64,7 @@ defineEmits<{
                                     @click="$emit('close')" ref="cancelButtonRef">Close</button>
                                 <button type="button"
                                     class="flex-1 rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="store.clear()">Clear Clipboard</button>
+                                    @click="clipboardStore.clear()">Clear Clipboard</button>
                             </div>
                         </DialogPanel>
                     </TransitionChild>

@@ -7,7 +7,7 @@ import { ClipboardDocument } from '../../store/clipboard';
 
 const store = useClipboardStore();
 
-const documents = computed(() => store.state.documents);
+const documents = computed(() => store.$state.documents);
 
 const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void,
@@ -79,7 +79,7 @@ async function removeAll(): Promise<void> {
 
 watch(props, async (newVal) => {
     if (newVal.submit) {
-        if (store.state) {
+        if (store.activeStack) {
             store.activeStack.documents.length = 0;
             selected.value.forEach((v) => store.activeStack.documents.push(v));
         } else if (documents.value && documents.value.length === 1) {

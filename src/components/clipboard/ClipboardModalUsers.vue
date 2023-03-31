@@ -6,7 +6,7 @@ import { UsersIcon } from '@heroicons/vue/20/solid';
 
 const store = useClipboardStore();
 
-const users = computed(() => store.state.users);
+const users = computed(() => store.$state.users);
 
 const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void,
