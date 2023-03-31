@@ -13,19 +13,18 @@
     - [x] Use a list of ESX user groups in the config
     - [x] Allow them to switch jobs on the fly to always the highest job rank
     - [ ] Allow them to edit/ delete any user content
-- [ ] Breadcrumbs
-    - [ ] Use "page title" (e.g., when viewing a user or editing a document) it should be reflected in the breadcrumbs, instead of just relying on the path
-    - [ ] Correctly make href anchor based on breadcrumb
-- [ ] "Faction Leader Control Panel"
-    - [ ] Templates
+- [ ] "Faction Leader Control Panel" aka "Rector Service"
+    - [ ] Permission Editor for the job ranks (Rector)
+        - [ ] Can view the permissions
+        - [ ] Can edit the permissions
+    - [ ] Templates (DocStore)
         - [ ] Create new templates by leaders
         - [ ] Editable templates by the leader of the jobs
-    - [ ] Permissions-based "can do anything" in their faction
-    - [ ] Audit Log
-    - [ ] Category
+    - [ ] Category (DocStore)
         - [ ] Create Categories
         - [ ] Edit Categories
         - [ ] Delete categories
+    - [ ] Audit Log (Rector)
 
 ### Future
 
@@ -83,6 +82,8 @@
             - [x] Edit Document Comments
 - [x] "Completor" Service
     - [x] Use [Bleve search](https://blevesearch.com/)
+- [x] Breadcrumbs
+    - [x] Use closest thing to "page title" (e.g., when viewing a user or editing a document) to build the breadcrumbs
 
 ## Development
 

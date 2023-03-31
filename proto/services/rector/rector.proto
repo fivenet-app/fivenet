@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package services.rector;
+option go_package = "github.com/galexrt/fivenet/proto/services/rector;rector";
+
+import "resources/common/database/database.proto";
+import "resources/permissions/permissions.proto";
+import "validate/validate.proto";
+
+message GetRolesRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+}
+
+message GetRolesResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.permissions.Role roles = 2;
+}
+
+message UpdateRoleRequest {
+  resources.permissions.Role role = 1;
+}
+
+message UpdateRoleResponse {}
+
+message DeleteRoleRequest {
+  uint64 role_id = 1;
+}
+
+message DeleteRoleResponse {}
+
+service RectorService {
+  // @permission
+  rpc GetRoles(GetRolesRequest) returns (GetRolesResponse);
+  // @permission
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
+  // @permission
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
+}
