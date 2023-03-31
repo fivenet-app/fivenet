@@ -97,8 +97,6 @@ function updateActiveItem() {
         const sidebarIndex = sidebarNavigation.findIndex(e => route.name.toLowerCase().includes(e.href.name.toLowerCase()));
         if (sidebarIndex !== -1) {
             currSidebar.value = sidebarNavigation[sidebarIndex].name;
-        } else {
-            currSidebar.value = sidebarNavigation[0].name;
         }
     } else {
         currSidebar.value = sidebarNavigation[0].name;

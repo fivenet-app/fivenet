@@ -1,3 +1,5 @@
+![FiveNet Logo](src/public/images/logo.png)
+
 # FiveNet
 
 ## Features
