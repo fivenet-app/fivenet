@@ -84,7 +84,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.services.rector.UpdateRoleRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.services.rector.UpdateRoleRequest.repeatedFields_, null);
 };
 goog.inherits(proto.services.rector.UpdateRoleRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -189,7 +189,8 @@ proto.services.rector.GetRolesRequest.prototype.toObject = function(opt_includeI
  */
 proto.services.rector.GetRolesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f)
+    rank: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    withPerms: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {
@@ -227,9 +228,12 @@ proto.services.rector.GetRolesRequest.deserializeBinaryFromReader = function(msg
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_common_database_database_pb.PaginationRequest;
-      reader.readMessage(value,resources_common_database_database_pb.PaginationRequest.deserializeBinaryFromReader);
-      msg.setPagination(value);
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setRank(value);
+      break;
+    case 2:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setWithPerms(value);
       break;
     default:
       reader.skipField();
@@ -260,51 +264,56 @@ proto.services.rector.GetRolesRequest.prototype.serializeBinary = function() {
  */
 proto.services.rector.GetRolesRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getPagination();
-  if (f != null) {
-    writer.writeMessage(
+  f = message.getRank();
+  if (f !== 0) {
+    writer.writeInt32(
       1,
-      f,
-      resources_common_database_database_pb.PaginationRequest.serializeBinaryToWriter
+      f
+    );
+  }
+  f = message.getWithPerms();
+  if (f) {
+    writer.writeBool(
+      2,
+      f
     );
   }
 };
 
 
 /**
- * optional resources.common.database.PaginationRequest pagination = 1;
- * @return {?proto.resources.common.database.PaginationRequest}
+ * optional int32 rank = 1;
+ * @return {number}
  */
-proto.services.rector.GetRolesRequest.prototype.getPagination = function() {
-  return /** @type{?proto.resources.common.database.PaginationRequest} */ (
-    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationRequest, 1));
+proto.services.rector.GetRolesRequest.prototype.getRank = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
 /**
- * @param {?proto.resources.common.database.PaginationRequest|undefined} value
- * @return {!proto.services.rector.GetRolesRequest} returns this
-*/
-proto.services.rector.GetRolesRequest.prototype.setPagination = function(value) {
-  return jspb.Message.setWrapperField(this, 1, value);
-};
-
-
-/**
- * Clears the message field making it undefined.
+ * @param {number} value
  * @return {!proto.services.rector.GetRolesRequest} returns this
  */
-proto.services.rector.GetRolesRequest.prototype.clearPagination = function() {
-  return this.setPagination(undefined);
+proto.services.rector.GetRolesRequest.prototype.setRank = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * Returns whether this field is set.
+ * optional bool with_perms = 2;
  * @return {boolean}
  */
-proto.services.rector.GetRolesRequest.prototype.hasPagination = function() {
-  return jspb.Message.getField(this, 1) != null;
+proto.services.rector.GetRolesRequest.prototype.getWithPerms = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.services.rector.GetRolesRequest} returns this
+ */
+proto.services.rector.GetRolesRequest.prototype.setWithPerms = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 
@@ -314,7 +323,7 @@ proto.services.rector.GetRolesRequest.prototype.hasPagination = function() {
  * @private {!Array<number>}
  * @const
  */
-proto.services.rector.GetRolesResponse.repeatedFields_ = [2];
+proto.services.rector.GetRolesResponse.repeatedFields_ = [1];
 
 
 
@@ -347,7 +356,6 @@ proto.services.rector.GetRolesResponse.prototype.toObject = function(opt_include
  */
 proto.services.rector.GetRolesResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationResponse.toObject(includeInstance, f),
     rolesList: jspb.Message.toObjectList(msg.getRolesList(),
     resources_permissions_permissions_pb.Role.toObject, includeInstance)
   };
@@ -387,11 +395,6 @@ proto.services.rector.GetRolesResponse.deserializeBinaryFromReader = function(ms
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_common_database_database_pb.PaginationResponse;
-      reader.readMessage(value,resources_common_database_database_pb.PaginationResponse.deserializeBinaryFromReader);
-      msg.setPagination(value);
-      break;
-    case 2:
       var value = new resources_permissions_permissions_pb.Role;
       reader.readMessage(value,resources_permissions_permissions_pb.Role.deserializeBinaryFromReader);
       msg.addRoles(value);
@@ -425,18 +428,10 @@ proto.services.rector.GetRolesResponse.prototype.serializeBinary = function() {
  */
 proto.services.rector.GetRolesResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getPagination();
-  if (f != null) {
-    writer.writeMessage(
-      1,
-      f,
-      resources_common_database_database_pb.PaginationResponse.serializeBinaryToWriter
-    );
-  }
   f = message.getRolesList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      2,
+      1,
       f,
       resources_permissions_permissions_pb.Role.serializeBinaryToWriter
     );
@@ -445,49 +440,12 @@ proto.services.rector.GetRolesResponse.serializeBinaryToWriter = function(messag
 
 
 /**
- * optional resources.common.database.PaginationResponse pagination = 1;
- * @return {?proto.resources.common.database.PaginationResponse}
- */
-proto.services.rector.GetRolesResponse.prototype.getPagination = function() {
-  return /** @type{?proto.resources.common.database.PaginationResponse} */ (
-    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationResponse, 1));
-};
-
-
-/**
- * @param {?proto.resources.common.database.PaginationResponse|undefined} value
- * @return {!proto.services.rector.GetRolesResponse} returns this
-*/
-proto.services.rector.GetRolesResponse.prototype.setPagination = function(value) {
-  return jspb.Message.setWrapperField(this, 1, value);
-};
-
-
-/**
- * Clears the message field making it undefined.
- * @return {!proto.services.rector.GetRolesResponse} returns this
- */
-proto.services.rector.GetRolesResponse.prototype.clearPagination = function() {
-  return this.setPagination(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.services.rector.GetRolesResponse.prototype.hasPagination = function() {
-  return jspb.Message.getField(this, 1) != null;
-};
-
-
-/**
- * repeated resources.permissions.Role roles = 2;
+ * repeated resources.permissions.Role roles = 1;
  * @return {!Array<!proto.resources.permissions.Role>}
  */
 proto.services.rector.GetRolesResponse.prototype.getRolesList = function() {
   return /** @type{!Array<!proto.resources.permissions.Role>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_permissions_permissions_pb.Role, 2));
+    jspb.Message.getRepeatedWrapperField(this, resources_permissions_permissions_pb.Role, 1));
 };
 
 
@@ -496,7 +454,7 @@ proto.services.rector.GetRolesResponse.prototype.getRolesList = function() {
  * @return {!proto.services.rector.GetRolesResponse} returns this
 */
 proto.services.rector.GetRolesResponse.prototype.setRolesList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+  return jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
 
@@ -506,7 +464,7 @@ proto.services.rector.GetRolesResponse.prototype.setRolesList = function(value) 
  * @return {!proto.resources.permissions.Role}
  */
 proto.services.rector.GetRolesResponse.prototype.addRoles = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.permissions.Role, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.resources.permissions.Role, opt_index);
 };
 
 
@@ -519,6 +477,13 @@ proto.services.rector.GetRolesResponse.prototype.clearRolesList = function() {
 };
 
 
+
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.services.rector.UpdateRoleRequest.repeatedFields_ = [2];
 
 
 
@@ -551,7 +516,9 @@ proto.services.rector.UpdateRoleRequest.prototype.toObject = function(opt_includ
  */
 proto.services.rector.UpdateRoleRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    role: (f = msg.getRole()) && resources_permissions_permissions_pb.Role.toObject(includeInstance, f)
+    roleId: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    permsList: jspb.Message.toObjectList(msg.getPermsList(),
+    resources_permissions_permissions_pb.Permission.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -589,9 +556,13 @@ proto.services.rector.UpdateRoleRequest.deserializeBinaryFromReader = function(m
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_permissions_permissions_pb.Role;
-      reader.readMessage(value,resources_permissions_permissions_pb.Role.deserializeBinaryFromReader);
-      msg.setRole(value);
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setRoleId(value);
+      break;
+    case 2:
+      var value = new resources_permissions_permissions_pb.Permission;
+      reader.readMessage(value,resources_permissions_permissions_pb.Permission.deserializeBinaryFromReader);
+      msg.addPerms(value);
       break;
     default:
       reader.skipField();
@@ -622,51 +593,77 @@ proto.services.rector.UpdateRoleRequest.prototype.serializeBinary = function() {
  */
 proto.services.rector.UpdateRoleRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getRole();
-  if (f != null) {
-    writer.writeMessage(
+  f = message.getRoleId();
+  if (f !== 0) {
+    writer.writeUint64(
       1,
+      f
+    );
+  }
+  f = message.getPermsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      2,
       f,
-      resources_permissions_permissions_pb.Role.serializeBinaryToWriter
+      resources_permissions_permissions_pb.Permission.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * optional resources.permissions.Role role = 1;
- * @return {?proto.resources.permissions.Role}
+ * optional uint64 role_id = 1;
+ * @return {number}
  */
-proto.services.rector.UpdateRoleRequest.prototype.getRole = function() {
-  return /** @type{?proto.resources.permissions.Role} */ (
-    jspb.Message.getWrapperField(this, resources_permissions_permissions_pb.Role, 1));
+proto.services.rector.UpdateRoleRequest.prototype.getRoleId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
 /**
- * @param {?proto.resources.permissions.Role|undefined} value
+ * @param {number} value
+ * @return {!proto.services.rector.UpdateRoleRequest} returns this
+ */
+proto.services.rector.UpdateRoleRequest.prototype.setRoleId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * repeated resources.permissions.Permission perms = 2;
+ * @return {!Array<!proto.resources.permissions.Permission>}
+ */
+proto.services.rector.UpdateRoleRequest.prototype.getPermsList = function() {
+  return /** @type{!Array<!proto.resources.permissions.Permission>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_permissions_permissions_pb.Permission, 2));
+};
+
+
+/**
+ * @param {!Array<!proto.resources.permissions.Permission>} value
  * @return {!proto.services.rector.UpdateRoleRequest} returns this
 */
-proto.services.rector.UpdateRoleRequest.prototype.setRole = function(value) {
-  return jspb.Message.setWrapperField(this, 1, value);
+proto.services.rector.UpdateRoleRequest.prototype.setPermsList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
 
 /**
- * Clears the message field making it undefined.
+ * @param {!proto.resources.permissions.Permission=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.resources.permissions.Permission}
+ */
+proto.services.rector.UpdateRoleRequest.prototype.addPerms = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.permissions.Permission, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
  * @return {!proto.services.rector.UpdateRoleRequest} returns this
  */
-proto.services.rector.UpdateRoleRequest.prototype.clearRole = function() {
-  return this.setRole(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.services.rector.UpdateRoleRequest.prototype.hasRole = function() {
-  return jspb.Message.getField(this, 1) != null;
+proto.services.rector.UpdateRoleRequest.prototype.clearPermsList = function() {
+  return this.setPermsList([]);
 };
 
 

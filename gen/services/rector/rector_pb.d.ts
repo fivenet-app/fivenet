@@ -5,10 +5,11 @@ import * as resources_permissions_permissions_pb from '../../resources/permissio
 
 
 export class GetRolesRequest extends jspb.Message {
-  getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
-  setPagination(value?: resources_common_database_database_pb.PaginationRequest): GetRolesRequest;
-  hasPagination(): boolean;
-  clearPagination(): GetRolesRequest;
+  getRank(): number;
+  setRank(value: number): GetRolesRequest;
+
+  getWithPerms(): boolean;
+  setWithPerms(value: boolean): GetRolesRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetRolesRequest.AsObject;
@@ -20,16 +21,12 @@ export class GetRolesRequest extends jspb.Message {
 
 export namespace GetRolesRequest {
   export type AsObject = {
-    pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
+    rank: number,
+    withPerms: boolean,
   }
 }
 
 export class GetRolesResponse extends jspb.Message {
-  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
-  setPagination(value?: resources_common_database_database_pb.PaginationResponse): GetRolesResponse;
-  hasPagination(): boolean;
-  clearPagination(): GetRolesResponse;
-
   getRolesList(): Array<resources_permissions_permissions_pb.Role>;
   setRolesList(value: Array<resources_permissions_permissions_pb.Role>): GetRolesResponse;
   clearRolesList(): GetRolesResponse;
@@ -45,16 +42,18 @@ export class GetRolesResponse extends jspb.Message {
 
 export namespace GetRolesResponse {
   export type AsObject = {
-    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
     rolesList: Array<resources_permissions_permissions_pb.Role.AsObject>,
   }
 }
 
 export class UpdateRoleRequest extends jspb.Message {
-  getRole(): resources_permissions_permissions_pb.Role | undefined;
-  setRole(value?: resources_permissions_permissions_pb.Role): UpdateRoleRequest;
-  hasRole(): boolean;
-  clearRole(): UpdateRoleRequest;
+  getRoleId(): number;
+  setRoleId(value: number): UpdateRoleRequest;
+
+  getPermsList(): Array<resources_permissions_permissions_pb.Permission>;
+  setPermsList(value: Array<resources_permissions_permissions_pb.Permission>): UpdateRoleRequest;
+  clearPermsList(): UpdateRoleRequest;
+  addPerms(value?: resources_permissions_permissions_pb.Permission, index?: number): resources_permissions_permissions_pb.Permission;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateRoleRequest.AsObject;
@@ -66,7 +65,8 @@ export class UpdateRoleRequest extends jspb.Message {
 
 export namespace UpdateRoleRequest {
   export type AsObject = {
-    role?: resources_permissions_permissions_pb.Role.AsObject,
+    roleId: number,
+    permsList: Array<resources_permissions_permissions_pb.Permission.AsObject>,
   }
 }
 

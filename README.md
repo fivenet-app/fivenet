@@ -25,6 +25,9 @@
         - [ ] Edit Categories
         - [ ] Delete categories
     - [ ] Audit Log (Rector)
+- [ ] Better error handling
+    - [ ] Backend: use predefined errors
+    - [ ] Frontend: use form validation before it is sent to the server
 
 ### Future
 

@@ -32,6 +32,7 @@ import (
 	pbjobs "github.com/galexrt/fivenet/proto/services/jobs"
 	pblivemapper "github.com/galexrt/fivenet/proto/services/livemapper"
 	pbnotificator "github.com/galexrt/fivenet/proto/services/notificator"
+	pbrector "github.com/galexrt/fivenet/proto/services/rector"
 )
 
 func init() {
@@ -101,6 +102,7 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p))
 	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher))
+	pbrector.RegisterRectorServiceServer(grpcServer, pbrector.NewServer(logger, db, p))
 
 	// Only run the livemapper random user marker generator in debug mode
 	if config.C.Mode == gin.DebugMode {

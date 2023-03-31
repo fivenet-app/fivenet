@@ -6,14 +6,9 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
-	database "github.com/galexrt/fivenet/proto/resources/common/database"
-	"github.com/galexrt/fivenet/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/galexrt/fivenet/proto/resources/permissions"
+	"github.com/galexrt/fivenet/proto/resources/timestamp"
 	"go.uber.org/zap"
-)
-
-var (
-	roles = table.FivenetRoles
 )
 
 type Server struct {
@@ -35,25 +30,31 @@ func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions) *Server {
 func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesResponse, error) {
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	condition := roles.GuardName.LIKE(jet.String("job-" + job + "-"))
+	rolePrefix := "job-" + job + "-"
 
-	countStmt := roles.
-		SELECT(
-			jet.COUNT(roles.ID).AS("datacount.totalcount"),
-		).
-		FROM(roles).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+	roles, err := s.p.GetRoles(rolePrefix)
+	if err != nil {
 		return nil, err
 	}
 
-	resp := &GetRolesResponse{
-		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
-	}
-	if count.TotalCount <= 0 {
-		return resp, nil
+	resp := &GetRolesResponse{}
+	_ = roles
+
+	for _, r := range roles {
+		var updatedAt *timestamp.Timestamp
+		if r.UpdatedAt != nil {
+			updatedAt = timestamp.New(*r.UpdatedAt)
+		}
+
+		resp.Roles = append(resp.Roles, &permissions.Role{
+			Id:          r.ID,
+			CreatedAt:   timestamp.New(*r.CreatedAt),
+			UpdatedAt:   updatedAt,
+			Name:        r.Name,
+			GuardName:   r.GuardName,
+			Description: *r.Description,
+			Permissions: []*permissions.Permission{},
+		})
 	}
 
 	return resp, nil
