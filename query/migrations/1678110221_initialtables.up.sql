@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_accounts` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_accounts_username` (`username`),
   UNIQUE KEY `idx_fivenet_accounts_license` (`license`),
-  UNIQUE KEY `idx_fivenet_accounts_username_license` (`username`, `license`)
-  UNIQUE KEY `idx_fivenet_accounts_reg_token` (`reg_token`),
+  UNIQUE KEY `idx_fivenet_accounts_username_license` (`username`, `license`),
+  UNIQUE KEY `idx_fivenet_accounts_reg_token` (`reg_token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: fivenet_documents_categories
