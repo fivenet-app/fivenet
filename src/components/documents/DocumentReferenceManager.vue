@@ -87,8 +87,8 @@ function addReference(doc: Document, reference: number): void {
 
     const ref = new DocumentReference();
     ref.setId(key);
-    ref.setCreatorId(authStore.data.activeChar!.getUserId());
-    ref.setCreator(authStore.data.activeChar!)
+    ref.setCreatorId(authStore.$state.activeChar!.getUserId());
+    ref.setCreator(authStore.$state.activeChar!)
     ref.setTargetDocumentId(doc.getId());
     ref.setTargetDocument(doc);
     ref.setReference(DOC_REFERENCE_Util.fromInt(reference));

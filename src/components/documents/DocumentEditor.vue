@@ -51,7 +51,7 @@ const props = defineProps({
     },
 });
 
-const activeChar = computed(() => authStore.data.activeChar);
+const activeChar = computed(() => authStore.$state.activeChar);
 
 const canEdit = ref(false);
 
