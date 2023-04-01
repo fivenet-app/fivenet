@@ -1,14 +1,11 @@
 package perms
 
 import (
-	"errors"
-
 	"github.com/galexrt/fivenet/pkg/dbutils"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/go-sql-driver/mysql"
 )
 
 func (p *Perms) GetRoles(prefix string) (collections.Roles, error) {
@@ -49,16 +46,37 @@ func (p *Perms) GetRole(id uint64) (*model.FivenetRoles, error) {
 	return &dest, nil
 }
 
+func (p *Perms) GetRoleByGuardName(name string) (*model.FivenetRoles, error) {
+	stmt := ar.
+		SELECT(
+			ar.AllColumns,
+		).
+		FROM(ar).
+		WHERE(
+			ar.GuardName.EQ(jet.String(helpers.Guard(name))),
+		)
+
+	var dest model.FivenetRoles
+	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
+}
+
 func (p *Perms) GetRolePermissions(id uint64) (collections.Permissions, error) {
-	stmt := ap.
+	stmt := arp.
 		SELECT(
 			ap.AllColumns,
 		).
 		FROM(
-			ap.
-				INNER_JOIN(arp,
-					arp.RoleID.EQ(jet.Uint64(id)),
+			arp.
+				INNER_JOIN(ap,
+					ap.ID.EQ(arp.PermissionID),
 				),
+		).
+		WHERE(
+			arp.RoleID.EQ(jet.Uint64(id)),
 		).
 		ORDER_BY(
 			ap.Name.ASC(),
@@ -73,16 +91,68 @@ func (p *Perms) GetRolePermissions(id uint64) (collections.Permissions, error) {
 	return dest, nil
 }
 
-func (p *Perms) CreateRole(name string, description string) error {
+func (p *Perms) CreateRole(name string, description string) (uint64, error) {
+	guardName := helpers.Guard(name)
+
 	stmt := ar.
 		INSERT(
 			ar.Name,
 			ar.GuardName,
 			ar.Description,
 		).
-		VALUES(name, helpers.Guard(name), description)
+		VALUES(name, guardName, description)
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
+
+	if !dbutils.IsDuplicateError(err) {
+		return 0, err
+	}
+
+	role, err := p.GetRoleByGuardName(guardName)
+	if err != nil {
+		return 0, err
+	}
+
+	return role.ID, nil
+}
+
+func (p *Perms) DeleteRole(id uint64) error {
+	_, err := ar.
+		DELETE().
+		WHERE(
+			ar.ID.EQ(jet.Uint64(id)),
+		).
+		ExecContext(p.ctx, p.db)
+	return err
+}
+
+func (p *Perms) AddPermissionsToRole(id uint64, perms []uint64) error {
+	role, err := p.GetRole(id)
+	if err != nil {
+		return err
+	}
+
+	var rolePerms []struct {
+		PermissionID uint64
+		RoleID       uint64
+	}
+	for _, permID := range perms {
+		rolePerms = append(rolePerms, struct {
+			PermissionID uint64
+			RoleID       uint64
+		}{
+			PermissionID: permID,
+			RoleID:       role.ID,
+		})
+	}
+
+	_, err = arp.
+		INSERT(
+			arp.PermissionID,
+			arp.RoleID,
+		).
+		MODELS(rolePerms).
+		ExecContext(p.ctx, p.db)
 
 	if !dbutils.IsDuplicateError(err) {
 		return err
@@ -91,57 +161,20 @@ func (p *Perms) CreateRole(name string, description string) error {
 	return nil
 }
 
-func (p *Perms) DeleteRole(name string) error {
-	_, err := ar.
+func (p *Perms) RemovePermissionsFromRole(id uint64, perms []uint64) error {
+	ids := make([]jet.Expression, len(perms))
+	for i := 0; i < len(perms); i++ {
+		ids[i] = jet.Uint64(perms[i])
+	}
+
+	stmt := arp.
 		DELETE().
-		WHERE(
-			ar.GuardName.EQ(jet.String(helpers.Guard(name))),
-		).
-		ExecContext(p.ctx, p.db)
+		WHERE(jet.AND(
+			arp.RoleID.EQ(jet.Uint64(id)),
+			arp.PermissionID.IN(ids...),
+		))
+
+	_, err := stmt.ExecContext(p.ctx, p.db)
+
 	return err
-}
-
-func (p *Perms) AddPermissionsToRole(name string, perms collections.Permissions) error {
-	// Make sure the role exists
-	rolesStmt := ar.
-		SELECT(ar.ID).
-		FROM(ar).
-		WHERE(
-			ar.GuardName.EQ(jet.String(helpers.Guard(name))),
-		).
-		LIMIT(1)
-
-	var roleIDs []uint
-	if err := rolesStmt.QueryContext(p.ctx, p.db, &roleIDs); err != nil {
-		return err
-	}
-
-	var rolePerms []struct {
-		PermissionID uint
-		RoleID       uint
-	}
-	for _, permID := range perms.IDs() {
-		rolePerms = append(rolePerms, struct {
-			PermissionID uint
-			RoleID       uint
-		}{
-			PermissionID: uint(permID),
-			RoleID:       roleIDs[0],
-		})
-	}
-
-	_, err := arp.
-		INSERT(
-			arp.PermissionID,
-			arp.RoleID,
-		).
-		MODELS(rolePerms).
-		ExecContext(p.ctx, p.db)
-
-	var mysqlErr *mysql.MySQLError
-	if errors.As(err, &mysqlErr) && mysqlErr.Number != 1062 {
-		return err
-	}
-
-	return nil
 }

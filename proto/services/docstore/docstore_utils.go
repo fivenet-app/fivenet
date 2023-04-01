@@ -121,6 +121,11 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32,
 		return documentIds, nil
 	}
 
+	// Allow superusers access to any docs
+	if s.p.Can(userId, "SuperUser.AnyAccess") {
+		return documentIds, nil
+	}
+
 	ids := make([]jet.Expression, len(documentIds))
 	for i := 0; i < len(documentIds); i++ {
 		ids[i] = jet.Uint64(documentIds[i])

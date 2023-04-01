@@ -31,8 +31,9 @@ func init() {
 			Name: "DeleteRole",
 		},
 		{
-			Key:  RectorServicePermKey,
-			Name: "GetPermissions",
+			Key:    RectorServicePermKey,
+			Name:   "GetPermissions",
+			PerJob: true,
 		},
 		{
 			Key:  RectorServicePermKey,

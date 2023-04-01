@@ -9,10 +9,6 @@
         - [ ] Create in-game "register" command to get a token with which one can then set their username and password
     - [ ] Livemap
         - [ ] Write a FiveM plugin that writes player positions into our location table
-- [ ] "Content Moderation" access for server admins
-    - [x] Use a list of ESX user groups in the config
-    - [x] Allow them to switch jobs on the fly to always the highest job rank
-    - [ ] Allow them to edit/ delete any user content
 - [ ] "Faction Leader Control Panel" aka "Rector Service"
     - [ ] Permission Editor for the job ranks (Rector)
         - [ ] Can view the permissions
@@ -40,13 +36,20 @@
     - [ ] Create Notes and Warns for Employees ("Führungsregister")
     - [ ] Promote and Demote Employees
     - [ ] Fire employees
+    - [ ] Training Modules
+        - [ ] Calendar
+        - [ ] History
 - [ ] Discord integration
-    - [ ] Automatic Role assignal
+    - [ ] Automatic Role assignment
 
 ### Completed
 
 - [x] Authentication
     - [x] Separate "accounts" table that allows users to log in to the network
+- [x] "Content Moderation" access for server admins
+    - [x] Use a list of ESX user groups in the config
+    - [x] Allow them to switch jobs on the fly to always the highest job rank
+    - [x] Allow them to edit/ delete any user content
 - [x] Livemap
     - [x] See your colleagues (for now using Copnet VPC Connector's data)
         - [x] Create a table model for our player location table

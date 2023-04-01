@@ -129,7 +129,7 @@ function updateBread() {
     pathSplit.forEach((breadcrumb, idx) => {
         breadcrumb = "/" + breadcrumb;
         if (idx > 0) {
-            breadcrumb = "/" + pathSplit.slice(0,idx).join("/") + breadcrumb;
+            breadcrumb = "/" + pathSplit.slice(0, idx).join("/") + breadcrumb;
         }
         const route = router.getRoutes().find(r => r.path.toLowerCase() === breadcrumb.toLowerCase());
         if (route === undefined) {
@@ -294,9 +294,9 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
-                            <div v-can="'AuthService.SetJob'">
+                            <span v-can="'AuthService.SetJob'">
                                 <SidebarJobSwitcher v-if="activeChar" />
-                            </div>
+                            </span>
                             <span v-if="activeChar" class="text-sm font-medium text-base-400">
                                 {{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}
                                 ({{ activeChar.getJobLabel() }})

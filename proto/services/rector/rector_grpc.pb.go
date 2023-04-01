@@ -32,7 +32,7 @@ type RectorServiceClient interface {
 	RemovePermFromRole(ctx context.Context, in *RemovePermFromRoleRequest, opts ...grpc.CallOption) (*RemovePermFromRoleResponse, error)
 	// @permission
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
-	// @permission
+	// @permission: PerJob=true
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error)
 }
 
@@ -112,7 +112,7 @@ type RectorServiceServer interface {
 	RemovePermFromRole(context.Context, *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error)
 	// @permission
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
-	// @permission
+	// @permission: PerJob=true
 	GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
 }

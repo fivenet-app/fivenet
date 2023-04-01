@@ -42,7 +42,9 @@ message DeleteRoleRequest {
 
 message DeleteRoleResponse {}
 
-message GetPermissionsRequest {}
+message GetPermissionsRequest {
+  string search = 1 [(validate.rules).string.max_len = 32];
+}
 
 message GetPermissionsResponse {
   repeated resources.permissions.Permission permissions = 1;
@@ -60,6 +62,6 @@ service RectorService {
   // @permission
   rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
 
-  // @permission
+  // @permission: PerJob=true
   rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
 }

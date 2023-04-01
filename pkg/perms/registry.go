@@ -61,13 +61,14 @@ func (p *Perms) Register() error {
 }
 
 func (p *Perms) setupRoles() error {
-	if err := p.CreateRole("masterofdisaster", ""); err != nil {
+	roleId, err := p.CreateRole("masterofdisaster", "")
+	if err != nil {
 		return err
 	}
 
 	perms, _ := p.GetAllPermissions()
 	// Ensure the "masterofdisaster" role always has all permissions
-	if err := p.AddPermissionsToRole("masterofdisaster", perms); err != nil {
+	if err := p.AddPermissionsToRole(roleId, perms.IDs()); err != nil {
 		return err
 	}
 
@@ -96,14 +97,19 @@ func (p *Perms) setupRoles() error {
 	if err != nil {
 		return err
 	}
-	existingRoles := existingRolesList.GuardNames()
+	existingRoles := existingRolesList.IDs()
 
 	// Iterate over current job and job grades to find any non-existant roles in our database
 	for i := 0; i < len(dest); i++ {
 		for _, grade := range dest[i].Grades {
 			roleName := strings.ToLower(GetRoleName(dest[i].Name, grade.Grade))
 
-			index := slices.Index(existingRoles, roleName)
+			role, err := p.GetRoleByGuardName(roleName)
+			if err != nil {
+				return err
+			}
+
+			index := slices.Index(existingRoles, role.ID)
 			if index >= 0 {
 				existingRoles = append(existingRoles[:index], existingRoles[index+1:]...)
 			}

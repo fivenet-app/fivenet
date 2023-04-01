@@ -22,6 +22,7 @@ var (
 
 type Permissions interface {
 	GetAllPermissions() (collections.Permissions, error)
+	GetPermissionsByIDs(ids ...uint64) (collections.Permissions, error)
 	CreatePermission(name string, description string) error
 
 	GetAllPermissionsOfUser(userId int32) (collections.Permissions, error)
@@ -31,6 +32,11 @@ type Permissions interface {
 	GetRoles(prefix string) (collections.Roles, error)
 	GetRole(id uint64) (*model.FivenetRoles, error)
 	GetRolePermissions(id uint64) (collections.Permissions, error)
+
+	CreateRole(name string, description string) (uint64, error)
+	DeleteRole(id uint64) error
+	AddPermissionsToRole(id uint64, perms []uint64) error
+	RemovePermissionsFromRole(id uint64, perms []uint64) error
 
 	GetUserRoles(userId int32) (collections.Roles, error)
 	AddUserRoles(userId int32, roles ...string) error

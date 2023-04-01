@@ -188,6 +188,9 @@ export namespace DeleteRoleResponse {
 }
 
 export class GetPermissionsRequest extends jspb.Message {
+  getSearch(): string;
+  setSearch(value: string): GetPermissionsRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetPermissionsRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetPermissionsRequest): GetPermissionsRequest.AsObject;
@@ -198,6 +201,7 @@ export class GetPermissionsRequest extends jspb.Message {
 
 export namespace GetPermissionsRequest {
   export type AsObject = {
+    search: string,
   }
 }
 

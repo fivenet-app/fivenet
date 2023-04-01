@@ -1699,7 +1699,7 @@ proto.services.rector.GetPermissionsRequest.prototype.toObject = function(opt_in
  */
 proto.services.rector.GetPermissionsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    search: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1736,6 +1736,10 @@ proto.services.rector.GetPermissionsRequest.deserializeBinaryFromReader = functi
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSearch(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1765,6 +1769,31 @@ proto.services.rector.GetPermissionsRequest.prototype.serializeBinary = function
  */
 proto.services.rector.GetPermissionsRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getSearch();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string search = 1;
+ * @return {string}
+ */
+proto.services.rector.GetPermissionsRequest.prototype.getSearch = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.services.rector.GetPermissionsRequest} returns this
+ */
+proto.services.rector.GetPermissionsRequest.prototype.setSearch = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 

@@ -1173,6 +1173,17 @@ func (m *GetPermissionsRequest) validate(all bool) error {
 
 	var errors []error
 
+	if utf8.RuneCountInString(m.GetSearch()) > 32 {
+		err := GetPermissionsRequestValidationError{
+			field:  "Search",
+			reason: "value length must be at most 32 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return GetPermissionsRequestMultiError(errors)
 	}
