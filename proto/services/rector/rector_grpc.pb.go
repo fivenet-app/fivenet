@@ -27,11 +27,13 @@ type RectorServiceClient interface {
 	// @permission: name=GetRoles
 	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error)
 	// @permission
+	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
+	// @permission
+	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
+	// @permission
 	AddPermToRole(ctx context.Context, in *AddPermToRoleRequest, opts ...grpc.CallOption) (*AddPermToRoleResponse, error)
 	// @permission: name=AddPermToRole
 	RemovePermFromRole(ctx context.Context, in *RemovePermFromRoleRequest, opts ...grpc.CallOption) (*RemovePermFromRoleResponse, error)
-	// @permission
-	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
 	// @permission: PerJob=true
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error)
 }
@@ -62,6 +64,24 @@ func (c *rectorServiceClient) GetRole(ctx context.Context, in *GetRoleRequest, o
 	return out, nil
 }
 
+func (c *rectorServiceClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error) {
+	out := new(CreateRoleResponse)
+	err := c.cc.Invoke(ctx, "/services.rector.RectorService/CreateRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rectorServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error) {
+	out := new(DeleteRoleResponse)
+	err := c.cc.Invoke(ctx, "/services.rector.RectorService/DeleteRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *rectorServiceClient) AddPermToRole(ctx context.Context, in *AddPermToRoleRequest, opts ...grpc.CallOption) (*AddPermToRoleResponse, error) {
 	out := new(AddPermToRoleResponse)
 	err := c.cc.Invoke(ctx, "/services.rector.RectorService/AddPermToRole", in, out, opts...)
@@ -74,15 +94,6 @@ func (c *rectorServiceClient) AddPermToRole(ctx context.Context, in *AddPermToRo
 func (c *rectorServiceClient) RemovePermFromRole(ctx context.Context, in *RemovePermFromRoleRequest, opts ...grpc.CallOption) (*RemovePermFromRoleResponse, error) {
 	out := new(RemovePermFromRoleResponse)
 	err := c.cc.Invoke(ctx, "/services.rector.RectorService/RemovePermFromRole", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rectorServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error) {
-	out := new(DeleteRoleResponse)
-	err := c.cc.Invoke(ctx, "/services.rector.RectorService/DeleteRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -107,11 +118,13 @@ type RectorServiceServer interface {
 	// @permission: name=GetRoles
 	GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error)
 	// @permission
+	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
+	// @permission
+	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
+	// @permission
 	AddPermToRole(context.Context, *AddPermToRoleRequest) (*AddPermToRoleResponse, error)
 	// @permission: name=AddPermToRole
 	RemovePermFromRole(context.Context, *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error)
-	// @permission
-	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
 	// @permission: PerJob=true
 	GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
@@ -127,14 +140,17 @@ func (UnimplementedRectorServiceServer) GetRoles(context.Context, *GetRolesReque
 func (UnimplementedRectorServiceServer) GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRole not implemented")
 }
+func (UnimplementedRectorServiceServer) CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
+}
+func (UnimplementedRectorServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
+}
 func (UnimplementedRectorServiceServer) AddPermToRole(context.Context, *AddPermToRoleRequest) (*AddPermToRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPermToRole not implemented")
 }
 func (UnimplementedRectorServiceServer) RemovePermFromRole(context.Context, *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemovePermFromRole not implemented")
-}
-func (UnimplementedRectorServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
 }
 func (UnimplementedRectorServiceServer) GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPermissions not implemented")
@@ -188,6 +204,42 @@ func _RectorService_GetRole_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RectorService_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).CreateRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.rector.RectorService/CreateRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).CreateRole(ctx, req.(*CreateRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RectorService_DeleteRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).DeleteRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.rector.RectorService/DeleteRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).DeleteRole(ctx, req.(*DeleteRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RectorService_AddPermToRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddPermToRoleRequest)
 	if err := dec(in); err != nil {
@@ -220,24 +272,6 @@ func _RectorService_RemovePermFromRole_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RectorServiceServer).RemovePermFromRole(ctx, req.(*RemovePermFromRoleRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RectorService_DeleteRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteRoleRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RectorServiceServer).DeleteRole(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.rector.RectorService/DeleteRole",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).DeleteRole(ctx, req.(*DeleteRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -276,16 +310,20 @@ var RectorService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RectorService_GetRole_Handler,
 		},
 		{
+			MethodName: "CreateRole",
+			Handler:    _RectorService_CreateRole_Handler,
+		},
+		{
+			MethodName: "DeleteRole",
+			Handler:    _RectorService_DeleteRole_Handler,
+		},
+		{
 			MethodName: "AddPermToRole",
 			Handler:    _RectorService_AddPermToRole_Handler,
 		},
 		{
 			MethodName: "RemovePermFromRole",
 			Handler:    _RectorService_RemovePermFromRole_Handler,
-		},
-		{
-			MethodName: "DeleteRole",
-			Handler:    _RectorService_DeleteRole_Handler,
 		},
 		{
 			MethodName: "GetPermissions",

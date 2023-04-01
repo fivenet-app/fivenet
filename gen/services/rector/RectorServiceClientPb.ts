@@ -125,6 +125,92 @@ export class RectorServiceClient {
     this.methodDescriptorGetRole);
   }
 
+  methodDescriptorCreateRole = new grpcWeb.MethodDescriptor(
+    '/services.rector.RectorService/CreateRole',
+    grpcWeb.MethodType.UNARY,
+    services_rector_rector_pb.CreateRoleRequest,
+    services_rector_rector_pb.CreateRoleResponse,
+    (request: services_rector_rector_pb.CreateRoleRequest) => {
+      return request.serializeBinary();
+    },
+    services_rector_rector_pb.CreateRoleResponse.deserializeBinary
+  );
+
+  createRole(
+    request: services_rector_rector_pb.CreateRoleRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.CreateRoleResponse>;
+
+  createRole(
+    request: services_rector_rector_pb.CreateRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.CreateRoleResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.CreateRoleResponse>;
+
+  createRole(
+    request: services_rector_rector_pb.CreateRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.CreateRoleResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.rector.RectorService/CreateRole',
+        request,
+        metadata || {},
+        this.methodDescriptorCreateRole,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.rector.RectorService/CreateRole',
+    request,
+    metadata || {},
+    this.methodDescriptorCreateRole);
+  }
+
+  methodDescriptorDeleteRole = new grpcWeb.MethodDescriptor(
+    '/services.rector.RectorService/DeleteRole',
+    grpcWeb.MethodType.UNARY,
+    services_rector_rector_pb.DeleteRoleRequest,
+    services_rector_rector_pb.DeleteRoleResponse,
+    (request: services_rector_rector_pb.DeleteRoleRequest) => {
+      return request.serializeBinary();
+    },
+    services_rector_rector_pb.DeleteRoleResponse.deserializeBinary
+  );
+
+  deleteRole(
+    request: services_rector_rector_pb.DeleteRoleRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.DeleteRoleResponse>;
+
+  deleteRole(
+    request: services_rector_rector_pb.DeleteRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.DeleteRoleResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.DeleteRoleResponse>;
+
+  deleteRole(
+    request: services_rector_rector_pb.DeleteRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.DeleteRoleResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.rector.RectorService/DeleteRole',
+        request,
+        metadata || {},
+        this.methodDescriptorDeleteRole,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.rector.RectorService/DeleteRole',
+    request,
+    metadata || {},
+    this.methodDescriptorDeleteRole);
+  }
+
   methodDescriptorAddPermToRole = new grpcWeb.MethodDescriptor(
     '/services.rector.RectorService/AddPermToRole',
     grpcWeb.MethodType.UNARY,
@@ -209,49 +295,6 @@ export class RectorServiceClient {
     request,
     metadata || {},
     this.methodDescriptorRemovePermFromRole);
-  }
-
-  methodDescriptorDeleteRole = new grpcWeb.MethodDescriptor(
-    '/services.rector.RectorService/DeleteRole',
-    grpcWeb.MethodType.UNARY,
-    services_rector_rector_pb.DeleteRoleRequest,
-    services_rector_rector_pb.DeleteRoleResponse,
-    (request: services_rector_rector_pb.DeleteRoleRequest) => {
-      return request.serializeBinary();
-    },
-    services_rector_rector_pb.DeleteRoleResponse.deserializeBinary
-  );
-
-  deleteRole(
-    request: services_rector_rector_pb.DeleteRoleRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.DeleteRoleResponse>;
-
-  deleteRole(
-    request: services_rector_rector_pb.DeleteRoleRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: services_rector_rector_pb.DeleteRoleResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.DeleteRoleResponse>;
-
-  deleteRole(
-    request: services_rector_rector_pb.DeleteRoleRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: services_rector_rector_pb.DeleteRoleResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/services.rector.RectorService/DeleteRole',
-        request,
-        metadata || {},
-        this.methodDescriptorDeleteRole,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/services.rector.RectorService/DeleteRole',
-    request,
-    metadata || {},
-    this.methodDescriptorDeleteRole);
   }
 
   methodDescriptorGetPermissions = new grpcWeb.MethodDescriptor(

@@ -79,6 +79,78 @@ export namespace GetRoleResponse {
   }
 }
 
+export class CreateRoleRequest extends jspb.Message {
+  getJob(): string;
+  setJob(value: string): CreateRoleRequest;
+
+  getGrade(): number;
+  setGrade(value: number): CreateRoleRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CreateRoleRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateRoleRequest): CreateRoleRequest.AsObject;
+  static serializeBinaryToWriter(message: CreateRoleRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateRoleRequest;
+  static deserializeBinaryFromReader(message: CreateRoleRequest, reader: jspb.BinaryReader): CreateRoleRequest;
+}
+
+export namespace CreateRoleRequest {
+  export type AsObject = {
+    job: string,
+    grade: number,
+  }
+}
+
+export class CreateRoleResponse extends jspb.Message {
+  getId(): number;
+  setId(value: number): CreateRoleResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CreateRoleResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateRoleResponse): CreateRoleResponse.AsObject;
+  static serializeBinaryToWriter(message: CreateRoleResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateRoleResponse;
+  static deserializeBinaryFromReader(message: CreateRoleResponse, reader: jspb.BinaryReader): CreateRoleResponse;
+}
+
+export namespace CreateRoleResponse {
+  export type AsObject = {
+    id: number,
+  }
+}
+
+export class DeleteRoleRequest extends jspb.Message {
+  getId(): number;
+  setId(value: number): DeleteRoleRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteRoleRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteRoleRequest): DeleteRoleRequest.AsObject;
+  static serializeBinaryToWriter(message: DeleteRoleRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteRoleRequest;
+  static deserializeBinaryFromReader(message: DeleteRoleRequest, reader: jspb.BinaryReader): DeleteRoleRequest;
+}
+
+export namespace DeleteRoleRequest {
+  export type AsObject = {
+    id: number,
+  }
+}
+
+export class DeleteRoleResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteRoleResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteRoleResponse): DeleteRoleResponse.AsObject;
+  static serializeBinaryToWriter(message: DeleteRoleResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteRoleResponse;
+  static deserializeBinaryFromReader(message: DeleteRoleResponse, reader: jspb.BinaryReader): DeleteRoleResponse;
+}
+
+export namespace DeleteRoleResponse {
+  export type AsObject = {
+  }
+}
+
 export class AddPermToRoleRequest extends jspb.Message {
   getId(): number;
   setId(value: number): AddPermToRoleRequest;
@@ -151,38 +223,6 @@ export class RemovePermFromRoleResponse extends jspb.Message {
 }
 
 export namespace RemovePermFromRoleResponse {
-  export type AsObject = {
-  }
-}
-
-export class DeleteRoleRequest extends jspb.Message {
-  getId(): number;
-  setId(value: number): DeleteRoleRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): DeleteRoleRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: DeleteRoleRequest): DeleteRoleRequest.AsObject;
-  static serializeBinaryToWriter(message: DeleteRoleRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): DeleteRoleRequest;
-  static deserializeBinaryFromReader(message: DeleteRoleRequest, reader: jspb.BinaryReader): DeleteRoleRequest;
-}
-
-export namespace DeleteRoleRequest {
-  export type AsObject = {
-    id: number,
-  }
-}
-
-export class DeleteRoleResponse extends jspb.Message {
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): DeleteRoleResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: DeleteRoleResponse): DeleteRoleResponse.AsObject;
-  static serializeBinaryToWriter(message: DeleteRoleResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): DeleteRoleResponse;
-  static deserializeBinaryFromReader(message: DeleteRoleResponse, reader: jspb.BinaryReader): DeleteRoleResponse;
-}
-
-export namespace DeleteRoleResponse {
   export type AsObject = {
   }
 }

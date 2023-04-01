@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Role } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { RpcError } from 'grpc-web';
-import { DeleteRoleRequest, GetRoleRequest } from '@fivenet/gen/services/rector/rector_pb';
+import { CreateRoleRequest, DeleteRoleRequest, GetRoleRequest } from '@fivenet/gen/services/rector/rector_pb';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
@@ -35,10 +35,26 @@ async function getRole(): Promise<Role> {
 
 const { data: role, pending, refresh, error } = await useLazyAsyncData(`rector-roles-${props.roleId}`, () => getRole());
 
+async function createRole(job: string, grade: number): Promise<void> {
+    return new Promise(async (res, rej) => {
+        const req = new CreateRoleRequest();
+        req.setJob(job);
+        req.setGrade(grade);
+
+        try {
+            return $grpc.getRectorClient().
+                createRole(req, null);
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
 async function deleteRole(id: number): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new DeleteRoleRequest();
-        req.setRoleId(id);
+        req.setId(id);
 
         try {
             return $grpc.getRectorClient().
@@ -53,7 +69,7 @@ async function deleteRole(id: number): Promise<void> {
 async function removePermission(id: number): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new DeleteRoleRequest();
-        req.setRoleId(id);
+        req.setId(id);
 
         try {
             return $grpc.getRectorClient().
@@ -83,6 +99,7 @@ async function removePermission(id: number): Promise<void> {
             </div>
         </div>
         <div class="py-2">
+            <!-- TODO add CreateRole logic-->
             <div class="px-2 sm:px-6 lg:px-8">
                 <div class="flow-root mt-2">
                     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

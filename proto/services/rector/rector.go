@@ -3,6 +3,7 @@ package rector
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 
 	"github.com/galexrt/fivenet/pkg/auth"
@@ -48,6 +49,22 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	role, err := s.p.GetRole(roleId)
+	if err != nil {
+		return nil, false, err
+	}
+
+	// Make sure the user is from the job
+	if !strings.HasPrefix(role.GuardName, "job-"+job+"-") {
+		return nil, false, InvalidRequestErr
+	}
+
+	return role, true, nil
+}
+
+func (s *Server) ensureUserCanAccessRoleByGuardName(ctx context.Context, name string) (*model.FivenetRoles, bool, error) {
+	_, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	role, err := s.p.GetRoleByGuardName(name)
 	if err != nil {
 		return nil, false, err
 	}
@@ -198,8 +215,10 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 	return resp, nil
 }
 
-func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (*AddPermToRoleResponse, error) {
-	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
+func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*CreateRoleResponse, error) {
+	name := fmt.Sprintf("job-%s-%d", req.Job, req.Grade)
+
+	role, check, err := s.ensureUserCanAccessRoleByGuardName(ctx, name)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
@@ -207,37 +226,20 @@ func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (
 		return nil, InvalidRequestErr
 	}
 
-	perms, err := s.filterPermissionIDs(ctx, req.Permissions)
-	if err != nil {
+	if role != nil {
 		return nil, InvalidRequestErr
 	}
 
-	if err := s.p.AddPermissionsToRole(role.ID, perms); err != nil {
+	description := fmt.Sprintf("Role for ambulance %s (Rank: %d)", req.Job, req.Grade)
+
+	roleId, err := s.p.CreateRole(name, description)
+	if err != nil {
 		return nil, err
 	}
 
-	return &AddPermToRoleResponse{}, nil
-}
-
-func (s *Server) RemovePermFromRole(ctx context.Context, req *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error) {
-	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
-	if err != nil {
-		return nil, InvalidRequestErr
-	}
-	if !check {
-		return nil, InvalidRequestErr
-	}
-
-	perms, err := s.filterPermissionIDs(ctx, req.Permissions)
-	if err != nil {
-		return nil, InvalidRequestErr
-	}
-
-	if err := s.p.RemovePermissionsFromRole(role.ID, perms); err != nil {
-		return nil, err
-	}
-
-	return &RemovePermFromRoleResponse{}, nil
+	return &CreateRoleResponse{
+		Id: roleId,
+	}, nil
 }
 
 func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*DeleteRoleResponse, error) {
@@ -254,6 +256,58 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 	}
 
 	return &DeleteRoleResponse{}, nil
+}
+
+func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (*AddPermToRoleResponse, error) {
+	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
+	if err != nil {
+		return nil, InvalidRequestErr
+	}
+	if !check {
+		return nil, InvalidRequestErr
+	}
+
+	perms, err := s.filterPermissionIDs(ctx, req.Permissions)
+	if err != nil {
+		return nil, InvalidRequestErr
+	}
+
+	resp := &AddPermToRoleResponse{}
+	if len(perms) == 0 {
+		return resp, nil
+	}
+
+	if err := s.p.AddPermissionsToRole(role.ID, perms); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (s *Server) RemovePermFromRole(ctx context.Context, req *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error) {
+	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
+	if err != nil {
+		return nil, InvalidRequestErr
+	}
+	if !check {
+		return nil, InvalidRequestErr
+	}
+
+	perms, err := s.filterPermissionIDs(ctx, req.Permissions)
+	if err != nil {
+		return nil, InvalidRequestErr
+	}
+
+	resp := &RemovePermFromRoleResponse{}
+	if len(perms) == 0 {
+		return resp, nil
+	}
+
+	if err := s.p.RemovePermissionsFromRole(role.ID, perms); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest) (*GetPermissionsResponse, error) {

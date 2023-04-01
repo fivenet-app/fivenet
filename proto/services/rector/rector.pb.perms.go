@@ -28,6 +28,10 @@ func init() {
 		},
 		{
 			Key:  RectorServicePermKey,
+			Name: "CreateRole",
+		},
+		{
+			Key:  RectorServicePermKey,
 			Name: "DeleteRole",
 		},
 		{

@@ -1,7 +1,6 @@
 package perms
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -101,8 +100,6 @@ func (p *Perms) getAllPermissionsByPrefixOfUser(userId int32, prefix string) (co
 				),
 			),
 		)
-
-	fmt.Println(stmt.DebugSql())
 
 	var perms collections.Permissions
 	if err := stmt.QueryContext(p.ctx, p.db, &perms); err != nil {
