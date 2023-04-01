@@ -43,7 +43,7 @@ const reqStatus = ref<{
 
 const readyToCreate = ref(false);
 
-watch(reqStatus.value, (v) => {
+watch(reqStatus.value, () => {
     readyToCreate.value = (reqStatus.value.documents && reqStatus.value.users && reqStatus.value.vehicles);
 
     // Auto redirect users when the requirements are matched

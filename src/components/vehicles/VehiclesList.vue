@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { Vehicle } from '@fivenet/gen/resources/vehicles/vehicles_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
@@ -14,7 +14,6 @@ import {
     CheckIcon,
 } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
-import { rejects } from 'assert';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 

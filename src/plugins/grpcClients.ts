@@ -10,6 +10,7 @@ import { LivemapperServiceClient } from '@fivenet/gen/services/livemapper/Livema
 import { UnaryInterceptor } from 'grpc-web';
 import { RpcError, StatusCode } from 'grpc-web';
 import { dispatchNotification } from '../components/notification';
+import { RectorServiceClient } from '@fivenet/gen/services/rector/RectorServiceClientPb';
 
 export default defineNuxtPlugin(() => {
     return {
@@ -155,6 +156,16 @@ export class GRPCClients {
         }
 
         return this.livemapperClient;
+    }
+
+    // Rector
+    private rectorClient: undefined | RectorServiceClient;
+    getRectorClient(): RectorServiceClient {
+        if (!this.rectorClient) {
+            this.rectorClient = new RectorServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
+        }
+
+        return this.rectorClient;
     }
 }
 

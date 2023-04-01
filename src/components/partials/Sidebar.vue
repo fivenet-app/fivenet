@@ -23,7 +23,7 @@ import {
     HomeIcon,
     UserIcon,
     TruckIcon,
-QuestionMarkCircleIcon,
+    QuestionMarkCircleIcon,
 } from '@heroicons/vue/24/outline';
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
 import SidebarJobSwitcher from './SidebarJobSwitcher.vue';
@@ -126,18 +126,22 @@ function updateBread() {
     const currentRoute = router.currentRoute.value;
 
     const pathSplit = currentRoute.path.split('/').filter(e => e !== '');
-    pathSplit.forEach(breadcrumb => {
-        const route = router.getRoutes().find(r => r.name?.toString().toLowerCase() === breadcrumb.toLowerCase());
+    pathSplit.forEach((breadcrumb, idx) => {
+        breadcrumb = "/" + breadcrumb;
+        if (idx > 0) {
+            breadcrumb = "/" + pathSplit.slice(0,idx).join("/") + breadcrumb;
+        }
+        const route = router.getRoutes().find(r => r.path.toLowerCase() === breadcrumb.toLowerCase());
         if (route === undefined) {
             return;
         }
 
-        if (route.name?.toString().toLowerCase() === currentRoute.name.toLowerCase()) {
+        if (route.path.toLowerCase() === currentRoute.path.toLowerCase()) {
             return;
         }
 
         breadcrumbs.value.push({
-            name: toTitleCase(breadcrumb),
+            name: route.meta.title ?? toTitleCase(breadcrumb),
             href: route.path,
             current: false,
         });
@@ -155,6 +159,7 @@ function updateBread() {
             });
         }
     }
+    console.log(breadcrumbs.value.length);
 }
 
 watch(accessToken, () => updateUserNav());
@@ -177,7 +182,8 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                     <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo" :title="'FiveNet' + appVersion" />
                 </div>
                 <div class="flex-grow w-full px-2 mt-6 space-y-1">
-                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')" :key="item.name" :to="item.href" v-can="item.permission"
+                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')" :key="item.name"
+                        :to="item.href" v-can="item.permission"
                         :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="currSidebar === item.name ? 'page' : undefined">
                         <component :is="item.icon"
@@ -187,7 +193,8 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                     </NuxtLink>
                 </div>
                 <div class="flex-initial w-full px-2 space-y-1">
-                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'bottom')" :key="item.name" :to="item.href" v-can="item.permission"
+                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'bottom')" :key="item.name"
+                        :to="item.href" v-can="item.permission"
                         :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="currSidebar === item.name ? 'page' : undefined">
                         <component :is="item.icon"
@@ -264,7 +271,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                     <div class="flex justify-between flex-1 px-4 sm:px-6">
                         <div class="flex flex-1">
                             <nav class="flex" aria-label="Breadcrumb">
-                                <ol v-if="activeChar" role="list" class="flex items-center space-x-4">
+                                <ol role="list" class="flex items-center space-x-4">
                                     <li>
                                         <div>
                                             <NuxtLink :to="{ name: accessToken ? 'overview' : 'index' }"
@@ -313,7 +320,8 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                     leave-to-class="transform scale-95 opacity-0">
                                     <MenuItems
                                         class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
-                                        <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }" v-can="item.permission">
+                                        <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }"
+                                            v-can="item.permission">
                                         <NuxtLink :to="item.href"
                                             :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral hover:transition-colors']">
                                             {{ item.name }}
