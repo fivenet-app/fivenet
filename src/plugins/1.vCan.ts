@@ -4,8 +4,8 @@ import slug from '../utils/slugify';
 // Add `v-can` directive for easy client-side permission checking
 export default defineNuxtPlugin((nuxtApp) => {
     nuxtApp.vueApp.directive('can', (el, binding, vnode) => {
-        // Ignore empty v-can directives
-        if (binding.value === "") {
+        // Ignore undefined/ empty permissions
+        if (!binding.value || binding.value === '') {
             return;
         }
 

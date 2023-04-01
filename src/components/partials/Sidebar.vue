@@ -85,7 +85,9 @@ const sidebarNavigation = [
         position: 'bottom',
     },
 ] as { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, position: 'top' | 'bottom' }[];
-const userNavigation = ref<{ name: string, href: RoutesNamedLocations }[]>([{ name: 'Login', href: { name: 'auth-login' } }]);
+const userNavigation = ref<{ name: string, href: RoutesNamedLocations, permission?: string }[]>([
+    { name: 'Login', href: { name: 'auth-login' } },
+]);
 const currSidebar = ref('')
 const breadcrumbs = ref<{ name: string, href: string, current: boolean }[]>([]);
 const mobileMenuOpen = ref(false);
@@ -100,6 +102,7 @@ function updateUserNav() {
     if (accessToken.value && activeChar.value) {
         userNavigation.value = [
             { name: 'Change Character', href: { name: 'auth-character-selector' } },
+            { name: 'Control Panel', href: { name: 'rector' }, permission: 'RectorService.GetRoles' },
             { name: 'Sign out', href: { name: 'auth-logout' } }
         ];
     }
@@ -310,7 +313,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                     leave-to-class="transform scale-95 opacity-0">
                                     <MenuItems
                                         class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
-                                        <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
+                                        <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }" v-can="item.permission">
                                         <NuxtLink :to="item.href"
                                             :class="[active ? 'bg-base-800' : '', 'block px-4 py-2 text-sm text-neutral hover:transition-colors']">
                                             {{ item.name }}

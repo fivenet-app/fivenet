@@ -6,7 +6,7 @@ import { ref, watch } from 'vue';
 import ClipboardModalDocuments from '../clipboard/ClipboardModalDocuments.vue';
 import ClipboardModalUsers from '../clipboard/ClipboardModalUsers.vue';
 import ClipboardModalVehicles from '../clipboard/ClipboardModalVehicles.vue';
-import TemplateRequirementsList from './TemplateRequirements.vue';
+import TemplateRequirementsList from './TemplateRequirementsList.vue';
 import TemplatesList from './TemplatesList.vue';
 
 const router = useRouter();
@@ -162,8 +162,9 @@ function clipboardDialog() {
                                             <div v-if="reqs.getUsers()">
                                                 <p>
                                                     <TemplateRequirementsList name="User"
-                                                        :required="reqs.getUsers()?.getRequired()"
-                                                        :min="reqs.getUsers()?.getMin()" :max="reqs.getUsers()?.getMax()" />
+                                                        :required="reqs.getUsers()?.getRequired()!"
+                                                        :min="reqs.getUsers()?.getMin()!"
+                                                        :max="reqs.getUsers()?.getMax()!" />
                                                 </p>
 
                                                 <ClipboardModalUsers :submit.sync="submit" :showSelect="true"
@@ -173,9 +174,9 @@ function clipboardDialog() {
                                             <div v-if="reqs.getVehicles()">
                                                 <p>
                                                     <TemplateRequirementsList name="Vehicle"
-                                                        :required="reqs.getVehicles()?.getRequired()"
-                                                        :min="reqs.getVehicles()?.getMin()"
-                                                        :max="reqs.getVehicles()?.getMax()" />
+                                                        :required="reqs.getVehicles()?.getRequired()!"
+                                                        :min="reqs.getVehicles()?.getMin()!"
+                                                        :max="reqs.getVehicles()?.getMax()!" />
                                                 </p>
 
                                                 <ClipboardModalVehicles :submit.sync="submit" :showSelect="true"
@@ -185,9 +186,9 @@ function clipboardDialog() {
                                             <div v-if="reqs.getDocuments()">
                                                 <p>
                                                     <TemplateRequirementsList name="User"
-                                                        :required="reqs.getDocuments()?.getRequired()"
-                                                        :min="reqs.getDocuments()?.getMin()"
-                                                        :max="reqs.getDocuments()?.getMax()" />
+                                                        :required="reqs.getDocuments()?.getRequired()!"
+                                                        :min="reqs.getDocuments()?.getMin()!"
+                                                        :max="reqs.getDocuments()?.getMax()!" />
                                                 </p>
 
                                                 <ClipboardModalDocuments :submit.sync="submit" :showSelect="true"
