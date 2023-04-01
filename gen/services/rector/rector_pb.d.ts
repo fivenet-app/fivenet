@@ -80,9 +80,6 @@ export namespace GetRoleResponse {
 }
 
 export class CreateRoleRequest extends jspb.Message {
-  getJob(): string;
-  setJob(value: string): CreateRoleRequest;
-
   getGrade(): number;
   setGrade(value: number): CreateRoleRequest;
 
@@ -96,7 +93,6 @@ export class CreateRoleRequest extends jspb.Message {
 
 export namespace CreateRoleRequest {
   export type AsObject = {
-    job: string,
     grade: number,
   }
 }

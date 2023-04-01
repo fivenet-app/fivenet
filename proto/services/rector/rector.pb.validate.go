@@ -533,8 +533,6 @@ func (m *CreateRoleRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Job
-
 	// no validation rules for Grade
 
 	if len(errors) > 0 {

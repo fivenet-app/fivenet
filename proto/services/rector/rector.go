@@ -216,7 +216,8 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 }
 
 func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*CreateRoleResponse, error) {
-	name := fmt.Sprintf("job-%s-%d", req.Job, req.Grade)
+	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	name := fmt.Sprintf("job-%s-%d", job, req.Grade)
 
 	role, check, err := s.ensureUserCanAccessRoleByGuardName(ctx, name)
 	if err != nil {
@@ -230,7 +231,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		return nil, InvalidRequestErr
 	}
 
-	description := fmt.Sprintf("Role for ambulance %s (Rank: %d)", req.Job, req.Grade)
+	description := fmt.Sprintf("Role for ambulance %s (Rank: %d)", job, req.Grade)
 
 	roleId, err := s.p.CreateRole(name, description)
 	if err != nil {

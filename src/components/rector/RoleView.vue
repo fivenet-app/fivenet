@@ -38,7 +38,6 @@ const { data: role, pending, refresh, error } = await useLazyAsyncData(`rector-r
 async function createRole(job: string, grade: number): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new CreateRoleRequest();
-        req.setJob(job);
         req.setGrade(grade);
 
         try {
@@ -99,7 +98,7 @@ async function removePermission(id: number): Promise<void> {
             </div>
         </div>
         <div class="py-2">
-            <!-- TODO add CreateRole logic-->
+            <!-- TODO add CreateRole logic -->
             <div class="px-2 sm:px-6 lg:px-8">
                 <div class="flow-root mt-2">
                     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

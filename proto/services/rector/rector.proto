@@ -23,8 +23,7 @@ message GetRoleResponse {
 }
 
 message CreateRoleRequest {
-  string job = 1;
-  int32 grade = 2;
+  int32 grade = 1;
 }
 
 message CreateRoleResponse {
