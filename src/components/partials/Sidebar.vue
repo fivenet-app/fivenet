@@ -228,7 +228,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                             </div>
                             <div class="flex-1 h-0 px-2 mt-5 overflow-y-auto">
                                 <nav class="flex flex-col h-full">
-                                    <div class="space-y-1" v-if="activeChar">
+                                    <div class="space-y-1">
                                         <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href"
                                             v-can="item.permission"
                                             :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
