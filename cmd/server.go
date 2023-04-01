@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
@@ -20,6 +19,7 @@ import (
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-contrib/static"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/gin"
@@ -153,29 +153,8 @@ func setupHTTPServer() *gin.Engine {
 	// Register app routes
 	rs := routes.New(logger)
 	rs.Register(e)
-	// Register dist dir for assets and other static files
-	e.Static("/dist", "dist")
-
-	// Index.html helper for /
-	index := func(c *gin.Context) {
-		c.Status(http.StatusOK)
-		c.Header("Content-Type", "text/html")
-		c.File("dist/index.html")
-	}
-	e.GET("/", index)
-
-	e.NoRoute(func(c *gin.Context) {
-		if !strings.HasPrefix(c.Request.URL.Path, "/dist") {
-			index(c)
-			return
-		}
-	})
-
-	e.GET("favicon.ico", func(c *gin.Context) {
-		c.Status(http.StatusOK)
-		c.Header("Content-Type", "image/x-icon")
-		c.File("dist/favicon.ico")
-	})
+	// Register output dir for assets and other static files
+	e.Use(static.Serve("/", static.LocalFile(".output/public/", false)))
 
 	return e
 }

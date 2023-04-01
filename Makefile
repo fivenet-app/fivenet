@@ -6,7 +6,7 @@ VALIDATE_VERSION ?= v0.10.1
 
 .PHONY: clean
 clean:
-	rm -rf ./dist/ ./src/public/tiles/*/
+	rm -rf ./.nuxt/dist/ ./src/public/tiles/*/
 	rm -rf gdal2tiles-leaflet
 
 .PHONY: watch
@@ -27,13 +27,12 @@ build-go:
 
 .PHONY: build-yarn
 build-yarn:
-	rm -rf ./dist/
-	NUXT_APP_BASE_URL="/dist/" \
-		yarn build
+	rm -rf ./.nuxt/dist/
+	yarn build
 
 .PHONY: run-server
 run-server:
-	mkdir -p ./dist/
+	mkdir -p ./.nuxt/dist/
 	go run . server
 
 .PHONY: gen

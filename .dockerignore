@@ -39,3 +39,10 @@ localhost.*
 # Repo checkouts
 /gdal2tiles-leaflet/
 /validate/
+
+# Nuxt
+.nuxt
+.nitro
+.cache
+.output
+.env
