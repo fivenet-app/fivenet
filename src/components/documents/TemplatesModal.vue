@@ -6,6 +6,7 @@ import { ref, watch } from 'vue';
 import ClipboardModalDocuments from '../clipboard/ClipboardModalDocuments.vue';
 import ClipboardModalUsers from '../clipboard/ClipboardModalUsers.vue';
 import ClipboardModalVehicles from '../clipboard/ClipboardModalVehicles.vue';
+import TemplateRequirementsList from './TemplateRequirements.vue';
 import TemplatesList from './TemplatesList.vue';
 
 const router = useRouter();
@@ -160,21 +161,10 @@ function clipboardDialog() {
                                         <div class="mt-2 text-white">
                                             <div v-if="reqs.getUsers()">
                                                 <p>
-                                                    <span>
-                                                        <span v-if="reqs.getUsers()?.getRequired()">
-                                                            Requires
-                                                        </span>
-                                                        <span v-if="reqs.getUsers()?.getMax() == reqs.getUsers()?.getMin()">
-                                                            1 User
-                                                        </span>
-                                                        <span v-else>
-                                                            {{ (reqs.getUsers()?.getMin() === 0 &&
-                                                                reqs.getUsers()?.getRequired()) ? reqs.getUsers()?.getMax() :
-                                                                reqs.getUsers()?.getMin() }} User(s)
-                                                            <span v-if="reqs.getUsers()?.getMax()! > 0">&nbsp;(Max: {{
-                                                                reqs.getUsers()?.getMax() }})</span>
-                                                        </span>
-                                                    </span>
+                                                    <TemplateRequirementsList name="Vehicle"
+                                                        :required="reqs.getUsers()?.getRequired()"
+                                                        :min="reqs.getUsers()?.getMin()"
+                                                        :max="reqs.getUsers()?.getMax()" />
                                                 </p>
 
                                                 <ClipboardModalUsers :submit.sync="submit" :showSelect="true"
@@ -183,23 +173,10 @@ function clipboardDialog() {
                                             </div>
                                             <div v-if="reqs.getVehicles()">
                                                 <p>
-                                                    <span>
-                                                        <span v-if="reqs.getVehicles()?.getRequired()">
-                                                            Requires
-                                                        </span>
-                                                        <span
-                                                            v-if="reqs.getVehicles()?.getMax() == reqs.getVehicles()?.getMin()">
-                                                            1 Vehicle
-                                                        </span>
-                                                        <span v-else>
-                                                            {{ (reqs.getVehicles()?.getMin() === 0 &&
-                                                                reqs.getVehicles()?.getRequired()) ?
-                                                                reqs.getVehicles()?.getMax() : reqs.getVehicles()?.getMin() }}
-                                                            Vehicle(s)
-                                                            <span v-if="reqs.getVehicles()?.getMax()! > 0">&nbsp;(Max: {{
-                                                                reqs.getVehicles()?.getMax() }})</span>
-                                                        </span>
-                                                    </span>
+                                                    <TemplateRequirementsList name="Vehicle"
+                                                        :required="reqs.getVehicles()?.getRequired()"
+                                                        :min="reqs.getVehicles()?.getMin()"
+                                                        :max="reqs.getVehicles()?.getMax()" />
                                                 </p>
 
                                                 <ClipboardModalVehicles :submit.sync="submit" :showSelect="true"
@@ -208,23 +185,10 @@ function clipboardDialog() {
                                             </div>
                                             <div v-if="reqs.getDocuments()">
                                                 <p>
-                                                    <span>
-                                                        <span v-if="reqs.getDocuments()?.getRequired()">
-                                                            Requires
-                                                        </span>
-                                                        <span
-                                                            v-if="reqs.getDocuments()?.getMax() == reqs.getDocuments()?.getMin()">
-                                                            1 User
-                                                        </span>
-                                                        <span v-else>
-                                                            {{ (reqs.getDocuments()?.getMin() === 0 &&
-                                                                reqs.getDocuments()?.getRequired()) ?
-                                                                reqs.getDocuments()?.getMax() : reqs.getDocuments()?.getMin() }}
-                                                            User(s)
-                                                            <span v-if="reqs.getDocuments()?.getMax()! > 0">&nbsp;(Max: {{
-                                                                reqs.getDocuments()?.getMax() }})</span>
-                                                        </span>
-                                                    </span>
+                                                    <TemplateRequirementsList name="User"
+                                                        :required="reqs.getDocuments()?.getRequired()"
+                                                        :min="reqs.getDocuments()?.getMin()"
+                                                        :max="reqs.getDocuments()?.getMax()" />
                                                 </p>
 
                                                 <ClipboardModalDocuments :submit.sync="submit" :showSelect="true"
