@@ -161,10 +161,9 @@ function clipboardDialog() {
                                         <div class="mt-2 text-white">
                                             <div v-if="reqs.getUsers()">
                                                 <p>
-                                                    <TemplateRequirementsList name="Vehicle"
+                                                    <TemplateRequirementsList name="User"
                                                         :required="reqs.getUsers()?.getRequired()"
-                                                        :min="reqs.getUsers()?.getMin()"
-                                                        :max="reqs.getUsers()?.getMax()" />
+                                                        :min="reqs.getUsers()?.getMin()" :max="reqs.getUsers()?.getMax()" />
                                                 </p>
 
                                                 <ClipboardModalUsers :submit.sync="submit" :showSelect="true"

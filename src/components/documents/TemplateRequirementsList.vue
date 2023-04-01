@@ -35,7 +35,8 @@ defineProps({
             required) ?
             max : min }}
         {{ plural ?? name + "(s)" }}
-        <span v-if="max! > 0">&nbsp;(Max: {{
-            max }})</span>
+        <span v-if="max! > 0">
+        &nbsp;(Max: {{ max }})
+        </span>
     </span>
 </template>
