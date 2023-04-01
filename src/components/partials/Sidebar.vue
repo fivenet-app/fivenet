@@ -159,7 +159,6 @@ function updateBread() {
             });
         }
     }
-    console.log(breadcrumbs.value.length);
 }
 
 watch(accessToken, () => updateUserNav());

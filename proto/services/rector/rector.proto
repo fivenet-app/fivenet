@@ -3,37 +3,63 @@ syntax = "proto3";
 package services.rector;
 option go_package = "github.com/galexrt/fivenet/proto/services/rector;rector";
 
-import "resources/common/database/database.proto";
 import "resources/permissions/permissions.proto";
 import "validate/validate.proto";
 
 message GetRolesRequest {
   int32 rank = 1 [(validate.rules).int32.gt = 0];
-  bool with_perms = 2;
 }
 
 message GetRolesResponse {
   repeated resources.permissions.Role roles = 1;
 }
 
-message UpdateRoleRequest {
-  uint64 role_id = 1;
-  repeated resources.permissions.Permission perms = 2;
+message GetRoleRequest {
+  uint64 id = 1;
 }
 
-message UpdateRoleResponse {}
+message GetRoleResponse {
+  resources.permissions.Role role = 1;
+}
+
+message AddPermToRoleRequest {
+  uint64 id = 1;
+  repeated uint64 permissions = 2 [(validate.rules).repeated.min_items = 1];
+}
+
+message AddPermToRoleResponse {}
+
+message RemovePermFromRoleRequest {
+  uint64 id = 1;
+  repeated uint64 permissions = 2 [(validate.rules).repeated.min_items = 1];
+}
+
+message RemovePermFromRoleResponse {}
 
 message DeleteRoleRequest {
-  uint64 role_id = 1;
+  uint64 id = 1;
 }
 
 message DeleteRoleResponse {}
 
+message GetPermissionsRequest {}
+
+message GetPermissionsResponse {
+  repeated resources.permissions.Permission permissions = 1;
+}
+
 service RectorService {
   // @permission
   rpc GetRoles(GetRolesRequest) returns (GetRolesResponse);
+  // @permission: name=GetRoles
+  rpc GetRole(GetRoleRequest) returns (GetRoleResponse);
   // @permission
-  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
+  rpc AddPermToRole(AddPermToRoleRequest) returns (AddPermToRoleResponse);
+  // @permission: name=AddPermToRole
+  rpc RemovePermFromRole(RemovePermFromRoleRequest) returns (RemovePermFromRoleResponse);
   // @permission
   rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
+
+  // @permission
+  rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
 }

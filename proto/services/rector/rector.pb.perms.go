@@ -5,6 +5,16 @@ package rector
 
 import "github.com/galexrt/fivenet/pkg/perms"
 
+var PermsRemap = map[string]string{
+	// Service: RectorService
+	"RectorService/GetRole":            "RectorService/GetRoles",
+	"RectorService/RemovePermFromRole": "RectorService/AddPermToRole",
+}
+
+func (s *Server) GetPermsRemap() map[string]string {
+	return PermsRemap
+}
+
 const (
 	RectorServicePermKey = "RectorService"
 )
@@ -14,15 +24,19 @@ func init() {
 		// Service: RectorService
 		{
 			Key:  RectorServicePermKey,
+			Name: "AddPermToRole",
+		},
+		{
+			Key:  RectorServicePermKey,
 			Name: "DeleteRole",
 		},
 		{
 			Key:  RectorServicePermKey,
-			Name: "GetRoles",
+			Name: "GetPermissions",
 		},
 		{
 			Key:  RectorServicePermKey,
-			Name: "UpdateRole",
+			Name: "GetRoles",
 		},
 	})
 }

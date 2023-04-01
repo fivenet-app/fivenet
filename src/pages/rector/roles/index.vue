@@ -12,5 +12,7 @@ definePageMeta({
 </script>
 
 <template>
-    <RolesList />
+    <div class="w-full">
+        <RolesList />
+    </div>
 </template>

@@ -6,6 +6,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/dbutils"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-sql-driver/mysql"
 )
@@ -23,6 +24,48 @@ func (p *Perms) GetRoles(prefix string) (collections.Roles, error) {
 		)
 
 	var dest collections.Roles
+	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+		return nil, err
+	}
+
+	return dest, nil
+}
+
+func (p *Perms) GetRole(id uint64) (*model.FivenetRoles, error) {
+	stmt := ar.
+		SELECT(
+			ar.AllColumns,
+		).
+		FROM(ar).
+		WHERE(
+			ar.ID.EQ(jet.Uint64(id)),
+		)
+
+	var dest model.FivenetRoles
+	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
+}
+
+func (p *Perms) GetRolePermissions(id uint64) (collections.Permissions, error) {
+	stmt := ap.
+		SELECT(
+			ap.AllColumns,
+		).
+		FROM(
+			ap.
+				INNER_JOIN(arp,
+					arp.RoleID.EQ(jet.Uint64(id)),
+				),
+		).
+		ORDER_BY(
+			ap.Name.ASC(),
+			ap.ID.ASC(),
+		)
+
+	var dest collections.Permissions
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		return nil, err
 	}

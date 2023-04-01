@@ -166,6 +166,20 @@ func (p *PermsMock) GetRoles(prefix string) (collections.Roles, error) {
 	return r, nil
 }
 
+func (p *PermsMock) GetRole(id uint64) (*model.FivenetRoles, error) {
+
+	// TODO
+
+	return nil, nil
+}
+
+func (p *PermsMock) GetRolePermissions(id uint64) (collections.Permissions, error) {
+
+	// TODO
+
+	return nil, nil
+}
+
 func (p *PermsMock) GetUserRoles(userId int32) (collections.Roles, error) {
 	r := collections.Roles{}
 

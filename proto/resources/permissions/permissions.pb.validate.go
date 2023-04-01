@@ -59,64 +59,6 @@ func (m *Permission) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if all {
-		switch v := interface{}(m.GetCreatedAt()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, PermissionValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, PermissionValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return PermissionValidationError{
-				field:  "CreatedAt",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetUpdatedAt()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, PermissionValidationError{
-					field:  "UpdatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, PermissionValidationError{
-					field:  "UpdatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return PermissionValidationError{
-				field:  "UpdatedAt",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if utf8.RuneCountInString(m.GetName()) > 255 {
 		err := PermissionValidationError{
 			field:  "Name",
@@ -139,15 +81,85 @@ func (m *Permission) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetDescription()) > 255 {
-		err := PermissionValidationError{
-			field:  "Description",
-			reason: "value length must be at most 255 runes",
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PermissionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PermissionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PermissionValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
 		}
-		if !all {
-			return err
+
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PermissionValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PermissionValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PermissionValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
 		}
-		errors = append(errors, err)
+
+	}
+
+	if m.Description != nil {
+
+		if utf8.RuneCountInString(m.GetDescription()) > 255 {
+			err := PermissionValidationError{
+				field:  "Description",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -250,64 +262,6 @@ func (m *Role) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if all {
-		switch v := interface{}(m.GetCreatedAt()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, RoleValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, RoleValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return RoleValidationError{
-				field:  "CreatedAt",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetUpdatedAt()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, RoleValidationError{
-					field:  "UpdatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, RoleValidationError{
-					field:  "UpdatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return RoleValidationError{
-				field:  "UpdatedAt",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if utf8.RuneCountInString(m.GetName()) > 255 {
 		err := RoleValidationError{
 			field:  "Name",
@@ -322,17 +276,6 @@ func (m *Role) validate(all bool) error {
 	if utf8.RuneCountInString(m.GetGuardName()) > 255 {
 		err := RoleValidationError{
 			field:  "GuardName",
-			reason: "value length must be at most 255 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetDescription()) > 255 {
-		err := RoleValidationError{
-			field:  "Description",
 			reason: "value length must be at most 255 runes",
 		}
 		if !all {
@@ -371,6 +314,87 @@ func (m *Role) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RoleValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RoleValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RoleValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RoleValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RoleValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RoleValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Description != nil {
+
+		if utf8.RuneCountInString(m.GetDescription()) > 255 {
+			err := RoleValidationError{
+				field:  "Description",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}

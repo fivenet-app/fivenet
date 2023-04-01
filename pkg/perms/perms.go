@@ -8,6 +8,7 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 )
 
@@ -28,6 +29,8 @@ type Permissions interface {
 	GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix string) ([]string, error)
 
 	GetRoles(prefix string) (collections.Roles, error)
+	GetRole(id uint64) (*model.FivenetRoles, error)
+	GetRolePermissions(id uint64) (collections.Permissions, error)
 
 	GetUserRoles(userId int32) (collections.Roles, error)
 	AddUserRoles(userId int32, roles ...string) error

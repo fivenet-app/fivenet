@@ -82,47 +82,133 @@ export class RectorServiceClient {
     this.methodDescriptorGetRoles);
   }
 
-  methodDescriptorUpdateRole = new grpcWeb.MethodDescriptor(
-    '/services.rector.RectorService/UpdateRole',
+  methodDescriptorGetRole = new grpcWeb.MethodDescriptor(
+    '/services.rector.RectorService/GetRole',
     grpcWeb.MethodType.UNARY,
-    services_rector_rector_pb.UpdateRoleRequest,
-    services_rector_rector_pb.UpdateRoleResponse,
-    (request: services_rector_rector_pb.UpdateRoleRequest) => {
+    services_rector_rector_pb.GetRoleRequest,
+    services_rector_rector_pb.GetRoleResponse,
+    (request: services_rector_rector_pb.GetRoleRequest) => {
       return request.serializeBinary();
     },
-    services_rector_rector_pb.UpdateRoleResponse.deserializeBinary
+    services_rector_rector_pb.GetRoleResponse.deserializeBinary
   );
 
-  updateRole(
-    request: services_rector_rector_pb.UpdateRoleRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.UpdateRoleResponse>;
+  getRole(
+    request: services_rector_rector_pb.GetRoleRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.GetRoleResponse>;
 
-  updateRole(
-    request: services_rector_rector_pb.UpdateRoleRequest,
+  getRole(
+    request: services_rector_rector_pb.GetRoleRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: services_rector_rector_pb.UpdateRoleResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.UpdateRoleResponse>;
+               response: services_rector_rector_pb.GetRoleResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.GetRoleResponse>;
 
-  updateRole(
-    request: services_rector_rector_pb.UpdateRoleRequest,
+  getRole(
+    request: services_rector_rector_pb.GetRoleRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: services_rector_rector_pb.UpdateRoleResponse) => void) {
+               response: services_rector_rector_pb.GetRoleResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/services.rector.RectorService/UpdateRole',
+          '/services.rector.RectorService/GetRole',
         request,
         metadata || {},
-        this.methodDescriptorUpdateRole,
+        this.methodDescriptorGetRole,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/services.rector.RectorService/UpdateRole',
+      '/services.rector.RectorService/GetRole',
     request,
     metadata || {},
-    this.methodDescriptorUpdateRole);
+    this.methodDescriptorGetRole);
+  }
+
+  methodDescriptorAddPermToRole = new grpcWeb.MethodDescriptor(
+    '/services.rector.RectorService/AddPermToRole',
+    grpcWeb.MethodType.UNARY,
+    services_rector_rector_pb.AddPermToRoleRequest,
+    services_rector_rector_pb.AddPermToRoleResponse,
+    (request: services_rector_rector_pb.AddPermToRoleRequest) => {
+      return request.serializeBinary();
+    },
+    services_rector_rector_pb.AddPermToRoleResponse.deserializeBinary
+  );
+
+  addPermToRole(
+    request: services_rector_rector_pb.AddPermToRoleRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.AddPermToRoleResponse>;
+
+  addPermToRole(
+    request: services_rector_rector_pb.AddPermToRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.AddPermToRoleResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.AddPermToRoleResponse>;
+
+  addPermToRole(
+    request: services_rector_rector_pb.AddPermToRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.AddPermToRoleResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.rector.RectorService/AddPermToRole',
+        request,
+        metadata || {},
+        this.methodDescriptorAddPermToRole,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.rector.RectorService/AddPermToRole',
+    request,
+    metadata || {},
+    this.methodDescriptorAddPermToRole);
+  }
+
+  methodDescriptorRemovePermFromRole = new grpcWeb.MethodDescriptor(
+    '/services.rector.RectorService/RemovePermFromRole',
+    grpcWeb.MethodType.UNARY,
+    services_rector_rector_pb.RemovePermFromRoleRequest,
+    services_rector_rector_pb.RemovePermFromRoleResponse,
+    (request: services_rector_rector_pb.RemovePermFromRoleRequest) => {
+      return request.serializeBinary();
+    },
+    services_rector_rector_pb.RemovePermFromRoleResponse.deserializeBinary
+  );
+
+  removePermFromRole(
+    request: services_rector_rector_pb.RemovePermFromRoleRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.RemovePermFromRoleResponse>;
+
+  removePermFromRole(
+    request: services_rector_rector_pb.RemovePermFromRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.RemovePermFromRoleResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.RemovePermFromRoleResponse>;
+
+  removePermFromRole(
+    request: services_rector_rector_pb.RemovePermFromRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.RemovePermFromRoleResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.rector.RectorService/RemovePermFromRole',
+        request,
+        metadata || {},
+        this.methodDescriptorRemovePermFromRole,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.rector.RectorService/RemovePermFromRole',
+    request,
+    metadata || {},
+    this.methodDescriptorRemovePermFromRole);
   }
 
   methodDescriptorDeleteRole = new grpcWeb.MethodDescriptor(
@@ -166,6 +252,49 @@ export class RectorServiceClient {
     request,
     metadata || {},
     this.methodDescriptorDeleteRole);
+  }
+
+  methodDescriptorGetPermissions = new grpcWeb.MethodDescriptor(
+    '/services.rector.RectorService/GetPermissions',
+    grpcWeb.MethodType.UNARY,
+    services_rector_rector_pb.GetPermissionsRequest,
+    services_rector_rector_pb.GetPermissionsResponse,
+    (request: services_rector_rector_pb.GetPermissionsRequest) => {
+      return request.serializeBinary();
+    },
+    services_rector_rector_pb.GetPermissionsResponse.deserializeBinary
+  );
+
+  getPermissions(
+    request: services_rector_rector_pb.GetPermissionsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.GetPermissionsResponse>;
+
+  getPermissions(
+    request: services_rector_rector_pb.GetPermissionsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.GetPermissionsResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.GetPermissionsResponse>;
+
+  getPermissions(
+    request: services_rector_rector_pb.GetPermissionsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.GetPermissionsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.rector.RectorService/GetPermissions',
+        request,
+        metadata || {},
+        this.methodDescriptorGetPermissions,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.rector.RectorService/GetPermissions',
+    request,
+    metadata || {},
+    this.methodDescriptorGetPermissions);
   }
 
 }

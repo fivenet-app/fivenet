@@ -233,8 +233,8 @@ proto.resources.permissions.Permission.serializeBinaryToWriter = function(messag
       f
     );
   }
-  f = message.getDescription();
-  if (f.length > 0) {
+  f = /** @type {string} */ (jspb.Message.getField(message, 6));
+  if (f != null) {
     writer.writeString(
       6,
       f
@@ -385,7 +385,25 @@ proto.resources.permissions.Permission.prototype.getDescription = function() {
  * @return {!proto.resources.permissions.Permission} returns this
  */
 proto.resources.permissions.Permission.prototype.setDescription = function(value) {
-  return jspb.Message.setProto3StringField(this, 6, value);
+  return jspb.Message.setField(this, 6, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.permissions.Permission} returns this
+ */
+proto.resources.permissions.Permission.prototype.clearDescription = function() {
+  return jspb.Message.setField(this, 6, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.permissions.Permission.prototype.hasDescription = function() {
+  return jspb.Message.getField(this, 6) != null;
 };
 
 
@@ -569,8 +587,8 @@ proto.resources.permissions.Role.serializeBinaryToWriter = function(message, wri
       f
     );
   }
-  f = message.getDescription();
-  if (f.length > 0) {
+  f = /** @type {string} */ (jspb.Message.getField(message, 6));
+  if (f != null) {
     writer.writeString(
       6,
       f
@@ -729,7 +747,25 @@ proto.resources.permissions.Role.prototype.getDescription = function() {
  * @return {!proto.resources.permissions.Role} returns this
  */
 proto.resources.permissions.Role.prototype.setDescription = function(value) {
-  return jspb.Message.setProto3StringField(this, 6, value);
+  return jspb.Message.setField(this, 6, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.permissions.Role} returns this
+ */
+proto.resources.permissions.Role.prototype.clearDescription = function() {
+  return jspb.Message.setField(this, 6, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.permissions.Role.prototype.hasDescription = function() {
+  return jspb.Message.getField(this, 6) != null;
 };
 
 

@@ -14,7 +14,6 @@ const { data: roles, pending, refresh, error } = await useLazyAsyncData('rector-
 async function getRoles(): Promise<Array<Role>> {
     return new Promise(async (res, rej) => {
         const req = new GetRolesRequest();
-        req.setWithPerms(false);
         req.setRank(1);
 
         try {

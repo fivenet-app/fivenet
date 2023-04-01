@@ -25,6 +25,8 @@ export class Permission extends jspb.Message {
 
   getDescription(): string;
   setDescription(value: string): Permission;
+  hasDescription(): boolean;
+  clearDescription(): Permission;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Permission.AsObject;
@@ -41,7 +43,22 @@ export namespace Permission {
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     name: string,
     guardName: string,
-    description: string,
+    description?: string,
+  }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum UpdatedAtCase { 
+    _UPDATED_AT_NOT_SET = 0,
+    UPDATED_AT = 3,
+  }
+
+  export enum DescriptionCase { 
+    _DESCRIPTION_NOT_SET = 0,
+    DESCRIPTION = 6,
   }
 }
 
@@ -67,6 +84,8 @@ export class Role extends jspb.Message {
 
   getDescription(): string;
   setDescription(value: string): Role;
+  hasDescription(): boolean;
+  clearDescription(): Role;
 
   getPermissionsList(): Array<Permission>;
   setPermissionsList(value: Array<Permission>): Role;
@@ -88,8 +107,23 @@ export namespace Role {
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     name: string,
     guardName: string,
-    description: string,
+    description?: string,
     permissionsList: Array<Permission.AsObject>,
+  }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum UpdatedAtCase { 
+    _UPDATED_AT_NOT_SET = 0,
+    UPDATED_AT = 3,
+  }
+
+  export enum DescriptionCase { 
+    _DESCRIPTION_NOT_SET = 0,
+    DESCRIPTION = 6,
   }
 }
 
