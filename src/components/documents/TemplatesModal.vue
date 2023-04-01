@@ -107,7 +107,7 @@ function clipboardDialog() {
         <Dialog as="div" class="relative z-10" @close="closeDialog">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
                 leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
             </TransitionChild>
 
             <div class="fixed inset-0 z-10 overflow-y-auto">
@@ -119,20 +119,20 @@ function clipboardDialog() {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                         <div>
                             <DialogPanel
-                                class="relative transform overflow-hidden rounded-lg bg-gray-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-5xl sm:p-6">
+                                class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-6xl sm:p-6">
                                 <div v-if="steps.selectTemplate">
                                     <div>
                                         <div
-                                            class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-                                            <PencilIcon class="h-6 w-6 text-indigo-600" aria-hidden="true" />
+                                            class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800">
+                                            <PencilIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                                         </div>
                                         <div class="mt-3 text-center sm:mt-5">
-                                            <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">
+                                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
                                                 Document Templates
                                             </DialogTitle>
-                                            <div class="mt-2 text-white">
+                                            <div class="mt-2">
                                                 <NuxtLink :to="{ name: 'documents-create' }" type="button"
-                                                    class="mb-5 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0">
+                                                    class="w-full mb-5 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
                                                     No Template
                                                 </NuxtLink>
                                                 <TemplatesList
@@ -140,9 +140,9 @@ function clipboardDialog() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:gap-3">
+                                    <div class="gap-2 mt-5 sm:mt-4 sm:flex">
                                         <button type="button"
-                                            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                                            class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                             @click="closeDialog" ref="cancelButtonRef">
                                             Close
                                         </button>
