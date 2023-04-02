@@ -12,10 +12,10 @@ import (
 )
 
 type FivenetUserLocations struct {
-	UserID    int32      `sql:"primary_key" json:"user_id"`
-	Job       *string    `json:"job"`
-	X         *float64   `json:"x"`
-	Y         *float64   `json:"y"`
-	Hidden    *bool      `json:"hidden"`
-	UpdatedAt *time.Time `json:"updated_at"`
+	Identifier string     `sql:"primary_key" json:"identifier"`
+	Job        *string    `json:"job"`
+	X          *float64   `json:"x"`
+	Y          *float64   `json:"y"`
+	Hidden     *bool      `json:"hidden"`
+	UpdatedAt  *time.Time `json:"updated_at"`
 }

@@ -190,15 +190,15 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_activity` (
 
 -- Table: fivenet_user_locations
 CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
-  `user_id` int(11) NOT NULL,
+  `identifier` varchar(64) NOT NULL,
   `job` varchar(20) DEFAULT NULL,
   `x` decimal(24,14) DEFAULT NULL,
   `y` decimal(24,14) DEFAULT NULL,
   `hidden` tinyint(1) DEFAULT NULL,
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_id`),
+  PRIMARY KEY (`identifier`),
   KEY `idx_fivenet_user_locations_job` (`job`),
-  CONSTRAINT `fk_fivenet_user_locations_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_user_locations_identifier` FOREIGN KEY (`identifier`) REFERENCES `users` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: fivenet_user_props

@@ -83,7 +83,7 @@ onMounted(async () => {
                     <div class="sm:flex-auto">
                         <form @submit.prevent="createRole()">
                             <div class="flex flex-row gap-4 mx-auto">
-                                <div class="flex-initial form-control">
+                                <div class="flex-1 form-control">
                                     <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
                                         Job Grade
                                     </label>
@@ -118,8 +118,8 @@ onMounted(async () => {
                                         </Combobox>
                                     </div>
                                 </div>
-                                <div class="flex-initial form-control" v-can="'RectorService.CreateRole'">
-                                    <button @click="createRole()" :disabled="selectedJobGrade <= 0"
+                                <div class="flex-1 form-control" v-can="'RectorService.CreateRole'">
+                                    <button @click="createRole()" :disabled="selectedJobGrade && selectedJobGrade.getGrade() <= 0"
                                         class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                         Create
                                     </button>

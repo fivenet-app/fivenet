@@ -62,7 +62,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	locs := locs.AS("usermarker")
 	stmt := locs.
 		SELECT(
-			locs.UserID.AS("usermarker.userid"),
+			locs.Identifier.AS("usermarker.userid"),
 			locs.Job,
 			locs.X,
 			locs.Y,
@@ -78,7 +78,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		FROM(
 			locs.
 				LEFT_JOIN(users,
-					locs.UserID.EQ(users.ID),
+					locs.Identifier.EQ(users.Identifier),
 				),
 		).
 		WHERE(

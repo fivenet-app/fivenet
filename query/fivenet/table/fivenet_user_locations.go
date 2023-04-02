@@ -17,12 +17,12 @@ type fivenetUserLocationsTable struct {
 	mysql.Table
 
 	//Columns
-	UserID    mysql.ColumnInteger
-	Job       mysql.ColumnString
-	X         mysql.ColumnFloat
-	Y         mysql.ColumnFloat
-	Hidden    mysql.ColumnBool
-	UpdatedAt mysql.ColumnTimestamp
+	Identifier mysql.ColumnString
+	Job        mysql.ColumnString
+	X          mysql.ColumnFloat
+	Y          mysql.ColumnFloat
+	Hidden     mysql.ColumnBool
+	UpdatedAt  mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -63,26 +63,26 @@ func newFivenetUserLocationsTable(schemaName, tableName, alias string) *FivenetU
 
 func newFivenetUserLocationsTableImpl(schemaName, tableName, alias string) fivenetUserLocationsTable {
 	var (
-		UserIDColumn    = mysql.IntegerColumn("user_id")
-		JobColumn       = mysql.StringColumn("job")
-		XColumn         = mysql.FloatColumn("x")
-		YColumn         = mysql.FloatColumn("y")
-		HiddenColumn    = mysql.BoolColumn("hidden")
-		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
-		allColumns      = mysql.ColumnList{UserIDColumn, JobColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn}
-		mutableColumns  = mysql.ColumnList{JobColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn}
+		IdentifierColumn = mysql.StringColumn("identifier")
+		JobColumn        = mysql.StringColumn("job")
+		XColumn          = mysql.FloatColumn("x")
+		YColumn          = mysql.FloatColumn("y")
+		HiddenColumn     = mysql.BoolColumn("hidden")
+		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
+		allColumns       = mysql.ColumnList{IdentifierColumn, JobColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn}
+		mutableColumns   = mysql.ColumnList{JobColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn}
 	)
 
 	return fivenetUserLocationsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		UserID:    UserIDColumn,
-		Job:       JobColumn,
-		X:         XColumn,
-		Y:         YColumn,
-		Hidden:    HiddenColumn,
-		UpdatedAt: UpdatedAtColumn,
+		Identifier: IdentifierColumn,
+		Job:        JobColumn,
+		X:          XColumn,
+		Y:          YColumn,
+		Hidden:     HiddenColumn,
+		UpdatedAt:  UpdatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
