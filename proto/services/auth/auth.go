@@ -257,14 +257,13 @@ func buildCharSearchIdentifier(license string) string {
 	return "char%:" + license
 }
 
-func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, string, error) {
+func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, error) {
 	stmt := user.
 		SELECT(
 			user.ID,
 			user.Identifier,
 			user.Job,
 			user.JobGrade,
-			user.Group.AS("group"),
 			js.Label.AS("user.job_label"),
 			jobGrades.Label.AS("user.job_grade_label"),
 			jobProps.Theme,
@@ -291,17 +290,16 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 
 	var dest struct {
 		users.User
-		group    string
 		JobProps jobs.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
-			return nil, nil, "", NoCharacterFoundErr
+			return nil, nil, NoCharacterFoundErr
 		}
-		return nil, nil, "", err
+		return nil, nil, err
 	}
 
-	return &dest.User, &dest.JobProps, dest.group, nil
+	return &dest.User, &dest.JobProps, nil
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
@@ -310,7 +308,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	char, jProps, group, err := s.getCharacter(ctx, req.CharId)
+	char, jProps, err := s.getCharacter(ctx, req.CharId)
 	if err != nil {
 		return nil, NoCharacterFoundErr
 	}
@@ -344,9 +342,6 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	if len(perms) == 0 {
 		return nil, UnableToChooseCharErr
 	}
-
-	// TODO add (all) permissions to "superuser"
-	_ = group
 
 	return &ChooseCharacterResponse{
 		Token:       token,
@@ -439,13 +434,10 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		return nil, err
 	}
 
-	char, jProps, group, err := s.getCharacter(ctx, claims.ActiveCharID)
+	char, jProps, err := s.getCharacter(ctx, claims.ActiveCharID)
 	if err != nil {
 		return nil, err
 	}
-
-	// TODO ensure user is still in a superuser group
-	_ = group
 
 	char.Job = req.Job
 	char.JobGrade = req.JobGrade

@@ -61,14 +61,14 @@ func (p *Perms) Register() error {
 }
 
 func (p *Perms) setupRoles() error {
-	roleId, err := p.CreateRole("masterofdisaster", "")
+	role, err := p.CreateRole("masterofdisaster", "")
 	if err != nil {
 		return err
 	}
 
 	perms, _ := p.GetAllPermissions()
 	// Ensure the "masterofdisaster" role always has all permissions
-	if err := p.AddPermissionsToRole(roleId, perms.IDs()); err != nil {
+	if err := p.AddPermissionsToRole(role.ID, perms.IDs()); err != nil {
 		return err
 	}
 

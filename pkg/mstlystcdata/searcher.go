@@ -138,16 +138,24 @@ func (s *Searcher) SearchDocumentCategories(ctx context.Context, search string, 
 	return categories, nil
 }
 
-func (s *Searcher) SearchJobs(ctx context.Context, search string) ([]*jobs.Job, error) {
+func (s *Searcher) SearchJobs(ctx context.Context, search string, exactMatch bool) ([]*jobs.Job, error) {
 	var searchQuery query.Query
 	if search == "" {
 		searchQuery = bleve.NewMatchAllQuery()
 	} else {
-		searchQuery = bleve.NewQueryStringQuery(strings.ToLower(search) + "*")
+		if exactMatch {
+			searchQuery = bleve.NewMatchQuery(strings.ToLower(search))
+		} else {
+			searchQuery = bleve.NewQueryStringQuery(strings.ToLower(search) + "*")
+		}
 	}
 
 	searchRequest := bleve.NewSearchRequest(searchQuery)
-	searchRequest.Size = 32
+	if exactMatch {
+		searchRequest.Size = 1
+	} else {
+		searchRequest.Size = 32
+	}
 	searchRequest.Fields = []string{"label", "name"}
 	searchRequest.SortBy([]string{"label", "_id"})
 

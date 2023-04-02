@@ -363,7 +363,7 @@ proto.services.rector.GetRolesRequest.prototype.toObject = function(opt_includeI
  */
 proto.services.rector.GetRolesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    rank: jspb.Message.getFieldWithDefault(msg, 1, 0)
+
   };
 
   if (includeInstance) {
@@ -400,10 +400,6 @@ proto.services.rector.GetRolesRequest.deserializeBinaryFromReader = function(msg
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 1:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setRank(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -433,31 +429,6 @@ proto.services.rector.GetRolesRequest.prototype.serializeBinary = function() {
  */
 proto.services.rector.GetRolesRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getRank();
-  if (f !== 0) {
-    writer.writeInt32(
-      1,
-      f
-    );
-  }
-};
-
-
-/**
- * optional int32 rank = 1;
- * @return {number}
- */
-proto.services.rector.GetRolesRequest.prototype.getRank = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.services.rector.GetRolesRequest} returns this
- */
-proto.services.rector.GetRolesRequest.prototype.setRank = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -1064,7 +1035,7 @@ proto.services.rector.CreateRoleResponse.prototype.toObject = function(opt_inclu
  */
 proto.services.rector.CreateRoleResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    role: (f = msg.getRole()) && resources_permissions_permissions_pb.Role.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1102,8 +1073,9 @@ proto.services.rector.CreateRoleResponse.deserializeBinaryFromReader = function(
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
-      msg.setId(value);
+      var value = new resources_permissions_permissions_pb.Role;
+      reader.readMessage(value,resources_permissions_permissions_pb.Role.deserializeBinaryFromReader);
+      msg.setRole(value);
       break;
     default:
       reader.skipField();
@@ -1134,31 +1106,51 @@ proto.services.rector.CreateRoleResponse.prototype.serializeBinary = function() 
  */
 proto.services.rector.CreateRoleResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getId();
-  if (f !== 0) {
-    writer.writeUint64(
+  f = message.getRole();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
+      f,
+      resources_permissions_permissions_pb.Role.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * optional uint64 id = 1;
- * @return {number}
+ * optional resources.permissions.Role role = 1;
+ * @return {?proto.resources.permissions.Role}
  */
-proto.services.rector.CreateRoleResponse.prototype.getId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.services.rector.CreateRoleResponse.prototype.getRole = function() {
+  return /** @type{?proto.resources.permissions.Role} */ (
+    jspb.Message.getWrapperField(this, resources_permissions_permissions_pb.Role, 1));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.resources.permissions.Role|undefined} value
+ * @return {!proto.services.rector.CreateRoleResponse} returns this
+*/
+proto.services.rector.CreateRoleResponse.prototype.setRole = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.services.rector.CreateRoleResponse} returns this
  */
-proto.services.rector.CreateRoleResponse.prototype.setId = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+proto.services.rector.CreateRoleResponse.prototype.clearRole = function() {
+  return this.setRole(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.rector.CreateRoleResponse.prototype.hasRole = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 

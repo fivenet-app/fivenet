@@ -34,7 +34,8 @@ type Permissions interface {
 	GetRoleByGuardName(name string) (*model.FivenetRoles, error)
 	GetRolePermissions(id uint64) (collections.Permissions, error)
 
-	CreateRole(name string, description string) (uint64, error)
+	CreateRole(name string, description string) (*model.FivenetRoles, error)
+	CreateRoleWithGuard(name string, guard string, description string) (*model.FivenetRoles, error)
 	DeleteRole(id uint64) error
 	AddPermissionsToRole(id uint64, perms []uint64) error
 	RemovePermissionsFromRole(id uint64, perms []uint64) error

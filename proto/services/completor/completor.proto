@@ -17,7 +17,9 @@ message CompleteCharNamesRespoonse {
 }
 
 message CompleteJobNamesRequest {
-  string search = 1 [(validate.rules).string.max_len = 50];
+  optional string search = 1 [(validate.rules).string.max_len = 50];
+  bool exact_match = 2;
+  bool current_job = 3;
 }
 
 message CompleteJobNamesResponse {

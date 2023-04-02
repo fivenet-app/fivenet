@@ -17,7 +17,11 @@ func (p *Perms) GetRoles(prefix string) (collections.Roles, error) {
 		).
 		FROM(ar).
 		WHERE(
-			ar.GuardName.LIKE(jet.String(prefix + "%")),
+			ar.GuardName.LIKE(jet.String(prefix+"%")),
+		).
+		ORDER_BY(
+			jet.LENGTH(ar.GuardName),
+			ar.GuardName.ASC(),
 		)
 
 	var dest collections.Roles
@@ -91,29 +95,43 @@ func (p *Perms) GetRolePermissions(id uint64) (collections.Permissions, error) {
 	return dest, nil
 }
 
-func (p *Perms) CreateRole(name string, description string) (uint64, error) {
-	guardName := helpers.Guard(name)
-
+func (p *Perms) CreateRoleWithGuard(name string, guard string, description string) (*model.FivenetRoles, error) {
 	stmt := ar.
 		INSERT(
 			ar.Name,
 			ar.GuardName,
 			ar.Description,
 		).
-		VALUES(name, guardName, description)
+		VALUES(name, guard, description)
 
-	_, err := stmt.ExecContext(p.ctx, p.db)
-
+	res, err := stmt.ExecContext(p.ctx, p.db)
 	if !dbutils.IsDuplicateError(err) {
-		return 0, err
+		return nil, err
 	}
 
-	role, err := p.GetRoleByGuardName(guardName)
-	if err != nil {
-		return 0, err
+	var role *model.FivenetRoles
+	if res != nil {
+		lastId, err := res.LastInsertId()
+		if err != nil {
+			return nil, err
+		}
+
+		role, err = p.GetRole(uint64(lastId))
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		role, err = p.GetRoleByGuardName(guard)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return role.ID, nil
+	return role, nil
+}
+
+func (p *Perms) CreateRole(name string, description string) (*model.FivenetRoles, error) {
+	return p.CreateRoleWithGuard(name, helpers.Guard(name), description)
 }
 
 func (p *Perms) DeleteRole(id uint64) error {

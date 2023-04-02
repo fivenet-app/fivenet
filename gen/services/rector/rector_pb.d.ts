@@ -4,9 +4,6 @@ import * as resources_permissions_permissions_pb from '../../resources/permissio
 
 
 export class GetRolesRequest extends jspb.Message {
-  getRank(): number;
-  setRank(value: number): GetRolesRequest;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetRolesRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetRolesRequest): GetRolesRequest.AsObject;
@@ -17,7 +14,6 @@ export class GetRolesRequest extends jspb.Message {
 
 export namespace GetRolesRequest {
   export type AsObject = {
-    rank: number,
   }
 }
 
@@ -98,8 +94,10 @@ export namespace CreateRoleRequest {
 }
 
 export class CreateRoleResponse extends jspb.Message {
-  getId(): number;
-  setId(value: number): CreateRoleResponse;
+  getRole(): resources_permissions_permissions_pb.Role | undefined;
+  setRole(value?: resources_permissions_permissions_pb.Role): CreateRoleResponse;
+  hasRole(): boolean;
+  clearRole(): CreateRoleResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CreateRoleResponse.AsObject;
@@ -111,7 +109,7 @@ export class CreateRoleResponse extends jspb.Message {
 
 export namespace CreateRoleResponse {
   export type AsObject = {
-    id: number,
+    role?: resources_permissions_permissions_pb.Role.AsObject,
   }
 }
 

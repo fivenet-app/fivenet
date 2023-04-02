@@ -481,7 +481,9 @@ proto.services.completor.CompleteJobNamesRequest.prototype.toObject = function(o
  */
 proto.services.completor.CompleteJobNamesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    search: jspb.Message.getFieldWithDefault(msg, 1, "")
+    search: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    exactMatch: jspb.Message.getBooleanFieldWithDefault(msg, 2, false),
+    currentJob: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
   };
 
   if (includeInstance) {
@@ -522,6 +524,14 @@ proto.services.completor.CompleteJobNamesRequest.deserializeBinaryFromReader = f
       var value = /** @type {string} */ (reader.readString());
       msg.setSearch(value);
       break;
+    case 2:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setExactMatch(value);
+      break;
+    case 3:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setCurrentJob(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -551,10 +561,24 @@ proto.services.completor.CompleteJobNamesRequest.prototype.serializeBinary = fun
  */
 proto.services.completor.CompleteJobNamesRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getSearch();
-  if (f.length > 0) {
+  f = /** @type {string} */ (jspb.Message.getField(message, 1));
+  if (f != null) {
     writer.writeString(
       1,
+      f
+    );
+  }
+  f = message.getExactMatch();
+  if (f) {
+    writer.writeBool(
+      2,
+      f
+    );
+  }
+  f = message.getCurrentJob();
+  if (f) {
+    writer.writeBool(
+      3,
       f
     );
   }
@@ -575,7 +599,61 @@ proto.services.completor.CompleteJobNamesRequest.prototype.getSearch = function(
  * @return {!proto.services.completor.CompleteJobNamesRequest} returns this
  */
 proto.services.completor.CompleteJobNamesRequest.prototype.setSearch = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.services.completor.CompleteJobNamesRequest} returns this
+ */
+proto.services.completor.CompleteJobNamesRequest.prototype.clearSearch = function() {
+  return jspb.Message.setField(this, 1, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.completor.CompleteJobNamesRequest.prototype.hasSearch = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional bool exact_match = 2;
+ * @return {boolean}
+ */
+proto.services.completor.CompleteJobNamesRequest.prototype.getExactMatch = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.services.completor.CompleteJobNamesRequest} returns this
+ */
+proto.services.completor.CompleteJobNamesRequest.prototype.setExactMatch = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 2, value);
+};
+
+
+/**
+ * optional bool current_job = 3;
+ * @return {boolean}
+ */
+proto.services.completor.CompleteJobNamesRequest.prototype.getCurrentJob = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 3, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.services.completor.CompleteJobNamesRequest} returns this
+ */
+proto.services.completor.CompleteJobNamesRequest.prototype.setCurrentJob = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 3, value);
 };
 
 

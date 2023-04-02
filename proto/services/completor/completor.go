@@ -73,8 +73,16 @@ func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRe
 func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error) {
 	resp := &CompleteJobNamesResponse{}
 
+	var search string
+	if req.Search == nil || req.CurrentJob {
+		_, job, _ := auth.GetUserInfoFromContext(ctx)
+		search = job
+	} else {
+		search = *req.Search
+	}
+
 	var err error
-	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, req.Search)
+	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, req.ExactMatch)
 	if err != nil {
 		return nil, err
 	}

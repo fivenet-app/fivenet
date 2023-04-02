@@ -3,6 +3,7 @@ package rector
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -13,13 +14,15 @@ import (
 	"github.com/galexrt/fivenet/proto/resources/permissions"
 	"github.com/galexrt/fivenet/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 var (
-	InvalidRequestErr = status.Error(codes.InvalidArgument, "Invalid role action requested!")
+	InvalidRequestErr    = status.Error(codes.InvalidArgument, "Invalid role action requested!")
+	RoleAlreadyExistsErr = status.Error(codes.InvalidArgument, "Role already exists!")
 )
 
 var (
@@ -49,22 +52,6 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	role, err := s.p.GetRole(roleId)
-	if err != nil {
-		return nil, false, err
-	}
-
-	// Make sure the user is from the job
-	if !strings.HasPrefix(role.GuardName, "job-"+job+"-") {
-		return nil, false, InvalidRequestErr
-	}
-
-	return role, true, nil
-}
-
-func (s *Server) ensureUserCanAccessRoleByGuardName(ctx context.Context, name string) (*model.FivenetRoles, bool, error) {
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
-
-	role, err := s.p.GetRoleByGuardName(name)
 	if err != nil {
 		return nil, false, err
 	}
@@ -193,23 +180,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 
 	resp.Role.Permissions = make([]*permissions.Permission, len(fPerms))
 	for k := 0; k < len(fPerms); k++ {
-		var createdAt *timestamp.Timestamp
-		if fPerms[k].CreatedAt != nil {
-			createdAt = timestamp.New(*fPerms[k].CreatedAt)
-		}
-		var updatedAt *timestamp.Timestamp
-		if fPerms[k].UpdatedAt != nil {
-			updatedAt = timestamp.New(*fPerms[k].UpdatedAt)
-		}
-
-		resp.Role.Permissions[k] = &permissions.Permission{
-			Id:          fPerms[k].ID,
-			CreatedAt:   createdAt,
-			UpdatedAt:   updatedAt,
-			Name:        fPerms[k].Name,
-			GuardName:   fPerms[k].GuardName,
-			Description: fPerms[k].Description,
-		}
+		resp.Role.Permissions[k] = permissions.ConvertFromPerm(fPerms[k])
 	}
 
 	return resp, nil
@@ -217,29 +188,30 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 
 func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*CreateRoleResponse, error) {
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
-	name := fmt.Sprintf("job-%s-%d", job, req.Grade)
+	name := fmt.Sprintf("%s - Rank: %d", strings.ToTitle(job), req.Grade)
 
-	role, check, err := s.ensureUserCanAccessRoleByGuardName(ctx, name)
+	role, err := s.p.GetRoleByGuardName(name)
 	if err != nil {
-		return nil, InvalidRequestErr
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
 	}
-	if !check {
-		return nil, InvalidRequestErr
-	}
-
 	if role != nil {
-		return nil, InvalidRequestErr
+		return nil, RoleAlreadyExistsErr
 	}
 
-	description := fmt.Sprintf("Role for ambulance %s (Rank: %d)", job, req.Grade)
+	guard := fmt.Sprintf("job-%s-%d", job, req.Grade)
+	description := fmt.Sprintf("Role for %s (Rank: %d)", job, req.Grade)
 
-	roleId, err := s.p.CreateRole(name, description)
+	cr, err := s.p.CreateRoleWithGuard(name, guard, description)
 	if err != nil {
 		return nil, err
 	}
 
 	return &CreateRoleResponse{
-		Id: roleId,
+		Role: &permissions.Role{
+			Id: cr.ID,
+		},
 	}, nil
 }
 
@@ -325,23 +297,7 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 	resp := &GetPermissionsResponse{}
 	resp.Permissions = make([]*permissions.Permission, len(filtered))
 	for k := 0; k < len(filtered); k++ {
-		var createdAt *timestamp.Timestamp
-		if perms[k].CreatedAt != nil {
-			createdAt = timestamp.New(*perms[k].CreatedAt)
-		}
-		var updatedAt *timestamp.Timestamp
-		if perms[k].UpdatedAt != nil {
-			updatedAt = timestamp.New(*perms[k].UpdatedAt)
-		}
-
-		resp.Permissions[k] = &permissions.Permission{
-			Id:          perms[k].ID,
-			CreatedAt:   createdAt,
-			UpdatedAt:   updatedAt,
-			Name:        perms[k].Name,
-			GuardName:   perms[k].GuardName,
-			Description: perms[k].Description,
-		}
+		resp.Permissions[k] = permissions.ConvertFromPerm(perms[k])
 	}
 
 	return resp, nil

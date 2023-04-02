@@ -46,6 +46,14 @@ export namespace CompleteCharNamesRespoonse {
 export class CompleteJobNamesRequest extends jspb.Message {
   getSearch(): string;
   setSearch(value: string): CompleteJobNamesRequest;
+  hasSearch(): boolean;
+  clearSearch(): CompleteJobNamesRequest;
+
+  getExactMatch(): boolean;
+  setExactMatch(value: boolean): CompleteJobNamesRequest;
+
+  getCurrentJob(): boolean;
+  setCurrentJob(value: boolean): CompleteJobNamesRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CompleteJobNamesRequest.AsObject;
@@ -57,7 +65,14 @@ export class CompleteJobNamesRequest extends jspb.Message {
 
 export namespace CompleteJobNamesRequest {
   export type AsObject = {
-    search: string,
+    search?: string,
+    exactMatch: boolean,
+    currentJob: boolean,
+  }
+
+  export enum SearchCase { 
+    _SEARCH_NOT_SET = 0,
+    SEARCH = 1,
   }
 }
 

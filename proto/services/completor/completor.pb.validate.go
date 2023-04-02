@@ -306,15 +306,23 @@ func (m *CompleteJobNamesRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetSearch()) > 50 {
-		err := CompleteJobNamesRequestValidationError{
-			field:  "Search",
-			reason: "value length must be at most 50 runes",
+	// no validation rules for ExactMatch
+
+	// no validation rules for CurrentJob
+
+	if m.Search != nil {
+
+		if utf8.RuneCountInString(m.GetSearch()) > 50 {
+			err := CompleteJobNamesRequestValidationError{
+				field:  "Search",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {

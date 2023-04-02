@@ -65,7 +65,8 @@ async function findJobs(): Promise<void> {
     const req = new CompleteJobNamesRequest();
     req.setSearch(queryJob.value);
 
-    const resp = await $grpc.getCompletorClient().completeJobNames(req, null)
+    const resp = await $grpc.getCompletorClient().
+        completeJobNames(req, null);
     entriesJobs = resp.getJobsList();
 }
 
@@ -73,7 +74,8 @@ async function findChars(): Promise<void> {
     const req = new CompleteCharNamesRequest();
     req.setSearch(queryChar.value);
 
-    const resp = await $grpc.getCompletorClient().completeCharNames(req, null)
+    const resp = await $grpc.getCompletorClient().
+        completeCharNames(req, null);
     entriesChars = resp.getUsersList();
 }
 

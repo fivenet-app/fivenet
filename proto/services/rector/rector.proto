@@ -6,9 +6,7 @@ option go_package = "github.com/galexrt/fivenet/proto/services/rector;rector";
 import "resources/permissions/permissions.proto";
 import "validate/validate.proto";
 
-message GetRolesRequest {
-  int32 rank = 1 [(validate.rules).int32.gt = 0];
-}
+message GetRolesRequest {}
 
 message GetRolesResponse {
   repeated resources.permissions.Role roles = 1;
@@ -23,11 +21,11 @@ message GetRoleResponse {
 }
 
 message CreateRoleRequest {
-  int32 grade = 1;
+  int32 grade = 1 [(validate.rules).int32.gt = 0];
 }
 
 message CreateRoleResponse {
-  uint64 id = 1;
+  resources.permissions.Role role = 1;
 }
 
 message DeleteRoleRequest {

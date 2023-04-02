@@ -1,11 +1,15 @@
 <script lang="ts" setup>
 import { Role } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { RpcError } from 'grpc-web';
-import { GetRolesRequest } from '@fivenet/gen/services/rector/rector_pb';
+import { CreateRoleRequest, GetRolesRequest } from '@fivenet/gen/services/rector/rector_pb';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import RolesListEntry from './RolesListEntry.vue';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CheckIcon } from '@heroicons/vue/20/solid';
 
 const { $grpc } = useNuxtApp();
 
@@ -14,7 +18,6 @@ const { data: roles, pending, refresh, error } = await useLazyAsyncData('rector-
 async function getRoles(): Promise<Array<Role>> {
     return new Promise(async (res, rej) => {
         const req = new GetRolesRequest();
-        req.setRank(1);
 
         try {
             const resp = await $grpc.getRectorClient().
@@ -27,12 +30,104 @@ async function getRoles(): Promise<Array<Role>> {
         }
     });
 }
+
+const entriesJobGrades = ref<Array<JobGrade>>([]);
+const selectedJobGrade = ref<JobGrade>();
+
+async function findJobGrades(): Promise<void> {
+    const req = new CompleteJobNamesRequest();
+    req.setExactMatch(true);
+    req.setCurrentJob(true);
+
+    const resp = await $grpc.getCompletorClient().
+        completeJobNames(req, null);
+
+
+    const job = resp.getJobsList()[0];
+    entriesJobGrades.value = job.getGradesList();
+}
+
+async function createRole(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        if (!selectedJobGrade.value) {
+            return;
+        }
+
+        const req = new CreateRoleRequest();
+        req.setGrade(selectedJobGrade.value.getGrade());
+
+        try {
+            const role = await $grpc.getRectorClient().
+                createRole(req, null);
+
+            if (role.hasRole()) {
+                roles.value?.unshift(role.getRole()!);
+            }
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+onMounted(async () => {
+    findJobGrades();
+});
 </script>
 
 <template>
     <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="flow-root mt-2">
+                <div class="sm:flex sm:items-center">
+                    <div class="sm:flex-auto">
+                        <form @submit.prevent="createRole()">
+                            <div class="flex flex-row gap-4 mx-auto">
+                                <div class="flex-initial form-control">
+                                    <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
+                                        Job Grade
+                                    </label>
+                                    <div class="relative flex items-center mt-2">
+                                        <Combobox as="div" v-model="selectedJobGrade" nullable>
+                                            <div class="relative">
+                                                <ComboboxButton as="div">
+                                                    <ComboboxInput
+                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        :display-value="(grade: any) => grade ? grade?.getLabel() : ''" />
+                                                </ComboboxButton>
+
+                                                <ComboboxOptions v-if="entriesJobGrades.length > 0"
+                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
+                                                    <ComboboxOption v-for="grade in entriesJobGrades"
+                                                        :key="grade.getGrade()" :value="grade" as="grade"
+                                                        v-slot="{ active, selected }">
+                                                        <li
+                                                            :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                                            <span :class="['block truncate', selected && 'font-semibold']">
+                                                                {{ grade.getLabel() }}
+                                                            </span>
+
+                                                            <span v-if="selected"
+                                                                :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            </span>
+                                                        </li>
+                                                    </ComboboxOption>
+                                                </ComboboxOptions>
+                                            </div>
+                                        </Combobox>
+                                    </div>
+                                </div>
+                                <div class="flex-initial form-control" v-can="'RectorService.CreateRole'">
+                                    <button @click="createRole()" :disabled="selectedJobGrade <= 0"
+                                        class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
+                                        Create
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <DataPendingBlock v-if="pending" message="Loading roles..." />
