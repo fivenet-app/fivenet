@@ -180,16 +180,15 @@ func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.D
 }
 
 func (s *Server) GenerateRandomUserMarker() {
-	userIds := []int32{
-		26061,
-		4650,
-		29225,
-		931,
-		6173,
-		16235,
+	userIdentifiers := []string{
+		"char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
+		"char1:0ff2f772f2527a0626cac48670cbc20ddbdc09fb",
+		"char2:d9793ddb457316fb3951d1b1092526183270a307",
+		"char2:d7abbfba01625bec803788ee42da86461c96e0bd",
+		"char1:ad4fb9f44bb784dd30effcc743a9c169db4d625d",
 	}
 
-	markers := make([]*model.FivenetUserLocations, len(userIds))
+	markers := make([]*model.FivenetUserLocations, len(userIdentifiers))
 
 	resetMarkers := func() {
 		xMin := -3300
@@ -203,9 +202,9 @@ func (s *Server) GenerateRandomUserMarker() {
 			job := "ambulance"
 			hidden := false
 			markers[i] = &model.FivenetUserLocations{
-				UserID: userIds[i],
-				Job:    &job,
-				Hidden: &hidden,
+				Identifier: userIdentifiers[i],
+				Job:        &job,
+				Hidden:     &hidden,
 
 				X: &x,
 				Y: &y,
@@ -244,7 +243,7 @@ func (s *Server) GenerateRandomUserMarker() {
 
 		stmt := locs.
 			INSERT(
-				locs.UserID,
+				locs.Identifier,
 				locs.Job,
 				locs.X,
 				locs.Y,
