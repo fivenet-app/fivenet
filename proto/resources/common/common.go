@@ -9,6 +9,11 @@ type IJobInfo interface {
 	SetJobGradeLabel(label string)
 }
 
+type IJobName interface {
+	GetJob() string
+	SetJobLabel(label string)
+}
+
 type IDocumentCategory interface {
 	GetCategoryId() uint64
 	SetCategory(*documents.DocumentCategory)

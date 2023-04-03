@@ -50,69 +50,28 @@ var serverCmd = &cobra.Command{
 			defer sentry.Flush(5 * time.Second)
 		}
 
-		// Setup SQL Prometheus metrics
-		prometheus.MustRegister(collectors.NewDBStatsCollector(db, config.C.Database.DBName))
+		// Central context for cancelling any "background" services
+		ctx, cancel := context.WithCancel(cmd.Context())
+		defer cancel()
 
-		// Setup permissions system
-		p := perms.New(db)
-		defer p.Stop()
-		p.Register()
+		// Setup SQL Prometheus metrics collector
+		prometheus.MustRegister(collectors.NewDBStatsCollector(db, config.C.Database.DBName))
 
 		// Create JWT Token TokenManager
 		tm := auth.NewTokenManager(config.C.JWT.Secret)
 
-		grpcServer, grpcLis := proto.NewGRPCServer(logger, db, tm, p)
+		// Setup permissions system
+		p := perms.New(ctx, db)
+		p.Register()
 
-		go func() {
-			if err := grpcServer.Serve(grpcLis); err != nil {
-				logger.Error("failed to serve grpc server", zap.Error(err))
-			} else {
-				logger.Info("grpc server started successfully")
-			}
-		}()
-		logger.Info("grpc server listening", zap.String("address", config.C.GRPC.Listen))
-
-		// Create HTTP Server for graceful shutdown handling
-		srv := &http.Server{
-			Addr:    config.C.HTTP.Listen,
-			Handler: setupHTTPServer(),
-		}
-		// Initializing the server in a goroutine so that
-		// it won't block the graceful shutdown handling below
-		go func() {
-			if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-				logger.Error("http listen error", zap.Error(err))
-			}
-		}()
-		logger.Info("http server listening", zap.String("address", config.C.HTTP.Listen))
-
-		// Wait for interrupt signal to gracefully shutdown the server with
-		// a timeout of 5 seconds.
-		quit := make(chan os.Signal)
-		// kill (no param) default send syscall.SIGTERM
-		// kill -2 is syscall.SIGINT
-		// kill -9 is syscall.SIGKILL but can't be caught, so don't need to add it
-		//lint:ignore SA1017 can be unbuffered because of signal channel usage
-		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-		<-quit
-		logger.Info("shutting down servers...")
-
-		// The context is used to inform the servers, they have 5 seconds to finish
-		// the requests they are currently handling
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		go func() {
-			grpcServer.GracefulStop()
-		}()
-
-		if err := srv.Shutdown(ctx); err != nil {
-			logger.Error("http server forced to shutdown", zap.Error(err))
+		// Wrap the server parts to try to isolate the actual "run servers" logic
+		server := &server{
+			db: db,
+			tm: tm,
+			p:  p,
 		}
 
-		grpcServer.Stop()
-
-		logger.Info("http server exiting")
-		return nil
+		return server.runServers(ctx)
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		db, err = query.SetupDB(logger)
@@ -124,7 +83,68 @@ func init() {
 	rootCmd.AddCommand(serverCmd)
 }
 
-func setupHTTPServer() *gin.Engine {
+type server struct {
+	db *sql.DB
+	tm *auth.TokenManager
+	p  perms.Permissions
+}
+
+func (s *server) runServers(bctx context.Context) error {
+	grpcServer, grpcLis := proto.NewGRPCServer(bctx, logger, s.db, s.tm, s.p)
+
+	go func() {
+		if err := grpcServer.Serve(grpcLis); err != nil {
+			logger.Error("failed to serve grpc server", zap.Error(err))
+		} else {
+			logger.Info("grpc server started successfully")
+		}
+	}()
+	logger.Info("grpc server listening", zap.String("address", config.C.GRPC.Listen))
+
+	// Create HTTP Server for graceful shutdown handling
+	srv := &http.Server{
+		Addr:    config.C.HTTP.Listen,
+		Handler: s.setupHTTPServer(),
+	}
+	// Initializing the server in a goroutine so that
+	// it won't block the graceful shutdown handling below
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			logger.Error("http listen error", zap.Error(err))
+		}
+	}()
+	logger.Info("http server listening", zap.String("address", config.C.HTTP.Listen))
+
+	// Wait for interrupt signal to gracefully shutdown the server with
+	// a timeout of 5 seconds.
+	quit := make(chan os.Signal)
+	// kill (no param) default send syscall.SIGTERM
+	// kill -2 is syscall.SIGINT
+	// kill -9 is syscall.SIGKILL but can't be caught, so don't need to add it
+	//lint:ignore SA1017 can be unbuffered because of signal channel usage
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	logger.Info("shutting down servers...")
+
+	// The context is used to inform the servers, they have 5 seconds to finish
+	// the requests they are currently handling
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	go func() {
+		grpcServer.GracefulStop()
+	}()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		logger.Error("http server forced to shutdown", zap.Error(err))
+	}
+
+	grpcServer.Stop()
+
+	logger.Info("http server exiting")
+	return nil
+}
+
+func (s *server) setupHTTPServer() *gin.Engine {
 	// Gin HTTP Server
 	gin.SetMode(config.C.Mode)
 	e := gin.New()

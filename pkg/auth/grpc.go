@@ -21,6 +21,10 @@ const (
 	AuthSubCtxTag                = "auth.sub"
 )
 
+var (
+	InvalidTokenErr = status.Error(codes.Unauthenticated, "Token invalid/ expired!")
+)
+
 type GRPCAuth struct {
 	tm *TokenManager
 }
@@ -44,7 +48,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 	// Parse token only returns the token info when the token is still valid
 	tokenInfo, err := g.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", err)
+		return nil, InvalidTokenErr
 	}
 
 	grpc_ctxtags.Extract(ctx).Set(AuthAccIDCtxTag, tokenInfo.AccountID)

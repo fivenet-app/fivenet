@@ -101,6 +101,28 @@ func (m *DispatchMarker) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
+		err := DispatchMarkerValidationError{
+			field:  "Job",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+		err := DispatchMarkerValidationError{
+			field:  "JobLabel",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	// no validation rules for Name
 
 	// no validation rules for Icon
@@ -108,8 +130,6 @@ func (m *DispatchMarker) validate(all bool) error {
 	// no validation rules for IconColor
 
 	// no validation rules for Popup
-
-	// no validation rules for Link
 
 	if len(errors) > 0 {
 		return DispatchMarkerMultiError(errors)

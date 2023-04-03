@@ -31,3 +31,8 @@ fivem:
     - doj
     - fib
     - police
+  livemapJobs:
+    - ambulance
+    - doj
+    - fib
+    - police

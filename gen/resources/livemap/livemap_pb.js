@@ -105,11 +105,12 @@ proto.resources.livemap.DispatchMarker.toObject = function(includeInstance, msg)
     y: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0),
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     id: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    name: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    icon: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    iconColor: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    popup: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    link: jspb.Message.getFieldWithDefault(msg, 9, "")
+    job: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    jobLabel: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    name: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    icon: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    iconColor: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    popup: jspb.Message.getFieldWithDefault(msg, 10, "")
   };
 
   if (includeInstance) {
@@ -165,23 +166,27 @@ proto.resources.livemap.DispatchMarker.deserializeBinaryFromReader = function(ms
       break;
     case 5:
       var value = /** @type {string} */ (reader.readString());
-      msg.setName(value);
+      msg.setJob(value);
       break;
     case 6:
       var value = /** @type {string} */ (reader.readString());
-      msg.setIcon(value);
+      msg.setJobLabel(value);
       break;
     case 7:
       var value = /** @type {string} */ (reader.readString());
-      msg.setIconColor(value);
+      msg.setName(value);
       break;
     case 8:
       var value = /** @type {string} */ (reader.readString());
-      msg.setPopup(value);
+      msg.setIcon(value);
       break;
     case 9:
       var value = /** @type {string} */ (reader.readString());
-      msg.setLink(value);
+      msg.setIconColor(value);
+      break;
+    case 10:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPopup(value);
       break;
     default:
       reader.skipField();
@@ -241,38 +246,45 @@ proto.resources.livemap.DispatchMarker.serializeBinaryToWriter = function(messag
       f
     );
   }
-  f = message.getName();
+  f = message.getJob();
   if (f.length > 0) {
     writer.writeString(
       5,
       f
     );
   }
-  f = message.getIcon();
+  f = message.getJobLabel();
   if (f.length > 0) {
     writer.writeString(
       6,
       f
     );
   }
-  f = message.getIconColor();
+  f = message.getName();
   if (f.length > 0) {
     writer.writeString(
       7,
       f
     );
   }
-  f = message.getPopup();
+  f = message.getIcon();
   if (f.length > 0) {
     writer.writeString(
       8,
       f
     );
   }
-  f = message.getLink();
+  f = message.getIconColor();
   if (f.length > 0) {
     writer.writeString(
       9,
+      f
+    );
+  }
+  f = message.getPopup();
+  if (f.length > 0) {
+    writer.writeString(
+      10,
       f
     );
   }
@@ -371,10 +383,10 @@ proto.resources.livemap.DispatchMarker.prototype.setId = function(value) {
 
 
 /**
- * optional string name = 5;
+ * optional string job = 5;
  * @return {string}
  */
-proto.resources.livemap.DispatchMarker.prototype.getName = function() {
+proto.resources.livemap.DispatchMarker.prototype.getJob = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
@@ -383,16 +395,16 @@ proto.resources.livemap.DispatchMarker.prototype.getName = function() {
  * @param {string} value
  * @return {!proto.resources.livemap.DispatchMarker} returns this
  */
-proto.resources.livemap.DispatchMarker.prototype.setName = function(value) {
+proto.resources.livemap.DispatchMarker.prototype.setJob = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
 /**
- * optional string icon = 6;
+ * optional string job_label = 6;
  * @return {string}
  */
-proto.resources.livemap.DispatchMarker.prototype.getIcon = function() {
+proto.resources.livemap.DispatchMarker.prototype.getJobLabel = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
@@ -401,16 +413,16 @@ proto.resources.livemap.DispatchMarker.prototype.getIcon = function() {
  * @param {string} value
  * @return {!proto.resources.livemap.DispatchMarker} returns this
  */
-proto.resources.livemap.DispatchMarker.prototype.setIcon = function(value) {
+proto.resources.livemap.DispatchMarker.prototype.setJobLabel = function(value) {
   return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
 /**
- * optional string icon_color = 7;
+ * optional string name = 7;
  * @return {string}
  */
-proto.resources.livemap.DispatchMarker.prototype.getIconColor = function() {
+proto.resources.livemap.DispatchMarker.prototype.getName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
@@ -419,16 +431,16 @@ proto.resources.livemap.DispatchMarker.prototype.getIconColor = function() {
  * @param {string} value
  * @return {!proto.resources.livemap.DispatchMarker} returns this
  */
-proto.resources.livemap.DispatchMarker.prototype.setIconColor = function(value) {
+proto.resources.livemap.DispatchMarker.prototype.setName = function(value) {
   return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
 /**
- * optional string popup = 8;
+ * optional string icon = 8;
  * @return {string}
  */
-proto.resources.livemap.DispatchMarker.prototype.getPopup = function() {
+proto.resources.livemap.DispatchMarker.prototype.getIcon = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
@@ -437,16 +449,16 @@ proto.resources.livemap.DispatchMarker.prototype.getPopup = function() {
  * @param {string} value
  * @return {!proto.resources.livemap.DispatchMarker} returns this
  */
-proto.resources.livemap.DispatchMarker.prototype.setPopup = function(value) {
+proto.resources.livemap.DispatchMarker.prototype.setIcon = function(value) {
   return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 
 /**
- * optional string link = 9;
+ * optional string icon_color = 9;
  * @return {string}
  */
-proto.resources.livemap.DispatchMarker.prototype.getLink = function() {
+proto.resources.livemap.DispatchMarker.prototype.getIconColor = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
 };
 
@@ -455,8 +467,26 @@ proto.resources.livemap.DispatchMarker.prototype.getLink = function() {
  * @param {string} value
  * @return {!proto.resources.livemap.DispatchMarker} returns this
  */
-proto.resources.livemap.DispatchMarker.prototype.setLink = function(value) {
+proto.resources.livemap.DispatchMarker.prototype.setIconColor = function(value) {
   return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional string popup = 10;
+ * @return {string}
+ */
+proto.resources.livemap.DispatchMarker.prototype.getPopup = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.livemap.DispatchMarker} returns this
+ */
+proto.resources.livemap.DispatchMarker.prototype.setPopup = function(value) {
+  return jspb.Message.setProto3StringField(this, 10, value);
 };
 
 

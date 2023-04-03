@@ -8,7 +8,11 @@ import (
 	"strings"
 	"time"
 
+	cache "github.com/Code-Hex/go-generics-cache"
+	"github.com/Code-Hex/go-generics-cache/policy/lfu"
 	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/proto/resources/livemap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -25,21 +29,54 @@ var (
 type Server struct {
 	LivemapperServiceServer
 
+	ctx    context.Context
 	logger *zap.Logger
 	db     *sql.DB
 	p      perms.Permissions
+	c      *mstlystcdata.Enricher
+
+	dispatchesCache *cache.Cache[string, []*livemap.DispatchMarker]
+	usersCache      *cache.Cache[string, []*livemap.UserMarker]
 }
 
-func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions) *Server {
+func NewServer(ctx context.Context, logger *zap.Logger, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
+	dispatchesCache := cache.NewContext(
+		ctx,
+		cache.AsLFU[string, []*livemap.DispatchMarker](lfu.WithCapacity(32)),
+		cache.WithJanitorInterval[string, []*livemap.DispatchMarker](120*time.Second),
+	)
+	usersCache := cache.NewContext(
+		ctx,
+		cache.AsLFU[string, []*livemap.UserMarker](lfu.WithCapacity(32)),
+		cache.WithJanitorInterval[string, []*livemap.UserMarker](120*time.Second),
+	)
+
 	return &Server{
+		ctx:    ctx,
 		logger: logger,
 		db:     db,
 		p:      p,
+		c:      c,
+
+		dispatchesCache: dispatchesCache,
+		usersCache:      usersCache,
 	}
 }
 
-func (s *Server) SetLogger(logger *zap.Logger) {
-	s.logger = logger
+func (s *Server) Start() {
+	go func() {
+		select {
+		case <-s.ctx.Done():
+			return
+		case <-time.After(6 * time.Second):
+			if err := s.refreshUserLocations(); err != nil {
+				s.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
+			}
+			if err := s.refreshDispatches(); err != nil {
+				s.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
+			}
+		}
+	}()
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
@@ -58,6 +95,66 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	for k := 0; k < len(jobs); k++ {
 		sqlJobs[k] = jet.String(jobs[k])
 	}
+
+	for {
+		resp := &StreamResponse{}
+
+		dispatchMarkers, err := s.getUserDispatches(jobs)
+		if err != nil {
+			return err
+		}
+		resp.Dispatches = dispatchMarkers
+
+		userMarkers, err := s.getUserLocations(jobs)
+		if err != nil {
+			return err
+		}
+		resp.Users = userMarkers
+
+		if err := srv.Send(resp); err != nil {
+			return err
+		}
+
+		select {
+		case <-srv.Context().Done():
+			return nil
+		case <-time.After(6 * time.Second):
+		}
+	}
+}
+
+func (s *Server) getUserLocations(jobs []string) ([]*livemap.UserMarker, error) {
+	ds := []*livemap.UserMarker{}
+
+	for _, job := range jobs {
+		markers, ok := s.usersCache.Get(job)
+		if !ok {
+			continue
+		}
+
+		ds = append(ds, markers...)
+	}
+
+	return ds, nil
+}
+
+func (s *Server) getUserDispatches(jobs []string) ([]*livemap.DispatchMarker, error) {
+	ds := []*livemap.DispatchMarker{}
+
+	for _, job := range jobs {
+		markers, ok := s.dispatchesCache.Get(job)
+		if !ok {
+			continue
+		}
+
+		ds = append(ds, markers...)
+	}
+
+	return ds, nil
+}
+
+func (s *Server) refreshUserLocations() error {
+	markers := map[string][]*livemap.UserMarker{}
 
 	locs := locs.AS("usermarker")
 	stmt := locs.
@@ -82,41 +179,34 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 				),
 		).
 		WHERE(
-			locs.Job.IN(sqlJobs...).
-				AND(
-					locs.Hidden.IS_FALSE(),
-				).
+			locs.Hidden.IS_FALSE().
 				AND(
 					locs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE))),
 				),
-		)
+		).
+		GROUP_BY(locs.Job)
 
-	for {
-		resp := &StreamResponse{}
-
-		if err := stmt.QueryContext(srv.Context(), s.db, &resp.Users); err != nil {
-			return err
-		}
-
-		ds, err := s.getDispatches(srv.Context(), jobs)
-		if err != nil {
-			return err
-		}
-		resp.Dispatches = ds
-
-		if err := srv.Send(resp); err != nil {
-			return err
-		}
-
-		select {
-		case <-srv.Context().Done():
-			return nil
-		case <-time.After(3 * time.Second):
-		}
+	var dest []*livemap.UserMarker
+	if err := stmt.QueryContext(s.ctx, s.db, &dest); err != nil {
+		return err
 	}
+
+	for i := 0; i < len(dest); i++ {
+		s.c.EnrichJobName(dest[i].User)
+
+		if _, ok := markers[dest[i].User.Job]; !ok {
+			markers[dest[i].User.Job] = []*livemap.UserMarker{}
+		}
+		markers[dest[i].User.Job] = append(markers[dest[i].User.Job], dest[i])
+	}
+	for job, v := range markers {
+		s.usersCache.Set(job, v)
+	}
+
+	return nil
 }
 
-func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.DispatchMarker, error) {
+func (s *Server) refreshDispatches() error {
 	d := table.GksphoneJobMessage
 	stmt := d.
 		SELECT(
@@ -135,7 +225,7 @@ func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.D
 		).
 		WHERE(
 			jet.AND(
-				d.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(jobs, "|")+")\"\\]")),
+				d.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(config.C.FiveM.LivemapJobs, "|")+")\"\\]")),
 				d.Time.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE))),
 			),
 		).
@@ -143,13 +233,12 @@ func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.D
 		LIMIT(50)
 
 	var dest []*model.GksphoneJobMessage
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
+	if err := stmt.QueryContext(s.ctx, s.db, &dest); err != nil {
+		return err
 	}
 
-	ds := make([]*livemap.DispatchMarker, len(dest))
-
-	for i, v := range dest {
+	markers := map[string][]*livemap.DispatchMarker{}
+	for _, v := range dest {
 		gps, _ := strings.CutPrefix(*v.Gps, "GPS: ")
 		gpsSplit := strings.Split(gps, ", ")
 		x, _ := strconv.ParseFloat(gpsSplit[0], 32)
@@ -165,7 +254,12 @@ func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.D
 			iconColor = "DA3E52"
 		}
 
-		ds[i] = &livemap.DispatchMarker{
+		// Remove the "json" leftovers (in the gksphone table it looks like `["ambulance"]`)
+		job := strings.TrimSuffix(strings.TrimPrefix(*v.Jobm, "[\""), "\"]")
+		if _, ok := markers[job]; !ok {
+			markers[job] = []*livemap.DispatchMarker{}
+		}
+		marker := &livemap.DispatchMarker{
 			X:         float32(x),
 			Y:         float32(y),
 			Id:        v.ID,
@@ -174,9 +268,16 @@ func (s *Server) getDispatches(ctx context.Context, jobs []string) ([]*livemap.D
 			Name:      *v.Name,
 			Popup:     *v.Message,
 		}
+
+		s.c.EnrichJobName(marker)
+		markers[job] = append(markers[job], marker)
 	}
 
-	return ds, nil
+	for job, v := range markers {
+		s.dispatchesCache.Set(job, v)
+	}
+
+	return nil
 }
 
 func (s *Server) GenerateRandomUserMarker() {

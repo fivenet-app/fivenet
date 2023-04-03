@@ -12,11 +12,12 @@ message DispatchMarker {
   float y = 2; // @gotags: alias:"y"
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   int32 id = 4 [(validate.rules).int32.gt = 0];
-  string name = 5;
-  string icon = 6;
-  string icon_color = 7;
-  string popup = 8;
-  string link = 9;
+  string job = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
+  string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
+  string name = 7;
+  string icon = 8;
+  string icon_color = 9;
+  string popup = 10;
 }
 
 message UserMarker {

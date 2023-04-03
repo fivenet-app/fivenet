@@ -19,6 +19,12 @@ export class DispatchMarker extends jspb.Message {
   getId(): number;
   setId(value: number): DispatchMarker;
 
+  getJob(): string;
+  setJob(value: string): DispatchMarker;
+
+  getJobLabel(): string;
+  setJobLabel(value: string): DispatchMarker;
+
   getName(): string;
   setName(value: string): DispatchMarker;
 
@@ -30,9 +36,6 @@ export class DispatchMarker extends jspb.Message {
 
   getPopup(): string;
   setPopup(value: string): DispatchMarker;
-
-  getLink(): string;
-  setLink(value: string): DispatchMarker;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DispatchMarker.AsObject;
@@ -48,11 +51,12 @@ export namespace DispatchMarker {
     y: number,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     id: number,
+    job: string,
+    jobLabel: string,
     name: string,
     icon: string,
     iconColor: string,
     popup: string,
-    link: string,
   }
 }
 

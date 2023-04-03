@@ -1,6 +1,7 @@
 package proto
 
 import (
+	"context"
 	"database/sql"
 	"net"
 
@@ -44,7 +45,7 @@ func init() {
 
 type RegisterFunc func() error
 
-func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *perms.Perms) (*grpc.Server, net.Listener) {
+func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p perms.Permissions) (*grpc.Server, net.Listener) {
 	// Create GRPC Server
 	lis, err := net.Listen("tcp", config.C.GRPC.Listen)
 	if err != nil {
@@ -84,7 +85,8 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 	)
 
 	// "Mostly Static Data" Cache
-	cache, err := mstlystcdata.NewCache(logger.Named("mstlystcdata"), db)
+	cache, err := mstlystcdata.NewCache(ctx,
+		logger.Named("mstlystcdata"), db)
 	if err != nil {
 		logger.Fatal("failed to create mostly static data cache", zap.Error(err))
 	}
@@ -99,7 +101,7 @@ func NewGRPCServer(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p *per
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
-	livemapper := pblivemapper.NewServer(logger.Named("grpc_livemap"), db, p)
+	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), db, p, enricher)
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p))
 	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher))

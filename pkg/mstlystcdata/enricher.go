@@ -40,6 +40,15 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 	}
 }
 
+func (e *Enricher) EnrichJobName(usr common.IJobName) {
+	job, ok := e.c.jobs.Get(usr.GetJob())
+	if ok {
+		usr.SetJobLabel(job.Label)
+	} else {
+		usr.SetJobLabel(usr.GetJob())
+	}
+}
+
 func (e *Enricher) EnrichDocumentCategory(doc common.IDocumentCategory) {
 	cId := doc.GetCategoryId()
 

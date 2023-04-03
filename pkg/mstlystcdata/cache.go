@@ -26,7 +26,6 @@ type Cache struct {
 	db     *sql.DB
 
 	ctx                context.Context
-	cancel             context.CancelFunc
 	jobs               *cache.Cache[string, *jobs.Job]
 	docCategories      *cache.Cache[uint64, *documents.DocumentCategory]
 	docCategoriesByJob *cache.Cache[string, []*documents.DocumentCategory]
@@ -34,9 +33,7 @@ type Cache struct {
 	searcher *Searcher
 }
 
-func NewCache(logger *zap.Logger, db *sql.DB) (*Cache, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-
+func NewCache(ctx context.Context, logger *zap.Logger, db *sql.DB) (*Cache, error) {
 	jobsCache := cache.NewContext(
 		ctx,
 		cache.AsLFU[string, *jobs.Job](lfu.WithCapacity(32)),
@@ -58,7 +55,6 @@ func NewCache(logger *zap.Logger, db *sql.DB) (*Cache, error) {
 		db:     db,
 
 		ctx:                ctx,
-		cancel:             cancel,
 		jobs:               jobsCache,
 		docCategories:      docCategoriesCache,
 		docCategoriesByJob: docCategoriesByJobCache,

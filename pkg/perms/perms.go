@@ -50,8 +50,7 @@ type Permissions interface {
 type Perms struct {
 	db *sql.DB
 
-	ctx    context.Context
-	cancel context.CancelFunc
+	ctx context.Context
 
 	canCacheTTL time.Duration
 	canCache    *cache.Cache[string, bool]
@@ -60,9 +59,7 @@ type Perms struct {
 	permsCache    *cache.Cache[int32, collections.Permissions]
 }
 
-func New(db *sql.DB) *Perms {
-	ctx, cancel := context.WithCancel(context.Background())
-
+func New(ctx context.Context, db *sql.DB) *Perms {
 	canCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[string, bool](lru.WithCapacity(128)),
@@ -77,19 +74,12 @@ func New(db *sql.DB) *Perms {
 	return &Perms{
 		db: db,
 
-		ctx:    ctx,
-		cancel: cancel,
+		ctx: ctx,
 
 		canCacheTTL: 2 * time.Minute,
 		canCache:    canCache,
 
 		permsCacheTTL: 2 * time.Minute,
 		permsCache:    permsCache,
-	}
-}
-
-func (p *Perms) Stop() {
-	if p.cancel != nil {
-		p.cancel()
 	}
 }
