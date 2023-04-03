@@ -23,6 +23,13 @@ var (
 	RoleAlreadyExistsErr = status.Error(codes.InvalidArgument, "Role already exists!")
 )
 
+var (
+	ignoredGuardPermissions = []string{
+		"authservice-setjob",
+		"superuser-override",
+	}
+)
+
 func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*model.FivenetRoles, bool, error) {
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
@@ -199,8 +206,20 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, NoPermissionErr
 	}
 
+	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	jobRoleKey := fmt.Sprintf("job-%s-", job)
+	jobRolesModels, err := s.p.GetRoles(jobRoleKey)
+	if err != nil {
+		return nil, InvalidRequestErr
+	}
+
+	// Don't allow deleting the "last" role, one role should always remain
+	if len(jobRolesModels) <= 1 {
+		return nil, InvalidRequestErr
+	}
+
 	if err := s.p.DeleteRole(role.ID); err != nil {
-		return nil, err
+		return nil, InvalidRequestErr
 	}
 
 	return &DeleteRoleResponse{}, nil
@@ -264,7 +283,7 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 		return nil, err
 	}
 
-	filtered, err := s.filterPermissionIDs(ctx, perms.IDs())
+	filtered, err := s.filterPermissions(ctx, perms)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
@@ -272,7 +291,7 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 	resp := &GetPermissionsResponse{}
 	resp.Permissions = make([]*permissions.Permission, len(filtered))
 	for k := 0; k < len(filtered); k++ {
-		resp.Permissions[k] = permissions.ConvertFromPerm(perms[k])
+		resp.Permissions[k] = permissions.ConvertFromPerm(filtered[k])
 	}
 
 	return resp, nil

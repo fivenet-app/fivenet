@@ -7,13 +7,6 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	ignoredGuardPermissions = []string{
-		"authservice-setjob",
-		"superuser-override",
-	}
-)
-
 type Server struct {
 	RectorServiceServer
 
