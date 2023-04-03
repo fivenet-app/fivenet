@@ -165,9 +165,9 @@ export class Livemap extends L.Map {
 
         return new L.DivIcon({
             html: '<div class="place-content-center">' + html + '</div>',
-            iconSize: [42, 42],
-            iconAnchor: [21, 12],
-            popupAnchor: [21,12 ],
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
+            popupAnchor: [0, -8],
         });
     }
 }

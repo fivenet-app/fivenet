@@ -181,8 +181,7 @@ func (s *Server) refreshUserLocations() error {
 				AND(
 					locs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE))),
 				),
-		).
-		GROUP_BY(locs.Job)
+		)
 
 	var dest []*livemap.UserMarker
 	if err := stmt.QueryContext(s.ctx, s.db, &dest); err != nil {
@@ -192,10 +191,11 @@ func (s *Server) refreshUserLocations() error {
 	for i := 0; i < len(dest); i++ {
 		s.c.EnrichJobInfo(dest[i].User)
 
-		if _, ok := markers[dest[i].User.Job]; !ok {
-			markers[dest[i].User.Job] = []*livemap.UserMarker{}
+		job := dest[i].User.Job
+		if _, ok := markers[job]; !ok {
+			markers[job] = []*livemap.UserMarker{}
 		}
-		markers[dest[i].User.Job] = append(markers[dest[i].User.Job], dest[i])
+		markers[job] = append(markers[job], dest[i])
 	}
 	for job, v := range markers {
 		s.usersCache.Set(job, v)
