@@ -14,6 +14,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/proto/resources/livemap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -37,6 +38,8 @@ type Server struct {
 
 	dispatchesCache *cache.Cache[string, []*livemap.DispatchMarker]
 	usersCache      *cache.Cache[string, []*livemap.UserMarker]
+
+	broker *utils.Broker[interface{}]
 }
 
 func NewServer(ctx context.Context, logger *zap.Logger, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
@@ -51,6 +54,9 @@ func NewServer(ctx context.Context, logger *zap.Logger, db *sql.DB, p perms.Perm
 		cache.WithJanitorInterval[string, []*livemap.UserMarker](120*time.Second),
 	)
 
+	broker := utils.NewBroker[interface{}](ctx)
+	go broker.Start()
+
 	return &Server{
 		ctx:    ctx,
 		logger: logger,
@@ -60,6 +66,7 @@ func NewServer(ctx context.Context, logger *zap.Logger, db *sql.DB, p perms.Perm
 
 		dispatchesCache: dispatchesCache,
 		usersCache:      usersCache,
+		broker:          broker,
 	}
 }
 
@@ -69,13 +76,14 @@ func (s *Server) Start() {
 			select {
 			case <-s.ctx.Done():
 				return
-			case <-time.After(6 * time.Second):
+			case <-time.After(5 * time.Second):
 				if err := s.refreshUserLocations(); err != nil {
 					s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
 				}
 				if err := s.refreshDispatches(); err != nil {
 					s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
 				}
+				s.broker.Publish(nil)
 			}
 		}
 	}()
@@ -92,6 +100,9 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	if len(jobs) == 0 {
 		return nil
 	}
+
+	signalCh := s.broker.Subscribe()
+	defer s.broker.Unsubscribe(signalCh)
 
 	for {
 		resp := &StreamResponse{}
@@ -115,7 +126,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		select {
 		case <-srv.Context().Done():
 			return nil
-		case <-time.After(6 * time.Second):
+		case <-signalCh:
 		}
 	}
 }
