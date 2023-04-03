@@ -99,7 +99,9 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 	}
 
 	stmt := nots.
-		UPDATE(nots.ReadAt).
+		UPDATE(
+			nots.ReadAt,
+		).
 		SET(
 			nots.ReadAt.SET(jet.CURRENT_TIMESTAMP()),
 		).

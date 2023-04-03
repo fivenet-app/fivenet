@@ -46,7 +46,7 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 	return role, true, nil
 }
 
-func (s *Server) filterPermissions(ctx context.Context, perms collections.Permissions) (collections.Permissions, error) {
+func (s *Server) filterPermissions(ctx context.Context, perms collections.Permissions, jobFilter bool) (collections.Permissions, error) {
 	userId := auth.GetUserIDFromContext(ctx)
 	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, "RectorService.GetPermissions")
 	if err != nil {
@@ -61,14 +61,16 @@ outer:
 			if p.GuardName == ignoredGuardPermissions[i] {
 				continue outer
 			}
-			for _, jc := range config.C.FiveM.PermissionRoleJobs {
-				if strings.HasSuffix(p.GuardName, "-"+jc) {
-					if len(jobs) == 0 {
-						continue outer
-					}
-					for _, j := range jobs {
-						if !strings.HasSuffix(p.GuardName, "-"+j) {
+			if jobFilter {
+				for _, jc := range config.C.FiveM.PermissionRoleJobs {
+					if strings.HasSuffix(p.GuardName, "-"+jc) {
+						if len(jobs) == 0 {
 							continue outer
+						}
+						for _, j := range jobs {
+							if !strings.HasSuffix(p.GuardName, "-"+j) {
+								continue outer
+							}
 						}
 					}
 				}
@@ -81,13 +83,13 @@ outer:
 	return filtered, nil
 }
 
-func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64) ([]uint64, error) {
+func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64, jobFilter bool) ([]uint64, error) {
 	perms, err := s.p.GetPermissionsByIDs(ids...)
 	if err != nil {
 		return nil, err
 	}
 
-	filtered, err := s.filterPermissions(ctx, perms)
+	filtered, err := s.filterPermissions(ctx, perms, jobFilter)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +157,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 		Description: role.Description,
 	}
 
-	fPerms, err := s.filterPermissions(ctx, perms)
+	fPerms, err := s.filterPermissions(ctx, perms, false)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
@@ -234,7 +236,7 @@ func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (
 		return nil, NoPermissionErr
 	}
 
-	perms, err := s.filterPermissionIDs(ctx, req.Permissions)
+	perms, err := s.filterPermissionIDs(ctx, req.Permissions, true)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
@@ -260,7 +262,7 @@ func (s *Server) RemovePermFromRole(ctx context.Context, req *RemovePermFromRole
 		return nil, NoPermissionErr
 	}
 
-	perms, err := s.filterPermissionIDs(ctx, req.Permissions)
+	perms, err := s.filterPermissionIDs(ctx, req.Permissions, true)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
@@ -283,7 +285,7 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 		return nil, err
 	}
 
-	filtered, err := s.filterPermissions(ctx, perms)
+	filtered, err := s.filterPermissions(ctx, perms, true)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}

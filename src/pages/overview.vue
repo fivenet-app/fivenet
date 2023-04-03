@@ -11,7 +11,6 @@ useHead({
 definePageMeta({
     title: 'Overview',
     requiresAuth: true,
-    permission: 'Overview.View',
 });
 
 const features = [

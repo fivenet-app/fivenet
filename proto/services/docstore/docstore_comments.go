@@ -165,7 +165,9 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
 
 	stmt := dComments.
-		UPDATE().
+		UPDATE(
+			dComments.Comment,
+		).
 		SET(
 			dComments.Comment.SET(jet.String(req.Comment.Comment)),
 		).
@@ -220,7 +222,9 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 	}
 
 	stmt := dComments.
-		UPDATE().
+		UPDATE(
+			dComments.DeletedAt,
+		).
 		SET(
 			dComments.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).

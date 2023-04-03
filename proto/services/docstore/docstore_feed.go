@@ -272,7 +272,9 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 	}
 
 	stmt := docRef.
-		UPDATE().
+		UPDATE(
+			docRef.DeletedAt,
+		).
 		SET(
 			docRef.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
@@ -356,7 +358,9 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 	}
 
 	stmt := docRel.
-		UPDATE().
+		UPDATE(
+			docRel.DeletedAt,
+		).
 		SET(
 			docRel.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).

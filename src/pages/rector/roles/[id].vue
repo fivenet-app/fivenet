@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
-import ContentWrapper from '~~/src/components/partials/ContentWrapper.vue';
 import RoleView from '~~/src/components/rector/RoleView.vue';
 
 useHead({
@@ -21,7 +20,7 @@ const route = useRoute('rector-roles-id');
 </script>
 
 <template>
-    <ContentWrapper>
+    <div class="w-full">
         <RoleView :role-id="parseInt(route.params.id)" />
-    </ContentWrapper>
+    </div>
 </template>

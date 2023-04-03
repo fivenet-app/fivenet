@@ -41,6 +41,7 @@ var (
 	NoCharacterFoundErr    = status.Error(codes.NotFound, "No character(s) found for your account.")
 	GenericLoginErr        = status.Error(codes.Internal, "Failed to login you in, please try again.")
 	UnableToChooseCharErr  = status.Error(codes.PermissionDenied, "You don't have permission to select this character!")
+	UpdateAccountErr       = status.Error(codes.InvalidArgument, "Failed to update your account!")
 )
 
 type Server struct {
@@ -111,7 +112,6 @@ func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, a
 
 func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {
 	acc, err := s.getAccountFromDB(ctx, jet.AND(
-		account.Password.IS_NULL(),
 		account.RegToken.EQ(jet.String(req.RegToken)),
 	))
 	if err != nil {
@@ -124,7 +124,11 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 	}
 
 	stmt := account.
-		UPDATE().
+		UPDATE(
+			account.Username,
+			account.Password,
+			account.RegToken,
+		).
 		SET(
 			account.Username.SET(jet.String(req.Username)),
 			account.Password.SET(jet.String(string(hashedPassword))),
@@ -133,7 +137,6 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		WHERE(
 			jet.AND(
 				account.ID.EQ(jet.Uint64(acc.ID)),
-				account.Password.IS_NULL(),
 				account.RegToken.EQ(jet.String(req.RegToken)),
 			),
 		)
@@ -191,6 +194,64 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 	}
 
 	return &LoginResponse{
+		Token: token,
+	}, nil
+}
+
+func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest) (*ChangePasswordResponse, error) {
+	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	if err != nil {
+		return nil, GenericLoginErr
+	}
+
+	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccountID)))
+	if err != nil {
+		if errors.Is(qrm.ErrNoRows, err) {
+			return nil, InvalidLoginErr
+		}
+
+		return nil, err
+	}
+
+	// No password set
+	if acc.Password == nil {
+		return nil, NoAccountErr
+	}
+
+	// Password check logic
+	if err := bcrypt.CompareHashAndPassword([]byte(*acc.Password), []byte(req.Current)); err != nil {
+		return nil, InvalidLoginErr
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.New), 14)
+	if err != nil {
+		return nil, AccountCreateFailedErr
+	}
+
+	pass := string(hashedPassword)
+	acc.Password = &pass
+
+	stmt := account.
+		UPDATE(
+			account.Password,
+		).
+		SET(
+			account.Password.SET(jet.String(pass)),
+		).
+		WHERE(
+			account.ID.EQ(jet.Uint64(acc.ID)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, UpdateAccountErr
+	}
+
+	token, err := s.createTokenFromAccountAndChar(acc, nil)
+	if err != nil {
+		return nil, InvalidLoginErr
+	}
+
+	return &ChangePasswordResponse{
 		Token: token,
 	}, nil
 }

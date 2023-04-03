@@ -372,6 +372,6 @@ func (s *Server) GenerateRandomUserMarker() {
 		}
 
 		counter++
-		time.Sleep(2 * time.Second)
+		time.Sleep(3 * time.Second)
 	}
 }
