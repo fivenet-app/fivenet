@@ -41,6 +41,7 @@ const sidebarNavigation = [
         permission: 'Overview.View',
         icon: HomeIcon,
         position: 'top',
+        current: false,
     },
     {
         name: 'Citizens',
@@ -48,6 +49,7 @@ const sidebarNavigation = [
         permission: 'CitizenStoreService.FindUsers',
         icon: UsersIcon,
         position: 'top',
+        current: false,
     },
     {
         name: 'Vehicles',
@@ -55,6 +57,7 @@ const sidebarNavigation = [
         permission: 'DMVService.FindVehicles',
         icon: TruckIcon,
         position: 'top',
+        current: false,
     },
     {
         name: 'Documents',
@@ -62,6 +65,7 @@ const sidebarNavigation = [
         permission: 'DocStoreService.FindDocuments',
         icon: DocumentTextIcon,
         position: 'top',
+        current: false,
     },
     {
         name: 'Job',
@@ -69,6 +73,7 @@ const sidebarNavigation = [
         permission: 'Jobs.View',
         icon: BriefcaseIcon,
         position: 'top',
+        current: false,
     },
     {
         name: 'Livemap',
@@ -76,6 +81,7 @@ const sidebarNavigation = [
         permission: 'LivemapperService.Stream',
         icon: MapIcon,
         position: 'top',
+        current: false,
     },
     {
         name: 'About',
@@ -83,12 +89,12 @@ const sidebarNavigation = [
         permission: '',
         icon: QuestionMarkCircleIcon,
         position: 'bottom',
+        current: false,
     },
-] as { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, position: 'top' | 'bottom' }[];
+] as { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, position: 'top' | 'bottom', current: boolean }[];
 const userNavigation = ref<{ name: string, href: RoutesNamedLocations, permission?: string }[]>([
     { name: 'Login', href: { name: 'auth-login' } },
 ]);
-const currSidebar = ref('')
 const breadcrumbs = ref<{ name: string, href: string, current: boolean }[]>([]);
 const mobileMenuOpen = ref(false);
 
@@ -109,14 +115,19 @@ function updateUserNav() {
 }
 
 function updateActiveItem() {
+    console.log("updateActiveItem");
     const route = router.currentRoute.value;
     if (route.name) {
-        const sidebarIndex = sidebarNavigation.findIndex(e => route.name.toLowerCase().includes(e.href.name.toLowerCase()));
-        if (sidebarIndex !== -1) {
-            currSidebar.value = sidebarNavigation[sidebarIndex].name;
-        }
+        sidebarNavigation.forEach(e => {
+            if (route.name.toLowerCase().includes(e.href.name.toLowerCase())) {
+                e.current = true;
+            } else {
+                e.current = false;
+            }
+        });
+        console.log(route.name);
     } else {
-        currSidebar.value = sidebarNavigation[0].name;
+        sidebarNavigation.forEach(e => e.current = false);
     }
 }
 
@@ -183,10 +194,10 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                 <div class="flex-grow w-full px-2 mt-6 space-y-1">
                     <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')" :key="item.name"
                         :to="item.href" v-can="item.permission"
-                        :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
-                        :aria-current="currSidebar === item.name ? 'page' : undefined">
+                        :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
+                        :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"
-                            :class="[currSidebar === item.name ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
+                            :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true" />
                         <span class="mt-2">{{ item.name }}</span>
                     </NuxtLink>
@@ -194,10 +205,10 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                 <div class="flex-initial w-full px-2 space-y-1">
                     <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'bottom')" :key="item.name"
                         :to="item.href" v-can="item.permission"
-                        :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
-                        :aria-current="currSidebar === item.name ? 'page' : undefined">
+                        :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
+                        :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"
-                            :class="[currSidebar === item.name ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
+                            :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true" />
                         <span class="mt-2">{{ item.name }}</span>
                     </NuxtLink>
@@ -240,10 +251,10 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                     <div class="space-y-1">
                                         <NuxtLink v-for="item in sidebarNavigation" :key="item.name" :to="item.href"
                                             v-can="item.permission"
-                                            :class="[currSidebar === item.name ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
-                                            :aria-current="currSidebar === item.name ? 'page' : undefined">
+                                            :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
+                                            :aria-current="item.current ? 'page' : undefined">
                                             <component :is="item.icon"
-                                                :class="[currSidebar === item.name ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'mr-3 h-6 w-6']"
+                                                :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'mr-3 h-6 w-6']"
                                                 aria-hidden="true" />
                                             <span>{{ item.name }}</span>
                                         </NuxtLink>
