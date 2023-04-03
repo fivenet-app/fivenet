@@ -10,9 +10,7 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { UserShort } from '@fivenet/gen/resources/users/users_pb';
 import { CompleteCharNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
-import {
-    CheckIcon,
-} from '@heroicons/vue/20/solid';
+import { CheckIcon } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';

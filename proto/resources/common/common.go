@@ -2,6 +2,10 @@ package common
 
 import "github.com/galexrt/fivenet/proto/resources/documents"
 
+const (
+	SuperUserAnyAccess = "SuperUser.AnyAccess"
+)
+
 type IJobInfo interface {
 	GetJob() string
 	GetJobGrade() int32

@@ -19,6 +19,7 @@ import (
 
 var (
 	InvalidRequestErr    = status.Error(codes.InvalidArgument, "Invalid role action requested!")
+	NoPermissionErr      = status.Error(codes.PermissionDenied, "No permission to create/change/delete role!")
 	RoleAlreadyExistsErr = status.Error(codes.InvalidArgument, "Role already exists!")
 )
 
@@ -124,7 +125,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 		return nil, InvalidRequestErr
 	}
 	if !check {
-		return nil, InvalidRequestErr
+		return nil, NoPermissionErr
 	}
 
 	perms, err := s.p.GetRolePermissions(role.ID)
@@ -195,7 +196,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, InvalidRequestErr
 	}
 	if !check {
-		return nil, InvalidRequestErr
+		return nil, NoPermissionErr
 	}
 
 	if err := s.p.DeleteRole(role.ID); err != nil {
@@ -211,7 +212,7 @@ func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (
 		return nil, InvalidRequestErr
 	}
 	if !check {
-		return nil, InvalidRequestErr
+		return nil, NoPermissionErr
 	}
 
 	perms, err := s.filterPermissionIDs(ctx, req.Permissions)
@@ -237,7 +238,7 @@ func (s *Server) RemovePermFromRole(ctx context.Context, req *RemovePermFromRole
 		return nil, InvalidRequestErr
 	}
 	if !check {
-		return nil, InvalidRequestErr
+		return nil, NoPermissionErr
 	}
 
 	perms, err := s.filterPermissionIDs(ctx, req.Permissions)

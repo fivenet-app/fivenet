@@ -39,17 +39,28 @@ async function getRoles(): Promise<Array<Role>> {
 const entriesJobGrades = ref<Array<JobGrade>>([]);
 const selectedJobGrade = ref<JobGrade>();
 
-async function findJobGrades(): Promise<void> {
-    const req = new CompleteJobNamesRequest();
-    req.setExactMatch(true);
-    req.setCurrentJob(true);
+async function findJobGrades(): Promise<Array<JobGrade>> {
+    return new Promise(async (res, rej) => {
+        const req = new CompleteJobNamesRequest();
+        req.setExactMatch(true);
+        req.setCurrentJob(true);
 
-    const resp = await $grpc.getCompletorClient().
-        completeJobNames(req, null);
+        try {
+            const resp = await $grpc.getCompletorClient().
+                completeJobNames(req, null);
 
 
-    const job = resp.getJobsList()[0];
-    entriesJobGrades.value = job.getGradesList();
+            const jobs = resp.getJobsList();
+            if (jobs.length === 0) {
+                return;
+            }
+
+            return res(jobs[0].getGradesList());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function createRole(): Promise<void> {
@@ -77,7 +88,7 @@ async function createRole(): Promise<void> {
 }
 
 onMounted(async () => {
-    findJobGrades();
+    entriesJobGrades.value = await findJobGrades();
 });
 </script>
 

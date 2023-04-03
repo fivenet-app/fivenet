@@ -1,12 +1,15 @@
 <script lang="ts" setup>
-import { Role } from '@fivenet/gen/resources/permissions/permissions_pb';
+import { Permission, Role } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { RpcError } from 'grpc-web';
-import { DeleteRoleRequest, GetRoleRequest } from '@fivenet/gen/services/rector/rector_pb';
+import { AddPermToRoleRequest, DeleteRoleRequest, GetPermissionsRequest, GetRoleRequest, RemovePermFromRoleRequest } from '@fivenet/gen/services/rector/rector_pb';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import { TrashIcon } from '@heroicons/vue/20/solid';
 import Divider from '../partials/Divider.vue';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { CheckIcon } from '@heroicons/vue/20/solid';
+import { watchDebounced } from '@vueuse/shared';
 
 const { $grpc } = useNuxtApp();
 
@@ -34,12 +37,12 @@ async function getRole(): Promise<Role> {
     });
 }
 
-const { data: role, pending, refresh, error } = await useLazyAsyncData(`rector-roles-${props.roleId}`, () => getRole());
+const { data: role, pending, refresh, error } = await useLazyAsyncData(`rector-role-${props.roleId}`, () => getRole());
 
-async function deleteRole(id: number): Promise<void> {
+async function deleteRole(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new DeleteRoleRequest();
-        req.setId(id);
+        req.setId(props.roleId);
 
         try {
             return $grpc.getRectorClient().
@@ -51,26 +54,98 @@ async function deleteRole(id: number): Promise<void> {
     });
 }
 
-async function removePermission(id: number): Promise<void> {
+const entriesPerms = ref<Array<Permission>>([]);
+const queryPerm = ref('');
+const selectedPerm = ref();
+
+async function getPermissions(): Promise<Array<Permission>> {
     return new Promise(async (res, rej) => {
-        const req = new DeleteRoleRequest();
-        req.setId(id);
+        const req = new GetPermissionsRequest();
+        req.setSearch(queryPerm.value);
 
         try {
-            return $grpc.getRectorClient().
-                deleteRole(req, null);
+            const resp = await $grpc.getRectorClient().
+                getPermissions(req, null);
+
+            return res(resp.getPermissionsList());
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
 }
+
+const permsToAdd = ref<Array<Permission>>([]);
+const permsToRemove = ref<Array<Permission>>([]);
+
+function addPermission(): void {
+    if (permsToAdd.value.indexOf(selectedPerm.value) === -1) {
+        permsToAdd.value.push(selectedPerm.value);
+    }
+}
+
+function removePermission(perm: Permission): void {
+    const addIdx = permsToAdd.value.indexOf(perm);
+    if (addIdx > -1) {
+        permsToAdd.value.splice(addIdx, 1);
+    }
+
+    permsToRemove.value.push(perm);
+}
+
+async function saveRolePermissions(): Promise<void> {
+    await Promise.all([saveAddPermissions(), saveRemovePermissions()]);
+}
+
+async function saveAddPermissions(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        const req = new AddPermToRoleRequest();
+        req.setId(props.roleId);
+        const permIds = new Array<number>();
+        permsToAdd.value.forEach((v) => permIds.push(v.getId()));
+        req.setPermissionsList(permIds);
+
+        try {
+            return $grpc.getRectorClient().
+                removePermFromRole(req, null);
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+async function saveRemovePermissions(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        const req = new RemovePermFromRoleRequest();
+        req.setId(props.roleId);
+        const permIds = new Array<number>();
+        permsToRemove.value.forEach((v) => permIds.push(v.getId()));
+        req.setPermissionsList(permIds);
+
+        try {
+            return $grpc.getRectorClient().
+                removePermFromRole(req, null);
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+onMounted(async () => {
+    entriesPerms.value = await getPermissions();
+});
+watchDebounced(queryPerm, async () => await getPermissions(), { debounce: 750, maxWait: 1250 });
 </script>
 
 <template>
     <div v-if="role">
         <h2 class="text-3xl text-white">
             {{ toTitleCase(role?.getName()!) }}
+            <button v-can="'RectorService.DeleteRole'" @click="deleteRole()">
+                <TrashIcon class="w-6 h-6 mx-auto text-neutral" />
+            </button>
         </h2>
         <p class="text-gray-400 text-sm">
             {{ role.getDescription() }}
@@ -78,6 +153,58 @@ async function removePermission(id: number): Promise<void> {
         <Divider label="Permissions" />
         <div class="py-2">
             <div class="px-2 sm:px-6 lg:px-8">
+                <div v-can="'RectorService.AddPermToRole'" class="sm:flex-auto">
+                    <form @submit.prevent="addPermission()">
+                        <div class="flex flex-row gap-4 mx-auto">
+                            <div class="flex-1 form-control">
+                                <label for="owner"
+                                    class="block text-sm font-medium leading-6 text-neutral">Permission</label>
+                                <div class="relative items-center mt-2">
+                                    <Combobox as="div" v-model="selectedPerm" nullable>
+                                        <div class="relative">
+                                            <ComboboxButton as="div">
+                                                <ComboboxInput
+                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    :display-value="(perm: any) => perm ? `${perm?.getName()}: ${perm?.getDescription()}` : ''"
+                                                    placeholder="Permission" />
+                                            </ComboboxButton>
+
+                                            <ComboboxOptions v-if="entriesPerms.length > 0"
+                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
+                                                <ComboboxOption v-for="perm in entriesPerms" :key="perm?.getId()"
+                                                    :value="perm" as="perm" v-slot="{ active, selected }">
+                                                    <li
+                                                        :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                                        <span :class="['block truncate', selected && 'font-semibold']">
+                                                            {{ perm?.getName() }}: {{ perm?.getDescription() }}
+                                                        </span>
+
+                                                        <span v-if="selected"
+                                                            :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                        </span>
+                                                    </li>
+                                                </ComboboxOption>
+                                            </ComboboxOptions>
+                                        </div>
+                                    </Combobox>
+                                </div>
+                            </div>
+                            <div class="flex-initial form-control">
+                                <button @click="addPermission()"
+                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
+                                    Add Permission
+                                </button>
+                            </div>
+                            <div class="flex-initial form-control">
+                                <button @click="saveRolePermissions()"
+                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-success-700 text-neutral hover:bg-success-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-700">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div class="flow-root mt-2">
                     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -112,9 +239,9 @@ async function removePermission(id: number): Promise<void> {
                                         <tr v-for="perm in role.getPermissionsList()" :key="perm.getId()">
                                             <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
                                                 <div class="flex flex-row">
-                                                    <button v-can="'RectorService.UpdateRole'">
+                                                    <button v-can="'RectorService.AddPermToRole'">
                                                         <TrashIcon class="w-6 h-6 mx-auto text-neutral"
-                                                            @click="removePermission(perm.getId())" />
+                                                            @click="removePermission(perm)" />
                                                     </button>
                                                 </div>
                                             </td>
