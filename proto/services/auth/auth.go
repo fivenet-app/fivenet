@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/proto/resources/jobs"
 	users "github.com/galexrt/fivenet/proto/resources/users"
@@ -49,14 +50,16 @@ type Server struct {
 	auth *auth.GRPCAuth
 	tm   *auth.TokenManager
 	p    perms.Permissions
+	c    *mstlystcdata.Enricher
 }
 
-func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenManager, p perms.Permissions) *Server {
+func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenManager, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
 	return &Server{
 		db:   db,
 		auth: auth,
 		tm:   tm,
 		p:    p,
+		c:    c,
 	}
 }
 
@@ -441,6 +444,8 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 
 	char.Job = req.Job
 	char.JobGrade = req.JobGrade
+
+	s.c.EnrichJobInfo(char)
 
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(claims.Username)))

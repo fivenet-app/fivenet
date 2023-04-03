@@ -6,11 +6,13 @@ import (
 	"testing"
 
 	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms/mock"
 	"github.com/galexrt/fivenet/tests/dbmanager"
 	"github.com/galexrt/fivenet/tests/proto"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -29,14 +31,16 @@ func TestFullAuthFlow(t *testing.T) {
 
 	db := dbmanager.TestDBManager.DB()
 
+	ctx := context.Background()
 	tm := auth.NewTokenManager("")
 	p := mock.NewMock()
-	srv := NewServer(db, auth.NewGRPCAuth(tm), tm, p)
+	c, err := mstlystcdata.NewCache(ctx, zap.NewNop(), db)
+	assert.NoError(t, err)
+	enricher := mstlystcdata.NewEnricher(c)
+	srv := NewServer(db, auth.NewGRPCAuth(tm), tm, p, enricher)
 
 	client, _, cancel := NewTestAuthServiceClient(srv)
 	defer cancel()
-
-	ctx := context.Background()
 
 	// First login without credentials
 	loginReq := &LoginRequest{}

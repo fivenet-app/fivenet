@@ -6,6 +6,7 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import { TrashIcon } from '@heroicons/vue/20/solid';
+import Divider from '../partials/Divider.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -74,14 +75,7 @@ async function removePermission(id: number): Promise<void> {
         <p class="text-gray-400 text-sm">
             {{ role.getDescription() }}
         </p>
-        <div class="relative">
-            <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                <div class="w-full border-t border-gray-300"></div>
-            </div>
-            <div class="relative flex justify-center">
-                <span class="bg-primary-900 px-3 text-base font-semibold leading-6 text-gray-200">Permissions</span>
-            </div>
-        </div>
+        <Divider label="Permissions" />
         <div class="py-2">
             <div class="px-2 sm:px-6 lg:px-8">
                 <div class="flow-root mt-2">
