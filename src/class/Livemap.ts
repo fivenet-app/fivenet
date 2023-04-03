@@ -1,4 +1,5 @@
 import { IMarker } from '@fivenet/gen/resources/livemap/livemap';
+import { DispatchMarker, UserMarker } from '@fivenet/gen/resources/livemap/livemap_pb';
 import L from 'leaflet';
 
 import { AnimatedMarker } from './AnimatedMarker';
@@ -119,7 +120,15 @@ export class Livemap extends L.Map {
 
         list.forEach(async (marker) => {
             if (marker.getIcon() || marker.getIconColor()) options.icon = await this.getIcon(type, marker.getIcon(), marker.getIconColor());
-            await this.addMarker(marker.getId(), marker.getY(), marker.getX(), '', options);
+            let popupContent = '';
+            if (type === MarkerType.player) {
+                const userMarker = marker as UserMarker;
+                popupContent += `${userMarker.getUser()?.getFirstname()}, ${userMarker.getUser()?.getLastname()} (Job: ${userMarker.getUser()?.getJobLabel()})`;
+            } else if (type === MarkerType.dispatch) {
+                const dispatchMarker = marker as DispatchMarker;
+                popupContent += `${dispatchMarker.getName()} (Job: ${dispatchMarker.getJobLabel()})`;
+            }
+            await this.addMarker(marker.getId(), marker.getY(), marker.getX(), popupContent, options);
         });
 
         this.prevMarkerLists.set(
@@ -158,6 +167,7 @@ export class Livemap extends L.Map {
             html: '<div class="place-content-center">' + html + '</div>',
             iconSize: [42, 42],
             iconAnchor: [21, 12],
+            popupAnchor: [21,12 ],
         });
     }
 }

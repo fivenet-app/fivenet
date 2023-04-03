@@ -73,12 +73,14 @@ func (c *Cache) Start() {
 	}
 
 	go func() {
-		select {
-		case <-c.ctx.Done():
-			return
-		case <-time.After(5 * time.Minute):
-			if err := c.refreshCache(); err != nil {
-				c.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
+		for {
+			select {
+			case <-c.ctx.Done():
+				return
+			case <-time.After(5 * time.Minute):
+				if err := c.refreshCache(); err != nil {
+					c.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
+				}
 			}
 		}
 	}()

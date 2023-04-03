@@ -65,15 +65,17 @@ func NewServer(ctx context.Context, logger *zap.Logger, db *sql.DB, p perms.Perm
 
 func (s *Server) Start() {
 	go func() {
-		select {
-		case <-s.ctx.Done():
-			return
-		case <-time.After(6 * time.Second):
-			if err := s.refreshUserLocations(); err != nil {
-				s.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
-			}
-			if err := s.refreshDispatches(); err != nil {
-				s.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
+		for {
+			select {
+			case <-s.ctx.Done():
+				return
+			case <-time.After(6 * time.Second):
+				if err := s.refreshUserLocations(); err != nil {
+					s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
+				}
+				if err := s.refreshDispatches(); err != nil {
+					s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
+				}
 			}
 		}
 	}()
@@ -89,11 +91,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	if len(jobs) == 0 {
 		return nil
-	}
-
-	sqlJobs := make([]jet.Expression, len(jobs))
-	for k := 0; k < len(jobs); k++ {
-		sqlJobs[k] = jet.String(jobs[k])
 	}
 
 	for {
@@ -159,11 +156,12 @@ func (s *Server) refreshUserLocations() error {
 	locs := locs.AS("usermarker")
 	stmt := locs.
 		SELECT(
-			locs.Identifier.AS("usermarker.userid"),
+			locs.Identifier,
 			locs.Job,
 			locs.X,
 			locs.Y,
 			locs.UpdatedAt,
+			users.ID.AS("usermarker.userid"),
 			users.ID,
 			users.Identifier,
 			users.Job,
@@ -192,7 +190,7 @@ func (s *Server) refreshUserLocations() error {
 	}
 
 	for i := 0; i < len(dest); i++ {
-		s.c.EnrichJobName(dest[i].User)
+		s.c.EnrichJobInfo(dest[i].User)
 
 		if _, ok := markers[dest[i].User.Job]; !ok {
 			markers[dest[i].User.Job] = []*livemap.UserMarker{}
@@ -230,7 +228,7 @@ func (s *Server) refreshDispatches() error {
 			),
 		).
 		ORDER_BY(d.Time.DESC()).
-		LIMIT(50)
+		LIMIT(40)
 
 	var dest []*model.GksphoneJobMessage
 	if err := stmt.QueryContext(s.ctx, s.db, &dest); err != nil {
@@ -267,6 +265,7 @@ func (s *Server) refreshDispatches() error {
 			IconColor: iconColor,
 			Name:      *v.Name,
 			Popup:     *v.Message,
+			Job:       job,
 		}
 
 		s.c.EnrichJobName(marker)
