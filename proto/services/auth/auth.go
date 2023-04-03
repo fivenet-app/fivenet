@@ -267,6 +267,8 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			user.Identifier,
 			user.Job,
 			user.JobGrade,
+			user.Firstname,
+			user.Lastname,
 			js.Label.AS("user.job_label"),
 			jobGrades.Label.AS("user.job_grade_label"),
 			jobProps.Theme,
