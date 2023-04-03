@@ -10,8 +10,13 @@ import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOption
 import { JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { CheckIcon } from '@heroicons/vue/20/solid';
+import { useAuthStore } from '~~/src/store/auth';
 
 const { $grpc } = useNuxtApp();
+
+const store = useAuthStore();
+
+const activeChar = computed(() => store.activeChar);
 
 const { data: roles, pending, refresh, error } = await useLazyAsyncData('rector-roles', () => getRoles());
 
@@ -54,6 +59,7 @@ async function createRole(): Promise<void> {
         }
 
         const req = new CreateRoleRequest();
+        req.setJob(activeChar.value?.getJob()!);
         req.setGrade(selectedJobGrade.value.getGrade());
 
         try {
@@ -119,7 +125,8 @@ onMounted(async () => {
                                     </div>
                                 </div>
                                 <div class="flex-1 form-control" v-can="'RectorService.CreateRole'">
-                                    <button @click="createRole()" :disabled="selectedJobGrade && selectedJobGrade.getGrade() <= 0"
+                                    <button @click="createRole()"
+                                        :disabled="selectedJobGrade && selectedJobGrade.getGrade() <= 0"
                                         class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                         Create
                                     </button>

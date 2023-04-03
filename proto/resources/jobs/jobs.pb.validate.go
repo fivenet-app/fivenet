@@ -211,7 +211,16 @@ func (m *JobGrade) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for JobName
+	if utf8.RuneCountInString(m.GetJobName()) > 50 {
+		err := JobGradeValidationError{
+			field:  "JobName",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.GetGrade() <= 0 {
 		err := JobGradeValidationError{

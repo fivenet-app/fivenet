@@ -522,6 +522,17 @@ func (m *CreateRoleRequest) validate(all bool) error {
 
 	var errors []error
 
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
+		err := CreateRoleRequestValidationError{
+			field:  "Job",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.GetGrade() <= 0 {
 		err := CreateRoleRequestValidationError{
 			field:  "Grade",

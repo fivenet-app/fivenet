@@ -115,7 +115,6 @@ function updateUserNav() {
 }
 
 function updateActiveItem() {
-    console.log("updateActiveItem");
     const route = router.currentRoute.value;
     if (route.name) {
         sidebarNavigation.forEach(e => {
@@ -125,7 +124,6 @@ function updateActiveItem() {
                 e.current = false;
             }
         });
-        console.log(route.name);
     } else {
         sidebarNavigation.forEach(e => e.current = false);
     }

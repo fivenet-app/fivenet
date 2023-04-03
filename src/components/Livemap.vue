@@ -51,7 +51,7 @@ const postal = L.tileLayer('/tiles/postal/{z}/{x}/{y}.png', {
     noWrap: false,
     tms: true,
 });
-const road = L.tileLayer('/tile/road/{z}/{x}/{y}.png', {
+const road = L.tileLayer('/tiles/road/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,
@@ -59,7 +59,7 @@ const road = L.tileLayer('/tile/road/{z}/{x}/{y}.png', {
     noWrap: false,
     tms: true,
 });
-const satelite = L.tileLayer('/tile/satelite/{z}/{x}/{y}.png', {
+const satelite = L.tileLayer('/tiles/satelite/{z}/{x}/{y}.png', {
     attribution:
         '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
     minZoom: 1,

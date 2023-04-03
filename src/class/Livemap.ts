@@ -126,7 +126,7 @@ export class Livemap extends L.Map {
                 popupContent += `${userMarker.getUser()?.getFirstname()}, ${userMarker.getUser()?.getLastname()} (Job: ${userMarker.getUser()?.getJobLabel()})`;
             } else if (type === MarkerType.dispatch) {
                 const dispatchMarker = marker as DispatchMarker;
-                popupContent += `${dispatchMarker.getName()} (Job: ${dispatchMarker.getJobLabel()})`;
+                popupContent += `Dispatch: ${dispatchMarker.getPopup()}<br>Sent by: ${dispatchMarker.getName()} (Job: ${dispatchMarker.getJobLabel()})`;
             }
             await this.addMarker(marker.getId(), marker.getY(), marker.getX(), popupContent, options);
         });

@@ -905,7 +905,8 @@ proto.services.rector.CreateRoleRequest.prototype.toObject = function(opt_includ
  */
 proto.services.rector.CreateRoleRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    grade: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    job: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    grade: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -943,6 +944,10 @@ proto.services.rector.CreateRoleRequest.deserializeBinaryFromReader = function(m
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setJob(value);
+      break;
+    case 2:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGrade(value);
       break;
@@ -975,10 +980,17 @@ proto.services.rector.CreateRoleRequest.prototype.serializeBinary = function() {
  */
 proto.services.rector.CreateRoleRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getJob();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
   f = message.getGrade();
   if (f !== 0) {
     writer.writeInt32(
-      1,
+      2,
       f
     );
   }
@@ -986,11 +998,29 @@ proto.services.rector.CreateRoleRequest.serializeBinaryToWriter = function(messa
 
 
 /**
- * optional int32 grade = 1;
+ * optional string job = 1;
+ * @return {string}
+ */
+proto.services.rector.CreateRoleRequest.prototype.getJob = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.services.rector.CreateRoleRequest} returns this
+ */
+proto.services.rector.CreateRoleRequest.prototype.setJob = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional int32 grade = 2;
  * @return {number}
  */
 proto.services.rector.CreateRoleRequest.prototype.getGrade = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
@@ -999,7 +1029,7 @@ proto.services.rector.CreateRoleRequest.prototype.getGrade = function() {
  * @return {!proto.services.rector.CreateRoleRequest} returns this
  */
 proto.services.rector.CreateRoleRequest.prototype.setGrade = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
