@@ -1,6 +1,7 @@
 package perms
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -8,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/proto/resources/jobs"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/go-jet/jet/v2/qrm"
 	"golang.org/x/exp/slices"
 )
 
@@ -33,34 +35,17 @@ func AddPermsToList(perms []*Perm) {
 }
 
 func (p *Perms) Register() error {
-	all, err := p.GetAllPermissions()
-	if err != nil {
-		return err
-	}
-
-outer:
 	for _, perm := range list {
-		baseKey := fmt.Sprintf("%s.%s", perm.Key, perm.Name)
-
-		for _, ap := range all {
-			if baseKey == ap.Name {
-
-				if err := p.UpdatePermission(ap.ID, baseKey, perm.Description); err != nil {
-					return err
-				}
-
-				continue outer
-			}
-		}
-
-		if err := p.CreatePermission(baseKey, perm.Description); err != nil {
+		// Create "base" permission
+		pName := fmt.Sprintf("%s.%s", perm.Key, perm.Name)
+		if err := p.createOrUpdatePermission(pName, perm.Description); err != nil {
 			return err
 		}
 
 		if perm.PerJob {
 			for _, job := range config.C.FiveM.PermissionRoleJobs {
-				jobKey := fmt.Sprintf("%s.%s", baseKey, job)
-				if err := p.CreatePermission(jobKey, perm.Description); err != nil {
+				pJobName := fmt.Sprintf("%s.%s", pName, job)
+				if err := p.createOrUpdatePermission(pJobName, perm.Description); err != nil {
 					return err
 				}
 			}
@@ -68,8 +53,8 @@ outer:
 		}
 
 		for _, field := range perm.Fields {
-			fieldKey := fmt.Sprintf("%s.%s", baseKey, field)
-			if err := p.CreatePermission(fieldKey, perm.Description); err != nil {
+			pJobField := fmt.Sprintf("%s.%s", pName, field)
+			if err := p.createOrUpdatePermission(pJobField, perm.Description); err != nil {
 				return err
 			}
 		}
@@ -78,18 +63,24 @@ outer:
 	return p.setupRoles()
 }
 
-func (p *Perms) setupRoles() error {
-	role, err := p.CreateRole("masterofdisaster", "")
+func (p *Perms) createOrUpdatePermission(name string, description string) error {
+	role, err := p.GetPermissionByGuard(name)
 	if err != nil {
-		return err
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return err
+		}
 	}
 
-	perms, _ := p.GetAllPermissions()
-	// Ensure the "masterofdisaster" role always has all permissions
-	if err := p.AddPermissionsToRole(role.ID, perms.IDs()); err != nil {
-		return err
+	if role != nil {
+		if role.Name != name || (role.Description != nil && *role.Description != description) {
+			return p.UpdatePermission(role.ID, name, description)
+		}
 	}
 
+	return p.CreatePermission(name, description)
+}
+
+func (p *Perms) setupRoles() error {
 	j := table.Jobs.AS("job")
 	jg := table.JobGrades.AS("jobgrade")
 	stmt := j.

@@ -4,6 +4,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/dbutils"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
@@ -101,4 +102,26 @@ func (p *Perms) GetPermissionsByIDs(ids ...uint64) (collections.Permissions, err
 	}
 
 	return dest, nil
+}
+
+func (p *Perms) GetPermissionByGuard(name string) (*model.FivenetPermissions, error) {
+	guard := helpers.Guard(name)
+
+	stmt := ap.
+		SELECT(
+			ap.AllColumns,
+		).
+		FROM(ap).
+		WHERE(
+			ap.GuardName.EQ(jet.String(guard)),
+		).
+		LIMIT(1)
+
+	var dest model.FivenetPermissions
+	err := stmt.QueryContext(p.ctx, p.db, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
 }
