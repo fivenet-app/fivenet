@@ -105,13 +105,17 @@ onMounted(() => {
 });
 
 function updateUserNav() {
-    if (accessToken.value && activeChar.value) {
-        userNavigation.value = [
+    userNavigation.value.length = 0;
+    if (activeChar.value) {
+        userNavigation.value.push(
             { name: 'Change Character', href: { name: 'auth-character-selector' } },
             { name: 'Control Panel', href: { name: 'rector' }, permission: 'RectorService.GetRoles' },
-            { name: 'Sign out', href: { name: 'auth-logout' } }
-        ];
-    } else {
+    );
+    }
+    if (accessToken.value) {
+        userNavigation.value.push({ name: 'Sign out', href: { name: 'auth-logout' } });
+    }
+    if (userNavigation.value.length === 0) {
         userNavigation.value = [
             { name: 'Login', href: { name: 'auth-login' } },
         ];
@@ -194,7 +198,14 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                     <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo" :title="'FiveNet' + appVersion" />
                 </div>
                 <div class="flex-grow w-full px-2 mt-6 space-y-1">
-                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')" v-if="activeChar" :key="item.name"
+                    <NuxtLink :to="{ name: 'index' }" v-if="!accessToken || !activeChar"
+                        active-class="bg-accent-100/20 text-neutral font-bold"
+                        class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
+                        exact-active-class="text-neutral" aria-current-value="page">
+                        <HomeIcon class="h-6 w-6" aria-hidden="true" />
+                        <span class="mt-2">Home</span>
+                    </NuxtLink>
+                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')" v-else-if="accessToken && activeChar" :key="item.name"
                         :to="item.href" v-can="item.permission"
                         :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="item.current ? 'page' : undefined">
