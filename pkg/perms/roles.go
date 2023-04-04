@@ -4,6 +4,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/dbutils"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/proto/resources/common/database"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -30,6 +31,30 @@ func (p *Perms) GetRoles(prefix string) (collections.Roles, error) {
 	}
 
 	return dest, nil
+}
+
+func (p *Perms) CountRoles(prefix string) (int64, error) {
+	prefix = helpers.Guard(prefix)
+
+	stmt := ar.
+		SELECT(
+			jet.COUNT(ar.ID).AS("datacount.totalcount"),
+		).
+		FROM(ar).
+		WHERE(
+			ar.GuardName.LIKE(jet.String(prefix+"%")),
+		).
+		ORDER_BY(
+			jet.LENGTH(ar.GuardName),
+			ar.GuardName.ASC(),
+		)
+
+	var dest database.DataCount
+	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+		return -1, err
+	}
+
+	return dest.TotalCount, nil
 }
 
 func (p *Perms) GetRole(id uint64) (*model.FivenetRoles, error) {

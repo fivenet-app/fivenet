@@ -72,6 +72,8 @@ func (p *PermsMock) RemoveUserPerm(userId int32, perm string) {
 	delete(p.UserPerms[userId], perm)
 }
 
+// Implementation of perms.Permissions
+
 func (p *PermsMock) GetAllPermissions() (collections.Permissions, error) {
 	ps := collections.Permissions{}
 
@@ -95,7 +97,17 @@ func (p *PermsMock) GetAllPermissions() (collections.Permissions, error) {
 	return ps, nil
 }
 
+func (p *PermsMock) GetPermissionsByIDs(ids ...uint64) (collections.Permissions, error) {
+
+	// TODO
+
+	return nil, nil
+}
+
 func (p *PermsMock) CreatePermission(name string, description string) error {
+
+	// TODO
+
 	return nil
 }
 
@@ -166,7 +178,21 @@ func (p *PermsMock) GetRoles(prefix string) (collections.Roles, error) {
 	return r, nil
 }
 
+func (p *PermsMock) CountRoles(prefix string) (int64, error) {
+
+	// TODO
+
+	return 0, nil
+}
+
 func (p *PermsMock) GetRole(id uint64) (*model.FivenetRoles, error) {
+
+	// TODO
+
+	return nil, nil
+}
+
+func (p *PermsMock) GetRoleByGuardName(name string) (*model.FivenetRoles, error) {
 
 	// TODO
 
@@ -178,6 +204,41 @@ func (p *PermsMock) GetRolePermissions(id uint64) (collections.Permissions, erro
 	// TODO
 
 	return nil, nil
+}
+
+func (p *PermsMock) CreateRole(name string, description string) (*model.FivenetRoles, error) {
+
+	// TODO
+
+	return nil, nil
+}
+
+func (p *PermsMock) CreateRoleWithGuard(name string, guard string, description string) (*model.FivenetRoles, error) {
+
+	// TODO
+
+	return nil, nil
+}
+
+func (p *PermsMock) DeleteRole(id uint64) error {
+
+	// TODO
+
+	return nil
+}
+
+func (p *PermsMock) AddPermissionsToRole(id uint64, perms []uint64) error {
+
+	// TODO
+
+	return nil
+}
+
+func (p *PermsMock) RemovePermissionsFromRole(id uint64, perms []uint64) error {
+
+	// TODO
+
+	return nil
 }
 
 func (p *PermsMock) GetUserRoles(userId int32) (collections.Roles, error) {

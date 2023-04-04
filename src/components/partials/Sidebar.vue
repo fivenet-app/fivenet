@@ -38,7 +38,7 @@ const sidebarNavigation = [
     {
         name: 'Overview',
         href: { name: 'overview' },
-        permission: 'Overview.View',
+        permission: '',
         icon: HomeIcon,
         position: 'top',
         current: false,
@@ -110,6 +110,10 @@ function updateUserNav() {
             { name: 'Change Character', href: { name: 'auth-character-selector' } },
             { name: 'Control Panel', href: { name: 'rector' }, permission: 'RectorService.GetRoles' },
             { name: 'Sign out', href: { name: 'auth-logout' } }
+        ];
+    } else {
+        userNavigation.value = [
+            { name: 'Login', href: { name: 'auth-login' } },
         ];
     }
 }
@@ -190,7 +194,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                     <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo" :title="'FiveNet' + appVersion" />
                 </div>
                 <div class="flex-grow w-full px-2 mt-6 space-y-1">
-                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')" :key="item.name"
+                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')" v-if="activeChar" :key="item.name"
                         :to="item.href" v-can="item.permission"
                         :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="item.current ? 'page' : undefined">

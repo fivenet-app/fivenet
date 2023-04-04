@@ -210,13 +210,13 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 	jobRoleKey := fmt.Sprintf("job-%s-", job)
-	jobRolesModels, err := s.p.GetRoles(jobRoleKey)
+	roleCount, err := s.p.CountRoles(jobRoleKey)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
 
 	// Don't allow deleting the "last" role, one role should always remain
-	if len(jobRolesModels) <= 1 {
+	if roleCount <= 1 {
 		return nil, InvalidRequestErr
 	}
 

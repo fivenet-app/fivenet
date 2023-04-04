@@ -30,6 +30,7 @@ type Permissions interface {
 	GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix string) ([]string, error)
 
 	GetRoles(prefix string) (collections.Roles, error)
+	CountRoles(prefix string) (int64, error)
 	GetRole(id uint64) (*model.FivenetRoles, error)
 	GetRoleByGuardName(name string) (*model.FivenetRoles, error)
 	GetRolePermissions(id uint64) (collections.Permissions, error)

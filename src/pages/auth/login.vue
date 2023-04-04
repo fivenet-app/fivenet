@@ -6,6 +6,7 @@ useHead({
     title: 'Login',
 });
 definePageMeta({
+    title: 'Login',
     requiresAuth: false,
 });
 </script>
