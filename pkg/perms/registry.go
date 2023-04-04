@@ -33,8 +33,26 @@ func AddPermsToList(perms []*Perm) {
 }
 
 func (p *Perms) Register() error {
+	all, err := p.GetAllPermissions()
+	if err != nil {
+		return err
+	}
+
+outer:
 	for _, perm := range list {
 		baseKey := fmt.Sprintf("%s.%s", perm.Key, perm.Name)
+
+		for _, ap := range all {
+			if baseKey == ap.Name {
+
+				if err := p.UpdatePermission(ap.ID, baseKey, perm.Description); err != nil {
+					return err
+				}
+
+				continue outer
+			}
+		}
+
 		if err := p.CreatePermission(baseKey, perm.Description); err != nil {
 			return err
 		}

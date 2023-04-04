@@ -72,7 +72,7 @@ func (p *PermifyModule) generate(f pgs.File) {
 
 			comment := m.SourceCodeInfo().LeadingComments()
 			comment = strings.TrimLeft(comment, " ")
-			if !strings.HasPrefix(comment, "@permission") {
+			if !strings.HasPrefix(comment, "@perm") {
 				continue
 			}
 			comment = strings.TrimRight(comment, "\n")
@@ -119,8 +119,8 @@ func (p *PermifyModule) generate(f pgs.File) {
 }
 
 func (p *PermifyModule) parseComment(service string, method string, comment string) (*Perm, error) {
-	comment = strings.TrimPrefix(comment, "@permission: ")
-	comment = strings.TrimPrefix(comment, "@permission")
+	comment = strings.TrimPrefix(comment, "@perm: ")
+	comment = strings.TrimPrefix(comment, "@perm")
 
 	perm := &Perm{
 		Name:        method,
@@ -156,6 +156,9 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 			perm.PerJob = bo
 			continue
 		case "description":
+			if !strings.Contains(v, "\"") {
+				v = "\"" + v + "\""
+			}
 			perm.Description = v
 			continue
 		case "fields":
@@ -211,6 +214,8 @@ func init() {
             PerJob: {{ $perm.PerJob }},{{ end }}
 			{{- if $perm.Fields }}
             Fields: []string{ {{ range $i, $field := $perm.Fields }}"{{ $field }}",{{ end -}} },{{ end }}
+			{{- with $perm.Description }}
+            Description: {{ . }},{{ end }}
 		},
 		{{- end }}
 	{{- end }}

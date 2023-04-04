@@ -13,6 +13,6 @@ message StreamResponse {
 }
 
 service LivemapperService {
-  // @permission: PerJob=true
+  // @perm: PerJob=true;description="Being able to view the Livemap"
   rpc Stream(StreamRequest) returns (stream StreamResponse);
 }

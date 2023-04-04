@@ -22,11 +22,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotificatorServiceClient interface {
-	// @permission
+	// @perm: description="Being able list their own notifications"
 	GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error)
-	// @permission: name=GetNotifications
+	// @perm: name=GetNotifications
 	ReadNotifications(ctx context.Context, in *ReadNotificationsRequest, opts ...grpc.CallOption) (*ReadNotificationsResponse, error)
-	// @permission: name=GetNotifications
+	// @perm: name=GetNotifications;description="Being able to receive notifications"
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (NotificatorService_StreamClient, error)
 }
 
@@ -92,11 +92,11 @@ func (x *notificatorServiceStreamClient) Recv() (*StreamResponse, error) {
 // All implementations must embed UnimplementedNotificatorServiceServer
 // for forward compatibility
 type NotificatorServiceServer interface {
-	// @permission
+	// @perm: description="Being able list their own notifications"
 	GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error)
-	// @permission: name=GetNotifications
+	// @perm: name=GetNotifications
 	ReadNotifications(context.Context, *ReadNotificationsRequest) (*ReadNotificationsResponse, error)
-	// @permission: name=GetNotifications
+	// @perm: name=GetNotifications;description="Being able to receive notifications"
 	Stream(*StreamRequest, NotificatorService_StreamServer) error
 	mustEmbedUnimplementedNotificatorServiceServer()
 }

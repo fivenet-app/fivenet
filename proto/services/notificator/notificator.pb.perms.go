@@ -23,8 +23,9 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: NotificatorService
 		{
-			Key:  NotificatorServicePermKey,
-			Name: "GetNotifications",
+			Key:         NotificatorServicePermKey,
+			Name:        "GetNotifications",
+			Description: "Being able list their own notifications",
 		},
 	})
 }

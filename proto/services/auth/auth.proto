@@ -75,11 +75,10 @@ service AuthService {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
 
-  // @permission
   rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse);
-  // @permission: name=GetCharacters
+  // @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
   rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
-  // @permission
+  // @perm: description="SuperUser: Allow to override their own job on the go."
   rpc SetJob(SetJobRequest) returns (SetJobResponse);
 }

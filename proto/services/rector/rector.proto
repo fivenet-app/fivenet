@@ -58,20 +58,20 @@ message GetPermissionsResponse {
 }
 
 service RectorService {
-  // @permission
+  // @perm: description="Get/List FiveNet job roles"
   rpc GetRoles(GetRolesRequest) returns (GetRolesResponse);
-  // @permission: name=GetRoles
+  // @perm: name=GetRoles
   rpc GetRole(GetRoleRequest) returns (GetRoleResponse);
-  // @permission
+  // @perm: description="Create rank-specific FiveNet job roles"
   rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
-  // @permission
+  // @perm: description="Delete FiveNet job roles"
   rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
 
-  // @permission
+  // @perm: description="Add/ Delete permissions to FiveNet job roles"
   rpc AddPermToRole(AddPermToRoleRequest) returns (AddPermToRoleResponse);
-  // @permission: name=AddPermToRole
+  // @perm: name=AddPermToRole
   rpc RemovePermFromRole(RemovePermFromRoleRequest) returns (RemovePermFromRoleResponse);
 
-  // @permission: PerJob=true
+  // @perm: PerJob=true;description="Get list of available FiveNet job roles permissions"
   rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
 }

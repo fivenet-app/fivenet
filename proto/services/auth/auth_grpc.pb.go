@@ -25,12 +25,11 @@ type AuthServiceClient interface {
 	CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*CreateAccountResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
-	// @permission
 	GetCharacters(ctx context.Context, in *GetCharactersRequest, opts ...grpc.CallOption) (*GetCharactersResponse, error)
-	// @permission: name=GetCharacters
+	// @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
 	ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
-	// @permission
+	// @perm: description="SuperUser: Allow to override their own job on the go."
 	SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error)
 }
 
@@ -112,12 +111,11 @@ type AuthServiceServer interface {
 	CreateAccount(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
-	// @permission
 	GetCharacters(context.Context, *GetCharactersRequest) (*GetCharactersResponse, error)
-	// @permission: name=GetCharacters
+	// @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
 	ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
-	// @permission
+	// @perm: description="SuperUser: Allow to override their own job on the go."
 	SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }

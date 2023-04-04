@@ -22,11 +22,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CompletorServiceClient interface {
-	// @permission
+	// @perm: description="Complete Citizen Names"
 	CompleteCharNames(ctx context.Context, in *CompleteCharNamesRequest, opts ...grpc.CallOption) (*CompleteCharNamesRespoonse, error)
-	// @permission
+	// @perm: description="Complete Job Names and Grades/Ranks"
 	CompleteJobNames(ctx context.Context, in *CompleteJobNamesRequest, opts ...grpc.CallOption) (*CompleteJobNamesResponse, error)
-	// @permission: PerJob=true
+	// @perm: PerJob=true;description="Complete a Jobs Document Categories"
 	CompleteDocumentCategory(ctx context.Context, in *CompleteDocumentCategoryRequest, opts ...grpc.CallOption) (*CompleteDocumentCategoryResponse, error)
 }
 
@@ -69,11 +69,11 @@ func (c *completorServiceClient) CompleteDocumentCategory(ctx context.Context, i
 // All implementations must embed UnimplementedCompletorServiceServer
 // for forward compatibility
 type CompletorServiceServer interface {
-	// @permission
+	// @perm: description="Complete Citizen Names"
 	CompleteCharNames(context.Context, *CompleteCharNamesRequest) (*CompleteCharNamesRespoonse, error)
-	// @permission
+	// @perm: description="Complete Job Names and Grades/Ranks"
 	CompleteJobNames(context.Context, *CompleteJobNamesRequest) (*CompleteJobNamesResponse, error)
-	// @permission: PerJob=true
+	// @perm: PerJob=true;description="Complete a Jobs Document Categories"
 	CompleteDocumentCategory(context.Context, *CompleteDocumentCategoryRequest) (*CompleteDocumentCategoryResponse, error)
 	mustEmbedUnimplementedCompletorServiceServer()
 }

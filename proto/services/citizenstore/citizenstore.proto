@@ -43,12 +43,12 @@ message SetUserPropsRequest {
 message SetUserPropsResponse {}
 
 service CitizenStoreService {
-  // @permission: fields=Licenses,UserProps
+  // @perm: fields=Licenses,UserProps;description="Citizens List and Search"
   rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
-  // @permission: name=FindUsers
+  // @perm: name=FindUsers
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  // @permission: fields=SourceUser
+  // @perm: fields=SourceUser;description="Citizen Info Activity Feed"
   rpc GetUserActivity(GetUserActivityRequest) returns (GetUserActivityResponse);
-  // @permission: fields=Wanted
+  // @perm: fields=Wanted;description="Set Citizen Props (e.g., wanted status)"
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 }

@@ -22,19 +22,22 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: CitizenStoreService
 		{
-			Key:    CitizenStoreServicePermKey,
-			Name:   "FindUsers",
-			Fields: []string{"Licenses", "UserProps"},
+			Key:         CitizenStoreServicePermKey,
+			Name:        "FindUsers",
+			Fields:      []string{"Licenses", "UserProps"},
+			Description: "Citizens List and Search",
 		},
 		{
-			Key:    CitizenStoreServicePermKey,
-			Name:   "GetUserActivity",
-			Fields: []string{"SourceUser"},
+			Key:         CitizenStoreServicePermKey,
+			Name:        "GetUserActivity",
+			Fields:      []string{"SourceUser"},
+			Description: "Citizen Info Activity Feed",
 		},
 		{
-			Key:    CitizenStoreServicePermKey,
-			Name:   "SetUserProps",
-			Fields: []string{"Wanted"},
+			Key:         CitizenStoreServicePermKey,
+			Name:        "SetUserProps",
+			Fields:      []string{"Wanted"},
+			Description: "Set Citizen Props (e.g., wanted status)",
 		},
 	})
 }

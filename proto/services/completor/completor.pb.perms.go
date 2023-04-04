@@ -13,17 +13,20 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: CompletorService
 		{
-			Key:  CompletorServicePermKey,
-			Name: "CompleteCharNames",
+			Key:         CompletorServicePermKey,
+			Name:        "CompleteCharNames",
+			Description: "Complete Citizen Names",
 		},
 		{
-			Key:    CompletorServicePermKey,
-			Name:   "CompleteDocumentCategory",
-			PerJob: true,
+			Key:         CompletorServicePermKey,
+			Name:        "CompleteDocumentCategory",
+			PerJob:      true,
+			Description: "Complete a Jobs Document Categories",
 		},
 		{
-			Key:  CompletorServicePermKey,
-			Name: "CompleteJobNames",
+			Key:         CompletorServicePermKey,
+			Name:        "CompleteJobNames",
+			Description: "Complete Job Names and Grades/Ranks",
 		},
 	})
 }

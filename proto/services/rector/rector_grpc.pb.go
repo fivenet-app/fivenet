@@ -22,19 +22,19 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RectorServiceClient interface {
-	// @permission
+	// @perm: description="Get/List FiveNet job roles"
 	GetRoles(ctx context.Context, in *GetRolesRequest, opts ...grpc.CallOption) (*GetRolesResponse, error)
-	// @permission: name=GetRoles
+	// @perm: name=GetRoles
 	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error)
-	// @permission
+	// @perm: description="Create rank-specific FiveNet job roles"
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
-	// @permission
+	// @perm: description="Delete FiveNet job roles"
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
-	// @permission
+	// @perm: description="Add/ Delete permissions to FiveNet job roles"
 	AddPermToRole(ctx context.Context, in *AddPermToRoleRequest, opts ...grpc.CallOption) (*AddPermToRoleResponse, error)
-	// @permission: name=AddPermToRole
+	// @perm: name=AddPermToRole
 	RemovePermFromRole(ctx context.Context, in *RemovePermFromRoleRequest, opts ...grpc.CallOption) (*RemovePermFromRoleResponse, error)
-	// @permission: PerJob=true
+	// @perm: PerJob=true;description="Get list of available FiveNet job roles permissions"
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error)
 }
 
@@ -113,19 +113,19 @@ func (c *rectorServiceClient) GetPermissions(ctx context.Context, in *GetPermiss
 // All implementations must embed UnimplementedRectorServiceServer
 // for forward compatibility
 type RectorServiceServer interface {
-	// @permission
+	// @perm: description="Get/List FiveNet job roles"
 	GetRoles(context.Context, *GetRolesRequest) (*GetRolesResponse, error)
-	// @permission: name=GetRoles
+	// @perm: name=GetRoles
 	GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error)
-	// @permission
+	// @perm: description="Create rank-specific FiveNet job roles"
 	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
-	// @permission
+	// @perm: description="Delete FiveNet job roles"
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
-	// @permission
+	// @perm: description="Add/ Delete permissions to FiveNet job roles"
 	AddPermToRole(context.Context, *AddPermToRoleRequest) (*AddPermToRoleResponse, error)
-	// @permission: name=AddPermToRole
+	// @perm: name=AddPermToRole
 	RemovePermFromRole(context.Context, *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error)
-	// @permission: PerJob=true
+	// @perm: PerJob=true;description="Get list of available FiveNet job roles permissions"
 	GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
 }

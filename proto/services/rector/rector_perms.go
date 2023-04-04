@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
+	"github.com/galexrt/fivenet/proto/resources/common"
 	"github.com/galexrt/fivenet/proto/resources/permissions"
 	"github.com/galexrt/fivenet/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -26,7 +27,7 @@ var (
 var (
 	ignoredGuardPermissions = []string{
 		"authservice-setjob",
-		"superuser-override",
+		common.SuperUserAnyAccessGuard,
 	}
 )
 
@@ -51,6 +52,11 @@ func (s *Server) filterPermissions(ctx context.Context, perms collections.Permis
 	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, "RectorService.GetPermissions")
 	if err != nil {
 		return nil, err
+	}
+
+	// Disable job filter when superuser
+	if s.p.Can(userId, common.SuperUserAnyAccess) {
+		jobFilter = false
 	}
 
 	filtered := collections.Permissions{}
@@ -193,9 +199,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 	}
 
 	return &CreateRoleResponse{
-		Role: &permissions.Role{
-			Id: cr.ID,
-		},
+		Role: permissions.ConvertFromRole(cr),
 	}, nil
 }
 

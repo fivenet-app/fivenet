@@ -13,8 +13,9 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: DMVService
 		{
-			Key:  DMVServicePermKey,
-			Name: "FindVehicles",
+			Key:         DMVServicePermKey,
+			Name:        "FindVehicles",
+			Description: "Search and list citizen's vehicles",
 		},
 	})
 }

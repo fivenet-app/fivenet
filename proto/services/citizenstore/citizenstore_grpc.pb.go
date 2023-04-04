@@ -22,13 +22,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CitizenStoreServiceClient interface {
-	// @permission: fields=Licenses,UserProps
+	// @perm: fields=Licenses,UserProps;description="Citizens List and Search"
 	FindUsers(ctx context.Context, in *FindUsersRequest, opts ...grpc.CallOption) (*FindUsersResponse, error)
-	// @permission: name=FindUsers
+	// @perm: name=FindUsers
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
-	// @permission: fields=SourceUser
+	// @perm: fields=SourceUser;description="Citizen Info Activity Feed"
 	GetUserActivity(ctx context.Context, in *GetUserActivityRequest, opts ...grpc.CallOption) (*GetUserActivityResponse, error)
-	// @permission: fields=Wanted
+	// @perm: fields=Wanted;description="Set Citizen Props (e.g., wanted status)"
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 }
 
@@ -80,13 +80,13 @@ func (c *citizenStoreServiceClient) SetUserProps(ctx context.Context, in *SetUse
 // All implementations must embed UnimplementedCitizenStoreServiceServer
 // for forward compatibility
 type CitizenStoreServiceServer interface {
-	// @permission: fields=Licenses,UserProps
+	// @perm: fields=Licenses,UserProps;description="Citizens List and Search"
 	FindUsers(context.Context, *FindUsersRequest) (*FindUsersResponse, error)
-	// @permission: name=FindUsers
+	// @perm: name=FindUsers
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
-	// @permission: fields=SourceUser
+	// @perm: fields=SourceUser;description="Citizen Info Activity Feed"
 	GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error)
-	// @permission: fields=Wanted
+	// @perm: fields=Wanted;description="Set Citizen Props (e.g., wanted status)"
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	mustEmbedUnimplementedCitizenStoreServiceServer()
 }

@@ -22,43 +22,43 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DocStoreServiceClient interface {
-	// @permission
+	// @perm: description="List available templates"
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
-	// @permission: name=ListTemplates
+	// @perm: name=ListTemplates
 	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
-	// @permission
+	// @perm: description="List/ Find documents"
 	FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error)
-	// @permission
+	// @perm: description="View a document"
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
-	// @permission
+	// @perm: description="Create a new document"
 	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
-	// @permission: name=UpdateDocument
+	// @perm: description="Edit/ Update an existing document"
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
-	// @permission: name=GetDocument
+	// @perm: name=GetDocument
 	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
-	// @permission: name=GetDocument
+	// @perm: name=GetDocument
 	GetDocumentRelations(ctx context.Context, in *GetDocumentRelationsRequest, opts ...grpc.CallOption) (*GetDocumentRelationsResponse, error)
-	// @permission
+	// @perm: description="Add/ Remove document references"
 	AddDocumentReference(ctx context.Context, in *AddDocumentReferenceRequest, opts ...grpc.CallOption) (*AddDocumentReferenceResponse, error)
-	// @permission: name=AddDocumentReference
+	// @perm: name=AddDocumentReference
 	RemoveDocumentReference(ctx context.Context, in *RemoveDocumentReferenceRequest, opts ...grpc.CallOption) (*RemoveDocumentReferenceResponse, error)
-	// @permission
+	// @perm: description="Add/ Remove document citizen relations"
 	AddDocumentRelation(ctx context.Context, in *AddDocumentRelationRequest, opts ...grpc.CallOption) (*AddDocumentRelationResponse, error)
-	// @permission: name=AddDocumentRelation
+	// @perm: name=AddDocumentRelation
 	RemoveDocumentRelation(ctx context.Context, in *RemoveDocumentRelationRequest, opts ...grpc.CallOption) (*RemoveDocumentRelationResponse, error)
-	// @permission
+	// @perm: description="View document comments"
 	GetDocumentComments(ctx context.Context, in *GetDocumentCommentsRequest, opts ...grpc.CallOption) (*GetDocumentCommentsResponse, error)
-	// @permission
+	// @perm: description="Post document comments"
 	PostDocumentComment(ctx context.Context, in *PostDocumentCommentRequest, opts ...grpc.CallOption) (*PostDocumentCommentResponse, error)
-	// @permission: name=PostDocumentComment
+	// @perm: name=PostDocumentComment
 	EditDocumentComment(ctx context.Context, in *EditDocumentCommentRequest, opts ...grpc.CallOption) (*EditDocumentCommentResponse, error)
-	// @permission
+	// @perm: description="Delete own document comment"
 	DeleteDocumentComment(ctx context.Context, in *DeleteDocumentCommentRequest, opts ...grpc.CallOption) (*DeleteDocumentCommentResponse, error)
-	// @permission
+	// @perm: description="View a document's access"
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
-	// @permission
+	// @perm: description="Set a document's access"
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
-	// @permission
+	// @perm: description="View the documents linked to a citizen"
 	GetUserDocuments(ctx context.Context, in *GetUserDocumentsRequest, opts ...grpc.CallOption) (*GetUserDocumentsResponse, error)
 }
 
@@ -245,43 +245,43 @@ func (c *docStoreServiceClient) GetUserDocuments(ctx context.Context, in *GetUse
 // All implementations must embed UnimplementedDocStoreServiceServer
 // for forward compatibility
 type DocStoreServiceServer interface {
-	// @permission
+	// @perm: description="List available templates"
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
-	// @permission: name=ListTemplates
+	// @perm: name=ListTemplates
 	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
-	// @permission
+	// @perm: description="List/ Find documents"
 	FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error)
-	// @permission
+	// @perm: description="View a document"
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
-	// @permission
+	// @perm: description="Create a new document"
 	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
-	// @permission: name=UpdateDocument
+	// @perm: description="Edit/ Update an existing document"
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
-	// @permission: name=GetDocument
+	// @perm: name=GetDocument
 	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
-	// @permission: name=GetDocument
+	// @perm: name=GetDocument
 	GetDocumentRelations(context.Context, *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error)
-	// @permission
+	// @perm: description="Add/ Remove document references"
 	AddDocumentReference(context.Context, *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error)
-	// @permission: name=AddDocumentReference
+	// @perm: name=AddDocumentReference
 	RemoveDocumentReference(context.Context, *RemoveDocumentReferenceRequest) (*RemoveDocumentReferenceResponse, error)
-	// @permission
+	// @perm: description="Add/ Remove document citizen relations"
 	AddDocumentRelation(context.Context, *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error)
-	// @permission: name=AddDocumentRelation
+	// @perm: name=AddDocumentRelation
 	RemoveDocumentRelation(context.Context, *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error)
-	// @permission
+	// @perm: description="View document comments"
 	GetDocumentComments(context.Context, *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error)
-	// @permission
+	// @perm: description="Post document comments"
 	PostDocumentComment(context.Context, *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error)
-	// @permission: name=PostDocumentComment
+	// @perm: name=PostDocumentComment
 	EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error)
-	// @permission
+	// @perm: description="Delete own document comment"
 	DeleteDocumentComment(context.Context, *DeleteDocumentCommentRequest) (*DeleteDocumentCommentResponse, error)
-	// @permission
+	// @perm: description="View a document's access"
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
-	// @permission
+	// @perm: description="Set a document's access"
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
-	// @permission
+	// @perm: description="View the documents linked to a citizen"
 	GetUserDocuments(context.Context, *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error)
 	mustEmbedUnimplementedDocStoreServiceServer()
 }

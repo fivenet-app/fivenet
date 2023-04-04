@@ -23,25 +23,30 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: RectorService
 		{
-			Key:  RectorServicePermKey,
-			Name: "AddPermToRole",
+			Key:         RectorServicePermKey,
+			Name:        "AddPermToRole",
+			Description: "Add/ Delete permissions to FiveNet job roles",
 		},
 		{
-			Key:  RectorServicePermKey,
-			Name: "CreateRole",
+			Key:         RectorServicePermKey,
+			Name:        "CreateRole",
+			Description: "Create rank-specific FiveNet job roles",
 		},
 		{
-			Key:  RectorServicePermKey,
-			Name: "DeleteRole",
+			Key:         RectorServicePermKey,
+			Name:        "DeleteRole",
+			Description: "Delete FiveNet job roles",
 		},
 		{
-			Key:    RectorServicePermKey,
-			Name:   "GetPermissions",
-			PerJob: true,
+			Key:         RectorServicePermKey,
+			Name:        "GetPermissions",
+			PerJob:      true,
+			Description: "Get list of available FiveNet job roles permissions",
 		},
 		{
-			Key:  RectorServicePermKey,
-			Name: "GetRoles",
+			Key:         RectorServicePermKey,
+			Name:        "GetRoles",
+			Description: "Get/List FiveNet job roles",
 		},
 	})
 }

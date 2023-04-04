@@ -22,12 +22,14 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: AuthService
 		{
-			Key:  AuthServicePermKey,
-			Name: "GetCharacters",
+			Key:         AuthServicePermKey,
+			Name:        "GetCharacters",
+			Description: "Permission to choose character, basically allow or disallow access to FiveNet.",
 		},
 		{
-			Key:  AuthServicePermKey,
-			Name: "SetJob",
+			Key:         AuthServicePermKey,
+			Name:        "SetJob",
+			Description: "SuperUser: Allow to override their own job on the go.",
 		},
 	})
 }

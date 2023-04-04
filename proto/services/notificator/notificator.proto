@@ -33,11 +33,11 @@ message StreamResponse {
 }
 
 service NotificatorService {
-  // @permission
+  // @perm: description="Being able list their own notifications"
   rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse);
-  // @permission: name=GetNotifications
+  // @perm: name=GetNotifications
   rpc ReadNotifications(ReadNotificationsRequest) returns (ReadNotificationsResponse);
 
-  // @permission: name=GetNotifications
+  // @perm: name=GetNotifications;description="Being able to receive notifications"
   rpc Stream(StreamRequest) returns (stream StreamResponse);
 }
