@@ -220,7 +220,7 @@ watchDebounced(queryPerm, async () => await getPermissions(), { debounce: 750, m
                                                                 :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                                                 <span
                                                                     :class="['block truncate', selected && 'font-semibold']">
-                                                                    {{ perm?.getName() }}: {{ perm?.getDescription() }}
+                                                                    {{ perm?.getName() }}<span v-if="perm?.hasDescription()">: {{ perm?.getDescription() }}</span>
                                                                 </span>
 
                                                                 <span v-if="selected"

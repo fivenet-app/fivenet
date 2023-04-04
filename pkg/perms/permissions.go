@@ -8,6 +8,13 @@ import (
 )
 
 func (p *Perms) CreatePermission(name string, description string) error {
+	var descField jet.Expression
+	if description == "" {
+		descField = jet.NULL
+	} else {
+		descField = jet.String(description)
+	}
+
 	stmt := ap.
 		INSERT(
 			ap.Name,
@@ -17,7 +24,7 @@ func (p *Perms) CreatePermission(name string, description string) error {
 		VALUES(
 			name,
 			helpers.Guard(name),
-			description,
+			descField,
 		)
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
@@ -30,6 +37,13 @@ func (p *Perms) CreatePermission(name string, description string) error {
 }
 
 func (p *Perms) UpdatePermission(id uint64, name string, description string) error {
+	var descField jet.StringExpression
+	if description == "" {
+		descField = jet.StringExp(jet.NULL)
+	} else {
+		descField = jet.String(description)
+	}
+
 	stmt := ap.
 		UPDATE(
 			ap.Name,
@@ -39,7 +53,7 @@ func (p *Perms) UpdatePermission(id uint64, name string, description string) err
 		SET(
 			ap.Name.SET(jet.String(name)),
 			ap.GuardName.SET(jet.String(helpers.Guard(name))),
-			ap.Description.SET(jet.String(description)),
+			ap.Description.SET(descField),
 		).
 		WHERE(
 			ap.ID.EQ(jet.Uint64(id)),
