@@ -14,6 +14,9 @@ export class Livemap extends L.Map {
     public hash: Hash | undefined;
     public hasLoaded: boolean = false;
 
+    public layerGroups: Map<string, L.LayerGroup> = new Map();
+    public controlLayer: L.Control.Layers | undefined = undefined;
+
     public markers: Map<number, AnimatedMarker> = new Map();
     public popups: Map<number, L.Popup> = new Map();
     private prevMarkerLists: Map<MarkerType, Array<IMarker.AsObject>> = new Map();
@@ -63,8 +66,40 @@ export class Livemap extends L.Map {
         }
     }
 
-    public async addMarker(id: number, latitude: number, longitude: number, popupContent: string, options: L.MarkerOptions): Promise<void> {
-        const marker = this.markers.get(id);
+    public async addLayerGroup(name: string): Promise<L.LayerGroup> {
+        const layer = new L.LayerGroup();
+        layer.addTo(this);
+
+        this.layerGroups.set(name, layer);
+
+        return layer;
+    }
+
+    public async getLayerGroup(id: string): Promise<L.LayerGroup | undefined> {
+        return this.layerGroups.get(id);
+    }
+
+    public async addControlLayer(baseLayers: L.Control.LayersObject): Promise<L.Control.Layers | undefined> {
+        const overlayLayers = Object.fromEntries(this.layerGroups.entries());
+        this.controlLayer = L.control.layers(baseLayers, overlayLayers).addTo(this);
+
+        return this.controlLayer;
+    }
+
+    public async getControlLayer(id: string): Promise<L.Control.Layers | undefined> {
+        return this.controlLayer;
+    }
+
+    public async addMarker(
+        id: number,
+        latitude: number,
+        longitude: number,
+        popupContent: string,
+        options: L.MarkerOptions,
+        layerName: string
+    ): Promise<AnimatedMarker> {
+        let marker = this.markers.get(id);
+        const layer = this.layerGroups.get(layerName) ?? this;
 
         if (marker) {
             marker.moveTo(L.latLng(latitude, longitude));
@@ -74,7 +109,7 @@ export class Livemap extends L.Map {
             options.icon = options?.icon ? options.icon : this.defaultIcon;
             options.icon.options.shadowSize = [0, 0];
 
-            const marker = new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(this);
+            marker = new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(layer);
 
             if (popupContent) {
                 const popup = L.popup({ content: popupContent, closeButton: false });
@@ -84,6 +119,8 @@ export class Livemap extends L.Map {
 
             this.markers.set(id, marker);
         }
+
+        return marker;
     }
 
     public async removeMarker(id: number): Promise<boolean> {
@@ -96,15 +133,19 @@ export class Livemap extends L.Map {
 
     public async parseMarkerlist(type: MarkerType, list: Array<IMarker>): Promise<void> {
         let options: L.MarkerOptions = {};
+        let layer: string = '';
+
         switch (type) {
             case MarkerType.player:
                 {
+                    layer = 'Players';
                     options = {};
                 }
                 break;
 
             case MarkerType.dispatch:
                 {
+                    layer = 'Dispatches';
                     options = {};
                 }
                 break;
@@ -119,16 +160,19 @@ export class Livemap extends L.Map {
         }
 
         list.forEach(async (marker) => {
-            if (marker.getIcon() || marker.getIconColor()) options.icon = await this.getIcon(type, marker.getIcon(), marker.getIconColor());
+            if (marker.getIcon() || marker.getIconColor())
+                options.icon = await this.getIcon(type, marker.getIcon(), marker.getIconColor());
             let popupContent = '';
             if (type === MarkerType.player) {
                 const userMarker = marker as UserMarker;
-                popupContent += `${userMarker.getUser()?.getFirstname()}, ${userMarker.getUser()?.getLastname()} (Job: ${userMarker.getUser()?.getJobLabel()})`;
+                popupContent += `${userMarker.getUser()?.getFirstname()}, ${userMarker
+                    .getUser()
+                    ?.getLastname()} (Job: ${userMarker.getUser()?.getJobLabel()})`;
             } else if (type === MarkerType.dispatch) {
                 const dispatchMarker = marker as DispatchMarker;
                 popupContent += `Dispatch: ${dispatchMarker.getPopup()}<br>Sent by: ${dispatchMarker.getName()} (Job: ${dispatchMarker.getJobLabel()})`;
             }
-            await this.addMarker(marker.getId(), marker.getY(), marker.getX(), popupContent, options);
+            await this.addMarker(marker.getId(), marker.getY(), marker.getX(), popupContent, options, layer);
         });
 
         this.prevMarkerLists.set(

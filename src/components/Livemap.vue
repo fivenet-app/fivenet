@@ -108,7 +108,7 @@ async function stop(): Promise<void> {
 const mapContainer = ref<HTMLDivElement | null>();
 
 onMounted(() => {
-    setTimeout(() => {
+    setTimeout(async () => {
         if (!mapContainer.value) {
             return;
         }
@@ -116,10 +116,11 @@ onMounted(() => {
         map.addHash();
         map.setView([0, 0], 2);
 
-        const markersLayer = new L.LayerGroup().addTo(map as L.Map);
-        L.control
-            .layers({ Atlas: atlas, Road: road, Satelite: satelite, Postal: postal }, { Markers: markersLayer })
-            .addTo(map as L.Map);
+        await map.addLayerGroup('Players');
+        await map.addLayerGroup('Dispatches');
+
+        await map.addControlLayer({ Atlas: atlas, Road: road, Satelite: satelite, Postal: postal });
+
         postal.bringToFront();
 
         map.updateBackground('Postal');
