@@ -1,4 +1,4 @@
-{{- if .Values.fivenet.ingress.enabled -}}
+{{- if .Values.ingress.enabled -}}
 {{- $fullName := include "fivenet.fullname" . -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -6,15 +6,15 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "fivenet.labels" . | nindent 4 }}
-  {{- with .Values.fivenet.ingress.annotations }}
   annotations:
+  {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  ingressClassName: {{ .Values.fivenet.ingress.className }}
-  {{- if .Values.fivenet.ingress.tls }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.tls }}
   tls:
-    {{- range .Values.fivenet.ingress.tls }}
+    {{- range .Values.ingress.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
@@ -23,7 +23,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.fivenet.ingress.hosts }}
+    {{- range .Values.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -32,9 +32,9 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ $fullName }}
+                name: {{ $fullName }}{{ with .service }}-{{ . }}{{ end }}
                 port:
-                  number: 8080
+                  name: {{ if .servicePort }}{{ .servicePort }}{{ else }}http{{ end }}
           {{- end }}
     {{- end }}
 {{- end }}

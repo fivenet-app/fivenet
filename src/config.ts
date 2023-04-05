@@ -5,7 +5,7 @@ type ArpanetConfig = {
 
 const config: ArpanetConfig = {
     sentryDSN: '',
-    apiProtoURL: '',
+    apiProtoURL: '/grpc',
 };
 
 export default config;
