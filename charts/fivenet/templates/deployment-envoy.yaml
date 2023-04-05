@@ -44,6 +44,13 @@ spec:
             - name: grpc
               containerPort: 8181
               protocol: TCP
+            - name: admin
+              containerPort: 9901
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.envoy.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.envoy.readinessProbe | nindent 12 }}
           volumeMounts:
             - name: envoy-config
               mountPath: /config

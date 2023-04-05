@@ -70,6 +70,14 @@ fivenet:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
   config:
     logLevel: "DEBUG"
     # debug or release
@@ -141,6 +149,14 @@ envoy:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+  livenessProbe:
+    httpGet:
+      path: /ready
+      port: admin
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: admin
   # Envoy config
   config:
     admin:

@@ -46,13 +46,9 @@ spec:
               containerPort: 9090
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml .Values.fivenet.livenessProbe | nindent 12 }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml .Values.fivenet.readinessProbe | nindent 12 }}
           volumeMounts:
             - name: fivenet-config
               mountPath: /config
