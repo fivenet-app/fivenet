@@ -13,7 +13,7 @@ definePageMeta({
 
 <style>
 #map {
-    height: 94.75vh;
+    height: 94vh;
 }
 </style>
 

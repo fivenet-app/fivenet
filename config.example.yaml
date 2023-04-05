@@ -2,7 +2,7 @@ logLevel: "DEBUG"
 # debug or release
 mode: "debug"
 sentry:
-  dsn: "https://d3372a68f9b440618195a6893c3e95a3@glitchtip.edenmal.moe/2"
+  serverDSN: "https://d3372a68f9b440618195a6893c3e95a3@glitchtip.edenmal.moe/2"
   environment: "dev"
   # Your Sentry or Glitchtip SDN
   clientDSN: ""
@@ -12,8 +12,8 @@ http:
     cookieSecret: "your_generated_cookie_secret"
 grpc:
   listen: ":9090"
-  # Must be https
-  clientURL: "https://localhost:8181"
+  # Must be https or on the same URL
+  clientURL: "/grpc"
 database:
   # refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
   dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local"

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fivenet.fullname" . }}-envoy
+  labels:
+    {{- include "fivenet.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.envoy.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: envoy
+      {{- include "fivenet.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/component: envoy
+        {{- include "fivenet.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "fivenet.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: envoy-config
+          secret:
+            secretName: "{{ include "fivenet.fullname" . }}-envoy-config"
+        - name: fivenet-config
+          secret:
+            secretName: "{{ include "fivenet.fullname" . }}-fivenet-config"
+      containers:
+        - image: "{{ .Values.envoy.image.repository }}:{{ .Values.envoy.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.envoy.image.pullPolicy }}
+          name: envoy
+          args:
+            - envoy
+            - -c
+            - /config/envoy.yaml
+          ports:
+            - name: grpc
+              containerPort: 8181
+              protocol: TCP
+          volumeMounts:
+            - name: envoy-config
+              mountPath: /config
+              readOnly: true
+          resources:
+            {{- toYaml .Values.envoy.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

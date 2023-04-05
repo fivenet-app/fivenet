@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fivenet.fullname" . }}
+  labels:
+    app.kubernetes.io/component: fivenet
+    {{- include "fivenet.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: http
+    - name: grpc
+      port: 9090
+      protocol: TCP
+      targetPort: grpc
+  selector:
+    app.kubernetes.io/component: fivenet
+    {{- include "fivenet.selectorLabels" . | nindent 4 }}

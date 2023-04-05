@@ -43,7 +43,7 @@ type Config struct {
 }
 
 type Sentry struct {
-	DSN         string `yaml:"dsn"`
+	ServerDSN   string `yaml:"serverDSN"`
 	Environment string `default:"dev" yaml:"environment"`
 	ClientDSN   string `default:"" yaml:"clientDSN"`
 }

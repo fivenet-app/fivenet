@@ -44,6 +44,11 @@ const config = defineNuxtConfig({
             https: false,
             proxy: {
                 '/api': 'http://localhost:8080',
+                '/grpc': {
+                    target: 'https://localhost:8181',
+                    rewrite: (path) => path.replace(/^\/grpc/, ''),
+                    secure: false,
+                },
             },
         },
     },

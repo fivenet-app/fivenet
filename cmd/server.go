@@ -37,9 +37,9 @@ var serverCmd = &cobra.Command{
 	Use: "server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Setup Sentry Integration
-		if config.C.Sentry.DSN != "" && config.C.Mode != gin.DebugMode {
+		if config.C.Sentry.ServerDSN != "" && config.C.Mode != gin.DebugMode {
 			err := sentry.Init(sentry.ClientOptions{
-				Dsn:         config.C.Sentry.DSN,
+				Dsn:         config.C.Sentry.ServerDSN,
 				Debug:       false,
 				Environment: config.C.Sentry.Environment,
 				Release:     version.Info(),
