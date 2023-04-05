@@ -51,7 +51,7 @@ func (p *Perms) GetAllPermissionsOfUser(userId int32) (collections.Permissions, 
 		return nil, err
 	}
 
-	p.permsCache.Set(userId, perms)
+	p.permsCache.Set(userId, perms, cache.WithExpiration(p.permsCacheTTL))
 
 	return perms, nil
 }

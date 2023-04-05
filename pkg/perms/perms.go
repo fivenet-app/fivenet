@@ -64,12 +64,12 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 	canCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[string, bool](lru.WithCapacity(128)),
-		cache.WithJanitorInterval[string, bool](15*time.Second),
+		cache.WithJanitorInterval[string, bool](90*time.Second),
 	)
 	permsCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[int32, collections.Permissions](lru.WithCapacity(128)),
-		cache.WithJanitorInterval[int32, collections.Permissions](15*time.Second),
+		cache.WithJanitorInterval[int32, collections.Permissions](90*time.Second),
 	)
 
 	return &Perms{
@@ -80,7 +80,7 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 		canCacheTTL: 2 * time.Minute,
 		canCache:    canCache,
 
-		permsCacheTTL: 2 * time.Minute,
+		permsCacheTTL: 1 * time.Minute,
 		permsCache:    permsCache,
 	}
 }

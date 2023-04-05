@@ -37,7 +37,7 @@ func NewCache(ctx context.Context, logger *zap.Logger, db *sql.DB) (*Cache, erro
 	jobsCache := cache.NewContext(
 		ctx,
 		cache.AsLFU[string, *jobs.Job](lfu.WithCapacity(32)),
-		cache.WithJanitorInterval[string, *jobs.Job](120*time.Second),
+		cache.WithJanitorInterval[string, *jobs.Job](2*time.Minute),
 	)
 
 	docCategoriesCache := cache.NewContext(

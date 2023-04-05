@@ -209,7 +209,7 @@ func (s *Server) refreshUserLocations() error {
 		markers[job] = append(markers[job], dest[i])
 	}
 	for job, v := range markers {
-		s.usersCache.Set(job, v)
+		s.usersCache.Set(job, v, cache.WithExpiration(5*time.Minute))
 	}
 
 	return nil
@@ -284,7 +284,7 @@ func (s *Server) refreshDispatches() error {
 	}
 
 	for job, v := range markers {
-		s.dispatchesCache.Set(job, v)
+		s.dispatchesCache.Set(job, v, cache.WithExpiration(5*time.Minute))
 	}
 
 	return nil
