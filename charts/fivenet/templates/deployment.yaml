@@ -12,8 +12,9 @@ spec:
       {{- include "fivenet.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/fivenet-config: {{ include (print $.Template.BasePath "/secrets.yaml") $ | sha256sum }}
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
