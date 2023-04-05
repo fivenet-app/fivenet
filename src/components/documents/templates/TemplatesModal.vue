@@ -3,9 +3,9 @@ import { DocumentTemplateShort, TemplateRequirements } from '@fivenet/gen/resour
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { PencilIcon } from '@heroicons/vue/24/solid';
 import { ref, watch } from 'vue';
-import ClipboardModalDocuments from '../clipboard/ClipboardModalDocuments.vue';
-import ClipboardModalUsers from '../clipboard/ClipboardModalUsers.vue';
-import ClipboardModalVehicles from '../clipboard/ClipboardModalVehicles.vue';
+import ClipboardModalDocuments from '../../clipboard/ClipboardModalDocuments.vue';
+import ClipboardModalUsers from '../../clipboard/ClipboardModalUsers.vue';
+import ClipboardModalVehicles from '../../clipboard/ClipboardModalVehicles.vue';
 import TemplateRequirementsList from './TemplateRequirementsList.vue';
 import TemplatesList from './TemplatesList.vue';
 

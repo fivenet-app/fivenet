@@ -7,6 +7,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 	database "github.com/galexrt/fivenet/proto/resources/common/database"
 	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,6 +15,10 @@ import (
 
 const (
 	CommentsDefaultPageLimit = 5
+)
+
+var (
+	dComments = table.FivenetDocumentsComments
 )
 
 func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {

@@ -4,6 +4,7 @@ package services.docstore;
 option go_package = "github.com/galexrt/fivenet/proto/services/docstore;docstore";
 
 import "resources/common/database/database.proto";
+import "resources/documents/category.proto";
 import "resources/documents/documents.proto";
 import "resources/documents/templates.proto";
 import "validate/validate.proto";
@@ -189,6 +190,26 @@ message GetUserDocumentsResponse {
   repeated resources.documents.DocumentRelation relations = 2;
 }
 
+message CreateDocumentCategoryRequest {
+  resources.documents.DocumentCategory category = 1;
+}
+
+message CreateDocumentCategoryResponse {
+  int64 id = 1;
+}
+
+message UpdateDocumentCategoryRequest {
+  resources.documents.DocumentCategory category = 1;
+}
+
+message UpdateDocumentCategoryResponse {}
+
+message DeleteDocumentCategoryRequest {
+  repeated uint64 ids = 1;
+}
+
+message DeleteDocumentCategoryResponse {}
+
 service DocStoreService {
   // @perm: description="List available templates"
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
@@ -233,4 +254,11 @@ service DocStoreService {
 
   // @perm: description="View the documents linked to a citizen"
   rpc GetUserDocuments(GetUserDocumentsRequest) returns (GetUserDocumentsResponse);
+
+  // @perm: description="Create/ Update document categories"
+  rpc CreateDocumentCategory(CreateDocumentCategoryRequest) returns (CreateDocumentCategoryResponse);
+  // @perm: name=CreateDocumentCategory
+  rpc UpdateDocumentCategory(UpdateDocumentCategoryRequest) returns (UpdateDocumentCategoryResponse);
+  // @perm: description="Delete document categories"
+  rpc DeleteDocumentCategory(DeleteDocumentCategoryRequest) returns (DeleteDocumentCategoryResponse);
 }

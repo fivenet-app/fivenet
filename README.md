@@ -7,19 +7,10 @@
 - [ ] FiveM Integration plugin
     - [ ] Authentication
         - [ ] Create in-game "register" command to get a token with which one can then set their username and password
-    - [ ] Livemap
-        - [ ] Write a FiveM plugin that writes player positions into our location table
 - [ ] "Faction Leader Control Panel" aka "Rector Service"
-    - [ ] Permission Editor for the job ranks (Rector)
-        - [ ] Can view the permissions
-        - [ ] Can edit the permissions
     - [ ] Templates (DocStore)
         - [ ] Create new templates by leaders
         - [ ] Editable templates by the leader of the jobs
-    - [ ] Category (DocStore)
-        - [ ] Create Categories
-        - [ ] Edit Categories
-        - [ ] Delete categories
     - [ ] Audit Log (Rector)
 - [ ] Better error handling
     - [ ] Backend: use predefined errors
@@ -95,6 +86,17 @@
     - [x] Use [Bleve search](https://blevesearch.com/)
 - [x] Breadcrumbs
     - [x] Use the closest thing to a page title (e.g., when viewing a user or editing a document) to build the breadcrumbs
+- [x] "Faction Leader Control Panel" aka "Rector Service"
+    - [x] Permission Editor for the job ranks (Rector)
+        - [x] Can view the permissions
+        - [x] Can edit the permissions
+    - [x] Category (DocStore)
+        - [x] Create Categories
+        - [x] Edit Categories
+        - [x] Delete categories
+- [x] FiveM Integration plugin
+    - [x] Livemap
+        - [x] Write a FiveM plugin that writes player positions into our location table
 
 ## Development
 

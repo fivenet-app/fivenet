@@ -856,5 +856,134 @@ export class DocStoreServiceClient {
     this.methodDescriptorGetUserDocuments);
   }
 
+  methodDescriptorCreateDocumentCategory = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/CreateDocumentCategory',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.CreateDocumentCategoryRequest,
+    services_docstore_docstore_pb.CreateDocumentCategoryResponse,
+    (request: services_docstore_docstore_pb.CreateDocumentCategoryRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.CreateDocumentCategoryResponse.deserializeBinary
+  );
+
+  createDocumentCategory(
+    request: services_docstore_docstore_pb.CreateDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.CreateDocumentCategoryResponse>;
+
+  createDocumentCategory(
+    request: services_docstore_docstore_pb.CreateDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.CreateDocumentCategoryResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.CreateDocumentCategoryResponse>;
+
+  createDocumentCategory(
+    request: services_docstore_docstore_pb.CreateDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.CreateDocumentCategoryResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/CreateDocumentCategory',
+        request,
+        metadata || {},
+        this.methodDescriptorCreateDocumentCategory,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/CreateDocumentCategory',
+    request,
+    metadata || {},
+    this.methodDescriptorCreateDocumentCategory);
+  }
+
+  methodDescriptorUpdateDocumentCategory = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/UpdateDocumentCategory',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.UpdateDocumentCategoryRequest,
+    services_docstore_docstore_pb.UpdateDocumentCategoryResponse,
+    (request: services_docstore_docstore_pb.UpdateDocumentCategoryRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.UpdateDocumentCategoryResponse.deserializeBinary
+  );
+
+  updateDocumentCategory(
+    request: services_docstore_docstore_pb.UpdateDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.UpdateDocumentCategoryResponse>;
+
+  updateDocumentCategory(
+    request: services_docstore_docstore_pb.UpdateDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.UpdateDocumentCategoryResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.UpdateDocumentCategoryResponse>;
+
+  updateDocumentCategory(
+    request: services_docstore_docstore_pb.UpdateDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.UpdateDocumentCategoryResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/UpdateDocumentCategory',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateDocumentCategory,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/UpdateDocumentCategory',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateDocumentCategory);
+  }
+
+  methodDescriptorDeleteDocumentCategory = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/DeleteDocumentCategory',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.DeleteDocumentCategoryRequest,
+    services_docstore_docstore_pb.DeleteDocumentCategoryResponse,
+    (request: services_docstore_docstore_pb.DeleteDocumentCategoryRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.DeleteDocumentCategoryResponse.deserializeBinary
+  );
+
+  deleteDocumentCategory(
+    request: services_docstore_docstore_pb.DeleteDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.DeleteDocumentCategoryResponse>;
+
+  deleteDocumentCategory(
+    request: services_docstore_docstore_pb.DeleteDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.DeleteDocumentCategoryResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.DeleteDocumentCategoryResponse>;
+
+  deleteDocumentCategory(
+    request: services_docstore_docstore_pb.DeleteDocumentCategoryRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.DeleteDocumentCategoryResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/DeleteDocumentCategory',
+        request,
+        metadata || {},
+        this.methodDescriptorDeleteDocumentCategory,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/DeleteDocumentCategory',
+    request,
+    metadata || {},
+    this.methodDescriptorDeleteDocumentCategory);
+  }
+
 }
 

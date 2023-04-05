@@ -11,14 +11,6 @@ definePageMeta({
 });
 </script>
 
-<style>
-#map {
-    height: 94vh;
-}
-</style>
-
 <template>
-    <div class="w-full">
-        <Livemap />
-    </div>
+    <Livemap />
 </template>

@@ -27,10 +27,8 @@ var (
 	user        = table.Users
 	uCreator    = user.AS("creator")
 	docs        = table.FivenetDocuments.AS("document")
-	dComments   = table.FivenetDocumentsComments
 	dUserAccess = table.FivenetDocumentsUserAccess.AS("user_access")
 	dJobAccess  = table.FivenetDocumentsJobAccess.AS("job_access")
-	dCategory   = table.FivenetDocumentsCategories.AS("category")
 )
 
 type Server struct {
@@ -254,7 +252,9 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			req.State,
 			req.Public,
 		).
-		WHERE(docs.ID.EQ(jet.Uint64(req.DocumentId)))
+		WHERE(
+			docs.ID.EQ(jet.Uint64(req.DocumentId)),
+		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, err

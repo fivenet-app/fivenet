@@ -1,6 +1,7 @@
 import * as jspb from 'google-protobuf'
 
 import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
+import * as resources_documents_category_pb from '../../resources/documents/category_pb';
 import * as resources_documents_documents_pb from '../../resources/documents/documents_pb';
 import * as resources_documents_templates_pb from '../../resources/documents/templates_pb';
 
@@ -929,6 +930,112 @@ export namespace GetUserDocumentsResponse {
   export type AsObject = {
     pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
     relationsList: Array<resources_documents_documents_pb.DocumentRelation.AsObject>,
+  }
+}
+
+export class CreateDocumentCategoryRequest extends jspb.Message {
+  getCategory(): resources_documents_category_pb.DocumentCategory | undefined;
+  setCategory(value?: resources_documents_category_pb.DocumentCategory): CreateDocumentCategoryRequest;
+  hasCategory(): boolean;
+  clearCategory(): CreateDocumentCategoryRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CreateDocumentCategoryRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateDocumentCategoryRequest): CreateDocumentCategoryRequest.AsObject;
+  static serializeBinaryToWriter(message: CreateDocumentCategoryRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateDocumentCategoryRequest;
+  static deserializeBinaryFromReader(message: CreateDocumentCategoryRequest, reader: jspb.BinaryReader): CreateDocumentCategoryRequest;
+}
+
+export namespace CreateDocumentCategoryRequest {
+  export type AsObject = {
+    category?: resources_documents_category_pb.DocumentCategory.AsObject,
+  }
+}
+
+export class CreateDocumentCategoryResponse extends jspb.Message {
+  getId(): number;
+  setId(value: number): CreateDocumentCategoryResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CreateDocumentCategoryResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateDocumentCategoryResponse): CreateDocumentCategoryResponse.AsObject;
+  static serializeBinaryToWriter(message: CreateDocumentCategoryResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateDocumentCategoryResponse;
+  static deserializeBinaryFromReader(message: CreateDocumentCategoryResponse, reader: jspb.BinaryReader): CreateDocumentCategoryResponse;
+}
+
+export namespace CreateDocumentCategoryResponse {
+  export type AsObject = {
+    id: number,
+  }
+}
+
+export class UpdateDocumentCategoryRequest extends jspb.Message {
+  getCategory(): resources_documents_category_pb.DocumentCategory | undefined;
+  setCategory(value?: resources_documents_category_pb.DocumentCategory): UpdateDocumentCategoryRequest;
+  hasCategory(): boolean;
+  clearCategory(): UpdateDocumentCategoryRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateDocumentCategoryRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateDocumentCategoryRequest): UpdateDocumentCategoryRequest.AsObject;
+  static serializeBinaryToWriter(message: UpdateDocumentCategoryRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateDocumentCategoryRequest;
+  static deserializeBinaryFromReader(message: UpdateDocumentCategoryRequest, reader: jspb.BinaryReader): UpdateDocumentCategoryRequest;
+}
+
+export namespace UpdateDocumentCategoryRequest {
+  export type AsObject = {
+    category?: resources_documents_category_pb.DocumentCategory.AsObject,
+  }
+}
+
+export class UpdateDocumentCategoryResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateDocumentCategoryResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateDocumentCategoryResponse): UpdateDocumentCategoryResponse.AsObject;
+  static serializeBinaryToWriter(message: UpdateDocumentCategoryResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateDocumentCategoryResponse;
+  static deserializeBinaryFromReader(message: UpdateDocumentCategoryResponse, reader: jspb.BinaryReader): UpdateDocumentCategoryResponse;
+}
+
+export namespace UpdateDocumentCategoryResponse {
+  export type AsObject = {
+  }
+}
+
+export class DeleteDocumentCategoryRequest extends jspb.Message {
+  getIdsList(): Array<number>;
+  setIdsList(value: Array<number>): DeleteDocumentCategoryRequest;
+  clearIdsList(): DeleteDocumentCategoryRequest;
+  addIds(value: number, index?: number): DeleteDocumentCategoryRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteDocumentCategoryRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteDocumentCategoryRequest): DeleteDocumentCategoryRequest.AsObject;
+  static serializeBinaryToWriter(message: DeleteDocumentCategoryRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteDocumentCategoryRequest;
+  static deserializeBinaryFromReader(message: DeleteDocumentCategoryRequest, reader: jspb.BinaryReader): DeleteDocumentCategoryRequest;
+}
+
+export namespace DeleteDocumentCategoryRequest {
+  export type AsObject = {
+    idsList: Array<number>,
+  }
+}
+
+export class DeleteDocumentCategoryResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteDocumentCategoryResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteDocumentCategoryResponse): DeleteDocumentCategoryResponse.AsObject;
+  static serializeBinaryToWriter(message: DeleteDocumentCategoryResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteDocumentCategoryResponse;
+  static deserializeBinaryFromReader(message: DeleteDocumentCategoryResponse, reader: jspb.BinaryReader): DeleteDocumentCategoryResponse;
+}
+
+export namespace DeleteDocumentCategoryResponse {
+  export type AsObject = {
   }
 }
 

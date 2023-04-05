@@ -6,7 +6,7 @@ import { dispatchNotification } from '../notification';
 import CharSexBadge from '../citizens/CharSexBadge.vue';
 import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
-import TemplatesModal from '../documents/TemplatesModal.vue';
+import TemplatesModal from '../documents/templates/TemplatesModal.vue';
 import { useClipboardStore } from '../../store/clipboard';
 import { RpcError } from 'grpc-web';
 

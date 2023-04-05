@@ -160,8 +160,8 @@ onUnmounted(() => {
 </style>
 
 <template>
-    <div class="relative">
-        <div id="map" ref="mapContainer" class="w-full z-0"></div>
+    <div class="w-full relative h-full">
+        <div id="map" ref="mapContainer" class="h-full w-full z-0"></div>
         <div v-if="error || !stream" class="absolute inset-0 flex justify-center items-center z-10"
             style="background-color: rgba(62, 60, 62, 0.5)">
             <DataPendingBlock v-if="!error && !stream" message="Starting Livemap data stream..." />
