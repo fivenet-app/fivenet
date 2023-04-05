@@ -4,10 +4,10 @@ import DocumentEditor from '../../../components/documents/DocumentEditor.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({
-    title: 'Documents: Edit',
+    title: 'Edit Document',
 });
 definePageMeta({
-    title: 'Documents: Edit',
+    title: 'Edit Document',
     requiresAuth: true,
     permission: 'DocStoreService.CreateDocument',
     validate: async (route) => {

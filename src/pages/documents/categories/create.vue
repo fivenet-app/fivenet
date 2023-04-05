@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 useHead({
-    title: 'Category: Create',
+    title: 'Create Category',
 });
 definePageMeta({
-    title: 'Category: Create',
+    title: 'Create Category',
     requiresAuth: true,
     permission: 'DocStoreService.CreateDocumentCategory',
 });

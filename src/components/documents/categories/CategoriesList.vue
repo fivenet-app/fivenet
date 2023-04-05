@@ -8,11 +8,12 @@ import Cards from '../../partials/Cards.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import DataPendingBlock from '../../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../../partials/DataErrorBlock.vue';
+import { CardElements } from '~~/src/utils/types';
 
 const { $grpc } = useNuxtApp();
 
 const { data: categories, pending, refresh, error } = await useLazyAsyncData(`documents-categories`, () => getCategories());
-const items = ref<{ title: string, description: string, href?: RoutesNamedLocations, permission?: string, icon?: FunctionalComponent, iconForeground?: string, iconBackground?: string }[]>([]);
+const items = ref<CardElements>([]);
 
 async function getCategories(): Promise<Array<DocumentCategory>> {
     return new Promise(async (res, rej) => {

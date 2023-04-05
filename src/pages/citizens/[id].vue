@@ -8,10 +8,10 @@ import { User } from '@fivenet/gen/resources/users/users_pb';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({
-    title: 'Citizens: Info',
+    title: 'Citizen Profile',
 });
 definePageMeta({
-    title: 'Citizens: Info',
+    title: 'Citizen Profile',
     requiresAuth: true,
     permission: 'CitizenStoreService.FindUsers',
     validate: async (route) => {

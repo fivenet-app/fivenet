@@ -1,12 +1,19 @@
 <script lang="ts" setup>
-import { FunctionalComponent } from 'vue';
-import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
+import { CardElement } from '~~/src/utils/types';
 import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
 
-defineProps<{
-    items: { title: string, description: string, href?: RoutesNamedLocations, permission?: string, icon?: FunctionalComponent, iconForeground?: string, iconBackground?: string }[],
-    showIcon: boolean,
-}>();
+defineProps({
+    items: {
+        type: Array<CardElement>,
+        default: [],
+        required: true,
+    },
+    showIcon: {
+        type: Boolean,
+        default: true,
+        required: false,
+    }
+});
 </script>
 
 <template>

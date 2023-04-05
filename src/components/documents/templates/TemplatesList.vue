@@ -9,6 +9,7 @@ import Cards from '../../partials/Cards.vue';
 import DataPendingBlock from '../../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../../partials/DataErrorBlock.vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
+import { CardElements } from '~~/src/utils/types';
 
 const { $grpc } = useNuxtApp();
 
@@ -17,7 +18,7 @@ defineEmits<{
 }>();
 
 const { data: templates, pending, refresh, error } = await useLazyAsyncData(`documents-templates`, () => findTemplates());
-const items = ref<{ title: string, description: string, href?: RoutesNamedLocations, permission?: string, icon?: FunctionalComponent, iconForeground?: string, iconBackground?: string }[]>([]);
+const items = ref<CardElements>([]);
 
 async function findTemplates(): Promise<Array<DocumentTemplateShort>> {
     return new Promise(async (res, rej) => {

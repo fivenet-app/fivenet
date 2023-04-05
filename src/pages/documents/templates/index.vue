@@ -3,10 +3,10 @@ import ContentWrapper from '../../../components/partials/ContentWrapper.vue';
 import TemplatesList from '../../../components/documents/templates/TemplatesList.vue';
 
 useHead({
-    title: 'Documents: Templates',
+    title: 'Templates',
 });
 definePageMeta({
-    title: 'Documents: Templates',
+    title: 'Templates',
     requiresAuth: true,
     permission: 'DocStoreService.FindDocuments',
 });

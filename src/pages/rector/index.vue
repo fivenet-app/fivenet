@@ -4,6 +4,7 @@ import { FunctionalComponent } from 'vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import Cards from '~~/src/components/partials/Cards.vue';
 import ContentCenterWrapper from '../../components/partials/ContentCenterWrapper.vue';
+import { CardElements } from '~~/src/utils/types';
 
 useHead({
     title: 'Control Panel',
@@ -25,7 +26,7 @@ const features = [
         iconForeground: 'text-purple-900',
         iconBackground: 'bg-purple-50',
     },
-] as { title: string, description: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, iconForeground: string, iconBackground: string }[];
+] as CardElements;
 </script>
 
 <template>

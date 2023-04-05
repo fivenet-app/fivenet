@@ -4,6 +4,7 @@ import { BriefcaseIcon, DocumentTextIcon, UsersIcon, MapIcon, TruckIcon } from '
 import { FunctionalComponent } from 'vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import Cards from '../components/partials/Cards.vue';
+import { CardElements } from '../utils/types';
 
 useHead({
     title: 'Overview',
@@ -62,7 +63,7 @@ const features = [
         iconForeground: 'text-teal-900',
         iconBackground: 'bg-teal-50',
     },
-] as { title: string, description: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, iconForeground: string, iconBackground: string }[];
+] as CardElements;
 </script>
 
 <template>
