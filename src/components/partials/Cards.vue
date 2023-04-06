@@ -12,8 +12,12 @@ defineProps({
         type: Boolean,
         default: true,
         required: false,
-    }
+    },
 });
+
+defineEmits<{
+    (e: 'selected', idx: number): void,
+}>();
 </script>
 
 <template>
@@ -32,7 +36,7 @@ defineProps({
                     <component :is="item.icon" class="h-auto w-7" aria-hidden="true" />
                 </span>
             </div>
-            <div class="mt-4">
+            <div class="mt-4" @click="$emit('selected', itemIdx)">
                 <h3 class="text-base font-semibold leading-6 text-neutral">
                     <span v-if="item.href">
                         <NuxtLink :to="item.href" class="focus:outline-none">

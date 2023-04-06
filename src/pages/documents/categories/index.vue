@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ContentWrapper from '../../../components/partials/ContentWrapper.vue';
-import CategoriesList from '../../../components/documents/categories/CategoriesList.vue';
+import ContentWrapper from '~/components/partials/ContentWrapper.vue';
+import CategoriesList from '~/components/documents/categories/CategoriesList.vue';
 
 useHead({
     title: 'Categories',

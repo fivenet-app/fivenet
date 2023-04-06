@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { loadConfig } from './config';
-import { NotificationProvider } from './components/notification';
-import Sidebar from './components/partials/Sidebar.vue';
+import { NotificationProvider } from '~/components/notification';
+import Sidebar from '~/components/partials/Sidebar.vue';
 
 useHead({
     htmlAttrs: {

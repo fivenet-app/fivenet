@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ContentWrapper from '../../../components/partials/ContentWrapper.vue';
-import DocumentEditor from '../../../components/documents/DocumentEditor.vue';
+import ContentWrapper from '~/components/partials/ContentWrapper.vue';
+import DocumentEditor from '~/components/documents/DocumentEditor.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({

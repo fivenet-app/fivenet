@@ -1,5 +1,5 @@
 import { NavigationGuard, RouteLocationNormalized } from 'vue-router';
-import { dispatchNotification } from '../components/notification';
+import { dispatchNotification } from '~/components/notification';
 import { useAuthStore } from '../store/auth';
 import slug from '../utils/slugify';
 

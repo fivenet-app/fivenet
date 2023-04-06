@@ -4,13 +4,13 @@ import { User } from '@fivenet/gen/resources/users/users_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
 import { FindUsersRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
-import TablePagination from '../partials/TablePagination.vue';
+import TablePagination from '~/components/partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
 

@@ -9,7 +9,7 @@ import { JobsServiceClient } from '@fivenet/gen/services/jobs/JobsServiceClientP
 import { LivemapperServiceClient } from '@fivenet/gen/services/livemapper/LivemapServiceClientPb';
 import { UnaryInterceptor } from 'grpc-web';
 import { RpcError, StatusCode } from 'grpc-web';
-import { dispatchNotification } from '../components/notification';
+import { dispatchNotification } from '~/components/notification';
 import { RectorServiceClient } from '@fivenet/gen/services/rector/RectorServiceClientPb';
 
 export default defineNuxtPlugin(() => {

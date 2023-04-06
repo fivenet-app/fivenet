@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
-import ContentWrapper from '../../../components/partials/ContentWrapper.vue';
+import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'Category: View',

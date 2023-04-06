@@ -2,8 +2,8 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon, LockClosedIcon, ServerIcon } from '@heroicons/vue/20/solid';
-import Footer from '../components/partials/Footer.vue';
-import DiscordLogo from '../components/partials/logos/DiscordLogo.vue';
+import Footer from '~/components/partials/Footer.vue';
+import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
 
 useHead({
     title: 'About',

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ContentWrapper from '../../../components/partials/ContentWrapper.vue';
-import TemplatesList from '../../../components/documents/templates/TemplatesList.vue';
+import ContentWrapper from '~/components/partials/ContentWrapper.vue';
+import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
 
 useHead({
     title: 'Templates',

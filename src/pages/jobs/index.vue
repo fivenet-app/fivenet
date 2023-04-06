@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ContentWrapper from '../../components/partials/ContentWrapper.vue';
+import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'Jobs',

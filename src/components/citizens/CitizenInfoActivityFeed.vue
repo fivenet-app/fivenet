@@ -6,8 +6,8 @@ import { toDateRelativeString } from '../../utils/time';
 import { USER_ACTIVITY_TYPE_Util } from '@fivenet/gen/resources/users/users.pb_enums';
 import { RectangleGroupIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 

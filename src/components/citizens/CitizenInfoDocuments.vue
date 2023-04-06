@@ -6,8 +6,8 @@ import { PaginationRequest } from '@fivenet/gen/resources/common/database/databa
 import DocumentRelations from '../documents/DocumentRelations.vue';
 import { DocumentTextIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 

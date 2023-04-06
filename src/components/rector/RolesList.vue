@@ -2,8 +2,8 @@
 import { Role } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { RpcError } from 'grpc-web';
 import { CreateRoleRequest, GetRolesRequest } from '@fivenet/gen/services/rector/rector_pb';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import RolesListEntry from './RolesListEntry.vue';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import ContentWrapper from '../../components/partials/ContentWrapper.vue';
-import DocumentView from '../../components/documents/DocumentView.vue';
-import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
+import ContentWrapper from '~/components/partials/ContentWrapper.vue';
+import DocumentView from '~/components/documents/DocumentView.vue';
+import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({

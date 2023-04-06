@@ -5,9 +5,9 @@ import { ref, onBeforeMount, FunctionalComponent } from 'vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from 'grpc-web';
-import Cards from '../../partials/Cards.vue';
-import DataPendingBlock from '../../partials/DataPendingBlock.vue';
-import DataErrorBlock from '../../partials/DataErrorBlock.vue';
+import Cards from '~/components/partials/Cards.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import { CardElements } from '~~/src/utils/types';
 
@@ -39,6 +39,10 @@ async function findTemplates(): Promise<Array<DocumentTemplateShort>> {
 watch(templates, () => templates.value?.forEach((v) => {
     items.value.push({ title: v?.getTitle(), description: v?.getDescription(), });
 }));
+
+function selected(idx: number): DocumentTemplateShort {
+    return templates.value![idx];
+}
 </script>
 
 <template>
@@ -53,7 +57,7 @@ watch(templates, () => templates.value?.forEach((v) => {
             </span>
         </button>
         <div v-else>
-            <Cards :items="items" :show-icon="false" />
+            <Cards :items="items" @selected="$emit('selected', selected($event))" />
         </div>
     </div>
 </template>

@@ -4,13 +4,13 @@ import { watchDebounced } from '@vueuse/shared';
 import { FindDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Document } from '@fivenet/gen/resources/documents/documents_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
-import TablePagination from '../partials/TablePagination.vue';
+import TablePagination from '~/components/partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
 import TemplatesModal from './templates/TemplatesModal.vue';
 import { RpcError } from 'grpc-web';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 

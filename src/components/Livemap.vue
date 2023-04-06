@@ -2,7 +2,7 @@
 import { onMounted, onBeforeUnmount, onUnmounted, ref, nextTick } from 'vue';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@fivenet/gen/services/livemapper/livemap_pb';
-import { customCRS, Livemap, MarkerType } from '../class/Livemap';
+import { customCRS, Livemap, MarkerType } from '~/class/Livemap';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import DataErrorBlock from './partials/DataErrorBlock.vue';

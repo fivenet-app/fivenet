@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
-import VehiclesList from '../../components/vehicles/VehiclesList.vue';
+import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
+import VehiclesList from '~/components/vehicles/VehiclesList.vue';
 
 useHead({
     title: 'Vehicles',

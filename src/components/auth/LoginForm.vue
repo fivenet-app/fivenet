@@ -8,7 +8,7 @@ import { NavigationFailure } from 'vue-router';
 import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { object, string } from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
-import Alert from '../partials/Alert.vue';
+import Alert from '~/components/partials/Alert.vue';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();

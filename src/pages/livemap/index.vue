@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Livemap from '../../components/Livemap.vue';
+import Livemap from '~/components/Livemap.vue';
 
 useHead({
     title: 'Livemap',

@@ -2,7 +2,7 @@
 import { KeyIcon } from '@heroicons/vue/24/outline';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import Cards from '~~/src/components/partials/Cards.vue';
-import ContentCenterWrapper from '../../components/partials/ContentCenterWrapper.vue';
+import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { CardElements } from '~~/src/utils/types';
 
 useHead({

@@ -3,10 +3,10 @@ import { Permission, Role } from '@fivenet/gen/resources/permissions/permissions
 import { RpcError } from 'grpc-web';
 import { AddPermToRoleRequest, DeleteRoleRequest, GetPermissionsRequest, GetRoleRequest, RemovePermFromRoleRequest } from '@fivenet/gen/services/rector/rector_pb';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { TrashIcon } from '@heroicons/vue/20/solid';
-import Divider from '../partials/Divider.vue';
+import Divider from '~/components/partials/Divider.vue';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/shared';

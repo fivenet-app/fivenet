@@ -3,13 +3,15 @@ import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
 import { CompleteDocumentCategoryRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { RpcError } from 'grpc-web';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
-import Cards from '../../partials/Cards.vue';
+import Cards from '~/components/partials/Cards.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
-import DataPendingBlock from '../../partials/DataPendingBlock.vue';
-import DataErrorBlock from '../../partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { CardElements } from '~~/src/utils/types';
 
 const { $grpc } = useNuxtApp();
+
+const router = useRouter();
 
 const { data: categories, pending, refresh, error } = await useLazyAsyncData(`documents-categories`, () => getCategories());
 const items = ref<CardElements>([]);
@@ -33,6 +35,10 @@ async function getCategories(): Promise<Array<DocumentCategory>> {
 watch(categories, () => categories.value?.forEach((v) => {
     items.value.push({ title: v?.getName(), description: v?.getDescription(), href: { name: 'documents-categories-id', params: { id: v.getId() } } });
 }));
+
+async function goToCategory(id: number): Promise<void> {
+    await router.push({ name: 'documents-categories-id', params: { id: id, } });
+}
 </script>
 
 <template>
@@ -47,7 +53,7 @@ watch(categories, () => categories.value?.forEach((v) => {
             </span>
         </button>
         <div v-else>
-            <Cards :items="items" :show-icon="true" />
+            <Cards :items="items" :show-icon="true" @selected="goToCategory($event)" />
         </div>
     </div>
 </template>

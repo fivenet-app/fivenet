@@ -6,7 +6,7 @@ import { computed, ref, onMounted } from 'vue';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
 import { useAuthStore } from '../../store/auth';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/20/solid';
-import TablePagination from '../partials/TablePagination.vue';
+import TablePagination from '~/components/partials/TablePagination.vue';
 import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();

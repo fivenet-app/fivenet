@@ -2,8 +2,8 @@
 import { Account } from '@fivenet/gen/resources/accounts/accounts_pb';
 import { GetAccountInfoRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { UserIcon } from '@heroicons/vue/24/outline';
 import ChangePasswordModal from './ChangePasswordModal.vue';
 

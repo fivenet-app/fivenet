@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import CitizensList from '../../components/citizens/CitizensList.vue';
-import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
+import CitizensList from '~/components/citizens/CitizensList.vue';
+import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 
 useHead({
     title: 'Citizens',
