@@ -856,6 +856,49 @@ export class DocStoreServiceClient {
     this.methodDescriptorGetUserDocuments);
   }
 
+  methodDescriptorListDocumentCategories = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/ListDocumentCategories',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.ListDocumentCategoriesRequest,
+    services_docstore_docstore_pb.ListDocumentCategoriesResponse,
+    (request: services_docstore_docstore_pb.ListDocumentCategoriesRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.ListDocumentCategoriesResponse.deserializeBinary
+  );
+
+  listDocumentCategories(
+    request: services_docstore_docstore_pb.ListDocumentCategoriesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.ListDocumentCategoriesResponse>;
+
+  listDocumentCategories(
+    request: services_docstore_docstore_pb.ListDocumentCategoriesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.ListDocumentCategoriesResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.ListDocumentCategoriesResponse>;
+
+  listDocumentCategories(
+    request: services_docstore_docstore_pb.ListDocumentCategoriesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.ListDocumentCategoriesResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/ListDocumentCategories',
+        request,
+        metadata || {},
+        this.methodDescriptorListDocumentCategories,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/ListDocumentCategories',
+    request,
+    metadata || {},
+    this.methodDescriptorListDocumentCategories);
+  }
+
   methodDescriptorCreateDocumentCategory = new grpcWeb.MethodDescriptor(
     '/services.docstore.DocStoreService/CreateDocumentCategory',
     grpcWeb.MethodType.UNARY,

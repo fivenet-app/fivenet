@@ -132,7 +132,8 @@ function removeReference(id: number): void {
                                     <XMarkIcon class="w-6 h-6" aria-hidden="true" />
                                 </button>
                             </div>
-                            <DialogTitle as="h3" class="text-base font-semibold leading-6">Document References
+                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
+                                Document References
                             </DialogTitle>
                             <TabGroup>
                                 <TabList class="flex flex-row mb-4">

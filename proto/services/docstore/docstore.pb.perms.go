@@ -83,6 +83,10 @@ func init() {
 			Description: "View the documents linked to a citizen",
 		},
 		{
+			Key:  DocStoreServicePermKey,
+			Name: "ListDocumentCategories",
+		},
+		{
 			Key:         DocStoreServicePermKey,
 			Name:        "ListTemplates",
 			Description: "List available templates",

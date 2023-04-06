@@ -4235,6 +4235,17 @@ func (m *GetDocumentAccessResponse) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetAccess() == nil {
+		err := GetDocumentAccessResponseValidationError{
+			field:  "Access",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetAccess()).(type) {
 		case interface{ ValidateAll() error }:
@@ -4919,6 +4930,246 @@ var _ interface {
 	ErrorName() string
 } = GetUserDocumentsResponseValidationError{}
 
+// Validate checks the field values on ListDocumentCategoriesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListDocumentCategoriesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListDocumentCategoriesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListDocumentCategoriesRequestMultiError, or nil if none found.
+func (m *ListDocumentCategoriesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListDocumentCategoriesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ListDocumentCategoriesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListDocumentCategoriesRequestMultiError is an error wrapping multiple
+// validation errors returned by ListDocumentCategoriesRequest.ValidateAll()
+// if the designated constraints aren't met.
+type ListDocumentCategoriesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListDocumentCategoriesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListDocumentCategoriesRequestMultiError) AllErrors() []error { return m }
+
+// ListDocumentCategoriesRequestValidationError is the validation error
+// returned by ListDocumentCategoriesRequest.Validate if the designated
+// constraints aren't met.
+type ListDocumentCategoriesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListDocumentCategoriesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListDocumentCategoriesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListDocumentCategoriesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListDocumentCategoriesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListDocumentCategoriesRequestValidationError) ErrorName() string {
+	return "ListDocumentCategoriesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListDocumentCategoriesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListDocumentCategoriesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListDocumentCategoriesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListDocumentCategoriesRequestValidationError{}
+
+// Validate checks the field values on ListDocumentCategoriesResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListDocumentCategoriesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListDocumentCategoriesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListDocumentCategoriesResponseMultiError, or nil if none found.
+func (m *ListDocumentCategoriesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListDocumentCategoriesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCategory() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListDocumentCategoriesResponseValidationError{
+						field:  fmt.Sprintf("Category[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListDocumentCategoriesResponseValidationError{
+						field:  fmt.Sprintf("Category[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListDocumentCategoriesResponseValidationError{
+					field:  fmt.Sprintf("Category[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListDocumentCategoriesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListDocumentCategoriesResponseMultiError is an error wrapping multiple
+// validation errors returned by ListDocumentCategoriesResponse.ValidateAll()
+// if the designated constraints aren't met.
+type ListDocumentCategoriesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListDocumentCategoriesResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListDocumentCategoriesResponseMultiError) AllErrors() []error { return m }
+
+// ListDocumentCategoriesResponseValidationError is the validation error
+// returned by ListDocumentCategoriesResponse.Validate if the designated
+// constraints aren't met.
+type ListDocumentCategoriesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListDocumentCategoriesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListDocumentCategoriesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListDocumentCategoriesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListDocumentCategoriesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListDocumentCategoriesResponseValidationError) ErrorName() string {
+	return "ListDocumentCategoriesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListDocumentCategoriesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListDocumentCategoriesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListDocumentCategoriesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListDocumentCategoriesResponseValidationError{}
+
 // Validate checks the field values on CreateDocumentCategoryRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -4940,6 +5191,17 @@ func (m *CreateDocumentCategoryRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetCategory() == nil {
+		err := CreateDocumentCategoryRequestValidationError{
+			field:  "Category",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetCategory()).(type) {
@@ -5177,6 +5439,17 @@ func (m *UpdateDocumentCategoryRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetCategory() == nil {
+		err := UpdateDocumentCategoryRequestValidationError{
+			field:  "Category",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetCategory()).(type) {

@@ -60,6 +60,8 @@ type DocStoreServiceClient interface {
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
 	// @perm: description="View the documents linked to a citizen"
 	GetUserDocuments(ctx context.Context, in *GetUserDocumentsRequest, opts ...grpc.CallOption) (*GetUserDocumentsResponse, error)
+	// @perm
+	ListDocumentCategories(ctx context.Context, in *ListDocumentCategoriesRequest, opts ...grpc.CallOption) (*ListDocumentCategoriesResponse, error)
 	// @perm: description="Create/ Update document categories"
 	CreateDocumentCategory(ctx context.Context, in *CreateDocumentCategoryRequest, opts ...grpc.CallOption) (*CreateDocumentCategoryResponse, error)
 	// @perm: name=CreateDocumentCategory
@@ -247,6 +249,15 @@ func (c *docStoreServiceClient) GetUserDocuments(ctx context.Context, in *GetUse
 	return out, nil
 }
 
+func (c *docStoreServiceClient) ListDocumentCategories(ctx context.Context, in *ListDocumentCategoriesRequest, opts ...grpc.CallOption) (*ListDocumentCategoriesResponse, error) {
+	out := new(ListDocumentCategoriesResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/ListDocumentCategories", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *docStoreServiceClient) CreateDocumentCategory(ctx context.Context, in *CreateDocumentCategoryRequest, opts ...grpc.CallOption) (*CreateDocumentCategoryResponse, error) {
 	out := new(CreateDocumentCategoryResponse)
 	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/CreateDocumentCategory", in, out, opts...)
@@ -316,6 +327,8 @@ type DocStoreServiceServer interface {
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
 	// @perm: description="View the documents linked to a citizen"
 	GetUserDocuments(context.Context, *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error)
+	// @perm
+	ListDocumentCategories(context.Context, *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error)
 	// @perm: description="Create/ Update document categories"
 	CreateDocumentCategory(context.Context, *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error)
 	// @perm: name=CreateDocumentCategory
@@ -385,6 +398,9 @@ func (UnimplementedDocStoreServiceServer) SetDocumentAccess(context.Context, *Se
 }
 func (UnimplementedDocStoreServiceServer) GetUserDocuments(context.Context, *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserDocuments not implemented")
+}
+func (UnimplementedDocStoreServiceServer) ListDocumentCategories(context.Context, *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListDocumentCategories not implemented")
 }
 func (UnimplementedDocStoreServiceServer) CreateDocumentCategory(context.Context, *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDocumentCategory not implemented")
@@ -750,6 +766,24 @@ func _DocStoreService_GetUserDocuments_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DocStoreService_ListDocumentCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDocumentCategoriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).ListDocumentCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/ListDocumentCategories",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).ListDocumentCategories(ctx, req.(*ListDocumentCategoriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DocStoreService_CreateDocumentCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateDocumentCategoryRequest)
 	if err := dec(in); err != nil {
@@ -886,6 +920,10 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserDocuments",
 			Handler:    _DocStoreService_GetUserDocuments_Handler,
+		},
+		{
+			MethodName: "ListDocumentCategories",
+			Handler:    _DocStoreService_ListDocumentCategories_Handler,
 		},
 		{
 			MethodName: "CreateDocumentCategory",

@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
-import { DeleteDocumentCategoryRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { DeleteDocumentCategoryRequest, UpdateDocumentCategoryRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { TagIcon } from '@heroicons/vue/24/solid';
 import { dispatchNotification } from '../../notification';
 import { RpcError } from 'grpc-web';
+import { ErrorMessage, Field, useForm } from 'vee-validate';
+import { object, string } from 'yup';
+import { toTypedSchema } from '@vee-validate/yup';
 
 const { $grpc } = useNuxtApp();
 
@@ -26,13 +29,13 @@ const props = defineProps({
 async function deleteCategory(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new DeleteDocumentCategoryRequest();
-        req.setIdsList([]);
+        req.setIdsList([props.category?.getId()!]);
 
         try {
             const resp = await $grpc.getDocStoreClient()
                 .deleteDocumentCategory(req, null);
 
-            dispatchNotification({ title: 'Password has been changed', content: 'Please login with your new password.', type: 'success' });
+            dispatchNotification({ title: 'Category has been deleted', content: '', type: 'success' });
             emit('close');
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -40,6 +43,37 @@ async function deleteCategory(): Promise<void> {
         }
     });
 }
+
+async function updateCategory(name: string, description: string): Promise<void> {
+    return new Promise(async (res, rej) => {
+        const req = new UpdateDocumentCategoryRequest();
+        props.category?.setName(name);
+        props.category?.setDescription(description);
+        req.setCategory(props.category);
+
+        try {
+            await $grpc.getDocStoreClient()
+                .updateDocumentCategory(req, null);
+
+            dispatchNotification({ title: 'Category has been updated', content: '', type: 'success' });
+            emit('close');
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+const { handleSubmit } = useForm({
+    validationSchema: toTypedSchema(
+        object({
+            name: string().required().min(3).max(255),
+            description: string().required().max(255),
+        }),
+    ),
+});
+
+const onSubmit = handleSubmit(async (values): Promise<void> => await updateCategory(values.name, values.description));
 </script>
 
 <template>
@@ -68,8 +102,46 @@ async function deleteCategory(): Promise<void> {
                                         </div>
                                         <div class="mt-3 text-center sm:mt-5">
                                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                                {{ category?.getName() }}
+                                                Category: {{ category?.getName() }}
                                             </DialogTitle>
+                                            <div class="mt-2">
+                                                <div class="sm:flex-auto">
+                                                    <form @submit="onSubmit">
+                                                        <div class="flex flex-row gap-4 mx-auto">
+                                                            <div class="flex-1 form-control">
+                                                                <label for="name"
+                                                                    class="block text-sm font-medium leading-6 text-neutral">Category</label>
+                                                                <div class="relative flex items-center mt-2">
+                                                                    <Field type="text" name="name" id="name"
+                                                                        placeholder="Category" :value="category?.getName()"
+                                                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                                                    <ErrorMessage name="description" as="p"
+                                                                        class="mt-2 text-sm text-red-500" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-1 form-control">
+                                                                <label for="description"
+                                                                    class="block text-sm font-medium leading-6 text-neutral">Description</label>
+                                                                <div class="relative flex items-center mt-2">
+                                                                    <Field type="text" name="description" id="description"
+                                                                        placeholder="Description" :value="category?.getDescription()"
+                                                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                                                    <ErrorMessage name="description" as="p"
+                                                                        class="mt-2 text-sm text-red-500" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-1 form-control">
+                                                                <div class="relative flex items-center mt-2">
+                                                                    <button type="submit"
+                                                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
+                                                                        Create
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="gap-2 mt-5 sm:mt-4 sm:flex">

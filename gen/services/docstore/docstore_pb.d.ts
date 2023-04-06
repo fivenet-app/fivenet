@@ -933,6 +933,40 @@ export namespace GetUserDocumentsResponse {
   }
 }
 
+export class ListDocumentCategoriesRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListDocumentCategoriesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ListDocumentCategoriesRequest): ListDocumentCategoriesRequest.AsObject;
+  static serializeBinaryToWriter(message: ListDocumentCategoriesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListDocumentCategoriesRequest;
+  static deserializeBinaryFromReader(message: ListDocumentCategoriesRequest, reader: jspb.BinaryReader): ListDocumentCategoriesRequest;
+}
+
+export namespace ListDocumentCategoriesRequest {
+  export type AsObject = {
+  }
+}
+
+export class ListDocumentCategoriesResponse extends jspb.Message {
+  getCategoryList(): Array<resources_documents_category_pb.DocumentCategory>;
+  setCategoryList(value: Array<resources_documents_category_pb.DocumentCategory>): ListDocumentCategoriesResponse;
+  clearCategoryList(): ListDocumentCategoriesResponse;
+  addCategory(value?: resources_documents_category_pb.DocumentCategory, index?: number): resources_documents_category_pb.DocumentCategory;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListDocumentCategoriesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ListDocumentCategoriesResponse): ListDocumentCategoriesResponse.AsObject;
+  static serializeBinaryToWriter(message: ListDocumentCategoriesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListDocumentCategoriesResponse;
+  static deserializeBinaryFromReader(message: ListDocumentCategoriesResponse, reader: jspb.BinaryReader): ListDocumentCategoriesResponse;
+}
+
+export namespace ListDocumentCategoriesResponse {
+  export type AsObject = {
+    categoryList: Array<resources_documents_category_pb.DocumentCategory.AsObject>,
+  }
+}
+
 export class CreateDocumentCategoryRequest extends jspb.Message {
   getCategory(): resources_documents_category_pb.DocumentCategory | undefined;
   setCategory(value?: resources_documents_category_pb.DocumentCategory): CreateDocumentCategoryRequest;

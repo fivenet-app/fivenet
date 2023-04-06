@@ -2,19 +2,47 @@ package docstore
 
 import (
 	"context"
+	"errors"
 
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 var (
 	dCategory = table.FivenetDocumentsCategories.AS("category")
 )
 
+func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error) {
+	_, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	dCategory := table.FivenetDocumentsCategories.AS("documentcategory")
+	stmt := dCategory.
+		SELECT(
+			dCategory.AllColumns,
+		).
+		FROM(
+			dCategory,
+		).
+		WHERE(
+			dCategory.Job.EQ(jet.String(job)),
+		)
+
+	resp := &ListDocumentCategoriesResponse{}
+	if err := stmt.QueryContext(ctx, s.db, &resp.Category); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	return resp, nil
+}
+
 func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error) {
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
+	dCategory := table.FivenetDocumentsCategories
 	stmt := dCategory.
 		INSERT(
 			dCategory.Name,
@@ -45,6 +73,7 @@ func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocument
 func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocumentCategoryRequest) (*UpdateDocumentCategoryResponse, error) {
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
+	dCategory := table.FivenetDocumentsCategories
 	stmt := dCategory.
 		UPDATE(
 			dCategory.Name,
@@ -56,7 +85,10 @@ func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocument
 			job,
 		).
 		WHERE(
-			dCategory.ID.EQ(jet.Uint64(req.Category.Id)),
+			jet.AND(
+				dCategory.ID.EQ(jet.Uint64(req.Category.Id)),
+				dCategory.Job.EQ(jet.String(job)),
+			),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -74,11 +106,14 @@ func (s *Server) DeleteDocumentCategory(ctx context.Context, req *DeleteDocument
 		ids[i] = jet.Uint64(req.Ids[i])
 	}
 
+	dCategory := table.FivenetDocumentsCategories
 	stmt := dCategory.
 		DELETE().
 		WHERE(
-			dCategory.ID.IN(ids...).
-				AND(dCategory.Job.EQ(jet.String(job))),
+			jet.AND(
+				dCategory.Job.EQ(jet.String(job)),
+				dCategory.ID.IN(ids...),
+			),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

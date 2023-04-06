@@ -162,7 +162,7 @@ message GetDocumentAccessRequest {
 }
 
 message GetDocumentAccessResponse {
-  resources.documents.DocumentAccess access = 1;
+  resources.documents.DocumentAccess access = 1 [(validate.rules).message.required = true];
 }
 
 enum DOC_ACCESS_UPDATE_MODE {
@@ -190,8 +190,14 @@ message GetUserDocumentsResponse {
   repeated resources.documents.DocumentRelation relations = 2;
 }
 
+message ListDocumentCategoriesRequest {}
+
+message ListDocumentCategoriesResponse {
+  repeated resources.documents.DocumentCategory category = 1;
+}
+
 message CreateDocumentCategoryRequest {
-  resources.documents.DocumentCategory category = 1;
+  resources.documents.DocumentCategory category = 1 [(validate.rules).message.required = true];
 }
 
 message CreateDocumentCategoryResponse {
@@ -199,7 +205,7 @@ message CreateDocumentCategoryResponse {
 }
 
 message UpdateDocumentCategoryRequest {
-  resources.documents.DocumentCategory category = 1;
+  resources.documents.DocumentCategory category = 1 [(validate.rules).message.required = true];
 }
 
 message UpdateDocumentCategoryResponse {}
@@ -255,6 +261,8 @@ service DocStoreService {
   // @perm: description="View the documents linked to a citizen"
   rpc GetUserDocuments(GetUserDocumentsRequest) returns (GetUserDocumentsResponse);
 
+  // @perm
+  rpc ListDocumentCategories(ListDocumentCategoriesRequest) returns (ListDocumentCategoriesResponse);
   // @perm: description="Create/ Update document categories"
   rpc CreateDocumentCategory(CreateDocumentCategoryRequest) returns (CreateDocumentCategoryResponse);
   // @perm: name=CreateDocumentCategory

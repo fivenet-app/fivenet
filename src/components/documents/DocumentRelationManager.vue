@@ -129,7 +129,8 @@ function removeRelation(id: number): void {
                                     <XMarkIcon class="w-6 h-6" aria-hidden="true" />
                                 </button>
                             </div>
-                            <DialogTitle as="h3" class="text-base font-semibold leading-6">Citizen Relations
+                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
+                                Citizen Relations
                             </DialogTitle>
                             <TabGroup>
                                 <TabList class="flex flex-row mb-4">
