@@ -8,12 +8,13 @@ export interface DocumentEditorState {
 }
 
 export const useDocumentEditorStore = defineStore('documentEditor', {
-    state: () => ({
-        title: '',
-        content: '',
-        closed: undefined,
-        state: '',
-    } as DocumentEditorState),
+    state: () =>
+        ({
+            title: '',
+            content: '',
+            closed: undefined,
+            state: '',
+        } as DocumentEditorState),
     persist: true,
     actions: {
         save(doc: DocumentEditorState): void {

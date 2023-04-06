@@ -12,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/proto/resources/accounts"
 	"github.com/galexrt/fivenet/proto/resources/jobs"
 	users "github.com/galexrt/fivenet/proto/resources/users"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -260,6 +261,26 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 	}, nil
 }
 
+func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
+	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	if err != nil {
+		return nil, GenericLoginErr
+	}
+
+	// Load account
+	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccountID)))
+	if err != nil {
+		return nil, GenericLoginErr
+	}
+	if acc.ID == 0 {
+		return nil, GenericLoginErr
+	}
+
+	return &GetAccountInfoResponse{
+		Account: accounts.ConvertFromAcc(acc),
+	}, nil
+}
+
 func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {
 	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
 	if err != nil {
@@ -267,7 +288,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	}
 
 	// Load account to make sure it (still) exists
-	acc, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(claims.Username)))
+	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccountID)))
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -389,7 +410,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(claims.Username)))
+	account, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccountID)))
 	if err != nil {
 		return nil, NoCharacterFoundErr
 	}

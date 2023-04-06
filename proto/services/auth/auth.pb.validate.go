@@ -794,6 +794,239 @@ var _ interface {
 	ErrorName() string
 } = ChangePasswordResponseValidationError{}
 
+// Validate checks the field values on GetAccountInfoRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetAccountInfoRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetAccountInfoRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetAccountInfoRequestMultiError, or nil if none found.
+func (m *GetAccountInfoRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetAccountInfoRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetAccountInfoRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetAccountInfoRequestMultiError is an error wrapping multiple validation
+// errors returned by GetAccountInfoRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetAccountInfoRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetAccountInfoRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetAccountInfoRequestMultiError) AllErrors() []error { return m }
+
+// GetAccountInfoRequestValidationError is the validation error returned by
+// GetAccountInfoRequest.Validate if the designated constraints aren't met.
+type GetAccountInfoRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetAccountInfoRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetAccountInfoRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetAccountInfoRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetAccountInfoRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetAccountInfoRequestValidationError) ErrorName() string {
+	return "GetAccountInfoRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetAccountInfoRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetAccountInfoRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetAccountInfoRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetAccountInfoRequestValidationError{}
+
+// Validate checks the field values on GetAccountInfoResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetAccountInfoResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetAccountInfoResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetAccountInfoResponseMultiError, or nil if none found.
+func (m *GetAccountInfoResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetAccountInfoResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetAccount()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetAccountInfoResponseValidationError{
+					field:  "Account",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetAccountInfoResponseValidationError{
+					field:  "Account",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAccount()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetAccountInfoResponseValidationError{
+				field:  "Account",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetAccountInfoResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetAccountInfoResponseMultiError is an error wrapping multiple validation
+// errors returned by GetAccountInfoResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetAccountInfoResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetAccountInfoResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetAccountInfoResponseMultiError) AllErrors() []error { return m }
+
+// GetAccountInfoResponseValidationError is the validation error returned by
+// GetAccountInfoResponse.Validate if the designated constraints aren't met.
+type GetAccountInfoResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetAccountInfoResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetAccountInfoResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetAccountInfoResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetAccountInfoResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetAccountInfoResponseValidationError) ErrorName() string {
+	return "GetAccountInfoResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetAccountInfoResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetAccountInfoResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetAccountInfoResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetAccountInfoResponseValidationError{}
+
 // Validate checks the field values on GetCharactersRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

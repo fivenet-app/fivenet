@@ -16,6 +16,7 @@ definePageMeta({
     },
 });
 </script>
+
 <template>
     <ContentWrapper>
         <h2 class="text-2xl text-white">Category: View</h2>

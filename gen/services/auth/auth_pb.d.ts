@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as resources_accounts_accounts_pb from '../../resources/accounts/accounts_pb';
 import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
@@ -121,6 +122,40 @@ export class ChangePasswordResponse extends jspb.Message {
 export namespace ChangePasswordResponse {
   export type AsObject = {
     token: string,
+  }
+}
+
+export class GetAccountInfoRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetAccountInfoRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetAccountInfoRequest): GetAccountInfoRequest.AsObject;
+  static serializeBinaryToWriter(message: GetAccountInfoRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetAccountInfoRequest;
+  static deserializeBinaryFromReader(message: GetAccountInfoRequest, reader: jspb.BinaryReader): GetAccountInfoRequest;
+}
+
+export namespace GetAccountInfoRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetAccountInfoResponse extends jspb.Message {
+  getAccount(): resources_accounts_accounts_pb.Account | undefined;
+  setAccount(value?: resources_accounts_accounts_pb.Account): GetAccountInfoResponse;
+  hasAccount(): boolean;
+  clearAccount(): GetAccountInfoResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetAccountInfoResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetAccountInfoResponse): GetAccountInfoResponse.AsObject;
+  static serializeBinaryToWriter(message: GetAccountInfoResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetAccountInfoResponse;
+  static deserializeBinaryFromReader(message: GetAccountInfoResponse, reader: jspb.BinaryReader): GetAccountInfoResponse;
+}
+
+export namespace GetAccountInfoResponse {
+  export type AsObject = {
+    account?: resources_accounts_accounts_pb.Account.AsObject,
   }
 }
 

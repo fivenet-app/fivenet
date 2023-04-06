@@ -12,6 +12,7 @@ useHead({
 definePageMeta({
     title: 'Logout',
     requiresAuth: true,
+    authOnlyToken: true,
 });
 
 const { $grpc } = useNuxtApp();

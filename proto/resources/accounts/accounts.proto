@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package resources.accounts;
+option go_package = "github.com/galexrt/fivenet/proto/resources/accounts;accounts";
+
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+message Account {
+  uint64 id = 1;
+	optional resources.timestamp.Timestamp created_at = 2;
+	optional resources.timestamp.Timestamp updated_at = 3;
+	string username = 4;
+	string license = 5;
+}

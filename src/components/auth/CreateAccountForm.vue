@@ -35,7 +35,7 @@ async function createAccount(regToken: string, username: string, password: strin
 
 const accountError = ref('');
 
-const { errors, handleSubmit } = useForm({
+const { handleSubmit } = useForm({
     validationSchema: toTypedSchema(
         object({
             registrationToken: string().required().length(6),

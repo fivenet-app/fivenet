@@ -6,12 +6,14 @@ import { RpcError } from 'grpc-web';
 import ClipboardButton from '../../components/clipboard/ClipboardButton.vue';
 import { User } from '@fivenet/gen/resources/users/users_pb';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
+import DataPendingBlock from '~~/src/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~~/src/components/partials/DataErrorBlock.vue';
 
 useHead({
-    title: 'Citizen Profile',
+    title: 'Citizen File',
 });
 definePageMeta({
-    title: 'Citizen Profile',
+    title: 'Citizen File',
     requiresAuth: true,
     permission: 'CitizenStoreService.FindUsers',
     validate: async (route) => {
@@ -24,30 +26,34 @@ definePageMeta({
 const { $grpc } = useNuxtApp();
 const route = useRoute('citizens-id');
 
-const user = ref<User>();
+const { data: user, pending, refresh, error } = await useLazyAsyncData(`citizen-${route.params.id}`, () => getUser());
 
-async function getUser(): Promise<void> {
-    const req = new GetUserRequest();
-    req.setUserId(parseInt(route.params.id));
+async function getUser(): Promise<User> {
+    return new Promise(async (res, rej) => {
+        const req = new GetUserRequest();
+        req.setUserId(parseInt(route.params.id));
 
-    try {
-        const resp = await $grpc.getCitizenStoreClient().
-            getUser(req, null);
+        try {
+            const resp = await $grpc.getCitizenStoreClient().
+                getUser(req, null);
 
-        user.value = resp.getUser();
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            if (resp.hasUser()) {
+                return res(resp.getUser()!);
+            }
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
-
-onBeforeMount(async () => getUser());
 </script>
 
 <template>
     <ContentWrapper>
-        <div v-if="user">
-            <CitizenInfo :user="user" />
+        <DataPendingBlock v-if="pending" message="Loading citizen..." />
+        <DataErrorBlock v-else-if="error" title="Unable to load citizen!" :retry="refresh" />
+        <div v-else>
+            <CitizenInfo :user="user!" />
             <ClipboardButton />
         </div>
     </ContentWrapper>

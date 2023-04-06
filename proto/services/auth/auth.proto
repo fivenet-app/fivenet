@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.auth;
 option go_package = "github.com/galexrt/fivenet/proto/services/auth;auth";
 
+import "resources/accounts/accounts.proto";
 import "resources/jobs/jobs.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -38,6 +39,12 @@ message ChangePasswordRequest {
 
 message ChangePasswordResponse {
   string token = 1;
+}
+
+message GetAccountInfoRequest {}
+
+message GetAccountInfoResponse {
+  resources.accounts.Account account = 1;
 }
 
 message GetCharactersRequest {}
@@ -78,6 +85,8 @@ service AuthService {
   rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+
+  rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
 
   rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse);
   // @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."

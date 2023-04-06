@@ -110,10 +110,13 @@ function updateUserNav(): void {
         userNavigation.value.push(
             { name: 'Change Character', href: { name: 'auth-character-selector' } },
             { name: 'Control Panel', href: { name: 'rector' }, permission: 'RectorService.GetRoles' },
-    );
+        );
     }
     if (accessToken.value) {
-        userNavigation.value.push({ name: 'Sign out', href: { name: 'auth-logout' } });
+        userNavigation.value.push(
+            { name: 'Account Info', href: { name: 'auth-account-info' } },
+            { name: 'Sign out', href: { name: 'auth-logout' } },
+        );
     }
     if (userNavigation.value.length === 0) {
         userNavigation.value = [
@@ -205,8 +208,8 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                         <HomeIcon class="h-6 w-6" aria-hidden="true" />
                         <span class="mt-2">Home</span>
                     </NuxtLink>
-                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')" v-else-if="accessToken && activeChar" :key="item.name"
-                        :to="item.href" v-can="item.permission"
+                    <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')"
+                        v-else-if="accessToken && activeChar" :key="item.name" :to="item.href" v-can="item.permission"
                         :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
                         :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon"

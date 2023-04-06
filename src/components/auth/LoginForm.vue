@@ -42,7 +42,7 @@ async function login(username: string, password: string): Promise<void> {
     });
 }
 
-const { errors, handleSubmit } = useForm({
+const { handleSubmit } = useForm({
     validationSchema: toTypedSchema(
         object({
             username: string().required().min(3).max(24),

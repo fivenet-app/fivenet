@@ -168,6 +168,49 @@ export class AuthServiceClient {
     this.methodDescriptorChangePassword);
   }
 
+  methodDescriptorGetAccountInfo = new grpcWeb.MethodDescriptor(
+    '/services.auth.AuthService/GetAccountInfo',
+    grpcWeb.MethodType.UNARY,
+    services_auth_auth_pb.GetAccountInfoRequest,
+    services_auth_auth_pb.GetAccountInfoResponse,
+    (request: services_auth_auth_pb.GetAccountInfoRequest) => {
+      return request.serializeBinary();
+    },
+    services_auth_auth_pb.GetAccountInfoResponse.deserializeBinary
+  );
+
+  getAccountInfo(
+    request: services_auth_auth_pb.GetAccountInfoRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_auth_auth_pb.GetAccountInfoResponse>;
+
+  getAccountInfo(
+    request: services_auth_auth_pb.GetAccountInfoRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_auth_auth_pb.GetAccountInfoResponse) => void): grpcWeb.ClientReadableStream<services_auth_auth_pb.GetAccountInfoResponse>;
+
+  getAccountInfo(
+    request: services_auth_auth_pb.GetAccountInfoRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_auth_auth_pb.GetAccountInfoResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.auth.AuthService/GetAccountInfo',
+        request,
+        metadata || {},
+        this.methodDescriptorGetAccountInfo,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.auth.AuthService/GetAccountInfo',
+    request,
+    metadata || {},
+    this.methodDescriptorGetAccountInfo);
+  }
+
   methodDescriptorGetCharacters = new grpcWeb.MethodDescriptor(
     '/services.auth.AuthService/GetCharacters',
     grpcWeb.MethodType.UNARY,
