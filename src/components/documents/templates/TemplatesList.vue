@@ -57,7 +57,7 @@ function selected(idx: number): DocumentTemplateShort {
             </span>
         </button>
         <div v-else>
-            <Cards :items="items" @selected="$emit('selected', selected($event))" />
+            <Cards :items="items" :show-icon="false" @selected="$emit('selected', selected($event))" />
         </div>
     </div>
 </template>

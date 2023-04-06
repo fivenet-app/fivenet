@@ -9,12 +9,12 @@
         - [ ] Create in-game "register" command to get a token with which one can then set their username and password
 - [ ] "Faction Leader Control Panel" aka "Rector Service"
     - [ ] Templates (DocStore)
-        - [ ] Create new templates by leaders
-        - [ ] Editable templates by the leader of the jobs
+        - [ ] Create templates
+        - [ ] Edit templates
     - [ ] Audit Log (Rector)
 - [ ] Better error handling
     - [ ] Backend: use predefined errors
-    - [ ] Frontend: use form validation before it is sent to the server
+    - [ ] Frontend: starting using client-side form validation
 - [ ] Final polishing pass before release of version 1.0.0
     - [ ] Unify the design
     - [ ] Clean up Code
@@ -23,7 +23,7 @@
 
 - [ ] Documents
     - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
-- [ ] Employee Management
+- [ ] Employee Management (Jobs)
     - [ ] Create Notes and Warns for Employees ("Führungsregister")
     - [ ] Promote and Demote Employees
     - [ ] Fire employees
