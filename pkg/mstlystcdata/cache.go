@@ -7,7 +7,6 @@ import (
 	"time"
 
 	cache "github.com/Code-Hex/go-generics-cache"
-	"github.com/Code-Hex/go-generics-cache/policy/lfu"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/proto/resources/documents"
 	"github.com/galexrt/fivenet/proto/resources/jobs"
@@ -36,7 +35,7 @@ type Cache struct {
 func NewCache(ctx context.Context, logger *zap.Logger, db *sql.DB) (*Cache, error) {
 	jobsCache := cache.NewContext(
 		ctx,
-		cache.AsLFU[string, *jobs.Job](lfu.WithCapacity(32)),
+		cache.AsLRU[string, *jobs.Job](lru.WithCapacity(32)),
 		cache.WithJanitorInterval[string, *jobs.Job](2*time.Minute),
 	)
 

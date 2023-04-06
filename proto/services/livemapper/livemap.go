@@ -9,7 +9,7 @@ import (
 	"time"
 
 	cache "github.com/Code-Hex/go-generics-cache"
-	"github.com/Code-Hex/go-generics-cache/policy/lfu"
+	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
@@ -45,12 +45,12 @@ type Server struct {
 func NewServer(ctx context.Context, logger *zap.Logger, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
 	dispatchesCache := cache.NewContext(
 		ctx,
-		cache.AsLFU[string, []*livemap.DispatchMarker](lfu.WithCapacity(32)),
+		cache.AsLRU[string, []*livemap.DispatchMarker](lru.WithCapacity(32)),
 		cache.WithJanitorInterval[string, []*livemap.DispatchMarker](120*time.Second),
 	)
 	usersCache := cache.NewContext(
 		ctx,
-		cache.AsLFU[string, []*livemap.UserMarker](lfu.WithCapacity(32)),
+		cache.AsLRU[string, []*livemap.UserMarker](lru.WithCapacity(32)),
 		cache.WithJanitorInterval[string, []*livemap.UserMarker](120*time.Second),
 	)
 
