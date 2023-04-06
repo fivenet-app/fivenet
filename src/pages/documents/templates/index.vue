@@ -14,6 +14,8 @@ definePageMeta({
 
 <template>
     <ContentWrapper>
-        <TemplatesList />
+        <div class="pt-2">
+            <TemplatesList />
+        </div>
     </ContentWrapper>
 </template>

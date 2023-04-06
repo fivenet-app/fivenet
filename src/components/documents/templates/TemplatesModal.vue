@@ -136,8 +136,10 @@ async function clipboardDialog(): Promise<void> {
                                                     class="w-full mb-5 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
                                                     No Template
                                                 </NuxtLink>
-                                                <TemplatesList
-                                                    @selected="(t: DocumentTemplateShort) => templateSelected(t)" />
+                                                <div class="pt-6">
+                                                    <TemplatesList
+                                                        @selected="(t: DocumentTemplateShort) => templateSelected(t)" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

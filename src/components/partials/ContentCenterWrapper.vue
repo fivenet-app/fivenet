@@ -4,8 +4,10 @@ import ContentWrapper from './ContentWrapper.vue';
 
 <template>
     <div class="flex overflow-hidden justify-center items-center align-middle h-full">
-        <ContentWrapper classes="flex-1">
-            <slot></slot>
-        </ContentWrapper>
+        <main>
+            <div class="mx-auto max-w-7xl">
+                <slot></slot>
+            </div>
+        </main>
     </div>
 </template>

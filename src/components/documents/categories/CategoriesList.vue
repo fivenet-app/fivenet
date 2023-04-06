@@ -36,7 +36,7 @@ watch(categories, () => categories.value?.forEach((v) => {
 </script>
 
 <template>
-    <div>
+    <div class="py-2">
         <DataPendingBlock v-if="pending" message="Loading categories..." />
         <DataErrorBlock v-else-if="error" title="Unable to load categories!" :retry="refresh" />
         <button v-else-if="categories && categories.length == 0" type="button"

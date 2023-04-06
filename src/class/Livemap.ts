@@ -30,8 +30,9 @@ export class Livemap extends L.Map {
 
         this.defaultIcon = new L.Icon({
             iconUrl: import.meta.env.BASE_URL + 'images/livemap/markers/user-default.svg',
-            iconSize: [48, 48],
-            iconAnchor: [48, 48],
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
+            popupAnchor: [0, -8],
         });
 
         this.on('load', () => (this.hasLoaded = true));
@@ -209,8 +210,8 @@ export class Livemap extends L.Map {
 
         return new L.DivIcon({
             html: '<div class="place-content-center">' + html + '</div>',
-            iconSize: [40, 40],
-            iconAnchor: [20, 20],
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
             popupAnchor: [0, -8],
         });
     }
