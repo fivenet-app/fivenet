@@ -28,7 +28,7 @@ const props = defineProps({
     },
 });
 
-function addToClipboard() {
+function addToClipboard(): void {
     store.addVehicle(props.vehicle);
 }
 </script>

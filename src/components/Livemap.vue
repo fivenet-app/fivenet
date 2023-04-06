@@ -21,13 +21,13 @@ const Position = L.Control.extend({
     options: {
         position: 'bottomleft',
     },
-    onAdd: function () {
+    onAdd: function (): HTMLDivElement {
         const latlng = L.DomUtil.create('div', 'leaflet-control-attribution mouseposition');
         _latlng = latlng;
         _latlng.innerHTML = '<b>Latitude</b>: 0.0 | <b>Longtiude</b>: 0.0';
         return latlng;
     },
-    updateHTML: function (lat: number, lng: number) {
+    updateHTML: function (lat: number, lng: number): void {
         _latlng.innerHTML = '<b>Latitude</b>: ' + round(lat) + ' | <b>Longtiude</b>: ' + round(lng);
     },
 });
@@ -81,18 +81,18 @@ async function start(): Promise<void> {
 
     stream = $grpc.getLivemapperClient().
         stream(request).
-        on('error', async (err: RpcError) => {
+        on('error', async (err: RpcError): Promise<void> => {
             $grpc.handleRPCError(err);
             error.value = err;
             stop();
         }).
-        on('data', async (resp) => {
+        on('data', async (resp): Promise<void> => {
             error.value = null;
 
             map?.parseMarkerlist(MarkerType.dispatch, resp.getDispatchesList());
             map?.parseMarkerlist(MarkerType.player, resp.getUsersList());
         }).
-        on('end', function () {
+        on('end', (): void => {
             console.debug('Livemap Data Stream Ended');
         });
 }

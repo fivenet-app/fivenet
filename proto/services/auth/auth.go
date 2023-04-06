@@ -118,6 +118,8 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		return nil, AccountCreateFailedErr
 	}
 
+	req.Username = strings.TrimSpace(req.Username)
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 14)
 	if err != nil {
 		return nil, AccountCreateFailedErr
@@ -169,6 +171,8 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 }
 
 func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error) {
+	req.Username = strings.TrimSpace(req.Username)
+
 	account, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(req.Username)))
 	if err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {

@@ -26,36 +26,40 @@ const props = defineProps({
 const wantedState = ref(props.user.getProps() ? props.user.getProps()?.getWanted() : false);
 
 async function toggleWantedStatus(): Promise<void> {
-    if (!props.user) return;
-
-    wantedState.value = !props.user.getProps()?.getWanted();
-
-    const req = new SetUserPropsRequest();
-    let userProps = props.user?.getProps();
-    if (!userProps) {
-        userProps = new UserProps();
-        userProps.setUserId(props.user.getUserId());
-
-        props.user.setProps(userProps);
-    }
-
-    userProps?.setWanted(wantedState.value);
-    req.setProps(userProps);
-
-    try {
-        await $grpc.getCitizenStoreClient().
-            setUserProps(req, null);
-
-        dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
+    if (!props.user) {
         return;
     }
+
+    return new Promise(async (res, rej) => {
+        wantedState.value = !props.user.getProps()?.getWanted();
+
+        const req = new SetUserPropsRequest();
+        let userProps = props.user?.getProps();
+        if (!userProps) {
+            userProps = new UserProps();
+            userProps.setUserId(props.user.getUserId());
+
+            props.user.setProps(userProps);
+        }
+
+        userProps?.setWanted(wantedState.value);
+        req.setProps(userProps);
+
+        try {
+            await $grpc.getCitizenStoreClient().
+                setUserProps(req, null);
+
+            dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 const templatesOpen = ref(false);
 
-function openTemplates() {
+function openTemplates(): void {
     clipboardStore.addUser(props.user);
 
     templatesOpen.value = true;

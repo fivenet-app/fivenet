@@ -6,7 +6,7 @@ import { User } from '@fivenet/gen/resources/users/users_pb';
 import CharSexBadge from '../citizens/CharSexBadge.vue';
 import { fromSecondsToFormattedDuration } from '../../utils/time';
 import { RpcError } from 'grpc-web';
-import { parseQuery } from 'vue-router';
+import { parseQuery, NavigationFailure } from 'vue-router';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
@@ -22,26 +22,28 @@ const props = defineProps({
     },
 });
 
-async function chooseCharacter() {
-    const req = new ChooseCharacterRequest();
-    req.setCharId(props.char.getUserId());
+async function chooseCharacter(): Promise<NavigationFailure | void | undefined> {
+    return new Promise(async (res, rej) => {
+        const req = new ChooseCharacterRequest();
+        req.setCharId(props.char.getUserId());
 
-    try {
-        const resp = await $grpc.getAuthClient()
-            .chooseCharacter(req, null);
+        try {
+            const resp = await $grpc.getAuthClient()
+                .chooseCharacter(req, null);
 
-        store.updateAccessToken(resp.getToken());
-        store.updateActiveChar(props.char);
-        store.updatePermissions(resp.getPermissionsList());
-        console.log("Char Permissions: " + resp.getPermissionsList());
+            store.updateAccessToken(resp.getToken());
+            store.updateActiveChar(props.char);
+            store.updatePermissions(resp.getPermissionsList());
+            console.log("Char Permissions: " + resp.getPermissionsList());
 
-        const path = route.query.redirect?.toString() || "/overview";
-        const url = new URL("https://example.com" + path);
-        router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            const path = route.query.redirect?.toString() || "/overview";
+            const url = new URL("https://example.com" + path);
+            return await router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 </script>
 

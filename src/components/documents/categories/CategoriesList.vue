@@ -2,7 +2,6 @@
 import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
 import { CompleteDocumentCategoryRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { RpcError } from 'grpc-web';
-import { FunctionalComponent } from 'vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import Cards from '../../partials/Cards.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
@@ -32,7 +31,7 @@ async function getCategories(): Promise<Array<DocumentCategory>> {
 }
 
 watch(categories, () => categories.value?.forEach((v) => {
-    items.value.push({ title: v?.getName(), description: v?.getDescription(), });
+    items.value.push({ title: v?.getName(), description: v?.getDescription(), href: { name: 'documents-categories-id', params: { id: v.getId() } } });
 }));
 </script>
 
@@ -48,7 +47,7 @@ watch(categories, () => categories.value?.forEach((v) => {
             </span>
         </button>
         <div v-else>
-            <Cards :items="items" :show-icon="false" />
+            <Cards :items="items" :show-icon="true" />
         </div>
     </div>
 </template>

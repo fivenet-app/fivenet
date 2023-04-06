@@ -223,13 +223,13 @@ const scaleY = 0.0205;
 
 export const customCRS = L.extend({}, L.CRS.Simple, {
     projection: L.Projection.LonLat,
-    scale: function (zoom: number) {
+    scale: function (zoom: number): number {
         return Math.pow(2, zoom);
     },
-    zoom: function (sc: number) {
+    zoom: function (sc: number): number {
         return Math.log(sc) / 0.6931471805599453;
     },
-    distance: function (pos1: L.LatLng, pos2: L.LatLng) {
+    distance: function (pos1: L.LatLng, pos2: L.LatLng): number {
         var x_difference = pos2.lng - pos1.lng;
         var y_difference = pos2.lat - pos1.lat;
         return Math.sqrt(x_difference * x_difference + y_difference * y_difference);

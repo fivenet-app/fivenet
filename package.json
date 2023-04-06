@@ -21,6 +21,7 @@
     "@tailwindcss/typography": "^0.5.9",
     "@types/leaflet": "^1.9.3",
     "@types/uuid": "^9.0.1",
+    "@vee-validate/yup": "^4.8.4",
     "@vueup/vue-quill": "^1.1.1",
     "@vueuse/core": "^9.13.0",
     "google-protobuf": "^3.21.2",
@@ -32,8 +33,10 @@
     "postcss-nesting": "^11.2.2",
     "slugify": "^1.6.6",
     "uuid": "^9.0.0",
+    "vee-validate": "^4.8.4",
     "vue": "^3.2.47",
-    "vue-template-compiler": "^2.7.14"
+    "vue-template-compiler": "^2.7.14",
+    "yup": "^1.0.2"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.6.5",

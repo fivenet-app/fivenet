@@ -12,7 +12,7 @@ const props = defineProps({
     },
 });
 
-function addToClipboard() {
+function addToClipboard(): void {
     store.addUser(props.user);
 }
 </script>

@@ -104,7 +104,7 @@ onMounted(() => {
     updateBread();
 });
 
-function updateUserNav() {
+function updateUserNav(): void {
     userNavigation.value.length = 0;
     if (activeChar.value) {
         userNavigation.value.push(
@@ -122,7 +122,7 @@ function updateUserNav() {
     }
 }
 
-function updateActiveItem() {
+function updateActiveItem(): void {
     const route = router.currentRoute.value;
     if (route.name) {
         sidebarNavigation.forEach(e => {
@@ -137,7 +137,7 @@ function updateActiveItem() {
     }
 }
 
-function updateBread() {
+function updateBread(): void {
     // Clear current breadcrumbs
     breadcrumbs.value.length = 0;
     const currentRoute = router.currentRoute.value;

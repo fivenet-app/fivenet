@@ -12,7 +12,11 @@ message CreateAccountRequest {
     len: 6,
     pattern: "^[0-9]{6}$",
   }];
-  string username = 2 [(validate.rules).string = {min_len: 3, max_len: 24}];
+  string username = 2 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 24,
+    pattern: "^[a-zA-Z0-9-_]{3,24}$",
+  }];
   string password = 3 [(validate.rules).string = {min_len: 6, max_bytes: 70}];
 }
 

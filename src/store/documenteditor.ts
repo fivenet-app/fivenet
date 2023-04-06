@@ -16,7 +16,7 @@ export const useDocumentEditorStore = defineStore('documentEditor', {
     } as DocumentEditorState),
     persist: true,
     actions: {
-        save(doc: DocumentEditorState) {
+        save(doc: DocumentEditorState): void {
             this.title = doc.title;
             this.content = doc.content;
             this.closed = doc.closed;

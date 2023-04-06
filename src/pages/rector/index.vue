@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { KeyIcon } from '@heroicons/vue/24/outline';
-import { FunctionalComponent } from 'vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import Cards from '~~/src/components/partials/Cards.vue';
 import ContentCenterWrapper from '../../components/partials/ContentCenterWrapper.vue';

@@ -52,7 +52,7 @@ watch(reqStatus.value, () => {
     }
 });
 
-function closeDialog() {
+function closeDialog(): void {
     template.value = undefined;
     steps.value.selectTemplate = true;
     steps.value.selectClipboard = false;
@@ -60,7 +60,7 @@ function closeDialog() {
     emit('close');
 }
 
-function templateSelected(t: DocumentTemplateShort) {
+function templateSelected(t: DocumentTemplateShort): void {
     if (t) {
         template.value = t;
         if (t.getSchema()) {
@@ -90,16 +90,16 @@ function templateSelected(t: DocumentTemplateShort) {
     }
 }
 
-function goBackDialog() {
+function goBackDialog(): void {
     steps.value.selectTemplate = true;
     steps.value.selectClipboard = false;
 }
 
 const submit = ref(false);
 
-function clipboardDialog() {
+async function clipboardDialog(): Promise<void> {
     submit.value = true;
-    router.push({ name: 'documents-create', query: { templateId: template.value?.getId() } });
+    await router.push({ name: 'documents-create', query: { templateId: template.value?.getId() } });
 }
 </script>
 

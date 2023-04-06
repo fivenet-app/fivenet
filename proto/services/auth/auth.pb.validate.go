@@ -91,6 +91,17 @@ func (m *CreateAccountRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if !_CreateAccountRequest_Username_Pattern.MatchString(m.GetUsername()) {
+		err := CreateAccountRequestValidationError{
+			field:  "Username",
+			reason: "value does not match regex pattern \"^[a-zA-Z0-9-_]{3,24}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if utf8.RuneCountInString(m.GetPassword()) < 6 {
 		err := CreateAccountRequestValidationError{
 			field:  "Password",
@@ -194,6 +205,8 @@ var _ interface {
 } = CreateAccountRequestValidationError{}
 
 var _CreateAccountRequest_RegToken_Pattern = regexp.MustCompile("^[0-9]{6}$")
+
+var _CreateAccountRequest_Username_Pattern = regexp.MustCompile("^[a-zA-Z0-9-_]{3,24}$")
 
 // Validate checks the field values on CreateAccountResponse with the rules
 // defined in the proto definition for this message. If any rules are

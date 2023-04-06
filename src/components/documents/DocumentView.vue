@@ -88,7 +88,7 @@ async function getDocument(): Promise<void> {
         }).catch((err: RpcError) => $grpc.handleRPCError(err));
 }
 
-function addToClipboard() {
+function addToClipboard(): void {
     if (document.value) {
         clipboardStore.addDocument(document.value);
     }
