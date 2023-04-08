@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/proto/resources/documents"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -37,6 +38,32 @@ func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCa
 	}
 
 	return resp, nil
+}
+
+func (s *Server) getDocumentCategory(ctx context.Context, id uint64) (*documents.DocumentCategory, error) {
+	_, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	dCategory := table.FivenetDocumentsCategories.AS("documentcategory")
+	stmt := dCategory.
+		SELECT(
+			dCategory.AllColumns,
+		).
+		FROM(
+			dCategory,
+		).
+		WHERE(
+			jet.AND(
+				dCategory.Job.EQ(jet.String(job)),
+				dCategory.ID.EQ(jet.Uint64(id)),
+			),
+		)
+
+	var dest documents.DocumentCategory
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
 }
 
 func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error) {
@@ -78,6 +105,7 @@ func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocument
 		UPDATE(
 			dCategory.Name,
 			dCategory.Description,
+			dCategory.Job,
 		).
 		SET(
 			req.Category.Name,

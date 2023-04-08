@@ -10,6 +10,6 @@ message Account {
   uint64 id = 1;
 	optional resources.timestamp.Timestamp created_at = 2;
 	optional resources.timestamp.Timestamp updated_at = 3;
-	string username = 4;
-	string license = 5;
+	string username = 4 [(validate.rules).string.max_len = 24];
+	string license = 5 [(validate.rules).string.max_len = 64];
 }

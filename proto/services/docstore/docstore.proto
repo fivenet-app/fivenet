@@ -26,6 +26,28 @@ message GetTemplateResponse {
   bool rendered = 2;
 }
 
+message CreateTemplateRequest {
+  resources.documents.DocumentTemplate template = 1 [(validate.rules).message.required = true];
+}
+
+message CreateTemplateResponse {
+  int64 id = 1;
+}
+
+message UpdateTemplateRequest {
+  resources.documents.DocumentTemplate template = 1 [(validate.rules).message.required = true];
+}
+
+message UpdateTemplateResponse {
+  int64 id = 1;
+}
+
+message DeleteTemplateRequest {
+  uint64 id = 1;
+}
+
+message DeleteTemplateResponse {}
+
 message FindDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
@@ -222,6 +244,13 @@ service DocStoreService {
   // @perm: name=ListTemplates
   rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
 
+  // @perm: description="Create document templates"
+  rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse);
+  // @perm: name=CreateTemplate
+  rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse);
+  // @perm: description="Delete document templates"
+  rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse);
+
   // @perm: description="List/ Find documents"
   rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
   // @perm: description="View a document"
@@ -261,7 +290,7 @@ service DocStoreService {
   // @perm: description="View the documents linked to a citizen"
   rpc GetUserDocuments(GetUserDocumentsRequest) returns (GetUserDocumentsResponse);
 
-  // @perm
+  // @perm: description="List document categories"
   rpc ListDocumentCategories(ListDocumentCategoriesRequest) returns (ListDocumentCategoriesResponse);
   // @perm: description="Create/ Update document categories"
   rpc CreateDocumentCategory(CreateDocumentCategoryRequest) returns (CreateDocumentCategoryResponse);

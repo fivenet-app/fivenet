@@ -8,9 +8,9 @@
     - [ ] Authentication
         - [ ] Create in-game "register" command to get a token with which one can then set their username and password
 - [ ] "Faction Leader Control Panel" aka "Rector Service"
-    - [ ] Templates (DocStore)
-        - [ ] Create templates
-        - [ ] Edit templates
+    - [x] Templates (DocStore)
+        - [x] Create templates
+        - [x] Edit templates
     - [ ] Audit Log (Rector)
 - [ ] Better error handling
     - [ ] Backend: use predefined errors
@@ -47,6 +47,8 @@
     - [x] Multiple different designs
     - [x] Display dispatches (from GKS phone for now)
     - [x] See other jobs' positions and/ or dispatches
+    - [x] Animated Marker when they move
+    - [ ] Search markers
 - [x] Permissions System
     - [x] Based on Job + Job Rank/ Grade
 - [x] User Database - 1. Prio

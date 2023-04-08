@@ -36,6 +36,8 @@ type RectorServiceClient interface {
 	RemovePermFromRole(ctx context.Context, in *RemovePermFromRoleRequest, opts ...grpc.CallOption) (*RemovePermFromRoleResponse, error)
 	// @perm: PerJob=true;description="Get list of available FiveNet job roles permissions"
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error)
+	// @perm: description="View audit log"
+	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
 }
 
 type rectorServiceClient struct {
@@ -109,6 +111,15 @@ func (c *rectorServiceClient) GetPermissions(ctx context.Context, in *GetPermiss
 	return out, nil
 }
 
+func (c *rectorServiceClient) ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error) {
+	out := new(ViewAuditLogResponse)
+	err := c.cc.Invoke(ctx, "/services.rector.RectorService/ViewAuditLog", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RectorServiceServer is the server API for RectorService service.
 // All implementations must embed UnimplementedRectorServiceServer
 // for forward compatibility
@@ -127,6 +138,8 @@ type RectorServiceServer interface {
 	RemovePermFromRole(context.Context, *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error)
 	// @perm: PerJob=true;description="Get list of available FiveNet job roles permissions"
 	GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error)
+	// @perm: description="View audit log"
+	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
 }
 
@@ -154,6 +167,9 @@ func (UnimplementedRectorServiceServer) RemovePermFromRole(context.Context, *Rem
 }
 func (UnimplementedRectorServiceServer) GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPermissions not implemented")
+}
+func (UnimplementedRectorServiceServer) ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ViewAuditLog not implemented")
 }
 func (UnimplementedRectorServiceServer) mustEmbedUnimplementedRectorServiceServer() {}
 
@@ -294,6 +310,24 @@ func _RectorService_GetPermissions_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RectorService_ViewAuditLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ViewAuditLogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).ViewAuditLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.rector.RectorService/ViewAuditLog",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).ViewAuditLog(ctx, req.(*ViewAuditLogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RectorService_ServiceDesc is the grpc.ServiceDesc for RectorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -328,6 +362,10 @@ var RectorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPermissions",
 			Handler:    _RectorService_GetPermissions_Handler,
+		},
+		{
+			MethodName: "ViewAuditLog",
+			Handler:    _RectorService_ViewAuditLog_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1,19 +1,19 @@
 <script lang="ts" setup>
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
-import CategoriesList from '~/components/documents/categories/CategoriesList.vue';
+import TemplateEditor from '~/components/documents/templates/TemplateEditor.vue';
 
 useHead({
-    title: 'Categories',
+    title: 'Create Template',
 });
 definePageMeta({
-    title: 'Categories',
+    title: 'Create Template',
     requiresAuth: true,
-    permission: 'DocStoreService.ListDocumentCategories',
+    permission: 'DocStoreService.CreateTemplate',
 });
 </script>
 
 <template>
     <ContentWrapper>
-        <CategoriesList />
+        <TemplateEditor />
     </ContentWrapper>
 </template>

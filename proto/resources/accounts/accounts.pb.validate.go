@@ -58,9 +58,27 @@ func (m *Account) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Username
+	if utf8.RuneCountInString(m.GetUsername()) > 24 {
+		err := AccountValidationError{
+			field:  "Username",
+			reason: "value length must be at most 24 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for License
+	if utf8.RuneCountInString(m.GetLicense()) > 64 {
+		err := AccountValidationError{
+			field:  "License",
+			reason: "value length must be at most 64 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.CreatedAt != nil {
 

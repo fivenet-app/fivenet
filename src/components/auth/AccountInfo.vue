@@ -7,7 +7,6 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { UserIcon } from '@heroicons/vue/24/outline';
 import ChangePasswordModal from './ChangePasswordModal.vue';
 
-
 const { $grpc } = useNuxtApp();
 
 const { data: account, pending, refresh, error } = await useLazyAsyncData(`accounmt`, () => getAccountInfo());

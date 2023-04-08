@@ -26,6 +26,12 @@ type DocStoreServiceClient interface {
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
 	// @perm: name=ListTemplates
 	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
+	// @perm: description="Create document templates"
+	CreateTemplate(ctx context.Context, in *CreateTemplateRequest, opts ...grpc.CallOption) (*CreateTemplateResponse, error)
+	// @perm: name=CreateTemplate
+	UpdateTemplate(ctx context.Context, in *UpdateTemplateRequest, opts ...grpc.CallOption) (*UpdateTemplateResponse, error)
+	// @perm: description="Delete document templates"
+	DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error)
 	// @perm: description="List/ Find documents"
 	FindDocuments(ctx context.Context, in *FindDocumentsRequest, opts ...grpc.CallOption) (*FindDocumentsResponse, error)
 	// @perm: description="View a document"
@@ -60,7 +66,7 @@ type DocStoreServiceClient interface {
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
 	// @perm: description="View the documents linked to a citizen"
 	GetUserDocuments(ctx context.Context, in *GetUserDocumentsRequest, opts ...grpc.CallOption) (*GetUserDocumentsResponse, error)
-	// @perm
+	// @perm: description="List document categories"
 	ListDocumentCategories(ctx context.Context, in *ListDocumentCategoriesRequest, opts ...grpc.CallOption) (*ListDocumentCategoriesResponse, error)
 	// @perm: description="Create/ Update document categories"
 	CreateDocumentCategory(ctx context.Context, in *CreateDocumentCategoryRequest, opts ...grpc.CallOption) (*CreateDocumentCategoryResponse, error)
@@ -90,6 +96,33 @@ func (c *docStoreServiceClient) ListTemplates(ctx context.Context, in *ListTempl
 func (c *docStoreServiceClient) GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error) {
 	out := new(GetTemplateResponse)
 	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetTemplate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) CreateTemplate(ctx context.Context, in *CreateTemplateRequest, opts ...grpc.CallOption) (*CreateTemplateResponse, error) {
+	out := new(CreateTemplateResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/CreateTemplate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) UpdateTemplate(ctx context.Context, in *UpdateTemplateRequest, opts ...grpc.CallOption) (*UpdateTemplateResponse, error) {
+	out := new(UpdateTemplateResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/UpdateTemplate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error) {
+	out := new(DeleteTemplateResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/DeleteTemplate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -293,6 +326,12 @@ type DocStoreServiceServer interface {
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
 	// @perm: name=ListTemplates
 	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
+	// @perm: description="Create document templates"
+	CreateTemplate(context.Context, *CreateTemplateRequest) (*CreateTemplateResponse, error)
+	// @perm: name=CreateTemplate
+	UpdateTemplate(context.Context, *UpdateTemplateRequest) (*UpdateTemplateResponse, error)
+	// @perm: description="Delete document templates"
+	DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error)
 	// @perm: description="List/ Find documents"
 	FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error)
 	// @perm: description="View a document"
@@ -327,7 +366,7 @@ type DocStoreServiceServer interface {
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
 	// @perm: description="View the documents linked to a citizen"
 	GetUserDocuments(context.Context, *GetUserDocumentsRequest) (*GetUserDocumentsResponse, error)
-	// @perm
+	// @perm: description="List document categories"
 	ListDocumentCategories(context.Context, *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error)
 	// @perm: description="Create/ Update document categories"
 	CreateDocumentCategory(context.Context, *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error)
@@ -347,6 +386,15 @@ func (UnimplementedDocStoreServiceServer) ListTemplates(context.Context, *ListTe
 }
 func (UnimplementedDocStoreServiceServer) GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTemplate not implemented")
+}
+func (UnimplementedDocStoreServiceServer) CreateTemplate(context.Context, *CreateTemplateRequest) (*CreateTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTemplate not implemented")
+}
+func (UnimplementedDocStoreServiceServer) UpdateTemplate(context.Context, *UpdateTemplateRequest) (*UpdateTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTemplate not implemented")
+}
+func (UnimplementedDocStoreServiceServer) DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTemplate not implemented")
 }
 func (UnimplementedDocStoreServiceServer) FindDocuments(context.Context, *FindDocumentsRequest) (*FindDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindDocuments not implemented")
@@ -456,6 +504,60 @@ func _DocStoreService_GetTemplate_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DocStoreServiceServer).GetTemplate(ctx, req.(*GetTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_CreateTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).CreateTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/CreateTemplate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).CreateTemplate(ctx, req.(*CreateTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_UpdateTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).UpdateTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/UpdateTemplate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).UpdateTemplate(ctx, req.(*UpdateTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_DeleteTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).DeleteTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/DeleteTemplate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).DeleteTemplate(ctx, req.(*DeleteTemplateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -852,6 +954,18 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTemplate",
 			Handler:    _DocStoreService_GetTemplate_Handler,
+		},
+		{
+			MethodName: "CreateTemplate",
+			Handler:    _DocStoreService_CreateTemplate_Handler,
+		},
+		{
+			MethodName: "UpdateTemplate",
+			Handler:    _DocStoreService_UpdateTemplate_Handler,
+		},
+		{
+			MethodName: "DeleteTemplate",
+			Handler:    _DocStoreService_DeleteTemplate_Handler,
 		},
 		{
 			MethodName: "FindDocuments",

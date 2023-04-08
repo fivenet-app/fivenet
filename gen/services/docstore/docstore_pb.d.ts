@@ -97,6 +97,114 @@ export namespace GetTemplateResponse {
   }
 }
 
+export class CreateTemplateRequest extends jspb.Message {
+  getTemplate(): resources_documents_templates_pb.DocumentTemplate | undefined;
+  setTemplate(value?: resources_documents_templates_pb.DocumentTemplate): CreateTemplateRequest;
+  hasTemplate(): boolean;
+  clearTemplate(): CreateTemplateRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CreateTemplateRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateTemplateRequest): CreateTemplateRequest.AsObject;
+  static serializeBinaryToWriter(message: CreateTemplateRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateTemplateRequest;
+  static deserializeBinaryFromReader(message: CreateTemplateRequest, reader: jspb.BinaryReader): CreateTemplateRequest;
+}
+
+export namespace CreateTemplateRequest {
+  export type AsObject = {
+    template?: resources_documents_templates_pb.DocumentTemplate.AsObject,
+  }
+}
+
+export class CreateTemplateResponse extends jspb.Message {
+  getId(): number;
+  setId(value: number): CreateTemplateResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CreateTemplateResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: CreateTemplateResponse): CreateTemplateResponse.AsObject;
+  static serializeBinaryToWriter(message: CreateTemplateResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CreateTemplateResponse;
+  static deserializeBinaryFromReader(message: CreateTemplateResponse, reader: jspb.BinaryReader): CreateTemplateResponse;
+}
+
+export namespace CreateTemplateResponse {
+  export type AsObject = {
+    id: number,
+  }
+}
+
+export class UpdateTemplateRequest extends jspb.Message {
+  getTemplate(): resources_documents_templates_pb.DocumentTemplate | undefined;
+  setTemplate(value?: resources_documents_templates_pb.DocumentTemplate): UpdateTemplateRequest;
+  hasTemplate(): boolean;
+  clearTemplate(): UpdateTemplateRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateTemplateRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateTemplateRequest): UpdateTemplateRequest.AsObject;
+  static serializeBinaryToWriter(message: UpdateTemplateRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateTemplateRequest;
+  static deserializeBinaryFromReader(message: UpdateTemplateRequest, reader: jspb.BinaryReader): UpdateTemplateRequest;
+}
+
+export namespace UpdateTemplateRequest {
+  export type AsObject = {
+    template?: resources_documents_templates_pb.DocumentTemplate.AsObject,
+  }
+}
+
+export class UpdateTemplateResponse extends jspb.Message {
+  getId(): number;
+  setId(value: number): UpdateTemplateResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateTemplateResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateTemplateResponse): UpdateTemplateResponse.AsObject;
+  static serializeBinaryToWriter(message: UpdateTemplateResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateTemplateResponse;
+  static deserializeBinaryFromReader(message: UpdateTemplateResponse, reader: jspb.BinaryReader): UpdateTemplateResponse;
+}
+
+export namespace UpdateTemplateResponse {
+  export type AsObject = {
+    id: number,
+  }
+}
+
+export class DeleteTemplateRequest extends jspb.Message {
+  getId(): number;
+  setId(value: number): DeleteTemplateRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteTemplateRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteTemplateRequest): DeleteTemplateRequest.AsObject;
+  static serializeBinaryToWriter(message: DeleteTemplateRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteTemplateRequest;
+  static deserializeBinaryFromReader(message: DeleteTemplateRequest, reader: jspb.BinaryReader): DeleteTemplateRequest;
+}
+
+export namespace DeleteTemplateRequest {
+  export type AsObject = {
+    id: number,
+  }
+}
+
+export class DeleteTemplateResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteTemplateResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteTemplateResponse): DeleteTemplateResponse.AsObject;
+  static serializeBinaryToWriter(message: DeleteTemplateResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteTemplateResponse;
+  static deserializeBinaryFromReader(message: DeleteTemplateResponse, reader: jspb.BinaryReader): DeleteTemplateResponse;
+}
+
+export namespace DeleteTemplateResponse {
+  export type AsObject = {
+  }
+}
+
 export class FindDocumentsRequest extends jspb.Message {
   getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
   setPagination(value?: resources_common_database_database_pb.PaginationRequest): FindDocumentsRequest;

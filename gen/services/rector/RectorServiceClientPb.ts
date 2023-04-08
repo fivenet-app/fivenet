@@ -340,5 +340,48 @@ export class RectorServiceClient {
     this.methodDescriptorGetPermissions);
   }
 
+  methodDescriptorViewAuditLog = new grpcWeb.MethodDescriptor(
+    '/services.rector.RectorService/ViewAuditLog',
+    grpcWeb.MethodType.UNARY,
+    services_rector_rector_pb.ViewAuditLogRequest,
+    services_rector_rector_pb.ViewAuditLogResponse,
+    (request: services_rector_rector_pb.ViewAuditLogRequest) => {
+      return request.serializeBinary();
+    },
+    services_rector_rector_pb.ViewAuditLogResponse.deserializeBinary
+  );
+
+  viewAuditLog(
+    request: services_rector_rector_pb.ViewAuditLogRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.ViewAuditLogResponse>;
+
+  viewAuditLog(
+    request: services_rector_rector_pb.ViewAuditLogRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.ViewAuditLogResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.ViewAuditLogResponse>;
+
+  viewAuditLog(
+    request: services_rector_rector_pb.ViewAuditLogRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.ViewAuditLogResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.rector.RectorService/ViewAuditLog',
+        request,
+        metadata || {},
+        this.methodDescriptorViewAuditLog,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.rector.RectorService/ViewAuditLog',
+    request,
+    metadata || {},
+    this.methodDescriptorViewAuditLog);
+  }
+
 }
 

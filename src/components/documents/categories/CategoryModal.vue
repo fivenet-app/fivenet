@@ -12,6 +12,7 @@ import { toTypedSchema } from '@vee-validate/yup';
 const { $grpc } = useNuxtApp();
 
 const emit = defineEmits<{
+    (e: 'deleted'): void,
     (e: 'close'): void,
 }>();
 
@@ -37,6 +38,7 @@ async function deleteCategory(): Promise<void> {
 
             dispatchNotification({ title: 'Category has been deleted', content: '', type: 'success' });
             emit('close');
+            emit('deleted');
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -124,7 +126,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                                                     class="block text-sm font-medium leading-6 text-neutral">Description</label>
                                                                 <div class="relative flex items-center mt-2">
                                                                     <Field type="text" name="description" id="description"
-                                                                        placeholder="Description" :value="category?.getDescription()"
+                                                                        placeholder="Description"
+                                                                        :value="category?.getDescription()"
                                                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                                                     <ErrorMessage name="description" as="p"
                                                                         class="mt-2 text-sm text-red-500" />

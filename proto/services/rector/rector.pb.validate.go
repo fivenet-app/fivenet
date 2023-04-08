@@ -1643,3 +1643,241 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetPermissionsResponseValidationError{}
+
+// Validate checks the field values on ViewAuditLogRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ViewAuditLogRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ViewAuditLogRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ViewAuditLogRequestMultiError, or nil if none found.
+func (m *ViewAuditLogRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ViewAuditLogRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ViewAuditLogRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ViewAuditLogRequestMultiError is an error wrapping multiple validation
+// errors returned by ViewAuditLogRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ViewAuditLogRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ViewAuditLogRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ViewAuditLogRequestMultiError) AllErrors() []error { return m }
+
+// ViewAuditLogRequestValidationError is the validation error returned by
+// ViewAuditLogRequest.Validate if the designated constraints aren't met.
+type ViewAuditLogRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ViewAuditLogRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ViewAuditLogRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ViewAuditLogRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ViewAuditLogRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ViewAuditLogRequestValidationError) ErrorName() string {
+	return "ViewAuditLogRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ViewAuditLogRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sViewAuditLogRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ViewAuditLogRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ViewAuditLogRequestValidationError{}
+
+// Validate checks the field values on ViewAuditLogResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ViewAuditLogResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ViewAuditLogResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ViewAuditLogResponseMultiError, or nil if none found.
+func (m *ViewAuditLogResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ViewAuditLogResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetEntries() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ViewAuditLogResponseValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ViewAuditLogResponseValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ViewAuditLogResponseValidationError{
+					field:  fmt.Sprintf("Entries[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ViewAuditLogResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ViewAuditLogResponseMultiError is an error wrapping multiple validation
+// errors returned by ViewAuditLogResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ViewAuditLogResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ViewAuditLogResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ViewAuditLogResponseMultiError) AllErrors() []error { return m }
+
+// ViewAuditLogResponseValidationError is the validation error returned by
+// ViewAuditLogResponse.Validate if the designated constraints aren't met.
+type ViewAuditLogResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ViewAuditLogResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ViewAuditLogResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ViewAuditLogResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ViewAuditLogResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ViewAuditLogResponseValidationError) ErrorName() string {
+	return "ViewAuditLogResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ViewAuditLogResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sViewAuditLogResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ViewAuditLogResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ViewAuditLogResponseValidationError{}

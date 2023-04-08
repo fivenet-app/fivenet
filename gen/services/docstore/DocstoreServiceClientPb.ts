@@ -125,6 +125,135 @@ export class DocStoreServiceClient {
     this.methodDescriptorGetTemplate);
   }
 
+  methodDescriptorCreateTemplate = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/CreateTemplate',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.CreateTemplateRequest,
+    services_docstore_docstore_pb.CreateTemplateResponse,
+    (request: services_docstore_docstore_pb.CreateTemplateRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.CreateTemplateResponse.deserializeBinary
+  );
+
+  createTemplate(
+    request: services_docstore_docstore_pb.CreateTemplateRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.CreateTemplateResponse>;
+
+  createTemplate(
+    request: services_docstore_docstore_pb.CreateTemplateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.CreateTemplateResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.CreateTemplateResponse>;
+
+  createTemplate(
+    request: services_docstore_docstore_pb.CreateTemplateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.CreateTemplateResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/CreateTemplate',
+        request,
+        metadata || {},
+        this.methodDescriptorCreateTemplate,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/CreateTemplate',
+    request,
+    metadata || {},
+    this.methodDescriptorCreateTemplate);
+  }
+
+  methodDescriptorUpdateTemplate = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/UpdateTemplate',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.UpdateTemplateRequest,
+    services_docstore_docstore_pb.UpdateTemplateResponse,
+    (request: services_docstore_docstore_pb.UpdateTemplateRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.UpdateTemplateResponse.deserializeBinary
+  );
+
+  updateTemplate(
+    request: services_docstore_docstore_pb.UpdateTemplateRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.UpdateTemplateResponse>;
+
+  updateTemplate(
+    request: services_docstore_docstore_pb.UpdateTemplateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.UpdateTemplateResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.UpdateTemplateResponse>;
+
+  updateTemplate(
+    request: services_docstore_docstore_pb.UpdateTemplateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.UpdateTemplateResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/UpdateTemplate',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateTemplate,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/UpdateTemplate',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateTemplate);
+  }
+
+  methodDescriptorDeleteTemplate = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/DeleteTemplate',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.DeleteTemplateRequest,
+    services_docstore_docstore_pb.DeleteTemplateResponse,
+    (request: services_docstore_docstore_pb.DeleteTemplateRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.DeleteTemplateResponse.deserializeBinary
+  );
+
+  deleteTemplate(
+    request: services_docstore_docstore_pb.DeleteTemplateRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.DeleteTemplateResponse>;
+
+  deleteTemplate(
+    request: services_docstore_docstore_pb.DeleteTemplateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.DeleteTemplateResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.DeleteTemplateResponse>;
+
+  deleteTemplate(
+    request: services_docstore_docstore_pb.DeleteTemplateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.DeleteTemplateResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/DeleteTemplate',
+        request,
+        metadata || {},
+        this.methodDescriptorDeleteTemplate,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/DeleteTemplate',
+    request,
+    metadata || {},
+    this.methodDescriptorDeleteTemplate);
+  }
+
   methodDescriptorFindDocuments = new grpcWeb.MethodDescriptor(
     '/services.docstore.DocStoreService/FindDocuments',
     grpcWeb.MethodType.UNARY,

@@ -36,7 +36,7 @@ async function changePassword(current: string, newPassword: string): Promise<voi
 
             dispatchNotification({ title: 'Password has been changed', content: 'Please login with your new password.', type: 'success' });
             store.updateAccessToken(null);
-            await router.push({ name: 'auth-logout' });
+            return await router.push({ name: 'auth-logout' });
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

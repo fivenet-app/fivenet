@@ -38,13 +38,11 @@ onBeforeMount(async () => {
 
 <template>
     <HeroFull>
-        <ContentCenterWrapper class="max-w-2xl mx-auto text-center">
-            <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
-                Signed out
-            </h2>
-            <p class="mt-6 text-lg leading-8 text-gray-300">
-                You will be redirected to the home page in a moment.
-            </p>
-        </ContentCenterWrapper>
+        <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
+            Signed out
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-gray-300">
+            You will be redirected to the home page in a moment.
+        </p>
     </HeroFull>
 </template>

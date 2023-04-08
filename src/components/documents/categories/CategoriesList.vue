@@ -86,7 +86,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
 
 <template>
     <div>
-        <CategoryModal :category="chosenCategory" :open="open" @close="open = false" />
+        <CategoryModal :category="chosenCategory" :open="open" @close="open = false" @deleted="refresh()" />
         <div class="py-2">
             <div class="px-2 sm:px-6 lg:px-8">
                 <div v-can="'DocStoreService.CreateDocumentCategory'" class="sm:flex sm:items-center">
@@ -97,8 +97,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                     <label for="name"
                                         class="block text-sm font-medium leading-6 text-neutral">Category</label>
                                     <div class="relative flex items-center mt-2">
-                                        <Field type="text" name="name" id="name"
-                                            placeholder="Category"
+                                        <Field type="text" name="name" id="name" placeholder="Category"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                         <ErrorMessage name="description" as="p" class="mt-2 text-sm text-red-500" />
                                     </div>
@@ -107,8 +106,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                     <label for="description"
                                         class="block text-sm font-medium leading-6 text-neutral">Description</label>
                                     <div class="relative flex items-center mt-2">
-                                        <Field type="text" name="description"
-                                            id="description" placeholder="Description"
+                                        <Field type="text" name="description" id="description" placeholder="Description"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                         <ErrorMessage name="description" as="p" class="mt-2 text-sm text-red-500" />
                                     </div>

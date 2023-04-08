@@ -1,6 +1,7 @@
 import * as jspb from 'google-protobuf'
 
 import * as resources_permissions_permissions_pb from '../../resources/permissions/permissions_pb';
+import * as resources_rector_audit_pb from '../../resources/rector/audit_pb';
 
 
 export class GetRolesRequest extends jspb.Message {
@@ -260,6 +261,40 @@ export class GetPermissionsResponse extends jspb.Message {
 export namespace GetPermissionsResponse {
   export type AsObject = {
     permissionsList: Array<resources_permissions_permissions_pb.Permission.AsObject>,
+  }
+}
+
+export class ViewAuditLogRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ViewAuditLogRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ViewAuditLogRequest): ViewAuditLogRequest.AsObject;
+  static serializeBinaryToWriter(message: ViewAuditLogRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ViewAuditLogRequest;
+  static deserializeBinaryFromReader(message: ViewAuditLogRequest, reader: jspb.BinaryReader): ViewAuditLogRequest;
+}
+
+export namespace ViewAuditLogRequest {
+  export type AsObject = {
+  }
+}
+
+export class ViewAuditLogResponse extends jspb.Message {
+  getEntriesList(): Array<resources_rector_audit_pb.AuditLogEntry>;
+  setEntriesList(value: Array<resources_rector_audit_pb.AuditLogEntry>): ViewAuditLogResponse;
+  clearEntriesList(): ViewAuditLogResponse;
+  addEntries(value?: resources_rector_audit_pb.AuditLogEntry, index?: number): resources_rector_audit_pb.AuditLogEntry;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ViewAuditLogResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ViewAuditLogResponse): ViewAuditLogResponse.AsObject;
+  static serializeBinaryToWriter(message: ViewAuditLogResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ViewAuditLogResponse;
+  static deserializeBinaryFromReader(message: ViewAuditLogResponse, reader: jspb.BinaryReader): ViewAuditLogResponse;
+}
+
+export namespace ViewAuditLogResponse {
+  export type AsObject = {
+    entriesList: Array<resources_rector_audit_pb.AuditLogEntry.AsObject>,
   }
 }
 

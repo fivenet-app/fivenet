@@ -149,3 +149,127 @@ func (s *Server) renderDocumentTemplate(docTmpl *documents.DocumentTemplate, dat
 
 	return
 }
+
+func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest) (*CreateTemplateResponse, error) {
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	categoryId := jet.NULL
+	if req.Template.Category != nil {
+		cat, err := s.getDocumentCategory(ctx, req.Template.Category.Id)
+		if err != nil {
+			return nil, err
+		}
+		if cat != nil {
+			categoryId = jet.Uint64(cat.Id)
+		}
+	}
+
+	dTemplates := table.FivenetDocumentsTemplates
+	stmt := dTemplates.
+		INSERT(
+			dTemplates.Job,
+			dTemplates.JobGrade,
+			dTemplates.CategoryID,
+			dTemplates.Title,
+			dTemplates.Description,
+			dTemplates.ContentTitle,
+			dTemplates.Content,
+			dTemplates.Schema,
+			dTemplates.CreatorID,
+		).
+		VALUES(
+			job,
+			jobGrade,
+			categoryId,
+			req.Template.Title,
+			req.Template.Description,
+			req.Template.ContentTitle,
+			req.Template.Content,
+			req.Template.Schema,
+			userId,
+		)
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	return &CreateTemplateResponse{
+		Id: lastId,
+	}, nil
+}
+
+func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest) (*UpdateTemplateResponse, error) {
+	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	categoryId := jet.NULL
+	if req.Template.Category != nil {
+		cat, err := s.getDocumentCategory(ctx, req.Template.Category.Id)
+		if err != nil {
+			return nil, err
+		}
+		if cat != nil {
+			categoryId = jet.Uint64(cat.Id)
+		}
+	}
+
+	dTemplates := table.FivenetDocumentsTemplates
+	stmt := dTemplates.
+		UPDATE(
+			dTemplates.Job,
+			dTemplates.JobGrade,
+			dTemplates.CategoryID,
+			dTemplates.Title,
+			dTemplates.Description,
+			dTemplates.ContentTitle,
+			dTemplates.Content,
+			dTemplates.Schema,
+		).
+		SET(
+			job,
+			jobGrade,
+			categoryId,
+			req.Template.Title,
+			req.Template.Description,
+			req.Template.ContentTitle,
+			req.Template.Content,
+			req.Template.Schema,
+		).
+		WHERE(
+			jet.AND(
+				dTemplates.ID.EQ(jet.Uint64(req.Template.Id)),
+				dTemplates.Job.EQ(jet.String(job)),
+			),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
+
+	return &UpdateTemplateResponse{}, nil
+}
+
+func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {
+	_, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	dTemplates := table.FivenetDocumentsTemplates
+	stmt := dTemplates.
+		DELETE().
+		WHERE(
+			jet.AND(
+				dTemplates.Job.EQ(jet.String(job)),
+				dTemplates.ID.EQ(jet.Uint64(req.Id)),
+			),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
+
+	return &DeleteTemplateResponse{}, nil
+}

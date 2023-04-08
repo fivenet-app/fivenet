@@ -4,6 +4,7 @@ package services.rector;
 option go_package = "github.com/galexrt/fivenet/proto/services/rector;rector";
 
 import "resources/permissions/permissions.proto";
+import "resources/rector/audit.proto";
 import "validate/validate.proto";
 
 message GetRolesRequest {}
@@ -57,6 +58,14 @@ message GetPermissionsResponse {
   repeated resources.permissions.Permission permissions = 1;
 }
 
+message ViewAuditLogRequest {
+  // TODO
+}
+
+message ViewAuditLogResponse {
+  repeated resources.rector.AuditLogEntry entries = 1;
+}
+
 service RectorService {
   // @perm: description="Get/List FiveNet job roles"
   rpc GetRoles(GetRolesRequest) returns (GetRolesResponse);
@@ -74,4 +83,7 @@ service RectorService {
 
   // @perm: PerJob=true;description="Get list of available FiveNet job roles permissions"
   rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
+
+  // @perm: description="View audit log"
+  rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse);
 }

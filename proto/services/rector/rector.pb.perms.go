@@ -48,5 +48,10 @@ func init() {
 			Name:        "GetRoles",
 			Description: "Get/List FiveNet job roles",
 		},
+		{
+			Key:         RectorServicePermKey,
+			Name:        "ViewAuditLog",
+			Description: "View audit log",
+		},
 	})
 }
