@@ -31,7 +31,7 @@ function addToClipboard(): void {
 </script>
 
 <template>
-    <div>
+    <div class="py-2">
         <div class="flex flex-row items-center gap-3">
             <p class="text-xl font-bold text-neutral sm:text-4xl inline-flex">
                 {{ user?.getFirstname() }}, {{ user?.getLastname() }}
