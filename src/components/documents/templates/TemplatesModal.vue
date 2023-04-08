@@ -133,10 +133,10 @@ async function clipboardDialog(): Promise<void> {
                                             </DialogTitle>
                                             <div class="mt-2">
                                                 <NuxtLink :to="{ name: 'documents-create' }" type="button"
-                                                    class="w-full mb-5 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
+                                                    class="w-full rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
                                                     No Template
                                                 </NuxtLink>
-                                                <div class="pt-6">
+                                                <div class="pt-4">
                                                     <TemplatesList
                                                         @selected="(t: DocumentTemplateShort) => templateSelected(t)" />
                                                 </div>
