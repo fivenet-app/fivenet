@@ -267,12 +267,12 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                     <div class="space-y-1">
                                         <NuxtLink v-if="!accessToken || !activeChar" :to="{ name: 'index' }"
                                             class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium group flex items-center rounded-md py-2 px-3 text-sm">
-                                            <HomeIcon
-                                                class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
+                                            <HomeIcon class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
                                                 aria-hidden="true" />
                                             <span>Home</span>
                                         </NuxtLink>
-                                        <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')" v-else-if="accessToken && activeChar" :key="item.name" :to="item.href"
+                                        <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')"
+                                            v-else-if="accessToken && activeChar" :key="item.name" :to="item.href"
                                             v-can="item.permission"
                                             :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
                                             :aria-current="item.current ? 'page' : undefined">
@@ -287,8 +287,8 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                             <div class="flex-initial px-2 overflow-y-auto">
                                 <nav class="flex flex-col h-full">
                                     <div class="space-y-1">
-                                        <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'bottom')" :key="item.name" :to="item.href"
-                                            v-can="item.permission"
+                                        <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'bottom')"
+                                            :key="item.name" :to="item.href" v-can="item.permission"
                                             :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'group flex items-center rounded-md py-2 px-3 text-sm']"
                                             :aria-current="item.current ? 'page' : undefined">
                                             <component :is="item.icon"
