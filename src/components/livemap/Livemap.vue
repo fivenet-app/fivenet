@@ -47,8 +47,8 @@ const backgroundColorList = {
 } as const;
 const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColorList.Postal);
 
-const zoom: number = 2;
-const center: L.PointExpression = [0, 0];
+let zoom: number = 2;
+let center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 
 const markerJobs = ref<Job[]>([]);
