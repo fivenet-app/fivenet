@@ -103,7 +103,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 
 	resp := &StreamResponse{}
-
 	resp.Jobs = make([]*jobs.Job, len(js))
 	for i := 0; i < len(resp.Jobs); i++ {
 		resp.Jobs[i] = &jobs.Job{

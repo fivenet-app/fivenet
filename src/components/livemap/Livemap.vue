@@ -77,14 +77,14 @@ let map: L.Map | undefined = undefined;
 
 watch(currentHash, () => {
     window.location.replace(currentHash.value);
-})
+});
 
 watchDebounced(isMoving, () => {
-    if (isMoving.value || !map) return;
+    if (!map || isMoving.value) return;
 
     const newHash = stringifyHash(map.getZoom(), map.getCenter().lat, map.getCenter().lng);
     if (currentHash.value !== newHash) currentHash.value = newHash;
-}, { debounce: 1000, maxWait: 3000 })
+}, { debounce: 1000, maxWait: 3000 });
 
 
 async function updateBackground(layer: string): Promise<void> {
@@ -143,9 +143,9 @@ async function onMapReady($event: any): Promise<void> {
         mouseLong.value = (Math.round(event.latlng.lng * 100000) / 100000).toFixed(3);
     });
 
-    $event.on('movestart', async () => { isMoving.value = true })
+    $event.on('movestart', async () => { isMoving.value = true });
 
-    $event.on('moveend', async () => { isMoving.value = false })
+    $event.on('moveend', async () => { isMoving.value = false });
 
     startDataStream();
 }
@@ -251,8 +251,8 @@ onBeforeUnmount(() => {
             <DataErrorBlock v-else-if="error" title="Failed to stream Livemap data!" :retry="() => { startDataStream() }" />
         </div>
 
-        <LMap ref="mapElement" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="0" :max-zoom="6"
-            :inertia="false" :style="{ backgroundColor }" @ready="onMapReady($event)">
+        <LMap v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="0" :max-zoom="6" :inertia="false"
+            :style="{ backgroundColor }" @ready="onMapReady($event)" :use-global-leaflet="false">
             <LTileLayer url="/tiles/postal/{z}/{x}/{y}.png" layer-type="base" name="Postal" :no-wrap="true" :tms="true"
                 :visible="true" :attribution="attribution" />
             <LTileLayer url="/tiles/atlas/{z}/{x}/{y}.png" layer-type="base" name="Atlas" :no-wrap="true" :tms="true"
