@@ -61,8 +61,11 @@ const dispatchQuery = ref<string>('');
 let dispatchMarkers: DispatchMarker[] = [];
 const dispatchMarkersFiltered = ref<DispatchMarker[]>([]);
 
-watchDebounced(playerQuery, async () => { playerMarkersFiltered.value = playerMarkers.filter(m => (m.getUser()?.getFirstname() + ' ' + m.getUser()?.getLastname()).includes(playerQuery.value)) }, { debounce: 750, maxWait: 2000 });
-watchDebounced(dispatchQuery, async () => { dispatchMarkersFiltered.value = dispatchMarkers.filter(m => m.getPopup().includes(dispatchQuery.value) || m.getName().includes(dispatchQuery.value)) }, { debounce: 750, maxWait: 2000 });
+async function applyPlayerQuery(): Promise<void> { playerMarkersFiltered.value = playerMarkers.filter(m => (m.getUser()?.getFirstname() + ' ' + m.getUser()?.getLastname()).includes(playerQuery.value)) }
+async function applyDispatchQuery(): Promise<void> { dispatchMarkersFiltered.value = dispatchMarkers.filter(m => m.getPopup().includes(dispatchQuery.value) || m.getName().includes(dispatchQuery.value)) }
+
+watchDebounced(playerQuery, async () => { applyPlayerQuery() }, { debounce: 750, maxWait: 2000 });
+watchDebounced(dispatchQuery, async () => { applyDispatchQuery() }, { debounce: 750, maxWait: 2000 });
 
 const mouseLat = ref<string>((0).toFixed(3));
 const mouseLong = ref<string>((0).toFixed(3));
@@ -152,7 +155,6 @@ async function startDataStream(): Promise<void> {
 
     console.debug('Starting Data Stream');
 
-    let firstStart = true;
     const request = new StreamRequest();
 
     stream.value = $grpc.getLivemapperClient().
@@ -170,12 +172,8 @@ async function startDataStream(): Promise<void> {
             playerMarkers = resp.getUsersList();
             dispatchMarkers = resp.getDispatchesList();
 
-            if (firstStart) {
-                playerMarkersFiltered.value = playerMarkers;
-                dispatchMarkersFiltered.value = dispatchMarkers;
-
-                firstStart = false;
-            }
+            applyPlayerQuery();
+            applyDispatchQuery();
         }).
         on('end', async () => {
             console.debug('Data Stream Ended');
@@ -224,6 +222,7 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
 
 onBeforeUnmount(() => {
     stopDataStream();
+    map = undefined;
 });
 </script>
 
