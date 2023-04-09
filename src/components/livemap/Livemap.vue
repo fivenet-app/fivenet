@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, onUnmounted, ref, nextTick } from 'vue';
+import { onBeforeUnmount, ref } from 'vue';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@fivenet/gen/services/livemapper/livemap_pb';
 import L from 'leaflet';
@@ -61,7 +61,7 @@ const dispatchQuery = ref<string>('');
 let dispatchMarkers: DispatchMarker[] = [];
 const dispatchMarkersFiltered = ref<DispatchMarker[]>([]);
 
-watchDebounced(playerQuery, async () => { playerMarkersFiltered.value = playerMarkers.filter(m => (m.getUser()?.getFirstname() + '' + m.getUser()?.getLastname()).includes(playerQuery.value)) }, { debounce: 750, maxWait: 2000 });
+watchDebounced(playerQuery, async () => { playerMarkersFiltered.value = playerMarkers.filter(m => (m.getUser()?.getFirstname() + ' ' + m.getUser()?.getLastname()).includes(playerQuery.value)) }, { debounce: 750, maxWait: 2000 });
 watchDebounced(dispatchQuery, async () => { dispatchMarkersFiltered.value = dispatchMarkers.filter(m => m.getPopup().includes(dispatchQuery.value) || m.getName().includes(dispatchQuery.value)) }, { debounce: 750, maxWait: 2000 });
 
 const mouseLat = ref<string>((0).toFixed(3));
@@ -225,36 +225,6 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
 onBeforeUnmount(() => {
     stopDataStream();
 });
-
-// onMounted(() => {
-//     setTimeout(async () => {
-//         if (!mapContainer.value) {
-//             return;
-//         }
-//         map = new Livemap(mapContainer.value, { layers: [postal], crs: customCRS });
-//         map.addHash();
-//         map.setView([0, 0], 2);
-
-//         await map.addLayerGroup('Players');
-//         await map.addLayerGroup('Dispatches');
-
-//         await map.addControlLayer({ Atlas: atlas, Road: road, Satelite: satelite, Postal: postal });
-
-//         postal.bringToFront();
-
-//         map.updateBackground('Postal');
-//         map.on('baselayerchange', (event: L.LayersControlEvent) => map?.updateBackground(event.name));
-
-//         map.addControl(position);
-//         map.addEventListener('mousemove', (event: L.LeafletMouseEvent) => {
-//             const lat = Math.round(event.latlng.lat * 100000) / 100000;
-//             const lng = Math.round(event.latlng.lng * 100000) / 100000;
-//             position.updateHTML(lat, lng);
-//         });
-
-//         start();
-//     }, 100);
-// });
 </script>
 
 <style>
@@ -295,13 +265,13 @@ onBeforeUnmount(() => {
 
             <LControlLayers />
 
-            <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`Players ${job.getLabel()}`"
+            <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`Employees ${job.getLabel()}`"
                 layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.getUser()?.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
                     :icon="getIcon('player', marker.getIcon(), marker.getIconColor()) as L.Icon">
                     <LPopup :options="{ closeButton: false }"
-                        :content="`${marker.getUser()?.getFirstname()}, ${marker.getUser()?.getLastname()} (Job: ${marker.getUser()?.getJobLabel()})`">
+                        :content="`<span class='font-semibold'>Employee ${marker.getUser()?.getJobLabel()}</span><br><span class='italic'>[${marker.getUser()?.getJobGrade()}] ${marker.getUser()?.getJobGradeLabel()}</span><br>${marker.getUser()?.getFirstname()} ${marker.getUser()?.getLastname()}`">
                     </LPopup>
                 </LMarker>
             </LLayerGroup>
@@ -312,7 +282,7 @@ onBeforeUnmount(() => {
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
                     :icon="getIcon('dispatch', marker.getIcon(), marker.getIconColor()) as L.Icon">
                     <LPopup :options="{ closeButton: false }"
-                        :content="`Dispatch: ${marker.getPopup()}<br>Sent by: ${marker.getName()} (Job: ${marker.getJobLabel()})`">
+                        :content="`<span class='font-semibold'>Dispatch ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span class='italic'>Sent by ${marker.getName()}</span>`">
                     </LPopup>
                 </LMarker>
             </LLayerGroup>
@@ -324,7 +294,7 @@ onBeforeUnmount(() => {
                 <div class="form-control">
                     <div class="relative flex items-center">
                         <input v-model="playerQuery" type="text" name="searchPlayer" id="searchPlayer"
-                            placeholder="Player Filter" />
+                            placeholder="Employee Filter" />
                     </div>
                     <div class="relative flex items-center mt-2">
                         <input v-model="dispatchQuery" type="text" name="searchDispatch" id="searchDispatch"
