@@ -3,21 +3,19 @@ import { onMounted, onBeforeUnmount, onUnmounted, ref, nextTick } from 'vue';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@fivenet/gen/services/livemapper/livemap_pb';
 import L from 'leaflet';
-import { LMap, LLayerGroup, LTileLayer, LControlLayers, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
+import { LMap, LLayerGroup, LTileLayer, LControlLayers, LMarker, LPopup, LControl } from '@vue-leaflet/vue-leaflet';
 import 'leaflet/dist/leaflet.css';
-import DataErrorBlock from './partials/DataErrorBlock.vue';
-import DataPendingBlock from './partials/DataPendingBlock.vue';
-import { ValueOf } from 'type-fest';
+import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataPendingBlock from '../partials/DataPendingBlock.vue';
+import { ValueOf } from '../../utils/types';
 import { DispatchMarker, UserMarker } from '@fivenet/gen/resources/livemap/livemap_pb';
+import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { watchDebounced } from '@vueuse/core';
 
 const { $grpc } = useNuxtApp();
 
 const stream = ref<ClientReadableStream<StreamResponse> | null>(null);
 const error = ref<RpcError | null>(null);
-
-function round(num: number): number {
-    return Math.round(num * 100) / 1000;
-}
 
 const centerX = 117.3;
 const centerY = 172.8;
@@ -41,24 +39,6 @@ const customCRS = L.extend({}, L.CRS.Simple, {
     infinite: true,
 });
 
-// Latitude and Longitiude popup on mouse over
-let _latlng: HTMLDivElement;
-const Position = L.Control.extend({
-    _container: null,
-    options: {
-        position: 'bottomleft',
-    },
-    onAdd: function (): HTMLDivElement {
-        const latlng = L.DomUtil.create('div', 'leaflet-control-attribution mouseposition');
-        _latlng = latlng;
-        _latlng.innerHTML = '<b>Latitude</b>: 0.0 | <b>Longtiude</b>: 0.0';
-        return latlng;
-    },
-    updateHTML: function (lat: number, lng: number): void {
-        _latlng.innerHTML = '<b>Latitude</b>: ' + round(lat) + ' | <b>Longtiude</b>: ' + round(lng);
-    },
-});
-const position = new Position();
 
 const backgroundColorList = {
     Atlas: '#0fa8d2',
@@ -72,8 +52,29 @@ const zoom: number = 2;
 const center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 
+const markerJobs = ref<Job[]>([]);
 const playerMarkers = ref<UserMarker[]>([]);
 const dispatchMarkers = ref<DispatchMarker[]>([]);
+
+const mouseLat = ref<string>((0).toFixed(3));
+const mouseLong = ref<string>((0).toFixed(3));
+
+const currentHash = ref<string>('');
+const isMoving = ref<boolean>(false);
+
+let map: L.Map | undefined = undefined;
+
+watch(currentHash, () => {
+    window.location.replace(currentHash.value);
+})
+
+watchDebounced(isMoving, () => {
+    if (isMoving.value || !map) return;
+
+    const newHash = stringifyHash(map.getZoom(), map.getCenter().lat, map.getCenter().lng);
+    if (currentHash.value !== newHash) currentHash.value = newHash;
+}, { debounce: 1000, maxWait: 3000 })
+
 
 async function updateBackground(layer: string): Promise<void> {
     switch (layer) {
@@ -92,8 +93,48 @@ async function updateBackground(layer: string): Promise<void> {
     }
 }
 
+function stringifyHash(currZoom: number, centerLat: number, centerLong: number): string {
+    const precision = Math.max(0, Math.ceil(Math.log(zoom) / Math.LN2));
+
+    const hash = '#' + [currZoom, centerLat.toFixed(precision), centerLong.toFixed(precision)].join('/');
+    return hash;
+}
+
+function parseHash(hash: string): { latlng: L.LatLng, zoom: number } | undefined {
+    if (hash.indexOf('#') === 0) hash = hash.substring(1);
+
+    const args = hash.split('/');
+    if (args.length !== 3) return;
+
+    const zoom = parseInt(args[0], 10)
+    const lat = parseFloat(args[1])
+    const lng = parseFloat(args[2]);
+
+    if (isNaN(zoom) || isNaN(lat) || isNaN(lng)) return;
+
+    return {
+        latlng: new L.LatLng(lat, lng),
+        zoom,
+    };
+}
+
 async function onMapReady($event: any): Promise<void> {
-    $event.on('baselayerchange', (event: L.LayersControlEvent) => { updateBackground(event.name) });
+    map = $event as L.Map;
+
+    const startingHash = window.location.hash;
+    const startPos = parseHash(startingHash);
+    if (startPos) $event.setView(startPos.latlng, startPos.zoom);
+
+    $event.on('baselayerchange', async (event: L.LayersControlEvent) => { updateBackground(event.name) });
+
+    $event.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {
+        mouseLat.value = (Math.round(event.latlng.lat * 100000) / 100000).toFixed(3);
+        mouseLong.value = (Math.round(event.latlng.lng * 100000) / 100000).toFixed(3);
+    });
+
+    $event.on('movestart', async () => { isMoving.value = true })
+
+    $event.on('moveend', async () => { isMoving.value = false })
 
     startDataStream();
 }
@@ -114,6 +155,8 @@ async function startDataStream(): Promise<void> {
         }).
         on('data', async (resp) => {
             error.value = null;
+
+            markerJobs.value = resp.getJobsList();
 
             dispatchMarkers.value = resp.getDispatchesList();
             playerMarkers.value = resp.getUsersList();
@@ -223,7 +266,7 @@ onBeforeUnmount(() => {
             <DataErrorBlock v-else-if="error" title="Failed to stream Livemap data!" :retry="() => { startDataStream() }" />
         </div>
 
-        <LMap ref="Map" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="0" :max-zoom="6"
+        <LMap ref="mapElement" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="0" :max-zoom="6"
             :inertia="false" :style="{ backgroundColor }" @ready="onMapReady($event)">
             <LTileLayer url="/tiles/postal/{z}/{x}/{y}.png" layer-type="base" name="Postal" :no-wrap="true" :tms="true"
                 :visible="true" :attribution="attribution" />
@@ -236,23 +279,31 @@ onBeforeUnmount(() => {
 
             <LControlLayers />
 
-            <LLayerGroup name="Players" layer-type="overlay" :visible="true">
-                <LMarker v-for="marker in playerMarkers" :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]"
-                    :name="marker.getName()" :icon="getIcon('player', marker.getIcon(), marker.getIconColor()) as L.Icon">
+            <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`Players ${job.getLabel()}`"
+                layer-type="overlay" :visible="true">
+                <LMarker v-for="marker in playerMarkers.filter(p => p.getUser()?.getJob() === job.getName())"
+                    :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
+                    :icon="getIcon('player', marker.getIcon(), marker.getIconColor()) as L.Icon">
                     <LPopup :options="{ closeButton: false }"
                         :content="`${marker.getUser()?.getFirstname()}, ${marker.getUser()?.getLastname()} (Job: ${marker.getUser()?.getJobLabel()})`">
                     </LPopup>
                 </LMarker>
             </LLayerGroup>
 
-            <LLayerGroup name="Dispatches" layer-type="overlay" :visible="true">
-                <LMarker v-for="marker in dispatchMarkers" :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]"
-                    :name="marker.getName()" :icon="getIcon('dispatch', marker.getIcon(), marker.getIconColor()) as L.Icon">
+            <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`Dispatches ${job.getLabel()}`"
+                layer-type="overlay" :visible="true">
+                <LMarker v-for="marker in dispatchMarkers.filter(m => m.getJob() === job.getName())" :key="marker.getId()"
+                    :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
+                    :icon="getIcon('dispatch', marker.getIcon(), marker.getIconColor()) as L.Icon">
                     <LPopup :options="{ closeButton: false }"
                         :content="`Dispatch: ${marker.getPopup()}<br>Sent by: ${marker.getName()} (Job: ${marker.getJobLabel()})`">
                     </LPopup>
                 </LMarker>
             </LLayerGroup>
+
+            <LControl position="bottomleft" class="leaflet-control-attribution mouseposition">
+                <b>Latitude</b>: {{ mouseLat }} | <b>Longtiude</b>: {{ mouseLong }}
+            </LControl>
         </LMap>
     </div>
 </template>
