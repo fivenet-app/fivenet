@@ -39,7 +39,6 @@ const customCRS = L.extend({}, L.CRS.Simple, {
     infinite: true,
 });
 
-
 const backgroundColorList = {
     Atlas: '#0fa8d2',
     Satelite: '#143d6b',
@@ -53,8 +52,17 @@ const center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 
 const markerJobs = ref<Job[]>([]);
-const playerMarkers = ref<UserMarker[]>([]);
-const dispatchMarkers = ref<DispatchMarker[]>([]);
+
+const playerQuery = ref<string>('');
+let playerMarkers: UserMarker[] = [];
+const playerMarkersFiltered = ref<UserMarker[]>([]);
+
+const dispatchQuery = ref<string>('');
+let dispatchMarkers: DispatchMarker[] = [];
+const dispatchMarkersFiltered = ref<DispatchMarker[]>([]);
+
+watchDebounced(playerQuery, async () => { playerMarkersFiltered.value = playerMarkers.filter(m => (m.getUser()?.getFirstname() + '' + m.getUser()?.getLastname()).includes(playerQuery.value)) }, { debounce: 750, maxWait: 2000 });
+watchDebounced(dispatchQuery, async () => { dispatchMarkersFiltered.value = dispatchMarkers.filter(m => m.getPopup().includes(dispatchQuery.value) || m.getName().includes(dispatchQuery.value)) }, { debounce: 750, maxWait: 2000 });
 
 const mouseLat = ref<string>((0).toFixed(3));
 const mouseLong = ref<string>((0).toFixed(3));
@@ -144,6 +152,7 @@ async function startDataStream(): Promise<void> {
 
     console.debug('Starting Data Stream');
 
+    let firstStart = true;
     const request = new StreamRequest();
 
     stream.value = $grpc.getLivemapperClient().
@@ -158,8 +167,15 @@ async function startDataStream(): Promise<void> {
 
             markerJobs.value = resp.getJobsList();
 
-            dispatchMarkers.value = resp.getDispatchesList();
-            playerMarkers.value = resp.getUsersList();
+            playerMarkers = resp.getUsersList();
+            dispatchMarkers = resp.getDispatchesList();
+
+            if (firstStart) {
+                playerMarkersFiltered.value = playerMarkers;
+                dispatchMarkersFiltered.value = dispatchMarkers;
+
+                firstStart = false;
+            }
         }).
         on('end', async () => {
             console.debug('Data Stream Ended');
@@ -281,7 +297,7 @@ onBeforeUnmount(() => {
 
             <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`Players ${job.getLabel()}`"
                 layer-type="overlay" :visible="true">
-                <LMarker v-for="marker in playerMarkers.filter(p => p.getUser()?.getJob() === job.getName())"
+                <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.getUser()?.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
                     :icon="getIcon('player', marker.getIcon(), marker.getIconColor()) as L.Icon">
                     <LPopup :options="{ closeButton: false }"
@@ -292,8 +308,8 @@ onBeforeUnmount(() => {
 
             <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`Dispatches ${job.getLabel()}`"
                 layer-type="overlay" :visible="true">
-                <LMarker v-for="marker in dispatchMarkers.filter(m => m.getJob() === job.getName())" :key="marker.getId()"
-                    :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
+                <LMarker v-for="marker in dispatchMarkersFiltered.filter(m => m.getJob() === job.getName())"
+                    :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
                     :icon="getIcon('dispatch', marker.getIcon(), marker.getIconColor()) as L.Icon">
                     <LPopup :options="{ closeButton: false }"
                         :content="`Dispatch: ${marker.getPopup()}<br>Sent by: ${marker.getName()} (Job: ${marker.getJobLabel()})`">
@@ -303,6 +319,18 @@ onBeforeUnmount(() => {
 
             <LControl position="bottomleft" class="leaflet-control-attribution mouseposition">
                 <b>Latitude</b>: {{ mouseLat }} | <b>Longtiude</b>: {{ mouseLong }}
+            </LControl>
+            <LControl position="topleft">
+                <div class="form-control">
+                    <div class="relative flex items-center">
+                        <input v-model="playerQuery" type="text" name="searchPlayer" id="searchPlayer"
+                            placeholder="Player Filter" />
+                    </div>
+                    <div class="relative flex items-center mt-2">
+                        <input v-model="dispatchQuery" type="text" name="searchDispatch" id="searchDispatch"
+                            placeholder="Dispatch Filter" />
+                    </div>
+                </div>
             </LControl>
         </LMap>
     </div>
