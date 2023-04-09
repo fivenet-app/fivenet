@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
 import * as resources_livemap_livemap_pb from '../../resources/livemap/livemap_pb';
 
 
@@ -18,6 +19,11 @@ export namespace StreamRequest {
 }
 
 export class StreamResponse extends jspb.Message {
+  getJobsList(): Array<resources_jobs_jobs_pb.Job>;
+  setJobsList(value: Array<resources_jobs_jobs_pb.Job>): StreamResponse;
+  clearJobsList(): StreamResponse;
+  addJobs(value?: resources_jobs_jobs_pb.Job, index?: number): resources_jobs_jobs_pb.Job;
+
   getDispatchesList(): Array<resources_livemap_livemap_pb.DispatchMarker>;
   setDispatchesList(value: Array<resources_livemap_livemap_pb.DispatchMarker>): StreamResponse;
   clearDispatchesList(): StreamResponse;
@@ -38,6 +44,7 @@ export class StreamResponse extends jspb.Message {
 
 export namespace StreamResponse {
   export type AsObject = {
+    jobsList: Array<resources_jobs_jobs_pb.Job.AsObject>,
     dispatchesList: Array<resources_livemap_livemap_pb.DispatchMarker.AsObject>,
     usersList: Array<resources_livemap_livemap_pb.UserMarker.AsObject>,
   }

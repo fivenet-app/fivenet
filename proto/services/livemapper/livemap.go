@@ -15,6 +15,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/utils"
+	jobs "github.com/galexrt/fivenet/proto/resources/jobs"
 	"github.com/galexrt/fivenet/proto/resources/livemap"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -92,28 +93,36 @@ func (s *Server) Start() {
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userId := auth.GetUserIDFromContext(srv.Context())
 
-	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, "LivemapperService.Stream")
+	js, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, "LivemapperService.Stream")
 	if err != nil {
 		return err
 	}
 
-	if len(jobs) == 0 {
+	if len(js) == 0 {
 		return nil
+	}
+
+	resp := &StreamResponse{}
+
+	resp.Jobs = make([]*jobs.Job, len(js))
+	for i := 0; i < len(resp.Jobs); i++ {
+		resp.Jobs[i] = &jobs.Job{
+			Name: js[i],
+		}
+		s.c.EnrichJobName(resp.Jobs[i])
 	}
 
 	signalCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(signalCh)
 
 	for {
-		resp := &StreamResponse{}
-
-		dispatchMarkers, err := s.getUserDispatches(jobs)
+		dispatchMarkers, err := s.getUserDispatches(js)
 		if err != nil {
 			return err
 		}
 		resp.Dispatches = dispatchMarkers
 
-		userMarkers, err := s.getUserLocations(jobs)
+		userMarkers, err := s.getUserLocations(js)
 		if err != nil {
 			return err
 		}

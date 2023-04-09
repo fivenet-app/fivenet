@@ -21,6 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
+var resources_jobs_jobs_pb = require('../../resources/jobs/jobs_pb.js');
+goog.object.extend(proto, resources_jobs_jobs_pb);
 var resources_livemap_livemap_pb = require('../../resources/livemap/livemap_pb.js');
 goog.object.extend(proto, resources_livemap_livemap_pb);
 goog.exportSymbol('proto.services.livemapper.StreamRequest', null, global);
@@ -174,7 +176,7 @@ proto.services.livemapper.StreamRequest.serializeBinaryToWriter = function(messa
  * @private {!Array<number>}
  * @const
  */
-proto.services.livemapper.StreamResponse.repeatedFields_ = [1,2];
+proto.services.livemapper.StreamResponse.repeatedFields_ = [1,2,3];
 
 
 
@@ -207,6 +209,8 @@ proto.services.livemapper.StreamResponse.prototype.toObject = function(opt_inclu
  */
 proto.services.livemapper.StreamResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
+    jobsList: jspb.Message.toObjectList(msg.getJobsList(),
+    resources_jobs_jobs_pb.Job.toObject, includeInstance),
     dispatchesList: jspb.Message.toObjectList(msg.getDispatchesList(),
     resources_livemap_livemap_pb.DispatchMarker.toObject, includeInstance),
     usersList: jspb.Message.toObjectList(msg.getUsersList(),
@@ -248,11 +252,16 @@ proto.services.livemapper.StreamResponse.deserializeBinaryFromReader = function(
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = new resources_jobs_jobs_pb.Job;
+      reader.readMessage(value,resources_jobs_jobs_pb.Job.deserializeBinaryFromReader);
+      msg.addJobs(value);
+      break;
+    case 2:
       var value = new resources_livemap_livemap_pb.DispatchMarker;
       reader.readMessage(value,resources_livemap_livemap_pb.DispatchMarker.deserializeBinaryFromReader);
       msg.addDispatches(value);
       break;
-    case 2:
+    case 3:
       var value = new resources_livemap_livemap_pb.UserMarker;
       reader.readMessage(value,resources_livemap_livemap_pb.UserMarker.deserializeBinaryFromReader);
       msg.addUsers(value);
@@ -286,10 +295,18 @@ proto.services.livemapper.StreamResponse.prototype.serializeBinary = function() 
  */
 proto.services.livemapper.StreamResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getDispatchesList();
+  f = message.getJobsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       1,
+      f,
+      resources_jobs_jobs_pb.Job.serializeBinaryToWriter
+    );
+  }
+  f = message.getDispatchesList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      2,
       f,
       resources_livemap_livemap_pb.DispatchMarker.serializeBinaryToWriter
     );
@@ -297,7 +314,7 @@ proto.services.livemapper.StreamResponse.serializeBinaryToWriter = function(mess
   f = message.getUsersList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      2,
+      3,
       f,
       resources_livemap_livemap_pb.UserMarker.serializeBinaryToWriter
     );
@@ -306,12 +323,50 @@ proto.services.livemapper.StreamResponse.serializeBinaryToWriter = function(mess
 
 
 /**
- * repeated resources.livemap.DispatchMarker dispatches = 1;
+ * repeated resources.jobs.Job jobs = 1;
+ * @return {!Array<!proto.resources.jobs.Job>}
+ */
+proto.services.livemapper.StreamResponse.prototype.getJobsList = function() {
+  return /** @type{!Array<!proto.resources.jobs.Job>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_jobs_jobs_pb.Job, 1));
+};
+
+
+/**
+ * @param {!Array<!proto.resources.jobs.Job>} value
+ * @return {!proto.services.livemapper.StreamResponse} returns this
+*/
+proto.services.livemapper.StreamResponse.prototype.setJobsList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 1, value);
+};
+
+
+/**
+ * @param {!proto.resources.jobs.Job=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.resources.jobs.Job}
+ */
+proto.services.livemapper.StreamResponse.prototype.addJobs = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.resources.jobs.Job, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.livemapper.StreamResponse} returns this
+ */
+proto.services.livemapper.StreamResponse.prototype.clearJobsList = function() {
+  return this.setJobsList([]);
+};
+
+
+/**
+ * repeated resources.livemap.DispatchMarker dispatches = 2;
  * @return {!Array<!proto.resources.livemap.DispatchMarker>}
  */
 proto.services.livemapper.StreamResponse.prototype.getDispatchesList = function() {
   return /** @type{!Array<!proto.resources.livemap.DispatchMarker>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_livemap_livemap_pb.DispatchMarker, 1));
+    jspb.Message.getRepeatedWrapperField(this, resources_livemap_livemap_pb.DispatchMarker, 2));
 };
 
 
@@ -320,7 +375,7 @@ proto.services.livemapper.StreamResponse.prototype.getDispatchesList = function(
  * @return {!proto.services.livemapper.StreamResponse} returns this
 */
 proto.services.livemapper.StreamResponse.prototype.setDispatchesList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 1, value);
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
 
@@ -330,7 +385,7 @@ proto.services.livemapper.StreamResponse.prototype.setDispatchesList = function(
  * @return {!proto.resources.livemap.DispatchMarker}
  */
 proto.services.livemapper.StreamResponse.prototype.addDispatches = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.resources.livemap.DispatchMarker, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.livemap.DispatchMarker, opt_index);
 };
 
 
@@ -344,12 +399,12 @@ proto.services.livemapper.StreamResponse.prototype.clearDispatchesList = functio
 
 
 /**
- * repeated resources.livemap.UserMarker users = 2;
+ * repeated resources.livemap.UserMarker users = 3;
  * @return {!Array<!proto.resources.livemap.UserMarker>}
  */
 proto.services.livemapper.StreamResponse.prototype.getUsersList = function() {
   return /** @type{!Array<!proto.resources.livemap.UserMarker>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_livemap_livemap_pb.UserMarker, 2));
+    jspb.Message.getRepeatedWrapperField(this, resources_livemap_livemap_pb.UserMarker, 3));
 };
 
 
@@ -358,7 +413,7 @@ proto.services.livemapper.StreamResponse.prototype.getUsersList = function() {
  * @return {!proto.services.livemapper.StreamResponse} returns this
 */
 proto.services.livemapper.StreamResponse.prototype.setUsersList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+  return jspb.Message.setRepeatedWrapperField(this, 3, value);
 };
 
 
@@ -368,7 +423,7 @@ proto.services.livemapper.StreamResponse.prototype.setUsersList = function(value
  * @return {!proto.resources.livemap.UserMarker}
  */
 proto.services.livemapper.StreamResponse.prototype.addUsers = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.livemap.UserMarker, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 3, opt_value, proto.resources.livemap.UserMarker, opt_index);
 };
 
 
