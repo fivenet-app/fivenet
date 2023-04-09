@@ -2,7 +2,6 @@ import { IMarker } from '@fivenet/gen/resources/livemap/livemap';
 import { DispatchMarker, UserMarker } from '@fivenet/gen/resources/livemap/livemap_pb';
 import L from 'leaflet';
 
-import { AnimatedMarker } from './AnimatedMarker';
 import { Hash } from './Hash';
 
 export enum MarkerType {
@@ -17,7 +16,10 @@ export class Livemap extends L.Map {
     public layerGroups: Map<string, L.LayerGroup> = new Map();
     public controlLayer: L.Control.Layers | undefined = undefined;
 
-    public markers: Map<number, AnimatedMarker> = new Map();
+    public markers: Map<number, L.Marker> = new Map();
+    public markersQuery: string = '';
+    public markersFiltered: typeof this.markers = new Map();
+
     public popups: Map<number, L.Popup> = new Map();
     private prevMarkerLists: Map<MarkerType, Array<IMarker.AsObject>> = new Map();
     private defaultIcon: L.Icon;
@@ -98,19 +100,19 @@ export class Livemap extends L.Map {
         popupContent: string,
         options: L.MarkerOptions,
         layerName: string
-    ): Promise<AnimatedMarker> {
+    ): Promise<L.Marker> {
         let marker = this.markers.get(id);
         const layer = this.layerGroups.get(layerName) ?? this;
 
         if (marker) {
-            marker.moveTo(L.latLng(latitude, longitude));
+            marker.setLatLng(L.latLng(latitude, longitude));
             if (options?.icon) marker.setIcon(options.icon);
             if (options?.opacity) marker.setOpacity(options.opacity);
         } else {
             options.icon = options?.icon ? options.icon : this.defaultIcon;
             options.icon.options.shadowSize = [0, 0];
 
-            marker = new AnimatedMarker(L.latLng(latitude, longitude), options).addTo(layer);
+            marker = new L.Marker(L.latLng(latitude, longitude), options).addTo(layer);
 
             if (popupContent) {
                 const popup = L.popup({ content: popupContent, closeButton: false });
@@ -132,7 +134,7 @@ export class Livemap extends L.Map {
         return this.markers.delete(id);
     }
 
-    public async parseMarkerlist(type: MarkerType, list: Array<IMarker>): Promise<void> {
+    public async parseMarkerlist(type: MarkerType, list: IMarker[]): Promise<void> {
         let options: L.MarkerOptions = {};
         let layer: string = '';
 

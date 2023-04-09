@@ -5,6 +5,8 @@ export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType exten
     ? ElementType
     : never;
 
+export type ValueOf<T> = T[keyof T];
+
 export type CardElement = {
     title: string;
     description: string;
