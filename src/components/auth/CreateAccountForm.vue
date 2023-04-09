@@ -53,10 +53,10 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
 
     <form @submit="onSubmit" class="my-2 space-y-6">
         <div>
-            <label for="regtoken" class="sr-only">Registration Token</label>
+            <label for="registrationToken" class="sr-only">Registration Token</label>
             <div>
-                <Field id="regtoken" name="regtoken" type="text" inputmode="numeric" aria-describedby="hint"
-                    pattern="[0-9]*" autocomplete="regtoken" placeholder="Registration Token"
+                <Field id="registrationToken" name="registrationToken" type="text" inputmode="numeric" aria-describedby="hint"
+                    pattern="[0-9]*" autocomplete="registrationToken" placeholder="Registration Token"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6" />
                 <ErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-red-500" />
             </div>
