@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import Livemap from '~/components/livemap/Livemap.vue';
+import { NotificationProvider } from '~/components/partials/notification';
 import Sidebar from '~/components/partials/Sidebar.vue';
+import Livemap from '~/components/livemap/Livemap.vue';
 
 useHead({
     title: 'Livemap',
