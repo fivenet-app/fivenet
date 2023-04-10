@@ -358,7 +358,7 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                     <div class="relative flex items-center mt-2">
                         <Combobox as="div" v-model="selectedPostal" nullable>
                             <ComboboxInput @change="postalQuery = $event.target.value" @click="loadPostals"
-                                :display-value="(postal: any) => postal ? postal?.code : ''" />
+                                :display-value="(postal: any) => postal ? postal?.code : ''" placeholder="Postal" />
                             <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">
                                 <ComboboxOption v-for="postal in filteredPostals" :key="postal.code" :value="postal"
                                     v-slot="{ active }">
