@@ -195,18 +195,16 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
     switch (type) {
         case 'player':
             {
-                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor ? '#' + iconColor : 'currentColor'
-                    }" class="w-full h-full">
-                  <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor ? '#' + iconColor : 'currentColor'}" class="w-full h-full">
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
                 </svg>`;
             }
             break;
 
         case 'dispatch':
             {
-                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor ? '#' + iconColor : 'currentColor'
-                    }" class="w-full h-full">
-                  <path fill-rule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clip-rule="evenodd" />
+                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor ? '#' + iconColor : 'currentColor'}" class="w-full h-full">
+                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
                 </svg>`;
             }
             break;
@@ -214,9 +212,9 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
 
     return new L.DivIcon({
         html: '<div class="place-content-center">' + html + '</div>',
-        iconSize: [34, 34],
-        iconAnchor: [17, 17],
-        popupAnchor: [0, -7],
+        iconSize: [48, 48],
+        iconAnchor: [24, 24],
+        popupAnchor: [-8, -24],
     });
 }
 
@@ -233,8 +231,8 @@ onBeforeUnmount(() => {
 }
 
 .leaflet-div-icon svg path {
-    stroke: #000000;
-    stroke-width: 1.75px;
+    stroke: #000;
+    stroke-width: 0.75px;
     stroke-linejoin: round;
 }
 
@@ -251,8 +249,8 @@ onBeforeUnmount(() => {
             <DataErrorBlock v-else-if="error" title="Failed to stream Livemap data!" :retry="() => { startDataStream() }" />
         </div>
 
-        <LMap class="z-0" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="1" :max-zoom="6" :inertia="false"
-            :style="{ backgroundColor }" @ready="onMapReady($event)" :use-global-leaflet="false">
+        <LMap class="z-0" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="1" :max-zoom="6"
+            :inertia="false" :style="{ backgroundColor }" @ready="onMapReady($event)" :use-global-leaflet="false">
             <LTileLayer url="/tiles/postal/{z}/{x}/{y}.png" layer-type="base" name="Postal" :no-wrap="true" :tms="true"
                 :visible="true" :attribution="attribution" />
             <LTileLayer url="/tiles/atlas/{z}/{x}/{y}.png" layer-type="base" name="Atlas" :no-wrap="true" :tms="true"
