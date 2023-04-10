@@ -251,7 +251,7 @@ onBeforeUnmount(() => {
             <DataErrorBlock v-else-if="error" title="Failed to stream Livemap data!" :retry="() => { startDataStream() }" />
         </div>
 
-        <LMap v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="0" :max-zoom="6" :inertia="false"
+        <LMap class="z-0" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="1" :max-zoom="6" :inertia="false"
             :style="{ backgroundColor }" @ready="onMapReady($event)" :use-global-leaflet="false">
             <LTileLayer url="/tiles/postal/{z}/{x}/{y}.png" layer-type="base" name="Postal" :no-wrap="true" :tms="true"
                 :visible="true" :attribution="attribution" />
