@@ -3,6 +3,9 @@ import * as jspb from 'google-protobuf'
 
 
 export class AuditLogEntry extends jspb.Message {
+  getId(): number;
+  setId(value: number): AuditLogEntry;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AuditLogEntry.AsObject;
   static toObject(includeInstance: boolean, msg: AuditLogEntry): AuditLogEntry.AsObject;
@@ -13,6 +16,7 @@ export class AuditLogEntry extends jspb.Message {
 
 export namespace AuditLogEntry {
   export type AsObject = {
+    id: number,
   }
 }
 

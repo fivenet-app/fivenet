@@ -77,7 +77,7 @@ func (s *Server) Start() {
 			select {
 			case <-s.ctx.Done():
 				return
-			case <-time.After(5 * time.Second):
+			case <-time.After(4 * time.Second):
 				if err := s.refreshUserLocations(); err != nil {
 					s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
 				}
@@ -198,7 +198,7 @@ func (s *Server) refreshUserLocations() error {
 		WHERE(
 			locs.Hidden.IS_FALSE().
 				AND(
-					locs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE))),
+					locs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(10, jet.MINUTE))),
 				),
 		)
 

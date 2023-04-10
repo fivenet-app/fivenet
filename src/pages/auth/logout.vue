@@ -20,14 +20,26 @@ const { $grpc } = useNuxtApp();
 const store = useAuthStore();
 const router = useRouter();
 
+const accessToken = computed(() => store.$state.accessToken);
+
+async function redirect() {
+    setTimeout(async () => {
+        await router.push({ name: 'index' });
+    }, 1500);
+}
+
 onBeforeMount(async () => {
     store.clear();
+
+    if (!accessToken.value) {
+        redirect();
+        return;
+    }
+
     $grpc.getAuthClient()
         .logout(new LogoutRequest(), null)
         .then((resp) => {
-            setTimeout(async () => {
-                await router.push({ name: 'index' });
-            }, 1500);
+            redirect();
         })
         .catch((err: RpcError) => {
             store.loginStop(err.message);

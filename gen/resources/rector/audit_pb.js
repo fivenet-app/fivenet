@@ -75,7 +75,7 @@ proto.resources.rector.AuditLogEntry.prototype.toObject = function(opt_includeIn
  */
 proto.resources.rector.AuditLogEntry.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -112,6 +112,10 @@ proto.resources.rector.AuditLogEntry.deserializeBinaryFromReader = function(msg,
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setId(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -141,6 +145,31 @@ proto.resources.rector.AuditLogEntry.prototype.serializeBinary = function() {
  */
 proto.resources.rector.AuditLogEntry.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeUint64(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional uint64 id = 1;
+ * @return {number}
+ */
+proto.resources.rector.AuditLogEntry.prototype.getId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.resources.rector.AuditLogEntry} returns this
+ */
+proto.resources.rector.AuditLogEntry.prototype.setId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 

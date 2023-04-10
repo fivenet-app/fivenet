@@ -4,4 +4,5 @@ package resources.rector;
 option go_package = "github.com/galexrt/fivenet/proto/resources/rector;rector";
 
 message AuditLogEntry {
+  uint64 id = 1;
 }
