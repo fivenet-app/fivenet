@@ -214,9 +214,9 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
 
     return new L.DivIcon({
         html: '<div class="place-content-center">' + html + '</div>',
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
-        popupAnchor: [0, -8],
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+        popupAnchor: [0, -7],
     });
 }
 
