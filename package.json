@@ -22,7 +22,7 @@
     "@types/leaflet": "^1.9.3",
     "@types/uuid": "^9.0.1",
     "@vee-validate/yup": "^4.8.4",
-    "@vue-leaflet/vue-leaflet": "^0.9.0",
+    "@vue-leaflet/vue-leaflet": "0.9.0",
     "@vueup/vue-quill": "^1.1.1",
     "@vueuse/core": "^9.13.0",
     "google-protobuf": "^3.21.2",

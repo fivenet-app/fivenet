@@ -2,9 +2,9 @@
 import { onBeforeUnmount, ref } from 'vue';
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@fivenet/gen/services/livemapper/livemap_pb';
+import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { LMap, LLayerGroup, LTileLayer, LControlLayers, LMarker, LPopup, LControl } from '@vue-leaflet/vue-leaflet';
-import 'leaflet/dist/leaflet.css';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import { ValueOf } from '../../utils/types';
@@ -244,7 +244,7 @@ onBeforeUnmount(() => {
 </style>
 
 <template>
-    <div class="w-full relative h-full">
+    <div class="relative w-full h-full">
         <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center"
             style="background-color: rgba(62, 60, 62, 0.5); z-index: 99999">
             <DataPendingBlock v-if="!error && stream === null" message="Starting Livemap data stream..." />
