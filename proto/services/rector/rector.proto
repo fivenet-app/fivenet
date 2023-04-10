@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.rector;
 option go_package = "github.com/galexrt/fivenet/proto/services/rector;rector";
 
+import "resources/common/database/database.proto";
 import "resources/permissions/permissions.proto";
 import "resources/rector/audit.proto";
 import "validate/validate.proto";
@@ -59,11 +60,12 @@ message GetPermissionsResponse {
 }
 
 message ViewAuditLogRequest {
-  // TODO
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
 }
 
 message ViewAuditLogResponse {
-  repeated resources.rector.AuditEntry entries = 1;
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.rector.AuditEntry logs = 2;
 }
 
 service RectorService {

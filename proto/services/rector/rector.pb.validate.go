@@ -1666,6 +1666,46 @@ func (m *ViewAuditLogRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetPagination() == nil {
+		err := ViewAuditLogRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ViewAuditLogRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ViewAuditLogRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ViewAuditLogRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return ViewAuditLogRequestMultiError(errors)
 	}
@@ -1768,7 +1808,36 @@ func (m *ViewAuditLogResponse) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetEntries() {
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ViewAuditLogResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ViewAuditLogResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ViewAuditLogResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetLogs() {
 		_, _ = idx, item
 
 		if all {
@@ -1776,7 +1845,7 @@ func (m *ViewAuditLogResponse) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ViewAuditLogResponseValidationError{
-						field:  fmt.Sprintf("Entries[%v]", idx),
+						field:  fmt.Sprintf("Logs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1784,7 +1853,7 @@ func (m *ViewAuditLogResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ViewAuditLogResponseValidationError{
-						field:  fmt.Sprintf("Entries[%v]", idx),
+						field:  fmt.Sprintf("Logs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1793,7 +1862,7 @@ func (m *ViewAuditLogResponse) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ViewAuditLogResponseValidationError{
-					field:  fmt.Sprintf("Entries[%v]", idx),
+					field:  fmt.Sprintf("Logs[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

@@ -21,6 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
+var resources_common_database_database_pb = require('../../resources/common/database/database_pb.js');
+goog.object.extend(proto, resources_common_database_database_pb);
 var resources_permissions_permissions_pb = require('../../resources/permissions/permissions_pb.js');
 goog.object.extend(proto, resources_permissions_permissions_pb);
 var resources_rector_audit_pb = require('../../resources/rector/audit_pb.js');
@@ -2361,7 +2363,7 @@ proto.services.rector.ViewAuditLogRequest.prototype.toObject = function(opt_incl
  */
 proto.services.rector.ViewAuditLogRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -2398,6 +2400,11 @@ proto.services.rector.ViewAuditLogRequest.deserializeBinaryFromReader = function
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = new resources_common_database_database_pb.PaginationRequest;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationRequest.deserializeBinaryFromReader);
+      msg.setPagination(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2427,6 +2434,51 @@ proto.services.rector.ViewAuditLogRequest.prototype.serializeBinary = function()
  */
 proto.services.rector.ViewAuditLogRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      resources_common_database_database_pb.PaginationRequest.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional resources.common.database.PaginationRequest pagination = 1;
+ * @return {?proto.resources.common.database.PaginationRequest}
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationRequest} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationRequest, 1));
+};
+
+
+/**
+ * @param {?proto.resources.common.database.PaginationRequest|undefined} value
+ * @return {!proto.services.rector.ViewAuditLogRequest} returns this
+*/
+proto.services.rector.ViewAuditLogRequest.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.rector.ViewAuditLogRequest} returns this
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -2436,7 +2488,7 @@ proto.services.rector.ViewAuditLogRequest.serializeBinaryToWriter = function(mes
  * @private {!Array<number>}
  * @const
  */
-proto.services.rector.ViewAuditLogResponse.repeatedFields_ = [1];
+proto.services.rector.ViewAuditLogResponse.repeatedFields_ = [2];
 
 
 
@@ -2469,7 +2521,8 @@ proto.services.rector.ViewAuditLogResponse.prototype.toObject = function(opt_inc
  */
 proto.services.rector.ViewAuditLogResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    entriesList: jspb.Message.toObjectList(msg.getEntriesList(),
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationResponse.toObject(includeInstance, f),
+    logsList: jspb.Message.toObjectList(msg.getLogsList(),
     resources_rector_audit_pb.AuditEntry.toObject, includeInstance)
   };
 
@@ -2508,9 +2561,14 @@ proto.services.rector.ViewAuditLogResponse.deserializeBinaryFromReader = functio
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = new resources_common_database_database_pb.PaginationResponse;
+      reader.readMessage(value,resources_common_database_database_pb.PaginationResponse.deserializeBinaryFromReader);
+      msg.setPagination(value);
+      break;
+    case 2:
       var value = new resources_rector_audit_pb.AuditEntry;
       reader.readMessage(value,resources_rector_audit_pb.AuditEntry.deserializeBinaryFromReader);
-      msg.addEntries(value);
+      msg.addLogs(value);
       break;
     default:
       reader.skipField();
@@ -2541,10 +2599,18 @@ proto.services.rector.ViewAuditLogResponse.prototype.serializeBinary = function(
  */
 proto.services.rector.ViewAuditLogResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getEntriesList();
+  f = message.getPagination();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      resources_common_database_database_pb.PaginationResponse.serializeBinaryToWriter
+    );
+  }
+  f = message.getLogsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      1,
+      2,
       f,
       resources_rector_audit_pb.AuditEntry.serializeBinaryToWriter
     );
@@ -2553,12 +2619,49 @@ proto.services.rector.ViewAuditLogResponse.serializeBinaryToWriter = function(me
 
 
 /**
- * repeated resources.rector.AuditEntry entries = 1;
+ * optional resources.common.database.PaginationResponse pagination = 1;
+ * @return {?proto.resources.common.database.PaginationResponse}
+ */
+proto.services.rector.ViewAuditLogResponse.prototype.getPagination = function() {
+  return /** @type{?proto.resources.common.database.PaginationResponse} */ (
+    jspb.Message.getWrapperField(this, resources_common_database_database_pb.PaginationResponse, 1));
+};
+
+
+/**
+ * @param {?proto.resources.common.database.PaginationResponse|undefined} value
+ * @return {!proto.services.rector.ViewAuditLogResponse} returns this
+*/
+proto.services.rector.ViewAuditLogResponse.prototype.setPagination = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.rector.ViewAuditLogResponse} returns this
+ */
+proto.services.rector.ViewAuditLogResponse.prototype.clearPagination = function() {
+  return this.setPagination(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.rector.ViewAuditLogResponse.prototype.hasPagination = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * repeated resources.rector.AuditEntry logs = 2;
  * @return {!Array<!proto.resources.rector.AuditEntry>}
  */
-proto.services.rector.ViewAuditLogResponse.prototype.getEntriesList = function() {
+proto.services.rector.ViewAuditLogResponse.prototype.getLogsList = function() {
   return /** @type{!Array<!proto.resources.rector.AuditEntry>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_rector_audit_pb.AuditEntry, 1));
+    jspb.Message.getRepeatedWrapperField(this, resources_rector_audit_pb.AuditEntry, 2));
 };
 
 
@@ -2566,8 +2669,8 @@ proto.services.rector.ViewAuditLogResponse.prototype.getEntriesList = function()
  * @param {!Array<!proto.resources.rector.AuditEntry>} value
  * @return {!proto.services.rector.ViewAuditLogResponse} returns this
 */
-proto.services.rector.ViewAuditLogResponse.prototype.setEntriesList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 1, value);
+proto.services.rector.ViewAuditLogResponse.prototype.setLogsList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
 
@@ -2576,8 +2679,8 @@ proto.services.rector.ViewAuditLogResponse.prototype.setEntriesList = function(v
  * @param {number=} opt_index
  * @return {!proto.resources.rector.AuditEntry}
  */
-proto.services.rector.ViewAuditLogResponse.prototype.addEntries = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.resources.rector.AuditEntry, opt_index);
+proto.services.rector.ViewAuditLogResponse.prototype.addLogs = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.rector.AuditEntry, opt_index);
 };
 
 
@@ -2585,8 +2688,8 @@ proto.services.rector.ViewAuditLogResponse.prototype.addEntries = function(opt_v
  * Clears the list making it empty but non-null.
  * @return {!proto.services.rector.ViewAuditLogResponse} returns this
  */
-proto.services.rector.ViewAuditLogResponse.prototype.clearEntriesList = function() {
-  return this.setEntriesList([]);
+proto.services.rector.ViewAuditLogResponse.prototype.clearLogsList = function() {
+  return this.setLogsList([]);
 };
 
 

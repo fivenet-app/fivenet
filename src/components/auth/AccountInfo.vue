@@ -33,7 +33,7 @@ const changePasswordModal = ref(false);
 </script>
 
 <template>
-    <div>
+    <div class="py-2">
         <ChangePasswordModal :open="changePasswordModal" @close="changePasswordModal = false" />
         <DataPendingBlock v-if="pending" message="Loading documents..." />
         <DataErrorBlock v-else-if="error" title="Unable to load account info!" :retry="refresh" />

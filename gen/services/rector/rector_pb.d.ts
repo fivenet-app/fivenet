@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
 import * as resources_permissions_permissions_pb from '../../resources/permissions/permissions_pb';
 import * as resources_rector_audit_pb from '../../resources/rector/audit_pb';
 
@@ -265,6 +266,11 @@ export namespace GetPermissionsResponse {
 }
 
 export class ViewAuditLogRequest extends jspb.Message {
+  getPagination(): resources_common_database_database_pb.PaginationRequest | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationRequest): ViewAuditLogRequest;
+  hasPagination(): boolean;
+  clearPagination(): ViewAuditLogRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ViewAuditLogRequest.AsObject;
   static toObject(includeInstance: boolean, msg: ViewAuditLogRequest): ViewAuditLogRequest.AsObject;
@@ -275,14 +281,20 @@ export class ViewAuditLogRequest extends jspb.Message {
 
 export namespace ViewAuditLogRequest {
   export type AsObject = {
+    pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
   }
 }
 
 export class ViewAuditLogResponse extends jspb.Message {
-  getEntriesList(): Array<resources_rector_audit_pb.AuditEntry>;
-  setEntriesList(value: Array<resources_rector_audit_pb.AuditEntry>): ViewAuditLogResponse;
-  clearEntriesList(): ViewAuditLogResponse;
-  addEntries(value?: resources_rector_audit_pb.AuditEntry, index?: number): resources_rector_audit_pb.AuditEntry;
+  getPagination(): resources_common_database_database_pb.PaginationResponse | undefined;
+  setPagination(value?: resources_common_database_database_pb.PaginationResponse): ViewAuditLogResponse;
+  hasPagination(): boolean;
+  clearPagination(): ViewAuditLogResponse;
+
+  getLogsList(): Array<resources_rector_audit_pb.AuditEntry>;
+  setLogsList(value: Array<resources_rector_audit_pb.AuditEntry>): ViewAuditLogResponse;
+  clearLogsList(): ViewAuditLogResponse;
+  addLogs(value?: resources_rector_audit_pb.AuditEntry, index?: number): resources_rector_audit_pb.AuditEntry;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ViewAuditLogResponse.AsObject;
@@ -294,7 +306,8 @@ export class ViewAuditLogResponse extends jspb.Message {
 
 export namespace ViewAuditLogResponse {
   export type AsObject = {
-    entriesList: Array<resources_rector_audit_pb.AuditEntry.AsObject>,
+    pagination?: resources_common_database_database_pb.PaginationResponse.AsObject,
+    logsList: Array<resources_rector_audit_pb.AuditEntry.AsObject>,
   }
 }
 

@@ -229,7 +229,7 @@ watch(selectedChar, () => {
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Job
                                         </th>
-                                        <th v-if="!hideCitizenLink" scope="col"
+                                        <th v-if="!hideCitizenLink && !hideCopy" scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
                                             Actions
                                         </th>
