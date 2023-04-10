@@ -2470,7 +2470,7 @@ proto.services.rector.ViewAuditLogResponse.prototype.toObject = function(opt_inc
 proto.services.rector.ViewAuditLogResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     entriesList: jspb.Message.toObjectList(msg.getEntriesList(),
-    resources_rector_audit_pb.AuditLogEntry.toObject, includeInstance)
+    resources_rector_audit_pb.AuditEntry.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -2508,8 +2508,8 @@ proto.services.rector.ViewAuditLogResponse.deserializeBinaryFromReader = functio
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_rector_audit_pb.AuditLogEntry;
-      reader.readMessage(value,resources_rector_audit_pb.AuditLogEntry.deserializeBinaryFromReader);
+      var value = new resources_rector_audit_pb.AuditEntry;
+      reader.readMessage(value,resources_rector_audit_pb.AuditEntry.deserializeBinaryFromReader);
       msg.addEntries(value);
       break;
     default:
@@ -2546,24 +2546,24 @@ proto.services.rector.ViewAuditLogResponse.serializeBinaryToWriter = function(me
     writer.writeRepeatedMessage(
       1,
       f,
-      resources_rector_audit_pb.AuditLogEntry.serializeBinaryToWriter
+      resources_rector_audit_pb.AuditEntry.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * repeated resources.rector.AuditLogEntry entries = 1;
- * @return {!Array<!proto.resources.rector.AuditLogEntry>}
+ * repeated resources.rector.AuditEntry entries = 1;
+ * @return {!Array<!proto.resources.rector.AuditEntry>}
  */
 proto.services.rector.ViewAuditLogResponse.prototype.getEntriesList = function() {
-  return /** @type{!Array<!proto.resources.rector.AuditLogEntry>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_rector_audit_pb.AuditLogEntry, 1));
+  return /** @type{!Array<!proto.resources.rector.AuditEntry>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_rector_audit_pb.AuditEntry, 1));
 };
 
 
 /**
- * @param {!Array<!proto.resources.rector.AuditLogEntry>} value
+ * @param {!Array<!proto.resources.rector.AuditEntry>} value
  * @return {!proto.services.rector.ViewAuditLogResponse} returns this
 */
 proto.services.rector.ViewAuditLogResponse.prototype.setEntriesList = function(value) {
@@ -2572,12 +2572,12 @@ proto.services.rector.ViewAuditLogResponse.prototype.setEntriesList = function(v
 
 
 /**
- * @param {!proto.resources.rector.AuditLogEntry=} opt_value
+ * @param {!proto.resources.rector.AuditEntry=} opt_value
  * @param {number=} opt_index
- * @return {!proto.resources.rector.AuditLogEntry}
+ * @return {!proto.resources.rector.AuditEntry}
  */
 proto.services.rector.ViewAuditLogResponse.prototype.addEntries = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.resources.rector.AuditLogEntry, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.resources.rector.AuditEntry, opt_index);
 };
 
 

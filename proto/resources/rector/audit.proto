@@ -3,6 +3,21 @@ syntax = "proto3";
 package resources.rector;
 option go_package = "github.com/galexrt/fivenet/proto/resources/rector;rector";
 
-message AuditLogEntry {
-  uint64 id = 1;
+import "resources/timestamp/timestamp.proto";
+
+enum EVENT_TYPE {
+  UNKNOWN = 0;
+  CREATE = 1;
+  UPDATE = 2;
+  DELETE = 3;
+}
+
+message AuditEntry {
+  uint64 id = 1; // @gotags: alias:"id"
+  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  uint64 user_id = 3; // @gotags: alias:"user_id"
+  string service = 4; // @gotags: alias:"service"
+  string method = 5; // @gotags: alias:"method"
+  EVENT_TYPE state = 6; // @gotags: alias:"state"
+  string data = 7; // @gotags: alias:"data"
 }

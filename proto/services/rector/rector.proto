@@ -63,7 +63,7 @@ message ViewAuditLogRequest {
 }
 
 message ViewAuditLogResponse {
-  repeated resources.rector.AuditLogEntry entries = 1;
+  repeated resources.rector.AuditEntry entries = 1;
 }
 
 service RectorService {

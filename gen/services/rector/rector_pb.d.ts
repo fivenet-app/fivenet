@@ -279,10 +279,10 @@ export namespace ViewAuditLogRequest {
 }
 
 export class ViewAuditLogResponse extends jspb.Message {
-  getEntriesList(): Array<resources_rector_audit_pb.AuditLogEntry>;
-  setEntriesList(value: Array<resources_rector_audit_pb.AuditLogEntry>): ViewAuditLogResponse;
+  getEntriesList(): Array<resources_rector_audit_pb.AuditEntry>;
+  setEntriesList(value: Array<resources_rector_audit_pb.AuditEntry>): ViewAuditLogResponse;
   clearEntriesList(): ViewAuditLogResponse;
-  addEntries(value?: resources_rector_audit_pb.AuditLogEntry, index?: number): resources_rector_audit_pb.AuditLogEntry;
+  addEntries(value?: resources_rector_audit_pb.AuditEntry, index?: number): resources_rector_audit_pb.AuditEntry;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ViewAuditLogResponse.AsObject;
@@ -294,7 +294,7 @@ export class ViewAuditLogResponse extends jspb.Message {
 
 export namespace ViewAuditLogResponse {
   export type AsObject = {
-    entriesList: Array<resources_rector_audit_pb.AuditLogEntry.AsObject>,
+    entriesList: Array<resources_rector_audit_pb.AuditEntry.AsObject>,
   }
 }
 
