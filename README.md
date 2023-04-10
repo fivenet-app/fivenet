@@ -29,8 +29,6 @@
         - [ ] History
 - [ ] Discord integration
     - [ ] Automatic Role assignment
-- [ ] Livemap
-    - [ ] Postal Search
 
 ### Completed
 
@@ -47,7 +45,8 @@
     - [x] Display dispatches (from GKS phone for now)
     - [x] See other jobs' positions and/ or dispatches
     - [x] Animated Marker when they move
-    - [ ] Search markers
+    - [x] Search markers
+    - [x] Postal Search
 - [x] Permissions System
     - [x] Based on Job + Job Rank/ Grade
 - [x] User Database - 1. Prio
