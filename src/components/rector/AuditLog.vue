@@ -65,7 +65,13 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
                                             Time
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Type
+                                            Service
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            State
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            Data
                                         </th>
                                         <th scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
@@ -87,7 +93,13 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
                                             Time
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Type
+                                            Service
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            State
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            Data
                                         </th>
                                         <th scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">

@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	audit = table.FivenetAuditLog
+	audit = table.FivenetAuditLog.AS("auditentry")
 )
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {

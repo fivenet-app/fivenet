@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { AuditEntry } from '@fivenet/gen/resources/rector/audit_pb';
+import { toDateRelativeString } from '~/utils/time';
+import { EVENT_TYPE_Util } from '@fivenet/gen/resources/rector/audit.pb_enums';
 
 defineProps({
     log: {
@@ -11,17 +13,23 @@ defineProps({
 
 <template>
     <tr>
-        <td>
-            ID
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+            {{ log.getId() }}
         </td>
-        <td>
-            Time
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+            {{ toDateRelativeString(log.getCreatedAt()) }}
         </td>
-        <td>
-            Type
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+            {{ log.getService() }}/{{ log.getMethod() }}
         </td>
-        <td>
-            Actions
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+            {{ EVENT_TYPE_Util.fromInt(log.getState()) }}
+        </td>
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+            {{ log.getData() }}
+        </td>
+        <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+            COPY
         </td>
     </tr>
 </template>
