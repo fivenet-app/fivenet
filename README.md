@@ -8,13 +8,10 @@
     - [ ] Authentication
         - [ ] Create in-game "register" command to get a token with which one can then set their username and password
 - [ ] "Faction Leader Control Panel" aka "Rector Service"
-    - [x] Templates (DocStore)
-        - [x] Create templates
-        - [x] Edit templates
     - [ ] Audit Log (Rector)
 - [ ] Better error handling
     - [ ] Backend: use predefined errors
-    - [ ] Frontend: starting using client-side form validation
+    - [ ] Frontend: Start using client-side form validation
 - [ ] Final polishing pass before release of version 1.0.0
     - [ ] Unify the design
     - [ ] Clean up Code
@@ -32,6 +29,8 @@
         - [ ] History
 - [ ] Discord integration
     - [ ] Automatic Role assignment
+- [ ] Livemap
+    - [ ] Postal Search
 
 ### Completed
 
@@ -92,6 +91,9 @@
     - [x] Permission Editor for the job ranks (Rector)
         - [x] Can view the permissions
         - [x] Can edit the permissions
+    - [x] Templates (DocStore)
+        - [x] Create templates
+        - [x] Edit templates
     - [x] Category (DocStore)
         - [x] Create Categories
         - [x] Edit Categories
