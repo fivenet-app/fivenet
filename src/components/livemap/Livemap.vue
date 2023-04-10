@@ -11,6 +11,8 @@ import { ValueOf } from '~/utils/types';
 import { DispatchMarker, UserMarker } from '@fivenet/gen/resources/livemap/livemap_pb';
 import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { watchDebounced } from '@vueuse/core';
+import { dispatchNotification } from '../partials/notification';
+import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -47,7 +49,7 @@ const backgroundColorList = {
 } as const;
 const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColorList.Postal);
 
-let zoom: number = 2;
+const zoom = ref(2);
 let center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 
@@ -105,7 +107,7 @@ async function updateBackground(layer: string): Promise<void> {
 }
 
 function stringifyHash(currZoom: number, centerLat: number, centerLong: number): string {
-    const precision = Math.max(0, Math.ceil(Math.log(zoom) / Math.LN2));
+    const precision = Math.max(0, Math.ceil(Math.log(zoom.value) / Math.LN2));
 
     const hash = '#' + [currZoom, centerLat.toFixed(precision), centerLong.toFixed(precision)].join('/');
     return hash;
@@ -189,9 +191,7 @@ async function stopDataStream(): Promise<void> {
 }
 
 function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): L.DivIcon {
-    let html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full mx-auto">
-          <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
-        </svg>`;
+    let html = ``;
     switch (type) {
         case 'player':
             {
@@ -222,6 +222,64 @@ onBeforeUnmount(() => {
     stopDataStream();
     map = undefined;
 });
+
+type Postal = {
+    x: number;
+    y: number;
+    code: string;
+}
+
+const selectedPostal = ref<Postal | undefined>();
+const postalQuery = ref('');
+let postalsLoaded = false;
+const postals = ref<Array<Postal>>([]);
+const filteredPostals = ref<Array<Postal>>([]);
+
+async function loadPostals(): Promise<void> {
+    if (postalsLoaded) {
+        return;
+    }
+    postalsLoaded = true;
+
+    try {
+        const response = await fetch('/data/postals.json');
+        postals.value.push(...(await response.json()) as Postal[]);
+    } catch (_) {
+        dispatchNotification({ title: 'Failed to load Postals map', content: '' });
+        postalsLoaded = false;
+    }
+}
+
+async function findPostal(): Promise<void> {
+    if (postalQuery.value === "") {
+        return;
+    }
+
+    let results = 0;
+    filteredPostals.value.length = 0;
+    filteredPostals.value = postals.value.filter(p => {
+        if (results >= 10) {
+            return false;
+        }
+        const result = p.code.startsWith(postalQuery.value!);
+        if (result) results++;
+        return result;
+    });
+    if (filteredPostals.value.length === 0) {
+        return;
+    }
+}
+
+watch(selectedPostal, () => {
+    if (!selectedPostal.value) {
+        return;
+    }
+
+    map?.flyTo([selectedPostal.value.y, selectedPostal.value.x], 5, {
+        duration: 0.850,
+    });
+});
+watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 });
 </script>
 
 <style>
@@ -296,6 +354,21 @@ onBeforeUnmount(() => {
                     <div class="relative flex items-center mt-2">
                         <input v-model="dispatchQuery" type="text" name="searchDispatch" id="searchDispatch"
                             placeholder="Dispatch Filter" />
+                    </div>
+                    <div class="relative flex items-center mt-2">
+                        <Combobox as="div" v-model="selectedPostal" nullable>
+                            <ComboboxInput @change="postalQuery = $event.target.value" @click="loadPostals"
+                                :display-value="(postal: any) => postal ? postal?.code : ''" />
+                            <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">
+                                <ComboboxOption v-for="postal in filteredPostals" :key="postal.code" :value="postal"
+                                    v-slot="{ active }">
+                                    <li
+                                        :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-primary-500 text-white' : 'text-gray-600']">
+                                        {{ postal.code }}
+                                    </li>
+                                </ComboboxOption>
+                            </ComboboxOptions>
+                        </Combobox>
                     </div>
                 </div>
             </LControl>
