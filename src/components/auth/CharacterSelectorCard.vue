@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useAuthStore } from '../../store/auth';
+import { useAuthStore } from '~/store/auth';
 import { ChooseCharacterRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { User } from '@fivenet/gen/resources/users/users_pb';
-import CharSexBadge from '../citizens/CharSexBadge.vue';
-import { fromSecondsToFormattedDuration } from '../../utils/time';
+import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
+import { fromSecondsToFormattedDuration } from '~/utils/time';
 import { RpcError } from 'grpc-web';
 import { parseQuery, NavigationFailure } from 'vue-router';
 

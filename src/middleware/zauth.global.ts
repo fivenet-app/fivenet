@@ -1,7 +1,7 @@
 import { NavigationGuard, RouteLocationNormalized } from 'vue-router';
-import { dispatchNotification } from '~/components/notification';
-import { useAuthStore } from '../store/auth';
-import slug from '../utils/slugify';
+import { dispatchNotification } from '~/components/partials/notification';
+import { useAuthStore } from '~/store/auth';
+import slug from '~/utils/slugify';
 
 export default defineNuxtRouteMiddleware(
     (to: RouteLocationNormalized, from: RouteLocationNormalized): ReturnType<NavigationGuard> => {

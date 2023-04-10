@@ -21,8 +21,8 @@ import { CompleteCharNamesRequest, CompleteJobNamesRequest } from '@fivenet/gen/
 import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@fivenet/gen/resources/users/users_pb';
 import { DOC_ACCESS } from '@fivenet/gen/resources/documents/documents_pb';
-import { toTitleCase } from '../../utils/strings';
-import { ArrayElement } from '../../utils/types';
+import { toTitleCase } from '~/utils/strings';
+import { ArrayElement } from '~/utils/types';
 import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 
 const { $grpc } = useNuxtApp();

@@ -4,7 +4,7 @@ import { DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
 import { DeleteDocumentCommentRequest, GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { computed, ref, onMounted } from 'vue';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
-import { useAuthStore } from '../../store/auth';
+import { useAuthStore } from '~/store/auth';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/20/solid';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import { RpcError } from 'grpc-web';

@@ -5,9 +5,9 @@ import { StreamRequest, StreamResponse } from '@fivenet/gen/services/livemapper/
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { LMap, LLayerGroup, LTileLayer, LControlLayers, LMarker, LPopup, LControl } from '@vue-leaflet/vue-leaflet';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
-import { ValueOf } from '../../utils/types';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import { ValueOf } from '~/utils/types';
 import { DispatchMarker, UserMarker } from '@fivenet/gen/resources/livemap/livemap_pb';
 import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { watchDebounced } from '@vueuse/core';

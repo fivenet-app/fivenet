@@ -31,9 +31,9 @@ import { UsersIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
 import { RpcError } from 'grpc-web';
 import { onMounted, ref, FunctionalComponent } from 'vue';
-import { useClipboardStore } from '~~/src/store/clipboard';
-import { useAuthStore } from '../../store/auth';
-import { toTitleCase } from '../../utils/strings';
+import { useClipboardStore } from '~/store/clipboard';
+import { useAuthStore } from '~/store/auth';
+import { toTitleCase } from '~/utils/strings';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();

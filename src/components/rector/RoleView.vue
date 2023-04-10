@@ -10,7 +10,7 @@ import Divider from '~/components/partials/Divider.vue';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/shared';
-import { dispatchNotification } from '../notification';
+import { dispatchNotification } from '~/components/partials/notification';
 
 const { $grpc } = useNuxtApp();
 

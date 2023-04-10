@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useAuthStore } from '../../store/auth';
+import { useAuthStore } from '~/store/auth';
 import { computed, ref, watch } from 'vue';
 import { CreateAccountRequest, LoginRequest, LoginResponse } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
-import { dispatchNotification } from '../notification';
+import { dispatchNotification } from '~/components/partials/notification';
 import { NavigationFailure } from 'vue-router';
 import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { object, string } from 'yup';

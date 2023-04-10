@@ -3,7 +3,7 @@ import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue
 import { BriefcaseIcon, DocumentTextIcon, UsersIcon, MapIcon, TruckIcon } from '@heroicons/vue/24/outline';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import Cards from '~/components/partials/Cards.vue';
-import { CardElements } from '../utils/types';
+import { CardElements } from '~/utils/types';
 
 useHead({
     title: 'Overview',

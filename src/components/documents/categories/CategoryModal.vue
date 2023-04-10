@@ -3,7 +3,7 @@ import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
 import { DeleteDocumentCategoryRequest, UpdateDocumentCategoryRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { TagIcon } from '@heroicons/vue/24/solid';
-import { dispatchNotification } from '../../notification';
+import { dispatchNotification } from '~/components/partials/notification';
 import { RpcError } from 'grpc-web';
 import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { object, string } from 'yup';

@@ -2,7 +2,7 @@
 import CharacterSelectorCard from './CharacterSelectorCard.vue';
 import { GetCharactersRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { User } from '@fivenet/gen/resources/users/users_pb';
-import { useAuthStore } from '../../store/auth';
+import { useAuthStore } from '~/store/auth';
 import { RpcError } from 'grpc-web';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';

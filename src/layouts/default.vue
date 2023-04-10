@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NotificationProvider } from '~/components/notification';
+import { NotificationProvider } from '~/components/partials/notification';
 import Sidebar from '~/components/partials/Sidebar.vue';
 </script>
 

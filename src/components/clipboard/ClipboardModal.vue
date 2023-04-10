@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useClipboardStore } from '../../store/clipboard';
+import { useClipboardStore } from '~/store/clipboard';
 import {
     Dialog,
     DialogPanel,

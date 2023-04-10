@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb';
 import { GetUserDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
-import DocumentRelations from '../documents/DocumentRelations.vue';
+import DocumentRelations from '~/components/documents/DocumentRelations.vue';
 import { DocumentTextIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import AccountInfo from '~~/src/components/auth/AccountInfo.vue';
+import AccountInfo from '~/components/auth/AccountInfo.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({

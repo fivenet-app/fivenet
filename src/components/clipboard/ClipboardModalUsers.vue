@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useClipboardStore, ClipboardUser } from '../../store/clipboard';
+import { useClipboardStore, ClipboardUser } from '~/store/clipboard';
 import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { UsersIcon } from '@heroicons/vue/20/solid';

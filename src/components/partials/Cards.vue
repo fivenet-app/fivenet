@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CardElement } from '~~/src/utils/types';
+import { CardElement } from '~/utils/types';
 import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
 
 defineProps({

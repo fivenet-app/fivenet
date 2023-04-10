@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useAuthStore } from '../store/auth';
+import { useAuthStore } from '~/store/auth';
 import Footer from '~/components/partials/Footer.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';

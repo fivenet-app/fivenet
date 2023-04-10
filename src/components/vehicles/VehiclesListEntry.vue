@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Vehicle } from '@fivenet/gen/resources/vehicles/vehicles_pb';
 import { ClipboardDocumentIcon, EyeIcon } from '@heroicons/vue/24/solid';
-import { useClipboardStore } from '../../store/clipboard';
-import { toTitleCase } from '../../utils/strings';
+import { useClipboardStore } from '~/store/clipboard';
+import { toTitleCase } from '~/utils/strings';
 
 const store = useClipboardStore();
 

@@ -1,5 +1,5 @@
-import { useAuthStore } from '../store/auth';
-import slug from '../utils/slugify';
+import { useAuthStore } from '~/store/auth';
+import slug from '~/utils/slugify';
 
 // Add `v-can` directive for easy client-side permission checking
 export default defineNuxtPlugin((nuxtApp) => {

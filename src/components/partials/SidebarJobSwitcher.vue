@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAuthStore } from '../../store/auth';
+import { useAuthStore } from '~/store/auth';
 import { computed, ref, onMounted } from 'vue';
 import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';

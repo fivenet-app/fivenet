@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue';
-import { useAuthStore } from '../../store/auth';
-import { useDocumentEditorStore } from '../../store/documenteditor';
-import { useClipboardStore } from '../../store/clipboard';
+import { useAuthStore } from '~/store/auth';
+import { useDocumentEditorStore } from '~/store/documenteditor';
+import { useClipboardStore } from '~/store/clipboard';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@fivenet/gen/resources/documents/documents_pb';
 import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
-import { dispatchNotification } from '../notification';
+import { dispatchNotification } from '~/components/partials/notification';
 import {
     PlusIcon,
     ChevronDownIcon,

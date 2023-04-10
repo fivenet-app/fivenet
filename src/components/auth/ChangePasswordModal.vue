@@ -6,8 +6,8 @@ import { object, string } from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
 import { ChangePasswordRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
-import { dispatchNotification } from '../notification';
-import { useAuthStore } from '~~/src/store/auth';
+import { dispatchNotification } from '~/components/partials/notification';
+import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();

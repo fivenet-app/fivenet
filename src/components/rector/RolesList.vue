@@ -10,7 +10,7 @@ import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOption
 import { JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { CheckIcon } from '@heroicons/vue/20/solid';
-import { useAuthStore } from '~~/src/store/auth';
+import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
 

@@ -4,9 +4,9 @@ import { User } from '@fivenet/gen/resources/users/users_pb';
 import CitizenInfoProfile from './CitizenInfoProfile.vue';
 import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
 import CitizenInfoActivityFeed from './CitizenInfoActivityFeed.vue';
-import VehiclesList from '../vehicles/VehiclesList.vue';
+import VehiclesList from '~/components/vehicles/VehiclesList.vue';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-import { useClipboardStore } from '../../store/clipboard';
+import { useClipboardStore } from '~/store/clipboard';
 import { PlusIcon } from '@heroicons/vue/24/solid';
 
 const tabs = [

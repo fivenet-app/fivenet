@@ -6,7 +6,7 @@ import { Document } from '@fivenet/gen/resources/documents/documents_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
-import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
+import { toDateLocaleString, toDateRelativeString } from '~/utils/time';
 import TemplatesModal from './templates/TemplatesModal.vue';
 import { RpcError } from 'grpc-web';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';

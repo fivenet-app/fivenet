@@ -9,7 +9,7 @@ import Cards from '~/components/partials/Cards.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
-import { CardElements } from '~~/src/utils/types';
+import { CardElements } from '~/utils/types';
 
 const { $grpc } = useNuxtApp();
 

@@ -6,8 +6,8 @@ import { RpcError } from 'grpc-web';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import { User } from '@fivenet/gen/resources/users/users_pb';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
-import DataPendingBlock from '~~/src/components/partials/DataPendingBlock.vue';
-import DataErrorBlock from '~~/src/components/partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 
 useHead({
     title: 'Citizen File',

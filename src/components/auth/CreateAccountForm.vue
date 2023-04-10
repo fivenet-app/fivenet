@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CreateAccountRequest } from '@fivenet/gen/services/auth/auth_pb';
-import { dispatchNotification } from '../notification';
+import { dispatchNotification } from '~/components/partials/notification';
 import { RpcError } from 'grpc-web';
 import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { object, string } from 'yup';

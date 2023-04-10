@@ -2,7 +2,7 @@
 import { UserCircleIcon } from '@heroicons/vue/20/solid'
 import { GetUserActivityRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@fivenet/gen/resources/users/users_pb';
-import { toDateRelativeString } from '../../utils/time';
+import { toDateRelativeString } from '~/utils/time';
 import { USER_ACTIVITY_TYPE_Util } from '@fivenet/gen/resources/users/users.pb_enums';
 import { RectangleGroupIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';

@@ -5,7 +5,7 @@ import Cards from '~/components/partials/Cards.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
-import { CardElements } from '~~/src/utils/types';
+import { CardElements } from '~/utils/types';
 import CategoryModal from './CategoryModal.vue';
 import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { object, string } from 'yup';

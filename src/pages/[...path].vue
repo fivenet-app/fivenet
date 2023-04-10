@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAuthStore } from '../store/auth';
+import { useAuthStore } from '~/store/auth';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import { computed } from 'vue';
 

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { User } from '@fivenet/gen/resources/users/users_pb';
 import { ClipboardDocumentIcon, EyeIcon } from '@heroicons/vue/24/solid';
-import { useClipboardStore } from '../../store/clipboard';
+import { useClipboardStore } from '~/store/clipboard';
 
 const store = useClipboardStore();
 

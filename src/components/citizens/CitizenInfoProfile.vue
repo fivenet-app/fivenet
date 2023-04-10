@@ -2,12 +2,12 @@
 import { ref } from 'vue'
 import { User, UserProps } from '@fivenet/gen/resources/users/users_pb';
 import { SetUserPropsRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
-import { dispatchNotification } from '../notification';
-import CharSexBadge from '../citizens/CharSexBadge.vue';
+import { dispatchNotification } from '~/components/partials/notification';
+import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
-import TemplatesModal from '../documents/templates/TemplatesModal.vue';
-import { useClipboardStore } from '../../store/clipboard';
+import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
+import { useClipboardStore } from '~/store/clipboard';
 import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();

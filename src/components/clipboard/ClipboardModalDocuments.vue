@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useClipboardStore } from '../../store/clipboard';
+import { useClipboardStore } from '~/store/clipboard';
 import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { DocumentTextIcon } from '@heroicons/vue/20/solid';
-import { ClipboardDocument } from '../../store/clipboard';
+import { ClipboardDocument } from '~/store/clipboard';
 
 const store = useClipboardStore();
 

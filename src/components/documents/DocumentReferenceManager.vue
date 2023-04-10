@@ -27,10 +27,10 @@ import { ChevronDoubleUpIcon, DocumentCheckIcon, DocumentTextIcon, LockClosedIco
 import { watchDebounced } from '@vueuse/core';
 import { RpcError } from 'grpc-web';
 import { onMounted, ref, FunctionalComponent } from 'vue';
-import { ClipboardDocument, getDocument } from '../../store/clipboard';
-import { useAuthStore } from '../../store/auth';
-import { toDateLocaleString, toDateRelativeString } from '../../utils/time';
-import { useClipboardStore } from '../../store/clipboard';
+import { ClipboardDocument, getDocument } from '~/store/clipboard';
+import { useAuthStore } from '~/store/auth';
+import { toDateLocaleString, toDateRelativeString } from '~/utils/time';
+import { useClipboardStore } from '~/store/clipboard';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();

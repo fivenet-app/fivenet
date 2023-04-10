@@ -2,10 +2,10 @@
 import { LogoutRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
 import { onBeforeMount } from 'vue';
-import { dispatchNotification } from '~~/src/components/notification';
-import { useAuthStore } from '../../store/auth';
+import { dispatchNotification } from '~/components/partials/notification';
+import { useAuthStore } from '~/store/auth';
 import HeroFull from '~/components/partials/HeroFull.vue';
-import ContentCenterWrapper from '~~/src/components/partials/ContentCenterWrapper.vue';
+import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 
 useHead({
     title: 'Logout',

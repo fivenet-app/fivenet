@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import RolesList from '~~/src/components/rector/RolesList.vue';
+import RolesList from '~/components/rector/RolesList.vue';
 
 useHead({
     title: 'Roles',

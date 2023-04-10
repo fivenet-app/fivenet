@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed, ref, FunctionalComponent, onMounted } from 'vue';
-import { useAuthStore } from '../../store/auth';
+import { useAuthStore } from '~/store/auth';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
-import { toTitleCase } from '../../utils/strings';
+import { toTitleCase } from '~/utils/strings';
 import {
     Dialog,
     DialogPanel,
