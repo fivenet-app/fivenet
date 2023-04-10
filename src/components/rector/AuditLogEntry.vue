@@ -26,7 +26,7 @@ defineProps({
             {{ EVENT_TYPE_Util.fromInt(log.getState()) }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ log.getData() }}
+            {{ log.getData() ? log.getData() : 'N/A' }}
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             COPY
