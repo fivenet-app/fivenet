@@ -6,6 +6,7 @@ import { dispatchNotification } from '~/components/partials/notification';
 import { useAuthStore } from '~/store/auth';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
+import Footer from '~/components/partials/Footer.vue';
 
 useHead({
     title: 'Logout',
@@ -49,14 +50,17 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <HeroFull>
-        <ContentCenterWrapper>
-            <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
-                Signed out
-            </h2>
-            <p class="mt-6 text-lg leading-8 text-gray-300">
-                You will be redirected to the home page in a moment.
-            </p>
-        </ContentCenterWrapper>
-    </HeroFull>
+    <div class="h-full justify-between flex flex-col">
+        <HeroFull>
+            <ContentCenterWrapper class="max-w-2xl mx-auto text-center">
+                <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
+                    Signed out
+                </h2>
+                <p class="mt-6 text-lg leading-8 text-gray-300">
+                    You will be redirected to the home page in a moment.
+                </p>
+            </ContentCenterWrapper>
+        </HeroFull>
+        <Footer />
+    </div>
 </template>
