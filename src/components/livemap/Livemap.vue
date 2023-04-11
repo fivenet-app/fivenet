@@ -194,7 +194,7 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
     switch (type) {
         case 'player':
             {
-                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor ? '#' + iconColor : 'currentColor'}" class="w-full h-full">
+                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${iconColor ? '#' + iconColor : 'currentColor'}" class="w-full h-full">
                     <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
                 </svg>`;
             }
@@ -202,7 +202,7 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
 
         case 'dispatch':
             {
-                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor ? '#' + iconColor : 'currentColor'}" class="w-full h-full">
+                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${iconColor ? '#' + iconColor : 'currentColor'}" class="w-full h-full">
                     <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
                 </svg>`;
             }
@@ -210,10 +210,9 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
     }
 
     return new L.DivIcon({
-        html: '<div class="place-content-center">' + html + '</div>',
-        iconSize: [48, 48],
-        iconAnchor: [24, 24],
-        popupAnchor: [-8, -24],
+        html: '<div>' + html + '</div>',
+        iconSize: [32, 32],
+        popupAnchor: [0, -16],
     });
 }
 
