@@ -31,6 +31,10 @@ var (
 	dJobAccess  = table.FivenetDocumentsJobAccess.AS("job_access")
 )
 
+var (
+	FailedQueryErr = status.Error(codes.Internal, "Failed to get/create/update documents!")
+)
+
 type Server struct {
 	DocStoreServiceServer
 
@@ -67,7 +71,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	resp := &FindDocumentsResponse{
@@ -82,7 +86,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		OFFSET(req.Pagination.Offset)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	for i := 0; i < len(resp.Documents); i++ {
@@ -110,7 +114,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	resp := &GetDocumentResponse{}
@@ -125,7 +129,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		DocumentId: resp.Document.Id,
 	})
 	if err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	resp.Access = docAccess.Access
@@ -140,7 +144,7 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, FailedQueryErr
 		}
 	}
 
@@ -155,7 +159,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -189,21 +193,21 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, DOC_ACCESS_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	return &CreateDocumentResponse{
@@ -215,7 +219,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
 	if err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 	if !check {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
@@ -234,7 +238,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	stmt := docs.
@@ -257,16 +261,16 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, DOC_ACCESS_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	return &UpdateDocumentResponse{
@@ -274,7 +278,30 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}, nil
 }
 
-func (s *Server) DeleteDocument(ctx context.Context) error {
+func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	if !check {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
+	}
 
-	return nil
+	stmt := docs.
+		UPDATE(
+			docs.DeletedAt,
+		).
+		SET(
+			docs.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+		).
+		WHERE(
+			docs.ID.EQ(jet.Uint64(req.DocumentId)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
+
+	return nil, nil
 }

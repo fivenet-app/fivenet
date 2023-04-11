@@ -12,10 +12,16 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
 	user = table.Users.AS("usershort")
+)
+
+var (
+	FailedSearchErr = status.Error(codes.Internal, "Failed to complete/ search the data!")
 )
 
 type Server struct {
@@ -63,7 +69,7 @@ func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRe
 	resp := &CompleteCharNamesRespoonse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
+			return nil, FailedSearchErr
 		}
 	}
 
@@ -84,7 +90,7 @@ func (s *Server) CompleteJobNames(ctx context.Context, req *CompleteJobNamesRequ
 	var err error
 	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, req.ExactMatch)
 	if err != nil {
-		return nil, err
+		return nil, FailedSearchErr
 	}
 
 	return resp, nil
@@ -95,7 +101,7 @@ func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocu
 
 	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, CompletorServicePermKey+"-CompleteDocumentCategory")
 	if err != nil {
-		return nil, err
+		return nil, FailedSearchErr
 	}
 
 	resp := &CompleteDocumentCategoryResponse{}
@@ -106,7 +112,7 @@ func (s *Server) CompleteDocumentCategory(ctx context.Context, req *CompleteDocu
 	resp.Categories, err = s.data.GetSearcher().
 		SearchDocumentCategories(ctx, req.Search, jobs)
 	if err != nil {
-		return nil, err
+		return nil, FailedSearchErr
 	}
 
 	return resp, nil

@@ -21,11 +21,17 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
+	codes "google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
 	locs  = table.FivenetUserLocations
 	users = table.Users.AS("user")
+)
+
+var (
+	FailedErr = status.Error(codes.Internal, "Failed to stream livemap data!")
 )
 
 type Server struct {
@@ -95,7 +101,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	js, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, "LivemapperService.Stream")
 	if err != nil {
-		return err
+		return FailedErr
 	}
 
 	if len(js) == 0 {
@@ -117,13 +123,13 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	for {
 		dispatchMarkers, err := s.getUserDispatches(js)
 		if err != nil {
-			return err
+			return FailedErr
 		}
 		resp.Dispatches = dispatchMarkers
 
 		userMarkers, err := s.getUserLocations(js)
 		if err != nil {
-			return err
+			return FailedErr
 		}
 		resp.Users = userMarkers
 

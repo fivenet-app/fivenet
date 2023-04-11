@@ -7,6 +7,7 @@ import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import AuditLogEntry from './AuditLogEntry.vue';
+import TablePagination from '../partials/TablePagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -24,6 +25,7 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
             const resp = await $grpc.getRectorClient().
                 viewAuditLog(req, null);
 
+            pagination.value = resp.getPagination();
             return res(resp.getLogsList());
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -65,6 +67,9 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
                                             Time
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            User
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Service
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
@@ -91,6 +96,9 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Time
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            User
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Service

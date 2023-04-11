@@ -426,6 +426,49 @@ export class DocStoreServiceClient {
     this.methodDescriptorUpdateDocument);
   }
 
+  methodDescriptorDeleteDocument = new grpcWeb.MethodDescriptor(
+    '/services.docstore.DocStoreService/DeleteDocument',
+    grpcWeb.MethodType.UNARY,
+    services_docstore_docstore_pb.DeleteDocumentRequest,
+    services_docstore_docstore_pb.DeleteDocumentResponse,
+    (request: services_docstore_docstore_pb.DeleteDocumentRequest) => {
+      return request.serializeBinary();
+    },
+    services_docstore_docstore_pb.DeleteDocumentResponse.deserializeBinary
+  );
+
+  deleteDocument(
+    request: services_docstore_docstore_pb.DeleteDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_docstore_docstore_pb.DeleteDocumentResponse>;
+
+  deleteDocument(
+    request: services_docstore_docstore_pb.DeleteDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.DeleteDocumentResponse) => void): grpcWeb.ClientReadableStream<services_docstore_docstore_pb.DeleteDocumentResponse>;
+
+  deleteDocument(
+    request: services_docstore_docstore_pb.DeleteDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_docstore_docstore_pb.DeleteDocumentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.docstore.DocStoreService/DeleteDocument',
+        request,
+        metadata || {},
+        this.methodDescriptorDeleteDocument,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.docstore.DocStoreService/DeleteDocument',
+    request,
+    metadata || {},
+    this.methodDescriptorDeleteDocument);
+  }
+
   methodDescriptorGetDocumentReferences = new grpcWeb.MethodDescriptor(
     '/services.docstore.DocStoreService/GetDocumentReferences',
     grpcWeb.MethodType.UNARY,

@@ -905,6 +905,38 @@ export namespace UpdateDocumentResponse {
   }
 }
 
+export class DeleteDocumentRequest extends jspb.Message {
+  getDocumentId(): number;
+  setDocumentId(value: number): DeleteDocumentRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteDocumentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteDocumentRequest): DeleteDocumentRequest.AsObject;
+  static serializeBinaryToWriter(message: DeleteDocumentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteDocumentRequest;
+  static deserializeBinaryFromReader(message: DeleteDocumentRequest, reader: jspb.BinaryReader): DeleteDocumentRequest;
+}
+
+export namespace DeleteDocumentRequest {
+  export type AsObject = {
+    documentId: number,
+  }
+}
+
+export class DeleteDocumentResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteDocumentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteDocumentResponse): DeleteDocumentResponse.AsObject;
+  static serializeBinaryToWriter(message: DeleteDocumentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteDocumentResponse;
+  static deserializeBinaryFromReader(message: DeleteDocumentResponse, reader: jspb.BinaryReader): DeleteDocumentResponse;
+}
+
+export namespace DeleteDocumentResponse {
+  export type AsObject = {
+  }
+}
+
 export class GetDocumentAccessRequest extends jspb.Message {
   getDocumentId(): number;
   setDocumentId(value: number): GetDocumentAccessRequest;

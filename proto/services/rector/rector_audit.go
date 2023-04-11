@@ -10,6 +10,7 @@ import (
 
 var (
 	audit = table.FivenetAuditLog.AS("auditentry")
+	user  = table.Users.AS("usershort")
 )
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
@@ -36,9 +37,18 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 	stmt := audit.
 		SELECT(
 			audit.AllColumns,
+			user.ID,
+			user.Identifier,
+			user.Job,
+			user.JobGrade,
+			user.Firstname,
+			user.Lastname,
 		).
 		FROM(
-			audit,
+			audit.
+				LEFT_JOIN(user,
+					user.ID.EQ(audit.UserID),
+				),
 		).
 		ORDER_BY(
 			audit.CreatedAt.ASC(),

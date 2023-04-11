@@ -9,6 +9,8 @@ import "resources/documents/documents.proto";
 import "resources/documents/templates.proto";
 import "validate/validate.proto";
 
+// Templates ==================================================================
+
 message ListTemplatesRequest {}
 
 message ListTemplatesResponse {
@@ -47,6 +49,8 @@ message DeleteTemplateRequest {
 }
 
 message DeleteTemplateResponse {}
+
+// Documents ==================================================================
 
 message FindDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
@@ -114,6 +118,8 @@ message RemoveDocumentRelationRequest {
 
 message RemoveDocumentRelationResponse {}
 
+// Doc Comments ===============================================================
+
 message GetDocumentCommentsRequest {
   resources.common.database.PaginationRequest pagination = 1;
   uint64 document_id = 2;
@@ -179,6 +185,14 @@ message UpdateDocumentResponse {
   uint64 document_id = 1; // @gotags: alias:"id"
 }
 
+message DeleteDocumentRequest {
+  uint64 document_id = 1; // @gotags: alias:"id"
+}
+
+message DeleteDocumentResponse {}
+
+// Doc Access =================================================================
+
 message GetDocumentAccessRequest {
   uint64 document_id = 1;
 }
@@ -243,7 +257,6 @@ service DocStoreService {
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
   // @perm: name=ListTemplates
   rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
-
   // @perm: description="Create document templates"
   rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse);
   // @perm: name=CreateTemplate
@@ -259,6 +272,8 @@ service DocStoreService {
   rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
   // @perm: description="Edit/ Update an existing document"
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
+  // @perm: description="Delete a document"
+  rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
 
   // @perm: name=GetDocument
   rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse);

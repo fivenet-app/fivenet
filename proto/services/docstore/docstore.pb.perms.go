@@ -55,6 +55,11 @@ func init() {
 		},
 		{
 			Key:         DocStoreServicePermKey,
+			Name:        "DeleteDocument",
+			Description: "Delete a document",
+		},
+		{
+			Key:         DocStoreServicePermKey,
 			Name:        "DeleteDocumentCategory",
 			Description: "Delete document categories",
 		},

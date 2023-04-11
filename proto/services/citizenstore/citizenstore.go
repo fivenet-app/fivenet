@@ -29,6 +29,10 @@ var (
 	userAct   = table.FivenetUserActivity
 )
 
+var (
+	FailedQueryErr = status.Error(codes.Internal, "Failed to get/create/update document data!")
+)
+
 type Server struct {
 	CitizenStoreServiceServer
 
@@ -92,7 +96,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	resp := &FindUsersResponse{
@@ -139,7 +143,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	}
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	database.PaginationHelper(resp.Pagination,
@@ -194,7 +198,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.User); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	// Check if user can see licenses and fetch them separately
@@ -217,7 +221,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
 			if !errors.Is(qrm.ErrNoRows, err) {
-				return nil, err
+				return nil, FailedQueryErr
 			}
 		}
 	}
@@ -272,7 +276,7 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
+			return nil, FailedQueryErr
 		}
 	}
 
@@ -295,7 +299,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -313,7 +317,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	// Create user activity
@@ -329,12 +333,12 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			OldValue:     &oldValue,
 			NewValue:     &newValue,
 		}); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	return &SetUserPropsResponse{}, nil

@@ -10,11 +10,17 @@ import (
 	"github.com/galexrt/fivenet/proto/resources/common/database"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
 	vehicle = table.OwnedVehicles.AS("vehicle")
 	user    = table.Users.AS("usershort")
+)
+
+var (
+	FailedQueryErr = status.Error(codes.Internal, "Failed to retrieve vehicles data!")
 )
 
 type Server struct {
@@ -66,7 +72,7 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	resp := &FindVehiclesResponse{
@@ -103,7 +109,7 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 		LIMIT(database.DefaultPageLimit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Vehicles); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	database.PaginationHelper(resp.Pagination,
