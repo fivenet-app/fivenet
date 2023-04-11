@@ -23,6 +23,8 @@ var global =
 
 var resources_timestamp_timestamp_pb = require('../../resources/timestamp/timestamp_pb.js');
 goog.object.extend(proto, resources_timestamp_timestamp_pb);
+var resources_users_users_pb = require('../../resources/users/users_pb.js');
+goog.object.extend(proto, resources_users_users_pb);
 goog.exportSymbol('proto.resources.rector.AuditEntry', null, global);
 goog.exportSymbol('proto.resources.rector.EVENT_TYPE', null, global);
 /**
@@ -81,10 +83,11 @@ proto.resources.rector.AuditEntry.toObject = function(includeInstance, msg) {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     createdAt: (f = msg.getCreatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     userId: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    service: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    method: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    state: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    data: jspb.Message.getFieldWithDefault(msg, 7, "")
+    user: (f = msg.getUser()) && resources_users_users_pb.UserShort.toObject(includeInstance, f),
+    service: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    method: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    state: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    data: jspb.Message.getFieldWithDefault(msg, 8, "")
   };
 
   if (includeInstance) {
@@ -135,18 +138,23 @@ proto.resources.rector.AuditEntry.deserializeBinaryFromReader = function(msg, re
       msg.setUserId(value);
       break;
     case 4:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setService(value);
+      var value = new resources_users_users_pb.UserShort;
+      reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
+      msg.setUser(value);
       break;
     case 5:
       var value = /** @type {string} */ (reader.readString());
-      msg.setMethod(value);
+      msg.setService(value);
       break;
     case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setMethod(value);
+      break;
+    case 7:
       var value = /** @type {!proto.resources.rector.EVENT_TYPE} */ (reader.readEnum());
       msg.setState(value);
       break;
-    case 7:
+    case 8:
       var value = /** @type {string} */ (reader.readString());
       msg.setData(value);
       break;
@@ -201,31 +209,39 @@ proto.resources.rector.AuditEntry.serializeBinaryToWriter = function(message, wr
       f
     );
   }
-  f = message.getService();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getUser();
+  if (f != null) {
+    writer.writeMessage(
       4,
-      f
+      f,
+      resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
   }
-  f = message.getMethod();
+  f = message.getService();
   if (f.length > 0) {
     writer.writeString(
       5,
       f
     );
   }
-  f = message.getState();
-  if (f !== 0.0) {
-    writer.writeEnum(
+  f = message.getMethod();
+  if (f.length > 0) {
+    writer.writeString(
       6,
       f
     );
   }
-  f = message.getData();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getState();
+  if (f !== 0.0) {
+    writer.writeEnum(
       7,
+      f
+    );
+  }
+  f = /** @type {string} */ (jspb.Message.getField(message, 8));
+  if (f != null) {
+    writer.writeString(
+      8,
       f
     );
   }
@@ -306,28 +322,47 @@ proto.resources.rector.AuditEntry.prototype.setUserId = function(value) {
 
 
 /**
- * optional string service = 4;
+ * optional resources.users.UserShort user = 4;
+ * @return {?proto.resources.users.UserShort}
+ */
+proto.resources.rector.AuditEntry.prototype.getUser = function() {
+  return /** @type{?proto.resources.users.UserShort} */ (
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 4));
+};
+
+
+/**
+ * @param {?proto.resources.users.UserShort|undefined} value
+ * @return {!proto.resources.rector.AuditEntry} returns this
+*/
+proto.resources.rector.AuditEntry.prototype.setUser = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.resources.rector.AuditEntry} returns this
+ */
+proto.resources.rector.AuditEntry.prototype.clearUser = function() {
+  return this.setUser(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.rector.AuditEntry.prototype.hasUser = function() {
+  return jspb.Message.getField(this, 4) != null;
+};
+
+
+/**
+ * optional string service = 5;
  * @return {string}
  */
 proto.resources.rector.AuditEntry.prototype.getService = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.resources.rector.AuditEntry} returns this
- */
-proto.resources.rector.AuditEntry.prototype.setService = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
-};
-
-
-/**
- * optional string method = 5;
- * @return {string}
- */
-proto.resources.rector.AuditEntry.prototype.getMethod = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
@@ -336,17 +371,35 @@ proto.resources.rector.AuditEntry.prototype.getMethod = function() {
  * @param {string} value
  * @return {!proto.resources.rector.AuditEntry} returns this
  */
-proto.resources.rector.AuditEntry.prototype.setMethod = function(value) {
+proto.resources.rector.AuditEntry.prototype.setService = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
 /**
- * optional EVENT_TYPE state = 6;
+ * optional string method = 6;
+ * @return {string}
+ */
+proto.resources.rector.AuditEntry.prototype.getMethod = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.rector.AuditEntry} returns this
+ */
+proto.resources.rector.AuditEntry.prototype.setMethod = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional EVENT_TYPE state = 7;
  * @return {!proto.resources.rector.EVENT_TYPE}
  */
 proto.resources.rector.AuditEntry.prototype.getState = function() {
-  return /** @type {!proto.resources.rector.EVENT_TYPE} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {!proto.resources.rector.EVENT_TYPE} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
@@ -355,16 +408,16 @@ proto.resources.rector.AuditEntry.prototype.getState = function() {
  * @return {!proto.resources.rector.AuditEntry} returns this
  */
 proto.resources.rector.AuditEntry.prototype.setState = function(value) {
-  return jspb.Message.setProto3EnumField(this, 6, value);
+  return jspb.Message.setProto3EnumField(this, 7, value);
 };
 
 
 /**
- * optional string data = 7;
+ * optional string data = 8;
  * @return {string}
  */
 proto.resources.rector.AuditEntry.prototype.getData = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
 
@@ -373,7 +426,25 @@ proto.resources.rector.AuditEntry.prototype.getData = function() {
  * @return {!proto.resources.rector.AuditEntry} returns this
  */
 proto.resources.rector.AuditEntry.prototype.setData = function(value) {
-  return jspb.Message.setProto3StringField(this, 7, value);
+  return jspb.Message.setField(this, 8, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.rector.AuditEntry} returns this
+ */
+proto.resources.rector.AuditEntry.prototype.clearData = function() {
+  return jspb.Message.setField(this, 8, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.rector.AuditEntry.prototype.hasData = function() {
+  return jspb.Message.getField(this, 8) != null;
 };
 
 

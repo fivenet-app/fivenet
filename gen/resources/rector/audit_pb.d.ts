@@ -1,6 +1,7 @@
 import * as jspb from 'google-protobuf'
 
 import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
+import * as resources_users_users_pb from '../../resources/users/users_pb';
 
 
 export class AuditEntry extends jspb.Message {
@@ -15,6 +16,11 @@ export class AuditEntry extends jspb.Message {
   getUserId(): number;
   setUserId(value: number): AuditEntry;
 
+  getUser(): resources_users_users_pb.UserShort | undefined;
+  setUser(value?: resources_users_users_pb.UserShort): AuditEntry;
+  hasUser(): boolean;
+  clearUser(): AuditEntry;
+
   getService(): string;
   setService(value: string): AuditEntry;
 
@@ -26,6 +32,8 @@ export class AuditEntry extends jspb.Message {
 
   getData(): string;
   setData(value: string): AuditEntry;
+  hasData(): boolean;
+  clearData(): AuditEntry;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AuditEntry.AsObject;
@@ -40,10 +48,21 @@ export namespace AuditEntry {
     id: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     userId: number,
+    user?: resources_users_users_pb.UserShort.AsObject,
     service: string,
     method: string,
     state: EVENT_TYPE,
-    data: string,
+    data?: string,
+  }
+
+  export enum UserCase { 
+    _USER_NOT_SET = 0,
+    USER = 4,
+  }
+
+  export enum DataCase { 
+    _DATA_NOT_SET = 0,
+    DATA = 8,
   }
 }
 

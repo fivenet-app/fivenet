@@ -4,6 +4,7 @@ package resources.rector;
 option go_package = "github.com/galexrt/fivenet/proto/resources/rector;rector";
 
 import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
 
 enum EVENT_TYPE {
   UNKNOWN = 0;
@@ -16,8 +17,9 @@ message AuditEntry {
   uint64 id = 1; // @gotags: alias:"id"
   resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   uint64 user_id = 3; // @gotags: alias:"user_id"
-  string service = 4; // @gotags: alias:"service"
-  string method = 5; // @gotags: alias:"method"
-  EVENT_TYPE state = 6; // @gotags: alias:"state"
-  string data = 7; // @gotags: alias:"data"
+  optional resources.users.UserShort user = 4;
+  string service = 5; // @gotags: alias:"service"
+  string method = 6; // @gotags: alias:"method"
+  EVENT_TYPE state = 7; // @gotags: alias:"state"
+  optional string data = 8; // @gotags: alias:"data"
 }
