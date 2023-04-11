@@ -13,16 +13,27 @@ definePageMeta({
     requiresAuth: false,
 });
 
+const discordLink = 'https://discord.gg/sWvkHuVQA5';
+const repoLink = 'https://github.com/galexrt/fivenet';
+
 const faqs = [
     {
-        question: "Who has created FiveNet?",
-        answer: "Galexrt and Clover, are the main people working on FiveNet.",
+        question: 'Who has created FiveNet?',
+        answer: 'Galexrt and Clover, are the main people working on FiveNet at the moment.',
     },
     {
-        question: "Why was FiveNet created?",
-        answer: "It started out as a way for Galexrt to learn frontend development and then it spiraled into a way for ModernV server to have an alternative to VPC CopNet/ MedicNet.",
+        question: 'Why was FiveNet created?',
+        answer: 'It started out as a way for Galexrt to learn frontend development and then it spiraled into a way for ModernV server to have an alternative to VPC CopNet/ MedicNet.',
     },
-]
+    {
+        question: 'Where can I find the FiveNet development roadmap?',
+        answer: `<a class="underline" href="${repoLink}/#readme">Click here (GitHub galexrt/fivenet README)</a>.`,
+    },
+    {
+        question: 'I found a bug or other issue with FiveNet. Where do I report it?',
+        answer: `Please report on <a class="underline" href="${discordLink}">the Galexrt Discord server</a> or on <a class="underline" href="${repoLink}">the FiveNet GitHub project</a>.`,
+    },
+] as { question: string; answer: string; }[];
 </script>
 
 <template>
@@ -120,7 +131,7 @@ const faqs = [
                                     </DisclosureButton>
                                 </dt>
                                 <DisclosurePanel as="dd" class="mt-2 pr-12">
-                                    <p class="text-base leading-7 text-gray-300">{{ faq.answer }}</p>
+                                    <p v-html="faq.answer" class="text-base leading-7 text-gray-300"></p>
                                 </DisclosurePanel>
                             </Disclosure>
                         </dl>
@@ -138,7 +149,7 @@ const faqs = [
                             FiveNet.
                         </p>
                         <div class="mt-8">
-                            <a href="https://discord.gg/sWvkHuVQA5"
+                            <a :href="discordLink"
                                 class="inline-flex items-center gap-x-2 rounded-md bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600">
                                 <DiscordLogo class="-ml-0.5 h-5 w-5" aria-hidden="true" />
                                 <span>

@@ -88,7 +88,6 @@ watchDebounced(isMoving, () => {
     if (currentHash.value !== newHash) currentHash.value = newHash;
 }, { debounce: 1000, maxWait: 3000 });
 
-
 async function updateBackground(layer: string): Promise<void> {
     switch (layer) {
         case 'Atlas':
@@ -138,16 +137,16 @@ async function onMapReady($event: any): Promise<void> {
     const startPos = parseHash(startingHash);
     if (startPos) $event.setView(startPos.latlng, startPos.zoom);
 
-    $event.on('baselayerchange', async (event: L.LayersControlEvent) => { updateBackground(event.name) });
+    map.on('baselayerchange', async (event: L.LayersControlEvent) => { updateBackground(event.name) });
 
-    $event.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {
+    map.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {
         mouseLat.value = (Math.round(event.latlng.lat * 100000) / 100000).toFixed(3);
         mouseLong.value = (Math.round(event.latlng.lng * 100000) / 100000).toFixed(3);
     });
 
-    $event.on('movestart', async () => { isMoving.value = true });
+    map.on('movestart', async () => { isMoving.value = true });
 
-    $event.on('moveend', async () => { isMoving.value = false });
+    map.on('moveend', async () => { isMoving.value = false });
 
     startDataStream();
 }

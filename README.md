@@ -1,36 +1,14 @@
-<img alt="FiveNet Logo" src="src/public/images/logo.png" width="250">
+<p align="center">
+    <img alt="FiveNet Logo" src="src/public/images/logo.png" width="250">
+</p>
 
 # FiveNet
 
-## Features
+* [Upcoming Release Plan](https://github.com/users/galexrt/projects/1/views/1)
+* [Future Ideas and Project Roadmap](https://github.com/users/galexrt/projects/2/views/1)
 
-- [ ] FiveM Integration plugin
-    - [ ] Authentication
-        - [ ] Create in-game "register" command to get a token with which one can then set their username and password
-- [ ] "Faction Leader Control Panel" aka "Rector Service"
-    - [ ] Audit Log (Rector)
-- [ ] Better error handling
-    - [ ] Backend: use predefined errors
-    - [ ] Frontend: Start using client-side form validation
-- [ ] Final polishing pass before release of version 1.0.0
-    - [ ] Unify the design
-    - [ ] Clean up Code
-
-### Future
-
-- [ ] Documents
-    - [ ] Different Styles/ Types (e.g., Arbeitsunfähigkeitsschein, Polizeireport)
-- [ ] Employee Management (Jobs)
-    - [ ] Create Notes and Warns for Employees ("Führungsregister")
-    - [ ] Promote and Demote Employees
-    - [ ] Fire employees
-    - [ ] Training Modules
-        - [ ] Calendar
-        - [ ] History
-- [ ] Discord integration
-    - [ ] Automatic Role assignment
-
-### Completed
+<details>
+  <summary>Show Complete Feature List</summary>
 
 - [x] Authentication
     - [x] Separate "accounts" table that allows users to log in to the network
@@ -98,29 +76,30 @@
         - [x] Edit Categories
         - [x] Delete categories
 - [x] FiveM Integration plugin
-    - [x] Livemap
-        - [x] Write a FiveM plugin that writes player positions into our location table
+    - [x] Livemap - Player position tracker plugin
+
+</details>
 
 ## Development
 
 ### Required Tools
 
-* Golang 1.20
-    * Assumption is that your `$GOPATH/bin` is part of your `$PATH`.
+* Golang 1.20 or higher
+    * The assumption is that your `PATH` contains `$GOPATH/bin`.
 * `yarn`
 * [`protoc`](https://grpc.io/docs/protoc-installation/)
     * Depending on your OS, Deb-based `libprotobuf-dev`, Fedora: `protobuf-dev`
 * `protoc-gen-go` (might be available via your OSes package manager):
     * `go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28`
     * `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2`
-* `protoc-gen-js`: Run `yarn` (without any args)
+* `protoc-gen-js`: Run `yarn`, without any args, in the root of the repository to install this and other dependencies.
 * `protoc-gen-grpc-web`: Download and install the latest release from https://github.com/grpc/grpc-web/releases
 * `protoc-gen-validate`: Download and install the latest release from https://github.com/bufbuild/protoc-gen-validate/releases
 * `protoc-go-inject-tag`: Run `go install github.com/favadi/protoc-go-inject-tag@latest`
 
 ### Codium/ VSCode Users
 
-Make sure to disable the builtin Typescript plugin.
+Make sure to disable the built-in Typescript plugin.
 
 > 1. In your project workspace, bring up the command palette with Ctrl + Shift + P (macOS: Cmd + Shift + P).
 > 2. Type built and select "Extensions: Show Built-in Extensions".
@@ -136,4 +115,4 @@ You must use this forked version: [Github jrapoport/grpc-web-devtools](https://g
 
 ## Credits
 
-Based upon https://gist.github.com/NelsonMinar/6600524#file-maketiles-sh and VPC's CopNet/ MedicNet livemap code.
+Based upon [NelsonMinar's Map Viewer Gist](https://gist.github.com/NelsonMinar/6600524) and VPC's CopNet/ MedicNet livemap code.
