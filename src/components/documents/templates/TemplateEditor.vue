@@ -91,31 +91,31 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createTempl
             <div class="mt-2">
                 <Field as="textarea" rows="4" name="title" id="title"
                     class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
-                <ErrorMessage name="title" as="p" class="mt-2 text-sm text-red-500" />
+                <ErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <label for="title" class="block text-sm font-medium leading-6 text-gray-100">Description</label>
             <div class="mt-2">
                 <Field as="textarea" rows="4" name="description" id="description"
                     class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
-                <ErrorMessage name="description" as="p" class="mt-2 text-sm text-red-500" />
+                <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <label for="contentTitle" class="block text-sm font-medium leading-6 text-gray-100">Content Title</label>
             <div class="mt-2">
                 <Field as="textarea" rows="4" name="contentTitle" id="contentTitle"
                     class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
-                <ErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-red-500" />
+                <ErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <label for="content" class="block text-sm font-medium leading-6 text-gray-100">Content</label>
             <div class="mt-2">
                 <Field as="textarea" rows="4" name="content" id="content"
                     class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
-                <ErrorMessage name="content" as="p" class="mt-2 text-sm text-red-500" />
+                <ErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <label for="schema" class="block text-sm font-medium leading-6 text-gray-100">Schema</label>
             <div class="mt-2">
                 <Field as="textarea" rows="4" name="schema" id="schema"
                     class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
-                <ErrorMessage name="schema" as="p" class="mt-2 text-sm text-red-500" />
+                <ErrorMessage name="schema" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <button type="submit"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">

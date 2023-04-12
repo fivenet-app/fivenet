@@ -132,7 +132,7 @@ onMounted(() => {
                         <div class="flex flex-row gap-2">
                             <div v-if="document?.getClosed()"
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
-                                <LockClosedIcon class="w-5 h-5 text-error-500" aria-hidden="true" />
+                                <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                                 <span class="text-sm font-medium text-error-700">Closed</span>
                             </div>
                             <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
