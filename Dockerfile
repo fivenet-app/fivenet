@@ -12,7 +12,7 @@ RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o fivenet .
 
 FROM docker.io/library/alpine:3.17.2
 WORKDIR /app
-RUN apk --no-cache add ca-certificates && \
+RUN apk --no-cache add ca-certificates tzdata && \
     mkdir -p ./.output/public
 COPY --from=nodebuilder /app/.output/public ./.output/public
 COPY --from=gobuilder /go/src/github.com/galexrt/fivenet/fivenet /usr/local/bin
