@@ -237,7 +237,6 @@ func (s *Server) refreshDispatches() error {
 			d.Name,
 			d.Number,
 			d.Message,
-			d.Photo,
 			d.Gps,
 			d.Owner,
 			d.Jobm,
@@ -252,7 +251,10 @@ func (s *Server) refreshDispatches() error {
 				d.Time.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE))),
 			),
 		).
-		ORDER_BY(d.Time.DESC()).
+		ORDER_BY(
+			d.Owner.ASC(),
+			d.Time.DESC(),
+		).
 		LIMIT(40)
 
 	var dest []*model.GksphoneJobMessage
@@ -277,6 +279,13 @@ func (s *Server) refreshDispatches() error {
 			iconColor = "DA3E52"
 		}
 
+		var name string
+		if v.Anon != nil && *v.Anon == "1" {
+			name = "Anonym"
+		} else {
+			name = *v.Name
+		}
+
 		// Remove the "json" leftovers (in the gksphone table it looks like `["ambulance"]`)
 		job := strings.TrimSuffix(strings.TrimPrefix(*v.Jobm, "[\""), "\"]")
 		if _, ok := markers[job]; !ok {
@@ -288,7 +297,7 @@ func (s *Server) refreshDispatches() error {
 			Id:        v.ID,
 			Icon:      icon,
 			IconColor: iconColor,
-			Name:      *v.Name,
+			Name:      name,
 			Popup:     *v.Message,
 			Job:       job,
 		}
