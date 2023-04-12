@@ -38,6 +38,8 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.fivenet.image.repository }}:{{ .Values.fivenet.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.fivenet.image.pullPolicy }}
+          env:
+            {{- toYaml .Values.fivenet.additionalEnv | nindent 12 }}
           ports:
             - name: http
               containerPort: 8080

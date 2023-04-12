@@ -86,6 +86,7 @@ fivenet:
     httpGet:
       path: /
       port: http
+  additionalEnv: []
   config:
     logLevel: "DEBUG"
     # debug or release
