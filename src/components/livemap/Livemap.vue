@@ -11,8 +11,9 @@ import { ValueOf } from '~/utils/types';
 import { DispatchMarker, UserMarker } from '@fivenet/gen/resources/livemap/livemap_pb';
 import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { watchDebounced } from '@vueuse/core';
-import { dispatchNotification } from '../partials/notification';
+import { dispatchNotification } from '~/components/partials/notification';
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { toDateRelativeString } from '~/utils/time';
 
 const { $grpc } = useNuxtApp();
 
@@ -335,13 +336,13 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
                     :icon="getIcon('dispatch', marker.getIcon(), marker.getIconColor()) as L.Icon">
                     <LPopup :options="{ closeButton: false }"
-                        :content="`<span class='font-semibold'>Dispatch ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span class='italic'>Sent by ${marker.getName()}</span>`">
+                        :content="`<span class='font-semibold'>Dispatch ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span>${toDateRelativeString(marker.getUpdatedAt())}</span><br><span class='italic'>Sent by ${marker.getName()}</span>`">
                     </LPopup>
                 </LMarker>
             </LLayerGroup>
 
             <LControl position="bottomleft" class="leaflet-control-attribution mouseposition">
-                <b>Latitude</b>: {{ mouseLat }} | <b>Longtiude</b>: {{ mouseLong }}
+                <b>Latitude</b>: {{ mouseLat }} | <b>Longtitude</b>: {{ mouseLong }}
             </LControl>
             <LControl position="topleft">
                 <div class="form-control">

@@ -17,6 +17,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	jobs "github.com/galexrt/fivenet/proto/resources/jobs"
 	"github.com/galexrt/fivenet/proto/resources/livemap"
+	"github.com/galexrt/fivenet/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -241,6 +242,7 @@ func (s *Server) refreshDispatches() error {
 			d.Owner,
 			d.Jobm,
 			d.Anon,
+			d.Time,
 		).
 		FROM(
 			d,
@@ -300,6 +302,7 @@ func (s *Server) refreshDispatches() error {
 			Name:      name,
 			Popup:     *v.Message,
 			Job:       job,
+			UpdatedAt: timestamp.New(v.Time),
 		}
 
 		s.c.EnrichJobName(marker)
