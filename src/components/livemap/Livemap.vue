@@ -298,9 +298,9 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 </style>
 
 <template>
-    <div class="relative w-full h-full">
-        <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center"
-            style="background-color: rgba(62, 60, 62, 0.5); z-index: 99999">
+    <div class="relative w-full h-full z-0">
+        <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center z-20"
+            style="background-color: rgba(62, 60, 62, 0.5)">
             <DataPendingBlock v-if="!error && stream === null" message="Starting Livemap data stream..." />
             <DataErrorBlock v-else-if="error" title="Failed to stream Livemap data!" :retry="() => { startDataStream() }" />
         </div>

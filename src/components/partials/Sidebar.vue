@@ -367,7 +367,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                     leave-from-class="transform scale-100 opacity-100"
                                     leave-to-class="transform scale-95 opacity-0">
                                     <MenuItems
-                                        class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none">
+                                        class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none z-40">
                                         <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }"
                                             v-can="item.permission">
                                         <NuxtLink :to="item.href"
