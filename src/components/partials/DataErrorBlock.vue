@@ -26,7 +26,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="p-4 rounded-md bg-red-50 max-w-xs mx-auto">
+    <div class="p-4 rounded-md bg-red-50 max-w-md mx-auto">
         <div class="flex">
             <div class="flex-shrink-0">
                 <XCircleIcon class="h-5 w-5 text-red-400" aria-hidden="true" />
