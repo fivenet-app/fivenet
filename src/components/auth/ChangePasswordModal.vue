@@ -24,6 +24,8 @@ defineEmits<{
     (e: 'close'): void,
 }>();
 
+const newPassword = ref<string>('');
+
 async function changePassword(current: string, newPassword: string): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new ChangePasswordRequest();
@@ -98,7 +100,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                                 <div>
                                                     <Field id="newPassword" name="newPassword" type="password"
                                                         autocomplete="new-password" placeholder="New Password"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        v-model:model-value="newPassword" />
+                                                    <PartialsPasswordStrengthMeter :input="newPassword" class="mt-2" />
                                                     <ErrorMessage name="newPassword" as="p"
                                                         class="mt-2 text-sm text-error-400" />
                                                 </div>
