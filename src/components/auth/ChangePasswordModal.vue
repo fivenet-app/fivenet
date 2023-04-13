@@ -71,63 +71,57 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                         enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200"
                         leave-from="opacity-100 translate-y-0 sm:scale-100"
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                        <div>
-                            <DialogPanel
-                                class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-6xl sm:p-6">
-                                <div>
-                                    <div>
-                                        <div
-                                            class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800">
-                                            <KeyIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
-                                        </div>
-                                        <div class="mt-3 text-center sm:mt-5">
-                                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                                Change Password
-                                            </DialogTitle>
-                                            <div class="mt-2">
-                                                <form @submit="onSubmit" class="my-2 space-y-6">
-                                                    <div>
-                                                        <label for="currentPassword" class="sr-only">Password</label>
-                                                        <div>
-                                                            <Field id="currentPassword" name="currentPassword"
-                                                                type="password" autocomplete="current-password"
-                                                                placeholder="Current Password"
-                                                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                                                            <ErrorMessage name="currentPassword" as="p"
-                                                                class="mt-2 text-sm text-error-400" />
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <label for="newPassword" class="sr-only">Password</label>
-                                                        <div>
-                                                            <Field id="newPassword" name="newPassword" type="password"
-                                                                autocomplete="new-password" placeholder="New Password"
-                                                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                                                            <ErrorMessage name="newPassword" as="p"
-                                                                class="mt-2 text-sm text-error-400" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div>
-                                                        <button type="submit"
-                                                            class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-                                                            Change Password
-                                                        </button>
-                                                    </div>
-                                                </form>
+                        <DialogPanel
+                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                            <div>
+                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800">
+                                    <KeyIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
+                                </div>
+                                <div class="mt-3 text-center sm:mt-5">
+                                    <DialogTitle as="h3" class="text-base font-semibold leading-6">
+                                        Change Password
+                                    </DialogTitle>
+                                    <div class="mt-2">
+                                        <form @submit="onSubmit" class="my-2 space-y-6">
+                                            <div>
+                                                <label for="currentPassword" class="sr-only">Password</label>
+                                                <div>
+                                                    <Field id="currentPassword" name="currentPassword" type="password"
+                                                        autocomplete="current-password" placeholder="Current Password"
+                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                                    <ErrorMessage name="currentPassword" as="p"
+                                                        class="mt-2 text-sm text-error-400" />
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="gap-2 mt-5 sm:mt-4 sm:flex">
-                                        <button type="button"
-                                            class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                            @click="$emit('close')" ref="cancelButtonRef">
-                                            Close
-                                        </button>
+                                            <div>
+                                                <label for="newPassword" class="sr-only">Password</label>
+                                                <div>
+                                                    <Field id="newPassword" name="newPassword" type="password"
+                                                        autocomplete="new-password" placeholder="New Password"
+                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                                    <ErrorMessage name="newPassword" as="p"
+                                                        class="mt-2 text-sm text-error-400" />
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <button type="submit"
+                                                    class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+                                                    Change Password
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                            </DialogPanel>
-                        </div>
+                            </div>
+                            <div class="gap-2 mt-5 sm:mt-4 sm:flex">
+                                <button type="button"
+                                    class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    @click="$emit('close')" ref="cancelButtonRef">
+                                    Close
+                                </button>
+                            </div>
+                        </DialogPanel>
                     </TransitionChild>
                 </div>
             </div>
