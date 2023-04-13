@@ -3,6 +3,7 @@ import { useClipboardStore, ClipboardVehicle } from '~/store/clipboard';
 import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { TruckIcon } from '@heroicons/vue/20/solid';
+import { dispatchNotification } from '~/components/partials/notification';
 
 const store = useClipboardStore();
 
@@ -57,23 +58,27 @@ async function select(item: ClipboardVehicle): Promise<void> {
     }
 }
 
-async function remove(item: ClipboardVehicle): Promise<void> {
+async function remove(item: ClipboardVehicle, notify: boolean): Promise<void> {
     const idx = selected.value.indexOf(item);
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
     }
 
-    store.removeVehicle(item.plate);
+    await store.removeVehicle(item.plate);
+    if (notify) {
+        dispatchNotification({ title: 'Clipboard: Vehicle removed', content: 'Selected vehicle removed from clipboard', duration: 3500 });
+    }
 }
 
 async function removeAll(): Promise<void> {
     while (selected.value.length > 0) {
         selected.value.forEach((v) => {
-            remove(v);
+            remove(v, false);
         });
     }
 
     emit('statisfied', false);
+    dispatchNotification({ title: 'Clipboard: Vehicles removed', content: 'All vehicles have been removed from your clipboard', duration: 3500 });
 }
 
 watch(props, (newVal) => {
@@ -149,7 +154,7 @@ watch(props, (newVal) => {
                     {{ item.owner.firstname }}, {{ item.owner.lastname }}
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                    <button @click="remove(item)">
+                    <button @click="remove(item, true)">
                         <TrashIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </td>

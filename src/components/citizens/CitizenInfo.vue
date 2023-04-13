@@ -8,6 +8,7 @@ import VehiclesList from '~/components/vehicles/VehiclesList.vue';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { PlusIcon } from '@heroicons/vue/24/solid';
+import { dispatchNotification } from '~/components/partials/notification';
 
 const tabs = [
     { name: 'Profile', icon: UserIcon, permission: 'CitizenStoreService.FindUsers' },
@@ -27,6 +28,7 @@ const props = defineProps({
 
 function addToClipboard(): void {
     store.addUser(props.user);
+    dispatchNotification({ title: 'Clipboard: Citizen added', content: 'Citizen has been added to clipboard', duration: 3500 });
 }
 </script>
 

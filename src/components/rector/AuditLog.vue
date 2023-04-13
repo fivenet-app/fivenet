@@ -3,11 +3,11 @@ import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/co
 import { AuditEntry } from '@fivenet/gen/resources/rector/audit_pb';
 import { ViewAuditLogRequest } from '@fivenet/gen/services/rector/rector_pb';
 import { RpcError } from 'grpc-web';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components//partials/DataErrorBlock.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import AuditLogEntry from './AuditLogEntry.vue';
-import TablePagination from '../partials/TablePagination.vue';
+import TablePagination from '~/components//partials/TablePagination.vue';
 
 const { $grpc } = useNuxtApp();
 

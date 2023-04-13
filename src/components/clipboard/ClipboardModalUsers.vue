@@ -3,6 +3,7 @@ import { useClipboardStore, ClipboardUser } from '~/store/clipboard';
 import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { UsersIcon } from '@heroicons/vue/20/solid';
+import { dispatchNotification } from '~/components/partials/notification';
 
 const store = useClipboardStore();
 
@@ -57,23 +58,27 @@ async function select(item: ClipboardUser): Promise<void> {
     }
 }
 
-async function remove(item: ClipboardUser): Promise<void> {
+async function remove(item: ClipboardUser, notify: boolean): Promise<void> {
     const idx = selected.value.indexOf(item);
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
     }
 
     await store.removeUser(item.id!);
+    if (notify) {
+        dispatchNotification({ title: 'Clipboard: Citizen removed', content: 'Selected citizen removed from clipboard', duration: 3500 });
+    }
 }
 
 async function removeAll(): Promise<void> {
     while (selected.value.length > 0) {
         selected.value.forEach((v) => {
-            remove(v);
+            remove(v, false);
         });
     }
 
     emit('statisfied', false);
+    dispatchNotification({ title: 'Clipboard: Citizens removed', content: 'All citizens have been removed from your clipboard', duration: 3500 });
 }
 
 watch(props, async (newVal) => {
@@ -146,7 +151,7 @@ watch(props, async (newVal) => {
                     {{ item.jobLabel }} (Rank: {{ item.jobGradeLabel }})
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                    <button @click="remove(item)">
+                    <button @click="remove(item, true)">
                         <TrashIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </td>

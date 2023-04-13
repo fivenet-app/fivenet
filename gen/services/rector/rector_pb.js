@@ -27,6 +27,8 @@ var resources_permissions_permissions_pb = require('../../resources/permissions/
 goog.object.extend(proto, resources_permissions_permissions_pb);
 var resources_rector_audit_pb = require('../../resources/rector/audit_pb.js');
 goog.object.extend(proto, resources_rector_audit_pb);
+var resources_timestamp_timestamp_pb = require('../../resources/timestamp/timestamp_pb.js');
+goog.object.extend(proto, resources_timestamp_timestamp_pb);
 goog.exportSymbol('proto.services.rector.AddPermToRoleRequest', null, global);
 goog.exportSymbol('proto.services.rector.AddPermToRoleResponse', null, global);
 goog.exportSymbol('proto.services.rector.CreateRoleRequest', null, global);
@@ -348,7 +350,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.services.rector.ViewAuditLogRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.services.rector.ViewAuditLogRequest.repeatedFields_, null);
 };
 goog.inherits(proto.services.rector.ViewAuditLogRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -2332,6 +2334,13 @@ proto.services.rector.GetPermissionsResponse.prototype.clearPermissionsList = fu
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.services.rector.ViewAuditLogRequest.repeatedFields_ = [2];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -2363,7 +2372,10 @@ proto.services.rector.ViewAuditLogRequest.prototype.toObject = function(opt_incl
  */
 proto.services.rector.ViewAuditLogRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f)
+    pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f),
+    userIdList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f,
+    from: (f = msg.getFrom()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    to: (f = msg.getTo()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -2405,6 +2417,22 @@ proto.services.rector.ViewAuditLogRequest.deserializeBinaryFromReader = function
       reader.readMessage(value,resources_common_database_database_pb.PaginationRequest.deserializeBinaryFromReader);
       msg.setPagination(value);
       break;
+    case 2:
+      var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedInt32() : [reader.readInt32()]);
+      for (var i = 0; i < values.length; i++) {
+        msg.addUserId(values[i]);
+      }
+      break;
+    case 3:
+      var value = new resources_timestamp_timestamp_pb.Timestamp;
+      reader.readMessage(value,resources_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setFrom(value);
+      break;
+    case 4:
+      var value = new resources_timestamp_timestamp_pb.Timestamp;
+      reader.readMessage(value,resources_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setTo(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2440,6 +2468,29 @@ proto.services.rector.ViewAuditLogRequest.serializeBinaryToWriter = function(mes
       1,
       f,
       resources_common_database_database_pb.PaginationRequest.serializeBinaryToWriter
+    );
+  }
+  f = message.getUserIdList();
+  if (f.length > 0) {
+    writer.writePackedInt32(
+      2,
+      f
+    );
+  }
+  f = message.getFrom();
+  if (f != null) {
+    writer.writeMessage(
+      3,
+      f,
+      resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getTo();
+  if (f != null) {
+    writer.writeMessage(
+      4,
+      f,
+      resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
   }
 };
@@ -2479,6 +2530,117 @@ proto.services.rector.ViewAuditLogRequest.prototype.clearPagination = function()
  */
 proto.services.rector.ViewAuditLogRequest.prototype.hasPagination = function() {
   return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * repeated int32 user_id = 2;
+ * @return {!Array<number>}
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.getUserIdList = function() {
+  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 2));
+};
+
+
+/**
+ * @param {!Array<number>} value
+ * @return {!proto.services.rector.ViewAuditLogRequest} returns this
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.setUserIdList = function(value) {
+  return jspb.Message.setField(this, 2, value || []);
+};
+
+
+/**
+ * @param {number} value
+ * @param {number=} opt_index
+ * @return {!proto.services.rector.ViewAuditLogRequest} returns this
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.addUserId = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 2, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.rector.ViewAuditLogRequest} returns this
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.clearUserIdList = function() {
+  return this.setUserIdList([]);
+};
+
+
+/**
+ * optional resources.timestamp.Timestamp from = 3;
+ * @return {?proto.resources.timestamp.Timestamp}
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.getFrom = function() {
+  return /** @type{?proto.resources.timestamp.Timestamp} */ (
+    jspb.Message.getWrapperField(this, resources_timestamp_timestamp_pb.Timestamp, 3));
+};
+
+
+/**
+ * @param {?proto.resources.timestamp.Timestamp|undefined} value
+ * @return {!proto.services.rector.ViewAuditLogRequest} returns this
+*/
+proto.services.rector.ViewAuditLogRequest.prototype.setFrom = function(value) {
+  return jspb.Message.setWrapperField(this, 3, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.rector.ViewAuditLogRequest} returns this
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.clearFrom = function() {
+  return this.setFrom(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.hasFrom = function() {
+  return jspb.Message.getField(this, 3) != null;
+};
+
+
+/**
+ * optional resources.timestamp.Timestamp to = 4;
+ * @return {?proto.resources.timestamp.Timestamp}
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.getTo = function() {
+  return /** @type{?proto.resources.timestamp.Timestamp} */ (
+    jspb.Message.getWrapperField(this, resources_timestamp_timestamp_pb.Timestamp, 4));
+};
+
+
+/**
+ * @param {?proto.resources.timestamp.Timestamp|undefined} value
+ * @return {!proto.services.rector.ViewAuditLogRequest} returns this
+*/
+proto.services.rector.ViewAuditLogRequest.prototype.setTo = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.rector.ViewAuditLogRequest} returns this
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.clearTo = function() {
+  return this.setTo(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.rector.ViewAuditLogRequest.prototype.hasTo = function() {
+  return jspb.Message.getField(this, 4) != null;
 };
 
 

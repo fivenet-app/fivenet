@@ -6,6 +6,7 @@ option go_package = "github.com/galexrt/fivenet/proto/services/rector;rector";
 import "resources/common/database/database.proto";
 import "resources/permissions/permissions.proto";
 import "resources/rector/audit.proto";
+import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 message GetRolesRequest {}
@@ -61,6 +62,9 @@ message GetPermissionsResponse {
 
 message ViewAuditLogRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  repeated int32 user_id = 2;
+  resources.timestamp.Timestamp from = 3;
+  resources.timestamp.Timestamp to = 4;
 }
 
 message ViewAuditLogResponse {

@@ -3,6 +3,7 @@ import * as jspb from 'google-protobuf'
 import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
 import * as resources_permissions_permissions_pb from '../../resources/permissions/permissions_pb';
 import * as resources_rector_audit_pb from '../../resources/rector/audit_pb';
+import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
 
 
 export class GetRolesRequest extends jspb.Message {
@@ -271,6 +272,21 @@ export class ViewAuditLogRequest extends jspb.Message {
   hasPagination(): boolean;
   clearPagination(): ViewAuditLogRequest;
 
+  getUserIdList(): Array<number>;
+  setUserIdList(value: Array<number>): ViewAuditLogRequest;
+  clearUserIdList(): ViewAuditLogRequest;
+  addUserId(value: number, index?: number): ViewAuditLogRequest;
+
+  getFrom(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setFrom(value?: resources_timestamp_timestamp_pb.Timestamp): ViewAuditLogRequest;
+  hasFrom(): boolean;
+  clearFrom(): ViewAuditLogRequest;
+
+  getTo(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setTo(value?: resources_timestamp_timestamp_pb.Timestamp): ViewAuditLogRequest;
+  hasTo(): boolean;
+  clearTo(): ViewAuditLogRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ViewAuditLogRequest.AsObject;
   static toObject(includeInstance: boolean, msg: ViewAuditLogRequest): ViewAuditLogRequest.AsObject;
@@ -282,6 +298,9 @@ export class ViewAuditLogRequest extends jspb.Message {
 export namespace ViewAuditLogRequest {
   export type AsObject = {
     pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
+    userIdList: Array<number>,
+    from?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    to?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
   }
 }
 
