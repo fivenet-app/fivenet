@@ -46,7 +46,7 @@ const queryChar = ref('');
 const selectedChar = ref<undefined | UserShort>(undefined);
 
 async function findChars(): Promise<void> {
-    if (queryChar.value === "") {
+    if (queryChar.value === '') {
         return;
     }
 

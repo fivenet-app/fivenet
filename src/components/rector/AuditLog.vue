@@ -10,20 +10,25 @@ import AuditLogEntry from './AuditLogEntry.vue';
 import TablePagination from '~/components//partials/TablePagination.vue';
 import { Timestamp } from '@fivenet/gen/resources/timestamp/timestamp_pb';
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
+import { UserShort } from '@fivenet/gen/resources/users/users_pb';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { CheckIcon } from '@heroicons/vue/20/solid';
+import { CompleteCharNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { watchDebounced } from '@vueuse/core';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ users: number[], from: string; to: string }>({ users: [], from: '', to: '', });
+const query = ref<{ from: string; to: string }>({ from: '', to: '', });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
-
-const { data: logs, pending, refresh, error } = await useLazyAsyncData(`rector-audit-${offset}`, () => getAuditLog());
 
 async function getAuditLog(): Promise<Array<AuditEntry>> {
     return new Promise(async (res, rej) => {
         const req = new ViewAuditLogRequest();
         req.setPagination((new PaginationRequest()).setOffset(offset.value));
-        req.setUserIdList(query.value.users);
+        const users = new Array<number>();
+        selectedChars.value?.forEach((v) => users.push(v.getUserId()));
+        req.setUserIdsList(users);
 
         if (query.value.from != '') {
             const tts = new google_protobuf_timestamp_pb.Timestamp();
@@ -53,7 +58,43 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
     });
 }
 
+const { data: logs, pending, refresh, error } = await useLazyAsyncData(`rector-audit-${offset}`, () => getAuditLog());
+
+const entriesChars = ref<UserShort[]>([]);
+const queryChar = ref('');
+const selectedChars = ref<undefined | UserShort[]>([]);
+
+async function findChars(): Promise<void> {
+    if (queryChar.value === '') {
+        return;
+    }
+
+    const req = new CompleteCharNamesRequest();
+    req.setSearch(queryChar.value);
+
+    const resp = await $grpc.getCompletorClient().
+        completeCharNames(req, null);
+
+    entriesChars.value = resp.getUsersList();
+}
+
+const searchInput = ref<HTMLInputElement | null>(null);
+function focusSearch(): void {
+    if (searchInput.value) {
+        searchInput.value.focus();
+    }
+}
+
+function charsGetDisplayValue(chars: UserShort[]): string {
+    const cs = new Array<string>();
+    chars.forEach(c => cs.push(`${c?.getFirstname()} ${c?.getLastname()}`));
+
+    return cs.join(', ');
+}
+
 watch(offset, async () => refresh());
+watchDebounced(query.value, async () => refresh(), { debounce: 650, maxWait: 1500 });
+watchDebounced(queryChar, async () => await findChars(), { debounce: 650, maxWait: 1500 });
 </script>
 
 <template>
@@ -82,11 +123,37 @@ watch(offset, async () => refresh());
                                 </div>
                             </div>
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Users</label>
-                                <div class="relative flex items-center mt-2">
-                                    <input v-model="query.from" ref="searchInput" type="text" name="search" id="search"
-                                        placeholder="Citizen Name"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                <label for="users" class="block text-sm font-medium leading-6 text-neutral">Users</label>
+                                <div class="relative items-center mt-2">
+                                    <Combobox as="div" v-model="selectedChars" nullable multiple>
+                                        <div class="relative">
+                                            <ComboboxButton as="div">
+                                                <ComboboxInput
+                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    @change="queryChar = $event.target.value"
+                                                    :display-value="(chars: any) => chars ? charsGetDisplayValue(chars) : 'N/A'"
+                                                    placeholder="Users" />
+                                            </ComboboxButton>
+
+                                            <ComboboxOptions v-if="entriesChars.length > 0"
+                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
+                                                <ComboboxOption v-for="char in entriesChars" :key="char?.getIdentifier()"
+                                                    :value="char" as="char" v-slot="{ active, selected }">
+                                                    <li
+                                                        :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                                        <span :class="['block truncate', selected && 'font-semibold']">
+                                                            {{ char?.getFirstname() }} {{ char?.getLastname() }}
+                                                        </span>
+
+                                                        <span v-if="selected"
+                                                            :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                        </span>
+                                                    </li>
+                                                </ComboboxOption>
+                                            </ComboboxOptions>
+                                        </div>
+                                    </Combobox>
                                 </div>
                             </div>
                         </div>
@@ -98,7 +165,7 @@ watch(offset, async () => refresh());
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <DataPendingBlock v-if="pending" message="Loading audit logs..." />
                         <DataErrorBlock v-else-if="error" title="Unable to load audit logs!" :retry="refresh" />
-                        <button v-else-if="logs && logs.length == 0" type="button"
+                        <button v-else-if="logs && logs.length == 0" type="button" @click="focusSearch"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">

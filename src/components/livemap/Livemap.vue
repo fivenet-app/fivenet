@@ -250,7 +250,7 @@ async function loadPostals(): Promise<void> {
 }
 
 async function findPostal(): Promise<void> {
-    if (postalQuery.value === "") {
+    if (postalQuery.value === '') {
         return;
     }
 
