@@ -14,13 +14,17 @@ var (
 )
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
+	// TODO add time and user filter conditions
+	var condition jet.BoolExpression
+
 	countStmt := audit.
 		SELECT(
 			jet.COUNT(audit.ID).AS("datacount.totalcount"),
 		).
 		FROM(
 			audit,
-		)
+		).
+		WHERE(condition)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -50,6 +54,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 					user.ID.EQ(audit.UserID),
 				),
 		).
+		WHERE(condition).
 		ORDER_BY(
 			audit.CreatedAt.ASC(),
 		).

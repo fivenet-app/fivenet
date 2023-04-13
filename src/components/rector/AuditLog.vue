@@ -11,6 +11,7 @@ import TablePagination from '~/components//partials/TablePagination.vue';
 
 const { $grpc } = useNuxtApp();
 
+const query = ref<{ users: number[], from: string; to: string }>({ users: [], from: '', to: '', });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
@@ -33,6 +34,8 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
         }
     });
 }
+
+watch(offset, async () => refresh());
 </script>
 
 <template>
@@ -40,7 +43,34 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <!-- TODO -->
+                    <form @submit.prevent="refresh()">
+                        <div class="flex flex-row gap-4 mx-auto">
+                            <div class="flex-1 form-control">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Time Range: From</label>
+                                <div class="relative flex items-center mt-2">
+                                    <input v-model="query.from" ref="searchInput" type="datetime-local" name="search" id="search"
+                                        placeholder="Citizen Name"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                            <div class="flex-1 form-control">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Time Range: To</label>
+                                <div class="relative flex items-center mt-2">
+                                    <input v-model="query.from" ref="searchInput" type="datetime-local" name="search" id="search"
+                                        placeholder="Citizen Name"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                            <div class="flex-1 form-control">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Users</label>
+                                <div class="relative flex items-center mt-2">
+                                    <input v-model="query.from" ref="searchInput" type="text" name="search" id="search"
+                                        placeholder="Citizen Name"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
             <div class="flow-root mt-2">

@@ -28,7 +28,7 @@ const props = defineProps({
 
 function addToClipboard(): void {
     store.addUser(props.user);
-    dispatchNotification({ title: 'Clipboard: Citizen added', content: 'Citizen has been added to clipboard', duration: 3500 });
+    dispatchNotification({ title: 'Clipboard: Citizen added', content: 'Citizen has been added to clipboard', duration: 3500, type: 'info' });
 }
 </script>
 

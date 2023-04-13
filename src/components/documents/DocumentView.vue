@@ -93,7 +93,7 @@ function addToClipboard(): void {
     if (document.value) {
         clipboardStore.addDocument(document.value);
     }
-    dispatchNotification({ title: 'Clipboard: Document added', content: 'Document has been added to clipboard', duration: 3500 });
+    dispatchNotification({ title: 'Clipboard: Document added', content: 'Document has been added to clipboard', duration: 3500, type: 'info' });
 }
 
 onMounted(() => {

@@ -31,7 +31,7 @@ const props = defineProps({
 
 function addToClipboard(): void {
     store.addVehicle(props.vehicle);
-    dispatchNotification({ title: 'Clipboard: Vehicle added', content: 'Vehicle has been added to clipboard', duration: 3500 });
+    dispatchNotification({ title: 'Clipboard: Vehicle added', content: 'Vehicle has been added to clipboard', duration: 3500, type: 'info' });
 }
 </script>
 

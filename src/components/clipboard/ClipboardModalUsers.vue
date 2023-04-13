@@ -66,7 +66,7 @@ async function remove(item: ClipboardUser, notify: boolean): Promise<void> {
 
     await store.removeUser(item.id!);
     if (notify) {
-        dispatchNotification({ title: 'Clipboard: Citizen removed', content: 'Selected citizen removed from clipboard', duration: 3500 });
+        dispatchNotification({ title: 'Clipboard: Citizen removed', content: 'Selected citizen removed from clipboard', duration: 3500, type: 'info' });
     }
 }
 
@@ -78,7 +78,7 @@ async function removeAll(): Promise<void> {
     }
 
     emit('statisfied', false);
-    dispatchNotification({ title: 'Clipboard: Citizens removed', content: 'All citizens have been removed from your clipboard', duration: 3500 });
+    dispatchNotification({ title: 'Clipboard: Citizens removed', content: 'All citizens have been removed from your clipboard', duration: 3500, type: 'info' });
 }
 
 watch(props, async (newVal) => {
