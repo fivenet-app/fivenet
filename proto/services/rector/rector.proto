@@ -62,9 +62,9 @@ message GetPermissionsResponse {
 
 message ViewAuditLogRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  repeated int32 user_id = 2;
-  resources.timestamp.Timestamp from = 3;
-  resources.timestamp.Timestamp to = 4;
+  repeated int32 user_ids = 2;
+  optional resources.timestamp.Timestamp from = 3;
+  optional resources.timestamp.Timestamp to = 4;
 }
 
 message ViewAuditLogResponse {

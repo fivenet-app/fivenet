@@ -8,6 +8,8 @@ import DataErrorBlock from '~/components//partials/DataErrorBlock.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import AuditLogEntry from './AuditLogEntry.vue';
 import TablePagination from '~/components//partials/TablePagination.vue';
+import { Timestamp } from '@fivenet/gen/resources/timestamp/timestamp_pb';
+import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
 const { $grpc } = useNuxtApp();
 
@@ -15,12 +17,28 @@ const query = ref<{ users: number[], from: string; to: string }>({ users: [], fr
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-const { data: logs, pending, refresh, error } = await useLazyAsyncData('rector-roles', () => getAuditLog());
+const { data: logs, pending, refresh, error } = await useLazyAsyncData(`rector-audit-${offset}`, () => getAuditLog());
 
 async function getAuditLog(): Promise<Array<AuditEntry>> {
     return new Promise(async (res, rej) => {
         const req = new ViewAuditLogRequest();
         req.setPagination((new PaginationRequest()).setOffset(offset.value));
+        req.setUserIdList(query.value.users);
+
+        if (query.value.from != '') {
+            const tts = new google_protobuf_timestamp_pb.Timestamp();
+            tts.fromDate(fromString(query.value.from)!);
+            const ts = new Timestamp();
+            ts.setTimestamp(tts);
+            req.setFrom(ts);
+        }
+        if (query.value.from != '') {
+            const tts = new google_protobuf_timestamp_pb.Timestamp();
+            tts.fromDate(fromString(query.value.to)!);
+            const ts = new Timestamp();
+            ts.setTimestamp(tts);
+            req.setTo(ts);
+        }
 
         try {
             const resp = await $grpc.getRectorClient().
@@ -46,18 +64,20 @@ watch(offset, async () => refresh());
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Time Range: From</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Time Range:
+                                    From</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="query.from" ref="searchInput" type="datetime-local" name="search" id="search"
-                                        placeholder="Citizen Name"
+                                    <input v-model="query.from" ref="searchInput" type="datetime-local" name="search"
+                                        id="search" placeholder="Citizen Name"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Time Range: To</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Time Range:
+                                    To</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="query.from" ref="searchInput" type="datetime-local" name="search" id="search"
-                                        placeholder="Citizen Name"
+                                    <input v-model="query.from" ref="searchInput" type="datetime-local" name="search"
+                                        id="search" placeholder="Citizen Name"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>

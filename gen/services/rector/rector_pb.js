@@ -2373,7 +2373,7 @@ proto.services.rector.ViewAuditLogRequest.prototype.toObject = function(opt_incl
 proto.services.rector.ViewAuditLogRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f),
-    userIdList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f,
+    userIdsList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f,
     from: (f = msg.getFrom()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     to: (f = msg.getTo()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f)
   };
@@ -2420,7 +2420,7 @@ proto.services.rector.ViewAuditLogRequest.deserializeBinaryFromReader = function
     case 2:
       var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedInt32() : [reader.readInt32()]);
       for (var i = 0; i < values.length; i++) {
-        msg.addUserId(values[i]);
+        msg.addUserIds(values[i]);
       }
       break;
     case 3:
@@ -2470,7 +2470,7 @@ proto.services.rector.ViewAuditLogRequest.serializeBinaryToWriter = function(mes
       resources_common_database_database_pb.PaginationRequest.serializeBinaryToWriter
     );
   }
-  f = message.getUserIdList();
+  f = message.getUserIdsList();
   if (f.length > 0) {
     writer.writePackedInt32(
       2,
@@ -2534,10 +2534,10 @@ proto.services.rector.ViewAuditLogRequest.prototype.hasPagination = function() {
 
 
 /**
- * repeated int32 user_id = 2;
+ * repeated int32 user_ids = 2;
  * @return {!Array<number>}
  */
-proto.services.rector.ViewAuditLogRequest.prototype.getUserIdList = function() {
+proto.services.rector.ViewAuditLogRequest.prototype.getUserIdsList = function() {
   return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 2));
 };
 
@@ -2546,7 +2546,7 @@ proto.services.rector.ViewAuditLogRequest.prototype.getUserIdList = function() {
  * @param {!Array<number>} value
  * @return {!proto.services.rector.ViewAuditLogRequest} returns this
  */
-proto.services.rector.ViewAuditLogRequest.prototype.setUserIdList = function(value) {
+proto.services.rector.ViewAuditLogRequest.prototype.setUserIdsList = function(value) {
   return jspb.Message.setField(this, 2, value || []);
 };
 
@@ -2556,7 +2556,7 @@ proto.services.rector.ViewAuditLogRequest.prototype.setUserIdList = function(val
  * @param {number=} opt_index
  * @return {!proto.services.rector.ViewAuditLogRequest} returns this
  */
-proto.services.rector.ViewAuditLogRequest.prototype.addUserId = function(value, opt_index) {
+proto.services.rector.ViewAuditLogRequest.prototype.addUserIds = function(value, opt_index) {
   return jspb.Message.addToRepeatedField(this, 2, value, opt_index);
 };
 
@@ -2565,8 +2565,8 @@ proto.services.rector.ViewAuditLogRequest.prototype.addUserId = function(value, 
  * Clears the list making it empty but non-null.
  * @return {!proto.services.rector.ViewAuditLogRequest} returns this
  */
-proto.services.rector.ViewAuditLogRequest.prototype.clearUserIdList = function() {
-  return this.setUserIdList([]);
+proto.services.rector.ViewAuditLogRequest.prototype.clearUserIdsList = function() {
+  return this.setUserIdsList([]);
 };
 
 

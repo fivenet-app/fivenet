@@ -272,10 +272,10 @@ export class ViewAuditLogRequest extends jspb.Message {
   hasPagination(): boolean;
   clearPagination(): ViewAuditLogRequest;
 
-  getUserIdList(): Array<number>;
-  setUserIdList(value: Array<number>): ViewAuditLogRequest;
-  clearUserIdList(): ViewAuditLogRequest;
-  addUserId(value: number, index?: number): ViewAuditLogRequest;
+  getUserIdsList(): Array<number>;
+  setUserIdsList(value: Array<number>): ViewAuditLogRequest;
+  clearUserIdsList(): ViewAuditLogRequest;
+  addUserIds(value: number, index?: number): ViewAuditLogRequest;
 
   getFrom(): resources_timestamp_timestamp_pb.Timestamp | undefined;
   setFrom(value?: resources_timestamp_timestamp_pb.Timestamp): ViewAuditLogRequest;
@@ -298,9 +298,19 @@ export class ViewAuditLogRequest extends jspb.Message {
 export namespace ViewAuditLogRequest {
   export type AsObject = {
     pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
-    userIdList: Array<number>,
+    userIdsList: Array<number>,
     from?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     to?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+  }
+
+  export enum FromCase { 
+    _FROM_NOT_SET = 0,
+    FROM = 3,
+  }
+
+  export enum ToCase { 
+    _TO_NOT_SET = 0,
+    TO = 4,
   }
 }
 

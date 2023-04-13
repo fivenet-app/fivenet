@@ -14,8 +14,24 @@ var (
 )
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
-	// TODO add time and user filter conditions
-	var condition jet.BoolExpression
+	condition := jet.Bool(true)
+	if len(req.UserIds) > 0 {
+		ids := make([]jet.Expression, len(req.UserIds))
+		for i := 0; i < len(req.UserIds); i++ {
+			ids[i] = jet.Int32(req.UserIds[i])
+		}
+		condition = condition.AND(audit.UserID.IN(ids...))
+	}
+	if req.From != nil {
+		condition = condition.AND(audit.CreatedAt.GT_EQ(
+			jet.TimestampT(req.From.AsTime()),
+		))
+	}
+	if req.To != nil {
+		condition = condition.AND(audit.CreatedAt.LT_EQ(
+			jet.TimestampT(req.To.AsTime()),
+		))
+	}
 
 	countStmt := audit.
 		SELECT(
