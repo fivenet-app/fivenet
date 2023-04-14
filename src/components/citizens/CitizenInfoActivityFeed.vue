@@ -1,17 +1,13 @@
 <script lang="ts" setup>
-import { UserCircleIcon } from '@heroicons/vue/20/solid'
 import { GetUserActivityRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@fivenet/gen/resources/users/users_pb';
-import { toDateRelativeString } from '~/utils/time';
-import { USER_ACTIVITY_TYPE_Util } from '@fivenet/gen/resources/users/users.pb_enums';
 import { RectangleGroupIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import CitizenInfoActivityFeedEntry from '~/components/citizens/CitizenInfoActivityFeedEntry.vue';
 
 const { $grpc } = useNuxtApp();
-
-const defaultIcon = UserCircleIcon;
 
 const props = defineProps({
     userId: {
@@ -41,7 +37,7 @@ async function getUserActivity(): Promise<Array<UserActivity>> {
 </script>
 
 <template>
-    <div class="mt-3">
+    <div>
         <DataPendingBlock v-if="pending" message="Loading user activity..." />
         <DataErrorBlock v-else-if="error" title="Unable to load user activity!" :retry="refresh" />
         <button v-else-if="activities && activities.length == 0" type="button"
@@ -54,21 +50,7 @@ async function getUserActivity(): Promise<Array<UserActivity>> {
         </button>
         <ul v-else role="list" class="divide-y divide-gray-200">
             <li v-for="activity in activities" :key="activity.getId()" class="py-4">
-                <div class="flex space-x-3">
-                    <div class="h-6 w-6 rounded-full flex items-center justify-center bg-white">
-                        <component :is="defaultIcon" />
-                    </div>
-                    <div class="flex-1 space-y-1">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-medium text-neutral">{{ activity.getSourceUser()?.getFirstname() }} {{
-                                activity.getSourceUser()?.getLastname() }}</h3>
-                            <p class="text-sm text-gray-400">{{ toDateRelativeString(activity.getCreatedAt()) }}</p>
-                        </div>
-                        <p class="text-sm text-gray-300">{{ activity.getKey() }} <span class="font-bold">{{
-                            USER_ACTIVITY_TYPE_Util.toEnumKey(activity.getType()) }}</span>: {{
-        activity.getOldvalue() }} ⇒ {{ activity.getNewvalue() }}</p>
-                    </div>
-                </div>
+                <CitizenInfoActivityFeedEntry :activity="activity" />
             </li>
         </ul>
     </div>
