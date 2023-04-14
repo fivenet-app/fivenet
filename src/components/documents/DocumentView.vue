@@ -155,9 +155,9 @@ onMounted(() => {
                                         }}</time></span>
                             </div>
                         </div>
-                        <div class="flex flex-row gap-2 pb-3 mt-2 overflow-x-auto sm:pb-0">
+                        <div class="flex flex-row gap-2 pb-3 mt-2 overflow-x-auto snap-x sm:pb-0">
                             <div v-for="entry in access?.getJobsList()" :key="entry.getId()"
-                                class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-info-100 whitespace-nowrap">
+                                class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-info-100 whitespace-nowrap snap-start">
                                 <span class="w-2 h-2 rounded-full bg-info-500" aria-hidden="true" />
                                 <span class="text-sm font-medium text-info-800">{{ entry.getJobLabel() }}<span
                                         v-if="entry.getMinimumgrade() > 0"> (Rank: {{ entry.getMinimumgrade() }})</span> -
@@ -165,7 +165,7 @@ onMounted(() => {
                                         toTitleCase(DOC_ACCESS_Util.toEnumKey(entry.getAccess())!.toLowerCase()) }}</span>
                             </div>
                             <div v-for="entry in access?.getUsersList()" :key="entry.getId()"
-                                class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap">
+                                class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap snap-start">
                                 <span class="w-2 h-2 rounded-full bg-secondary-400" aria-hidden="true" />
                                 <span class="text-sm font-medium text-secondary-700">{{ entry.getUser()?.getFirstname() }}
                                     {{ entry.getUser()?.getLastname() }} - {{
