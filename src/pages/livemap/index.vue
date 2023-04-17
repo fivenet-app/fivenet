@@ -2,6 +2,7 @@
 import { NotificationProvider } from '~/components/partials/notification';
 import Sidebar from '~/components/partials/Sidebar.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
+import Notificator from '~/components/partials/Notificator.vue';
 
 useHead({
     title: 'Livemap',
@@ -19,5 +20,6 @@ definePageMeta({
         <Sidebar>
             <Livemap />
         </Sidebar>
+        <Notificator />
     </NotificationProvider>
 </template>

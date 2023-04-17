@@ -7,12 +7,12 @@ import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 message Notification {
-  uint64 id = 1; // @gotags: alias:"fivenet_notifications.id"
-  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"fivenet_notifications.created_at"
-  resources.timestamp.Timestamp read_at = 3; // @gotags: alias:"fivenet_notifications.read_at"
-  int32 user_id = 4; // @gotags: alias:"fivenet_notifications.user_id"
+  uint64 id = 1; // @gotags: alias:"id"
+  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  resources.timestamp.Timestamp read_at = 3; // @gotags: alias:"read_at"
+  int32 user_id = 4; // @gotags: alias:"user_id"
   string title = 5 [(validate.rules).string.max_len = 255]; // @gotags: alias:"title"
   string type = 6 [(validate.rules).string.max_len = 128]; // @gotags: alias:"type"
   string content = 7 [(validate.rules).string.max_bytes = 512]; // @gotags: alias:"content"
-  string data = 8 [(validate.rules).string.max_bytes = 512]; // @gotags: alias:"data"
+  optional string data = 8 [(validate.rules).string.max_bytes = 512]; // @gotags: alias:"data"
 }

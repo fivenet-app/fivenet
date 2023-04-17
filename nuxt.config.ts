@@ -3,8 +3,12 @@ import mkcert from 'vite-plugin-mkcert';
 import fs from 'fs';
 import path from 'path';
 
+type PackageJson = {
+    version: string;
+};
+
 const packageJson = fs.readFileSync('./package.json');
-const version: string = JSON.parse(packageJson.toString()).version || '0.0.0';
+const version: string = (JSON.parse(packageJson.toString()) as PackageJson).version || '0.0.0';
 
 mkcert();
 
@@ -13,7 +17,7 @@ const config = defineNuxtConfig({
     srcDir: 'src/',
     telemetry: false,
     ssr: false,
-    modules: ['@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt', 'nuxt-typed-router', '@nuxtjs/tailwindcss'],
+    modules: ['@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt', 'nuxt-typed-router', '@nuxtjs/i18n', '@nuxtjs/tailwindcss'],
     pinia: {
         autoImports: [
             // automatically imports `defineStore`
@@ -26,6 +30,9 @@ const config = defineNuxtConfig({
     piniaPersistedstate: {
         storage: 'localStorage',
         debug: true,
+    },
+    i18n: {
+        vueI18n: './i18n.config.ts',
     },
     vite: {
         define: {

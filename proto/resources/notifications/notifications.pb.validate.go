@@ -152,15 +152,19 @@ func (m *Notification) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if len(m.GetData()) > 512 {
-		err := NotificationValidationError{
-			field:  "Data",
-			reason: "value length must be at most 512 bytes",
+	if m.Data != nil {
+
+		if len(m.GetData()) > 512 {
+			err := NotificationValidationError{
+				field:  "Data",
+				reason: "value length must be at most 512 bytes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {

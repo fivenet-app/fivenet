@@ -235,8 +235,8 @@ proto.resources.notifications.Notification.serializeBinaryToWriter = function(me
       f
     );
   }
-  f = message.getData();
-  if (f.length > 0) {
+  f = /** @type {string} */ (jspb.Message.getField(message, 8));
+  if (f != null) {
     writer.writeString(
       8,
       f
@@ -423,7 +423,25 @@ proto.resources.notifications.Notification.prototype.getData = function() {
  * @return {!proto.resources.notifications.Notification} returns this
  */
 proto.resources.notifications.Notification.prototype.setData = function(value) {
-  return jspb.Message.setProto3StringField(this, 8, value);
+  return jspb.Message.setField(this, 8, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.notifications.Notification} returns this
+ */
+proto.resources.notifications.Notification.prototype.clearData = function() {
+  return jspb.Message.setField(this, 8, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.notifications.Notification.prototype.hasData = function() {
+  return jspb.Message.getField(this, 8) != null;
 };
 
 

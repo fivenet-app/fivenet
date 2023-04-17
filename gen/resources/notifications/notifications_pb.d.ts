@@ -31,6 +31,8 @@ export class Notification extends jspb.Message {
 
   getData(): string;
   setData(value: string): Notification;
+  hasData(): boolean;
+  clearData(): Notification;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Notification.AsObject;
@@ -49,7 +51,12 @@ export namespace Notification {
     title: string,
     type: string,
     content: string,
-    data: string,
+    data?: string,
+  }
+
+  export enum DataCase { 
+    _DATA_NOT_SET = 0,
+    DATA = 8,
   }
 }
 

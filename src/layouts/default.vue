@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { NotificationProvider } from '~/components/partials/notification';
 import Sidebar from '~/components/partials/Sidebar.vue';
+import Notificator from '~/components/partials/Notificator.vue';
 </script>
 
 <template>
@@ -10,5 +11,6 @@ import Sidebar from '~/components/partials/Sidebar.vue';
                 <slot />
             </div>
         </Sidebar>
+        <Notificator />
     </NotificationProvider>
 </template>

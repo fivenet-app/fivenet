@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_notifications` (
   `title` varchar(255) NOT NULL,
   `type` varchar(128) NOT NULL,
   `content` longtext NOT NULL,
-  `data` longtext NOT NULL,
+  `data` longtext DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_notifications_user_id` (`user_id`),
   KEY `idx_fivenet_notifications_type` (`type`),

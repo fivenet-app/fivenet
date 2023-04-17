@@ -11,6 +11,7 @@ import { UnaryInterceptor } from 'grpc-web';
 import { RpcError, StatusCode } from 'grpc-web';
 import { dispatchNotification } from '~/components/partials/notification';
 import { RectorServiceClient } from '@fivenet/gen/services/rector/RectorServiceClientPb';
+import { NotificatorServiceClient } from '@fivenet/gen/services/notificator/NotificatorServiceClientPb';
 
 export default defineNuxtPlugin(() => {
     return {
@@ -156,6 +157,16 @@ export class GRPCClients {
         }
 
         return this.livemapperClient;
+    }
+
+    // Notificator
+    private notificatorClient: undefined | NotificatorServiceClient;
+    getNotificatorClient(): NotificatorServiceClient {
+        if (!this.notificatorClient) {
+            this.notificatorClient = new NotificatorServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
+        }
+
+        return this.notificatorClient;
     }
 
     // Rector

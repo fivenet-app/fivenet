@@ -122,9 +122,14 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer) error {
 	userId := auth.GetUserIDFromContext(srv.Context())
 
+	nots := nots.AS("notification")
 	stmt := nots.
 		SELECT(
-			nots.AllColumns,
+			nots.ID,
+			nots.Title,
+			nots.Type,
+			nots.Content,
+			nots.Data,
 		).
 		FROM(nots).
 		ORDER_BY(nots.ID.DESC()).
@@ -132,9 +137,8 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 
 	lastId := req.LastId
 
+	resp := &StreamResponse{}
 	for {
-		resp := &StreamResponse{}
-
 		q := stmt.
 			WHERE(
 				jet.AND(
@@ -156,6 +160,11 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
-		time.Sleep(30 * time.Second)
+
+		select {
+		case <-srv.Context().Done():
+			return nil
+		case <-time.After(30 * time.Second):
+		}
 	}
 }
