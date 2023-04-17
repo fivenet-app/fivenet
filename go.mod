@@ -3,7 +3,7 @@ module github.com/galexrt/fivenet
 go 1.20
 
 require (
-	github.com/Code-Hex/go-generics-cache v1.2.1
+	github.com/Code-Hex/go-generics-cache v1.3.0
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/blevesearch/bleve v1.0.14
 	github.com/creasty/defaults v1.7.0
@@ -14,25 +14,25 @@ require (
 	github.com/gin-contrib/zap v0.1.0
 	github.com/gin-gonic/contrib v0.0.0-20221130124618-7e01895a63f2
 	github.com/gin-gonic/gin v1.9.0
-	github.com/go-jet/jet/v2 v2.9.0
+	github.com/go-jet/jet/v2 v2.10.0
 	github.com/go-sql-driver/mysql v1.7.0
-	github.com/golang-jwt/jwt/v5 v5.0.0-rc.2
+	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/gosimple/slug v1.13.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/json-iterator/go v1.1.12
 	github.com/microcosm-cc/bluemonday v1.0.23
-	github.com/ory/dockertest/v3 v3.9.1
-	github.com/prometheus/client_golang v1.14.0
+	github.com/ory/dockertest/v3 v3.10.0
+	github.com/prometheus/client_golang v1.15.0
 	github.com/prometheus/common v0.42.0
-	github.com/spf13/cobra v1.6.1
+	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.24.0
-	golang.org/x/crypto v0.7.0
+	golang.org/x/crypto v0.8.0
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
-	golang.org/x/oauth2 v0.6.0
+	golang.org/x/oauth2 v0.7.0
 	google.golang.org/grpc v1.54.0
 	google.golang.org/protobuf v1.30.0
 	gotest.tools v2.2.0+incompatible
@@ -134,9 +134,9 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/mod v0.9.0 // indirect
-	golang.org/x/net v0.8.0 // indirect
-	golang.org/x/sys v0.6.0 // indirect
-	golang.org/x/text v0.8.0 // indirect
+	golang.org/x/net v0.9.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/tools v0.7.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230331144136-dcfb400f0633 // indirect
