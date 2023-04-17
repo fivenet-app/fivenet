@@ -11,6 +11,7 @@ import { JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { useAuthStore } from '~/store/auth';
+import { watchDebounced } from '@vueuse/core';
 
 const { $grpc } = useNuxtApp();
 
@@ -36,31 +37,27 @@ async function getRoles(): Promise<Array<Role>> {
     });
 }
 
-const entriesJobGrades = ref<Array<JobGrade>>([]);
+let entriesJobGrades = [] as JobGrade[];
+const filteredJobGrades = ref<JobGrade[]>([]);
+const queryJobGrade = ref('');
 const selectedJobGrade = ref<JobGrade>();
 
-async function findJobGrades(): Promise<Array<JobGrade>> {
-    return new Promise(async (res, rej) => {
-        const req = new CompleteJobNamesRequest();
-        req.setExactMatch(true);
-        req.setCurrentJob(true);
+async function findJobGrades(): Promise<void> {
 
-        try {
-            const resp = await $grpc.getCompletorClient().
-                completeJobNames(req, null);
+    const req = new CompleteJobNamesRequest();
+    req.setExactMatch(true);
+    req.setCurrentJob(true);
+
+    try {
+        const resp = await $grpc.getCompletorClient().
+            completeJobNames(req, null);
 
 
-            const jobs = resp.getJobsList();
-            if (jobs.length === 0) {
-                return;
-            }
-
-            return res(jobs[0].getGradesList());
-        } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+        entriesJobGrades = resp.getJobsList()[0].getGradesList();
+        filteredJobGrades.value = entriesJobGrades;
+    } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
+    }
 }
 
 async function createRole(): Promise<void> {
@@ -87,8 +84,10 @@ async function createRole(): Promise<void> {
     });
 }
 
+watchDebounced(queryJobGrade, async () => { filteredJobGrades.value = entriesJobGrades.filter(g => g.getLabel().toLowerCase().includes(queryJobGrade.value.toLowerCase())) }, { debounce: 750, maxWait: 2000 });
+
 onMounted(async () => {
-    entriesJobGrades.value = await findJobGrades();
+    await findJobGrades();
 });
 </script>
 
@@ -110,12 +109,13 @@ onMounted(async () => {
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :display-value="(grade: any) => grade ? grade?.getLabel() : ''" />
+                                                        @change="queryJobGrade = $event.target.value"
+                                                        :display-value="(grade: any) => grade?.getLabel()" />
                                                 </ComboboxButton>
 
-                                                <ComboboxOptions v-if="entriesJobGrades.length > 0"
+                                                <ComboboxOptions v-if="filteredJobGrades.length > 0"
                                                     class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                                    <ComboboxOption v-for="grade in entriesJobGrades"
+                                                    <ComboboxOption v-for="grade in filteredJobGrades"
                                                         :key="grade.getGrade()" :value="grade" as="grade"
                                                         v-slot="{ active, selected }">
                                                         <li
