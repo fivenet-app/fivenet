@@ -208,7 +208,10 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
         <div class="hidden overflow-y-auto bg-accent-600 w-28 md:block">
             <div class="flex flex-col items-center w-full py-6 h-full">
                 <div class="flex items-center flex-shrink-0">
-                    <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo" :title="'FiveNet' + appVersion" />
+                    <NuxtLink :to="{ name: accessToken ? 'overview' : 'index' }" aria-current-value="page">
+                        <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo"
+                            :title="'FiveNet' + appVersion" />
+                    </NuxtLink>
                 </div>
                 <div class="flex-grow w-full px-2 mt-6 space-y-1 text-center">
                     <NuxtLink :to="{ name: 'index' }" v-if="!accessToken || !activeChar"
