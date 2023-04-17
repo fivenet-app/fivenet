@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"net"
 
+	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/config"
 	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -93,6 +94,10 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 
 	// Data enricher helper
 	enricher := mstlystcdata.NewEnricher(cache)
+
+	// Audit Storer
+	audit := audit.New(db)
+	_ = audit
 
 	// Attach our GRPC services
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher))

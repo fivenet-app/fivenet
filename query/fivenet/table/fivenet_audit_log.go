@@ -20,6 +20,8 @@ type fivenetAuditLogTable struct {
 	ID        mysql.ColumnInteger
 	CreatedAt mysql.ColumnTimestamp
 	UserID    mysql.ColumnInteger
+	UserJob   mysql.ColumnString
+	TargetJob mysql.ColumnString
 	Service   mysql.ColumnString
 	Method    mysql.ColumnString
 	State     mysql.ColumnInteger
@@ -67,12 +69,14 @@ func newFivenetAuditLogTableImpl(schemaName, tableName, alias string) fivenetAud
 		IDColumn        = mysql.IntegerColumn("id")
 		CreatedAtColumn = mysql.TimestampColumn("created_at")
 		UserIDColumn    = mysql.IntegerColumn("user_id")
+		UserJobColumn   = mysql.StringColumn("user_job")
+		TargetJobColumn = mysql.StringColumn("target_job")
 		ServiceColumn   = mysql.StringColumn("service")
 		MethodColumn    = mysql.StringColumn("method")
 		StateColumn     = mysql.IntegerColumn("state")
 		DataColumn      = mysql.StringColumn("data")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UserIDColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UserIDColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UserIDColumn, UserJobColumn, TargetJobColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UserIDColumn, UserJobColumn, TargetJobColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
 	)
 
 	return fivenetAuditLogTable{
@@ -82,6 +86,8 @@ func newFivenetAuditLogTableImpl(schemaName, tableName, alias string) fivenetAud
 		ID:        IDColumn,
 		CreatedAt: CreatedAtColumn,
 		UserID:    UserIDColumn,
+		UserJob:   UserJobColumn,
+		TargetJob: TargetJobColumn,
 		Service:   ServiceColumn,
 		Method:    MethodColumn,
 		State:     StateColumn,

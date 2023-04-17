@@ -15,6 +15,8 @@ type FivenetAuditLog struct {
 	ID        uint64     `sql:"primary_key" json:"id"`
 	CreatedAt *time.Time `json:"created_at"`
 	UserID    int32      `json:"user_id"`
+	UserJob   string     `json:"user_job"`
+	TargetJob *string    `json:"target_job"`
 	Service   string     `json:"service"`
 	Method    string     `json:"method"`
 	State     int16      `json:"state"`

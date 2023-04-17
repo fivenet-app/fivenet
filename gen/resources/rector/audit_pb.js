@@ -84,10 +84,12 @@ proto.resources.rector.AuditEntry.toObject = function(includeInstance, msg) {
     createdAt: (f = msg.getCreatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     userId: jspb.Message.getFieldWithDefault(msg, 3, 0),
     user: (f = msg.getUser()) && resources_users_users_pb.UserShort.toObject(includeInstance, f),
-    service: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    method: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    state: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    data: jspb.Message.getFieldWithDefault(msg, 8, "")
+    userJob: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    targetJob: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    service: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    method: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    state: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    data: jspb.Message.getFieldWithDefault(msg, 10, "")
   };
 
   if (includeInstance) {
@@ -144,17 +146,25 @@ proto.resources.rector.AuditEntry.deserializeBinaryFromReader = function(msg, re
       break;
     case 5:
       var value = /** @type {string} */ (reader.readString());
-      msg.setService(value);
+      msg.setUserJob(value);
       break;
     case 6:
       var value = /** @type {string} */ (reader.readString());
-      msg.setMethod(value);
+      msg.setTargetJob(value);
       break;
     case 7:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setService(value);
+      break;
+    case 8:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setMethod(value);
+      break;
+    case 9:
       var value = /** @type {!proto.resources.rector.EVENT_TYPE} */ (reader.readEnum());
       msg.setState(value);
       break;
-    case 8:
+    case 10:
       var value = /** @type {string} */ (reader.readString());
       msg.setData(value);
       break;
@@ -217,31 +227,45 @@ proto.resources.rector.AuditEntry.serializeBinaryToWriter = function(message, wr
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
   }
-  f = message.getService();
+  f = message.getUserJob();
   if (f.length > 0) {
     writer.writeString(
       5,
       f
     );
   }
+  f = /** @type {string} */ (jspb.Message.getField(message, 6));
+  if (f != null) {
+    writer.writeString(
+      6,
+      f
+    );
+  }
+  f = message.getService();
+  if (f.length > 0) {
+    writer.writeString(
+      7,
+      f
+    );
+  }
   f = message.getMethod();
   if (f.length > 0) {
     writer.writeString(
-      6,
+      8,
       f
     );
   }
   f = message.getState();
   if (f !== 0.0) {
     writer.writeEnum(
-      7,
+      9,
       f
     );
   }
-  f = /** @type {string} */ (jspb.Message.getField(message, 8));
+  f = /** @type {string} */ (jspb.Message.getField(message, 10));
   if (f != null) {
     writer.writeString(
-      8,
+      10,
       f
     );
   }
@@ -359,10 +383,10 @@ proto.resources.rector.AuditEntry.prototype.hasUser = function() {
 
 
 /**
- * optional string service = 5;
+ * optional string user_job = 5;
  * @return {string}
  */
-proto.resources.rector.AuditEntry.prototype.getService = function() {
+proto.resources.rector.AuditEntry.prototype.getUserJob = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
@@ -371,16 +395,16 @@ proto.resources.rector.AuditEntry.prototype.getService = function() {
  * @param {string} value
  * @return {!proto.resources.rector.AuditEntry} returns this
  */
-proto.resources.rector.AuditEntry.prototype.setService = function(value) {
+proto.resources.rector.AuditEntry.prototype.setUserJob = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
 /**
- * optional string method = 6;
+ * optional string target_job = 6;
  * @return {string}
  */
-proto.resources.rector.AuditEntry.prototype.getMethod = function() {
+proto.resources.rector.AuditEntry.prototype.getTargetJob = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
@@ -389,34 +413,52 @@ proto.resources.rector.AuditEntry.prototype.getMethod = function() {
  * @param {string} value
  * @return {!proto.resources.rector.AuditEntry} returns this
  */
-proto.resources.rector.AuditEntry.prototype.setMethod = function(value) {
-  return jspb.Message.setProto3StringField(this, 6, value);
+proto.resources.rector.AuditEntry.prototype.setTargetJob = function(value) {
+  return jspb.Message.setField(this, 6, value);
 };
 
 
 /**
- * optional EVENT_TYPE state = 7;
- * @return {!proto.resources.rector.EVENT_TYPE}
- */
-proto.resources.rector.AuditEntry.prototype.getState = function() {
-  return /** @type {!proto.resources.rector.EVENT_TYPE} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
-};
-
-
-/**
- * @param {!proto.resources.rector.EVENT_TYPE} value
+ * Clears the field making it undefined.
  * @return {!proto.resources.rector.AuditEntry} returns this
  */
-proto.resources.rector.AuditEntry.prototype.setState = function(value) {
-  return jspb.Message.setProto3EnumField(this, 7, value);
+proto.resources.rector.AuditEntry.prototype.clearTargetJob = function() {
+  return jspb.Message.setField(this, 6, undefined);
 };
 
 
 /**
- * optional string data = 8;
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.rector.AuditEntry.prototype.hasTargetJob = function() {
+  return jspb.Message.getField(this, 6) != null;
+};
+
+
+/**
+ * optional string service = 7;
  * @return {string}
  */
-proto.resources.rector.AuditEntry.prototype.getData = function() {
+proto.resources.rector.AuditEntry.prototype.getService = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.rector.AuditEntry} returns this
+ */
+proto.resources.rector.AuditEntry.prototype.setService = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
+};
+
+
+/**
+ * optional string method = 8;
+ * @return {string}
+ */
+proto.resources.rector.AuditEntry.prototype.getMethod = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
@@ -425,8 +467,44 @@ proto.resources.rector.AuditEntry.prototype.getData = function() {
  * @param {string} value
  * @return {!proto.resources.rector.AuditEntry} returns this
  */
+proto.resources.rector.AuditEntry.prototype.setMethod = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional EVENT_TYPE state = 9;
+ * @return {!proto.resources.rector.EVENT_TYPE}
+ */
+proto.resources.rector.AuditEntry.prototype.getState = function() {
+  return /** @type {!proto.resources.rector.EVENT_TYPE} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {!proto.resources.rector.EVENT_TYPE} value
+ * @return {!proto.resources.rector.AuditEntry} returns this
+ */
+proto.resources.rector.AuditEntry.prototype.setState = function(value) {
+  return jspb.Message.setProto3EnumField(this, 9, value);
+};
+
+
+/**
+ * optional string data = 10;
+ * @return {string}
+ */
+proto.resources.rector.AuditEntry.prototype.getData = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.rector.AuditEntry} returns this
+ */
 proto.resources.rector.AuditEntry.prototype.setData = function(value) {
-  return jspb.Message.setField(this, 8, value);
+  return jspb.Message.setField(this, 10, value);
 };
 
 
@@ -435,7 +513,7 @@ proto.resources.rector.AuditEntry.prototype.setData = function(value) {
  * @return {!proto.resources.rector.AuditEntry} returns this
  */
 proto.resources.rector.AuditEntry.prototype.clearData = function() {
-  return jspb.Message.setField(this, 8, undefined);
+  return jspb.Message.setField(this, 10, undefined);
 };
 
 
@@ -444,7 +522,7 @@ proto.resources.rector.AuditEntry.prototype.clearData = function() {
  * @return {boolean}
  */
 proto.resources.rector.AuditEntry.prototype.hasData = function() {
-  return jspb.Message.getField(this, 8) != null;
+  return jspb.Message.getField(this, 10) != null;
 };
 
 

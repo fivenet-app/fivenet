@@ -90,6 +90,8 @@ func (m *AuditEntry) validate(all bool) error {
 
 	// no validation rules for UserId
 
+	// no validation rules for UserJob
+
 	// no validation rules for Service
 
 	// no validation rules for Method
@@ -127,6 +129,10 @@ func (m *AuditEntry) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.TargetJob != nil {
+		// no validation rules for TargetJob
 	}
 
 	if m.Data != nil {

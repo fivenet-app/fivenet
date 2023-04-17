@@ -21,6 +21,14 @@ export class AuditEntry extends jspb.Message {
   hasUser(): boolean;
   clearUser(): AuditEntry;
 
+  getUserJob(): string;
+  setUserJob(value: string): AuditEntry;
+
+  getTargetJob(): string;
+  setTargetJob(value: string): AuditEntry;
+  hasTargetJob(): boolean;
+  clearTargetJob(): AuditEntry;
+
   getService(): string;
   setService(value: string): AuditEntry;
 
@@ -49,6 +57,8 @@ export namespace AuditEntry {
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     userId: number,
     user?: resources_users_users_pb.UserShort.AsObject,
+    userJob: string,
+    targetJob?: string,
     service: string,
     method: string,
     state: EVENT_TYPE,
@@ -60,9 +70,14 @@ export namespace AuditEntry {
     USER = 4,
   }
 
+  export enum TargetJobCase { 
+    _TARGET_JOB_NOT_SET = 0,
+    TARGET_JOB = 6,
+  }
+
   export enum DataCase { 
     _DATA_NOT_SET = 0,
-    DATA = 8,
+    DATA = 10,
   }
 }
 
