@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/galexrt/fivenet/proto/resources/rector"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 )
 
@@ -24,10 +25,10 @@ func New(db *sql.DB) *AuditStorer {
 }
 
 func (a *AuditStorer) Stop() {
-	// TODO
+	// TODO finish the queue and close the input channels
 }
 
-func (a *AuditStorer) storeInDatabase() error {
+func (a *AuditStorer) Log(userId int32, job string, targetJob string, service string, method string, state rector.EVENT_TYPE, data map[string]interface{}) error {
 
 	stmt := audit.
 		INSERT(
@@ -40,7 +41,13 @@ func (a *AuditStorer) storeInDatabase() error {
 			audit.Data,
 		).
 		VALUES(
-			"",
+			userId,
+			job,
+			targetJob,
+			service,
+			method,
+			state,
+			data,
 		)
 
 	if _, err := stmt.ExecContext(a.ctx, a.db); err != nil {

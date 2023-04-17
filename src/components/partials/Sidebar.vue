@@ -24,6 +24,7 @@ import {
     UserIcon,
     TruckIcon,
     QuestionMarkCircleIcon,
+    Cog8ToothIcon,
 } from '@heroicons/vue/24/outline';
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
 import SidebarJobSwitcher from './SidebarJobSwitcher.vue';
@@ -84,6 +85,14 @@ const sidebarNavigation = [
         current: false,
     },
     {
+        name: 'Control Panel',
+        href: { name: 'rector' },
+        permission: 'RectorService.GetRoles',
+        icon: Cog8ToothIcon,
+        position: 'top',
+        current: false,
+    },
+    {
         name: 'About',
         href: { name: 'about' },
         permission: '',
@@ -109,7 +118,6 @@ function updateUserNav(): void {
     if (activeChar.value) {
         userNavigation.value.push(
             { name: 'Change Character', href: { name: 'auth-character-selector' } },
-            { name: 'Control Panel', href: { name: 'rector' }, permission: 'RectorService.GetRoles' },
         );
     }
     if (accessToken.value) {
@@ -200,7 +208,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                 <div class="flex items-center flex-shrink-0">
                     <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo" :title="'FiveNet' + appVersion" />
                 </div>
-                <div class="flex-grow w-full px-2 mt-6 space-y-1">
+                <div class="flex-grow w-full px-2 mt-6 space-y-1 text-center">
                     <NuxtLink :to="{ name: 'index' }" v-if="!accessToken || !activeChar"
                         active-class="bg-accent-100/20 text-neutral font-bold"
                         class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
@@ -218,7 +226,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                         <span class="mt-2">{{ item.name }}</span>
                     </NuxtLink>
                 </div>
-                <div class="flex-initial w-full px-2 space-y-1">
+                <div class="flex-initial w-full px-2 space-y-1 text-center">
                     <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'bottom')" :key="item.name"
                         :to="item.href" v-can="item.permission"
                         :class="[item.current ? 'bg-accent-100/20 text-neutral font-bold' : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium', 'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2']"
