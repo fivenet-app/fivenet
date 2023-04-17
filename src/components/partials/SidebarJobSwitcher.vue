@@ -15,6 +15,7 @@ const store = useAuthStore();
 const activeChar = computed(() => store.$state.activeChar);
 
 let entriesJobs = [] as Job[];
+const filteredJobs = ref<Job[]>([]);
 const queryJob = ref('');
 const selectedJob = ref<Job>();
 
@@ -27,6 +28,7 @@ async function findJobs(): Promise<void> {
             completeJobNames(req, null)
 
         entriesJobs = resp.getJobsList();
+        filteredJobs.value = entriesJobs;
     } catch (e) {
         $grpc.handleRPCError(e as RpcError);
         return;
@@ -58,6 +60,7 @@ async function setJob(): Promise<void> {
     }
 }
 
+watchDebounced(queryJob, async () => { filteredJobs.value = entriesJobs.filter(g => g.getLabel().toLowerCase().includes(queryJob.value.toLowerCase())) }, { debounce: 750, maxWait: 2000 });
 watchDebounced(selectedJob, () => setJob());
 </script>
 
@@ -70,9 +73,9 @@ watchDebounced(selectedJob, () => setJob());
                     @change="queryJob = $event.target.value" :display-value="(job: any) => job?.getLabel()" />
             </ComboboxButton>
 
-            <ComboboxOptions v-if="entriesJobs.length > 0"
+            <ComboboxOptions v-if="filteredJobs.length > 0"
                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                <ComboboxOption v-for="job in entriesJobs" :key="job.getName()" :value="job" as="job"
+                <ComboboxOption v-for="job in filteredJobs" :key="job.getName()" :value="job" as="job"
                     v-slot="{ active, selected }">
                     <li
                         :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
