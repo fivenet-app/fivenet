@@ -12,6 +12,7 @@ import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/complet
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { useAuthStore } from '~/store/auth';
 import { watchDebounced } from '@vueuse/core';
+import { dispatchNotification } from '~/components/partials/notification';
 
 const { $grpc } = useNuxtApp();
 
@@ -77,6 +78,8 @@ async function createRole(): Promise<void> {
             if (role.hasRole()) {
                 roles.value?.unshift(role.getRole()!);
             }
+
+            dispatchNotification({ title: 'Role: Created', content: 'Role has been created.', type: 'success' });
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

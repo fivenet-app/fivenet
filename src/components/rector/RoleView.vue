@@ -46,8 +46,10 @@ async function deleteRole(): Promise<void> {
         req.setId(props.roleId);
 
         try {
-            return $grpc.getRectorClient().
+            await $grpc.getRectorClient().
                 deleteRole(req, null);
+
+            dispatchNotification({ title: 'Role: Deleted', content: 'Role has been successfully deleted.', type: 'success' });
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -170,7 +172,7 @@ async function saveRolePermissions(): Promise<void> {
     console.log(permsToAdd.value);
     console.log(permsToRemove.value);
     await Promise.all([saveAddPermissions(), saveRemovePermissions()]);
-    dispatchNotification({ title: 'Saving Role Permissions', content: '', type: 'success' });
+    dispatchNotification({ title: 'Role: Permissions Saved', content: 'Permissions have been saved.', type: 'success' });
 }
 
 onMounted(async () => {
