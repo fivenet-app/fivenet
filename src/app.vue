@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { loadConfig } from './config';
+import { useUserSettingsStore } from './store/usersettings';
 
 useHead({
     htmlAttrs: {
@@ -15,6 +16,13 @@ useHead({
 });
 
 await loadConfig();
+
+const store = useUserSettingsStore();
+const { setLocale } = useI18n();
+
+// Set locale on load
+const locale = computed(() => store.$state.locale);
+setLocale(locale.value);
 </script>
 
 <template>

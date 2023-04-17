@@ -34,7 +34,6 @@ async function chooseCharacter(): Promise<NavigationFailure | void | undefined> 
             store.updateAccessToken(resp.getToken());
             store.updateActiveChar(props.char);
             store.updatePermissions(resp.getPermissionsList());
-            console.log("Char Permissions: " + resp.getPermissionsList());
 
             const path = route.query.redirect?.toString() || "/overview";
             const url = new URL("https://example.com" + path);

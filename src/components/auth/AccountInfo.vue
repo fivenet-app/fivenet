@@ -6,8 +6,14 @@ import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { UserIcon } from '@heroicons/vue/24/outline';
 import ChangePasswordModal from './ChangePasswordModal.vue';
+import { KeyIcon } from '@heroicons/vue/20/solid';
+import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
+
+const store = useAuthStore();
+
+const perms = computed(() => store.$state.permissions);
 
 const { data: account, pending, refresh, error } = await useLazyAsyncData(`accounmt`, () => getAccountInfo());
 
@@ -81,6 +87,24 @@ const changePasswordModal = ref(false);
                                     class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
                                     Change account Password
                                 </button>
+                            </dd>
+                        </div>
+                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <dt class="text-sm font-medium">
+                                Your Permissions (used for debugging)
+                            </dt>
+                            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
+                                    <li v-for="perm in perms"
+                                        class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
+                                        <KeyIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                                        <div class="ml-4 flex min-w-0 flex-1 gap-2">
+                                            <span class="truncate font-medium">
+                                                {{ perm }}
+                                            </span>
+                                        </div>
+                                    </li>
+                                </ul>
                             </dd>
                         </div>
                     </dl>

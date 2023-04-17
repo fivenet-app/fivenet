@@ -123,11 +123,13 @@ function updateUserNav(): void {
     if (accessToken.value) {
         userNavigation.value.push(
             { name: 'Account Info', href: { name: 'auth-account-info' } },
+            { name: 'Switch Language', href: { name: 'lang' } },
             { name: 'Sign out', href: { name: 'auth-logout' } },
         );
     }
     if (userNavigation.value.length === 0) {
         userNavigation.value = [
+            { name: 'Switch Language', href: { name: 'lang' } },
             { name: 'Login', href: { name: 'auth-login' } },
         ];
     }

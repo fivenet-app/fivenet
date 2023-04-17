@@ -135,15 +135,15 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		ORDER_BY(nots.ID.DESC()).
 		LIMIT(10)
 
-	lastId := req.LastId
-
-	resp := &StreamResponse{}
+	resp := &StreamResponse{
+		LastId: req.LastId,
+	}
 	for {
 		q := stmt.
 			WHERE(
 				jet.AND(
 					nots.UserID.EQ(jet.Int32(userId)),
-					nots.ID.GT(jet.Uint64(lastId)),
+					nots.ID.GT(jet.Uint64(req.LastId)),
 				),
 			)
 
@@ -153,13 +153,14 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 
 		// Update last id for user
 		if len(resp.Notifications) > 0 {
-			lastId = resp.Notifications[0].Id
-			resp.LastId = lastId
+			req.LastId = resp.Notifications[0].Id
+			resp.LastId = resp.Notifications[0].Id
 		}
 
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
+		resp.Notifications = nil
 
 		select {
 		case <-srv.Context().Done():

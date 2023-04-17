@@ -1,1 +1,12 @@
-{}
+{
+    "overview": "Overview",
+    "login": "Login",
+    "logout": "Logout",
+    "pages": {
+        "index": {
+            "welcome": "Welcome to FiveNet!",
+            "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court and a livemap of your colleagues and dispatches.\n\nAll that and more, is (mostly) ready in this net, the FiveNet."
+        }
+    },
+    "copyright": "Copyright © 2023 Galexrt All rights reserved."
+}

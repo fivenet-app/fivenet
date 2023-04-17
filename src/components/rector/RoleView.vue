@@ -100,8 +100,6 @@ function addPermission(): void {
     if (pIdx === -1) {
         role.value?.getPermissionsList().push(selectedPerm.value);
     }
-
-    console.log(role.value?.getPermissionsList());
 }
 
 function removePermission(perm: Permission): void {
@@ -119,8 +117,6 @@ function removePermission(perm: Permission): void {
     if (pIdx > -1) {
         role.value?.getPermissionsList().splice(pIdx, 1);
     }
-
-    console.log(role.value?.getPermissionsList());
 }
 
 async function saveAddPermissions(): Promise<void> {
@@ -168,9 +164,6 @@ async function saveRemovePermissions(): Promise<void> {
 }
 
 async function saveRolePermissions(): Promise<void> {
-    console.log("saveRolePermissions");
-    console.log(permsToAdd.value);
-    console.log(permsToRemove.value);
     await Promise.all([saveAddPermissions(), saveRemovePermissions()]);
     dispatchNotification({ title: 'Role: Permissions Saved', content: 'Permissions have been saved.', type: 'success' });
 }

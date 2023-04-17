@@ -33,6 +33,27 @@ const config = defineNuxtConfig({
     },
     i18n: {
         vueI18n: './i18n.config.ts',
+        strategy: 'no_prefix',
+        detectBrowserLanguage: {
+            useCookie: false,
+        },
+        locales: [
+            {
+                name: 'English',
+                code: 'en',
+                iso: 'en-US',
+                file: 'en-US.json',
+            },
+            {
+                name: 'German',
+                code: 'de',
+                iso: 'de-DE',
+                file: 'de-DE.json',
+            },
+        ],
+        lazy: false,
+        langDir: './lang',
+        defaultLocale: 'en',
     },
     vite: {
         define: {

@@ -23,13 +23,12 @@ async function streamNotifications(): Promise<void> {
     stream.value = $grpc.getNotificatorClient().
         stream(request).
         on('error', async (err: RpcError) => {
-            $grpc.handleRPCError(err);
+            stream.value?.cancel();
         }).
         on('data', async (resp) => {
             if (resp.getLastId() > store.$state.lastId) {
                 store.setLastId(resp.getLastId());
             }
-            console.log(resp.getNotificationsList());
             resp.getNotificationsList().forEach(v => {
                 let nType: NotificationType = 'info';
                 dispatchNotification({ title: v.getTitle(), content: v.getContent(), type: nType });
