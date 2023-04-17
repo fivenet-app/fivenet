@@ -103,10 +103,9 @@ onMounted(async () => {
                                     <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
                                         Job Grade
                                     </label>
-                                    <div class="relative flex items-center mt-2">
-                                        <Combobox as="div" v-model="selectedJobGrade" nullable>
-                                            <div class="relative">
-                                                <ComboboxButton as="div">
+                                        <Combobox as="div" v-model="selectedJobGrade" class="relative flex items-center mt-2 w-full" nullable>
+                                            <div class="relative w-full">
+                                                <ComboboxButton as="div" class="w-full">
                                                     <ComboboxInput
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         @change="queryJobGrade = $event.target.value"
@@ -133,9 +132,8 @@ onMounted(async () => {
                                                 </ComboboxOptions>
                                             </div>
                                         </Combobox>
-                                    </div>
                                 </div>
-                                <div class="flex-1 form-control" v-can="'RectorService.CreateRole'">
+                                <div class="flex-initial form-control flex flex-col justify-end" v-can="'RectorService.CreateRole'">
                                     <button @click="createRole()"
                                         :disabled="selectedJobGrade && selectedJobGrade.getGrade() <= 0"
                                         class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
