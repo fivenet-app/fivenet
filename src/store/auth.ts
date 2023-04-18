@@ -11,7 +11,7 @@ export interface AuthState {
     permissions: Array<String>;
 }
 
-export const useAuthStore = defineStore('authStore', {
+export const useAuthStore = defineStore('auth', {
     state: () => ({
         // Persisted to Local Storage
         accessToken: null as null | string,
