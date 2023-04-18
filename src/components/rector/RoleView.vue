@@ -228,16 +228,16 @@ watchDebounced(queryPerm, async () => getPermissions(), { debounce: 750, maxWait
                                             </Combobox>
                                         </div>
                                     </div>
-                                    <div class="flex-initial form-control">
+                                    <div class="flex-initial form-control flex flex-col justify-end">
                                         <button type="submit" :disabled="!selectedPerm"
                                             class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                             Add Permission
                                         </button>
                                     </div>
-                                    <div class="flex-initial form-control">
+                                    <div class="flex-initial form-control flex flex-col justify-end">
                                         <button @click="saveRolePermissions()"
                                             :disabled="permsToAdd.length === 0 && permsToRemove.length === 0"
-                                            class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-success-700 text-neutral hover:bg-success-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-700">
+                                            class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-success-600 text-neutral hover:bg-success-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-600">
                                             Save Changes
                                         </button>
                                     </div>
