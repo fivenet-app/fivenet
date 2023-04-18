@@ -44,7 +44,7 @@ goog.exportSymbol('proto.services.citizenstore.SetUserPropsResponse', null, glob
  * @constructor
  */
 proto.services.citizenstore.FindUsersRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.services.citizenstore.FindUsersRequest.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.services.citizenstore.FindUsersRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -202,13 +202,6 @@ if (goog.DEBUG && !COMPILED) {
   proto.services.citizenstore.SetUserPropsResponse.displayName = 'proto.services.citizenstore.SetUserPropsResponse';
 }
 
-/**
- * List of repeated fields within this message type.
- * @private {!Array<number>}
- * @const
- */
-proto.services.citizenstore.FindUsersRequest.repeatedFields_ = [2];
-
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -241,10 +234,8 @@ proto.services.citizenstore.FindUsersRequest.prototype.toObject = function(opt_i
 proto.services.citizenstore.FindUsersRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f),
-    orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
-    resources_common_database_database_pb.OrderBy.toObject, includeInstance),
-    searchName: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 4, false)
+    searchName: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
   };
 
   if (includeInstance) {
@@ -287,15 +278,10 @@ proto.services.citizenstore.FindUsersRequest.deserializeBinaryFromReader = funct
       msg.setPagination(value);
       break;
     case 2:
-      var value = new resources_common_database_database_pb.OrderBy;
-      reader.readMessage(value,resources_common_database_database_pb.OrderBy.deserializeBinaryFromReader);
-      msg.addOrderby(value);
-      break;
-    case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.setSearchName(value);
       break;
-    case 4:
+    case 3:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setWanted(value);
       break;
@@ -336,25 +322,17 @@ proto.services.citizenstore.FindUsersRequest.serializeBinaryToWriter = function(
       resources_common_database_database_pb.PaginationRequest.serializeBinaryToWriter
     );
   }
-  f = message.getOrderbyList();
-  if (f.length > 0) {
-    writer.writeRepeatedMessage(
-      2,
-      f,
-      resources_common_database_database_pb.OrderBy.serializeBinaryToWriter
-    );
-  }
   f = message.getSearchName();
   if (f.length > 0) {
     writer.writeString(
-      3,
+      2,
       f
     );
   }
   f = message.getWanted();
   if (f) {
     writer.writeBool(
-      4,
+      3,
       f
     );
   }
@@ -399,49 +377,11 @@ proto.services.citizenstore.FindUsersRequest.prototype.hasPagination = function(
 
 
 /**
- * repeated resources.common.database.OrderBy orderBy = 2;
- * @return {!Array<!proto.resources.common.database.OrderBy>}
- */
-proto.services.citizenstore.FindUsersRequest.prototype.getOrderbyList = function() {
-  return /** @type{!Array<!proto.resources.common.database.OrderBy>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_common_database_database_pb.OrderBy, 2));
-};
-
-
-/**
- * @param {!Array<!proto.resources.common.database.OrderBy>} value
- * @return {!proto.services.citizenstore.FindUsersRequest} returns this
-*/
-proto.services.citizenstore.FindUsersRequest.prototype.setOrderbyList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 2, value);
-};
-
-
-/**
- * @param {!proto.resources.common.database.OrderBy=} opt_value
- * @param {number=} opt_index
- * @return {!proto.resources.common.database.OrderBy}
- */
-proto.services.citizenstore.FindUsersRequest.prototype.addOrderby = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.common.database.OrderBy, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.services.citizenstore.FindUsersRequest} returns this
- */
-proto.services.citizenstore.FindUsersRequest.prototype.clearOrderbyList = function() {
-  return this.setOrderbyList([]);
-};
-
-
-/**
- * optional string search_name = 3;
+ * optional string search_name = 2;
  * @return {string}
  */
 proto.services.citizenstore.FindUsersRequest.prototype.getSearchName = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
@@ -450,16 +390,16 @@ proto.services.citizenstore.FindUsersRequest.prototype.getSearchName = function(
  * @return {!proto.services.citizenstore.FindUsersRequest} returns this
  */
 proto.services.citizenstore.FindUsersRequest.prototype.setSearchName = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional bool wanted = 4;
+ * optional bool wanted = 3;
  * @return {boolean}
  */
 proto.services.citizenstore.FindUsersRequest.prototype.getWanted = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 4, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 3, false));
 };
 
 
@@ -468,7 +408,7 @@ proto.services.citizenstore.FindUsersRequest.prototype.getWanted = function() {
  * @return {!proto.services.citizenstore.FindUsersRequest} returns this
  */
 proto.services.citizenstore.FindUsersRequest.prototype.setWanted = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 4, value);
+  return jspb.Message.setProto3BooleanField(this, 3, value);
 };
 
 

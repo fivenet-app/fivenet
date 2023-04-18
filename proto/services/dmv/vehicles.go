@@ -115,8 +115,6 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 			vehicle.Type,
 			user.ID,
 			user.Identifier,
-			user.Job,
-			user.JobGrade,
 			user.Firstname,
 			user.Lastname,
 		).
@@ -139,12 +137,6 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 		count.TotalCount,
 		req.Pagination.Offset,
 		len(resp.Vehicles))
-
-	for i := 0; i < len(resp.Vehicles); i++ {
-		if resp.Vehicles[i].Owner != nil {
-			s.c.EnrichJobInfo(resp.Vehicles[i].Owner)
-		}
-	}
 
 	return resp, nil
 }

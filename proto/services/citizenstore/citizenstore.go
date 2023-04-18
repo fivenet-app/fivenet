@@ -30,7 +30,7 @@ var (
 )
 
 var (
-	FailedQueryErr = status.Error(codes.Internal, "Failed to get/create/update document data!")
+	FailedQueryErr = status.Error(codes.Internal, "Failed to list/get citizen(s) date!")
 )
 
 type Server struct {

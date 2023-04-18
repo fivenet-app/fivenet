@@ -97,51 +97,6 @@ func (m *FindUsersRequest) validate(all bool) error {
 		}
 	}
 
-	if len(m.GetOrderBy()) > 3 {
-		err := FindUsersRequestValidationError{
-			field:  "OrderBy",
-			reason: "value must contain no more than 3 item(s)",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	for idx, item := range m.GetOrderBy() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, FindUsersRequestValidationError{
-						field:  fmt.Sprintf("OrderBy[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, FindUsersRequestValidationError{
-						field:  fmt.Sprintf("OrderBy[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return FindUsersRequestValidationError{
-					field:  fmt.Sprintf("OrderBy[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if utf8.RuneCountInString(m.GetSearchName()) > 50 {
 		err := FindUsersRequestValidationError{
 			field:  "SearchName",
