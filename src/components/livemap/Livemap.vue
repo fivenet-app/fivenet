@@ -14,8 +14,10 @@ import { watchDebounced } from '@vueuse/core';
 import { dispatchNotification } from '~/components/partials/notification';
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { toDateRelativeString } from '~/utils/time';
+import { useUserSettingsStore } from '~/store/usersettings';
 
 const { $grpc } = useNuxtApp();
+const userSettings = useUserSettingsStore();
 
 const stream = ref<ClientReadableStream<StreamResponse> | null>(null);
 const error = ref<RpcError | null>(null);
@@ -209,12 +211,14 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
             }
             break;
     }
+    console.debug("🔎 • file: Livemap.vue:220 • getIcon • userSettings.livemapMarkerSize:", userSettings.getLivemapMarkerSize())
 
     return new L.DivIcon({
         html: '<div>' + html + '</div>',
-        iconSize: [32, 32],
-        popupAnchor: [0, -16],
+        iconSize: [userSettings.livemapMarkerSize, userSettings.livemapMarkerSize],
+        popupAnchor: [0, -(userSettings.livemapMarkerSize / 2)],
     });
+
 }
 
 onBeforeUnmount(() => {
@@ -278,6 +282,7 @@ watch(selectedPostal, () => {
         duration: 0.850,
     });
 });
+
 watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 });
 </script>
 
