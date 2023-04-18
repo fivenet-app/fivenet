@@ -56,6 +56,8 @@ const zoom = ref(2);
 let center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 
+const markerSize = ref<number>(userSettings.getLivemapMarkerSize);
+
 const markerJobs = ref<Job[]>([]);
 
 const playerQuery = ref<string>('');
@@ -211,12 +213,11 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
             }
             break;
     }
-    console.debug("🔎 • file: Livemap.vue:220 • getIcon • userSettings.livemapMarkerSize:", userSettings.getLivemapMarkerSize)
 
     return new L.DivIcon({
         html: '<div>' + html + '</div>',
-        iconSize: [userSettings.livemapMarkerSize, userSettings.livemapMarkerSize],
-        popupAnchor: [0, -(userSettings.livemapMarkerSize / 2)],
+        iconSize: [markerSize.value, markerSize.value],
+        popupAnchor: [0, (markerSize.value / 2 * -1)],
     });
 
 }
@@ -282,6 +283,8 @@ watch(selectedPostal, () => {
         duration: 0.850,
     });
 });
+
+watchDebounced(markerSize, () => userSettings.setLivemapMarkerSize(markerSize.value), { debounce: 250, maxWait: 850 });
 
 watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 });
 </script>
@@ -350,18 +353,18 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 <b>Latitude</b>: {{ mouseLat }} | <b>Longtitude</b>: {{ mouseLong }}
             </LControl>
             <LControl position="topleft">
-                <div class="form-control">
-                    <div class="relative flex items-center">
-                        <input v-model="playerQuery" type="text" name="searchPlayer" id="searchPlayer"
+                <div class="form-control flex flex-col gap-2">
+                    <div>
+                        <input v-model="playerQuery" class="w-full" type="text" name="searchPlayer" id="searchPlayer"
                             placeholder="Employee Filter" />
                     </div>
-                    <div class="relative flex items-center mt-2">
-                        <input v-model="dispatchQuery" type="text" name="searchDispatch" id="searchDispatch"
+                    <div>
+                        <input v-model="dispatchQuery" class="w-full" type="text" name="searchDispatch" id="searchDispatch"
                             placeholder="Dispatch Filter" />
                     </div>
-                    <div class="relative flex items-center mt-2">
-                        <Combobox as="div" v-model="selectedPostal" nullable>
-                            <ComboboxInput @change="postalQuery = $event.target.value" @click="loadPostals"
+                    <div>
+                        <Combobox as="div" class="w-full" v-model="selectedPostal" nullable>
+                            <ComboboxInput class="w-full" @change="postalQuery = $event.target.value" @click="loadPostals"
                                 :display-value="(postal: any) => postal ? postal?.code : ''" placeholder="Postal Search" />
                             <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">
                                 <ComboboxOption v-for="postal in filteredPostals" :key="postal.code" :value="postal"
@@ -373,6 +376,12 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                                 </ComboboxOption>
                             </ComboboxOptions>
                         </Combobox>
+                    </div>
+                    <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
+                        <span class="text-lg mr-2 text-[#6f7683]">{{ markerSize }}</span>
+                        <input id="markerSize" name="markerSize" type="range"
+                            class="h-1.5 w-full cursor-grab rounded-full my-auto" min="14" max="34" step="2"
+                            :value="markerSize" @change="markerSize = ($event.target as any).value" />
                     </div>
                 </div>
             </LControl>
