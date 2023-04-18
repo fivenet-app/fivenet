@@ -65,24 +65,29 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		user.Visum,
 		userProps.UserID,
 	}
+
+	condition := jet.Bool(true)
 	// Field Permission Check
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "PhoneNumber") {
 			selectors = append(selectors, user.PhoneNumber)
+			if req.PhoneNumber != "" {
+				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(req.PhoneNumber, "%", ""), " ", "") + "%"
+				condition = condition.AND(user.PhoneNumber.LIKE(jet.String(phoneNumber)))
+			}
 		}
 		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Wanted") {
 			selectors = append(selectors, userProps.Wanted)
+			if req.Wanted {
+				condition = condition.AND(userProps.Wanted.IS_TRUE())
+			}
 		}
 	}
 
 	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
 
-	condition := jet.Bool(true)
 	if req.SearchName != "" {
 		condition = condition.AND(jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.SearchName})))
-	}
-	if req.Wanted {
-		condition = condition.AND(userProps.Wanted.IS_TRUE())
 	}
 
 	// Get total count of values

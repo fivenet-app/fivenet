@@ -110,6 +110,17 @@ func (m *FindUsersRequest) validate(all bool) error {
 
 	// no validation rules for Wanted
 
+	if utf8.RuneCountInString(m.GetPhoneNumber()) > 20 {
+		err := FindUsersRequestValidationError{
+			field:  "PhoneNumber",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return FindUsersRequestMultiError(errors)
 	}

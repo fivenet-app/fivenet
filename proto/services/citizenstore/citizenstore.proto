@@ -12,6 +12,7 @@ message FindUsersRequest {
   // Search params
   string search_name = 2 [(validate.rules).string.max_len = 50];
   bool wanted = 3;
+  string phone_number = 4 [(validate.rules).string.max_len = 20];
 }
 
 message FindUsersResponse {

@@ -235,7 +235,8 @@ proto.services.citizenstore.FindUsersRequest.toObject = function(includeInstance
   var f, obj = {
     pagination: (f = msg.getPagination()) && resources_common_database_database_pb.PaginationRequest.toObject(includeInstance, f),
     searchName: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
+    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 3, false),
+    phoneNumber: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -285,6 +286,10 @@ proto.services.citizenstore.FindUsersRequest.deserializeBinaryFromReader = funct
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setWanted(value);
       break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPhoneNumber(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -333,6 +338,13 @@ proto.services.citizenstore.FindUsersRequest.serializeBinaryToWriter = function(
   if (f) {
     writer.writeBool(
       3,
+      f
+    );
+  }
+  f = message.getPhoneNumber();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
       f
     );
   }
@@ -409,6 +421,24 @@ proto.services.citizenstore.FindUsersRequest.prototype.getWanted = function() {
  */
 proto.services.citizenstore.FindUsersRequest.prototype.setWanted = function(value) {
   return jspb.Message.setProto3BooleanField(this, 3, value);
+};
+
+
+/**
+ * optional string phone_number = 4;
+ * @return {string}
+ */
+proto.services.citizenstore.FindUsersRequest.prototype.getPhoneNumber = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.services.citizenstore.FindUsersRequest} returns this
+ */
+proto.services.citizenstore.FindUsersRequest.prototype.setPhoneNumber = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 

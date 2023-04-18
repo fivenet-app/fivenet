@@ -16,6 +16,9 @@ export class FindUsersRequest extends jspb.Message {
   getWanted(): boolean;
   setWanted(value: boolean): FindUsersRequest;
 
+  getPhoneNumber(): string;
+  setPhoneNumber(value: string): FindUsersRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindUsersRequest.AsObject;
   static toObject(includeInstance: boolean, msg: FindUsersRequest): FindUsersRequest.AsObject;
@@ -29,6 +32,7 @@ export namespace FindUsersRequest {
     pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
     searchName: string,
     wanted: boolean,
+    phoneNumber: string,
   }
 }
 
