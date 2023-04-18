@@ -205,7 +205,7 @@ func (s *Server) refreshUserLocations() error {
 		WHERE(
 			locs.Hidden.IS_FALSE().
 				AND(
-					locs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(10, jet.MINUTE))),
+					locs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(120, jet.MINUTE))),
 				),
 		)
 
@@ -288,7 +288,7 @@ func (s *Server) refreshDispatches() error {
 			name = *v.Name
 		}
 
-		// Remove the "json" leftovers (in the gksphone table it looks like `["ambulance"]`)
+		// Remove the "json" leftovers (in the gksphone table it looks like, e.g., `["ambulance"]`)
 		job := strings.TrimSuffix(strings.TrimPrefix(*v.Jobm, "[\""), "\"]")
 		if _, ok := markers[job]; !ok {
 			markers[job] = []*livemap.DispatchMarker{}

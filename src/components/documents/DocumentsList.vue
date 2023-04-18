@@ -16,7 +16,6 @@ const { $grpc } = useNuxtApp();
 
 const search = ref({ title: '', });
 // TODO Implement order by for documents
-const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 

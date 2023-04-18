@@ -16,7 +16,6 @@ const { $grpc } = useNuxtApp();
 
 const queryName = ref('');
 const queryWanted = ref(false);
-const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
@@ -26,7 +25,6 @@ async function findUsers(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {
         const req = new FindUsersRequest();
         req.setPagination((new PaginationRequest()).setOffset(offset.value));
-        req.setOrderbyList(orderBys.value);
         req.setSearchName(queryName.value);
         req.setWanted(queryWanted.value);
 
@@ -41,30 +39,6 @@ async function findUsers(): Promise<Array<User>> {
             return rej(e as RpcError);
         }
     });
-}
-
-async function toggleOrderBy(column: string): Promise<void> {
-    const index = orderBys.value.findIndex((o: OrderBy) => {
-        return o.getColumn() == column;
-    });
-    let orderBy: OrderBy;
-    if (index > -1) {
-        //@ts-ignore I just checked if it exists, so it should exist
-        orderBy = orderBys.value.at(index);
-        if (orderBy.getDesc()) {
-            orderBys.value.splice(index);
-        }
-        else {
-            orderBy.setDesc(true);
-        }
-    } else {
-        orderBy = new OrderBy();
-        orderBy.setColumn(column);
-        orderBy.setDesc(false);
-        orderBys.value.push(orderBy);
-    }
-
-    return refresh();
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -126,11 +100,11 @@ watchDebounced(queryName, () => refresh(), { debounce: 650, maxWait: 1500 });
                             <table class="min-w-full divide-y divide-base-600">
                                 <thead>
                                     <tr>
-                                        <th v-on:click="toggleOrderBy('firstname')" scope="col"
+                                        <th scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
                                             Name
                                         </th>
-                                        <th v-on:click="toggleOrderBy('job')" scope="col"
+                                        <th scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Job
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Sex
@@ -155,11 +129,11 @@ watchDebounced(queryName, () => refresh(), { debounce: 650, maxWait: 1500 });
                                 </tbody>
                                 <thead>
                                     <tr>
-                                        <th v-on:click="toggleOrderBy('firstname')" scope="col"
+                                        <th scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
                                             Name
                                         </th>
-                                        <th v-on:click="toggleOrderBy('job')" scope="col"
+                                        <th scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Job
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Sex

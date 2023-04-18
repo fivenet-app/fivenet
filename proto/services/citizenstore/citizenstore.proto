@@ -9,10 +9,9 @@ import "validate/validate.proto";
 
 message FindUsersRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
   // Search params
-  string search_name = 3 [(validate.rules).string.max_len = 50];
-  bool wanted = 4;
+  string search_name = 2 [(validate.rules).string.max_len = 50];
+  bool wanted = 3;
 }
 
 message FindUsersResponse {
@@ -45,7 +44,7 @@ message SetUserPropsResponse {}
 service CitizenStoreService {
   // @perm: fields=PhoneNumber,Licenses,UserProps;description="Citizens List and Search"
   rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
-  // @perm: name=FindUsers
+  // @perm: description="See a user's profile"
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // @perm: fields=SourceUser;description="Citizen Info Activity Feed"
   rpc GetUserActivity(GetUserActivityRequest) returns (GetUserActivityResponse);
