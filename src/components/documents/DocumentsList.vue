@@ -51,7 +51,7 @@ function focusSearch(): void {
 const templatesOpen = ref(false);
 
 watch(offset, async () => refresh());
-watchDebounced(search.value, async () => refresh(), { debounce: 650, maxWait: 1500 });
+watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
 </script>
 
 <template>

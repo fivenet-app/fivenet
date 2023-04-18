@@ -124,7 +124,7 @@ function focusSearch(): void {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(search.value, async () => refresh(), { debounce: 650, maxWait: 1500 });
+watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
 watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWait: 1250 });
 watch(selectedChar, () => {
     if (selectedChar && selectedChar.value?.getUserId()) {

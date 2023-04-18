@@ -69,9 +69,9 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	condition := jet.Bool(true)
 	// Field Permission Check
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
-		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "PhoneNumber") {
-			selectors = append(selectors, user.PhoneNumber)
-			if req.PhoneNumber != "" {
+		if req.PhoneNumber != "" {
+			if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "PhoneNumber") {
+				selectors = append(selectors, user.PhoneNumber)
 				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(req.PhoneNumber, "%", ""), " ", "") + "%"
 				condition = condition.AND(user.PhoneNumber.LIKE(jet.String(phoneNumber)))
 			}
@@ -85,7 +85,6 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	}
 
 	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
-
 	if req.SearchName != "" {
 		condition = condition.AND(jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.SearchName})))
 	}
@@ -158,14 +157,19 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		user.Dateofbirth,
 		user.Sex,
 		user.Height,
-		user.PhoneNumber,
 		user.Visum,
 		userProps.UserID,
 	}
 
 	// Field Permission Check
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
-		selectors = append(selectors, userProps.Wanted)
+		// Field Permission Check
+		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "PhoneNumber") {
+			selectors = append(selectors, user.PhoneNumber)
+		}
+		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Wanted") {
+			selectors = append(selectors, userProps.Wanted)
+		}
 	}
 
 	resp := &GetUserResponse{

@@ -174,7 +174,7 @@ function saveToStore(): void {
 
 watchDebounced(doc.value, () => saveToStore(), { debounce: 1000, maxWait: 3000 });
 
-watchDebounced(queryCategory, () => findCategories(), { debounce: 650, maxWait: 1500 });
+watchDebounced(queryCategory, () => findCategories(), { debounce: 600, maxWait: 1400 });
 
 async function findCategories(): Promise<void> {
     const req = new CompleteDocumentCategoryRequest();

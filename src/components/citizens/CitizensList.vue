@@ -14,23 +14,19 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
-const queryName = ref('');
-const queryPhone = ref('');
-const queryWanted = ref(false);
+const query = ref<{ name: string; phone: string; wanted: boolean; }>({ name: '', phone: '', wanted: false });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-const { data: users, pending, refresh, error } = await useLazyAsyncData(`citizens-${offset.value}`, () => findUsers());
+const { data: users, pending, refresh, error } = await useLazyAsyncData(`citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phone}`, () => findUsers());
 
 async function findUsers(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {
         const req = new FindUsersRequest();
         req.setPagination((new PaginationRequest()).setOffset(offset.value));
-        req.setSearchName(queryName.value);
-        req.setWanted(queryWanted.value);
-        req.setPhoneNumber(queryPhone.value);
-        console.debug("🔎 • file: CitizensList.vue:32 • returnnewPromise • queryPhone.value:", queryPhone.value)
-
+        req.setSearchName(query.value.name);
+        req.setWanted(query.value.wanted);
+        req.setPhoneNumber(query.value.phone);
 
         try {
             const resp = await $grpc.getCitizenStoreClient().
@@ -53,9 +49,7 @@ function focusSearch(): void {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(queryWanted, () => refresh(), { debounce: 150, maxWait: 350 });
-watchDebounced(queryName, () => refresh(), { debounce: 650, maxWait: 1500 });
-watchDebounced(queryPhone, () => refresh(), { debounce: 650, maxWait: 1500 });
+watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
 </script>
 
 <template>
@@ -69,16 +63,16 @@ watchDebounced(queryPhone, () => refresh(), { debounce: 650, maxWait: 1500 });
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">Search
                                     Name</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="queryName" ref="searchNameInput" type="text" name="searchName"
+                                    <input v-model="query.name" ref="searchNameInput" type="text" name="searchName"
                                         id="searchName" placeholder="Citizen Name"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div class="flex-1 form-control" v-can="'CitizenStoreService.FindUsers.PhoneNumber'">
                                 <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">Search
                                     Phone</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="queryPhone" ref="searchPhoneInput" type="number" name="searchPhone"
+                                    <input v-model="query.phone" type="tel" name="searchPhone"
                                         id="searchPhone" placeholder="Phone Number"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
@@ -87,11 +81,11 @@ watchDebounced(queryPhone, () => refresh(), { debounce: 650, maxWait: 1500 });
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">Only
                                     Wanted</label>
                                 <div class="relative flex items-center mt-3">
-                                    <Switch v-model="queryWanted"
-                                        :class="[queryWanted ? 'bg-error-500' : 'bg-base-700', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2']">
+                                    <Switch v-model="query.wanted"
+                                        :class="[query.wanted ? 'bg-error-500' : 'bg-base-700', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2']">
                                         <span class="sr-only">Wanted</span>
                                         <span aria-hidden="true"
-                                            :class="[queryWanted ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral ring-0 transition duration-200 ease-in-out']" />
+                                            :class="[query.wanted ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral ring-0 transition duration-200 ease-in-out']" />
                                     </Switch>
                                 </div>
                             </div>

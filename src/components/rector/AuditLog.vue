@@ -93,8 +93,8 @@ function charsGetDisplayValue(chars: UserShort[]): string {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(query.value, async () => refresh(), { debounce: 650, maxWait: 1500 });
-watchDebounced(queryChar, async () => await findChars(), { debounce: 650, maxWait: 1500 });
+watchDebounced(query.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
+watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWait: 1400 });
 </script>
 
 <template>
