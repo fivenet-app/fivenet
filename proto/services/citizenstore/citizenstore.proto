@@ -43,7 +43,7 @@ message SetUserPropsRequest {
 message SetUserPropsResponse {}
 
 service CitizenStoreService {
-  // @perm: fields=PhoneNumber,Licenses,UserProps;description="Citizens List and Search"
+  // @perm: fields=PhoneNumber,Licenses,UserProps.Wanted;description="Citizens List and Search"
   rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
   // @perm: description="See a user's profile"
   rpc GetUser(GetUserRequest) returns (GetUserResponse);

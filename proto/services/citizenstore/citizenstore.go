@@ -70,7 +70,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	// Field Permission Check
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		if req.PhoneNumber != "" {
-			if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "PhoneNumber") {
+			if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "PhoneNumber") {
 				selectors = append(selectors, user.PhoneNumber)
 				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(req.PhoneNumber, "%", ""), " ", "") + "%"
 				condition = condition.AND(user.PhoneNumber.LIKE(jet.String(phoneNumber)))
@@ -164,7 +164,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	// Field Permission Check
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
 		// Field Permission Check
-		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "PhoneNumber") {
+		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "PhoneNumber") {
 			selectors = append(selectors, user.PhoneNumber)
 		}
 		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Wanted") {
