@@ -249,7 +249,7 @@ func (s *Server) refreshDispatches() error {
 		).
 		WHERE(
 			jet.AND(
-				d.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(config.C.FiveM.LivemapJobs, "|")+")\"\\]")),
+				d.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(config.C.Game.LivemapJobs, "|")+")\"\\]")),
 				d.Time.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE))),
 			),
 		).

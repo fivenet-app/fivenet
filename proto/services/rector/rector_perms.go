@@ -68,7 +68,7 @@ outer:
 				continue outer
 			}
 			if jobFilter {
-				for _, jc := range config.C.FiveM.PermissionRoleJobs {
+				for _, jc := range config.C.Game.PermissionRoleJobs {
 					if strings.HasSuffix(p.GuardName, "-"+jc) {
 						if len(jobs) == 0 {
 							continue outer

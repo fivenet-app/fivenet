@@ -22,10 +22,16 @@ database:
   dbName: fivenet
 jwt:
   secret: "your_generated_jwt_secret"
-fivem:
+game:
   superuserGroups:
     - projektleiter
     - teamleitung
+  unemployedJob: "unemployed"
+  visibleJobs:
+    - ambulance
+    - doj
+    - fib
+    - police
   permissionRoleJobs:
     - ambulance
     - doj

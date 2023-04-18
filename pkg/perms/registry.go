@@ -43,7 +43,7 @@ func (p *Perms) Register() error {
 		}
 
 		if perm.PerJob {
-			for _, job := range config.C.FiveM.PermissionRoleJobs {
+			for _, job := range config.C.Game.PermissionRoleJobs {
 				pJobName := fmt.Sprintf("%s.%s", pName, job)
 				if err := p.createOrUpdatePermission(pJobName, perm.Description); err != nil {
 					return err
