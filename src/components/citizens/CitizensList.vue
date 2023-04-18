@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { User } from '@fivenet/gen/resources/users/users_pb';
-import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
+import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
 import { FindUsersRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import TablePagination from '~/components/partials/TablePagination.vue';
@@ -15,6 +15,7 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 const { $grpc } = useNuxtApp();
 
 const queryName = ref('');
+const queryPhone = ref('');
 const queryWanted = ref(false);
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
@@ -27,6 +28,9 @@ async function findUsers(): Promise<Array<User>> {
         req.setPagination((new PaginationRequest()).setOffset(offset.value));
         req.setSearchName(queryName.value);
         req.setWanted(queryWanted.value);
+        req.setPhoneNumber(queryPhone.value);
+        console.debug("🔎 • file: CitizensList.vue:32 • returnnewPromise • queryPhone.value:", queryPhone.value)
+
 
         try {
             const resp = await $grpc.getCitizenStoreClient().
@@ -41,16 +45,17 @@ async function findUsers(): Promise<Array<User>> {
     });
 }
 
-const searchInput = ref<HTMLInputElement | null>(null);
+const searchNameInput = ref<HTMLInputElement | null>(null);
 function focusSearch(): void {
-    if (searchInput.value) {
-        searchInput.value.focus();
+    if (searchNameInput.value) {
+        searchNameInput.value.focus();
     }
 }
 
 watch(offset, async () => refresh());
 watchDebounced(queryWanted, () => refresh(), { debounce: 150, maxWait: 350 });
 watchDebounced(queryName, () => refresh(), { debounce: 650, maxWait: 1500 });
+watchDebounced(queryPhone, () => refresh(), { debounce: 650, maxWait: 1500 });
 </script>
 
 <template>
@@ -61,10 +66,20 @@ watchDebounced(queryName, () => refresh(), { debounce: 650, maxWait: 1500 });
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Search</label>
+                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">Search
+                                    Name</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="queryName" ref="searchInput" type="text" name="search" id="search"
-                                        placeholder="Citizen Name"
+                                    <input v-model="queryName" ref="searchNameInput" type="text" name="searchName"
+                                        id="searchName" placeholder="Citizen Name"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                            <div class="flex-1 form-control">
+                                <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">Search
+                                    Phone</label>
+                                <div class="relative flex items-center mt-2">
+                                    <input v-model="queryPhone" ref="searchPhoneInput" type="number" name="searchPhone"
+                                        id="searchPhone" placeholder="Phone Number"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
@@ -104,8 +119,7 @@ watchDebounced(queryName, () => refresh(), { debounce: 650, maxWait: 1500 });
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
                                             Name
                                         </th>
-                                        <th scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Job
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Job
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Sex
                                         </th>
@@ -133,8 +147,7 @@ watchDebounced(queryName, () => refresh(), { debounce: 650, maxWait: 1500 });
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
                                             Name
                                         </th>
-                                        <th scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Job
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Job
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Sex
                                         </th>
