@@ -5,7 +5,7 @@ export interface UserSettingsState {
     livemapMarkerSize: number;
 }
 
-export const useUserSettingsStore = defineStore('notificator', {
+export const useUserSettingsStore = defineStore('userSettings', {
     state: () =>
     ({
         locale: 'en-US',
@@ -16,11 +16,13 @@ export const useUserSettingsStore = defineStore('notificator', {
         setLocale(locale: string): void {
             this.locale = locale;
         },
-        getLivemapMarkerSize(): number {
-            return this.livemapMarkerSize;
-        },
         setLivemapMarkerSize(size: number): void {
             this.livemapMarkerSize = size;
+        },
+    },
+    getters: {
+        getLivemapMarkerSize(state): number {
+            return state.livemapMarkerSize;
         },
     },
 });

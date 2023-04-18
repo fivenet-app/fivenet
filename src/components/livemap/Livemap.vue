@@ -211,7 +211,7 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
             }
             break;
     }
-    console.debug("🔎 • file: Livemap.vue:220 • getIcon • userSettings.livemapMarkerSize:", userSettings.getLivemapMarkerSize())
+    console.debug("🔎 • file: Livemap.vue:220 • getIcon • userSettings.livemapMarkerSize:", userSettings.getLivemapMarkerSize)
 
     return new L.DivIcon({
         html: '<div>' + html + '</div>',
