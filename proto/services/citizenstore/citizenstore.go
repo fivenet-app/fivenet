@@ -110,27 +110,6 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		return resp, nil
 	}
 
-	// Convert our proto abstracted `common.OrderBy` to actual gorm order by instructions
-	orderBys := []jet.OrderByClause{}
-	if len(req.OrderBy) > 0 {
-		for _, orderBy := range req.OrderBy {
-			var column jet.Column
-			switch orderBy.Column {
-			case "firstname":
-				column = user.Firstname
-			case "job":
-			default:
-				column = user.Job
-			}
-
-			if orderBy.Desc {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	}
-
 	stmt := user.
 		SELECT(
 			selectors[0], selectors[1:]...,
@@ -143,7 +122,6 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
-		ORDER_BY(orderBys...).
 		LIMIT(database.DefaultPageLimit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
