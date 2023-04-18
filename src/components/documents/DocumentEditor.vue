@@ -315,7 +315,7 @@ function submitForm(): void {
             dispatchNotification({ title: 'Document created!', content: 'Document has been created.' });
             clipboardStore.clearActiveStack();
             documentStore.clear();
-            router.push('/documents/' + resp.getDocumentId());
+            router.push({ name: 'documents-id', params: { id: resp.getDocumentId(), } });
         });
 }
 
@@ -402,7 +402,7 @@ function editForm(): void {
             dispatchNotification({ title: 'Document updated!', content: 'Document has been updated.' });
             clipboardStore.clearActiveStack();
             documentStore.clear();
-            router.push('/documents/' + resp.getDocumentId());
+            router.push({ name: 'documents-id', params: { id: resp.getDocumentId(), } });
         });
 }
 </script>

@@ -17,7 +17,7 @@ const config = defineNuxtConfig({
     srcDir: 'src/',
     telemetry: false,
     ssr: false,
-    modules: ['@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt', 'nuxt-typed-router', '@nuxtjs/i18n', '@nuxtjs/tailwindcss'],
+    modules: ['@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt', 'nuxt-typed-router', /*'@nuxtjs/i18n',*/ '@nuxtjs/tailwindcss'],
     pinia: {
         autoImports: [
             // automatically imports `defineStore`
@@ -31,7 +31,7 @@ const config = defineNuxtConfig({
         storage: 'localStorage',
         debug: true,
     },
-    i18n: {
+    /*i18n: {
         vueI18n: './i18n.config.ts',
         strategy: 'no_prefix',
         detectBrowserLanguage: {
@@ -54,7 +54,7 @@ const config = defineNuxtConfig({
         lazy: false,
         langDir: './lang',
         defaultLocale: 'en',
-    },
+    },*/
     vite: {
         define: {
             __APP_VERSION__: '"' + version + '"',

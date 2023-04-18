@@ -62,13 +62,17 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		user.Dateofbirth,
 		user.Sex,
 		user.Height,
-		user.PhoneNumber,
 		user.Visum,
 		userProps.UserID,
 	}
 	// Field Permission Check
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
-		selectors = append(selectors, userProps.Wanted)
+		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "PhoneNumber") {
+			selectors = append(selectors, user.PhoneNumber)
+		}
+		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Wanted") {
+			selectors = append(selectors, userProps.Wanted)
+		}
 	}
 
 	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")

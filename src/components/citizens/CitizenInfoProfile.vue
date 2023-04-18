@@ -96,7 +96,7 @@ function openTemplates(): void {
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
                                     user?.getHeight() }}cm</dd>
                             </div>
-                            <div class="sm:flex sm:px-6 sm:py-5">
+                            <div v-can="'CitizenStoreService.FindUsers.PhoneNumber'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     Phone Number</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{

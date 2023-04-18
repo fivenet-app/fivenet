@@ -11,6 +11,7 @@ import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
+const router = useRouter();
 
 const activeChar = computed(() => store.$state.activeChar);
 
@@ -53,7 +54,7 @@ async function setJob(): Promise<void> {
         await store.updateAccessToken(resp.getToken());
         await store.updateActiveChar(resp.getChar()!);
 
-        await useRouter().push({ name: 'overview' });
+        await router.push({ name: 'overview' });
     } catch (e) {
         $grpc.handleRPCError(e as RpcError);
         return;

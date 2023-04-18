@@ -10,6 +10,7 @@ const { $grpc } = useNuxtApp();
 const store = useNotificatorStore();
 const authStore = useAuthStore();
 
+const accessToken = computed(() => authStore.$state.accessToken);
 const activeChar = computed(() => authStore.$state.activeChar);
 
 const stream = ref<ClientReadableStream<StreamResponse> | undefined>(undefined);
@@ -39,15 +40,18 @@ async function streamNotifications(): Promise<void> {
         });
 }
 
-watch(activeChar, () => {
+async function toggleStream(): Promise<void> {
     // Only stream notifications when a character is active
-    if (activeChar.value) {
+    if (accessToken.value && activeChar.value) {
         streamNotifications();
     } else {
         stream.value?.cancel();
         stream.value = undefined;
     }
-});
+}
+
+watch(accessToken, async () => toggleStream());
+watch(activeChar, async () => toggleStream());
 </script>
 
 <template></template>
