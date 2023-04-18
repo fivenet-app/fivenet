@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { StoreDefinition, defineStore } from 'pinia';
 
 export const useLoaderStore = defineStore('loaderStore', () => {
     const loading = ref(0);
@@ -21,5 +21,5 @@ export const useLoaderStore = defineStore('loaderStore', () => {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useLoaderStore, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useLoaderStore as unknown as StoreDefinition, import.meta.hot));
 }

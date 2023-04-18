@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { StoreDefinition, defineStore } from 'pinia';
 
 export interface UserSettingsState {
     locale: string;
@@ -18,5 +18,5 @@ export const useUserSettingsStore = defineStore('notificator', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useUserSettingsStore, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useUserSettingsStore as unknown as StoreDefinition, import.meta.hot));
 }

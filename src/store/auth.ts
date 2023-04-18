@@ -1,4 +1,5 @@
 import { User } from '@fivenet/gen/resources/users/users_pb';
+import { StoreDefinition } from 'pinia';
 import { defineStore } from 'pinia';
 
 export interface AuthState {
@@ -51,5 +52,5 @@ export const useAuthStore = defineStore('authStore', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useAuthStore as unknown as StoreDefinition, import.meta.hot));
 }
