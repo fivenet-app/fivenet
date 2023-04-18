@@ -57,17 +57,17 @@ async function deleteRole(): Promise<void> {
     });
 }
 
-const entriesPerms = ref<Permission[]>([]);
+let entriesPerms = [] as Permission[];
+const filteredPerms = ref<Permission[]>([]);
 const queryPerm = ref('');
 const selectedPerm = ref<Permission>();
 
 async function getPermissions(): Promise<void> {
     const req = new GetPermissionsRequest();
-    req.setSearch(queryPerm.value);
 
     try {
         const resp = await $grpc.getRectorClient().getPermissions(req, null);
-        entriesPerms.value = resp.getPermissionsList();
+        entriesPerms = resp.getPermissionsList();
     } catch (e) {
         $grpc.handleRPCError(e as RpcError);
         return;
@@ -159,6 +159,10 @@ async function saveRemovePermissions(): Promise<void> {
     });
 }
 
+async function applyQuery(): Promise<void> {
+    filteredPerms.value = entriesPerms.filter(p => p.getName().toLowerCase().includes(queryPerm.value.toLowerCase()) || p.getDescription().toLowerCase().includes(queryPerm.value.toLowerCase()));
+}
+
 async function saveRolePermissions(): Promise<void> {
     await Promise.all([saveAddPermissions(), saveRemovePermissions()]);
     dispatchNotification({ title: 'Role: Permissions Saved', content: 'Permissions have been saved.', type: 'success' });
@@ -166,9 +170,10 @@ async function saveRolePermissions(): Promise<void> {
 
 onMounted(async () => {
     await getPermissions();
+    applyQuery();
 });
 
-watchDebounced(queryPerm, async () => getPermissions(), { debounce: 750, maxWait: 1250 });
+watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 1250 });
 </script>
 
 <template>
@@ -204,9 +209,9 @@ watchDebounced(queryPerm, async () => getPermissions(), { debounce: 750, maxWait
                                                             placeholder="Permission" />
                                                     </ComboboxButton>
 
-                                                    <ComboboxOptions v-if="entriesPerms.length > 0"
+                                                    <ComboboxOptions v-if="filteredPerms.length > 0"
                                                         class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                                        <ComboboxOption v-for="perm in entriesPerms" :key="perm?.getId()"
+                                                        <ComboboxOption v-for="perm in filteredPerms" :key="perm?.getId()"
                                                             :value="perm" as="perm" v-slot="{ active, selected }">
                                                             <li
                                                                 :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
