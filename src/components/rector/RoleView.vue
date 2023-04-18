@@ -57,27 +57,23 @@ async function deleteRole(): Promise<void> {
     });
 }
 
-const entriesPerms = ref<Array<Permission>>([]);
+const entriesPerms = ref<Permission[]>([]);
 const queryPerm = ref('');
+const selectedPerm = ref<Permission>();
 
-async function getPermissions(): Promise<Array<Permission>> {
-    return new Promise(async (res, rej) => {
-        const req = new GetPermissionsRequest();
-        req.setSearch(queryPerm.value);
+async function getPermissions(): Promise<void> {
+    const req = new GetPermissionsRequest();
+    req.setSearch(queryPerm.value);
 
-        try {
-            const resp = await $grpc.getRectorClient().
-                getPermissions(req, null);
-
-            return res(resp.getPermissionsList());
-        } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+    try {
+        const resp = await $grpc.getRectorClient().getPermissions(req, null);
+        entriesPerms.value = resp.getPermissionsList();
+    } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
+        return;
+    }
 }
 
-const selectedPerm = ref<undefined | Permission>(undefined);
 const permsToAdd = ref<Array<Permission>>([]);
 const permsToRemove = ref<Array<Permission>>([]);
 
@@ -169,9 +165,10 @@ async function saveRolePermissions(): Promise<void> {
 }
 
 onMounted(async () => {
-    entriesPerms.value = await getPermissions();
+    await getPermissions();
 });
-watchDebounced(queryPerm, async () => await getPermissions(), { debounce: 750, maxWait: 1250 });
+
+watchDebounced(queryPerm, async () => getPermissions(), { debounce: 750, maxWait: 1250 });
 </script>
 
 <template>
@@ -215,7 +212,9 @@ watchDebounced(queryPerm, async () => await getPermissions(), { debounce: 750, m
                                                                 :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                                                 <span
                                                                     :class="['block truncate', selected && 'font-semibold']">
-                                                                    {{ perm?.getName() }}<span v-if="perm?.hasDescription()">: {{ perm?.getDescription() }}</span>
+                                                                    {{ perm?.getName() }}<span
+                                                                        v-if="perm?.hasDescription()">: {{
+                                                                            perm?.getDescription() }}</span>
                                                                 </span>
 
                                                                 <span v-if="selected"
