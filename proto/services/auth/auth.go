@@ -43,6 +43,7 @@ var (
 	GenericLoginErr        = status.Error(codes.Internal, "Failed to login you in, please try again.")
 	UnableToChooseCharErr  = status.Error(codes.PermissionDenied, "You don't have permission to select this character!")
 	UpdateAccountErr       = status.Error(codes.InvalidArgument, "Failed to update your account!")
+	ChangePasswordErr      = status.Error(codes.InvalidArgument, "Failed to change your password")
 )
 
 type Server struct {
@@ -212,7 +213,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccountID)))
 	if err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
-			return nil, InvalidLoginErr
+			return nil, ChangePasswordErr
 		}
 
 		return nil, err
@@ -225,7 +226,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 
 	// Password check logic
 	if err := bcrypt.CompareHashAndPassword([]byte(*acc.Password), []byte(req.Current)); err != nil {
-		return nil, InvalidLoginErr
+		return nil, ChangePasswordErr
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.New), 14)
@@ -253,7 +254,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 
 	token, err := s.createTokenFromAccountAndChar(acc, nil)
 	if err != nil {
-		return nil, InvalidLoginErr
+		return nil, ChangePasswordErr
 	}
 
 	return &ChangePasswordResponse{

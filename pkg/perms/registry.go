@@ -117,6 +117,9 @@ func (p *Perms) setupRoles() error {
 			if err != nil {
 				return err
 			}
+			if role == nil {
+				continue
+			}
 
 			index := slices.Index(existingRoles, role.ID)
 			if index >= 0 {

@@ -14,6 +14,8 @@ import { dispatchNotification } from '~/components/partials/notification';
 
 const { $grpc } = useNuxtApp();
 
+const router = useRouter();
+
 const props = defineProps({
     roleId: {
         type: Number,
@@ -50,6 +52,7 @@ async function deleteRole(): Promise<void> {
                 deleteRole(req, null);
 
             dispatchNotification({ title: 'Role: Deleted', content: 'Role has been successfully deleted.', type: 'success' });
+            await router.push({ name: 'rector-roles' });
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
