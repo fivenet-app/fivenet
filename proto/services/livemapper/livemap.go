@@ -98,7 +98,7 @@ func (s *Server) Start() {
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
-	userId := auth.GetUserIDFromContext(srv.Context())
+	userId, job, _ := auth.GetUserInfoFromContext(srv.Context())
 
 	js, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, "LivemapperService.Stream")
 	if err != nil {
@@ -128,7 +128,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 		resp.Dispatches = dispatchMarkers
 
-		userMarkers, err := s.getUserLocations(js)
+		userMarkers, err := s.getUserLocations(js, userId, job)
 		if err != nil {
 			return FailedErr
 		}
@@ -146,13 +146,21 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 }
 
-func (s *Server) getUserLocations(jobs []string) ([]*livemap.UserMarker, error) {
+func (s *Server) getUserLocations(jobs []string, userId int32, userJob string) ([]*livemap.UserMarker, error) {
 	ds := []*livemap.UserMarker{}
 
 	for _, job := range jobs {
 		markers, ok := s.usersCache.Get(job)
 		if !ok {
 			continue
+		}
+
+		if job == userJob {
+			for i := 0; i < len(markers); i++ {
+				if markers[i].GetId() == userId {
+					markers[i].IconColor = "FCAB10"
+				}
+			}
 		}
 
 		ds = append(ds, markers...)
@@ -194,7 +202,6 @@ func (s *Server) refreshUserLocations() error {
 			users.JobGrade,
 			users.Firstname,
 			users.Lastname,
-			jet.String("5C7AFF").AS("usermarker.icon_color"),
 		).
 		FROM(
 			locs.
@@ -221,6 +228,7 @@ func (s *Server) refreshUserLocations() error {
 		if _, ok := markers[job]; !ok {
 			markers[job] = []*livemap.UserMarker{}
 		}
+		dest[i].IconColor = "5C7AFF"
 		markers[job] = append(markers[job], dest[i])
 	}
 	for job, v := range markers {
@@ -231,6 +239,11 @@ func (s *Server) refreshUserLocations() error {
 }
 
 func (s *Server) refreshDispatches() error {
+	if len(config.C.Game.LivemapJobs) == 0 {
+		s.logger.Warn("empty livemap jobs in config, no dispatches can be found because of that")
+		return nil
+	}
+
 	d := table.GksphoneJobMessage
 	stmt := d.
 		SELECT(

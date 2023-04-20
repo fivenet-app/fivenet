@@ -108,7 +108,7 @@ fivenet:
       dbName: fivem
     jwt:
       secret: "YOUR_JWT_SECRET"
-    fivem:
+    game:
       permissionRoleJobs:
         - ambulance
         - doj
