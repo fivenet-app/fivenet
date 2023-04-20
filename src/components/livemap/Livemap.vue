@@ -57,8 +57,8 @@ let center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 
 const markerSize = ref<number>(userSettings.getLivemapMarkerSize);
-
 const markerJobs = ref<Job[]>([]);
+const selectedMarker = ref<number>();
 
 const playerQuery = ref<string>('');
 let playerMarkers: UserMarker[] = [];
@@ -178,8 +178,9 @@ async function startDataStream(): Promise<void> {
             playerMarkers = resp.getUsersList();
             dispatchMarkers = resp.getDispatchesList();
 
-            applyPlayerQuery();
-            applyDispatchQuery();
+            await applyPlayerQuery();
+            await applyDispatchQuery();
+            applySelectedMarkerCentering();
         }).
         on('end', async () => {
             console.debug('Data Stream Ended');
@@ -192,6 +193,15 @@ async function stopDataStream(): Promise<void> {
         stream.value.cancel();
         stream.value = null;
     }
+}
+
+async function applySelectedMarkerCentering(): Promise<void> {
+    if (selectedMarker.value === undefined) return;
+
+    const marker = playerMarkers.find(m => m.getId() === selectedMarker.value) || playerMarkers.find(m => m.getId() === selectedMarker.value);
+    if (!marker) { selectedMarker.value = undefined; return; };
+
+    map?.flyTo([marker.getY(), marker.getX()], undefined, { duration: 1 });
 }
 
 function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): L.DivIcon {
@@ -274,6 +284,13 @@ async function findPostal(): Promise<void> {
     }
 }
 
+async function setSelectedMarker(id: number): Promise<void> {
+    setTimeout(() => {
+        selectedMarker.value = id;
+        applySelectedMarkerCentering();
+    }, 100);
+}
+
 watch(selectedPostal, () => {
     if (!selectedPostal.value) {
         return;
@@ -315,7 +332,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
         </div>
 
         <LMap class="z-0" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="1" :max-zoom="6"
-            :inertia="false" :style="{ backgroundColor }" @ready="onMapReady($event)" :use-global-leaflet="false">
+            @click="selectedMarker = undefined" :inertia="false" :style="{ backgroundColor }" @ready="onMapReady($event)"
+            :use-global-leaflet="false">
             <LTileLayer url="/tiles/postal/{z}/{x}/{y}.png" layer-type="base" name="Postal" :no-wrap="true" :tms="true"
                 :visible="true" :attribution="attribution" />
             <LTileLayer url="/tiles/atlas/{z}/{x}/{y}.png" layer-type="base" name="Atlas" :no-wrap="true" :tms="true"
@@ -331,7 +349,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.getUser()?.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
-                    :icon="getIcon('player', marker.getIcon(), marker.getIconColor()) as L.Icon">
+                    :icon="getIcon('player', marker.getIcon(), marker.getIconColor()) as L.Icon"
+                    @click="setSelectedMarker(marker.getId())">
                     <LPopup :options="{ closeButton: false }"
                         :content="`<span class='font-semibold'>Employee ${marker.getUser()?.getJobLabel()}</span><br><span class='italic'>[${marker.getUser()?.getJobGrade()}] ${marker.getUser()?.getJobGradeLabel()}</span><br>${marker.getUser()?.getFirstname()} ${marker.getUser()?.getLastname()}`">
                     </LPopup>
@@ -342,7 +361,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in dispatchMarkersFiltered.filter(m => m.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
-                    :icon="getIcon('dispatch', marker.getIcon(), marker.getIconColor()) as L.Icon">
+                    :icon="getIcon('dispatch', marker.getIcon(), marker.getIconColor()) as L.Icon"
+                    @click="setSelectedMarker(marker.getId())">
                     <LPopup :options="{ closeButton: false }"
                         :content="`<span class='font-semibold'>Dispatch ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span>${toDateRelativeString(marker.getUpdatedAt())}</span><br><span class='italic'>Sent by ${marker.getName()}</span>`">
                     </LPopup>
