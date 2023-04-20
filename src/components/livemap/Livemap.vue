@@ -59,6 +59,12 @@ const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto 
 const markerSize = ref<number>(userSettings.getLivemapMarkerSize);
 const markerJobs = ref<Job[]>([]);
 const selectedMarker = ref<number>();
+const centerSelectedMarker = ref<boolean>(userSettings.getLivemapCenterSelectedMarker);
+
+watch(centerSelectedMarker, () => {
+    userSettings.setLivemapCenterSelectedMarker(centerSelectedMarker.value);
+    applySelectedMarkerCentering();
+});
 
 const playerQuery = ref<string>('');
 let playerMarkers: UserMarker[] = [];
@@ -196,6 +202,7 @@ async function stopDataStream(): Promise<void> {
 }
 
 async function applySelectedMarkerCentering(): Promise<void> {
+    if (!centerSelectedMarker.value) return;
     if (selectedMarker.value === undefined) return;
 
     const marker = playerMarkers.find(m => m.getId() === selectedMarker.value) || playerMarkers.find(m => m.getId() === selectedMarker.value);
@@ -203,6 +210,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
     map?.flyTo([marker.getY(), marker.getX()], undefined, { duration: 1 });
 }
+
 
 function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): L.DivIcon {
     let html = ``;
@@ -396,6 +404,15 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                                 </ComboboxOption>
                             </ComboboxOptions>
                         </Combobox>
+                    </div>
+                </div>
+            </LControl>
+            <LControl position="bottomright">
+                <div class="form-control flex flex-col gap-2">
+                    <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
+                        <span class="text-lg mr-2 text-[#6f7683]">Center selected Marker</span>
+                        <input v-model="centerSelectedMarker" class="my-auto" id="markerSize" name="markerSize"
+                            type="checkbox" />
                     </div>
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
                         <span class="text-lg mr-2 text-[#6f7683]">{{ markerSize }}</span>

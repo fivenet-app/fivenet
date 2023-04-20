@@ -3,6 +3,7 @@ import { StoreDefinition, defineStore } from 'pinia';
 export interface UserSettingsState {
     locale: string;
     livemapMarkerSize: number;
+    livemapCenterSelectedMarker: boolean;
 }
 
 export const useUserSettingsStore = defineStore('userSettings', {
@@ -10,6 +11,7 @@ export const useUserSettingsStore = defineStore('userSettings', {
     ({
         locale: 'en-US',
         livemapMarkerSize: 26,
+        livemapCenterSelectedMarker: false,
     } as UserSettingsState),
     persist: true,
     actions: {
@@ -19,10 +21,16 @@ export const useUserSettingsStore = defineStore('userSettings', {
         setLivemapMarkerSize(size: number): void {
             this.livemapMarkerSize = size;
         },
+        setLivemapCenterSelectedMarker(value: boolean): void {
+            this.livemapCenterSelectedMarker = value;
+        },
     },
     getters: {
         getLivemapMarkerSize(state): number {
             return state.livemapMarkerSize;
+        },
+        getLivemapCenterSelectedMarker(state): boolean {
+            return state.livemapCenterSelectedMarker;
         },
     },
 });
