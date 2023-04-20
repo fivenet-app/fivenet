@@ -15,9 +15,13 @@ import { dispatchNotification } from '~/components/partials/notification';
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { toDateRelativeString } from '~/utils/time';
 import { useUserSettingsStore } from '~/store/usersettings';
+import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
 const userSettings = useUserSettingsStore();
+const authStore = useAuthStore();
+
+const activeChar = computed(() => authStore.$state.activeChar);
 
 const stream = ref<ClientReadableStream<StreamResponse> | null>(null);
 const error = ref<RpcError | null>(null);
