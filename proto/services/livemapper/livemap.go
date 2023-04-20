@@ -3,7 +3,6 @@ package livemapper
 import (
 	"context"
 	"database/sql"
-	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -301,6 +300,13 @@ func (s *Server) refreshDispatches() error {
 			name = *v.Name
 		}
 
+		var message string
+		if v.Message != nil && *v.Message != "" {
+			message = *v.Message
+		} else {
+			message = "N/A"
+		}
+
 		// Remove the "json" leftovers (in the gksphone table it looks like, e.g., `["ambulance"]`)
 		job := strings.TrimSuffix(strings.TrimPrefix(*v.Jobm, "[\""), "\"]")
 		if _, ok := markers[job]; !ok {
@@ -313,7 +319,7 @@ func (s *Server) refreshDispatches() error {
 			Icon:      icon,
 			IconColor: iconColor,
 			Name:      name,
-			Popup:     *v.Message,
+			Popup:     message,
 			Job:       job,
 			UpdatedAt: timestamp.New(v.Time),
 		}
@@ -327,90 +333,4 @@ func (s *Server) refreshDispatches() error {
 	}
 
 	return nil
-}
-
-func (s *Server) GenerateRandomUserMarker() {
-	userIdentifiers := []string{
-		"char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
-		"char1:0ff2f772f2527a0626cac48670cbc20ddbdc09fb",
-		"char2:d9793ddb457316fb3951d1b1092526183270a307",
-		"char2:d7abbfba01625bec803788ee42da86461c96e0bd",
-		"char1:ad4fb9f44bb784dd30effcc743a9c169db4d625d",
-	}
-
-	markers := make([]*model.FivenetUserLocations, len(userIdentifiers))
-
-	resetMarkers := func() {
-		xMin := -3300
-		xMax := 4300
-		yMin := -3300
-		yMax := 5000
-		for i := 0; i < len(markers); i++ {
-			x := float64(rand.Intn(xMax-xMin+1) + xMin)
-			y := float64(rand.Intn(yMax-yMin+1) + yMin)
-
-			job := "ambulance"
-			hidden := false
-			markers[i] = &model.FivenetUserLocations{
-				Identifier: userIdentifiers[i],
-				Job:        &job,
-				Hidden:     &hidden,
-
-				X: &x,
-				Y: &y,
-			}
-		}
-	}
-
-	moveMarkers := func() {
-		xMin := -100
-		xMax := 100
-		yMin := -100
-		yMax := 100
-
-		for i := 0; i < len(markers); i++ {
-			curX := *markers[i].X
-			curY := *markers[i].Y
-
-			newX := curX + float64(rand.Intn(xMax-xMin+1)+xMin)
-			newY := curY + float64(rand.Intn(yMax-yMin+1)+yMin)
-
-			markers[i].X = &newX
-			markers[i].Y = &newY
-		}
-	}
-
-	resetMarkers()
-
-	counter := 0
-	for {
-		if counter >= 15 {
-			resetMarkers()
-			counter = 0
-		} else {
-			moveMarkers()
-		}
-
-		stmt := locs.
-			INSERT(
-				locs.Identifier,
-				locs.Job,
-				locs.X,
-				locs.Y,
-				locs.Hidden,
-			).
-			MODELS(markers).
-			ON_DUPLICATE_KEY_UPDATE(
-				locs.X.SET(jet.RawFloat("VALUES(x)")),
-				locs.Y.SET(jet.RawFloat("VALUES(y)")),
-			)
-
-		_, err := stmt.Exec(s.db)
-		if err != nil {
-			s.logger.Error("failed to insert/ update random location to locations table", zap.Error(err))
-		}
-
-		counter++
-		time.Sleep(3 * time.Second)
-	}
 }

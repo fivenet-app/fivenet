@@ -116,6 +116,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 	// Only run the livemapper random user marker generator in debug mode
 	if config.C.Mode == gin.DebugMode {
 		go livemapper.GenerateRandomUserMarker()
+		go livemapper.GenerateRandomDispatchMarker()
 	}
 
 	return grpcServer, lis
