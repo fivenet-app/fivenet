@@ -218,13 +218,17 @@ async function applySelectedMarkerCentering(): Promise<void> {
     });
 }
 
+type TMarker<TType> = TType extends 'player' ? UserMarker : TType extends 'dispatch' ? DispatchMarker : never;
 
-function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): L.DivIcon {
+function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMarker<TType>): L.DivIcon {
     let html = ``;
+    let color = marker.getIconColor();
+
     switch (type) {
         case 'player':
             {
-                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${iconColor ? '#' + iconColor : 'currentColor'}" class="w-full h-full">
+                if ((marker as UserMarker).getUser()?.getIdentifier() === authStore.activeChar?.getIdentifier()) color = 'FCAB10';
+                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${color ? '#' + color : 'currentColor'}" class="w-full h-full">
                     <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
                 </svg>`;
             }
@@ -232,7 +236,7 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
 
         case 'dispatch':
             {
-                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${iconColor ? '#' + iconColor : 'currentColor'}" class="w-full h-full">
+                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${color ? '#' + color : 'currentColor'}" class="w-full h-full">
                     <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
                 </svg>`;
             }
@@ -365,8 +369,7 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.getUser()?.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
-                    :icon="getIcon('player', marker.getIcon(), marker.getIconColor()) as L.Icon"
-                    @click="setSelectedMarker(marker.getId())">
+                    :icon="getIcon('player', marker) as L.Icon" @click="setSelectedMarker(marker.getId())">
                     <LPopup :options="{ closeButton: false }"
                         :content="`<span class='font-semibold'>Employee ${marker.getUser()?.getJobLabel()}</span><br><span class='italic'>[${marker.getUser()?.getJobGrade()}] ${marker.getUser()?.getJobGradeLabel()}</span><br>${marker.getUser()?.getFirstname()} ${marker.getUser()?.getLastname()}`">
                     </LPopup>
@@ -377,8 +380,7 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in dispatchMarkersFiltered.filter(m => m.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
-                    :icon="getIcon('dispatch', marker.getIcon(), marker.getIconColor()) as L.Icon"
-                    @click="setSelectedMarker(marker.getId())">
+                    :icon="getIcon('dispatch', marker) as L.Icon" @click="setSelectedMarker(marker.getId())">
                     <LPopup :options="{ closeButton: false }"
                         :content="`<span class='font-semibold'>Dispatch ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span>${toDateRelativeString(marker.getUpdatedAt())}</span><br><span class='italic'>Sent by ${marker.getName()}</span>`">
                     </LPopup>
