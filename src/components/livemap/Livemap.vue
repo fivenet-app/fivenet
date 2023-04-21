@@ -212,7 +212,10 @@ async function applySelectedMarkerCentering(): Promise<void> {
     const marker = playerMarkers.find(m => m.getId() === selectedMarker.value) || playerMarkers.find(m => m.getId() === selectedMarker.value);
     if (!marker) { selectedMarker.value = undefined; return; };
 
-    map?.flyTo([marker.getY(), marker.getX()], undefined, { duration: 1 });
+    map?.panTo([marker.getY(), marker.getX()], {
+        animate: true,
+        duration: 0.850,
+    });
 }
 
 
@@ -309,6 +312,7 @@ watch(selectedPostal, () => {
     }
 
     map?.flyTo([selectedPostal.value.y, selectedPostal.value.x], 5, {
+        animate: true,
         duration: 0.850,
     });
 });
