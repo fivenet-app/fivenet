@@ -82,6 +82,32 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 		return resp, nil
 	}
 
+	// Convert our proto abstracted `common.OrderBy` to actual gorm order by instructions
+	orderBys := []jet.OrderByClause{}
+	if len(req.OrderBy) > 0 {
+		for _, orderBy := range req.OrderBy {
+			var column jet.Column
+			switch orderBy.Column {
+			case "plate":
+				column = vehicle.Plate
+			case "model":
+			default:
+				column = vehicle.Model
+			}
+
+			if orderBy.Desc {
+				orderBys = append(orderBys, column.DESC())
+			} else {
+				orderBys = append(orderBys, column.ASC())
+			}
+		}
+	} else {
+		orderBys = append(orderBys,
+			vehicle.Type.ASC(),
+			vehicle.Plate.ASC(),
+		)
+	}
+
 	stmt := vehicle.
 		SELECT(
 			vehicle.Plate,
@@ -89,8 +115,6 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 			vehicle.Type,
 			user.ID,
 			user.Identifier,
-			user.Job,
-			user.JobGrade,
 			user.Firstname,
 			user.Lastname,
 		).
@@ -101,11 +125,8 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 				),
 		).
 		WHERE(condition).
-		ORDER_BY(
-			vehicle.Type.ASC(),
-			vehicle.Plate.ASC(),
-		).
 		OFFSET(req.Pagination.Offset).
+		ORDER_BY(orderBys...).
 		LIMIT(database.DefaultPageLimit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Vehicles); err != nil {
@@ -116,12 +137,6 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 		count.TotalCount,
 		req.Pagination.Offset,
 		len(resp.Vehicles))
-
-	for i := 0; i < len(resp.Vehicles); i++ {
-		if resp.Vehicles[i].Owner != nil {
-			s.c.EnrichJobInfo(resp.Vehicles[i].Owner)
-		}
-	}
 
 	return resp, nil
 }

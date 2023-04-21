@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { StoreDefinition, defineStore } from 'pinia';
 
 export interface NotificatorState {
     lastId: number;
@@ -18,5 +18,5 @@ export const useNotificatorStore = defineStore('notificator', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useNotificatorStore, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useNotificatorStore as unknown as StoreDefinition, import.meta.hot));
 }

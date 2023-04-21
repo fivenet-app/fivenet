@@ -62,10 +62,10 @@ function addToClipboard(): void {
                 <TabPanel>
                     <CitizenInfoProfile :user="user" />
                 </TabPanel>
-                <TabPanel>
+                <TabPanel v-can="'DMVService.FindVehicles'">
                     <VehiclesList :userId="user.getUserId()" :hide-owner="true" :hide-citizen-link="true" />
                 </TabPanel>
-                <TabPanel>
+                <TabPanel v-can="'DocStoreService.GetUserDocuments'">
                     <CitizenInfoDocuments :userId="user.getUserId()" />
                 </TabPanel>
                 <TabPanel v-can="'CitizenStoreService.GetUserActivity'">

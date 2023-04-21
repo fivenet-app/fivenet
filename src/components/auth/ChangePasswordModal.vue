@@ -26,19 +26,19 @@ defineEmits<{
 
 const newPassword = ref<string>('');
 
-async function changePassword(current: string, newPassword: string): Promise<void> {
+async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new ChangePasswordRequest();
-        req.setCurrent(current);
+        req.setCurrent(currentPassword);
         req.setNew(newPassword);
 
         try {
             const resp = await $grpc.getAuthClient()
                 .changePassword(req, null);
 
-            dispatchNotification({ title: 'Password has been changed', content: 'Please login with your new password.', type: 'success' });
-            store.updateAccessToken(null);
-            return await router.push({ name: 'auth-logout' });
+            dispatchNotification({ title: 'Password has been changed', content: 'Your new password has been set.', type: 'success' });
+            store.updateAccessToken(resp.getToken());
+            return await router.push({ name: 'overview' });
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

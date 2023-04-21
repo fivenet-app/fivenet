@@ -30,7 +30,7 @@ var (
 )
 
 var (
-	FailedQueryErr = status.Error(codes.Internal, "Failed to get/create/update document data!")
+	FailedQueryErr = status.Error(codes.Internal, "Failed to list/get citizen(s) date!")
 )
 
 type Server struct {
@@ -65,24 +65,28 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		user.Visum,
 		userProps.UserID,
 	}
+
+	condition := jet.Bool(true)
 	// Field Permission Check
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
-		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "PhoneNumber") {
-			selectors = append(selectors, user.PhoneNumber)
+		if req.PhoneNumber != "" {
+			if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "PhoneNumber") {
+				selectors = append(selectors, user.PhoneNumber)
+				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(req.PhoneNumber, "%", ""), " ", "") + "%"
+				condition = condition.AND(user.PhoneNumber.LIKE(jet.String(phoneNumber)))
+			}
 		}
 		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Wanted") {
 			selectors = append(selectors, userProps.Wanted)
+			if req.Wanted {
+				condition = condition.AND(userProps.Wanted.IS_TRUE())
+			}
 		}
 	}
 
 	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
-
-	condition := jet.Bool(true)
 	if req.SearchName != "" {
 		condition = condition.AND(jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.SearchName})))
-	}
-	if req.Wanted {
-		condition = condition.AND(userProps.Wanted.IS_TRUE())
 	}
 
 	// Get total count of values
@@ -124,28 +128,6 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		OFFSET(req.Pagination.Offset).
 		LIMIT(database.DefaultPageLimit)
 
-	// Convert our proto abstracted `common.OrderBy` to actual gorm order by instructions
-	orderBys := []jet.OrderByClause{}
-	if len(req.OrderBy) > 0 {
-		for _, orderBy := range req.OrderBy {
-			var column jet.Column
-			switch orderBy.Column {
-			case "firstname":
-				column = user.Firstname
-			case "job":
-				column = user.Job
-			}
-
-			if orderBy.Desc {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-
-		stmt = stmt.ORDER_BY(orderBys...)
-	}
-
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
 		return nil, FailedQueryErr
 	}
@@ -175,14 +157,19 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		user.Dateofbirth,
 		user.Sex,
 		user.Height,
-		user.PhoneNumber,
 		user.Visum,
 		userProps.UserID,
 	}
 
 	// Field Permission Check
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps") {
-		selectors = append(selectors, userProps.Wanted)
+		// Field Permission Check
+		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "PhoneNumber") {
+			selectors = append(selectors, user.PhoneNumber)
+		}
+		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Wanted") {
+			selectors = append(selectors, userProps.Wanted)
+		}
 	}
 
 	resp := &GetUserResponse{

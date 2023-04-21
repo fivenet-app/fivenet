@@ -14,6 +14,8 @@ import { dispatchNotification } from '~/components/partials/notification';
 
 const { $grpc } = useNuxtApp();
 
+const router = useRouter();
+
 const props = defineProps({
     roleId: {
         type: Number,
@@ -50,6 +52,7 @@ async function deleteRole(): Promise<void> {
                 deleteRole(req, null);
 
             dispatchNotification({ title: 'Role: Deleted', content: 'Role has been successfully deleted.', type: 'success' });
+            await router.push({ name: 'rector-roles' });
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -57,27 +60,23 @@ async function deleteRole(): Promise<void> {
     });
 }
 
-const entriesPerms = ref<Array<Permission>>([]);
+let entriesPerms = [] as Permission[];
+const filteredPerms = ref<Permission[]>([]);
 const queryPerm = ref('');
+const selectedPerm = ref<Permission>();
 
-async function getPermissions(): Promise<Array<Permission>> {
-    return new Promise(async (res, rej) => {
-        const req = new GetPermissionsRequest();
-        req.setSearch(queryPerm.value);
+async function getPermissions(): Promise<void> {
+    const req = new GetPermissionsRequest();
 
-        try {
-            const resp = await $grpc.getRectorClient().
-                getPermissions(req, null);
-
-            return res(resp.getPermissionsList());
-        } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+    try {
+        const resp = await $grpc.getRectorClient().getPermissions(req, null);
+        entriesPerms = resp.getPermissionsList();
+    } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
+        return;
+    }
 }
 
-const selectedPerm = ref<undefined | Permission>(undefined);
 const permsToAdd = ref<Array<Permission>>([]);
 const permsToRemove = ref<Array<Permission>>([]);
 
@@ -163,15 +162,21 @@ async function saveRemovePermissions(): Promise<void> {
     });
 }
 
+async function applyQuery(): Promise<void> {
+    filteredPerms.value = entriesPerms.filter(p => p.getName().toLowerCase().includes(queryPerm.value.toLowerCase()) || p.getDescription().toLowerCase().includes(queryPerm.value.toLowerCase()));
+}
+
 async function saveRolePermissions(): Promise<void> {
     await Promise.all([saveAddPermissions(), saveRemovePermissions()]);
     dispatchNotification({ title: 'Role: Permissions Saved', content: 'Permissions have been saved.', type: 'success' });
 }
 
 onMounted(async () => {
-    entriesPerms.value = await getPermissions();
+    await getPermissions();
+    applyQuery();
 });
-watchDebounced(queryPerm, async () => await getPermissions(), { debounce: 750, maxWait: 1250 });
+
+watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 1250 });
 </script>
 
 <template>
@@ -207,15 +212,17 @@ watchDebounced(queryPerm, async () => await getPermissions(), { debounce: 750, m
                                                             placeholder="Permission" />
                                                     </ComboboxButton>
 
-                                                    <ComboboxOptions v-if="entriesPerms.length > 0"
+                                                    <ComboboxOptions v-if="filteredPerms.length > 0"
                                                         class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                                        <ComboboxOption v-for="perm in entriesPerms" :key="perm?.getId()"
+                                                        <ComboboxOption v-for="perm in filteredPerms" :key="perm?.getId()"
                                                             :value="perm" as="perm" v-slot="{ active, selected }">
                                                             <li
                                                                 :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                                                 <span
                                                                     :class="['block truncate', selected && 'font-semibold']">
-                                                                    {{ perm?.getName() }}<span v-if="perm?.hasDescription()">: {{ perm?.getDescription() }}</span>
+                                                                    {{ perm?.getName() }}<span
+                                                                        v-if="perm?.hasDescription()">: {{
+                                                                            perm?.getDescription() }}</span>
                                                                 </span>
 
                                                                 <span v-if="selected"
@@ -229,16 +236,16 @@ watchDebounced(queryPerm, async () => await getPermissions(), { debounce: 750, m
                                             </Combobox>
                                         </div>
                                     </div>
-                                    <div class="flex-initial form-control">
+                                    <div class="flex-initial form-control flex flex-col justify-end">
                                         <button type="submit" :disabled="!selectedPerm"
                                             class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                             Add Permission
                                         </button>
                                     </div>
-                                    <div class="flex-initial form-control">
+                                    <div class="flex-initial form-control flex flex-col justify-end">
                                         <button @click="saveRolePermissions()"
                                             :disabled="permsToAdd.length === 0 && permsToRemove.length === 0"
-                                            class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-success-700 text-neutral hover:bg-success-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-700">
+                                            class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-success-600 text-neutral hover:bg-success-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-600">
                                             Save Changes
                                         </button>
                                     </div>

@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { StoreDefinition, defineStore } from 'pinia';
 import { TemplateData } from '@fivenet/gen/resources/documents/templates_pb';
 import { User, UserShort } from '@fivenet/gen/resources/users/users_pb';
 import { Document } from '@fivenet/gen/resources/documents/documents_pb';
@@ -134,7 +134,7 @@ export const useClipboardStore = defineStore('clipboard', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useClipboardStore, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useClipboardStore as unknown as StoreDefinition, import.meta.hot));
 }
 
 export class ClipboardUser {

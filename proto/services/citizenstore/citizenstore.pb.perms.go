@@ -5,15 +5,6 @@ package citizenstore
 
 import "github.com/galexrt/fivenet/pkg/perms"
 
-var PermsRemap = map[string]string{
-	// Service: CitizenStoreService
-	"CitizenStoreService/GetUser": "CitizenStoreService/FindUsers",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
-}
-
 const (
 	CitizenStoreServicePermKey = "CitizenStoreService"
 )
@@ -24,8 +15,13 @@ func init() {
 		{
 			Key:         CitizenStoreServicePermKey,
 			Name:        "FindUsers",
-			Fields:      []string{"PhoneNumber", "Licenses", "UserProps"},
+			Fields:      []string{"PhoneNumber", "Licenses", "UserProps.Wanted"},
 			Description: "Citizens List and Search",
+		},
+		{
+			Key:         CitizenStoreServicePermKey,
+			Name:        "GetUser",
+			Description: "See a user's profile",
 		},
 		{
 			Key:         CitizenStoreServicePermKey,

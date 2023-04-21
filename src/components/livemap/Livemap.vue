@@ -14,8 +14,14 @@ import { watchDebounced } from '@vueuse/core';
 import { dispatchNotification } from '~/components/partials/notification';
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { toDateRelativeString } from '~/utils/time';
+import { useUserSettingsStore } from '~/store/usersettings';
+import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
+const userSettings = useUserSettingsStore();
+const authStore = useAuthStore();
+
+const activeChar = computed(() => authStore.$state.activeChar);
 
 const stream = ref<ClientReadableStream<StreamResponse> | null>(null);
 const error = ref<RpcError | null>(null);
@@ -54,7 +60,15 @@ const zoom = ref(2);
 let center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 
+const markerSize = ref<number>(userSettings.getLivemapMarkerSize);
 const markerJobs = ref<Job[]>([]);
+const selectedMarker = ref<number>();
+const centerSelectedMarker = ref<boolean>(userSettings.getLivemapCenterSelectedMarker);
+
+watch(centerSelectedMarker, () => {
+    userSettings.setLivemapCenterSelectedMarker(centerSelectedMarker.value);
+    applySelectedMarkerCentering();
+});
 
 const playerQuery = ref<string>('');
 let playerMarkers: UserMarker[] = [];
@@ -174,8 +188,9 @@ async function startDataStream(): Promise<void> {
             playerMarkers = resp.getUsersList();
             dispatchMarkers = resp.getDispatchesList();
 
-            applyPlayerQuery();
-            applyDispatchQuery();
+            await applyPlayerQuery();
+            await applyDispatchQuery();
+            applySelectedMarkerCentering();
         }).
         on('end', async () => {
             console.debug('Data Stream Ended');
@@ -189,6 +204,17 @@ async function stopDataStream(): Promise<void> {
         stream.value = null;
     }
 }
+
+async function applySelectedMarkerCentering(): Promise<void> {
+    if (!centerSelectedMarker.value) return;
+    if (selectedMarker.value === undefined) return;
+
+    const marker = playerMarkers.find(m => m.getId() === selectedMarker.value) || playerMarkers.find(m => m.getId() === selectedMarker.value);
+    if (!marker) { selectedMarker.value = undefined; return; };
+
+    map?.flyTo([marker.getY(), marker.getX()], undefined, { duration: 1 });
+}
+
 
 function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): L.DivIcon {
     let html = ``;
@@ -212,9 +238,10 @@ function getIcon(type: 'player' | 'dispatch', icon: string, iconColor: string): 
 
     return new L.DivIcon({
         html: '<div>' + html + '</div>',
-        iconSize: [32, 32],
-        popupAnchor: [0, -16],
+        iconSize: [markerSize.value, markerSize.value],
+        popupAnchor: [0, (markerSize.value / 2 * -1)],
     });
+
 }
 
 onBeforeUnmount(() => {
@@ -269,6 +296,13 @@ async function findPostal(): Promise<void> {
     }
 }
 
+async function setSelectedMarker(id: number): Promise<void> {
+    setTimeout(() => {
+        selectedMarker.value = id;
+        applySelectedMarkerCentering();
+    }, 100);
+}
+
 watch(selectedPostal, () => {
     if (!selectedPostal.value) {
         return;
@@ -278,6 +312,9 @@ watch(selectedPostal, () => {
         duration: 0.850,
     });
 });
+
+watchDebounced(markerSize, () => userSettings.setLivemapMarkerSize(markerSize.value), { debounce: 250, maxWait: 850 });
+
 watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 });
 </script>
 
@@ -307,7 +344,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
         </div>
 
         <LMap class="z-0" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="1" :max-zoom="6"
-            :inertia="false" :style="{ backgroundColor }" @ready="onMapReady($event)" :use-global-leaflet="false">
+            @click="selectedMarker = undefined" :inertia="false" :style="{ backgroundColor }" @ready="onMapReady($event)"
+            :use-global-leaflet="false">
             <LTileLayer url="/tiles/postal/{z}/{x}/{y}.png" layer-type="base" name="Postal" :no-wrap="true" :tms="true"
                 :visible="true" :attribution="attribution" />
             <LTileLayer url="/tiles/atlas/{z}/{x}/{y}.png" layer-type="base" name="Atlas" :no-wrap="true" :tms="true"
@@ -323,7 +361,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.getUser()?.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
-                    :icon="getIcon('player', marker.getIcon(), marker.getIconColor()) as L.Icon">
+                    :icon="getIcon('player', marker.getIcon(), marker.getIconColor()) as L.Icon"
+                    @click="setSelectedMarker(marker.getId())">
                     <LPopup :options="{ closeButton: false }"
                         :content="`<span class='font-semibold'>Employee ${marker.getUser()?.getJobLabel()}</span><br><span class='italic'>[${marker.getUser()?.getJobGrade()}] ${marker.getUser()?.getJobGradeLabel()}</span><br>${marker.getUser()?.getFirstname()} ${marker.getUser()?.getLastname()}`">
                     </LPopup>
@@ -334,7 +373,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in dispatchMarkersFiltered.filter(m => m.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
-                    :icon="getIcon('dispatch', marker.getIcon(), marker.getIconColor()) as L.Icon">
+                    :icon="getIcon('dispatch', marker.getIcon(), marker.getIconColor()) as L.Icon"
+                    @click="setSelectedMarker(marker.getId())">
                     <LPopup :options="{ closeButton: false }"
                         :content="`<span class='font-semibold'>Dispatch ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span>${toDateRelativeString(marker.getUpdatedAt())}</span><br><span class='italic'>Sent by ${marker.getName()}</span>`">
                     </LPopup>
@@ -345,18 +385,18 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 <b>Latitude</b>: {{ mouseLat }} | <b>Longtitude</b>: {{ mouseLong }}
             </LControl>
             <LControl position="topleft">
-                <div class="form-control">
-                    <div class="relative flex items-center">
-                        <input v-model="playerQuery" type="text" name="searchPlayer" id="searchPlayer"
+                <div class="form-control flex flex-col gap-2">
+                    <div>
+                        <input v-model="playerQuery" class="w-full" type="text" name="searchPlayer" id="searchPlayer"
                             placeholder="Employee Filter" />
                     </div>
-                    <div class="relative flex items-center mt-2">
-                        <input v-model="dispatchQuery" type="text" name="searchDispatch" id="searchDispatch"
+                    <div>
+                        <input v-model="dispatchQuery" class="w-full" type="text" name="searchDispatch" id="searchDispatch"
                             placeholder="Dispatch Filter" />
                     </div>
-                    <div class="relative flex items-center mt-2">
-                        <Combobox as="div" v-model="selectedPostal" nullable>
-                            <ComboboxInput @change="postalQuery = $event.target.value" @click="loadPostals"
+                    <div>
+                        <Combobox as="div" class="w-full" v-model="selectedPostal" nullable>
+                            <ComboboxInput class="w-full" @change="postalQuery = $event.target.value" @click="loadPostals"
                                 :display-value="(postal: any) => postal ? postal?.code : ''" placeholder="Postal Search" />
                             <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">
                                 <ComboboxOption v-for="postal in filteredPostals" :key="postal.code" :value="postal"
@@ -368,6 +408,21 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                                 </ComboboxOption>
                             </ComboboxOptions>
                         </Combobox>
+                    </div>
+                </div>
+            </LControl>
+            <LControl position="bottomright">
+                <div class="form-control flex flex-col gap-2">
+                    <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
+                        <span class="text-lg mr-2 text-[#6f7683]">Center selected Marker</span>
+                        <input v-model="centerSelectedMarker" class="my-auto" id="markerSize" name="markerSize"
+                            type="checkbox" />
+                    </div>
+                    <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
+                        <span class="text-lg mr-2 text-[#6f7683]">{{ markerSize }}</span>
+                        <input id="markerSize" name="markerSize" type="range"
+                            class="h-1.5 w-full cursor-grab rounded-full my-auto" min="14" max="34" step="2"
+                            :value="markerSize" @change="markerSize = ($event.target as any).value" />
                     </div>
                 </div>
             </LControl>

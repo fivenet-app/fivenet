@@ -1,12 +1,15 @@
 package perms
 
 import (
+	"errors"
+
 	"github.com/galexrt/fivenet/pkg/dbutils"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/proto/resources/common/database"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (p *Perms) GetRoles(prefix string) (collections.Roles, error) {
@@ -87,7 +90,11 @@ func (p *Perms) GetRoleByGuardName(name string) (*model.FivenetRoles, error) {
 
 	var dest model.FivenetRoles
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
-		return nil, err
+		if errors.Is(qrm.ErrNoRows, err) {
+			return nil, nil
+		} else {
+			return nil, err
+		}
 	}
 
 	return &dest, nil

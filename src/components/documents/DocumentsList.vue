@@ -16,7 +16,6 @@ const { $grpc } = useNuxtApp();
 
 const search = ref({ title: '', });
 // TODO Implement order by for documents
-const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
@@ -52,7 +51,7 @@ function focusSearch(): void {
 const templatesOpen = ref(false);
 
 watch(offset, async () => refresh());
-watchDebounced(search.value, async () => refresh(), { debounce: 650, maxWait: 1500 });
+watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
 </script>
 
 <template>

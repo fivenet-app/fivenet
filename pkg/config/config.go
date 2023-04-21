@@ -39,7 +39,7 @@ type Config struct {
 	Database Database `yaml:"database"`
 	JWT      JWT      `yaml:"jwt"`
 
-	FiveM FiveM `yaml:"fivem"`
+	Game Game `yaml:"game"`
 }
 
 type Sentry struct {
@@ -72,8 +72,10 @@ type JWT struct {
 	Secret string `yaml:"secret"`
 }
 
-type FiveM struct {
+type Game struct {
 	SuperuserGroups    []string `yaml:"superuserGroups"`
+	UnemployedJob      string   `default:"unemployed" yaml:"unemployedJob"`
+	VisibleJobs        []string `yaml:"visibleJobs"`
 	PermissionRoleJobs []string `yaml:"permissionRoleJobs"`
 	LivemapJobs        []string `yaml:"livemapJobs"`
 }

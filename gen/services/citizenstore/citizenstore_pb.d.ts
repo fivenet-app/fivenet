@@ -10,16 +10,14 @@ export class FindUsersRequest extends jspb.Message {
   hasPagination(): boolean;
   clearPagination(): FindUsersRequest;
 
-  getOrderbyList(): Array<resources_common_database_database_pb.OrderBy>;
-  setOrderbyList(value: Array<resources_common_database_database_pb.OrderBy>): FindUsersRequest;
-  clearOrderbyList(): FindUsersRequest;
-  addOrderby(value?: resources_common_database_database_pb.OrderBy, index?: number): resources_common_database_database_pb.OrderBy;
-
   getSearchName(): string;
   setSearchName(value: string): FindUsersRequest;
 
   getWanted(): boolean;
   setWanted(value: boolean): FindUsersRequest;
+
+  getPhoneNumber(): string;
+  setPhoneNumber(value: string): FindUsersRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FindUsersRequest.AsObject;
@@ -32,9 +30,9 @@ export class FindUsersRequest extends jspb.Message {
 export namespace FindUsersRequest {
   export type AsObject = {
     pagination?: resources_common_database_database_pb.PaginationRequest.AsObject,
-    orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
     searchName: string,
     wanted: boolean,
+    phoneNumber: string,
   }
 }
 

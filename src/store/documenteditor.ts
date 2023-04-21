@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { StoreDefinition, defineStore } from 'pinia';
 
 export interface DocumentEditorState {
     title: string;
@@ -33,5 +33,5 @@ export const useDocumentEditorStore = defineStore('documentEditor', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useDocumentEditorStore, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useDocumentEditorStore as unknown as StoreDefinition, import.meta.hot));
 }

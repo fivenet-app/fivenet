@@ -124,7 +124,7 @@ function focusSearch(): void {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(search.value, async () => refresh(), { debounce: 650, maxWait: 1500 });
+watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
 watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWait: 1250 });
 watch(selectedChar, () => {
     if (selectedChar && selectedChar.value?.getUserId()) {
@@ -226,10 +226,6 @@ watch(selectedChar, () => {
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Owner
                                         </th>
-                                        <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Job
-                                        </th>
                                         <th v-if="!hideCitizenLink && !hideCopy" scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
                                             Actions
@@ -238,7 +234,7 @@ watch(selectedChar, () => {
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
                                     <VehiclesListEntry v-for="vehicle in vehicles" :key="vehicle.getPlate()"
-                                        :vehicle="vehicle" :hide-owner="hideOwner" :hide-citizen-link="hideCitizenLink"
+                                        :vehicle="vehicle" :hide-citizen-link="hideCitizenLink"
                                         :hide-copy="hideCopy" class="transition-colors hover:bg-neutral/5" />
                                 </tbody>
                                 <thead>
@@ -257,10 +253,6 @@ watch(selectedChar, () => {
                                         <th v-if="!hideOwner" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             Owner
-                                        </th>
-                                        <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Job
                                         </th>
                                         <th v-if="!hideCitizenLink && !hideCopy" scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">

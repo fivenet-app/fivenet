@@ -22,9 +22,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CitizenStoreServiceClient interface {
-	// @perm: fields=PhoneNumber,Licenses,UserProps;description="Citizens List and Search"
+	// @perm: fields=PhoneNumber,Licenses,UserProps.Wanted;description="Citizens List and Search"
 	FindUsers(ctx context.Context, in *FindUsersRequest, opts ...grpc.CallOption) (*FindUsersResponse, error)
-	// @perm: name=FindUsers
+	// @perm: description="See a user's profile"
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// @perm: fields=SourceUser;description="Citizen Info Activity Feed"
 	GetUserActivity(ctx context.Context, in *GetUserActivityRequest, opts ...grpc.CallOption) (*GetUserActivityResponse, error)
@@ -80,9 +80,9 @@ func (c *citizenStoreServiceClient) SetUserProps(ctx context.Context, in *SetUse
 // All implementations must embed UnimplementedCitizenStoreServiceServer
 // for forward compatibility
 type CitizenStoreServiceServer interface {
-	// @perm: fields=PhoneNumber,Licenses,UserProps;description="Citizens List and Search"
+	// @perm: fields=PhoneNumber,Licenses,UserProps.Wanted;description="Citizens List and Search"
 	FindUsers(context.Context, *FindUsersRequest) (*FindUsersResponse, error)
-	// @perm: name=FindUsers
+	// @perm: description="See a user's profile"
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// @perm: fields=SourceUser;description="Citizen Info Activity Feed"
 	GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error)
