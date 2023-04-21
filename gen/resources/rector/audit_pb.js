@@ -531,9 +531,11 @@ proto.resources.rector.AuditEntry.prototype.hasData = function() {
  */
 proto.resources.rector.EVENT_TYPE = {
   UNKNOWN: 0,
-  CREATE: 1,
-  UPDATE: 2,
-  DELETE: 3
+  ERRORED: 1,
+  VIEWED: 2,
+  CREATED: 3,
+  UPDATED: 4,
+  DELETED: 5
 };
 
 goog.object.extend(exports, proto.resources.rector);

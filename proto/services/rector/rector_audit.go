@@ -8,6 +8,8 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
+const AuditLogPageSize = 30
+
 var (
 	audit = table.FivenetAuditLog.AS("auditentry")
 	user  = table.Users.AS("usershort")
@@ -48,7 +50,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 	}
 
 	resp := &ViewAuditLogResponse{
-		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
+		Pagination: database.EmptyPaginationResponseWithPageSize(req.Pagination.Offset, AuditLogPageSize),
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -76,19 +78,20 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		).
 		WHERE(condition).
 		ORDER_BY(
-			audit.CreatedAt.ASC(),
+			audit.CreatedAt.DESC(),
 		).
 		OFFSET(req.Pagination.Offset).
-		LIMIT(database.DefaultPageLimit)
+		LIMIT(AuditLogPageSize)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Logs); err != nil {
 		return nil, err
 	}
 
-	database.PaginationHelper(resp.Pagination,
+	database.PaginationHelperWithPageSize(resp.Pagination,
 		count.TotalCount,
 		req.Pagination.Offset,
-		len(resp.Logs))
+		len(resp.Logs),
+		AuditLogPageSize)
 
 	return resp, nil
 }

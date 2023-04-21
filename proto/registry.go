@@ -3,6 +3,7 @@ package proto
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"net"
 
 	"github.com/galexrt/fivenet/pkg/audit"
@@ -14,12 +15,12 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
-	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
-	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/validator"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -45,43 +46,63 @@ func init() {
 
 type RegisterFunc func() error
 
-func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p perms.Permissions) (*grpc.Server, net.Listener) {
+func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p perms.Permissions, aud audit.IAuditer) (*grpc.Server, net.Listener) {
 	// Create GRPC Server
 	lis, err := net.Listen("tcp", config.C.GRPC.Listen)
 	if err != nil {
 		logger.Fatal("failed to listen", zap.Error(err))
 	}
-	sentryRecoverFunc := func(p interface{}) (err error) {
+
+	// Setup metrics.
+	srvMetrics := grpcprom.NewServerMetrics(
+		grpcprom.WithServerHandlingTimeHistogram(
+			grpcprom.WithHistogramBuckets([]float64{0.001, 0.01, 0.1, 0.3, 0.6, 1, 3, 6, 9, 20, 30, 60, 90, 120}),
+		),
+	)
+	prometheus.MustRegister(srvMetrics)
+
+	// Setup metric for panic recoveries.
+	panicsTotal := promauto.With(prometheus.DefaultRegisterer).NewCounter(prometheus.CounterOpts{
+		Name: "grpc_req_panics_recovered_total",
+		Help: "Total number of gRPC requests recovered from internal panic.",
+	})
+	grpcPanicRecoveryHandler := func(p any) (err error) {
+		panicsTotal.Inc()
+		logger.Error("recovered from panic", zap.Any("err", p), zap.Stack("stacktrace"))
 		if e, ok := p.(error); ok {
 			sentry.CaptureException(e)
 		}
 		return status.Errorf(codes.Internal, "%v", p)
 	}
+
 	grpcAuth := auth.NewGRPCAuth(tm)
 	grpcPerm := auth.NewGRPCPerms(p)
+
 	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-			grpc_ctxtags.UnaryServerInterceptor(),
-			grpc_prometheus.UnaryServerInterceptor,
-			grpc_zap.UnaryServerInterceptor(logger),
-			grpc_validator.UnaryServerInterceptor(),
+		grpc.ChainUnaryInterceptor(
+			srvMetrics.UnaryServerInterceptor(),
+			logging.UnaryServerInterceptor(InterceptorLogger(logger),
+				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
+			),
 			grpc_auth.UnaryServerInterceptor(grpcAuth.GRPCAuthFunc),
+			validator.UnaryServerInterceptor(),
 			grpc_permission.UnaryServerInterceptor(grpcPerm.GRPCPermissionUnaryFunc),
-			grpc_recovery.UnaryServerInterceptor(
-				grpc_recovery.WithRecoveryHandler(sentryRecoverFunc),
+			recovery.UnaryServerInterceptor(
+				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler),
 			),
-		)),
-		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
-			grpc_ctxtags.StreamServerInterceptor(),
-			grpc_prometheus.StreamServerInterceptor,
-			grpc_zap.StreamServerInterceptor(logger),
-			grpc_validator.StreamServerInterceptor(),
+		),
+		grpc.ChainStreamInterceptor(
+			srvMetrics.StreamServerInterceptor(),
+			logging.StreamServerInterceptor(InterceptorLogger(logger),
+				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
+			),
 			grpc_auth.StreamServerInterceptor(grpcAuth.GRPCAuthFunc),
+			validator.StreamServerInterceptor(),
 			grpc_permission.StreamServerInterceptor(grpcPerm.GRPCPermissionStreamFunc),
-			grpc_recovery.StreamServerInterceptor(
-				grpc_recovery.WithRecoveryHandler(sentryRecoverFunc),
+			recovery.StreamServerInterceptor(
+				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler),
 			),
-		)),
+		),
 	)
 
 	// "Mostly Static Data" Cache
@@ -90,14 +111,10 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 	if err != nil {
 		logger.Fatal("failed to create mostly static data cache", zap.Error(err))
 	}
-	cache.Start()
+	go cache.Start()
 
 	// Data enricher helper
 	enricher := mstlystcdata.NewEnricher(cache)
-
-	// Audit Storer
-	audit := audit.New(db)
-	_ = audit
 
 	// Attach our GRPC services
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher))
@@ -106,7 +123,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), db, p, enricher)
-	livemapper.Start()
+	go livemapper.Start()
 
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p))
@@ -120,4 +137,33 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 	}
 
 	return grpcServer, lis
+}
+
+// InterceptorLogger adapts zap logger to interceptor logger.
+// This code is simple enough to be copied and not imported.
+func InterceptorLogger(l *zap.Logger) logging.Logger {
+	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
+		f := make([]zap.Field, 0, len(fields)/2)
+		iter := logging.Fields(fields).Iterator()
+		for i := 0; i < len(fields); i += 2 {
+			if iter.Next() {
+				k, v := iter.At()
+				f = append(f, zap.Any(k, v))
+			}
+		}
+		l = l.WithOptions(zap.AddCallerSkip(1)).With(f...)
+
+		switch lvl {
+		case logging.LevelDebug:
+			l.Debug(msg)
+		case logging.LevelInfo:
+			l.Info(msg)
+		case logging.LevelWarn:
+			l.Warn(msg)
+		case logging.LevelError:
+			l.Error(msg)
+		default:
+			panic(fmt.Sprintf("unknown level %v", lvl))
+		}
+	})
 }

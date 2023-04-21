@@ -3,7 +3,7 @@ package grpc_permission
 import (
 	"context"
 
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	"google.golang.org/grpc"
 )
 
@@ -66,7 +66,7 @@ func StreamServerInterceptor(permissionFunc PermissionStreamFunc) grpc.StreamSer
 		if err != nil {
 			return err
 		}
-		wrapped := grpc_middleware.WrapServerStream(stream)
+		wrapped := middleware.WrapServerStream(stream)
 		wrapped.WrappedContext = newCtx
 		return handler(srv, wrapped)
 	}

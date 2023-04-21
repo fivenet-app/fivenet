@@ -26,7 +26,7 @@ defineProps({
             {{ log.getService() }}/{{ log.getMethod() }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ EVENT_TYPE_Util.fromInt(log.getState()) }}
+            {{ EVENT_TYPE_Util.toEnumKey(log.getState()) }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             {{ log.getData() ? log.getData() : 'N/A' }}

@@ -3,23 +3,9 @@
     "typescript.preferences.quoteStyle": "single",
     "protoc": {
         "options": [
-            "--proto_path=./validate"
+            "--proto_path=./validate",
+            "--proto_path=./proto"
         ]
     },
-    "inlineFold.maskChar": "...",
-    "sqltools.connections": [
-        {
-            "mysqlOptions": {
-                "authProtocol": "default"
-            },
-            "previewLimit": 50,
-            "server": "localhost",
-            "port": 3306,
-            "driver": "MariaDB",
-            "name": "fivenet-docker-compose-MariaDB",
-            "database": "fivenet",
-            "username": "fivenet",
-            "password": "changeme"
-        }
-    ]
+    "inlineFold.maskChar": "..."
 }

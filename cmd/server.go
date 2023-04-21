@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -64,11 +65,16 @@ var serverCmd = &cobra.Command{
 		p := perms.New(ctx, db)
 		p.Register()
 
+		// Audit Storer
+		aud := audit.New(logger.Named("audit"), db)
+		aud.Start()
+
 		// Wrap the server parts to try to isolate the actual "run servers" logic
 		server := &server{
-			db: db,
-			tm: tm,
-			p:  p,
+			db:    db,
+			tm:    tm,
+			p:     p,
+			audit: aud,
 		}
 
 		return server.runServers(ctx)
@@ -84,13 +90,14 @@ func init() {
 }
 
 type server struct {
-	db *sql.DB
-	tm *auth.TokenManager
-	p  perms.Permissions
+	db    *sql.DB
+	tm    *auth.TokenManager
+	p     perms.Permissions
+	audit *audit.AuditStorer
 }
 
 func (s *server) runServers(bctx context.Context) error {
-	grpcServer, grpcLis := proto.NewGRPCServer(bctx, logger, s.db, s.tm, s.p)
+	grpcServer, grpcLis := proto.NewGRPCServer(bctx, logger.Named("grpc/server"), s.db, s.tm, s.p, s.audit)
 
 	go func() {
 		if err := grpcServer.Serve(grpcLis); err != nil {
@@ -139,6 +146,8 @@ func (s *server) runServers(bctx context.Context) error {
 	}
 
 	grpcServer.Stop()
+
+	s.audit.Stop()
 
 	logger.Info("http server exiting")
 	return nil

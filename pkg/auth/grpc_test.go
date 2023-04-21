@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
+	grpc_metadata "github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -45,7 +45,7 @@ func TestGRPCAuthFunc(t *testing.T) {
 			msg:       "valid token",
 		},
 	} {
-		ctx := metautils.NiceMD(run.md).ToIncoming(context.Background())
+		ctx := grpc_metadata.MD(run.md).ToIncoming(context.Background())
 		out, err := grpcAuth.GRPCAuthFunc(ctx, "/services.Example/GetExample")
 		if run.errCode != codes.OK {
 			assert.Equal(t, run.errCode, status.Code(err), run.msg)

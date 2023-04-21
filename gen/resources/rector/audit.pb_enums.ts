@@ -19,13 +19,19 @@ export class EVENT_TYPE_Util {
                 return EVENT_TYPE.UNKNOWN;
             
             case 1:
-                return EVENT_TYPE.CREATE;
+                return EVENT_TYPE.ERRORED;
             
             case 2:
-                return EVENT_TYPE.UPDATE;
+                return EVENT_TYPE.VIEWED;
             
             case 3:
-                return EVENT_TYPE.DELETE;
+                return EVENT_TYPE.CREATED;
+            
+            case 4:
+                return EVENT_TYPE.UPDATED;
+            
+            case 5:
+                return EVENT_TYPE.DELETED;
             }
         return EVENT_TYPE.UNKNOWN;
     }
@@ -35,14 +41,20 @@ export class EVENT_TYPE_Util {
             case 'UNKNOWN':
                 return EVENT_TYPE.UNKNOWN;
             
-            case 'CREATE':
-                return EVENT_TYPE.CREATE;
+            case 'ERRORED':
+                return EVENT_TYPE.ERRORED;
             
-            case 'UPDATE':
-                return EVENT_TYPE.UPDATE;
+            case 'VIEWED':
+                return EVENT_TYPE.VIEWED;
             
-            case 'DELETE':
-                return EVENT_TYPE.DELETE;
+            case 'CREATED':
+                return EVENT_TYPE.CREATED;
+            
+            case 'UPDATED':
+                return EVENT_TYPE.UPDATED;
+            
+            case 'DELETED':
+                return EVENT_TYPE.DELETED;
             }
         return EVENT_TYPE.UNKNOWN;
     }

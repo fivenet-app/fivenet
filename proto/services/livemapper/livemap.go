@@ -78,22 +78,21 @@ func NewServer(ctx context.Context, logger *zap.Logger, db *sql.DB, p perms.Perm
 }
 
 func (s *Server) Start() {
-	go func() {
-		for {
-			select {
-			case <-s.ctx.Done():
-				return
-			case <-time.After(4 * time.Second):
-				if err := s.refreshUserLocations(); err != nil {
-					s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
-				}
-				if err := s.refreshDispatches(); err != nil {
-					s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
-				}
-				s.broker.Publish(nil)
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+		// 3.85 seconds
+		case <-time.After(3850 * time.Millisecond):
+			if err := s.refreshUserLocations(); err != nil {
+				s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
 			}
+			if err := s.refreshDispatches(); err != nil {
+				s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
+			}
+			s.broker.Publish(nil)
 		}
-	}()
+	}
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
@@ -152,14 +151,6 @@ func (s *Server) getUserLocations(jobs []string, userId int32, userJob string) (
 		markers, ok := s.usersCache.Get(job)
 		if !ok {
 			continue
-		}
-
-		if job == userJob {
-			for i := 0; i < len(markers); i++ {
-				if markers[i].GetId() == userId {
-					markers[i].IconColor = "FCAB10"
-				}
-			}
 		}
 
 		ds = append(ds, markers...)

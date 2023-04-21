@@ -83,7 +83,9 @@ export namespace AuditEntry {
 
 export enum EVENT_TYPE { 
   UNKNOWN = 0,
-  CREATE = 1,
-  UPDATE = 2,
-  DELETE = 3,
+  ERRORED = 1,
+  VIEWED = 2,
+  CREATED = 3,
+  UPDATED = 4,
+  DELETED = 5,
 }

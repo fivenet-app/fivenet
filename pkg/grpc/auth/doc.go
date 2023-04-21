@@ -1,10 +1,12 @@
-// Copyright 2016 Michal Witkowski. All Rights Reserved.
-// See LICENSE for licensing terms.
+// Copyright (c) The go-grpc-middleware Authors.
+// Licensed under the Apache License 2.0.
 
 /*
-`grpc_auth` a generic server-side auth middleware for gRPC.
+Package auth is a middleware that authenticates incoming gRPC requests.
 
-Server Side Auth Middleware
+`auth` a generic server-side auth middleware for gRPC.
+
+# Server Side Auth Middleware
 
 It allows for easy assertion of `:authorization` headers in gRPC calls, be it HTTP Basic auth, or
 OAuth2 Bearer tokens.
