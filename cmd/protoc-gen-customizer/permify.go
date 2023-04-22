@@ -123,10 +123,11 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 	comment = strings.TrimPrefix(comment, "@perm")
 
 	perm := &Perm{
-		Name:        method,
-		PerJob:      false,
-		Description: "",
-		Fields:      []string{},
+		Name:         method,
+		PerJob:       false,
+		PerJobFields: []string{},
+		Description:  "",
+		Fields:       []string{},
 	}
 
 	if comment == "" {
@@ -154,6 +155,10 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 				return nil, err
 			}
 			perm.PerJob = bo
+			continue
+		case "perjobfields":
+			fields := strings.Split(v, ",")
+			perm.PerJobFields = fields
 			continue
 		case "description":
 			if !strings.Contains(v, "\"") {
@@ -212,6 +217,8 @@ func init() {
 			Name: "{{ $perm.Name }}",
 			{{- if $perm.PerJob }}
             PerJob: {{ $perm.PerJob }},{{ end }}
+            {{- if $perm.PerJobFields }}
+            PerJobFields: []string{ {{ range $i, $field := $perm.PerJobFields }}"{{ $field }}",{{ end -}} },{{ end }}
 			{{- if $perm.Fields }}
             Fields: []string{ {{ range $i, $field := $perm.Fields }}"{{ $field }}",{{ end -}} },{{ end }}
 			{{- with $perm.Description }}
@@ -224,9 +231,10 @@ func init() {
 `
 
 type Perm struct {
-	Key         string
-	Name        string
-	Description string
-	Fields      []string
-	PerJob      bool
+	Key          string
+	Name         string
+	Description  string
+	Fields       []string
+	PerJob       bool
+	PerJobFields []string
 }

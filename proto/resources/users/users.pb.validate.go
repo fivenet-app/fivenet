@@ -685,6 +685,8 @@ func (m *UserProps) validate(all bool) error {
 
 	// no validation rules for Wanted
 
+	// no validation rules for Job
+
 	if len(errors) > 0 {
 		return UserPropsMultiError(errors)
 	}

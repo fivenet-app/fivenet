@@ -16,7 +16,7 @@ var Users = newUsersTable("", "users", "")
 type usersTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID           mysql.ColumnInteger
 	Identifier   mysql.ColumnString
 	License      mysql.ColumnString

@@ -8,8 +8,10 @@ import (
 	"strings"
 
 	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/proto/resources/common/database"
 	users "github.com/galexrt/fivenet/proto/resources/users"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -55,10 +57,10 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 	selectors := jet.ProjectionList{
 		user.ID,
 		user.Identifier,
-		user.Job,
-		user.JobGrade,
 		user.Firstname,
 		user.Lastname,
+		user.Job,
+		user.JobGrade,
 		user.Dateofbirth,
 		user.Sex,
 		user.Height,
@@ -81,6 +83,9 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 			if req.Wanted {
 				condition = condition.AND(userProps.Wanted.IS_TRUE())
 			}
+		}
+		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Job") {
+			selectors = append(selectors, userProps.Job)
 		}
 	}
 
@@ -138,6 +143,14 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		len(resp.Users))
 
 	for i := 0; i < len(resp.Users); i++ {
+		if resp.Users[i].Props != nil && resp.Users[i].Props.Job != "" {
+			resp.Users[i].Job = resp.Users[i].Props.Job
+			resp.Users[i].JobGrade = -1
+		} else if !utils.InStringSlice(config.C.Game.PublicJobs, resp.Users[i].Job) {
+			resp.Users[i].Job = config.C.Game.UnemployedJob.Name
+			resp.Users[i].JobGrade = config.C.Game.UnemployedJob.Grade
+		}
+
 		s.c.EnrichJobInfo(resp.Users[i])
 	}
 
@@ -150,10 +163,10 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	selectors := jet.ProjectionList{
 		user.ID,
 		user.Identifier,
-		user.Job,
-		user.JobGrade,
 		user.Firstname,
 		user.Lastname,
+		user.Job,
+		user.JobGrade,
 		user.Dateofbirth,
 		user.Sex,
 		user.Height,
@@ -169,6 +182,9 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Wanted") {
 			selectors = append(selectors, userProps.Wanted)
+		}
+		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Job") {
+			selectors = append(selectors, userProps.Job)
 		}
 	}
 
@@ -218,6 +234,13 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	if resp.User != nil {
+		if resp.User.Props != nil && resp.User.Props.Job != "" {
+			resp.User.Job = resp.User.Props.Job
+			resp.User.JobGrade = -1
+		} else if !utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
+			resp.User.Job = config.C.Game.UnemployedJob.Name
+			resp.User.JobGrade = config.C.Game.UnemployedJob.Grade
+		}
 		s.c.EnrichJobInfo(resp.User)
 	}
 

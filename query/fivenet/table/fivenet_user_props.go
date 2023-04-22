@@ -16,9 +16,10 @@ var FivenetUserProps = newFivenetUserPropsTable("", "fivenet_user_props", "")
 type fivenetUserPropsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	UserID mysql.ColumnInteger
 	Wanted mysql.ColumnBool
+	Job    mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -61,8 +62,9 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 	var (
 		UserIDColumn   = mysql.IntegerColumn("user_id")
 		WantedColumn   = mysql.BoolColumn("wanted")
-		allColumns     = mysql.ColumnList{UserIDColumn, WantedColumn}
-		mutableColumns = mysql.ColumnList{UserIDColumn, WantedColumn}
+		JobColumn      = mysql.StringColumn("job")
+		allColumns     = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn}
+		mutableColumns = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn}
 	)
 
 	return fivenetUserPropsTable{
@@ -71,6 +73,7 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		//Columns
 		UserID: UserIDColumn,
 		Wanted: WantedColumn,
+		Job:    JobColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

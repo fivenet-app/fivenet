@@ -16,7 +16,7 @@ var GksphoneJobMessage = newGksphoneJobMessageTable("", "gksphone_job_message", 
 type gksphoneJobMessageTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID      mysql.ColumnInteger
 	Name    mysql.ColumnString
 	Number  mysql.ColumnString

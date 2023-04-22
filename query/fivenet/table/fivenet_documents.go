@@ -16,7 +16,7 @@ var FivenetDocuments = newFivenetDocumentsTable("", "fivenet_documents", "")
 type fivenetDocumentsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID          mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
 	UpdatedAt   mysql.ColumnTimestamp

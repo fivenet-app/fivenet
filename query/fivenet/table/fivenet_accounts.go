@@ -16,7 +16,7 @@ var FivenetAccounts = newFivenetAccountsTable("", "fivenet_accounts", "")
 type fivenetAccountsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID        mysql.ColumnInteger
 	CreatedAt mysql.ColumnTimestamp
 	UpdatedAt mysql.ColumnTimestamp

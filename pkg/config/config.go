@@ -73,9 +73,14 @@ type JWT struct {
 }
 
 type Game struct {
-	SuperuserGroups    []string `yaml:"superuserGroups"`
-	UnemployedJob      string   `default:"unemployed" yaml:"unemployedJob"`
-	VisibleJobs        []string `yaml:"visibleJobs"`
-	PermissionRoleJobs []string `yaml:"permissionRoleJobs"`
-	LivemapJobs        []string `yaml:"livemapJobs"`
+	SuperuserGroups    []string      `yaml:"superuserGroups"`
+	UnemployedJob      UnemployedJob `yaml:"unemployedJob"`
+	PublicJobs         []string      `yaml:"publicJobs"`
+	PermissionRoleJobs []string      `yaml:"permissionRoleJobs"`
+	LivemapJobs        []string      `yaml:"livemapJobs"`
+}
+
+type UnemployedJob struct {
+	Name  string `default:"unemployed" yaml:"job"`
+	Grade int32  `default:"1" yaml:"grade"`
 }

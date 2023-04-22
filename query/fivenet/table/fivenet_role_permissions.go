@@ -16,7 +16,7 @@ var FivenetRolePermissions = newFivenetRolePermissionsTable("", "fivenet_role_pe
 type fivenetRolePermissionsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	RoleID       mysql.ColumnInteger
 	PermissionID mysql.ColumnInteger
 

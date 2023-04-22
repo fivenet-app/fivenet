@@ -16,7 +16,7 @@ var FivenetDocumentsRelations = newFivenetDocumentsRelationsTable("", "fivenet_d
 type fivenetDocumentsRelationsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
 	DeletedAt    mysql.ColumnTimestamp

@@ -16,7 +16,7 @@ var UserLicenses = newUserLicensesTable("", "user_licenses", "")
 type userLicensesTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	Type  mysql.ColumnString
 	Owner mysql.ColumnString
 

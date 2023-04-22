@@ -20,11 +20,12 @@ var (
 )
 
 type Perm struct {
-	Key         string
-	Name        string
-	Description string
-	Fields      []string
-	PerJob      bool
+	Key          string
+	Name         string
+	Description  string
+	Fields       []string
+	PerJob       bool
+	PerJobFields []string
 }
 
 func AddPermsToList(perms []*Perm) {

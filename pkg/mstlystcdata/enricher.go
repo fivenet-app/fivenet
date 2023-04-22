@@ -34,9 +34,8 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 			usr.SetJobGradeLabel(jg)
 		}
 	} else {
-		usr.SetJobLabel(usr.GetJob())
-		jg := strconv.Itoa(int(usr.GetJobGrade()))
-		usr.SetJobGradeLabel(jg)
+		usr.SetJobLabel("N/A")
+		usr.SetJobGradeLabel("N/A")
 	}
 }
 

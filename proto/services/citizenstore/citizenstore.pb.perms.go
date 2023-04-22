@@ -15,12 +15,13 @@ func init() {
 		{
 			Key:         CitizenStoreServicePermKey,
 			Name:        "FindUsers",
-			Fields:      []string{"PhoneNumber", "Licenses", "UserProps.Wanted"},
+			Fields:      []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job"},
 			Description: "Citizens List and Search",
 		},
 		{
 			Key:         CitizenStoreServicePermKey,
 			Name:        "GetUser",
+			PerJob:      true,
 			Description: "See a user's profile",
 		},
 		{

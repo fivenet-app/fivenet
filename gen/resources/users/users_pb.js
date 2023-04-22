@@ -1334,7 +1334,8 @@ proto.resources.users.UserProps.prototype.toObject = function(opt_includeInstanc
 proto.resources.users.UserProps.toObject = function(includeInstance, msg) {
   var f, obj = {
     userId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
+    wanted: jspb.Message.getBooleanFieldWithDefault(msg, 2, false),
+    job: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -1379,6 +1380,10 @@ proto.resources.users.UserProps.deserializeBinaryFromReader = function(msg, read
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setWanted(value);
       break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setJob(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1422,6 +1427,13 @@ proto.resources.users.UserProps.serializeBinaryToWriter = function(message, writ
       f
     );
   }
+  f = message.getJob();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
 };
 
 
@@ -1458,6 +1470,24 @@ proto.resources.users.UserProps.prototype.getWanted = function() {
  */
 proto.resources.users.UserProps.prototype.setWanted = function(value) {
   return jspb.Message.setProto3BooleanField(this, 2, value);
+};
+
+
+/**
+ * optional string job = 3;
+ * @return {string}
+ */
+proto.resources.users.UserProps.prototype.getJob = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.users.UserProps} returns this
+ */
+proto.resources.users.UserProps.prototype.setJob = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 

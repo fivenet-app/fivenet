@@ -16,7 +16,7 @@ var FivenetPermissions = newFivenetPermissionsTable("", "fivenet_permissions", "
 type fivenetPermissionsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID          mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
 	UpdatedAt   mysql.ColumnTimestamp

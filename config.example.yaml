@@ -2,10 +2,10 @@ logLevel: "DEBUG"
 # debug or release
 mode: "debug"
 sentry:
-  serverDSN: "https://d3372a68f9b440618195a6893c3e95a3@glitchtip.edenmal.moe/2"
   environment: "dev"
   # Your Sentry or Glitchtip SDN
   clientDSN: ""
+  serverDSN: "https://d3372a68f9b440618195a6893c3e95a3@glitchtip.edenmal.moe/2"
 http:
   listen: ":8080"
   sessions:
@@ -26,8 +26,10 @@ game:
   superuserGroups:
     - projektleiter
     - teamleitung
-  unemployedJob: "unemployed"
-  visibleJobs:
+  unemployedJob:
+    name: "unemployed"
+    grade: 1
+  publicJobs:
     - ambulance
     - doj
     - fib

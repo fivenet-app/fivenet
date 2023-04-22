@@ -16,7 +16,7 @@ var JobGrades = newJobGradesTable("", "job_grades", "")
 type jobGradesTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	JobName    mysql.ColumnString
 	Grade      mysql.ColumnInteger
 	Name       mysql.ColumnString

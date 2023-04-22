@@ -16,7 +16,7 @@ var FivenetDocumentsReferences = newFivenetDocumentsReferencesTable("", "fivenet
 type fivenetDocumentsReferencesTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID               mysql.ColumnInteger
 	CreatedAt        mysql.ColumnTimestamp
 	DeletedAt        mysql.ColumnTimestamp

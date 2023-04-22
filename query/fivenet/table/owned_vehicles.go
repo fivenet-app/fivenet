@@ -16,7 +16,7 @@ var OwnedVehicles = newOwnedVehiclesTable("", "owned_vehicles", "")
 type ownedVehiclesTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	Owner     mysql.ColumnString
 	Plate     mysql.ColumnString
 	Model     mysql.ColumnString

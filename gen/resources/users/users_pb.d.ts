@@ -174,6 +174,9 @@ export class UserProps extends jspb.Message {
   getWanted(): boolean;
   setWanted(value: boolean): UserProps;
 
+  getJob(): string;
+  setJob(value: string): UserProps;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UserProps.AsObject;
   static toObject(includeInstance: boolean, msg: UserProps): UserProps.AsObject;
@@ -186,6 +189,7 @@ export namespace UserProps {
   export type AsObject = {
     userId: number,
     wanted: boolean,
+    job: string,
   }
 }
 

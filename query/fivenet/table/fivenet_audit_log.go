@@ -16,7 +16,7 @@ var FivenetAuditLog = newFivenetAuditLogTable("", "fivenet_audit_log", "")
 type fivenetAuditLogTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID        mysql.ColumnInteger
 	CreatedAt mysql.ColumnTimestamp
 	UserID    mysql.ColumnInteger

@@ -16,7 +16,7 @@ var FivenetDocumentsCategories = newFivenetDocumentsCategoriesTable("", "fivenet
 type fivenetDocumentsCategoriesTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID          mysql.ColumnInteger
 	Name        mysql.ColumnString
 	Description mysql.ColumnString

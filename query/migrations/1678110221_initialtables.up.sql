@@ -205,9 +205,11 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
 CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
   `user_id` int(11) NOT NULL,
   `wanted` tinyint(1) NOT NULL DEFAULT 0,
+  `job` varchar(20) DEFAULT NULL,
   UNIQUE KEY `idx_fivenet_user_props_unique` (`user_id`),
   KEY `idx_fivenet_user_props_wanted` (`wanted`),
-  CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_fivenet_user_props_job` FOREIGN KEY (`job`) REFERENCES `jobs` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 COMMIT;

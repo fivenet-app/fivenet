@@ -16,7 +16,7 @@ var FivenetDocumentsJobAccess = newFivenetDocumentsJobAccessTable("", "fivenet_d
 type fivenetDocumentsJobAccessTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
 	UpdatedAt    mysql.ColumnTimestamp

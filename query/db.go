@@ -64,7 +64,7 @@ func MigrateDB(logger *zap.Logger, dsn string) error {
 		if !errors.Is(migrate.ErrNoChange, err) {
 			return err
 		} else {
-			logger.Info("database migration have caused no changes")
+			logger.Info("database migrations have caused no changes")
 		}
 	} else {
 		logger.Info("completed database migrations changes have been made")

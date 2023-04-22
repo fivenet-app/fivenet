@@ -92,15 +92,17 @@ fivenet:
     # debug or release
     mode: "release"
     sentry:
-      dsn: ""
       environment: "live"
+      # Your Sentry or Glitchtip SDN
       clientDSN: ""
+      serverDSN: ""
     http:
       listen: ":8080"
       sessions:
         cookieSecret: "YOUR_COOKIE_SECRET"
     grpc:
       listen: ":9090"
+      # Must be https or on the same URL
       clientURL: "/grpc"
     database:
       # refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
@@ -109,6 +111,17 @@ fivenet:
     jwt:
       secret: "YOUR_JWT_SECRET"
     game:
+      superuserGroups:
+        - projektleiter
+        - teamleitung
+      unemployedJob:
+        name: "unemployed"
+        grade: 1
+      publicJobs:
+        - ambulance
+        - doj
+        - fib
+        - police
       permissionRoleJobs:
         - ambulance
         - doj

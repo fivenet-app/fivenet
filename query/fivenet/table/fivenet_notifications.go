@@ -16,7 +16,7 @@ var FivenetNotifications = newFivenetNotificationsTable("", "fivenet_notificatio
 type fivenetNotificationsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID        mysql.ColumnInteger
 	CreatedAt mysql.ColumnTimestamp
 	ReadAt    mysql.ColumnTimestamp
