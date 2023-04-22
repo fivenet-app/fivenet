@@ -29,7 +29,7 @@ func init() {
 		{
 			Key:         AuthServicePermKey,
 			Name:        "SetJob",
-			Description: "SuperUser: Allow to override their own job on the go.",
+			Description: "Superuser: Allow to override their own job on the go.",
 		},
 	})
 }

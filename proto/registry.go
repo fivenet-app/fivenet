@@ -40,7 +40,7 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
-		{Key: "SuperUser", Name: "AnyAccess", Description: "Super User any access to view, edit and delete."},
+		{Key: "Superuser", Name: "AnyAccess", Description: "Super User any access to view, edit and delete."},
 	})
 }
 

@@ -8,7 +8,9 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/proto/resources/jobs"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"golang.org/x/exp/slices"
 )
@@ -20,12 +22,12 @@ var (
 )
 
 type Perm struct {
-	Key          string
-	Name         string
-	Description  string
-	Fields       []string
-	PerJob       bool
-	PerJobFields []string
+	Key         string
+	Name        string
+	Description string
+	Fields      []string
+	PerJob      bool
+	PerJobGrade bool
 }
 
 func AddPermsToList(perms []*Perm) {
@@ -46,8 +48,32 @@ func (p *Perms) Register() error {
 		if perm.PerJob {
 			for _, job := range config.C.Game.PermissionRoleJobs {
 				pJobName := fmt.Sprintf("%s.%s", pName, job)
-				if err := p.createOrUpdatePermission(pJobName, perm.Description); err != nil {
-					return err
+				if perm.PerJobGrade {
+					// TODO cleanup job grade permissions that are
+					jGrades := table.JobGrades
+					stmt := jGrades.
+						SELECT(
+							jGrades.Grade,
+						).
+						FROM(jGrades).
+						WHERE(jGrades.JobName.EQ(jet.String(job)))
+
+					var grades []*model.JobGrades
+					err := stmt.QueryContext(p.ctx, p.db, &grades)
+					if err != nil {
+						return err
+					}
+
+					for _, grade := range grades {
+						pJobName := fmt.Sprintf("%s.%d", pJobName, grade.Grade)
+						if err := p.createOrUpdatePermission(pJobName, perm.Description); err != nil {
+							return err
+						}
+					}
+				} else {
+					if err := p.createOrUpdatePermission(pJobName, perm.Description); err != nil {
+						return err
+					}
 				}
 			}
 			continue
@@ -65,16 +91,16 @@ func (p *Perms) Register() error {
 }
 
 func (p *Perms) createOrUpdatePermission(name string, description string) error {
-	role, err := p.GetPermissionByGuard(name)
+	perm, err := p.GetPermissionByGuard(name)
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return err
 		}
 	}
 
-	if role != nil {
-		if role.Name != name || (role.Description != nil && *role.Description != description) {
-			return p.UpdatePermission(role.ID, name, description)
+	if perm != nil {
+		if perm.Name != name || (perm.Description != nil && *perm.Description != description) {
+			return p.UpdatePermission(perm.ID, name, description)
 		}
 	}
 

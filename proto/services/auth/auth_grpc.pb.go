@@ -30,7 +30,7 @@ type AuthServiceClient interface {
 	// @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
 	ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
-	// @perm: description="SuperUser: Allow to override their own job on the go."
+	// @perm: description="Superuser: Allow to override their own job on the go."
 	SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error)
 }
 
@@ -126,7 +126,7 @@ type AuthServiceServer interface {
 	// @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
 	ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
-	// @perm: description="SuperUser: Allow to override their own job on the go."
+	// @perm: description="Superuser: Allow to override their own job on the go."
 	SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }

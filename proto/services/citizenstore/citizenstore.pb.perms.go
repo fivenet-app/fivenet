@@ -22,7 +22,8 @@ func init() {
 			Key:         CitizenStoreServicePermKey,
 			Name:        "GetUser",
 			PerJob:      true,
-			Description: "See a user's profile",
+			PerJobGrade: true,
+			Description: "See a user's profile/ up to a certain job rank",
 		},
 		{
 			Key:         CitizenStoreServicePermKey,

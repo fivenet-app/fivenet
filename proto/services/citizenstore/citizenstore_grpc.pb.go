@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CitizenStoreServiceClient interface {
 	// @perm: fields=PhoneNumber,Licenses,UserProps.Wanted,UserProps.Job;description="Citizens List and Search"
 	FindUsers(ctx context.Context, in *FindUsersRequest, opts ...grpc.CallOption) (*FindUsersResponse, error)
-	// @perm: PerJob=true;description="See a user's profile"
+	// @perm: PerJob=true;PerJobGrade=true;description="See a user's profile/ up to a certain job rank"
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// @perm: fields=SourceUser;description="Citizen Info Activity Feed"
 	GetUserActivity(ctx context.Context, in *GetUserActivityRequest, opts ...grpc.CallOption) (*GetUserActivityResponse, error)
@@ -82,7 +82,7 @@ func (c *citizenStoreServiceClient) SetUserProps(ctx context.Context, in *SetUse
 type CitizenStoreServiceServer interface {
 	// @perm: fields=PhoneNumber,Licenses,UserProps.Wanted,UserProps.Job;description="Citizens List and Search"
 	FindUsers(context.Context, *FindUsersRequest) (*FindUsersResponse, error)
-	// @perm: PerJob=true;description="See a user's profile"
+	// @perm: PerJob=true;PerJobGrade=true;description="See a user's profile/ up to a certain job rank"
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// @perm: fields=SourceUser;description="Citizen Info Activity Feed"
 	GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error)

@@ -32,7 +32,8 @@ var (
 )
 
 var (
-	FailedQueryErr = status.Error(codes.Internal, "Failed to list/get citizen(s) date!")
+	FailedQueryErr      = status.Error(codes.Internal, "Failed to list/get citizen(s) date!")
+	NotFoundOrNoPermErr = status.Error(codes.NotFound, "Citizen not found or no permission to access")
 )
 
 type Server struct {
@@ -143,12 +144,19 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		len(resp.Users))
 
 	for i := 0; i < len(resp.Users); i++ {
+		if utils.InStringSlice(config.C.Game.PublicJobs, resp.Users[i].Job) {
+			// Make sure user has permission to see that grade, otherwise "hide" the user's job
+			if !s.p.Can(userId, CitizenStoreServicePermKey, "GetUser", resp.Users[i].Job, strconv.Itoa(int(resp.Users[i].JobGrade))) {
+				resp.Users[i].JobGrade = -1
+			}
+		} else {
+			resp.Users[i].Job = config.C.Game.UnemployedJob.Name
+			resp.Users[i].JobGrade = config.C.Game.UnemployedJob.Grade
+		}
+
 		if resp.Users[i].Props != nil && resp.Users[i].Props.Job != "" {
 			resp.Users[i].Job = resp.Users[i].Props.Job
 			resp.Users[i].JobGrade = -1
-		} else if !utils.InStringSlice(config.C.Game.PublicJobs, resp.Users[i].Job) {
-			resp.Users[i].Job = config.C.Game.UnemployedJob.Name
-			resp.Users[i].JobGrade = config.C.Game.UnemployedJob.Grade
 		}
 
 		s.c.EnrichJobInfo(resp.Users[i])
@@ -234,13 +242,21 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	if resp.User != nil {
-		if resp.User.Props != nil && resp.User.Props.Job != "" {
-			resp.User.Job = resp.User.Props.Job
-			resp.User.JobGrade = -1
-		} else if !utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
+		if utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
+			// Make sure user has permission to see that grade
+			if !s.p.Can(userId, CitizenStoreServicePermKey, "GetUser", resp.User.Job, strconv.Itoa(int(resp.User.JobGrade))) {
+				return nil, NotFoundOrNoPermErr
+			}
+		} else {
 			resp.User.Job = config.C.Game.UnemployedJob.Name
 			resp.User.JobGrade = config.C.Game.UnemployedJob.Grade
 		}
+
+		if resp.User.Props != nil && resp.User.Props.Job != "" {
+			resp.User.Job = resp.User.Props.Job
+			resp.User.JobGrade = -1
+		}
+
 		s.c.EnrichJobInfo(resp.User)
 	}
 

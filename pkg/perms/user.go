@@ -147,7 +147,7 @@ func (p *Perms) can(userId int32, guardName string) bool {
 				LEFT_JOIN(aur,
 					aur.UserID.EQ(jet.Int32(userId)),
 				).
-				LEFT_JOIN(arp,
+				INNER_JOIN(arp,
 					arp.PermissionID.EQ(ap.ID).
 						AND(
 							arp.RoleID.EQ(aur.RoleID),
