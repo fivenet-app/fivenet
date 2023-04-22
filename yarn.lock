@@ -660,7 +660,7 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
   integrity sha512-YBI/6o2EBz02tdEJRBK8xkt3zvOFOWlLBf7WKYGBsSYSRtjjgrqPe2skp6VLLmKx5WbHHDNcW+6oACaurxGzeA==
 
-"@nuxt/kit@3.4.2", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.3.3":
+"@nuxt/kit@3.4.2", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.3.3", "@nuxt/kit@^3.4.1":
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.4.2.tgz#a7ae05f154c43560f18dd56c49df1b23a2c2553b"
   integrity sha512-bFUpkyG2ZF6RYqiW+tXnWssccHQQqMF4kZJJLP/0eKXf+Fkt/Is0R7IY768jy8ylnyqeMBbmpg4Zv5gSZjfZQw==
@@ -684,7 +684,7 @@
     unimport "^3.0.6"
     untyped "^1.3.2"
 
-"@nuxt/kit@^3.1.2", "@nuxt/kit@^3.4.1":
+"@nuxt/kit@^3.1.2":
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.4.1.tgz#18608db1ec28c9cf216c41d86535882cf8e838ec"
   integrity sha512-VeH26umZW6Rf4F1QX9nTIuTBp6HeL/MgmKY3+FgQiLD07afgFTLUJZohVE5xU7hb66zCnYvwKxa3JpjXFJZrhQ==
@@ -2683,9 +2683,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.284:
-  version "1.4.368"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.368.tgz#75901f97d3e23da2e66feb1e61fbb8e70ac96430"
-  integrity sha512-e2aeCAixCj9M7nJxdB/wDjO6mbYX+lJJxSJCXDzlr5YPGYVofuJwGN9nKg2o6wWInjX6XmxRinn3AeJMK81ltw==
+  version "1.4.369"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.369.tgz#a98d838cdd79be4471cd04e9b4dffe891d037874"
+  integrity sha512-LfxbHXdA/S+qyoTEA4EbhxGjrxx7WK2h6yb5K2v0UCOufUKX+VZaHbl3svlzZfv9sGseym/g3Ne4DpsgRULmqg==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -4766,9 +4766,9 @@ nuxi@3.4.2:
     fsevents "~2.3.2"
 
 nuxt-typed-router@^3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.1.4.tgz#c81e9f3c18d4c615060581885182a99b1c00f132"
-  integrity sha512-OfqVehSOYxkz1h93jxzSxLlfkdnZiMeA9s76KZe2sVe/mN7DbRJ+EVVaFxYHNFJwp7CA91kFmWKKJeE/RvSFmA==
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.1.5.tgz#6e604ada2ad18d9a852af78e70ec9b4754757028"
+  integrity sha512-wnI66Or/4bTYZVKpKpQwH5ffeqJuC+sBEc3Bco18iXLb7U1ywh+A7iSMnPDyxoz3BW1QXh4ErlRVXBYU87ORzg==
   dependencies:
     "@nuxt/kit" "^3.4.1"
     chalk "^5.2.0"
@@ -4871,10 +4871,15 @@ ofetch@^1.0.1:
     node-fetch-native "^1.0.2"
     ufo "^1.1.0"
 
-ohash@^1.0.0, ohash@^1.1.1:
+ohash@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ohash/-/ohash-1.1.1.tgz#7f34db6fb2852f4cd96afffc595de68d6d9f80f1"
   integrity sha512-N9UDJn2IV6oO6pNclJ80tRXraNNJqw/asscr3Lu7+ibRQdEswejJuuXNclMQTJVTsVhQs+ZJThVziy6t2v2KXA==
+
+ohash@^1.1.1:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/ohash/-/ohash-1.1.2.tgz#902dd01484f5573ef941d8f9e81105a2e13fd9ba"
+  integrity sha512-9CIOSq5945rI045GFtcO3uudyOkYVY1nyfFxVQp+9BRgslr8jPNiSSrsFGg/BNTUFOLqx0P5tng6G32brIPw0w==
 
 on-finished@2.4.1, on-finished@^2.3.0:
   version "2.4.1"
