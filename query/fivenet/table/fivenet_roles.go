@@ -16,7 +16,7 @@ var FivenetRoles = newFivenetRolesTable("", "fivenet_roles", "")
 type fivenetRolesTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID          mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
 	UpdatedAt   mysql.ColumnTimestamp

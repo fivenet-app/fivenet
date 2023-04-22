@@ -16,7 +16,7 @@ var FivenetDocumentsComments = newFivenetDocumentsCommentsTable("", "fivenet_doc
 type fivenetDocumentsCommentsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID         mysql.ColumnInteger
 	CreatedAt  mysql.ColumnTimestamp
 	UpdatedAt  mysql.ColumnTimestamp

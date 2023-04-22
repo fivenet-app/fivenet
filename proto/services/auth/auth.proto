@@ -92,6 +92,6 @@ service AuthService {
   // @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
   rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
-  // @perm: description="SuperUser: Allow to override their own job on the go."
+  // @perm: description="Superuser: Allow to override their own job on the go."
   rpc SetJob(SetJobRequest) returns (SetJobResponse);
 }

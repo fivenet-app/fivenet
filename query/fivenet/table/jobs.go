@@ -16,7 +16,7 @@ var Jobs = newJobsTable("", "jobs", "")
 type jobsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	Name  mysql.ColumnString
 	Label mysql.ColumnString
 

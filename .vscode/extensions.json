@@ -4,7 +4,8 @@
         "vue.vscode-typescript-vue-plugin",
         "editorconfig.editorconfig",
         "zxh404.vscode-proto3",
-        "moalamri.inline-fold"
+        "moalamri.inline-fold",
+        "yoavbls.pretty-ts-errors"
     ],
     "unwantedRecommendations": [
         "vscode.typescript-language-features"

@@ -58,8 +58,6 @@ func (s *Server) CompleteCharNames(ctx context.Context, req *CompleteCharNamesRe
 			user.Identifier,
 			user.Firstname,
 			user.Lastname,
-			user.Job,
-			user.JobGrade,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
 		FROM(user).

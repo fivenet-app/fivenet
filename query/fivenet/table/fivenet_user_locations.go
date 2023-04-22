@@ -16,7 +16,7 @@ var FivenetUserLocations = newFivenetUserLocationsTable("", "fivenet_user_locati
 type fivenetUserLocationsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	Identifier mysql.ColumnString
 	Job        mysql.ColumnString
 	X          mysql.ColumnFloat

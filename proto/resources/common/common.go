@@ -3,8 +3,8 @@ package common
 import "github.com/galexrt/fivenet/proto/resources/documents"
 
 const (
-	SuperUserAnyAccess      = "SuperUser.AnyAccess"
-	SuperUserAnyAccessGuard = "superuser-anyaccess"
+	SuperuserAnyAccess      = "Superuser.AnyAccess"
+	SuperuserAnyAccessGuard = "superuser-anyaccess"
 )
 
 type IJobInfo interface {

@@ -195,7 +195,7 @@ func (s *Server) refreshUserLocations() error {
 		).
 		FROM(
 			locs.
-				LEFT_JOIN(users,
+				INNER_JOIN(users,
 					locs.Identifier.EQ(users.Identifier),
 				),
 		).

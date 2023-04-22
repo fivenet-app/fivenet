@@ -16,7 +16,7 @@ var FivenetJobProps = newFivenetJobPropsTable("", "fivenet_job_props", "")
 type fivenetJobPropsTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	Job   mysql.ColumnString
 	Theme mysql.ColumnString
 

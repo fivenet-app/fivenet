@@ -27,7 +27,7 @@ var (
 var (
 	ignoredGuardPermissions = []string{
 		"authservice-setjob",
-		common.SuperUserAnyAccessGuard,
+		common.SuperuserAnyAccessGuard,
 	}
 )
 
@@ -55,7 +55,7 @@ func (s *Server) filterPermissions(ctx context.Context, perms collections.Permis
 	}
 
 	// Disable job filter when superuser
-	if s.p.Can(userId, common.SuperUserAnyAccess) {
+	if s.p.Can(userId, common.SuperuserAnyAccess) {
 		jobFilter = false
 	}
 

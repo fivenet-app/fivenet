@@ -16,7 +16,7 @@ var FivenetDocumentsUserAccess = newFivenetDocumentsUserAccessTable("", "fivenet
 type fivenetDocumentsUserAccessTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID         mysql.ColumnInteger
 	CreatedAt  mysql.ColumnTimestamp
 	DeletedAt  mysql.ColumnTimestamp

@@ -16,7 +16,7 @@ var FivenetUserActivity = newFivenetUserActivityTable("", "fivenet_user_activity
 type fivenetUserActivityTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
 	SourceUserID mysql.ColumnInteger

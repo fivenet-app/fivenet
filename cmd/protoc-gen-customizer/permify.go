@@ -124,9 +124,10 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 
 	perm := &Perm{
 		Name:        method,
-		PerJob:      false,
 		Description: "",
 		Fields:      []string{},
+		PerJob:      false,
+		PerJobGrade: false,
 	}
 
 	if comment == "" {
@@ -154,6 +155,13 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 				return nil, err
 			}
 			perm.PerJob = bo
+			continue
+		case "perjobgrade":
+			bo, err := strconv.ParseBool(v)
+			if err != nil {
+				return nil, err
+			}
+			perm.PerJobGrade = bo
 			continue
 		case "description":
 			if !strings.Contains(v, "\"") {
@@ -212,6 +220,8 @@ func init() {
 			Name: "{{ $perm.Name }}",
 			{{- if $perm.PerJob }}
             PerJob: {{ $perm.PerJob }},{{ end }}
+            {{- if $perm.PerJobGrade }}
+            PerJobGrade: {{ $perm.PerJobGrade }},{{ end }}
 			{{- if $perm.Fields }}
             Fields: []string{ {{ range $i, $field := $perm.Fields }}"{{ $field }}",{{ end -}} },{{ end }}
 			{{- with $perm.Description }}
@@ -229,4 +239,5 @@ type Perm struct {
 	Description string
 	Fields      []string
 	PerJob      bool
+	PerJobGrade bool
 }

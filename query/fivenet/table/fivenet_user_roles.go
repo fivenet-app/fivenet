@@ -16,7 +16,7 @@ var FivenetUserRoles = newFivenetUserRolesTable("", "fivenet_user_roles", "")
 type fivenetUserRolesTable struct {
 	mysql.Table
 
-	//Columns
+	// Columns
 	UserID mysql.ColumnInteger
 	RoleID mysql.ColumnInteger
 
