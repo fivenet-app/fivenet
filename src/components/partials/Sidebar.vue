@@ -27,7 +27,7 @@ import {
     Cog8ToothIcon,
 } from '@heroicons/vue/24/outline';
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
-import SidebarJobSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
+import SidebarJobSwitcher from '~/components/partials/SidebarJobSwitcher.vue';
 import SidebarLanguageSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
 
 const { t } = useI18n();
