@@ -33,7 +33,8 @@ async function saveJobProps(): Promise<void> {
         const req = new SetJobPropsRequest();
         const jProps = new JobProps();
         jProps.setTheme(props.value.theme);
-        jProps.setLivemapMarkerColor(props.value.livemapMarkerColor);
+        // Remove '#' from color code
+        jProps.setLivemapMarkerColor(props.value.livemapMarkerColor.substring(1));
         req.setJobProps(jProps);
 
         try {

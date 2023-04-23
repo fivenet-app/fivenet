@@ -3,6 +3,7 @@ package rector
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/proto/resources/jobs"
@@ -47,6 +48,8 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 	// Ensure that the job is the user's job
 	req.JobProps.Job = job
+
+	req.JobProps.LivemapMarkerColor = strings.ReplaceAll(req.JobProps.LivemapMarkerColor, "#", "")
 
 	stmt := jobProps.
 		INSERT(
