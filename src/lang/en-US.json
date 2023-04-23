@@ -1,10 +1,19 @@
 {
-    "overview": "Overview",
-    "login": "Login",
-    "logout": "Logout",
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
-    "username": "Username",
-    "password": "Password",
+    "common": {
+        "login": "Login",
+        "logout": "Logout",
+        "username": "Username",
+        "password": "Password",
+        "overview": "Overview",
+        "citizen": "Citizen | Citizens",
+        "vehicle": "Vehicle | Vehicles",
+        "document": "Document | Documents",
+        "job": "Job | Jobs",
+        "livemap": "Livemap",
+        "control_panel": "Control Panel",
+        "about": "about"
+    },
     "pages": {
         "index": {
             "welcome": "Welcome to FiveNet!",
@@ -29,13 +38,15 @@
                 "perms": "Your Permissions (debug info)"
             },
             "login": {
-                "register_account": "Register Account using Token"
+                "register_account": "Register Account using Token",
+                "login_error": "There was an error signing you in, please try again!"
             },
             "create_account": {
                 "title": "Create Account",
                 "registration_token": "Registration Token",
                 "submit_button": "Create Account",
-                "back_to_login_button": "Back to Login"
+                "back_to_login_button": "Back to Login",
+                "create_error": "There was an error creating your account, please try again!"
             }
         }
     }

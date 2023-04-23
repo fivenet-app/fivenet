@@ -52,13 +52,13 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
 
 <template>
     <h2 class="pb-4 text-3xl text-center text-white">
-        {{ $t('login') }}
+        {{ $t('common.login') }}
     </h2>
 
     <form @submit="onSubmit" class="my-2 space-y-6">
         <div>
             <label for="username" class="sr-only">
-                {{ $t('username') }}
+                {{ $t('common.username') }}
             </label>
             <div>
                 <Field id="username" name="username" type="text" autocomplete="username" placeholder="Username"
@@ -68,7 +68,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
         </div>
         <div>
             <label for="password" class="sr-only">
-                {{ $t('password') }}
+                {{ $t('common.password') }}
             </label>
             <div>
                 <Field id="password" name="password" type="password" autocomplete="current-password" placeholder="Password"
@@ -80,10 +80,10 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
         <div>
             <button type="submit"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-                {{ $t('login') }}
+                {{ $t('common.login') }}
             </button>
         </div>
     </form>
 
-    <Alert v-if="loginError" title="There was an error signing you in, please try again!" :message="loginError" />
+    <Alert v-if="loginError" :title="$t('components.auth.login.login_error')" :message="loginError" />
 </template>
