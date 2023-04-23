@@ -53,11 +53,15 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
 </script>
 
 <template>
-    <h2 class="pb-4 text-3xl text-center text-white">Create Account</h2>
+    <h2 class="pb-4 text-3xl text-center text-white">
+        {{ $t('components.auth.create_account.title') }}
+    </h2>
 
     <form @submit="onSubmit" class="my-2 space-y-6">
         <div>
-            <label for="registrationToken" class="sr-only">Registration Token</label>
+            <label for="registrationToken" class="sr-only">
+                {{ $t('components.auth.create_account.registration_token') }}
+            </label>
             <div>
                 <Field id="registrationToken" name="registrationToken" type="text" inputmode="numeric"
                     aria-describedby="hint" pattern="[0-9]*" autocomplete="registrationToken"
@@ -67,7 +71,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
             </div>
         </div>
         <div>
-            <label for="username" class="sr-only">Username</label>
+            <label for="username" class="sr-only">
+                {{ $t('username') }}
+            </label>
             <div>
                 <Field id="username" name="username" type="text" autocomplete="username" placeholder="Username"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
@@ -75,7 +81,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
             </div>
         </div>
         <div>
-            <label for="password" class="sr-only">Password</label>
+            <label for="password" class="sr-only">
+                {{ $t('password') }}
+            </label>
             <div>
                 <Field id="password" name="password" type="password" autocomplete="current-password" placeholder="Password"
                     v-model:model-value="currPassword"
@@ -88,7 +96,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
         <div>
             <button type="submit"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-                Create Account
+                {{ $t('components.auth.create_account.submit_button') }}
             </button>
         </div>
     </form>
@@ -96,7 +104,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
     <div class="mt-6">
         <button type="button" @click="$emit('back')"
             class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-            Back to Login
+            {{ $t('components.auth.create_account.back_to_login_button') }}
         </button>
     </div>
 

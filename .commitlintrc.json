@@ -13,6 +13,8 @@
                 "docs",
                 "feat",
                 "fix",
+                "lang",
+                "locale",
                 "gen",
                 "helm",
                 "perf",

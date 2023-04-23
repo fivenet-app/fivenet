@@ -13,6 +13,7 @@ const { $grpc } = useNuxtApp();
 
 const store = useAuthStore();
 
+const activeChar = computed(() => store.$state.activeChar);
 const perms = computed(() => store.$state.permissions);
 
 const { data: account, pending, refresh, error } = await useLazyAsyncData(`accounmt`, () => getAccountInfo());
@@ -47,24 +48,23 @@ const changePasswordModal = ref(false);
             class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <UserIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold">
-                No account data found!
+                {{ $t('components.auth.account_info.no_data') }}
             </span>
         </button>
         <div v-else>
             <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
                 <div class="px-4 py-5 sm:px-6">
                     <h3 class="text-base font-semibold leading-6">
-                        Account Info
-                    </h3>
+                        {{ $t('components.auth.account_info.title') }}</h3>
                     <p class="mt-1 max-w-2xl text-sm">
-                        Your FiveNet account details.
+                        {{ $t('components.auth.account_info.subtitle') }}
                     </p>
                 </div>
                 <div class="border-t border-base-400 px-4 py-5 sm:p-0">
                     <dl class="sm:divide-y sm:divide-base-400">
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                             <dt class="text-sm font-medium">
-                                Username
+                                {{ $t('common.username') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 {{ account.getUsername() }}
@@ -72,7 +72,7 @@ const changePasswordModal = ref(false);
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                             <dt class="text-sm font-medium">
-                                License
+                                {{ $t('components.auth.account_info.license') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 {{ account.getLicense() }}
@@ -80,18 +80,18 @@ const changePasswordModal = ref(false);
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                             <dt class="text-sm font-medium">
-                                Change Password
+                                {{ $t('components.auth.account_info.change_password') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <button type="button" @click="changePasswordModal = true"
                                     class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
-                                    Change account Password
+                                    {{ $t('components.auth.account_info.change_password_button') }}
                                 </button>
                             </dd>
                         </div>
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                        <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                             <dt class="text-sm font-medium">
-                                Your Permissions (used for debugging)
+                                {{ $t('components.auth.account_info.perms') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">

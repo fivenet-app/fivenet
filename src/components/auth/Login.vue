@@ -30,7 +30,7 @@ watch(accesToken, async (): Promise<NavigationFailure | void | undefined> => {
                 <div class="mt-6">
                     <button type="button" @click="createAccountForm = true"
                         class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-                        Register Account using Token
+                        {{ $t('components.auth.login.register_account') }}
                     </button>
                 </div>
             </div>

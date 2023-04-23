@@ -58,7 +58,7 @@ async function updateCategory(name: string, description: string): Promise<void> 
             await $grpc.getDocStoreClient()
                 .updateDocumentCategory(req, null);
 
-                notifications.dispatchNotification({ title: 'Category has been updated', content: '', type: 'success' });
+            notifications.dispatchNotification({ title: 'Category has been updated', content: '', type: 'success' });
             emit('close');
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);

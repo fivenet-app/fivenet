@@ -2,11 +2,41 @@
     "overview": "Overview",
     "login": "Login",
     "logout": "Logout",
+    "copyright": "Copyright © 2023 Galexrt All rights reserved.",
+    "username": "Username",
+    "password": "Password",
     "pages": {
         "index": {
             "welcome": "Welcome to FiveNet!",
             "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court and a livemap of your colleagues and dispatches.\\n\\nAll that and more, is (mostly) ready in this net, the FiveNet."
+        },
+        "auth": {
+            "logout": {
+                "title": "Signed out",
+                "subtitle": "You will be redirected to the home page in a moment."
+            }
         }
     },
-    "copyright": "Copyright © 2023 Galexrt All rights reserved."
+    "components": {
+        "auth": {
+            "account_info": {
+                "no_data": "No account data found!",
+                "title": "Account Info",
+                "subtitle": "Your FiveNet account details.",
+                "license": "Identifier/ License",
+                "change_password": "Change Password",
+                "change_password_button": "Change Account Password",
+                "perms": "Your Permissions (debug info)"
+            },
+            "login": {
+                "register_account": "Register Account using Token"
+            },
+            "create_account": {
+                "title": "Create Account",
+                "registration_token": "Registration Token",
+                "submit_button": "Create Account",
+                "back_to_login_button": "Back to Login"
+            }
+        }
+    }
 }
