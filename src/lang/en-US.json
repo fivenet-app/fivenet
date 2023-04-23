@@ -20,6 +20,11 @@
             "welcome": "Welcome to FiveNet!",
             "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court and a livemap of your colleagues and dispatches.\\n\\nAll that and more, is (mostly) ready in this net, the FiveNet."
         },
+        "404": {
+            "page_not_found": "Page Not Found",
+            "error": "4😵‍💫4 Error",
+            "fun_error": "Seems like you got lost. Let's get you back to the start!"
+        },
         "auth": {
             "logout": {
                 "title": "Signed out",
