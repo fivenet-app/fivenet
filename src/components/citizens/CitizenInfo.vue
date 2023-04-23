@@ -10,16 +10,18 @@ import { useClipboardStore } from '~/store/clipboard';
 import { PlusIcon } from '@heroicons/vue/24/solid';
 import { useNotificationsStore } from '~/store/notifications';
 
+const clipboard = useClipboardStore();
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const tabs = [
-    { name: 'Profile', icon: UserIcon, permission: 'CitizenStoreService.FindUsers' },
-    { name: 'Vehicles', icon: TruckIcon, permission: 'DMVService.FindVehicles' },
-    { name: 'Documents', icon: DocumentTextIcon, permission: 'DocStoreService.GetUserDocuments' },
-    { name: 'Activity', icon: RectangleGroupIcon, permission: 'CitizenStoreService.GetUserActivity' },
+    { name: t('common.profile'), icon: UserIcon, permission: 'CitizenStoreService.FindUsers' },
+    { name: t('common.vehicle', 2), icon: TruckIcon, permission: 'DMVService.FindVehicles' },
+    { name: t('common.document', 2), icon: DocumentTextIcon, permission: 'DocStoreService.GetUserDocuments' },
+    { name: t('common.activity'), icon: RectangleGroupIcon, permission: 'CitizenStoreService.GetUserActivity' },
 ];
 
-const store = useClipboardStore();
 
 const props = defineProps({
     user: {
@@ -29,8 +31,8 @@ const props = defineProps({
 });
 
 function addToClipboard(): void {
-    store.addUser(props.user);
-    notifications.dispatchNotification({ title: 'Clipboard: Citizen added', content: 'Citizen has been added to clipboard', duration: 3500, type: 'info' });
+    clipboard.addUser(props.user);
+    notifications.dispatchNotification({ title: t('notifications.citizen_add.title'), content: t('notifications.citizen_add.content'), duration: 3500, type: 'info' });
 }
 </script>
 
@@ -45,7 +47,7 @@ function addToClipboard(): void {
                     user.getJobLabel() }} (Rank: {{ user.getJobGradeLabel() }})
             </span>
             <span v-if="user.getProps()?.getWanted()"
-                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700">WANTED</span>
+                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700">{{ $t('common.wanted').toUpperCase() }}</span>
         </div>
         <TabGroup>
             <TabList class="border-b border-base-200 flex flex-row">
@@ -76,7 +78,7 @@ function addToClipboard(): void {
             </TabPanels>
         </TabGroup>
     </div>
-    <button title="Add to Clipboard" @click="addToClipboard()"
+    <button :title="$t('components.clipboard.clipboard_button.add')" @click="addToClipboard()"
         class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-24 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400">
         <PlusIcon class="w-10 h-auto" />
     </button>

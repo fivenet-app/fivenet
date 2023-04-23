@@ -26,7 +26,9 @@
         "previous": "Previous",
         "wanted": "Wanted",
         "loading": "Loading {0}...",
-        "unable_to_load": "Unable to load {0}!"
+        "unable_to_load": "Unable to load {0}!",
+        "profile": "Profile",
+        "activity": "Activity"
     },
     "notifications": {
         "citizen_add": {
@@ -140,6 +142,11 @@
             },
             "table_pagination": {
                 "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"
+            }
+        },
+        "clipboard": {
+            "clipboard_button": {
+                "add": "Add to Clipboard"
             }
         }
     }
