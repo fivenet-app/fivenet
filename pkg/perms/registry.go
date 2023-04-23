@@ -49,7 +49,11 @@ func (p *Perms) Register() error {
 			for _, job := range config.C.Game.PermissionRoleJobs {
 				pJobName := fmt.Sprintf("%s.%s", pName, job)
 				if perm.PerJobGrade {
-					// TODO cleanup job grade permissions that are
+					existingGrades, err := p.getPermissionsByGuardPrefix(pJobName)
+					if err != nil {
+						return err
+					}
+
 					jGrades := table.JobGrades
 					stmt := jGrades.
 						SELECT(
@@ -59,9 +63,23 @@ func (p *Perms) Register() error {
 						WHERE(jGrades.JobName.EQ(jet.String(job)))
 
 					var grades []*model.JobGrades
-					err := stmt.QueryContext(p.ctx, p.db, &grades)
-					if err != nil {
+					if err = stmt.QueryContext(p.ctx, p.db, &grades); err != nil {
 						return err
+					}
+
+					toRemove := []uint64{}
+				gradesLoop:
+					for _, v := range existingGrades {
+						for _, g := range grades {
+							if v.Name == fmt.Sprintf("%s.%d", pJobName, g.Grade) {
+								continue gradesLoop
+							}
+						}
+						toRemove = append(toRemove, v.ID)
+					}
+
+					if len(toRemove) > 0 {
+						p.RemovePermissionsByIDs(toRemove...)
 					}
 
 					for _, grade := range grades {

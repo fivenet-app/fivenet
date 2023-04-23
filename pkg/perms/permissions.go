@@ -80,6 +80,26 @@ func (p *Perms) GetAllPermissions() (collections.Permissions, error) {
 	return dest, nil
 }
 
+func (p *Perms) RemovePermissionsByIDs(ids ...uint64) error {
+	wIds := make([]jet.Expression, len(ids))
+	for i := 0; i < len(ids); i++ {
+		wIds[i] = jet.Uint64(ids[i])
+	}
+
+	stmt := ap.
+		DELETE().
+		WHERE(
+			ap.ID.IN(wIds...),
+		)
+
+	_, err := stmt.ExecContext(p.ctx, p.db)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p *Perms) GetPermissionsByIDs(ids ...uint64) (collections.Permissions, error) {
 	wIds := make([]jet.Expression, len(ids))
 	for i := 0; i < len(ids); i++ {
@@ -124,4 +144,25 @@ func (p *Perms) GetPermissionByGuard(name string) (*model.FivenetPermissions, er
 	}
 
 	return &dest, nil
+}
+
+func (p *Perms) getPermissionsByGuardPrefix(name string) (collections.Permissions, error) {
+	guard := helpers.Guard(name)
+
+	stmt := ap.
+		SELECT(
+			ap.AllColumns,
+		).
+		FROM(ap).
+		WHERE(
+			ap.GuardName.LIKE(jet.String(guard + "%")),
+		)
+
+	var dest collections.Permissions
+	err := stmt.QueryContext(p.ctx, p.db, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	return dest, nil
 }
