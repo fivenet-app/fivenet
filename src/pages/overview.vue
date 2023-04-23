@@ -16,7 +16,7 @@ const { t } = useI18n();
 
 const features = [
     {
-        title: t('common.citizen', 2),
+        title: `${t('common.citizen', 2)} ${t('common.search')}`,
         description: t('pages.overview.features.citizens'),
         href: { name: 'citizens' },
         permission: 'CitizenStoreService.FindUsers',

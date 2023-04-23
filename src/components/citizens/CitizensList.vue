@@ -60,26 +60,26 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
-                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">Search
-                                    Name</label>
+                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">{{
+                                    $t('common.search') }} {{ $t('common.citizen', 1) }}</label>
                                 <div class="relative flex items-center mt-2">
                                     <input v-model="query.name" ref="searchNameInput" type="text" name="searchName"
-                                        id="searchName" placeholder="Citizen Name"
+                                        id="searchName" :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
                             <div class="flex-1 form-control" v-can="'CitizenStoreService.FindUsers.PhoneNumber'">
-                                <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">Search
-                                    Phone</label>
+                                <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">{{
+                                    $t('common.search') }} {{ $t('common.phone') }}</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="query.phone" type="tel" name="searchPhone"
-                                        id="searchPhone" placeholder="Phone Number"
+                                    <input v-model="query.phone" type="tel" name="searchPhone" id="searchPhone"
+                                        :placeholder="`${$t('common.phone')} ${$t('common.number')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
                             <div class="flex-initial form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Only
-                                    Wanted</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">{{
+                                    $t('components.citizens.citizen_list.only_wanted') }}</label>
                                 <div class="relative flex items-center mt-3">
                                     <Switch v-model="query.wanted"
                                         :class="[query.wanted ? 'bg-error-500' : 'bg-base-700', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2']">
@@ -97,12 +97,13 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <DataPendingBlock v-if="pending" message="Loading citizens..." />
-                        <DataErrorBlock v-else-if="error" title="Unable to load citizens!" :retry="refresh" />
+                        <DataErrorBlock v-else-if="error" :title="$t('components.citizens.citizen_list.unable_to_load')"
+                            :retry="refresh" />
                         <button v-else-if="users && users.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                Use the search field above to search or update your query.
+                                {{ $t('components.citizens.citizen_list.no_citizens') }}
                             </span>
                         </button>
                         <div v-else>
@@ -111,23 +112,23 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     <tr>
                                         <th scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                                            Name
-                                        </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Job
-                                        </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Sex
+                                            {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Date
-                                            of
-                                            Birth
+                                            {{ $t('common.job', 1) }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Height
+                                            {{ $t('common.sex') }}
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.date_of_birth') }}
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.height') }}
                                         </th>
                                         <th scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Actions
+                                            {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
                                 </thead>
@@ -139,23 +140,23 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     <tr>
                                         <th scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                                            Name
-                                        </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Job
-                                        </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">Sex
+                                            {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Date
-                                            of
-                                            Birth
+                                            {{ $t('common.job', 1) }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Height
+                                            {{ $t('common.sex') }}
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.date_of_birth') }}
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.height') }}
                                         </th>
                                         <th scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Actions
+                                            {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
                                 </thead>

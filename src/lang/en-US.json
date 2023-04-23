@@ -13,7 +13,15 @@
         "job": "Job | Jobs",
         "livemap": "Livemap",
         "control_panel": "Control Panel",
-        "about": "About"
+        "about": "About",
+        "search": "Search",
+        "phone": "Phone",
+        "number": "Number",
+        "name": "Name",
+        "sex": "Sex",
+        "height": "Height",
+        "action": "Action | Actions",
+        "date_of_birth": "Date of Birth"
     },
     "pages": {
         "index": {
@@ -106,6 +114,13 @@
                 "submit_button": "Create Account",
                 "back_to_login_button": "Back to Login",
                 "create_error": "There was an error creating your account, please try again!"
+            }
+        },
+        "citizens": {
+            "citizen_list": {
+                "only_wanted": "Only Wanted",
+                "unable_to_load": "Unable to load citizens!",
+                "no_citizens": "Use the search field above to search or update your query."
             }
         },
         "partials": {
