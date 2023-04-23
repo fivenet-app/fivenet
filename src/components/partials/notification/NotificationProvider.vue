@@ -15,9 +15,3 @@ import store from './store';
         <slot></slot>
     </div>
 </template>
-
-<style scoped>
-.delay-300 {
-    transition-delay: 300ms;
-}
-</style>
