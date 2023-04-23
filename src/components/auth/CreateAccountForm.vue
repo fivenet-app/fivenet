@@ -73,7 +73,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
         </div>
         <div>
             <label for="username" class="sr-only">
-                {{ $t('username') }}
+                {{ $t('common.username') }}
             </label>
             <div>
                 <Field id="username" name="username" type="text" autocomplete="username" placeholder="Username"
@@ -83,7 +83,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
         </div>
         <div>
             <label for="password" class="sr-only">
-                {{ $t('password') }}
+                {{ $t('common.password') }}
             </label>
             <div>
                 <Field id="password" name="password" type="password" autocomplete="current-password" placeholder="Password"
@@ -109,5 +109,5 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
         </button>
     </div>
 
-    <Alert v-if="accountError" title="There was an error signing you in, please try again!" :message="accountError" />
+    <Alert v-if="accountError" :title="$t('components.auth.create_account.create_error')" :message="accountError" />
 </template>

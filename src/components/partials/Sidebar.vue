@@ -30,6 +30,7 @@ import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/s
 import SidebarJobSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
 import SidebarLanguageSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
 
+const { t, tc } = useI18n();
 const store = useAuthStore();
 const router = useRouter();
 
@@ -38,7 +39,7 @@ const activeChar = computed(() => store.$state.activeChar);
 
 const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, position: 'top' | 'bottom', current: boolean }[] = [
     {
-        name: 'Overview',
+        name: t('common.overview'),
         href: { name: 'overview' },
         permission: '',
         icon: HomeIcon,
@@ -46,7 +47,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
         current: false,
     },
     {
-        name: 'Citizens',
+        name: tc('common.citizen', 1),
         href: { name: 'citizens' },
         permission: 'CitizenStoreService.FindUsers',
         icon: UsersIcon,
