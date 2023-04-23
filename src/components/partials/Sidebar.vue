@@ -27,7 +27,7 @@ import {
     Cog8ToothIcon,
 } from '@heroicons/vue/24/outline';
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
-import SidebarJobSwitcher from './SidebarJobSwitcher.vue';
+import SidebarJobSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
 
 const store = useAuthStore();
 const router = useRouter();
@@ -35,7 +35,7 @@ const router = useRouter();
 const accessToken = computed(() => store.$state.accessToken);
 const activeChar = computed(() => store.$state.activeChar);
 
-const sidebarNavigation = [
+const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, position: 'top' | 'bottom', current: boolean }[] = [
     {
         name: 'Overview',
         href: { name: 'overview' },
@@ -100,7 +100,7 @@ const sidebarNavigation = [
         position: 'bottom',
         current: false,
     },
-] as { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, position: 'top' | 'bottom', current: boolean }[];
+];
 const userNavigation = ref<{ name: string, href: RoutesNamedLocations, permission?: string }[]>([
     { name: 'Login', href: { name: 'auth-login' } },
 ]);
@@ -123,13 +123,11 @@ function updateUserNav(): void {
     if (accessToken.value) {
         userNavigation.value.push(
             { name: 'Account Info', href: { name: 'auth-account-info' } },
-            { name: 'Switch Language', href: { name: 'lang' } },
             { name: 'Sign out', href: { name: 'auth-logout' } },
         );
     }
     if (userNavigation.value.length === 0) {
         userNavigation.value = [
-            { name: 'Switch Language', href: { name: 'lang' } },
             { name: 'Login', href: { name: 'auth-login' } },
         ];
     }
@@ -356,13 +354,14 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
-                            <span v-can="'AuthService.SetJob'">
+                            <div v-can="'AuthService.SetJob'">
                                 <SidebarJobSwitcher v-if="activeChar" />
-                            </span>
-                            <span v-if="activeChar" class="text-sm font-medium text-base-400">
+                            </div>
+                            <div v-if="activeChar" class="text-sm font-medium text-base-400">
                                 {{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}
                                 ({{ activeChar.getJobLabel() }})
-                            </span>
+                            </div>
+                            <PartialsSidebarLanguageSwitcher />
                             <!-- Profile dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">
                                 <div>
@@ -370,7 +369,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                         class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                         <span class="sr-only">Open user menu</span>
                                         <UserIcon
-                                            class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-200 hover:fill-base-200" />
+                                            class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100" />
                                     </MenuButton>
                                 </div>
                                 <transition enter-active-class="transition duration-100 ease-out"
@@ -380,7 +379,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                     leave-from-class="transform scale-100 opacity-100"
                                     leave-to-class="transform scale-95 opacity-0">
                                     <MenuItems
-                                        class="absolute right-0 z-10 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none z-40">
+                                        class="absolute right-0 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none z-40">
                                         <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }"
                                             v-can="item.permission">
                                         <NuxtLink :to="item.href"
