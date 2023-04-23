@@ -3,6 +3,7 @@
     "common": {
         "login": "Login",
         "logout": "Logout",
+        "sign_out": "Sign Out",
         "username": "Username",
         "password": "Password",
         "overview": "Overview",
@@ -47,6 +48,12 @@
                 "submit_button": "Create Account",
                 "back_to_login_button": "Back to Login",
                 "create_error": "There was an error creating your account, please try again!"
+            }
+        },
+        "partials": {
+            "sidebar": {
+                "change_character": "Change Character",
+                "account_info": "Account Info"
             }
         }
     }

@@ -119,18 +119,18 @@ function updateUserNav(): void {
     userNavigation.value.length = 0;
     if (activeChar.value) {
         userNavigation.value.push(
-            { name: 'Change Character', href: { name: 'auth-character-selector' } },
+            { name: t('components.partials.sidebar.change_character'), href: { name: 'auth-character-selector' } },
         );
     }
     if (accessToken.value) {
         userNavigation.value.push(
-            { name: 'Account Info', href: { name: 'auth-account-info' } },
-            { name: 'Sign out', href: { name: 'auth-logout' } },
+            { name: t('components.partials.sidebar.account_info'), href: { name: 'auth-account-info' } },
+            { name: t('common.sign_out'), href: { name: 'auth-logout' } },
         );
     }
     if (userNavigation.value.length === 0) {
         userNavigation.value = [
-            { name: 'Login', href: { name: 'auth-login' } },
+            { name: t('common.login'), href: { name: 'auth-login' } },
         ];
     }
 }
