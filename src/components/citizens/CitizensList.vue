@@ -96,7 +96,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
             <div class="flow-root mt-2">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <DataPendingBlock v-if="pending" message="Loading citizens..." />
+                        <DataPendingBlock v-if="pending" :message="$t('components.citizens.citizen_list.loading')" />
                         <DataErrorBlock v-else-if="error" :title="$t('components.citizens.citizen_list.unable_to_load')"
                             :retry="refresh" />
                         <button v-else-if="users && users.length == 0" type="button" @click="focusSearch()"

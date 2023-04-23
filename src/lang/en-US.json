@@ -122,7 +122,8 @@
             "citizen_list": {
                 "only_wanted": "Only Wanted",
                 "unable_to_load": "Unable to load citizens!",
-                "no_citizens": "Use the search field above to search or update your query."
+                "no_citizens": "Use the search field above to search or update your query.",
+                "loading": "Loading citizens..."
             }
         },
         "partials": {
