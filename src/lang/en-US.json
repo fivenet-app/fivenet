@@ -74,6 +74,15 @@
                 "content": "Be sure to join the Discord server should you encounter any issues or have questions regarding FiveNet."
             },
             "join_discord": "Join Galexrt Discord server"
+        },
+        "overview": {
+            "features": {
+                "citizens": "Search and find information about Citizens, including basic info, their licenses and related documents.",
+                "vehicles": "Search and find information about Vehicles.",
+                "documents": "Search and create Documents, using templates or from scratch.",
+                "jobs": "Infos about your job and employee management. Coming soon",
+                "livemap": "Live position of dispatches and your colleagues."
+            }
         }
     },
     "components": {
