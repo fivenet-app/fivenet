@@ -8,8 +8,6 @@ import { AdjustmentsVerticalIcon } from '@heroicons/vue/24/outline';
 
 const { $grpc } = useNuxtApp();
 
-const props = ref<{ theme: string; livemapMarkerColor: string; }>({ theme: 'default', livemapMarkerColor: '#5C7AFF' });
-
 async function getJobProps(): Promise<JobProps> {
     return new Promise(async (res, rej) => {
         const req = new GetJobPropsRequest();
@@ -27,6 +25,8 @@ async function getJobProps(): Promise<JobProps> {
 }
 
 const { data: jobProps, pending, refresh, error } = await useLazyAsyncData(`rector-jobprops`, () => getJobProps());
+
+const props = ref<{ theme: string; livemapMarkerColor: string; }>({ theme: 'default', livemapMarkerColor: '#5C7AFF' });
 
 async function saveJobProps(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -48,6 +48,8 @@ async function saveJobProps(): Promise<void> {
         }
     });
 }
+
+watch(jobProps, () => props.value.livemapMarkerColor = '#' + jobProps.value?.getLivemapMarkerColor());
 </script>
 
 <template>
@@ -86,8 +88,7 @@ async function saveJobProps(): Promise<void> {
                                 Livemap Marker Color
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                <input type="color"
-                                    :value="'#' + (jobProps ? jobProps.getLivemapMarkerColor() : props.livemapMarkerColor)" />
+                                <input type="color" v-model="props.livemapMarkerColor" />
                             </dd>
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5"
