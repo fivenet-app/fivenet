@@ -39,6 +39,92 @@ export class RectorServiceClient {
     this.options_ = options;
   }
 
+  methodDescriptorGetJobProps = new grpcWeb.MethodDescriptor(
+    '/services.rector.RectorService/GetJobProps',
+    grpcWeb.MethodType.UNARY,
+    services_rector_rector_pb.GetJobPropsRequest,
+    services_rector_rector_pb.GetJobPropsResponse,
+    (request: services_rector_rector_pb.GetJobPropsRequest) => {
+      return request.serializeBinary();
+    },
+    services_rector_rector_pb.GetJobPropsResponse.deserializeBinary
+  );
+
+  getJobProps(
+    request: services_rector_rector_pb.GetJobPropsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.GetJobPropsResponse>;
+
+  getJobProps(
+    request: services_rector_rector_pb.GetJobPropsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.GetJobPropsResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.GetJobPropsResponse>;
+
+  getJobProps(
+    request: services_rector_rector_pb.GetJobPropsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.GetJobPropsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.rector.RectorService/GetJobProps',
+        request,
+        metadata || {},
+        this.methodDescriptorGetJobProps,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.rector.RectorService/GetJobProps',
+    request,
+    metadata || {},
+    this.methodDescriptorGetJobProps);
+  }
+
+  methodDescriptorSetJobProps = new grpcWeb.MethodDescriptor(
+    '/services.rector.RectorService/SetJobProps',
+    grpcWeb.MethodType.UNARY,
+    services_rector_rector_pb.SetJobPropsRequest,
+    services_rector_rector_pb.SetJobPropsResponse,
+    (request: services_rector_rector_pb.SetJobPropsRequest) => {
+      return request.serializeBinary();
+    },
+    services_rector_rector_pb.SetJobPropsResponse.deserializeBinary
+  );
+
+  setJobProps(
+    request: services_rector_rector_pb.SetJobPropsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_rector_rector_pb.SetJobPropsResponse>;
+
+  setJobProps(
+    request: services_rector_rector_pb.SetJobPropsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.SetJobPropsResponse) => void): grpcWeb.ClientReadableStream<services_rector_rector_pb.SetJobPropsResponse>;
+
+  setJobProps(
+    request: services_rector_rector_pb.SetJobPropsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_rector_rector_pb.SetJobPropsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.rector.RectorService/SetJobProps',
+        request,
+        metadata || {},
+        this.methodDescriptorSetJobProps,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.rector.RectorService/SetJobProps',
+    request,
+    metadata || {},
+    this.methodDescriptorSetJobProps);
+  }
+
   methodDescriptorGetRoles = new grpcWeb.MethodDescriptor(
     '/services.rector.RectorService/GetRoles',
     grpcWeb.MethodType.UNARY,

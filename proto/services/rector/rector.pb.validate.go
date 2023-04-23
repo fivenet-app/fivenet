@@ -35,6 +35,472 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on GetJobPropsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetJobPropsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetJobPropsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetJobPropsRequestMultiError, or nil if none found.
+func (m *GetJobPropsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetJobPropsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetJobPropsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetJobPropsRequestMultiError is an error wrapping multiple validation errors
+// returned by GetJobPropsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetJobPropsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetJobPropsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetJobPropsRequestMultiError) AllErrors() []error { return m }
+
+// GetJobPropsRequestValidationError is the validation error returned by
+// GetJobPropsRequest.Validate if the designated constraints aren't met.
+type GetJobPropsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetJobPropsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetJobPropsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetJobPropsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetJobPropsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetJobPropsRequestValidationError) ErrorName() string {
+	return "GetJobPropsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetJobPropsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetJobPropsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetJobPropsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetJobPropsRequestValidationError{}
+
+// Validate checks the field values on GetJobPropsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetJobPropsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetJobPropsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetJobPropsResponseMultiError, or nil if none found.
+func (m *GetJobPropsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetJobPropsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetJobProps()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetJobPropsResponseValidationError{
+					field:  "JobProps",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetJobPropsResponseValidationError{
+					field:  "JobProps",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetJobProps()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetJobPropsResponseValidationError{
+				field:  "JobProps",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetJobPropsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetJobPropsResponseMultiError is an error wrapping multiple validation
+// errors returned by GetJobPropsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetJobPropsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetJobPropsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetJobPropsResponseMultiError) AllErrors() []error { return m }
+
+// GetJobPropsResponseValidationError is the validation error returned by
+// GetJobPropsResponse.Validate if the designated constraints aren't met.
+type GetJobPropsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetJobPropsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetJobPropsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetJobPropsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetJobPropsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetJobPropsResponseValidationError) ErrorName() string {
+	return "GetJobPropsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetJobPropsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetJobPropsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetJobPropsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetJobPropsResponseValidationError{}
+
+// Validate checks the field values on SetJobPropsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetJobPropsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetJobPropsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetJobPropsRequestMultiError, or nil if none found.
+func (m *SetJobPropsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetJobPropsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetJobProps()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetJobPropsRequestValidationError{
+					field:  "JobProps",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetJobPropsRequestValidationError{
+					field:  "JobProps",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetJobProps()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetJobPropsRequestValidationError{
+				field:  "JobProps",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SetJobPropsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetJobPropsRequestMultiError is an error wrapping multiple validation errors
+// returned by SetJobPropsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SetJobPropsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetJobPropsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetJobPropsRequestMultiError) AllErrors() []error { return m }
+
+// SetJobPropsRequestValidationError is the validation error returned by
+// SetJobPropsRequest.Validate if the designated constraints aren't met.
+type SetJobPropsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetJobPropsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetJobPropsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetJobPropsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetJobPropsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetJobPropsRequestValidationError) ErrorName() string {
+	return "SetJobPropsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetJobPropsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetJobPropsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetJobPropsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetJobPropsRequestValidationError{}
+
+// Validate checks the field values on SetJobPropsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetJobPropsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetJobPropsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetJobPropsResponseMultiError, or nil if none found.
+func (m *SetJobPropsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetJobPropsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return SetJobPropsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetJobPropsResponseMultiError is an error wrapping multiple validation
+// errors returned by SetJobPropsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type SetJobPropsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetJobPropsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetJobPropsResponseMultiError) AllErrors() []error { return m }
+
+// SetJobPropsResponseValidationError is the validation error returned by
+// SetJobPropsResponse.Validate if the designated constraints aren't met.
+type SetJobPropsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetJobPropsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetJobPropsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetJobPropsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetJobPropsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetJobPropsResponseValidationError) ErrorName() string {
+	return "SetJobPropsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetJobPropsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetJobPropsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetJobPropsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetJobPropsResponseValidationError{}
+
 // Validate checks the field values on GetRolesRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

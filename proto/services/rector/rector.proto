@@ -4,10 +4,23 @@ package services.rector;
 option go_package = "github.com/galexrt/fivenet/proto/services/rector;rector";
 
 import "resources/common/database/database.proto";
+import "resources/jobs/jobs.proto";
 import "resources/permissions/permissions.proto";
 import "resources/rector/audit.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
+
+message GetJobPropsRequest {}
+
+message GetJobPropsResponse {
+  resources.jobs.JobProps job_props = 1;
+}
+
+message SetJobPropsRequest {
+  resources.jobs.JobProps job_props = 1;
+}
+
+message SetJobPropsResponse {}
 
 message GetRolesRequest {}
 
@@ -73,6 +86,11 @@ message ViewAuditLogResponse {
 }
 
 service RectorService {
+  // @perm: description="View your job's properties"
+  rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse);
+  // @perm: description="Set your job's properties"
+  rpc SetJobProps(SetJobPropsRequest) returns (SetJobPropsResponse);
+
   // @perm: description="Get/List FiveNet job roles"
   rpc GetRoles(GetRolesRequest) returns (GetRolesResponse);
   // @perm: name=GetRoles

@@ -39,6 +39,11 @@ func init() {
 		},
 		{
 			Key:         RectorServicePermKey,
+			Name:        "GetJobProps",
+			Description: "View your job's properties",
+		},
+		{
+			Key:         RectorServicePermKey,
 			Name:        "GetPermissions",
 			PerJob:      true,
 			Description: "Get list of available FiveNet job roles permissions",
@@ -47,6 +52,11 @@ func init() {
 			Key:         RectorServicePermKey,
 			Name:        "GetRoles",
 			Description: "Get/List FiveNet job roles",
+		},
+		{
+			Key:         RectorServicePermKey,
+			Name:        "SetJobProps",
+			Description: "Set your job's properties",
 		},
 		{
 			Key:         RectorServicePermKey,

@@ -154,8 +154,8 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 			resp.Users[i].JobGrade = config.C.Game.UnemployedJob.Grade
 		}
 
-		if resp.Users[i].Props != nil && resp.Users[i].Props.Job != "" {
-			resp.Users[i].Job = resp.Users[i].Props.Job
+		if resp.Users[i].Props != nil && resp.Users[i].Props.Job != nil {
+			resp.Users[i].Job = *resp.Users[i].Props.Job
 			resp.Users[i].JobGrade = -1
 		}
 
@@ -227,8 +227,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			resp.User.JobGrade = config.C.Game.UnemployedJob.Grade
 		}
 
-		if resp.User.Props != nil && resp.User.Props.Job != "" {
-			resp.User.Job = resp.User.Props.Job
+		if resp.User.Props != nil && resp.User.Props.Job != nil {
+			resp.User.Job = *resp.User.Props.Job
 			resp.User.JobGrade = -1
 		}
 

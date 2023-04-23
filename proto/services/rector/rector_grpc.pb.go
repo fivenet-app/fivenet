@@ -22,6 +22,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RectorServiceClient interface {
+	// @perm: description="View your job's properties"
+	GetJobProps(ctx context.Context, in *GetJobPropsRequest, opts ...grpc.CallOption) (*GetJobPropsResponse, error)
+	// @perm: description="Set your job's properties"
+	SetJobProps(ctx context.Context, in *SetJobPropsRequest, opts ...grpc.CallOption) (*SetJobPropsResponse, error)
 	// @perm: description="Get/List FiveNet job roles"
 	GetRoles(ctx context.Context, in *GetRolesRequest, opts ...grpc.CallOption) (*GetRolesResponse, error)
 	// @perm: name=GetRoles
@@ -46,6 +50,24 @@ type rectorServiceClient struct {
 
 func NewRectorServiceClient(cc grpc.ClientConnInterface) RectorServiceClient {
 	return &rectorServiceClient{cc}
+}
+
+func (c *rectorServiceClient) GetJobProps(ctx context.Context, in *GetJobPropsRequest, opts ...grpc.CallOption) (*GetJobPropsResponse, error) {
+	out := new(GetJobPropsResponse)
+	err := c.cc.Invoke(ctx, "/services.rector.RectorService/GetJobProps", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rectorServiceClient) SetJobProps(ctx context.Context, in *SetJobPropsRequest, opts ...grpc.CallOption) (*SetJobPropsResponse, error) {
+	out := new(SetJobPropsResponse)
+	err := c.cc.Invoke(ctx, "/services.rector.RectorService/SetJobProps", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *rectorServiceClient) GetRoles(ctx context.Context, in *GetRolesRequest, opts ...grpc.CallOption) (*GetRolesResponse, error) {
@@ -124,6 +146,10 @@ func (c *rectorServiceClient) ViewAuditLog(ctx context.Context, in *ViewAuditLog
 // All implementations must embed UnimplementedRectorServiceServer
 // for forward compatibility
 type RectorServiceServer interface {
+	// @perm: description="View your job's properties"
+	GetJobProps(context.Context, *GetJobPropsRequest) (*GetJobPropsResponse, error)
+	// @perm: description="Set your job's properties"
+	SetJobProps(context.Context, *SetJobPropsRequest) (*SetJobPropsResponse, error)
 	// @perm: description="Get/List FiveNet job roles"
 	GetRoles(context.Context, *GetRolesRequest) (*GetRolesResponse, error)
 	// @perm: name=GetRoles
@@ -147,6 +173,12 @@ type RectorServiceServer interface {
 type UnimplementedRectorServiceServer struct {
 }
 
+func (UnimplementedRectorServiceServer) GetJobProps(context.Context, *GetJobPropsRequest) (*GetJobPropsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetJobProps not implemented")
+}
+func (UnimplementedRectorServiceServer) SetJobProps(context.Context, *SetJobPropsRequest) (*SetJobPropsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetJobProps not implemented")
+}
 func (UnimplementedRectorServiceServer) GetRoles(context.Context, *GetRolesRequest) (*GetRolesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRoles not implemented")
 }
@@ -182,6 +214,42 @@ type UnsafeRectorServiceServer interface {
 
 func RegisterRectorServiceServer(s grpc.ServiceRegistrar, srv RectorServiceServer) {
 	s.RegisterService(&RectorService_ServiceDesc, srv)
+}
+
+func _RectorService_GetJobProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetJobPropsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).GetJobProps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.rector.RectorService/GetJobProps",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).GetJobProps(ctx, req.(*GetJobPropsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RectorService_SetJobProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetJobPropsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).SetJobProps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.rector.RectorService/SetJobProps",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).SetJobProps(ctx, req.(*SetJobPropsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _RectorService_GetRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -335,6 +403,14 @@ var RectorService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.rector.RectorService",
 	HandlerType: (*RectorServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetJobProps",
+			Handler:    _RectorService_GetJobProps_Handler,
+		},
+		{
+			MethodName: "SetJobProps",
+			Handler:    _RectorService_SetJobProps_Handler,
+		},
 		{
 			MethodName: "GetRoles",
 			Handler:    _RectorService_GetRoles_Handler,

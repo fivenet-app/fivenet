@@ -1,10 +1,79 @@
 import * as jspb from 'google-protobuf'
 
 import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
+import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
 import * as resources_permissions_permissions_pb from '../../resources/permissions/permissions_pb';
 import * as resources_rector_audit_pb from '../../resources/rector/audit_pb';
 import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
 
+
+export class GetJobPropsRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetJobPropsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetJobPropsRequest): GetJobPropsRequest.AsObject;
+  static serializeBinaryToWriter(message: GetJobPropsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetJobPropsRequest;
+  static deserializeBinaryFromReader(message: GetJobPropsRequest, reader: jspb.BinaryReader): GetJobPropsRequest;
+}
+
+export namespace GetJobPropsRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetJobPropsResponse extends jspb.Message {
+  getJobProps(): resources_jobs_jobs_pb.JobProps | undefined;
+  setJobProps(value?: resources_jobs_jobs_pb.JobProps): GetJobPropsResponse;
+  hasJobProps(): boolean;
+  clearJobProps(): GetJobPropsResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetJobPropsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetJobPropsResponse): GetJobPropsResponse.AsObject;
+  static serializeBinaryToWriter(message: GetJobPropsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetJobPropsResponse;
+  static deserializeBinaryFromReader(message: GetJobPropsResponse, reader: jspb.BinaryReader): GetJobPropsResponse;
+}
+
+export namespace GetJobPropsResponse {
+  export type AsObject = {
+    jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
+  }
+}
+
+export class SetJobPropsRequest extends jspb.Message {
+  getJobProps(): resources_jobs_jobs_pb.JobProps | undefined;
+  setJobProps(value?: resources_jobs_jobs_pb.JobProps): SetJobPropsRequest;
+  hasJobProps(): boolean;
+  clearJobProps(): SetJobPropsRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SetJobPropsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: SetJobPropsRequest): SetJobPropsRequest.AsObject;
+  static serializeBinaryToWriter(message: SetJobPropsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SetJobPropsRequest;
+  static deserializeBinaryFromReader(message: SetJobPropsRequest, reader: jspb.BinaryReader): SetJobPropsRequest;
+}
+
+export namespace SetJobPropsRequest {
+  export type AsObject = {
+    jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
+  }
+}
+
+export class SetJobPropsResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SetJobPropsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SetJobPropsResponse): SetJobPropsResponse.AsObject;
+  static serializeBinaryToWriter(message: SetJobPropsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SetJobPropsResponse;
+  static deserializeBinaryFromReader(message: SetJobPropsResponse, reader: jspb.BinaryReader): SetJobPropsResponse;
+}
+
+export namespace SetJobPropsResponse {
+  export type AsObject = {
+  }
+}
 
 export class GetRolesRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
