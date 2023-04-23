@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { KeyIcon, QueueListIcon } from '@heroicons/vue/24/outline';
-import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
+import { AdjustmentsVerticalIcon, KeyIcon, QueueListIcon } from '@heroicons/vue/24/outline';
 import Cards from '~/components/partials/Cards.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { CardElements } from '~/utils/types';
@@ -15,6 +14,16 @@ definePageMeta({
 });
 
 const features = [
+    {
+        title: 'Properties',
+        description:
+            'Set your job properties (e.g., livemap color).',
+        href: { name: 'rector-props' },
+        permission: 'RectorService.GetJobProps',
+        icon: AdjustmentsVerticalIcon,
+        iconForeground: 'text-yellow-900',
+        iconBackground: 'bg-yellow-50',
+    },
     {
         title: 'Roles',
         description:

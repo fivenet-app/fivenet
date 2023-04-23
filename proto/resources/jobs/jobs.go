@@ -1,5 +1,7 @@
 package jobs
 
+const DefaultLivemapMarkerColor = "5C7AFF"
+
 func (x *Job) GetJob() string {
 	return x.Name
 }
