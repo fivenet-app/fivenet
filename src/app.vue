@@ -17,13 +17,12 @@ useHead({
 
 await loadConfig();
 
-/*const store = useUserSettingsStore();
+const store = useUserSettingsStore();
 const { setLocale } = useI18n();
 
 // Set locale on load
 const locale = computed(() => store.$state.locale);
 setLocale(locale.value);
-*/
 </script>
 
 <template>
