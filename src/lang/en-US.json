@@ -23,7 +23,14 @@
         "action": "Action | Actions",
         "date_of_birth": "Date of Birth",
         "next": "Next",
-        "previous": "Previous"
+        "previous": "Previous",
+        "wanted": "Wanted"
+    },
+    "notifications": {
+        "citizen_add": {
+            "title": "Clipboard: Citizen added",
+            "content": "Citizen has been added to clipboard"
+        }
     },
     "pages": {
         "index": {
@@ -119,7 +126,7 @@
             }
         },
         "citizens": {
-            "citizen_list": {
+            "citizens_list": {
                 "only_wanted": "Only Wanted",
                 "unable_to_load": "Unable to load citizens!",
                 "no_citizens": "Use the search field above to search or update your query.",

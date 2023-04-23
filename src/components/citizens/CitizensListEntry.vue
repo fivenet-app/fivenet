@@ -7,6 +7,8 @@ import { useNotificationsStore } from '~/store/notifications';
 const store = useClipboardStore();
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const props = defineProps({
     user: {
         required: true,
@@ -16,7 +18,7 @@ const props = defineProps({
 
 function addToClipboard(): void {
     store.addUser(props.user);
-    notifications.dispatchNotification({ title: 'Clipboard: Citizen added', content: 'Citizen has been added to clipboard', duration: 3500, type: 'info' });
+    notifications.dispatchNotification({ title: t('notifications.citizen_add.title'), content: t('notifications.citizen_add.content'), duration: 3500, type: 'info' });
 }
 </script>
 
@@ -25,7 +27,8 @@ function addToClipboard(): void {
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             {{ user.getFirstname() }}, {{ user.getLastname() }}
             <span v-if="user.getProps()?.getWanted()"
-                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700 ml-1">WANTED</span>
+                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700 ml-1">{{
+                    $t('common.wanted').toUpperCase() }}</span>
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
             {{ user.getJobLabel() }}
