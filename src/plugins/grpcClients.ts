@@ -9,9 +9,9 @@ import { JobsServiceClient } from '@fivenet/gen/services/jobs/JobsServiceClientP
 import { LivemapperServiceClient } from '@fivenet/gen/services/livemapper/LivemapServiceClientPb';
 import { UnaryInterceptor } from 'grpc-web';
 import { RpcError, StatusCode } from 'grpc-web';
-import { dispatchNotification } from '~/components/partials/notification';
 import { RectorServiceClient } from '@fivenet/gen/services/rector/RectorServiceClientPb';
 import { NotificatorServiceClient } from '@fivenet/gen/services/notificator/NotificatorServiceClientPb';
+import { useNotificationsStore } from '~/store/notifications';
 
 export default defineNuxtPlugin(() => {
     return {
@@ -46,11 +46,12 @@ export class GRPCClients {
 
     // Handle GRPC errors
     async handleRPCError(err: RpcError): Promise<void> {
+        const notifications = useNotificationsStore();
         switch (err.code) {
             case StatusCode.UNAUTHENTICATED:
                 await useAuthStore().clear();
 
-                dispatchNotification({
+                notifications.dispatchNotification({
                     title: 'Please login again',
                     content: 'You are not signed in anymore',
                     type: 'warning',
@@ -61,20 +62,20 @@ export class GRPCClients {
                 const redirect = router.currentRoute.value.query.redirect ?? router.currentRoute.value.fullPath;
                 await router.push({ name: 'auth-login', query: { redirect: redirect }, replace: true, force: true });
             case StatusCode.PERMISSION_DENIED:
-                dispatchNotification({ title: 'Permission denied', content: err.message, type: 'error' });
+                notifications.dispatchNotification({ title: 'Permission denied', content: err.message, type: 'error' });
                 break;
             case StatusCode.INTERNAL:
-                dispatchNotification({ title: 'Internal server error occured', content: err.message, type: 'error' });
+                notifications.dispatchNotification({ title: 'Internal server error occured', content: err.message, type: 'error' });
                 break;
             case StatusCode.UNAVAILABLE:
-                dispatchNotification({
+                notifications.dispatchNotification({
                     title: 'Unable to reach server',
                     content: 'Unable to reach FiveNet server, please check your internet connection.',
                     type: 'error',
                 });
                 break;
             default:
-                dispatchNotification({ title: 'Unknown error occured', content: err.message, type: 'error' });
+                notifications.dispatchNotification({ title: 'Unknown error occured', content: err.message, type: 'error' });
                 break;
         }
     }

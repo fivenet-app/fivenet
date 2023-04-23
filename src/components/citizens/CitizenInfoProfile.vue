@@ -2,16 +2,17 @@
 import { ref } from 'vue'
 import { User, UserProps } from '@fivenet/gen/resources/users/users_pb';
 import { SetUserPropsRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
-import { dispatchNotification } from '~/components/partials/notification';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { RpcError } from 'grpc-web';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
+const notifications = useNotificationsStore();
 
 const w = window;
 const clipboard = useClipboard();
@@ -49,7 +50,7 @@ async function toggleWantedStatus(): Promise<void> {
             await $grpc.getCitizenStoreClient().
                 setUserProps(req, null);
 
-            dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
+            notifications.dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

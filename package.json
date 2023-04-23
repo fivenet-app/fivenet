@@ -41,7 +41,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@nuxtjs/i18n": "^8.0.0-beta.11",
+    "@nuxtjs/i18n": "8.0.0-beta.10",
     "@nuxtjs/tailwindcss": "^6.6.6",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
     "@total-typescript/ts-reset": "^0.4.2",

@@ -1,13 +1,15 @@
 <script lang="ts" setup>
 import { CreateAccountRequest } from '@fivenet/gen/services/auth/auth_pb';
-import { dispatchNotification } from '~/components/partials/notification';
 import { RpcError } from 'grpc-web';
 import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { object, string } from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
 import Alert from '~/components/partials/Alert.vue';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
+
+const notifications = useNotificationsStore();
 
 defineEmits<{
     (e: 'back'): void,
@@ -26,7 +28,7 @@ async function createAccount(regToken: string, username: string, password: strin
             await $grpc.getUnAuthClient().
                 createAccount(req, null);
 
-            dispatchNotification({ title: 'Account created successfully!', content: '', type: 'success' });
+            notifications.dispatchNotification({ title: 'Account created successfully!', content: '', type: 'success' });
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             accountError.value = (e as RpcError).message;
@@ -75,7 +77,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
         <div>
             <label for="password" class="sr-only">Password</label>
             <div>
-                <Field id="password" name="password" type="password" autocomplete="current-password" placeholder="Password" v-model:model-value="currPassword"
+                <Field id="password" name="password" type="password" autocomplete="current-password" placeholder="Password"
+                    v-model:model-value="currPassword"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <PartialsPasswordStrengthMeter :input="currPassword" class="mt-2" />
                 <ErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />

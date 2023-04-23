@@ -10,10 +10,11 @@ import Divider from '~/components/partials/Divider.vue';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/shared';
-import { dispatchNotification } from '~/components/partials/notification';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 
+const notifications = useNotificationsStore();
 const router = useRouter();
 
 const props = defineProps({
@@ -51,7 +52,7 @@ async function deleteRole(): Promise<void> {
             await $grpc.getRectorClient().
                 deleteRole(req, null);
 
-            dispatchNotification({ title: 'Role: Deleted', content: 'Role has been successfully deleted.', type: 'success' });
+            notifications.dispatchNotification({ title: 'Role: Deleted', content: 'Role has been successfully deleted.', type: 'success' });
             await router.push({ name: 'rector-roles' });
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -168,7 +169,7 @@ async function applyQuery(): Promise<void> {
 
 async function saveRolePermissions(): Promise<void> {
     await Promise.all([saveAddPermissions(), saveRemovePermissions()]);
-    dispatchNotification({ title: 'Role: Permissions Saved', content: 'Permissions have been saved.', type: 'success' });
+    notifications.dispatchNotification({ title: 'Role: Permissions Saved', content: 'Permissions have been saved.', type: 'success' });
 }
 
 onMounted(async () => {

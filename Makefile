@@ -75,6 +75,7 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-customizerweb
 		--customizer_out="./proto" \
 		$(shell find proto/ -iname "*.proto")
 
+	# Inject Go field tags into generated fields
 	find proto/ -iname "*.pb.go" \
 		-exec protoc-go-inject-tag \
 			-input={} \;

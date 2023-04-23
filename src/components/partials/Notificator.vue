@@ -2,13 +2,14 @@
 import { ClientReadableStream, RpcError } from 'grpc-web';
 import { StreamRequest, StreamResponse } from '@fivenet/gen/services/notificator/notificator_pb';
 import { useNotificatorStore } from '~/store/notificator';
-import { dispatchNotification } from '~/components/partials/notification';
-import { NotificationType } from '~/components/partials/notification/interfaces';
 import { useAuthStore } from '~/store/auth';
+import { NotificationType } from '~/composables/notification/interfaces/Notification.interface';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 const store = useNotificatorStore();
 const authStore = useAuthStore();
+const notifications = useNotificationsStore();
 
 const accessToken = computed(() => authStore.$state.accessToken);
 const activeChar = computed(() => authStore.$state.activeChar);
@@ -32,7 +33,7 @@ async function streamNotifications(): Promise<void> {
             }
             resp.getNotificationsList().forEach(v => {
                 let nType: NotificationType = 'info';
-                dispatchNotification({ title: v.getTitle(), content: v.getContent(), type: nType });
+                notifications.dispatchNotification({ title: v.getTitle(), content: v.getContent(), type: nType });
             });
         }).
         on('end', async () => {

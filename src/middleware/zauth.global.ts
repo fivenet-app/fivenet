@@ -1,6 +1,6 @@
 import { NavigationGuard, RouteLocationNormalized } from 'vue-router';
-import { dispatchNotification } from '~/components/partials/notification';
 import { useAuthStore } from '~/store/auth';
+import { useNotificationsStore } from '~/store/notifications';
 import slug from '~/utils/slugify';
 
 export default defineNuxtRouteMiddleware(
@@ -23,7 +23,7 @@ export default defineNuxtRouteMiddleware(
                             // User has permission
                             return true;
                         } else {
-                            dispatchNotification({
+                            useNotificationsStore().dispatchNotification({
                                 title: "You don't have permission!",
                                 content: 'No permission to go to ' + (to.name ? to.name?.toString() : to.path) + '.',
                                 type: 'warning',

@@ -12,11 +12,13 @@ import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/complet
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { useAuthStore } from '~/store/auth';
 import { watchDebounced } from '@vueuse/core';
-import { dispatchNotification } from '~/components/partials/notification';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 
 const store = useAuthStore();
+const notifications = useNotificationsStore();
+const router = useRouter();
 
 const activeChar = computed(() => store.activeChar);
 
@@ -53,7 +55,6 @@ async function findJobGrades(): Promise<void> {
         const resp = await $grpc.getCompletorClient().
             completeJobNames(req, null);
 
-
         entriesJobGrades = resp.getJobsList()[0].getGradesList();
         filteredJobGrades.value = entriesJobGrades;
     } catch (e) {
@@ -79,7 +80,8 @@ async function createRole(): Promise<void> {
                 roles.value?.unshift(role.getRole()!);
             }
 
-            dispatchNotification({ title: 'Role: Created', content: 'Role has been created.', type: 'success' });
+            notifications.dispatchNotification({ title: 'Role: Created', content: 'Role has been created.', type: 'success' });
+            await router.push({ name: 'rector-roles-id', params: { id: role.getRole()?.getId()!, } });
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -106,37 +108,38 @@ onMounted(async () => {
                                     <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
                                         Job Grade
                                     </label>
-                                        <Combobox as="div" v-model="selectedJobGrade" class="relative flex items-center mt-2 w-full" nullable>
-                                            <div class="relative w-full">
-                                                <ComboboxButton as="div" class="w-full">
-                                                    <ComboboxInput
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @change="queryJobGrade = $event.target.value"
-                                                        :display-value="(grade: any) => grade?.getLabel()" />
-                                                </ComboboxButton>
+                                    <Combobox as="div" v-model="selectedJobGrade"
+                                        class="relative flex items-center mt-2 w-full" nullable>
+                                        <div class="relative w-full">
+                                            <ComboboxButton as="div" class="w-full">
+                                                <ComboboxInput
+                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    @change="queryJobGrade = $event.target.value"
+                                                    :display-value="(grade: any) => grade?.getLabel()" />
+                                            </ComboboxButton>
 
-                                                <ComboboxOptions v-if="filteredJobGrades.length > 0"
-                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                                    <ComboboxOption v-for="grade in filteredJobGrades"
-                                                        :key="grade.getGrade()" :value="grade" as="grade"
-                                                        v-slot="{ active, selected }">
-                                                        <li
-                                                            :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
-                                                            <span :class="['block truncate', selected && 'font-semibold']">
-                                                                {{ grade.getLabel() }}
-                                                            </span>
+                                            <ComboboxOptions v-if="filteredJobGrades.length > 0"
+                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
+                                                <ComboboxOption v-for="grade in filteredJobGrades" :key="grade.getGrade()"
+                                                    :value="grade" as="grade" v-slot="{ active, selected }">
+                                                    <li
+                                                        :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                                        <span :class="['block truncate', selected && 'font-semibold']">
+                                                            {{ grade.getLabel() }}
+                                                        </span>
 
-                                                            <span v-if="selected"
-                                                                :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
-                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
-                                                            </span>
-                                                        </li>
-                                                    </ComboboxOption>
-                                                </ComboboxOptions>
-                                            </div>
-                                        </Combobox>
+                                                        <span v-if="selected"
+                                                            :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                        </span>
+                                                    </li>
+                                                </ComboboxOption>
+                                            </ComboboxOptions>
+                                        </div>
+                                    </Combobox>
                                 </div>
-                                <div class="flex-initial form-control flex flex-col justify-end" v-can="'RectorService.CreateRole'">
+                                <div class="flex-initial form-control flex flex-col justify-end"
+                                    v-can="'RectorService.CreateRole'">
                                     <button @click="createRole()"
                                         :disabled="selectedJobGrade && selectedJobGrade.getGrade() <= 0"
                                         class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">

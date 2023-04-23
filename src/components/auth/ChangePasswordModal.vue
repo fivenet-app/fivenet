@@ -6,12 +6,13 @@ import { object, string } from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
 import { ChangePasswordRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
-import { dispatchNotification } from '~/components/partials/notification';
 import { useAuthStore } from '~/store/auth';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
 const router = useRouter();
+const notifications = useNotificationsStore();
 
 defineProps({
     open: {
@@ -36,7 +37,7 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
             const resp = await $grpc.getAuthClient()
                 .changePassword(req, null);
 
-            dispatchNotification({ title: 'Password has been changed', content: 'Your new password has been set.', type: 'success' });
+            notifications.dispatchNotification({ title: 'Password has been changed', content: 'Your new password has been set.', type: 'success' });
             store.updateAccessToken(resp.getToken());
             return await router.push({ name: 'overview' });
         } catch (e) {

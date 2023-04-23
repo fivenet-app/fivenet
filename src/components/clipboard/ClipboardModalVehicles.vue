@@ -3,9 +3,10 @@ import { useClipboardStore, ClipboardVehicle } from '~/store/clipboard';
 import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { TruckIcon } from '@heroicons/vue/20/solid';
-import { dispatchNotification } from '~/components/partials/notification';
+import { useNotificationsStore } from '~/store/notifications';
 
 const store = useClipboardStore();
+const notifications = useNotificationsStore();
 
 const vehicles = computed(() => store.$state.vehicles);
 
@@ -66,7 +67,7 @@ async function remove(item: ClipboardVehicle, notify: boolean): Promise<void> {
 
     await store.removeVehicle(item.plate);
     if (notify) {
-        dispatchNotification({ title: 'Clipboard: Vehicle removed', content: 'Selected vehicle removed from clipboard', duration: 3500, type: 'info' });
+        notifications.dispatchNotification({ title: 'Clipboard: Vehicle removed', content: 'Selected vehicle removed from clipboard', duration: 3500, type: 'info' });
     }
 }
 
@@ -78,7 +79,7 @@ async function removeAll(): Promise<void> {
     }
 
     emit('statisfied', false);
-    dispatchNotification({ title: 'Clipboard: Vehicles removed', content: 'All vehicles have been removed from your clipboard', duration: 3500, type: 'info' });
+    notifications.dispatchNotification({ title: 'Clipboard: Vehicles removed', content: 'All vehicles have been removed from your clipboard', duration: 3500, type: 'info' });
 }
 
 watch(props, (newVal) => {

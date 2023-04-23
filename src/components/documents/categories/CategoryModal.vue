@@ -3,13 +3,14 @@ import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
 import { DeleteDocumentCategoryRequest, UpdateDocumentCategoryRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { TagIcon } from '@heroicons/vue/24/solid';
-import { dispatchNotification } from '~/components/partials/notification';
 import { RpcError } from 'grpc-web';
 import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { object, string } from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
+const notifications = useNotificationsStore();
 
 const emit = defineEmits<{
     (e: 'deleted'): void,
@@ -36,7 +37,7 @@ async function deleteCategory(): Promise<void> {
             const resp = await $grpc.getDocStoreClient()
                 .deleteDocumentCategory(req, null);
 
-            dispatchNotification({ title: 'Category has been deleted', content: '', type: 'success' });
+            notifications.dispatchNotification({ title: 'Category has been deleted', content: '', type: 'success' });
             emit('close');
             emit('deleted');
         } catch (e) {
@@ -57,7 +58,7 @@ async function updateCategory(name: string, description: string): Promise<void> 
             await $grpc.getDocStoreClient()
                 .updateDocumentCategory(req, null);
 
-            dispatchNotification({ title: 'Category has been updated', content: '', type: 'success' });
+                notifications.dispatchNotification({ title: 'Category has been updated', content: '', type: 'success' });
             emit('close');
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);

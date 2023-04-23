@@ -2,11 +2,11 @@
 import { LogoutRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
 import { onBeforeMount } from 'vue';
-import { dispatchNotification } from '~/components/partials/notification';
 import { useAuthStore } from '~/store/auth';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import Footer from '~/components/partials/Footer.vue';
+import { useNotificationsStore } from '~/store/notifications';
 
 useHead({
     title: 'Logout',
@@ -20,6 +20,7 @@ definePageMeta({
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
 const router = useRouter();
+const notifications = useNotificationsStore();
 
 const accessToken = computed(() => store.$state.accessToken);
 
@@ -44,7 +45,7 @@ onBeforeMount(async () => {
         })
         .catch((err: RpcError) => {
             store.loginStop(err.message);
-            dispatchNotification({ title: 'Error during logout!', content: err.message, type: 'error' });
+            notifications.dispatchNotification({ title: 'Error during logout!', content: err.message, type: 'error' });
         });
 });
 </script>

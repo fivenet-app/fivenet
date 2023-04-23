@@ -14,7 +14,6 @@ import { CheckIcon } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
-import { dispatchNotification } from '~/components/partials/notification';
 
 const { $grpc } = useNuxtApp();
 

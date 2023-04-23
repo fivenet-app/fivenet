@@ -28,10 +28,11 @@ import { PaginationRequest } from '@fivenet/gen/resources/common/database/databa
 import { useClipboardStore } from '~/store/clipboard';
 import { PlusIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from 'grpc-web';
-import { dispatchNotification } from '~/components/partials/notification';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
+const notifications = useNotificationsStore();
 
 const document = ref<undefined | Document>(undefined);
 const access = ref<undefined | DocumentAccess>(undefined);
@@ -93,7 +94,7 @@ function addToClipboard(): void {
     if (document.value) {
         clipboardStore.addDocument(document.value);
     }
-    dispatchNotification({ title: 'Clipboard: Document added', content: 'Document has been added to clipboard', duration: 3500, type: 'info' });
+    notifications.dispatchNotification({ title: 'Clipboard: Document added', content: 'Document has been added to clipboard', duration: 3500, type: 'info' });
 }
 
 onMounted(() => {

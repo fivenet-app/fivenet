@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+import { useNotificationsStore } from '~/store/notifications';
 import NotificationItem from './NotificationItem.vue';
-import store from './store';
+
+const store = useNotificationsStore();
 </script>
 
 <template>
@@ -9,9 +11,9 @@ import store from './store';
         <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-50">
             <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
                 <NotificationItem :key="notification.id" :notification="notification" :class="idx > 0 ? 'mt-4' : ''"
-                    v-for="(notification, idx) in store.getters.getNotifications()" />
+                    v-for="(notification, idx) in store.getNotifications" />
             </div>
         </div>
-        <slot></slot>
+        <slot />
     </div>
 </template>

@@ -2,9 +2,10 @@
 import { User } from '@fivenet/gen/resources/users/users_pb';
 import { ClipboardDocumentIcon, EyeIcon } from '@heroicons/vue/24/solid';
 import { useClipboardStore } from '~/store/clipboard';
-import { dispatchNotification } from '~/components/partials/notification';
+import { useNotificationsStore } from '~/store/notifications';
 
 const store = useClipboardStore();
+const notifications = useNotificationsStore();
 
 const props = defineProps({
     user: {
@@ -15,7 +16,7 @@ const props = defineProps({
 
 function addToClipboard(): void {
     store.addUser(props.user);
-    dispatchNotification({ title: 'Clipboard: Citizen added', content: 'Citizen has been added to clipboard', duration: 3500, type: 'info' });
+    notifications.dispatchNotification({ title: 'Clipboard: Citizen added', content: 'Citizen has been added to clipboard', duration: 3500, type: 'info' });
 }
 </script>
 

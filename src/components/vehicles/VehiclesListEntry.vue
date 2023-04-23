@@ -2,10 +2,11 @@
 import { Vehicle } from '@fivenet/gen/resources/vehicles/vehicles_pb';
 import { ClipboardDocumentIcon, EyeIcon } from '@heroicons/vue/24/solid';
 import { useClipboardStore } from '~/store/clipboard';
+import { useNotificationsStore } from '~/store/notifications';
 import { toTitleCase } from '~/utils/strings';
-import { dispatchNotification } from '~/components/partials/notification';
 
 const store = useClipboardStore();
+const notifications = useNotificationsStore();
 
 const props = defineProps({
     vehicle: {
@@ -31,7 +32,7 @@ const props = defineProps({
 
 function addToClipboard(): void {
     store.addVehicle(props.vehicle);
-    dispatchNotification({ title: 'Clipboard: Vehicle added', content: 'Vehicle has been added to clipboard', duration: 3500, type: 'info' });
+    notifications.dispatchNotification({ title: 'Clipboard: Vehicle added', content: 'Vehicle has been added to clipboard', duration: 3500, type: 'info' });
 }
 </script>
 

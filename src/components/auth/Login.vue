@@ -1,16 +1,10 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
 import { computed, ref, watch } from 'vue';
-import { CreateAccountRequest, LoginRequest, LoginResponse } from '@fivenet/gen/services/auth/auth_pb';
-import { XCircleIcon } from '@heroicons/vue/20/solid';
-import { RpcError } from 'grpc-web';
-import { dispatchNotification } from '~/components/partials/notification';
 import { NavigationFailure } from 'vue-router';
-import { useForm } from 'vee-validate';
 import LoginForm from './LoginForm.vue';
 import CreateAccountForm from './CreateAccountForm.vue';
 
-const { $grpc } = useNuxtApp();
 const store = useAuthStore();
 const router = useRouter();
 const route = useRoute();

@@ -3,9 +3,10 @@ import { useClipboardStore, ClipboardUser } from '~/store/clipboard';
 import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { UsersIcon } from '@heroicons/vue/20/solid';
-import { dispatchNotification } from '~/components/partials/notification';
+import { useNotificationsStore } from '~/store/notifications';
 
 const store = useClipboardStore();
+const notifications = useNotificationsStore();
 
 const users = computed(() => store.$state.users);
 
@@ -66,7 +67,7 @@ async function remove(item: ClipboardUser, notify: boolean): Promise<void> {
 
     await store.removeUser(item.id!);
     if (notify) {
-        dispatchNotification({ title: 'Clipboard: Citizen removed', content: 'Selected citizen removed from clipboard', duration: 3500, type: 'info' });
+        notifications.dispatchNotification({ title: 'Clipboard: Citizen removed', content: 'Selected citizen removed from clipboard', duration: 3500, type: 'info' });
     }
 }
 
@@ -78,7 +79,7 @@ async function removeAll(): Promise<void> {
     }
 
     emit('statisfied', false);
-    dispatchNotification({ title: 'Clipboard: Citizens removed', content: 'All citizens have been removed from your clipboard', duration: 3500, type: 'info' });
+    notifications.dispatchNotification({ title: 'Clipboard: Citizens removed', content: 'All citizens have been removed from your clipboard', duration: 3500, type: 'info' });
 }
 
 watch(props, async (newVal) => {

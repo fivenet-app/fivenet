@@ -8,7 +8,6 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@fivenet/gen/resources/documents/documents_pb';
 import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
-import { dispatchNotification } from '~/components/partials/notification';
 import {
     PlusIcon,
     ChevronDownIcon,
@@ -35,11 +34,13 @@ import DocumentRelationManager from './DocumentRelationManager.vue';
 import DocumentAccessEntry from './DocumentAccessEntry.vue';
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from 'grpc-web';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
 const documentStore = useDocumentEditorStore();
+const notifications = useNotificationsStore();
 
 const router = useRouter();
 const route = useRoute();
@@ -186,7 +187,7 @@ async function findCategories(): Promise<void> {
 
 function addAccessEntry(): void {
     if (access.value.size > 9) {
-        dispatchNotification({ title: 'Maximum amount of Access entries exceeded', content: 'There can only be a maximum of 10 access entries on a Document', type: 'error' })
+        notifications.dispatchNotification({ title: 'Maximum amount of Access entries exceeded', content: 'There can only be a maximum of 10 access entries on a Document', type: 'error' })
         return;
     }
 
@@ -312,7 +313,7 @@ function submitForm(): void {
                 $grpc.getDocStoreClient().addDocumentRelation(req, null);
             });
 
-            dispatchNotification({ title: 'Document created!', content: 'Document has been created.' });
+            notifications.dispatchNotification({ title: 'Document created!', content: 'Document has been created.' });
             clipboardStore.clearActiveStack();
             documentStore.clear();
             router.push({ name: 'documents-id', params: { id: resp.getDocumentId(), } });
@@ -399,7 +400,7 @@ function editForm(): void {
                 $grpc.getDocStoreClient().addDocumentRelation(req, null);
             });
 
-            dispatchNotification({ title: 'Document updated!', content: 'Document has been updated.' });
+            notifications.dispatchNotification({ title: 'Document updated!', content: 'Document has been updated.' });
             clipboardStore.clearActiveStack();
             documentStore.clear();
             router.push({ name: 'documents-id', params: { id: resp.getDocumentId(), } });

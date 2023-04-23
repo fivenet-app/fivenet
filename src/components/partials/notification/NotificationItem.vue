@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-import store from './store';
-import type { Notification } from './interfaces';
-
 import { CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/vue/24/outline';
 import { XMarkIcon } from '@heroicons/vue/20/solid';
+import { useNotificationsStore } from '~/store/notifications';
+import { Notification } from '~/composables/notification/interfaces/Notification.interface';
+
+const notifications = useNotificationsStore();
 
 defineProps<{
     notification: Notification,
 }>();
 
 const closeNotification = (id: string) => {
-    store.actions.removeNotification(id);
+    notifications.removeNotification(id);
 }
 </script>
 

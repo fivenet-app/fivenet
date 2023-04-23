@@ -11,15 +11,16 @@ import { ValueOf } from '~/utils/types';
 import { DispatchMarker, UserMarker } from '@fivenet/gen/resources/livemap/livemap_pb';
 import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { watchDebounced } from '@vueuse/core';
-import { dispatchNotification } from '~/components/partials/notification';
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { toDateRelativeString } from '~/utils/time';
 import { useUserSettingsStore } from '~/store/usersettings';
 import { useAuthStore } from '~/store/auth';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 const userSettings = useUserSettingsStore();
 const authStore = useAuthStore();
+const notifications = useNotificationsStore();
 
 const activeChar = computed(() => authStore.$state.activeChar);
 
@@ -227,7 +228,7 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
     switch (type) {
         case 'player':
             {
-                if ((marker as UserMarker).getUser()?.getIdentifier() === authStore.activeChar?.getIdentifier()) color = 'FCAB10';
+                if (activeChar.value && (marker as UserMarker).getUser()?.getIdentifier() === activeChar.value?.getIdentifier()) color = 'FCAB10';
                 html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${color ? '#' + color : 'currentColor'}" class="w-full h-full">
                     <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
                 </svg>`;
@@ -278,7 +279,7 @@ async function loadPostals(): Promise<void> {
         const response = await fetch('/data/postals.json');
         postals.value.push(...(await response.json()) as Postal[]);
     } catch (_) {
-        dispatchNotification({ title: 'Failed to load Postals map', content: '' });
+        notifications.dispatchNotification({ title: 'Failed to load Postals map', content: '' });
         postalsLoaded = false;
     }
 }
