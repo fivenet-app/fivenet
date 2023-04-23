@@ -21,7 +21,9 @@
         "sex": "Sex",
         "height": "Height",
         "action": "Action | Actions",
-        "date_of_birth": "Date of Birth"
+        "date_of_birth": "Date of Birth",
+        "next": "Next",
+        "previous": "Previous"
     },
     "pages": {
         "index": {
@@ -127,6 +129,9 @@
             "sidebar": {
                 "change_character": "Change Character",
                 "account_info": "Account Info"
+            },
+            "table_pagination": {
+                "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"
             }
         }
     }
