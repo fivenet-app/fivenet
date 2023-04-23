@@ -30,7 +30,7 @@ import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/s
 import SidebarJobSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
 import SidebarLanguageSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
 
-const { t, tc } = useI18n();
+const { t } = useI18n();
 const store = useAuthStore();
 const router = useRouter();
 
@@ -47,7 +47,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
         current: false,
     },
     {
-        name: tc('common.citizen', 1),
+        name: t('common.citizen', 2),
         href: { name: 'citizens' },
         permission: 'CitizenStoreService.FindUsers',
         icon: UsersIcon,
@@ -55,7 +55,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
         current: false,
     },
     {
-        name: 'Vehicles',
+        name: t('common.vehicle', 2),
         href: { name: 'vehicles' },
         permission: 'DMVService.FindVehicles',
         icon: TruckIcon,
@@ -63,7 +63,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
         current: false,
     },
     {
-        name: 'Documents',
+        name: t('common.document', 2),
         href: { name: 'documents' },
         permission: 'DocStoreService.FindDocuments',
         icon: DocumentTextIcon,
@@ -71,7 +71,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
         current: false,
     },
     {
-        name: 'Job',
+        name: t('common.job', 2),
         href: { name: 'jobs' },
         permission: 'Jobs.View',
         icon: BriefcaseIcon,
@@ -79,7 +79,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
         current: false,
     },
     {
-        name: 'Livemap',
+        name: t('common.livemap'),
         href: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
         icon: MapIcon,
@@ -87,7 +87,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
         current: false,
     },
     {
-        name: 'Control Panel',
+        name: t('common.control_panel'),
         href: { name: 'rector' },
         permission: 'RectorService.GetRoles',
         icon: Cog8ToothIcon,
@@ -95,7 +95,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
         current: false,
     },
     {
-        name: 'About',
+        name: t('common.about'),
         href: { name: 'about' },
         permission: '',
         icon: QuestionMarkCircleIcon,
@@ -104,7 +104,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
     },
 ];
 const userNavigation = ref<{ name: string, href: RoutesNamedLocations, permission?: string }[]>([
-    { name: 'Login', href: { name: 'auth-login' } },
+    { name: t('common.login'), href: { name: 'auth-login' } },
 ]);
 const breadcrumbs = ref<{ name: string, href: string, current: boolean }[]>([]);
 const mobileMenuOpen = ref(false);
