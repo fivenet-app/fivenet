@@ -5,6 +5,8 @@ import { MagnifyingGlassIcon, LockClosedIcon, ServerIcon } from '@heroicons/vue/
 import Footer from '~/components/partials/Footer.vue';
 import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
 
+const { t } = useI18n();
+
 useHead({
     title: 'About',
 });
@@ -18,20 +20,20 @@ const repoLink = 'https://github.com/galexrt/fivenet';
 
 const faqs = [
     {
-        question: 'Who has created FiveNet?',
-        answer: 'Galexrt and Clover, are the main people working on FiveNet at the moment.',
+        question: t('pages.about.faq.one.question'),
+        answer: t('pages.about.faq.one.answer'),
     },
     {
-        question: 'Why was FiveNet created?',
-        answer: 'It started out as a way for Galexrt to learn frontend development and then it spiraled into a way for ModernV server to have an alternative to VPC CopNet/ MedicNet.',
+        question: t('pages.about.faq.two.question'),
+        answer: t('pages.about.faq.two.answer'),
     },
     {
-        question: 'Where can I find the FiveNet development roadmap?',
-        answer: `<a class="underline" href="${repoLink}/#readme">Click here (GitHub galexrt/fivenet README)</a>.`,
+        question: t('pages.about.faq.three.question'),
+        answer: t('pages.about.faq.three.answer', { repoLink }),
     },
     {
-        question: 'I found a bug or other issue with FiveNet. Where do I report it?',
-        answer: `Please report on <a class="underline" href="${discordLink}">the Galexrt Discord server</a> or on <a class="underline" href="${repoLink}">the FiveNet GitHub project</a>.`,
+        question: t('pages.about.faq.four.question'),
+        answer: t('pages.about.faq.four.answer', { discordLink, repoLink }),
     },
 ] as { question: string; answer: string; }[];
 </script>
@@ -41,9 +43,9 @@ const faqs = [
         <div>
             <div class="bg-gray-900 px-6 py-24 sm:py-32 lg:px-8">
                 <div class="mx-auto max-w-2xl text-center">
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">About</h2>
+                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">{{ $t('common.about') }}</h2>
                     <p class="mt-6 text-lg leading-8 text-gray-300">
-                        About FiveNet and it's creators.
+                        {{ $t('pages.about.sub_title') }}
                     </p>
                 </div>
             </div>
@@ -57,15 +59,13 @@ const faqs = [
                         <div class="lg:pr-4">
                             <div class="lg:max-w-lg">
                                 <p class="text-base font-semibold leading-7 text-primary-400">
-                                    More time for GTA V RolePlay.
+                                    {{ $t('pages.about.introduction.pre_title') }}
                                 </p>
                                 <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-400 sm:text-4xl">
-                                    A better workflow
+                                    {{ $t('pages.about.introduction.title') }}
                                 </h1>
                                 <p class="mt-6 text-xl leading-8 text-gray-100">
-                                    Easily search for citizens and vehicles. With the document access system it is easy to
-                                    create and securely share documents with your colleagues.
-                                    A livemap that shows last few dispatches and your colleagues locations.
+                                    {{ $t('pages.about.introduction.content') }}
                                 </p>
                             </div>
                         </div>
@@ -86,27 +86,26 @@ const faqs = [
                                         <MagnifyingGlassIcon class="mt-1 h-5 w-5 flex-none text-primary-300"
                                             aria-hidden="true" />
                                         <span>
-                                            <strong class="font-semibold text-gray-200">Search State Data.</strong> You can
-                                            search through citizens and vehicles.
-                                            You can also set a citizen as wanted.
+                                            <strong class="font-semibold text-gray-200">{{
+                                                $t('pages.about.introduction.feature_one.title') }}</strong> {{
+        $t('pages.about.introduction.feature_one.content') }}
                                         </span>
                                     </li>
                                     <li class="flex gap-x-3">
                                         <LockClosedIcon class="mt-1 h-5 w-5 flex-none text-primary-300"
                                             aria-hidden="true" />
                                         <span>
-                                            <strong class="font-semibold text-gray-200">Secure Document Sharing.</strong>
-                                            Documents can easily be shared
-                                            with your colleagues and other factions on the server.
+                                            <strong class="font-semibold text-gray-200">{{
+                                                $t('pages.about.introduction.feature_two.title') }}</strong> {{
+        $t('pages.about.introduction.feature_two.content') }}
                                         </span>
                                     </li>
                                     <li class="flex gap-x-3">
                                         <ServerIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>
-                                            <strong class="font-semibold text-gray-200">Livemap.</strong> See the location
-                                            of
-                                            your colleagues and dispatches live.
-                                            Different map styles are available as well.
+                                            <strong class="font-semibold text-gray-200">{{
+                                                $t('pages.about.introduction.feature_three.title') }}</strong> {{
+        $t('pages.about.introduction.feature_three.content') }}
                                         </span>
                                     </li>
                                 </ul>
@@ -118,7 +117,7 @@ const faqs = [
             <div class="bg-gray-900">
                 <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-20">
                     <div class="mx-auto max-w-4xl divide-y divide-white/10">
-                        <h2 class="text-2xl font-bold leading-10 tracking-tight text-white">Frequently asked questions</h2>
+                        <h2 class="text-2xl font-bold leading-10 tracking-tight text-white">{{ $t('pages.about.faq.title') }}</h2>
                         <dl class="mt-10 space-y-6 divide-y divide-white/10">
                             <Disclosure as="div" v-for="faq in faqs" :key="faq.question" class="pt-6" v-slot="{ open }">
                                 <dt>
@@ -141,26 +140,20 @@ const faqs = [
             <div class="relative bg-gray-900">
                 <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-20">
                     <div class="mx-auto max-w-4xl">
-                        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Got any questions or
-                            issues?
-                        </p>
-                        <p class="mt-6 text-base leading-7 text-gray-300">
-                            Be sure to join the Discord server should you encounter any issues or have questions regarding
-                            FiveNet.
-                        </p>
+                        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ $t('pages.about.questions_or_issues.title') }}</p>
+                        <p class="mt-6 text-base leading-7 text-gray-300">{{ $t('pages.about.questions_or_issues.content') }}</p>
                         <div class="mt-8">
                             <a :href="discordLink"
                                 class="inline-flex items-center gap-x-2 rounded-md bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600">
                                 <DiscordLogo class="-ml-0.5 h-5 w-5" aria-hidden="true" />
                                 <span>
-                                    Join Galexrt Discord server
+                                    {{ $t('pages.about.join_discord') }}
                                 </span>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <Footer />
     </div>
-</template>
+    <Footer />
+</div></template>
