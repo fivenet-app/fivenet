@@ -51,6 +51,8 @@ async function toggleWantedStatus(): Promise<void> {
                 setUserProps(req, null);
 
             notifications.dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
+
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

@@ -37,9 +37,7 @@ async function getUser(): Promise<User> {
             const resp = await $grpc.getCitizenStoreClient().
                 getUser(req, null);
 
-            if (resp.hasUser()) {
-                return res(resp.getUser()!);
-            }
+            return res(resp.getUser()!);
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

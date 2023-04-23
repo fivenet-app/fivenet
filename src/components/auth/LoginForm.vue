@@ -30,6 +30,8 @@ async function login(username: string, password: string): Promise<void> {
 
             store.loginStop(null);
             store.updateAccessToken(resp.getToken());
+
+            return res();
         } catch (e) {
             store.loginStop((e as RpcError).message);
             store.updateAccessToken(null);

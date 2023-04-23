@@ -18,7 +18,7 @@ const perms = computed(() => store.$state.permissions);
 
 const { data: account, pending, refresh, error } = await useLazyAsyncData(`accounmt`, () => getAccountInfo());
 
-async function getAccountInfo(): Promise<Account> {
+async function getAccountInfo(): Promise<Account | undefined> {
     return new Promise(async (res, rej) => {
         const req = new GetAccountInfoRequest();
 
@@ -26,9 +26,7 @@ async function getAccountInfo(): Promise<Account> {
             const resp = await $grpc.getAuthClient().
                 getAccountInfo(req, null);
 
-            if (resp.hasAccount()) {
-                return res(resp.getAccount()!);
-            }
+            return res(resp.getAccount()!);
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

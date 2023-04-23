@@ -16,7 +16,7 @@ const props = defineProps({
 const { data: template, pending, refresh, error } = await useLazyAsyncData(`documents-template-${props.templateId}`, () => getTemplate());
 const reqs = ref<undefined | TemplateRequirements>();
 
-async function getTemplate(): Promise<DocumentTemplate> {
+async function getTemplate(): Promise<DocumentTemplate | undefined> {
     return new Promise(async (res, rej) => {
         const req = new GetTemplateRequest();
         req.setTemplateId(props.templateId);
@@ -25,12 +25,11 @@ async function getTemplate(): Promise<DocumentTemplate> {
             const resp = await $grpc.getDocStoreClient().
                 getTemplate(req, null);
 
-            if (resp.hasTemplate()) {
-                if (resp.getTemplate()?.hasSchema()) {
-                    reqs.value = resp.getTemplate()?.getSchema()?.getRequirements();
-                }
-                return res(resp.getTemplate()!);
+            if (resp.getTemplate()?.hasSchema()) {
+                reqs.value = resp.getTemplate()?.getSchema()?.getRequirements();
             }
+
+            return res(resp.getTemplate()!);
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -46,6 +45,7 @@ async function deleteTemplate(): Promise<void> {
         try {
             await $grpc.getDocStoreClient().
                 deleteTemplate(req, null);
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -82,7 +82,8 @@ async function deleteTemplate(): Promise<void> {
                     <div v-if="reqs">
                         <label for="content" class="block text-sm font-medium leading-6 text-gray-100">Schema</label>
                         <div class="mt-2">
-                            <ul class="text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300">
+                            <ul
+                                class="text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300">
                                 <li v-if="reqs.getUsers()">
                                     <TemplateRequirementsList name="User" :required="reqs.getUsers()?.getRequired()!"
                                         :min="reqs.getUsers()?.getMin()!" :max="reqs.getUsers()?.getMax()!" />

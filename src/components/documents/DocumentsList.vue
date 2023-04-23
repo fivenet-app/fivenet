@@ -15,7 +15,6 @@ import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 const { $grpc } = useNuxtApp();
 
 const search = ref({ title: '', });
-// TODO Implement order by for documents
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 

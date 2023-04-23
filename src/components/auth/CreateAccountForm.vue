@@ -29,6 +29,7 @@ async function createAccount(regToken: string, username: string, password: strin
                 createAccount(req, null);
 
             notifications.dispatchNotification({ title: 'Account created successfully!', content: '', type: 'success' });
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             accountError.value = (e as RpcError).message;

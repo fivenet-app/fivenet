@@ -216,6 +216,25 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		return nil, FailedQueryErr
 	}
 
+	if resp.User != nil {
+		if utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
+			// Make sure user has permission to see that grade
+			if !s.p.Can(userId, CitizenStoreServicePermKey, "GetUser", resp.User.Job, strconv.Itoa(int(resp.User.JobGrade))) {
+				return nil, NotFoundOrNoPermErr
+			}
+		} else {
+			resp.User.Job = config.C.Game.UnemployedJob.Name
+			resp.User.JobGrade = config.C.Game.UnemployedJob.Grade
+		}
+
+		if resp.User.Props != nil && resp.User.Props.Job != "" {
+			resp.User.Job = resp.User.Props.Job
+			resp.User.JobGrade = -1
+		}
+
+		s.c.EnrichJobInfo(resp.User)
+	}
+
 	// Check if user can see licenses and fetch them separately
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
 		stmt := user.
@@ -239,25 +258,6 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 				return nil, FailedQueryErr
 			}
 		}
-	}
-
-	if resp.User != nil {
-		if utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
-			// Make sure user has permission to see that grade
-			if !s.p.Can(userId, CitizenStoreServicePermKey, "GetUser", resp.User.Job, strconv.Itoa(int(resp.User.JobGrade))) {
-				return nil, NotFoundOrNoPermErr
-			}
-		} else {
-			resp.User.Job = config.C.Game.UnemployedJob.Name
-			resp.User.JobGrade = config.C.Game.UnemployedJob.Grade
-		}
-
-		if resp.User.Props != nil && resp.User.Props.Job != "" {
-			resp.User.Job = resp.User.Props.Job
-			resp.User.JobGrade = -1
-		}
-
-		s.c.EnrichJobInfo(resp.User)
 	}
 
 	return resp, nil

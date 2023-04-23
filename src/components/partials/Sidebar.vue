@@ -28,6 +28,7 @@ import {
 } from '@heroicons/vue/24/outline';
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
 import SidebarJobSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
+import SidebarLanguageSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
 
 const store = useAuthStore();
 const router = useRouter();
@@ -361,7 +362,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                 {{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}
                                 ({{ activeChar.getJobLabel() }})
                             </div>
-                            <PartialsSidebarLanguageSwitcher />
+                            <SidebarLanguageSwitcher />
                             <!-- Profile dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">
                                 <div>

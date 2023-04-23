@@ -37,9 +37,11 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
             const resp = await $grpc.getAuthClient()
                 .changePassword(req, null);
 
-            notifications.dispatchNotification({ title: 'Password has been changed', content: 'Your new password has been set.', type: 'success' });
             store.updateAccessToken(resp.getToken());
-            return await router.push({ name: 'overview' });
+
+            notifications.dispatchNotification({ title: 'Password has been changed', content: 'Your new password has been set.', type: 'success' });
+            await router.push({ name: 'overview' });
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

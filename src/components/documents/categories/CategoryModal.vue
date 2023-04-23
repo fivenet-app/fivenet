@@ -40,6 +40,7 @@ async function deleteCategory(): Promise<void> {
             notifications.dispatchNotification({ title: 'Category has been deleted', content: '', type: 'success' });
             emit('close');
             emit('deleted');
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -60,6 +61,7 @@ async function updateCategory(name: string, description: string): Promise<void> 
 
             notifications.dispatchNotification({ title: 'Category has been updated', content: '', type: 'success' });
             emit('close');
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

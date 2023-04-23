@@ -54,6 +54,7 @@ async function deleteRole(): Promise<void> {
 
             notifications.dispatchNotification({ title: 'Role: Deleted', content: 'Role has been successfully deleted.', type: 'success' });
             await router.push({ name: 'rector-roles' });
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -120,11 +121,11 @@ function removePermission(perm: Permission): void {
 }
 
 async function saveAddPermissions(): Promise<void> {
-    if (permsToAdd.value.length === 0) {
-        return;
-    }
-
     return new Promise(async (res, rej) => {
+        if (permsToAdd.value.length === 0) {
+            return res();
+        }
+
         const req = new AddPermToRoleRequest();
         req.setId(props.roleId);
         const permIds = new Array<number>();
@@ -132,8 +133,9 @@ async function saveAddPermissions(): Promise<void> {
         req.setPermissionsList(permIds);
 
         try {
-            return $grpc.getRectorClient().
+            await $grpc.getRectorClient().
                 addPermToRole(req, null);
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -142,11 +144,11 @@ async function saveAddPermissions(): Promise<void> {
 }
 
 async function saveRemovePermissions(): Promise<void> {
-    if (permsToRemove.value.length === 0) {
-        return;
-    }
-
     return new Promise(async (res, rej) => {
+        if (permsToRemove.value.length === 0) {
+            return res();
+        }
+
         const req = new RemovePermFromRoleRequest();
         req.setId(props.roleId);
         const permIds = new Array<number>();
@@ -154,8 +156,9 @@ async function saveRemovePermissions(): Promise<void> {
         req.setPermissionsList(permIds);
 
         try {
-            return $grpc.getRectorClient().
+            await $grpc.getRectorClient().
                 removePermFromRole(req, null);
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

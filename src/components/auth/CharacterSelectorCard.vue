@@ -6,7 +6,7 @@ import { User } from '@fivenet/gen/resources/users/users_pb';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import { fromSecondsToFormattedDuration } from '~/utils/time';
 import { RpcError } from 'grpc-web';
-import { parseQuery, NavigationFailure } from 'vue-router';
+import { parseQuery } from 'vue-router';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
@@ -22,7 +22,7 @@ const props = defineProps({
     },
 });
 
-async function chooseCharacter(): Promise<NavigationFailure | void | undefined> {
+async function chooseCharacter(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new ChooseCharacterRequest();
         req.setCharId(props.char.getUserId());
@@ -37,7 +37,9 @@ async function chooseCharacter(): Promise<NavigationFailure | void | undefined> 
 
             const path = route.query.redirect?.toString() || "/overview";
             const url = new URL("https://example.com" + path);
-            return await router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
+            await router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
+
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

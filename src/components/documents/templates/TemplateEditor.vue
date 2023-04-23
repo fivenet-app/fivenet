@@ -39,6 +39,7 @@ async function createTemplate(title: string, description: string, contentTitle: 
                 createTemplate(req, null);
 
             await router.push({ name: 'documents-templates-id', params: { id: resp.getId() } });
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -62,6 +63,7 @@ async function updateTemplate(title: string, description: string, contentTitle: 
                 updateTemplate(req, null);
 
             await router.push({ name: 'documents-templates-id', params: { id: resp.getId() } });
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);

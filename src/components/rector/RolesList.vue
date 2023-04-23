@@ -65,7 +65,7 @@ async function findJobGrades(): Promise<void> {
 async function createRole(): Promise<void> {
     return new Promise(async (res, rej) => {
         if (!selectedJobGrade.value) {
-            return;
+            return res();
         }
 
         const req = new CreateRoleRequest();
@@ -82,6 +82,8 @@ async function createRole(): Promise<void> {
 
             notifications.dispatchNotification({ title: 'Role: Created', content: 'Role has been created.', type: 'success' });
             await router.push({ name: 'rector-roles-id', params: { id: role.getRole()?.getId()!, } });
+
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
