@@ -36,7 +36,8 @@
                 "livemapper",
                 "notificator",
                 "rector",
-                "version"
+                "version",
+                "rbac"
             ]
         ]
     }
