@@ -24,7 +24,9 @@
         "date_of_birth": "Date of Birth",
         "next": "Next",
         "previous": "Previous",
-        "wanted": "Wanted"
+        "wanted": "Wanted",
+        "loading": "Loading {0}...",
+        "unable_to_load": "Unable to load {0}!"
     },
     "notifications": {
         "citizen_add": {
@@ -128,9 +130,7 @@
         "citizens": {
             "citizens_list": {
                 "only_wanted": "Only Wanted",
-                "unable_to_load": "Unable to load citizens!",
-                "no_citizens": "Use the search field above to search or update your query.",
-                "loading": "Loading citizens..."
+                "no_citizens": "Use the search field above to search or update your query."
             }
         },
         "partials": {

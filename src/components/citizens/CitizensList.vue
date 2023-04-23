@@ -96,8 +96,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
             <div class="flow-root mt-2">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <DataPendingBlock v-if="pending" :message="$t('components.citizens.citizens_list.loading')" />
-                        <DataErrorBlock v-else-if="error" :title="$t('components.citizens.citizens_list.unable_to_load')"
+                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.citizen', 2)])" />
+                        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.citizen', 2)])"
                             :retry="refresh" />
                         <button v-else-if="users && users.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
