@@ -224,7 +224,7 @@ func (s *Server) refreshUserLocations() error {
 			markers[job] = []*livemap.UserMarker{}
 		}
 		if dest[i].IconColor == "" {
-			dest[i].IconColor = "5C7AFF"
+			dest[i].IconColor = jobs.DefaultLivemapMarkerColor
 		}
 		markers[job] = append(markers[job], dest[i])
 	}
