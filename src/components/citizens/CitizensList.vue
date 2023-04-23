@@ -79,7 +79,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             </div>
                             <div class="flex-initial form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">{{
-                                    $t('components.citizens.citizen_list.only_wanted') }}</label>
+                                    $t('components.citizens.citizens_list.only_wanted') }}</label>
                                 <div class="relative flex items-center mt-3">
                                     <Switch v-model="query.wanted"
                                         :class="[query.wanted ? 'bg-error-500' : 'bg-base-700', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2']">
@@ -96,14 +96,14 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
             <div class="flow-root mt-2">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <DataPendingBlock v-if="pending" :message="$t('components.citizens.citizen_list.loading')" />
-                        <DataErrorBlock v-else-if="error" :title="$t('components.citizens.citizen_list.unable_to_load')"
+                        <DataPendingBlock v-if="pending" :message="$t('components.citizens.citizens_list.loading')" />
+                        <DataErrorBlock v-else-if="error" :title="$t('components.citizens.citizens_list.unable_to_load')"
                             :retry="refresh" />
                         <button v-else-if="users && users.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                {{ $t('components.citizens.citizen_list.no_citizens') }}
+                                {{ $t('components.citizens.citizens_list.no_citizens') }}
                             </span>
                         </button>
                         <div v-else>
