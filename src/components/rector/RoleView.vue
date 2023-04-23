@@ -213,7 +213,7 @@ watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 12
                                                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             @change="queryPerm = $event.target.value"
                                                             :display-value="(perm: any) => perm ? `${perm?.getName()}: ${perm?.getDescription()}` : ''"
-                                                            placeholder="Permission" />
+                                                            placeholder="Permission" autocomplete="off" />
                                                     </ComboboxButton>
 
                                                     <ComboboxOptions v-if="filteredPerms.length > 0"
