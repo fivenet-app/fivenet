@@ -28,7 +28,7 @@ type CitizenStoreServiceClient interface {
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// @perm: fields=SourceUser;description="Citizen Info Activity Feed"
 	GetUserActivity(ctx context.Context, in *GetUserActivityRequest, opts ...grpc.CallOption) (*GetUserActivityResponse, error)
-	// @perm: fields=Wanted;description="Set Citizen Props (e.g., wanted status)"
+	// @perm: fields=Wanted,Job;description="Set Citizen Props (e.g., wanted status)"
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 }
 
@@ -86,7 +86,7 @@ type CitizenStoreServiceServer interface {
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// @perm: fields=SourceUser;description="Citizen Info Activity Feed"
 	GetUserActivity(context.Context, *GetUserActivityRequest) (*GetUserActivityResponse, error)
-	// @perm: fields=Wanted;description="Set Citizen Props (e.g., wanted status)"
+	// @perm: fields=Wanted,Job;description="Set Citizen Props (e.g., wanted status)"
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	mustEmbedUnimplementedCitizenStoreServiceServer()
 }

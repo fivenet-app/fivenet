@@ -8,6 +8,7 @@
 package model
 
 type FivenetJobProps struct {
-	Job   string  `json:"job"`
-	Theme *string `json:"theme"`
+	Job                string  `json:"job"`
+	Theme              *string `json:"theme"`
+	LivemapMarkerColor *string `json:"livemap_marker_color"`
 }

@@ -36,7 +36,7 @@ type DispatchMarker struct {
 	JobLabel  string               `protobuf:"bytes,6,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty" alias:"job_label"` // @gotags: alias:"job_label"
 	Name      string               `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
 	Icon      string               `protobuf:"bytes,8,opt,name=icon,proto3" json:"icon,omitempty"`
-	IconColor string               `protobuf:"bytes,9,opt,name=icon_color,json=iconColor,proto3" json:"icon_color,omitempty"`
+	IconColor string               `protobuf:"bytes,9,opt,name=icon_color,json=iconColor,proto3" json:"icon_color,omitempty" alias:"icon_color"` // @gotags: alias:"icon_color"
 	Popup     string               `protobuf:"bytes,10,opt,name=popup,proto3" json:"popup,omitempty"`
 }
 
@@ -153,8 +153,8 @@ type UserMarker struct {
 	Id        int32                `protobuf:"varint,4,opt,name=id,proto3" json:"id,omitempty" alias:"user_id"`                               // @gotags: alias:"user_id"
 	Name      string               `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
 	Icon      string               `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
-	IconColor string               `protobuf:"bytes,7,opt,name=icon_color,json=iconColor,proto3" json:"icon_color,omitempty"`
-	User      *users.UserShort     `protobuf:"bytes,8,opt,name=user,proto3" json:"user,omitempty" alias:"user"` // @gotags: alias:"user"
+	IconColor string               `protobuf:"bytes,7,opt,name=icon_color,json=iconColor,proto3" json:"icon_color,omitempty" alias:"icon_color"` // @gotags: alias:"icon_color"
+	User      *users.UserShort     `protobuf:"bytes,8,opt,name=user,proto3" json:"user,omitempty" alias:"user"`                            // @gotags: alias:"user"
 }
 
 func (x *UserMarker) Reset() {

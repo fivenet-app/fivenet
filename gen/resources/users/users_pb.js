@@ -1420,15 +1420,15 @@ proto.resources.users.UserProps.serializeBinaryToWriter = function(message, writ
       f
     );
   }
-  f = message.getWanted();
-  if (f) {
+  f = /** @type {boolean} */ (jspb.Message.getField(message, 2));
+  if (f != null) {
     writer.writeBool(
       2,
       f
     );
   }
-  f = message.getJob();
-  if (f.length > 0) {
+  f = /** @type {string} */ (jspb.Message.getField(message, 3));
+  if (f != null) {
     writer.writeString(
       3,
       f
@@ -1469,7 +1469,25 @@ proto.resources.users.UserProps.prototype.getWanted = function() {
  * @return {!proto.resources.users.UserProps} returns this
  */
 proto.resources.users.UserProps.prototype.setWanted = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 2, value);
+  return jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.users.UserProps} returns this
+ */
+proto.resources.users.UserProps.prototype.clearWanted = function() {
+  return jspb.Message.setField(this, 2, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.users.UserProps.prototype.hasWanted = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
@@ -1487,7 +1505,25 @@ proto.resources.users.UserProps.prototype.getJob = function() {
  * @return {!proto.resources.users.UserProps} returns this
  */
 proto.resources.users.UserProps.prototype.setJob = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setField(this, 3, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.users.UserProps} returns this
+ */
+proto.resources.users.UserProps.prototype.clearJob = function() {
+  return jspb.Message.setField(this, 3, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.users.UserProps.prototype.hasJob = function() {
+  return jspb.Message.getField(this, 3) != null;
 };
 
 

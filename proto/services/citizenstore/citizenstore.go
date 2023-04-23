@@ -321,9 +321,25 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*SetUserPropsResponse, error) {
 	userId := auth.GetUserIDFromContext(ctx)
 
+	values := []interface{}{}
+	updateSets := []jet.ColumnAssigment{}
+
 	// Field Permission Check
-	if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
-		return nil, status.Error(codes.PermissionDenied, "You are not allowed to set user wanted status!")
+	if req.Props.Wanted != nil {
+		if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
+			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user wanted status!")
+		}
+
+		values = append(values, *req.Props.Wanted)
+		updateSets = append(updateSets, userProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
+	}
+	if req.Props.Wanted != nil {
+		if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Job") {
+			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user job!")
+		}
+
+		values = append(values, *req.Props.Job)
+		updateSets = append(updateSets, userProps.Job.SET(jet.String(*req.Props.Job)))
 	}
 
 	// Begin transaction
@@ -339,11 +355,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			userProps.AllColumns,
 		).
 		VALUES(
-			req.Props.UserId,
-			req.Props.Wanted,
+			values[0],
+			values[1:],
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			userProps.Wanted.SET(jet.Bool(req.Props.Wanted)),
+			updateSets...,
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -351,19 +367,17 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	// Create user activity
-	key := "UserProps.Wanted"
-	newValue := strconv.FormatBool(req.Props.Wanted)
-	oldValue := strconv.FormatBool(!req.Props.Wanted)
-	if err := s.addUserAcitvity(ctx, tx,
-		&model.FivenetUserActivity{
-			SourceUserID: userId,
-			TargetUserID: req.Props.UserId,
-			Type:         int16(users.USER_ACTIVITY_TYPE_CHANGED),
-			Key:          key,
-			OldValue:     &oldValue,
-			NewValue:     &newValue,
-		}); err != nil {
-		return nil, FailedQueryErr
+	if req.Props.Wanted != nil {
+		if err := s.addUserAcitvity(ctx, tx,
+			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "Wanted", strconv.FormatBool(!*req.Props.Wanted), strconv.FormatBool(*req.Props.Wanted)); err != nil {
+			return nil, FailedQueryErr
+		}
+	}
+	if req.Props.Job != nil {
+		if err := s.addUserAcitvity(ctx, tx,
+			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "Job", *req.Props.Job, *req.Props.Job); err != nil {
+			return nil, FailedQueryErr
+		}
 	}
 
 	// Commit the transaction
@@ -374,7 +388,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	return &SetUserPropsResponse{}, nil
 }
 
-func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, activity *model.FivenetUserActivity) error {
+func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType int16, key string, oldValue string, newValue string) error {
 	stmt := userAct.
 		INSERT(
 			userAct.SourceUserID,
@@ -384,7 +398,14 @@ func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, activity *mode
 			userAct.OldValue,
 			userAct.NewValue,
 		).
-		MODEL(activity)
+		MODEL(&model.FivenetUserActivity{
+			SourceUserID: userId,
+			TargetUserID: targetUserId,
+			Type:         int16(activityType),
+			Key:          key,
+			OldValue:     &oldValue,
+			NewValue:     &newValue,
+		})
 
 	_, err := stmt.ExecContext(ctx, s.db)
 	return err

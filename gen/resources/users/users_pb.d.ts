@@ -173,9 +173,13 @@ export class UserProps extends jspb.Message {
 
   getWanted(): boolean;
   setWanted(value: boolean): UserProps;
+  hasWanted(): boolean;
+  clearWanted(): UserProps;
 
   getJob(): string;
   setJob(value: string): UserProps;
+  hasJob(): boolean;
+  clearJob(): UserProps;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UserProps.AsObject;
@@ -188,8 +192,18 @@ export class UserProps extends jspb.Message {
 export namespace UserProps {
   export type AsObject = {
     userId: number,
-    wanted: boolean,
-    job: string,
+    wanted?: boolean,
+    job?: string,
+  }
+
+  export enum WantedCase { 
+    _WANTED_NOT_SET = 0,
+    WANTED = 2,
+  }
+
+  export enum JobCase { 
+    _JOB_NOT_SET = 0,
+    JOB = 3,
   }
 }
 

@@ -34,7 +34,7 @@ func init() {
 		{
 			Key:         CitizenStoreServicePermKey,
 			Name:        "SetUserProps",
-			Fields:      []string{"Wanted"},
+			Fields:      []string{"Wanted", "Job"},
 			Description: "Set Citizen Props (e.g., wanted status)",
 		},
 	})

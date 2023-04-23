@@ -26,8 +26,9 @@ import (
 )
 
 var (
-	locs  = table.FivenetUserLocations
-	users = table.Users.AS("user")
+	locs     = table.FivenetUserLocations
+	users    = table.Users.AS("user")
+	jobProps = table.FivenetJobProps
 )
 
 var (
@@ -192,11 +193,15 @@ func (s *Server) refreshUserLocations() error {
 			users.JobGrade,
 			users.Firstname,
 			users.Lastname,
+			jobProps.LivemapMarkerColor.AS("usermarker.icon_color"),
 		).
 		FROM(
 			locs.
 				INNER_JOIN(users,
 					locs.Identifier.EQ(users.Identifier),
+				).
+				LEFT_JOIN(jobProps,
+					jobProps.Job.EQ(users.Job),
 				),
 		).
 		WHERE(
@@ -218,7 +223,9 @@ func (s *Server) refreshUserLocations() error {
 		if _, ok := markers[job]; !ok {
 			markers[job] = []*livemap.UserMarker{}
 		}
-		dest[i].IconColor = "5C7AFF"
+		if dest[i].IconColor == "" {
+			dest[i].IconColor = "5C7AFF"
+		}
 		markers[job] = append(markers[job], dest[i])
 	}
 	for job, v := range markers {

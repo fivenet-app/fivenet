@@ -20,4 +20,5 @@ message JobGrade {
 message JobProps {
   string job = 1 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   string theme = 2 [(validate.rules).string.max_len = 20]; // @gotags: alias:"theme"
+  string livemap_marker_color = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"livemap_marker_color"
 }

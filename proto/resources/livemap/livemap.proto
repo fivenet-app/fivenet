@@ -16,7 +16,7 @@ message DispatchMarker {
   string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   string name = 7;
   string icon = 8;
-  string icon_color = 9;
+  string icon_color = 9; // @gotags: alias:"icon_color"
   string popup = 10;
 }
 
@@ -27,7 +27,7 @@ message UserMarker {
   int32 id = 4 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
   string name = 5;
   string icon = 6;
-  string icon_color = 7;
+  string icon_color = 7; // @gotags: alias:"icon_color"
 
   resources.users.UserShort user = 8; // @gotags: alias:"user"
 }

@@ -530,7 +530,8 @@ proto.resources.jobs.JobProps.prototype.toObject = function(opt_includeInstance)
 proto.resources.jobs.JobProps.toObject = function(includeInstance, msg) {
   var f, obj = {
     job: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    theme: jspb.Message.getFieldWithDefault(msg, 2, "")
+    theme: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    livemapMarkerColor: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -575,6 +576,10 @@ proto.resources.jobs.JobProps.deserializeBinaryFromReader = function(msg, reader
       var value = /** @type {string} */ (reader.readString());
       msg.setTheme(value);
       break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLivemapMarkerColor(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -618,6 +623,13 @@ proto.resources.jobs.JobProps.serializeBinaryToWriter = function(message, writer
       f
     );
   }
+  f = message.getLivemapMarkerColor();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
 };
 
 
@@ -654,6 +666,24 @@ proto.resources.jobs.JobProps.prototype.getTheme = function() {
  */
 proto.resources.jobs.JobProps.prototype.setTheme = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string livemap_marker_color = 3;
+ * @return {string}
+ */
+proto.resources.jobs.JobProps.prototype.getLivemapMarkerColor = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.jobs.JobProps} returns this
+ */
+proto.resources.jobs.JobProps.prototype.setLivemapMarkerColor = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 

@@ -683,9 +683,13 @@ func (m *UserProps) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Wanted
+	if m.Wanted != nil {
+		// no validation rules for Wanted
+	}
 
-	// no validation rules for Job
+	if m.Job != nil {
+		// no validation rules for Job
+	}
 
 	if len(errors) > 0 {
 		return UserPropsMultiError(errors)
