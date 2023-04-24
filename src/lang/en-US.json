@@ -100,7 +100,9 @@
         "theme": "Theme",
         "job_grade": "Job Grade",
         "role": "Role | Roles",
-        "permission": "Permission | Permissions"
+        "permission": "Permission | Permissions",
+        "license_plate": "License Plate",
+        "type": "Type"
     },
     "notifications": {
         "clipboard": {
