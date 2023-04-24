@@ -56,6 +56,14 @@
             "documents_removed": {
                 "title": "Clipboard: Documents removed",
                 "content": "All documents have been removed from your clipboard"
+            },
+            "citizen_removed": {
+                "title": "Clipboard: Citizen removed",
+                "content": "Selected citizen removed from clipboard"
+            },
+            "citizens_removed": {
+                "title": "Clipboard: Citizens removed",
+                "content": "All citizens have been removed from your clipboard"
             }
         },
         "action_successfull": {
@@ -197,10 +205,8 @@
                 "add": "Add to Clipboard"
             },
             "clipboard_modal": {
-                "clear": "Clear Clipboard"
-            },
-            "clipboard_modal_documents": {
-                "no_documents": "No documents in clipboard"
+                "clear": "Clear Clipboard",
+                "no_data": "No {0} in clipboard"
             }
         }
     }

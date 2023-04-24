@@ -8,6 +8,8 @@ import { useNotificationsStore } from '~/store/notifications';
 const store = useClipboardStore();
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const users = computed(() => store.$state.users);
 
 const emit = defineEmits<{
@@ -67,7 +69,7 @@ async function remove(item: ClipboardUser, notify: boolean): Promise<void> {
 
     await store.removeUser(item.id!);
     if (notify) {
-        notifications.dispatchNotification({ title: 'Clipboard: Citizen removed', content: 'Selected citizen removed from clipboard', duration: 3500, type: 'info' });
+        notifications.dispatchNotification({ title: t('notifications.clipboard.citizen_removed.title'), content: t('notifications.clipboard.citizen_removed.content'), duration: 3500, type: 'info' });
     }
 }
 
@@ -79,7 +81,7 @@ async function removeAll(): Promise<void> {
     }
 
     emit('statisfied', false);
-    notifications.dispatchNotification({ title: 'Clipboard: Citizens removed', content: 'All citizens have been removed from your clipboard', duration: 3500, type: 'info' });
+    notifications.dispatchNotification({ title: t('notifications.clipboard.citizens_removed.title'), content: t('notifications.clipboard.citizens_removed.content'), duration: 3500, type: 'info' });
 }
 
 watch(props, async (newVal) => {
@@ -101,7 +103,7 @@ watch(props, async (newVal) => {
         disabled>
         <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
         <span class="block mt-2 text-sm font-semibold text-gray-300">
-            No Users in Clipboard.
+            {{ $t('components.clipboard.clipboard_modal.no_data', ['citizens']) }}
         </span>
     </button>
     <table v-else class="min-w-full divide-y divide-gray-700">
@@ -109,16 +111,16 @@ watch(props, async (newVal) => {
             <tr>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0"
                     v-if="showSelect">
-                    Select
+                    {{ $t('common.select', 1) }}
                 </th>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
-                    Name
+                    {{ $t('common.name') }}
                 </th>
                 <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-white">
-                    Job
+                    {{ $t('common.job', 1) }}
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                    Actions
+                    {{ $t('common.action', 2) }}
                     <button v-if="selected.length > 0" @click="removeAll()">
                         <TrashIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
@@ -132,10 +134,10 @@ watch(props, async (newVal) => {
                         <button @click="select(item)"
                             class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2">
                             <span v-if="!selected.includes(item)">
-                                SELECT
+                                {{ $t('common.select', 1).toUpperCase() }}
                             </span>
                             <span v-else>
-                                SELECTED
+                                {{ $t('common.select', 2).toUpperCase() }}
                             </span>
                         </button>
                     </div>

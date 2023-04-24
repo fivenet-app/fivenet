@@ -104,7 +104,7 @@ watch(props, async (newVal) => {
         disabled>
         <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />
         <span class="block mt-2 text-sm font-semibold text-gray-300">
-            {{ $t('components.clipboard.clipboard_modal_documents.no_documents') }}
+            {{ $t('components.clipboard.clipboard_modal.no_data', ['documents']) }}
         </span>
     </button>
     <table v-else class="min-w-full divide-y divide-gray-700">
