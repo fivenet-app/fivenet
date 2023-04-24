@@ -99,7 +99,8 @@
         "prop": "Prop",
         "theme": "Theme",
         "job_grade": "Job Grade",
-        "role": "Role | Roles"
+        "role": "Role | Roles",
+        "permission": "Permission | Permissions"
     },
     "notifications": {
         "clipboard": {
@@ -175,6 +176,10 @@
         "role_created": {
             "title": "Role: Created",
             "content": "Role has been created."
+        },
+        "role_updated": {
+            "title": "Role: Permissions Saved",
+            "content": "Permissions have been saved."
         }
     },
     "pages": {
@@ -373,6 +378,9 @@
                 "job_properties": "Job Properties",
                 "your_job_properties": "Your job's FiveNet properties.",
                 "livemap_marker_color": "Livemap Marker Color"
+            },
+            "role_view": {
+                "add_permission": "Add Permission"
             }
         }
     }
