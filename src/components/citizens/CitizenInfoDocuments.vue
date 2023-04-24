@@ -43,14 +43,14 @@ async function getUserDocuments(): Promise<Array<DocumentRelation>> {
 
 <template>
     <div class="mt-3">
-        <DataPendingBlock v-if="pending" message="Loading user documents..." />
-        <DataErrorBlock v-else-if="error" title="Unable to load user documents!" :retry="refresh" />
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', ['user documents'])" />
+        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', ['user documents'])" :retry="refresh" />
         <button v-else-if="relations && relations.length == 0" type="button"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
             disabled>
             <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                No User Documents found.
+                {{ $t('common.not_found', ['user documents']) }}
             </span>
         </button>
         <DocumentRelations v-else-if="relations" :relations="relations" />

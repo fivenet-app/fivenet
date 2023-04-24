@@ -27,6 +27,7 @@
         "wanted": "Wanted",
         "loading": "Loading {0}...",
         "unable_to_load": "Unable to load {0}!",
+        "not_found": "No {0} found!",
         "profile": "Profile",
         "activity": "Activity",
         "visum": "Visum",
@@ -115,7 +116,6 @@
     "components": {
         "auth": {
             "account_info": {
-                "no_data": "No account data found!",
                 "title": "Account Info",
                 "subtitle": "Your FiveNet account details.",
                 "license": "Identifier/ License",
