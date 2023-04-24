@@ -22,8 +22,6 @@ async function getJobProps(): Promise<JobProps> {
                 getJobProps(req, null);
 
             properties.value.livemapMarkerColor = '#' + resp.getJobProps()?.getLivemapMarkerColor();
-            console.log(resp.getJobProps()?.getLivemapMarkerColor());
-            console.log(properties.value.livemapMarkerColor);
             return res(resp.getJobProps()!);
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
