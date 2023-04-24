@@ -102,7 +102,8 @@
         "role": "Role | Roles",
         "permission": "Permission | Permissions",
         "license_plate": "License Plate",
-        "type": "Type"
+        "type": "Type",
+        "propertie": "Propertie | Properties"
     },
     "notifications": {
         "clipboard": {
@@ -267,6 +268,13 @@
                 "documents": "Search and create Documents, using templates or from scratch.",
                 "jobs": "Infos about your job and employee management. Coming soon",
                 "livemap": "Live position of dispatches and your colleagues."
+            }
+        },
+        "rector": {
+            "features": {
+                "properties": "Set your job properties (e.g., livemap color).",
+                "jobs": "Setup your factions roles job rank permissions.",
+                "audit_log": "An audit trail of everything your colleagues have done."
             }
         }
     },
