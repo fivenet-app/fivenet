@@ -290,7 +290,16 @@
                 "links": "Links",
                 "solves": "Solves",
                 "closes": "Closes",
-                "deprecates": "Deprecates"
+                "deprecates": "Deprecates",
+                "open_document": "Open Document",
+                "remove_reference": "Remove Reference",
+                "add_reference": "Add Reference",
+                "open_citizen": "Open Citizen",
+                "remove_relation": "Remove Relation",
+                "add_relation": "Add Relation",
+                "mentioned": "Mentioned",
+                "targets": "Targets",
+                "caused": "Caused"
             }
         },
         "partials": {

@@ -40,6 +40,8 @@ const store = useAuthStore();
 const clipboard = useClipboardStore();
 const router = useRouter();
 
+const { t } = useI18n();
+
 const props = defineProps<{
     open: boolean,
     document?: number,
@@ -52,9 +54,9 @@ const emit = defineEmits<{
 }>();
 
 const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
-    { name: 'View current', icon: MagnifyingGlassIcon },
-    { name: 'Clipboard', icon: ClipboardDocumentListIcon },
-    { name: 'Add new', icon: UserPlusIcon },
+    { name: t('components.documents.document_managers.view_current'), icon: MagnifyingGlassIcon },
+    { name: t('common.clipboard'), icon: ClipboardDocumentListIcon },
+    { name: t('components.documents.document_managers.add_new'), icon: UserPlusIcon },
 ]);
 
 const entriesUsers = ref<User[]>([]);
@@ -125,12 +127,12 @@ function removeRelation(id: number): void {
                                 <button type="button"
                                     class="transition-colors rounded-md hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                     @click="emit('close')">
-                                    <span class="sr-only">Close</span>
+                                    <span class="sr-only">{{ $t('common.close') }}</span>
                                     <XMarkIcon class="w-6 h-6" aria-hidden="true" />
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                Citizen Relations
+                                {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
                             </DialogTitle>
                             <TabGroup>
                                 <TabList class="flex flex-row mb-4">
@@ -157,16 +159,20 @@ function removeRelation(id: number): void {
                                                                 <tr>
                                                                     <th scope="col"
                                                                         class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold  sm:pl-6 lg:pl-8">
-                                                                        Name</th>
+                                                                        {{ $t('common.name') }}
+                                                                    </th>
                                                                     <th scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                                        Creator</th>
+                                                                        {{ $t('common.creator') }}
+                                                                    </th>
                                                                     <th scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                                        Relation</th>
+                                                                        {{ $t('common.relation', 1) }}
+                                                                    </th>
                                                                     <th scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                                        Actions</th>
+                                                                        {{ $t('common.action', 2) }}
+                                                                    </th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
@@ -189,7 +195,7 @@ function removeRelation(id: number): void {
                                                                             <div class="flex">
                                                                                 <a :href="router.resolve({ name: 'citizens-id', params: { id: rel.getTargetUserId() } }).href"
                                                                                     target="_blank" data-te-toggle="tooltip"
-                                                                                    title="Open Citizen">
+                                                                                    :title="$t('components.documents.document_managers.open_citizen')">
                                                                                     <ArrowTopRightOnSquareIcon
                                                                                         class="w-6 h-auto text-primary-500 hover:text-primary-300">
                                                                                     </ArrowTopRightOnSquareIcon>
@@ -199,7 +205,7 @@ function removeRelation(id: number): void {
                                                                                 <button role="button"
                                                                                     @click="removeRelation(rel.getId())"
                                                                                     data-te-toggle="tooltip"
-                                                                                    title="Remove Relation">
+                                                                                    :title="$t('components.documents.document_managers.remove_relation')">
                                                                                     <UserMinusIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200">
                                                                                     </UserMinusIcon>
@@ -219,7 +225,8 @@ function removeRelation(id: number): void {
                                                 <label for="name" class="sr-only">Name</label>
                                                 <input type="text" name="name" id="name"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    placeholder="Citizen Name" v-model="queryChar" />
+                                                    :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
+                                                    v-model="queryChar" />
                                             </div>
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -229,7 +236,8 @@ function removeRelation(id: number): void {
                                                             disabled>
                                                             <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
                                                             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                                                No Users in Clipboard.
+                                                                {{ $t('components.clipboard.clipboard_modal.no_data',
+                                                                    [$t('common.citizen', 2)]) }}
                                                             </span>
                                                         </button>
                                                         <table v-else class="min-w-full divide-y divide-base-200">
@@ -237,18 +245,22 @@ function removeRelation(id: number): void {
                                                                 <tr>
                                                                     <th scope="col"
                                                                         class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">
-                                                                        Name</th>
+                                                                        {{ $t('common.name') }}
+                                                                    </th>
                                                                     <th scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                                        Job</th>
+                                                                        {{ $t('common.job', 1) }}
+                                                                    </th>
                                                                     <th scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                                        Add Relation</th>
+                                                                        {{
+                                                                            $t('components.documents.document_managers.add_relation')
+                                                                        }}
+                                                                    </th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="user in clipboard.$state.users"
-                                                                    :key="user.id">
+                                                                <tr v-for="user in clipboard.$state.users" :key="user.id">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
                                                                         {{ user.firstname }} {{
@@ -262,7 +274,7 @@ function removeRelation(id: number): void {
                                                                                 <button role="button"
                                                                                     @click="addRelation(user.id!, 0)"
                                                                                     data-te-toggle="tooltip"
-                                                                                    title="Mentioned">
+                                                                                    :title="$t('components.documents.document_managers.mentioned')">
                                                                                     <ChatBubbleBottomCenterTextIcon
                                                                                         class="w-6 h-auto text-success-500 hover:text-success-300">
                                                                                     </ChatBubbleBottomCenterTextIcon>
@@ -272,7 +284,7 @@ function removeRelation(id: number): void {
                                                                                 <button role="button"
                                                                                     @click="addRelation(user.id!, 1)"
                                                                                     data-te-toggle="tooltip"
-                                                                                    title="Targets">
+                                                                                    :title="$t('components.documents.document_managers.targets')">
                                                                                     <ExclamationTriangleIcon
                                                                                         class="w-6 h-auto text-warn-400 hover:text-warn-200">
                                                                                     </ExclamationTriangleIcon>
@@ -281,7 +293,8 @@ function removeRelation(id: number): void {
                                                                             <div class="flex">
                                                                                 <button role="button"
                                                                                     @click="addRelation(user.id!, 2)"
-                                                                                    data-te-toggle="tooltip" title="Caused">
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="$t('components.documents.document_managers.caused')">
                                                                                     <ShieldExclamationIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200">
                                                                                     </ShieldExclamationIcon>
@@ -305,13 +318,18 @@ function removeRelation(id: number): void {
                                                                 <tr>
                                                                     <th scope="col"
                                                                         class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8">
-                                                                        Name</th>
+                                                                        {{ $t('common.name') }}
+                                                                    </th>
                                                                     <th scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                                        Job</th>
+                                                                        {{ $t('common.job', 1) }}
+                                                                    </th>
                                                                     <th scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                                        Add Relation</th>
+                                                                        {{
+                                                                            $t('components.documents.document_managers.add_relation')
+                                                                        }}
+                                                                    </th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
@@ -330,7 +348,7 @@ function removeRelation(id: number): void {
                                                                                 <button role="button"
                                                                                     @click="addRelation(user.getUserId(), 0)"
                                                                                     data-te-toggle="tooltip"
-                                                                                    title="Mentioned">
+                                                                                    :title="$t('components.documents.document_managers.mentioned')">
                                                                                     <ChatBubbleBottomCenterTextIcon
                                                                                         class="w-6 h-auto text-success-500 hover:text-success-300">
                                                                                     </ChatBubbleBottomCenterTextIcon>
@@ -340,7 +358,7 @@ function removeRelation(id: number): void {
                                                                                 <button role="button"
                                                                                     @click="addRelation(user.getUserId(), 1)"
                                                                                     data-te-toggle="tooltip"
-                                                                                    title="Targets">
+                                                                                    :title="$t('components.documents.document_managers.targets')">
                                                                                     <ExclamationTriangleIcon
                                                                                         class="w-6 h-auto text-warn-400 hover:text-warn-200">
                                                                                     </ExclamationTriangleIcon>
@@ -349,7 +367,8 @@ function removeRelation(id: number): void {
                                                                             <div class="flex">
                                                                                 <button role="button"
                                                                                     @click="addRelation(user.getUserId(), 2)"
-                                                                                    data-te-toggle="tooltip" title="Caused">
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="$t('components.documents.document_managers.caused')">
                                                                                     <ShieldExclamationIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200">
                                                                                     </ShieldExclamationIcon>
@@ -370,7 +389,7 @@ function removeRelation(id: number): void {
                             <div class="gap-2 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                                 <button type="button"
                                     class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="emit('close')">Close</button>
+                                    @click="emit('close')">{{ $t('common.close') }}</button>
                             </div>
                         </DialogPanel>
                     </TransitionChild>

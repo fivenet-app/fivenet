@@ -195,7 +195,7 @@ function removeReference(id: number): void {
                                                                             <div class="flex">
                                                                                 <a :href="router.resolve({ name: 'documents-id', params: { id: ref.getTargetDocumentId() } }).href"
                                                                                     target="_blank" data-te-toggle="tooltip"
-                                                                                    :title="`${$t('common.open')} ${$t('common.document', 1)}`">
+                                                                                    :title="$t('components.documents.document_managers.open_document')">
                                                                                     <ArrowTopRightOnSquareIcon
                                                                                         class="w-6 h-auto text-primary-500 hover:text-primary-300">
                                                                                     </ArrowTopRightOnSquareIcon>
@@ -205,7 +205,7 @@ function removeReference(id: number): void {
                                                                                 <button role="button"
                                                                                     @click="removeReference(ref.getId())"
                                                                                     data-te-toggle="tooltip"
-                                                                                    :title="`${$t('common.remove')} ${$t('common.reference', 1)}`">
+                                                                                    :title="$t('components.documents.document_managers.remove_reference')">
                                                                                     <DocumentMinusIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200">
                                                                                     </DocumentMinusIcon>
@@ -254,7 +254,7 @@ function removeReference(id: number): void {
                                                                     </th>
                                                                     <th scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                                        {{ $t('common.add') }} {{ $t('common.reference', 1) }}
+                                                                        {{ $t('components.documents.document_managers.add_reference') }}
                                                                     </th>
                                                                 </tr>
                                                             </thead>
