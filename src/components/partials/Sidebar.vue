@@ -219,7 +219,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                         class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
                         exact-active-class="text-neutral" aria-current-value="page">
                         <HomeIcon class="h-6 w-6" aria-hidden="true" />
-                        <span class="mt-2">Home</span>
+                        <span class="mt-2">{{ $t('common.home') }}</span>
                     </NuxtLink>
                     <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')"
                         v-else-if="accessToken && activeChar" :key="item.name" :to="item.href" v-can="item.permission"
@@ -268,7 +268,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                         class="flex items-center justify-center w-12 h-12 rounded-full focus:outline-none ring-2 ring-neutral"
                                         @click="mobileMenuOpen = false">
                                         <XMarkIcon class="w-6 h-6 text-neutral" aria-hidden="true" />
-                                        <span class="sr-only">Close sidebar</span>
+                                        <span class="sr-only">{{ $t('components.partials.sidebar.close_sidebar') }}</span>
                                     </button>
                                 </div>
                             </TransitionChild>
@@ -282,7 +282,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                             class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium group flex items-center rounded-md py-2 px-3 text-sm">
                                             <HomeIcon class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
                                                 aria-hidden="true" />
-                                            <span>Home</span>
+                                            <span>{{ $t('common.home') }}</span>
                                         </NuxtLink>
                                         <NuxtLink v-for="item in sidebarNavigation.filter(e => e.position === 'top')"
                                             v-else-if="accessToken && activeChar" :key="item.name" :to="item.href"
@@ -326,7 +326,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                     <button type="button"
                         class="px-4 text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
                         @click="mobileMenuOpen = true">
-                        <span class="sr-only">Open sidebar</span>
+                        <span class="sr-only">{{ $t('components.partials.sidebar.open_sidebar') }}</span>
                         <Bars3BottomLeftIcon class="w-6 h-6" aria-hidden="true" />
                     </button>
                     <div class="flex justify-between flex-1 px-4 sm:px-6">
@@ -369,7 +369,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                 <div>
                                     <MenuButton
                                         class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                                        <span class="sr-only">Open user menu</span>
+                                        <span class="sr-only">{{ $t('components.partials.sidebar.open_usermenu') }}</span>
                                         <UserIcon
                                             class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100" />
                                     </MenuButton>
