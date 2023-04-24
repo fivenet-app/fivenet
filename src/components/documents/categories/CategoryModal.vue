@@ -12,6 +12,8 @@ import { useNotificationsStore } from '~/store/notifications';
 const { $grpc } = useNuxtApp();
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const emit = defineEmits<{
     (e: 'deleted'): void,
     (e: 'close'): void,
@@ -37,7 +39,7 @@ async function deleteCategory(): Promise<void> {
             const resp = await $grpc.getDocStoreClient()
                 .deleteDocumentCategory(req, null);
 
-            notifications.dispatchNotification({ title: 'Category has been deleted', content: '', type: 'success' });
+            notifications.dispatchNotification({ title: t('notifications.category_deleted.title'), content: t('notifications.category_deleted.content'), type: 'success' });
             emit('close');
             emit('deleted');
             return res();
@@ -59,7 +61,7 @@ async function updateCategory(name: string, description: string): Promise<void> 
             await $grpc.getDocStoreClient()
                 .updateDocumentCategory(req, null);
 
-            notifications.dispatchNotification({ title: 'Category has been updated', content: '', type: 'success' });
+            notifications.dispatchNotification({ title: t('notifications.category_updated.title'), content: t('notifications.category_updated.content'), type: 'success' });
             emit('close');
             return res();
         } catch (e) {
@@ -107,7 +109,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                         </div>
                                         <div class="mt-3 text-center sm:mt-5">
                                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                                Category: {{ category?.getName() }}
+                                                {{ $t('common.category', 1) }}: {{ category?.getName() }}
                                             </DialogTitle>
                                             <div class="mt-2">
                                                 <div class="sm:flex-auto">
@@ -115,21 +117,24 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                                         <div class="flex flex-row gap-4 mx-auto">
                                                             <div class="flex-1 form-control">
                                                                 <label for="name"
-                                                                    class="block text-sm font-medium leading-6 text-neutral">Category</label>
+                                                                    class="block text-sm font-medium leading-6 text-neutral">{{
+                                                                        $t('common.category', 1) }}</label>
                                                                 <div class="relative flex items-center mt-2">
                                                                     <Field type="text" name="name" id="name"
-                                                                        placeholder="Category" :value="category?.getName()"
+                                                                        :placeholder="$t('common.category', 1)"
+                                                                        :value="category?.getName()"
                                                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                                                                    <ErrorMessage name="description" as="p"
+                                                                    <ErrorMessage name="category" as="p"
                                                                         class="mt-2 text-sm text-error-400" />
                                                                 </div>
                                                             </div>
                                                             <div class="flex-1 form-control">
                                                                 <label for="description"
-                                                                    class="block text-sm font-medium leading-6 text-neutral">Description</label>
+                                                                    class="block text-sm font-medium leading-6 text-neutral">{{
+                                                                        $t('common.description') }}</label>
                                                                 <div class="relative flex items-center mt-2">
                                                                     <Field type="text" name="description" id="description"
-                                                                        placeholder="Description"
+                                                                        :placeholder="$t('common.description')"
                                                                         :value="category?.getDescription()"
                                                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                                                     <ErrorMessage name="description" as="p"
@@ -140,7 +145,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                                                 <div class="relative flex items-center mt-2">
                                                                     <button type="submit"
                                                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
-                                                                        Create
+                                                                        {{ $t('common.create') }}
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -154,12 +159,12 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                         <button type="button" v-can="'DocStoreService.DeleteDocumentCategory'"
                                             class="flex-1 rounded-md bg-red-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-red-400"
                                             @click="deleteCategory()" ref="cancelButtonRef">
-                                            Delete
+                                            {{ $t('common.delete') }}
                                         </button>
                                         <button type="button"
                                             class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                             @click="$emit('close')" ref="cancelButtonRef">
-                                            Close
+                                            {{ $t('common.close') }}
                                         </button>
                                     </div>
                                 </div>
@@ -169,5 +174,4 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                 </div>
             </div>
         </Dialog>
-    </TransitionRoot>
-</template>
+    </TransitionRoot></template>

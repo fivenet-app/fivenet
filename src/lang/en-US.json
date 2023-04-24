@@ -53,7 +53,8 @@
         "data": "Data",
         "your": "your",
         "character": "Character | Characters",
-        "user": "User"
+        "user": "User",
+        "delete": "Delete"
     },
     "notifications": {
         "clipboard": {
@@ -97,6 +98,14 @@
         "account_created": {
             "title": "Account created!",
             "content": "Your account was successfully created"
+        },
+        "category_deleted": {
+            "title": "Category deleted!",
+            "content": "The Category was successfully deleted"
+        },
+        "category_updated": {
+            "title": "Category updated!",
+            "content": "The Category was successfully updated"
         }
     },
     "pages": {
