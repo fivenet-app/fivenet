@@ -44,7 +44,10 @@
         "creator": "Creator",
         "plate": "Plate",
         "model": "Model",
-        "owner": "Owner"
+        "owner": "Owner",
+        "category": "Category | Categories",
+        "description": "Description",
+        "create": "Create"
     },
     "notifications": {
         "clipboard": {
@@ -202,15 +205,6 @@
                 "set_citizen_as": "Set the citizen as"
             }
         },
-        "partials": {
-            "sidebar": {
-                "change_character": "Change Character",
-                "account_info": "Account Info"
-            },
-            "table_pagination": {
-                "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"
-            }
-        },
         "clipboard": {
             "clipboard_button": {
                 "add": "Add to Clipboard"
@@ -218,6 +212,22 @@
             "clipboard_modal": {
                 "clear": "Clear Clipboard",
                 "no_data": "No {0} in clipboard"
+            }
+        },
+        "documents": {
+            "categories": {
+                "categories_list": {
+                    "categories_for_your_job": "{0} for your {1} and {2}"
+                }
+            }
+        },
+        "partials": {
+            "sidebar": {
+                "change_character": "Change Character",
+                "account_info": "Account Info"
+            },
+            "table_pagination": {
+                "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"
             }
         }
     }
