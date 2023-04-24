@@ -31,7 +31,8 @@
         "profile": "Profile",
         "activity": "Activity",
         "visum": "Visum",
-        "license": "License | Licenses"
+        "license": "License | Licenses",
+        "not": "Not"
     },
     "notifications": {
         "citizen_add": {
@@ -145,6 +146,9 @@
                 "copy_profile_link": "Copy Profile Link",
                 "revoke_wanted": "Revoke Wanted Status",
                 "set_wanted": "Set Person Wanted"
+            },
+            "citizen_info_activity_feed_entry": {
+                "set_citizen_as": "Set the citizen as"
             }
         },
         "partials": {
