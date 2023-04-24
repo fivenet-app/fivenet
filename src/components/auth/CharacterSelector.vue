@@ -33,8 +33,8 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <DataPendingBlock v-if="pending" message="Loading your characters..." />
-    <DataErrorBlock v-else-if="error" title="Unable to load your characters!" :retry="refresh" />
+    <DataPendingBlock v-if="pending" :message="$t('common.loading', ['your characters'])" />
+    <DataErrorBlock v-else-if="error" :title="$t('common.not_found', ['characters'])" :retry="refresh" />
     <div v-else class="flex flex-row flex-wrap gap-y-2">
         <CharacterSelectorCard v-for="char in chars" :char="char" :key="char.getUserId()"
             class="flex-auto max-w-xl mx-auto" />
