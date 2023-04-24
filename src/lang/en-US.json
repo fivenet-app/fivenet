@@ -33,7 +33,11 @@
         "visum": "Visum",
         "license": "License | Licenses",
         "not": "Not",
-        "close": "Close"
+        "close": "Close",
+        "last_used": "Last Used",
+        "rank": "Rank",
+        "playtime": "Playtime",
+        "choose": "Choose"
     },
     "notifications": {
         "citizen_add": {
