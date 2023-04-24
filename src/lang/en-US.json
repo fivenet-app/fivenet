@@ -186,6 +186,10 @@
         "role_updated": {
             "title": "Role: Permissions Saved",
             "content": "Permissions have been saved."
+        },
+        "error_logout": {
+            "title": "Logout: Encountered an error",
+            "content": "{0}"
         }
     },
     "pages": {

@@ -22,6 +22,8 @@ const store = useAuthStore();
 const router = useRouter();
 const notifications = useNotificationsStore();
 
+const { t }= useI18n();
+
 const accessToken = computed(() => store.$state.accessToken);
 
 async function redirect() {
@@ -45,7 +47,7 @@ onBeforeMount(async () => {
         })
         .catch((err: RpcError) => {
             store.loginStop(err.message);
-            notifications.dispatchNotification({ title: 'Error during logout!', content: err.message, type: 'error' });
+            notifications.dispatchNotification({ title: t('notifications.error_logout.title'), content: t('notifications.error_logout.content', [err.message]), type: 'error' });
         });
 });
 </script>
