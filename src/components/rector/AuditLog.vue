@@ -105,25 +105,28 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Time Range:
-                                    From</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">{{
+                                    $t('common.time_range') }}:
+                                    {{ $t('common.from') }}</label>
                                 <div class="relative flex items-center mt-2">
                                     <input v-model="query.from" ref="searchInput" type="datetime-local" name="search"
-                                        id="search" placeholder="Citizen Name"
+                                        id="search" :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">Time Range:
-                                    To</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">{{
+                                    $t('common.time_range') }}:
+                                    {{ $t('common.to') }}</label>
                                 <div class="relative flex items-center mt-2">
                                     <input v-model="query.from" ref="searchInput" type="datetime-local" name="search"
-                                        id="search" placeholder="Citizen Name"
+                                        id="search" :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
                             <div class="flex-1 form-control">
-                                <label for="users" class="block text-sm font-medium leading-6 text-neutral">Users</label>
+                                <label for="users" class="block text-sm font-medium leading-6 text-neutral">{{
+                                    $t('common.user', 2) }}</label>
                                 <div class="relative items-center mt-2">
                                     <Combobox as="div" v-model="selectedChars" nullable multiple>
                                         <div class="relative">
@@ -132,7 +135,7 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     @change="queryChar = $event.target.value"
                                                     :display-value="(chars: any) => chars ? charsGetDisplayValue(chars) : 'N/A'"
-                                                    placeholder="Users" />
+                                                    :placeholder="$t('common.user', 2)" />
                                             </ComboboxButton>
 
                                             <ComboboxOptions v-if="entriesChars.length > 0"
@@ -163,13 +166,14 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
             <div class="flow-root mt-2">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <DataPendingBlock v-if="pending" message="Loading audit logs..." />
-                        <DataErrorBlock v-else-if="error" title="Unable to load audit logs!" :retry="refresh" />
+                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.audit_log', 2)])" />
+                        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])"
+                            :retry="refresh" />
                         <button v-else-if="logs && logs.length == 0" type="button" @click="focusSearch"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                Use the search field above to search or update your query.
+                                {{ $t('common.not_found', [$t('common.audit_log', 2)]) }}
                             </span>
                         </button>
                         <div v-else>
@@ -178,26 +182,26 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                                     <tr>
                                         <th scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                                            ID
+                                            {{ $t('common.id') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Time
+                                            {{ $t('common.time') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            User
+                                            {{ $t('common.user', 1) }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Service
+                                            {{ $t('common.service') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            State
+                                            {{ $t('common.state') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Data
+                                            {{ $t('common.data') }}
                                         </th>
                                         <th scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Actions
+                                            {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
                                 </thead>
@@ -209,26 +213,26 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                                     <tr>
                                         <th scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                                            ID
+                                            {{ $t('common.id') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Time
+                                            {{ $t('common.time') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            User
+                                            {{ $t('common.user', 1) }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Service
+                                            {{ $t('common.service') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            State
+                                            {{ $t('common.state') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Data
+                                            {{ $t('common.data') }}
                                         </th>
                                         <th scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Actions
+                                            {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
                                 </thead>
@@ -240,5 +244,4 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                 </div>
             </div>
         </div>
-    </div>
-</template>
+</div></template>

@@ -55,7 +55,7 @@
         "data": "Data",
         "your": "your",
         "character": "Character | Characters",
-        "user": "User",
+        "user": "User | Users",
         "delete": "Delete",
         "require": "Require | Requires",
         "max": "Max",
@@ -86,7 +86,14 @@
         "longitude": "Longitude",
         "filter": "Filter",
         "postal": "Postal",
-        "retry": "Retry"
+        "retry": "Retry",
+        "time_range": "Time Range",
+        "from": "From",
+        "to": "To",
+        "audit_log": "Audit Log | Audit Logs",
+        "id": "ID",
+        "time": "Time",
+        "service": "Service"
     },
     "notifications": {
         "clipboard": {
