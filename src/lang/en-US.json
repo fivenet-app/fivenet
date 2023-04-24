@@ -93,7 +93,8 @@
         "audit_log": "Audit Log | Audit Logs",
         "id": "ID",
         "time": "Time",
-        "service": "Service"
+        "service": "Service",
+        "copy": "Copy"
     },
     "notifications": {
         "clipboard": {
