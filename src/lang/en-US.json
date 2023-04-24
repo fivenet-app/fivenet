@@ -78,7 +78,13 @@
         "target": "Target",
         "source": "Source",
         "date": "Date",
-        "comment": "Comment | Comments"
+        "comment": "Comment | Comments",
+        "employee": "Employee | Employees",
+        "dispatch": "Dispatch | Dispatches",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "filter": "Filter",
+        "postal": "Postal"
     },
     "notifications": {
         "clipboard": {
@@ -146,6 +152,10 @@
         "document_updated": {
             "title": "Document updated!",
             "content": "Document has been updated."
+        },
+        "failed_loading_postals": {
+            "title": "Failed to load Postals",
+            "content": "Postals Map couldn't be loaded"
         }
     },
     "pages": {
@@ -310,6 +320,12 @@
             "document_list": {
                 "no_documents_hint": "Either update your search query or create the first document using the above \"Create\"-button."
             }
+        },
+        "livemap": {
+            "starting_datastream": "Starting Livemap data stream...",
+            "failed_datastream": "Failed to stream Livemap data!",
+            "sent_by": "Sent by",
+            "center_selected_marker": "Center selected Marker"
         },
         "partials": {
             "sidebar": {
