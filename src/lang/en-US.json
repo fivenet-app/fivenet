@@ -300,6 +300,9 @@
                 "mentioned": "Mentioned",
                 "targets": "Targets",
                 "caused": "Caused"
+            },
+            "document_list": {
+                "no_documents_hint": "Either update your search query or create the first document using the above \"Create\"-button."
             }
         },
         "partials": {
