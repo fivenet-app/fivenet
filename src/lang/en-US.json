@@ -51,6 +51,10 @@
         "changed_password": {
             "title": "Password has been changed",
             "content": "Your new password has been set"
+        },
+        "account_created": {
+            "title": "Account created!",
+            "content": "Your account was successfully created"
         }
     },
     "pages": {
