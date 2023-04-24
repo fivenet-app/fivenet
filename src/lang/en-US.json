@@ -37,7 +37,8 @@
         "last_used": "Last Used",
         "rank": "Rank",
         "playtime": "Playtime",
-        "choose": "Choose"
+        "choose": "Choose",
+        "clipboard": "Clipboard"
     },
     "notifications": {
         "citizen_add": {
