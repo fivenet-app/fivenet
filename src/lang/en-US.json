@@ -56,7 +56,8 @@
         "user": "User",
         "delete": "Delete",
         "require": "Require | Requires",
-        "max": "Max"
+        "max": "Max",
+        "template": "Template | Templates"
     },
     "notifications": {
         "clipboard": {
