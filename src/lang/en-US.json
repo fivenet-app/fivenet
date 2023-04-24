@@ -33,7 +33,8 @@
         "visum": "Visum",
         "license": "License | Licenses",
         "not": "Not",
-        "close": "Close",
+        "close": "Close | Closed",
+        "open": "Open",
         "last_used": "Last Used",
         "rank": "Rank",
         "playtime": "Playtime",
@@ -62,7 +63,13 @@
         "content": "Content",
         "schema": "Schema",
         "edit": "Edit",
-        "post": "Post"
+        "post": "Post",
+        "state": "State",
+        "reference": "Reference | References",
+        "relation": "Relation | Relations",
+        "access": "Access",
+        "submit": "Submit",
+        "save": "Save | Saving"
     },
     "notifications": {
         "clipboard": {
@@ -114,6 +121,18 @@
         "category_updated": {
             "title": "Category updated!",
             "content": "The Category was successfully updated"
+        },
+        "max_access_entry": {
+            "title": "Maximum amount of Access entries exceeded",
+            "content": "There can only be a maximum of {0} access entries on a Document"
+        },
+        "document_created": {
+            "title": "Document created!",
+            "content": "Document has been created."
+        },
+        "document_updated": {
+            "title": "Document updated!",
+            "content": "Document has been updated."
         }
     },
     "pages": {
@@ -254,6 +273,9 @@
             "document_comments": {
                 "add_comment": "Add your comment",
                 "no_comments": "No comments have been posted yet"
+            },
+            "document_editor": {
+                "add_permission": "Add Permission"
             }
         },
         "partials": {

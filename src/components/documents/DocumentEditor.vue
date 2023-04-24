@@ -42,6 +42,8 @@ const clipboardStore = useClipboardStore();
 const documentStore = useDocumentEditorStore();
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const router = useRouter();
 const route = useRoute();
 
@@ -52,13 +54,15 @@ const props = defineProps({
     },
 });
 
+const maxAccessEntries = 10;
+
 const activeChar = computed(() => authStore.$state.activeChar);
 
 const canEdit = ref(false);
 
 const openclose = [
-    { id: 0, label: 'Open', closed: false },
-    { id: 1, label: 'Closed', closed: true },
+    { id: 0, label: t('common.open'), closed: false },
+    { id: 1, label: t('common.close', 2), closed: true },
 ];
 
 const doc = ref<{ title: string, content: string, closed: { id: number, label: string, closed: boolean }, state: string }>({
@@ -186,8 +190,8 @@ async function findCategories(): Promise<void> {
 }
 
 function addAccessEntry(): void {
-    if (access.value.size > 9) {
-        notifications.dispatchNotification({ title: 'Maximum amount of Access entries exceeded', content: 'There can only be a maximum of 10 access entries on a Document', type: 'error' })
+    if (access.value.size > maxAccessEntries - 1) {
+        notifications.dispatchNotification({ title: t('notifications.max_access_entry.title'), content: t('notifications.max_access_entry.content', [maxAccessEntries]), type: 'error' })
         return;
     }
 
@@ -313,7 +317,7 @@ function submitForm(): void {
                 $grpc.getDocStoreClient().addDocumentRelation(req, null);
             });
 
-            notifications.dispatchNotification({ title: 'Document created!', content: 'Document has been created.' });
+            notifications.dispatchNotification({ title: t('notifications.document_created.title'), content: t('notifications.document_created.content') });
             clipboardStore.clearActiveStack();
             documentStore.clear();
             router.push({ name: 'documents-id', params: { id: resp.getDocumentId(), } });
@@ -400,7 +404,7 @@ function editForm(): void {
                 $grpc.getDocStoreClient().addDocumentRelation(req, null);
             });
 
-            notifications.dispatchNotification({ title: 'Document updated!', content: 'Document has been updated.' });
+            notifications.dispatchNotification({ title: t('notifications.document_updated.title'), content: t('notifications.document_updated.content') });
             clipboardStore.clearActiveStack();
             documentStore.clear();
             router.push({ name: 'documents-id', params: { id: resp.getDocumentId(), } });
@@ -421,10 +425,10 @@ function editForm(): void {
         @close="referenceManagerShow = false" />
     <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
         <div>
-            <label for="name" class="block font-medium sr-only text-s">Title</label>
+            <label for="name" class="block font-medium sr-only text-s">{{ $t('common.title') }}</label>
             <input v-model="doc.title" type="text" name="name"
                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
-                placeholder="Document Title" :disabled="!canEdit" />
+                :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`" :disabled="!canEdit" />
         </div>
         <div class="flex flex-row gap-2">
             <div class="flex-1">
@@ -458,9 +462,10 @@ function editForm(): void {
                 </Combobox>
             </div>
             <div class="flex-1">
+                <label for="name" class="block font-medium sr-only text-s">{{ $t('common.state') }}</label>
                 <input v-model="doc.state" type="text" name="state"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    placeholder="Document State" :disabled="!canEdit" />
+                    :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`" :disabled="!canEdit" />
             </div>
             <div class="flex-1">
                 <Listbox as="div" v-model="doc.closed">
@@ -506,34 +511,34 @@ function editForm(): void {
         <div class="flex-1">
             <button type="button" :disabled="!canEdit"
                 class="rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="referenceManagerShow = true">Document References</button>
+                @click="referenceManagerShow = true">{{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}</button>
         </div>
         <div class="flex-1">
             <button type="button" :disabled="!canEdit"
                 class="rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="relationManagerShow = true">Citizen Relations</button>
+                @click="relationManagerShow = true">{{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}</button>
         </div>
     </div>
     <div class="my-3">
-        <h2 class="text-neutral">Access</h2>
+        <h2 class="text-neutral">{{ $t('common.access') }}</h2>
         <DocumentAccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry"
             @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
             @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
             @deleteRequest="removeAccessEntry($event)" />
         <button type="button" :disabled="!canEdit"
             class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-            data-te-toggle="tooltip" title="Add Permission" @click="addAccessEntry()">
+            data-te-toggle="tooltip" :title="$t('components.documents.document_editor.add_permission')" @click="addAccessEntry()">
             <PlusIcon class="w-5 h-5" aria-hidden="true" />
         </button>
     </div>
     <div class="sm:flex sm:flex-row-reverse">
         <button v-if="!props.id" @click="submitForm()" :disabled="!canEdit"
-            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Submit</button>
+            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">{{ $t('common.submit') }}</button>
         <button v-if="props.id" @click="editForm()" :disabled="!canEdit"
-            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">Edit</button>
+            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">{{ $t('common.edit') }}</button>
         <div v-if="saving" class="text-gray-400 mr-4 flex flex-items">
             <ArrowPathIcon class="w-6 h-auto ml-auto mr-2.5 animate-spin" />
-            <span class="mt-2">Saving...</span>
+            <span class="mt-2">{{ $t('common.save', 2) }}...</span>
         </div>
     </div>
 </template>

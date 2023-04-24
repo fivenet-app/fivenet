@@ -147,7 +147,7 @@ async function clipboardDialog(): Promise<void> {
                                         <button type="button"
                                             class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                             @click="closeDialog" ref="cancelButtonRef">
-                                            {{ $t('common.close') }}
+                                            {{ $t('common.close', 1) }}
                                         </button>
                                     </div>
                                 </div>
