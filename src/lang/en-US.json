@@ -252,6 +252,11 @@
             },
             "join_discord": "Join Galexrt Discord server"
         },
+        "documents": {
+            "templates": {
+                "create_template": "Create Template"
+            }
+        },
         "overview": {
             "features": {
                 "citizens": "Search and find information about Citizens, including basic info, their licenses and related documents.",
