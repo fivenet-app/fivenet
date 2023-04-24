@@ -14,6 +14,8 @@ const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const w = window;
 const clipboard = useClipboard();
 
@@ -50,7 +52,7 @@ async function toggleWantedStatus(): Promise<void> {
             await $grpc.getCitizenStoreClient().
                 setUserProps(req, null);
 
-            notifications.dispatchNotification({ title: 'Success!', content: 'Your action was successfully submitted', type: 'success' });
+            notifications.dispatchNotification({ title: t('notifications.action_successfull.title'), content: t('notifications.action_successfull.content'), type: 'success' });
 
             return res();
         } catch (e) {
@@ -79,14 +81,14 @@ function openTemplates(): void {
                         <dl class="space-y-8 sm:space-y-0 sm:divide-y sm:divide-base-200">
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    Date of Birth</dt>
+                                    {{ $t('common.date_of_birth') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                                     {{ user?.getDateofbirth() }}
                                 </dd>
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    Sex</dt>
+                                    {{ $t('common.sex') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                                     {{ user?.getSex().toUpperCase() }}
                                     {{ ' ' }}
@@ -95,25 +97,25 @@ function openTemplates(): void {
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    Height</dt>
+                                    {{ $t('common.height') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
                                     user?.getHeight() }}cm</dd>
                             </div>
                             <div v-can="'CitizenStoreService.FindUsers.PhoneNumber'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    Phone Number</dt>
+                                    {{ $t('common.phone') }} {{ $t('common.number') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
                                     user?.getPhoneNumber() }}</dd>
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    Visum</dt>
+                                    {{ $t('common.visum') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                                     {{ user?.getVisum() }}</dd>
                             </div>
                             <div v-can="'CitizenStoreService.FindUsers.Licenses'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    Licenses</dt>
+                                    {{ $t('common.license', 2) }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                                     <span v-if="user?.getLicensesList().length == 0">No Licenses.</span>
                                     <ul v-else role="list"
@@ -140,21 +142,21 @@ function openTemplates(): void {
                 <button v-can="'DocStoreService.CreateDocument'" type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="openTemplates()">
-                    Create New Document
+                    {{ $t('components.citizens.citizen_info_profile.create_new_document') }}
                 </button>
             </div>
             <div class="flex-initial">
                 <button v-can="'CitizenStoreService.SetUserProps.Wanted'" type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="clipboard.copy(w.location.href)">
-                    Copy profile link
+                    {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
                 </button>
             </div>
             <div class="flex-initial">
                 <button v-can="'CitizenStoreService.SetUserProps.Wanted'" type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="toggleWantedStatus()">{{ wantedState ?
-                        'Revoke Wanted Status' : 'Set Person Wanted' }}
+                        $t('components.citizens.citizen_info_profile.revoke_wanted') : $t('components.citizens.citizen_info_profile.set_wanted') }}
                 </button>
             </div>
         </div>

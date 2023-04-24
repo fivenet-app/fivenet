@@ -28,12 +28,18 @@
         "loading": "Loading {0}...",
         "unable_to_load": "Unable to load {0}!",
         "profile": "Profile",
-        "activity": "Activity"
+        "activity": "Activity",
+        "visum": "Visum",
+        "license": "License | Licenses"
     },
     "notifications": {
         "citizen_add": {
             "title": "Clipboard: Citizen added",
             "content": "Citizen has been added to clipboard"
+        },
+        "action_successfull": {
+            "title": "Success!",
+            "content": "Your action was successfully submitted"
         }
     },
     "pages": {
@@ -133,6 +139,12 @@
             "citizens_list": {
                 "only_wanted": "Only Wanted",
                 "no_citizens": "Use the search field above to search or update your query."
+            },
+            "citizen_info_profile": {
+                "create_new_document": "Create New Document",
+                "copy_profile_link": "Copy Profile Link",
+                "revoke_wanted": "Revoke Wanted Status",
+                "set_wanted": "Set Person Wanted"
             }
         },
         "partials": {
