@@ -41,7 +41,10 @@
         "clipboard": "Clipboard",
         "select": "Select | Selected",
         "title": "Title",
-        "creator": "Creator"
+        "creator": "Creator",
+        "plate": "Plate",
+        "model": "Model",
+        "owner": "Owner"
     },
     "notifications": {
         "clipboard": {
@@ -64,6 +67,14 @@
             "citizens_removed": {
                 "title": "Clipboard: Citizens removed",
                 "content": "All citizens have been removed from your clipboard"
+            },
+            "vehicle_removed": {
+                "title": "Clipboard: Vehicle removed",
+                "content": "Selected vehicle removed from clipboard"
+            },
+            "vehicles_removed": {
+                "title": "Clipboard: Vehicles removed",
+                "content": "All vehicles have been removed from your clipboard"
             }
         },
         "action_successfull": {

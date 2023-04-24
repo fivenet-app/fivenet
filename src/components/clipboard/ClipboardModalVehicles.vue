@@ -8,6 +8,8 @@ import { useNotificationsStore } from '~/store/notifications';
 const store = useClipboardStore();
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const vehicles = computed(() => store.$state.vehicles);
 
 const emit = defineEmits<{
@@ -67,7 +69,7 @@ async function remove(item: ClipboardVehicle, notify: boolean): Promise<void> {
 
     await store.removeVehicle(item.plate);
     if (notify) {
-        notifications.dispatchNotification({ title: 'Clipboard: Vehicle removed', content: 'Selected vehicle removed from clipboard', duration: 3500, type: 'info' });
+        notifications.dispatchNotification({ title: t('notifications.clipboard.vehicle_removed.title'), content: t('notifications.clipboard.vehicle_removed.content'), duration: 3500, type: 'info' });
     }
 }
 
@@ -79,7 +81,7 @@ async function removeAll(): Promise<void> {
     }
 
     emit('statisfied', false);
-    notifications.dispatchNotification({ title: 'Clipboard: Vehicles removed', content: 'All vehicles have been removed from your clipboard', duration: 3500, type: 'info' });
+    notifications.dispatchNotification({ title: t('notifications.clipboard.vehicles_removed.title'), content: t('notifications.clipboard.vehicles_removed.content'), duration: 3500, type: 'info' });
 }
 
 watch(props, (newVal) => {
@@ -101,7 +103,7 @@ watch(props, (newVal) => {
         disabled>
         <TruckIcon class="w-12 h-12 mx-auto text-neutral" />
         <span class="block mt-2 text-sm font-semibold text-gray-300">
-            No Vehicles in Clipboard.
+            {{ $t('components.clipboard.clipboard_modal.no_data', ['vehicles']) }}
         </span>
     </button>
     <table v-else class="min-w-full divide-y divide-gray-700">
@@ -109,16 +111,18 @@ watch(props, (newVal) => {
             <tr>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0"
                     v-if="showSelect">
-                    Select
+                    {{ $t('common.select') }}
                 </th>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
-                    Plate</th>
-                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-white">Model
+                    {{ $t('common.plate') }}</th>
+                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-white">
+                    {{ $t('common.model') }}
                 </th>
-                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-white">Owner
+                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-white">
+                    {{ $t('common.owner') }}
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                    <span class="sr-only">Actions</span>
+                    <span class="sr-only">{{ $t('common.action', 2) }}</span>
                     <button v-if="selected.length > 0" @click="removeAll()">
                         <TrashIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
@@ -132,10 +136,10 @@ watch(props, (newVal) => {
                         <button @click="select(item)"
                             class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2">
                             <span v-if="!selected.includes(item)">
-                                SELECT
+                                {{ $t('common.select', 1).toUpperCase() }}
                             </span>
                             <span v-else>
-                                SELECTED
+                                {{ $t('common.select', 2).toUpperCase() }}
                             </span>
                         </button>
                     </div>
