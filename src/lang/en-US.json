@@ -58,7 +58,9 @@
         "require": "Require | Requires",
         "max": "Max",
         "template": "Template | Templates",
-        "go_back": "Go Back"
+        "go_back": "Go Back",
+        "content": "Content",
+        "schema": "Schema"
     },
     "notifications": {
         "clipboard": {
