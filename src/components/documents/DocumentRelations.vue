@@ -24,7 +24,7 @@ defineProps({
 
 <template>
     <div>
-        <span v-if="relations.length == 0" class="text-neutral">No Document Relations found.</span>
+        <span v-if="relations.length == 0" class="text-neutral">{{ $t('common.not_found', [`${$t('common.document', 1)} ${$t('common.relation', 2)}`]) }}</span>
         <!-- Relations list (smallest breakpoint only) -->
         <div v-if="relations.length > 0" class="sm:hidden text-neutral">
             <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
@@ -74,20 +74,20 @@ defineProps({
                             <thead>
                                 <tr>
                                     <th v-if="showDocument" class="px-6 py-3 text-sm font-semibold text-left " scope="col">
-                                        Document
+                                        {{ $t('common.document', 1) }}
                                     </th>
                                     <th class="px-6 py-3 text-sm font-semibold text-left " scope="col">
-                                        Target
+                                        {{ $t('common.target') }}
                                     </th>
                                     <th class="px-6 py-3 text-sm font-semibold text-right " scope="col">
-                                        Relation
+                                        {{ $t('common.relation', 1) }}
                                     </th>
                                     <th v-if="showSource" class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
                                         scope="col">
-                                        Creator
+                                        {{ $t('common.creator') }}
                                     </th>
                                     <th class="px-6 py-3 text-sm font-semibold text-right " scope="col">
-                                        Date
+                                        {{ $t('common.date') }}
                                     </th>
                                 </tr>
                             </thead>
@@ -97,7 +97,7 @@ defineProps({
                                         <NuxtLink
                                             :to="{ name: 'documents-id', params: { id: relation.getDocumentId() } }">
                                             {{ relation.getDocument()?.getTitle() }}<span
-                                                v-if="relation.getDocument()?.getCategory()"> (Category: {{
+                                                v-if="relation.getDocument()?.getCategory()"> ({{ $t('common.category', 1) }}: {{
                                                     relation.getDocument()?.getCategory()?.getName() }})</span>
                                         </NuxtLink>
                                     </td>
