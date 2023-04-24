@@ -106,10 +106,6 @@
     },
     "notifications": {
         "clipboard": {
-            "citizen_add": {
-                "title": "Clipboard: Citizen added",
-                "content": "Citizen has been added to clipboard"
-            },
             "document_added": {
                 "title": "Clipboard: Document added",
                 "content": "Document has been added to clipboard"
@@ -122,6 +118,10 @@
                 "title": "Clipboard: Documents removed",
                 "content": "All documents have been removed from your clipboard"
             },
+            "citizen_add": {
+                "title": "Clipboard: Citizen added",
+                "content": "Citizen has been added to clipboard"
+            },
             "citizen_removed": {
                 "title": "Clipboard: Citizen removed",
                 "content": "Selected citizen removed from clipboard"
@@ -129,6 +129,10 @@
             "citizens_removed": {
                 "title": "Clipboard: Citizens removed",
                 "content": "All citizens have been removed from your clipboard"
+            },
+            "vehicle_added": {
+                "title": "Clipboard: Vehicle added",
+                "content": "Vehicle has been added to clipboard"
             },
             "vehicle_removed": {
                 "title": "Clipboard: Vehicle removed",
