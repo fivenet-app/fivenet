@@ -38,12 +38,25 @@
         "rank": "Rank",
         "playtime": "Playtime",
         "choose": "Choose",
-        "clipboard": "Clipboard"
+        "clipboard": "Clipboard",
+        "select": "Select | Selected",
+        "title": "Title",
+        "creator": "Creator"
     },
     "notifications": {
-        "citizen_add": {
-            "title": "Clipboard: Citizen added",
-            "content": "Citizen has been added to clipboard"
+        "clipboard": {
+            "citizen_add": {
+                "title": "Clipboard: Citizen added",
+                "content": "Citizen has been added to clipboard"
+            },
+            "document_removed": {
+                "title": "Clipboard: Document removed",
+                "content": "Selected document removed from clipboard"
+            },
+            "documents_removed": {
+                "title": "Clipboard: Documents removed",
+                "content": "All documents have been removed from your clipboard"
+            }
         },
         "action_successfull": {
             "title": "Success!",
@@ -185,6 +198,9 @@
             },
             "clipboard_modal": {
                 "clear": "Clear Clipboard"
+            },
+            "clipboard_modal_documents": {
+                "no_documents": "No documents in clipboard"
             }
         }
     }
