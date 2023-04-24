@@ -131,6 +131,8 @@ func (m *DispatchMarker) validate(all bool) error {
 
 	// no validation rules for Popup
 
+	// no validation rules for Active
+
 	if len(errors) > 0 {
 		return DispatchMarkerMultiError(errors)
 	}

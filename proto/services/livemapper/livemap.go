@@ -321,6 +321,9 @@ func (s *Server) refreshDispatches() error {
 			Job:       job,
 			UpdatedAt: timestamp.New(v.Time),
 		}
+		if v.Owner == 1 {
+			marker.Active = true
+		}
 
 		s.c.EnrichJobName(marker)
 		markers[job] = append(markers[job], marker)

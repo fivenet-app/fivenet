@@ -37,6 +37,9 @@ export class DispatchMarker extends jspb.Message {
   getPopup(): string;
   setPopup(value: string): DispatchMarker;
 
+  getActive(): boolean;
+  setActive(value: boolean): DispatchMarker;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DispatchMarker.AsObject;
   static toObject(includeInstance: boolean, msg: DispatchMarker): DispatchMarker.AsObject;
@@ -57,6 +60,7 @@ export namespace DispatchMarker {
     icon: string,
     iconColor: string,
     popup: string,
+    active: boolean,
   }
 }
 

@@ -110,7 +110,8 @@ proto.resources.livemap.DispatchMarker.toObject = function(includeInstance, msg)
     name: jspb.Message.getFieldWithDefault(msg, 7, ""),
     icon: jspb.Message.getFieldWithDefault(msg, 8, ""),
     iconColor: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    popup: jspb.Message.getFieldWithDefault(msg, 10, "")
+    popup: jspb.Message.getFieldWithDefault(msg, 10, ""),
+    active: jspb.Message.getBooleanFieldWithDefault(msg, 11, false)
   };
 
   if (includeInstance) {
@@ -187,6 +188,10 @@ proto.resources.livemap.DispatchMarker.deserializeBinaryFromReader = function(ms
     case 10:
       var value = /** @type {string} */ (reader.readString());
       msg.setPopup(value);
+      break;
+    case 11:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setActive(value);
       break;
     default:
       reader.skipField();
@@ -285,6 +290,13 @@ proto.resources.livemap.DispatchMarker.serializeBinaryToWriter = function(messag
   if (f.length > 0) {
     writer.writeString(
       10,
+      f
+    );
+  }
+  f = message.getActive();
+  if (f) {
+    writer.writeBool(
+      11,
       f
     );
   }
@@ -487,6 +499,24 @@ proto.resources.livemap.DispatchMarker.prototype.getPopup = function() {
  */
 proto.resources.livemap.DispatchMarker.prototype.setPopup = function(value) {
   return jspb.Message.setProto3StringField(this, 10, value);
+};
+
+
+/**
+ * optional bool active = 11;
+ * @return {boolean}
+ */
+proto.resources.livemap.DispatchMarker.prototype.getActive = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 11, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.resources.livemap.DispatchMarker} returns this
+ */
+proto.resources.livemap.DispatchMarker.prototype.setActive = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 11, value);
 };
 
 
