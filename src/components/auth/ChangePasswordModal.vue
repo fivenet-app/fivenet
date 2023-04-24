@@ -25,6 +25,8 @@ defineEmits<{
     (e: 'close'): void,
 }>();
 
+const { t } = useI18n();
+
 const newPassword = ref<string>('');
 
 async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
@@ -39,7 +41,7 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
 
             store.updateAccessToken(resp.getToken());
 
-            notifications.dispatchNotification({ title: 'Password has been changed', content: 'Your new password has been set.', type: 'success' });
+            notifications.dispatchNotification({ title: t('notifications.changed_password.title'), content: t('notifications.changed_password.content'), type: 'success' });
             await router.push({ name: 'overview' });
             return res();
         } catch (e) {
@@ -92,7 +94,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                                 <label for="currentPassword" class="sr-only">Password</label>
                                                 <div>
                                                     <Field id="currentPassword" name="currentPassword" type="password"
-                                                        autocomplete="current-password" placeholder="Current Password"
+                                                        autocomplete="current-password" :placeholder="$t('components.auth.change_password_modal.current_password')"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                                     <ErrorMessage name="currentPassword" as="p"
                                                         class="mt-2 text-sm text-error-400" />
@@ -102,7 +104,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                                 <label for="newPassword" class="sr-only">Password</label>
                                                 <div>
                                                     <Field id="newPassword" name="newPassword" type="password"
-                                                        autocomplete="new-password" placeholder="New Password"
+                                                        autocomplete="new-password" :placeholder="$t('components.auth.change_password_modal.new_password')"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         v-model:model-value="newPassword" />
                                                     <PartialsPasswordStrengthMeter :input="newPassword" class="mt-2" />
@@ -114,7 +116,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                             <div>
                                                 <button type="submit"
                                                     class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-                                                    Change Password
+                                                    {{ $t('components.auth.change_password_modal.change_password') }}
                                                 </button>
                                             </div>
                                         </form>
@@ -125,7 +127,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                 <button type="button"
                                     class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                     @click="$emit('close')" ref="cancelButtonRef">
-                                    Close
+                                    {{ $t('common.close') }}
                                 </button>
                             </div>
                         </DialogPanel>

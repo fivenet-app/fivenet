@@ -32,7 +32,8 @@
         "activity": "Activity",
         "visum": "Visum",
         "license": "License | Licenses",
-        "not": "Not"
+        "not": "Not",
+        "close": "Close"
     },
     "notifications": {
         "citizen_add": {
@@ -42,6 +43,10 @@
         "action_successfull": {
             "title": "Success!",
             "content": "Your action was successfully submitted"
+        },
+        "changed_password": {
+            "title": "Password has been changed",
+            "content": "Your new password has been set"
         }
     },
     "pages": {
@@ -134,6 +139,11 @@
                 "submit_button": "Create Account",
                 "back_to_login_button": "Back to Login",
                 "create_error": "There was an error creating your account, please try again!"
+            },
+            "change_password_modal": {
+                "change_password": "Change Password",
+                "current_password": "Current Password",
+                "new_password": "New Password"
             }
         },
         "citizens": {
