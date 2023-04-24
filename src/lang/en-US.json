@@ -61,7 +61,8 @@
         "go_back": "Go Back",
         "content": "Content",
         "schema": "Schema",
-        "edit": "Edit"
+        "edit": "Edit",
+        "post": "Post"
     },
     "notifications": {
         "clipboard": {
@@ -249,6 +250,10 @@
             },
             "document_comment_entry": {
                 "edit_comment": "Edit your comment"
+            },
+            "document_comments": {
+                "add_comment": "Add your comment",
+                "no_comments": "No comments have been posted yet"
             }
         },
         "partials": {

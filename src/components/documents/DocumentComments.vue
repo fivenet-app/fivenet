@@ -115,10 +115,12 @@ onMounted(async () => {
                 <form @submit.prevent="addComment()" class="relative">
                     <div
                         class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-indigo-600">
-                        <label for="comment" class="sr-only">Add your comment</label>
+                        <label for="comment"
+                            class="sr-only">{{ $t('components.documents.document_comments.add_comment') }}</label>
                         <textarea rows="3" name="comment" id="comment"
                             class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
-                            ref="commentInput" v-model="message" placeholder="Add your comment..." />
+                            ref="commentInput" v-model="message"
+                            :placeholder="$t('components.documents.document_comments.add_comment')" />
 
                         <!-- Spacer element to match the height of the toolbar -->
                         <div class="py-2" aria-hidden="true">
@@ -133,7 +135,7 @@ onMounted(async () => {
                         <div class="flex items-center space-x-5"></div>
                         <div class="flex-shrink-0">
                             <button type="submit"
-                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Post</button>
+                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{{ $t('common.post') }}</button>
                         </div>
                     </div>
                 </form>
@@ -144,8 +146,9 @@ onMounted(async () => {
         <button v-if="comments.length == 0" type="button" @click="focusComment()"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
             <ChatBubbleLeftEllipsisIcon class="w-12 h-12 mx-auto text-neutral" />
-            <span v-can="'DocStoreService.PostDocumentComment'" class="block mt-2 text-sm font-semibold text-gray-300">No
-                comments have been posted yet</span>
+            <span v-can="'DocStoreService.PostDocumentComment'" class="block mt-2 text-sm font-semibold text-gray-300">
+                {{ $t('components.documents.document_comments.no_comments') }}
+            </span>
         </button>
         <div v-else class="flow-root px-4 rounded-lg text-neutral">
             <ul role="list" class="divide-y divide-gray-200">
