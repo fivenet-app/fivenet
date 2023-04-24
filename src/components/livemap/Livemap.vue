@@ -22,6 +22,8 @@ const userSettings = useUserSettingsStore();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const activeChar = computed(() => authStore.$state.activeChar);
 
 const stream = ref<ClientReadableStream<StreamResponse> | null>(null);
@@ -281,7 +283,7 @@ async function loadPostals(): Promise<void> {
         const response = await fetch('/data/postals.json');
         postals.value.push(...(await response.json()) as Postal[]);
     } catch (_) {
-        notifications.dispatchNotification({ title: 'Failed to load Postals map', content: '' });
+        notifications.dispatchNotification({ title: t('notifications.failed_loading_postals.title'), content: t('notifications.failed_loading_postals.content') });
         postalsLoaded = false;
     }
 }
@@ -376,8 +378,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
     <div class="relative w-full h-full z-0">
         <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center z-20"
             style="background-color: rgba(62, 60, 62, 0.5)">
-            <DataPendingBlock v-if="!error && stream === null" message="Starting Livemap data stream..." />
-            <DataErrorBlock v-else-if="error" title="Failed to stream Livemap data!" :retry="() => { startDataStream() }" />
+            <DataPendingBlock v-if="!error && stream === null" :message="$t('components.livemap.starting_datastream')" />
+            <DataErrorBlock v-else-if="error" :title="$t('components.livemap.failed_datastream')" :retry="() => { startDataStream() }" />
         </div>
 
         <LMap class="z-0" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="1" :max-zoom="6"
@@ -394,45 +396,45 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 
             <LControlLayers />
 
-            <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`Employees ${job.getLabel()}`"
+            <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`${$t('common.employee', 2)} ${job.getLabel()}`"
                 layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.getUser()?.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
                     :icon="getIcon('player', marker) as L.Icon" @click="setSelectedMarker(marker.getId())">
                     <LPopup :options="{ closeButton: false }"
-                        :content="`<span class='font-semibold'>Employee ${marker.getUser()?.getJobLabel()}</span><br><span class='italic'>[${marker.getUser()?.getJobGrade()}] ${marker.getUser()?.getJobGradeLabel()}</span><br>${marker.getUser()?.getFirstname()} ${marker.getUser()?.getLastname()}`">
+                        :content="`<span class='font-semibold'>${$t('common.employee', 2)} ${marker.getUser()?.getJobLabel()}</span><br><span class='italic'>[${marker.getUser()?.getJobGrade()}] ${marker.getUser()?.getJobGradeLabel()}</span><br>${marker.getUser()?.getFirstname()} ${marker.getUser()?.getLastname()}`">
                     </LPopup>
                 </LMarker>
             </LLayerGroup>
 
-            <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`Dispatches ${job.getLabel()}`"
+            <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`${$t('common.dispatch', 2)} ${job.getLabel()}`"
                 layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in dispatchMarkersFiltered.filter(m => m.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
                     :icon="getIcon('dispatch', marker) as L.Icon" @click="setSelectedMarker(marker.getId())">
                     <LPopup :options="{ closeButton: false }"
-                        :content="`<span class='font-semibold'>Dispatch ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span>${toDateRelativeString(marker.getUpdatedAt())}</span><br><span class='italic'>Sent by ${marker.getName()}</span>`">
+                        :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span>${toDateRelativeString(marker.getUpdatedAt())}</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.getName()}</span>`">
                     </LPopup>
                 </LMarker>
             </LLayerGroup>
 
             <LControl position="bottomleft" class="leaflet-control-attribution mouseposition">
-                <b>Latitude</b>: {{ mouseLat }} | <b>Longtitude</b>: {{ mouseLong }}
+                <b>{{ $t('common.latitude') }}</b>: {{ mouseLat }} | <b>{{ $t('common.longitude') }}</b>: {{ mouseLong }}
             </LControl>
             <LControl position="topleft">
                 <div class="form-control flex flex-col gap-2">
                     <div>
                         <input v-model="playerQuery" class="w-full" type="text" name="searchPlayer" id="searchPlayer"
-                            placeholder="Employee Filter" />
+                            :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`" />
                     </div>
                     <div>
                         <input v-model="dispatchQuery" class="w-full" type="text" name="searchDispatch" id="searchDispatch"
-                            placeholder="Dispatch Filter" />
+                            :placeholder="`${$t('common.dispatch', 1)} ${$t('common.filter')}`" />
                     </div>
                     <div>
                         <Combobox as="div" class="w-full" v-model="selectedPostal" nullable>
                             <ComboboxInput class="w-full" @change="postalQuery = $event.target.value" @click="loadPostals"
-                                :display-value="(postal: any) => postal ? postal?.code : ''" placeholder="Postal Search" />
+                                :display-value="(postal: any) => postal ? postal?.code : ''" :placeholder="`${$t('common.postal')} ${$t('common.search')}`" />
                             <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">
                                 <ComboboxOption v-for="postal in filteredPostals" :key="postal.code" :value="postal"
                                     v-slot="{ active }">
@@ -449,7 +451,7 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
             <LControl position="bottomright">
                 <div class="form-control flex flex-col gap-2">
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
-                        <span class="text-lg mr-2 text-[#6f7683]">Center selected Marker</span>
+                        <span class="text-lg mr-2 text-[#6f7683]">{{ $t('components.livemap.center_selected_marker') }}</span>
                         <input v-model="centerSelectedMarker" class="my-auto" id="markerSize" name="markerSize"
                             type="checkbox" />
                     </div>

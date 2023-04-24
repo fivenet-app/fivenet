@@ -7,6 +7,8 @@ const props = defineProps<{
     activity: UserActivity;
 }>();
 
+const { t } = useI18n();
+
 const icon = ref<FunctionalComponent>(QuestionMarkCircleIcon);
 const iconColor = ref<string>('text-neutral');
 const actionText = ref<string>(props.activity.getKey());
@@ -14,16 +16,16 @@ const actionValue = ref<string>(`${props.activity.getOldvalue()} -> ${props.acti
 
 switch (props.activity.getKey()) {
     case 'UserProps.Wanted': {
-        actionText.value = 'Set the citizen as';
+        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.set_citizen_as');
 
         if (props.activity.getNewvalue() === 'true') {
             icon.value = BellAlertIcon;
             iconColor.value = 'text-error-400'
-            actionValue.value = props.activity.getNewvalue() === 'true' ? 'Wanted' : 'not Wanted';
+            actionValue.value = props.activity.getNewvalue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
         } else {
             icon.value = BellSnoozeIcon;
             iconColor.value = 'text-success-400'
-            actionValue.value = props.activity.getNewvalue() === 'true' ? 'Wanted' : 'not Wanted';
+            actionValue.value = props.activity.getNewvalue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
         }
 
         break;

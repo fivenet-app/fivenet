@@ -60,11 +60,12 @@ watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 14
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
-                        <label for="search" class="block mb-2 text-sm font-medium leading-6 text-neutral">Search</label>
+                        <label for="search" class="block mb-2 text-sm font-medium leading-6 text-neutral">{{
+                            $t('common.search') }}</label>
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1 form-control">
                                 <input v-model="search.title" ref="searchInput" type="text" name="search" id="search"
-                                    placeholder="Title"
+                                    :placeholder="$t('common.title')"
                                     class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                             </div>
                             <div class="flex-initial form-control" v-can="'DocStoreService.CreateDocument'">
@@ -92,14 +93,15 @@ watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 14
             <div class="flow-root mt-2">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <DataPendingBlock v-if="pending" message="Loading documents..." />
-                        <DataErrorBlock v-else-if="error" title="Unable to load documents!" :retry="refresh" />
+                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
+                        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])"
+                            :retry="refresh" />
                         <button v-else-if="documents && documents.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                             <DocumentMagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                No Documents found. Either update your search
-                                query or create the first document using the above "Create"-button.
+                                {{ $t('common.not_found', [$t('common.document', 2)]) }}
+                                {{ $t('components.documents.document_list.no_documents_hint') }}
                             </span>
                         </button>
                         <div v-else>
@@ -135,7 +137,7 @@ watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 14
                                                     <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
                                                     <p>
-                                                        Created <time :datetime="toDateLocaleString(doc.getCreatedAt())">{{
+                                                        {{ $t('common.created') }} <time :datetime="toDateLocaleString(doc.getCreatedAt())">{{
                                                             toDateRelativeString(doc.getCreatedAt()) }}</time>
                                                     </p>
                                                 </div>

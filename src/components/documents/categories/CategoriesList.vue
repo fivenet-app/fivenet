@@ -94,19 +94,20 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                         <form @submit="onSubmit">
                             <div class="flex flex-row gap-4 mx-auto">
                                 <div class="flex-1 form-control">
-                                    <label for="name"
-                                        class="block text-sm font-medium leading-6 text-neutral">Category</label>
+                                    <label for="name" class="block text-sm font-medium leading-6 text-neutral">{{
+                                        $t('common.category', 1) }}</label>
                                     <div class="relative flex items-center mt-2">
-                                        <Field type="text" name="name" id="name" placeholder="Category"
+                                        <Field type="text" name="name" id="name" :placeholder="$t('common.category', 1)"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                                        <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
+                                        <ErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
                                 </div>
                                 <div class="flex-1 form-control">
-                                    <label for="description"
-                                        class="block text-sm font-medium leading-6 text-neutral">Description</label>
+                                    <label for="description" class="block text-sm font-medium leading-6 text-neutral">{{
+                                        $t('common.description') }}</label>
                                     <div class="relative flex items-center mt-2">
-                                        <Field type="text" name="description" id="description" placeholder="Description"
+                                        <Field type="text" name="description" id="description"
+                                            :placeholder="$t('common.description')"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                         <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
@@ -115,7 +116,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                     <div class="relative flex items-center mt-2">
                                         <button type="submit"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
-                                            Create
+                                            {{ $t('common.create') }}
                                         </button>
                                     </div>
                                 </div>
@@ -126,13 +127,16 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                 <div class="flow-root mt-2">
                     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                            <DataPendingBlock v-if="pending" message="Loading categories..." />
-                            <DataErrorBlock v-else-if="error" title="Unable to load categories!" :retry="refresh" />
+                            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.category', 2)])" />
+                            <DataErrorBlock v-else-if="error"
+                                :title="$t('common.unable_to_load', [$t('common.category', 2)])" :retry="refresh" />
                             <button v-else-if="categories && categories.length == 0" type="button"
                                 class="relative block w-full p-12 text-center rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
                                 <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                                 <span class="block mt-2 text-sm font-semibold text-base-200">
-                                    No categories for your job and rank found.
+                                    {{ $t('common.not_found',
+                                        [$t('components.documents.categories.categories_list.categories_for_your_job',
+                                            [$t('common.category', 2), $t('common.job', 1), $t('common.rank')])]) }}
                                 </span>
                             </button>
                             <div v-else>
@@ -143,5 +147,4 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                 </div>
             </div>
         </div>
-    </div>
-</template>
+</div></template>

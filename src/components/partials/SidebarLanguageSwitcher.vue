@@ -35,7 +35,7 @@ async function switchLanguage(lang: { name: string, iso: string }): Promise<void
         <div>
             <MenuButton
                 class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                <span class="sr-only">Open language menu</span>
+                <span class="sr-only">{{ $t('components.partials.sidebar_language_switcher.open_switcher') }}</span>
                 <LanguageIcon
                     class="w-auto h-10 p-1 rounded-full hover:transition-colors text-base-300 bg-base-800 hover:text-base-100" />
             </MenuButton>

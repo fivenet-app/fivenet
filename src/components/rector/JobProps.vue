@@ -57,8 +57,8 @@ async function saveJobProps(): Promise<void> {
 
 <template>
     <div class="py-2 mt-5 max-w-5xl mx-auto">
-        <DataPendingBlock v-if="pending" message="Loading job properties..." />
-        <DataErrorBlock v-else-if="error" title="Unable to load job properties!" :retry="refresh" />
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.job', 1)} ${$t('common.prop')}`])" />
+        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])" :retry="refresh" />
         <button v-else-if="!jobProps" type="button"
             class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <AdjustmentsVerticalIcon class="w-12 h-12 mx-auto text-neutral" />
@@ -70,17 +70,17 @@ async function saveJobProps(): Promise<void> {
             <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
                 <div class="px-4 py-5 sm:px-6">
                     <h3 class="text-base font-semibold leading-6">
-                        Job Properties
+                        {{ $t('components.rector.job_props.job_properties') }}
                     </h3>
                     <p class="mt-1 max-w-2xl text-sm">
-                        Your job's FiveNet properties.
+                        {{ $t('components.rector.job_props.your_job_properties') }}
                     </p>
                 </div>
                 <div class="border-t border-base-400 px-4 py-5 sm:p-0">
                     <dl class="sm:divide-y sm:divide-base-400">
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                             <dt class="text-sm font-medium">
-                                Theme
+                                {{ $t('common.theme') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 {{ jobProps.getTheme() }}
@@ -88,7 +88,7 @@ async function saveJobProps(): Promise<void> {
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                             <dt class="text-sm font-medium">
-                                Livemap Marker Color
+                                {{ $t('components.rector.job_props.livemap_marker_color') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <input type="color" v-model="properties.livemapMarkerColor" />
@@ -100,7 +100,7 @@ async function saveJobProps(): Promise<void> {
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <button type="button" @click="saveJobProps()"
                                     class="rounded-md bg-green-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-green-400">
-                                    Save
+                                    {{ $t('common.save', 1) }}
                                 </button>
                             </dd>
                         </div>

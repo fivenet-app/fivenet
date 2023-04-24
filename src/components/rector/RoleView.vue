@@ -17,6 +17,8 @@ const { $grpc } = useNuxtApp();
 const notifications = useNotificationsStore();
 const router = useRouter();
 
+const { t } = useI18n();
+
 const props = defineProps({
     roleId: {
         type: Number,
@@ -172,7 +174,7 @@ async function applyQuery(): Promise<void> {
 
 async function saveRolePermissions(): Promise<void> {
     await Promise.all([saveAddPermissions(), saveRemovePermissions()]);
-    notifications.dispatchNotification({ title: 'Role: Permissions Saved', content: 'Permissions have been saved.', type: 'success' });
+    notifications.dispatchNotification({ title: t('notifications.role_updated.title'), content: t('notifications.role_updated.content'), type: 'success' });
 }
 
 onMounted(async () => {
@@ -203,8 +205,8 @@ watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 12
                             <form @submit.prevent="addPermission()">
                                 <div class="flex flex-row gap-4 mx-auto">
                                     <div class="flex-1 form-control">
-                                        <label for="owner"
-                                            class="block text-sm font-medium leading-6 text-neutral">Permission</label>
+                                        <label for="owner" class="block text-sm font-medium leading-6 text-neutral">{{
+                                            $t('common.permission', 1) }}</label>
                                         <div class="relative items-center mt-2">
                                             <Combobox as="div" v-model="selectedPerm" nullable>
                                                 <div class="relative">
@@ -213,7 +215,7 @@ watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 12
                                                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             @change="queryPerm = $event.target.value"
                                                             :display-value="(perm: any) => perm ? `${perm?.getName()}: ${perm?.getDescription()}` : ''"
-                                                            placeholder="Permission" autocomplete="off" />
+                                                            :placeholder="$t('common.permission', 1)" autocomplete="off" />
                                                     </ComboboxButton>
 
                                                     <ComboboxOptions v-if="filteredPerms.length > 0"
@@ -243,14 +245,14 @@ watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 12
                                     <div class="flex-initial form-control flex flex-col justify-end">
                                         <button type="submit" :disabled="!selectedPerm"
                                             class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
-                                            Add Permission
+                                            {{ $t('components.rector.role_view.add_permission') }}
                                         </button>
                                     </div>
                                     <div class="flex-initial form-control flex flex-col justify-end">
                                         <button @click="saveRolePermissions()"
                                             :disabled="permsToAdd.length === 0 && permsToRemove.length === 0"
                                             class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-success-600 text-neutral hover:bg-success-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-600">
-                                            Save Changes
+                                            {{ $t('common.save', 1) }}
                                         </button>
                                     </div>
                                 </div>
@@ -259,14 +261,17 @@ watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 12
                         <div class="flow-root mt-2">
                             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                                    <DataPendingBlock v-if="pending" message="Loading role permissions..." />
-                                    <DataErrorBlock v-else-if="error" title="Unable to load role permissions!"
+                                    <DataPendingBlock v-if="pending"
+                                        :message="$t('common.loading', [`${$t('common.role', 1)} ${$t('common.permission', 1)}`])" />
+                                    <DataErrorBlock v-else-if="error"
+                                        :title="$t('common.unable_to_load', [`${$t('common.role', 1)} ${$t('common.permission', 1)}`])"
                                         :retry="refresh" />
                                     <button v-else-if="role.getPermissionsList().length == 0" type="button"
                                         class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                                         <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                                         <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                            No Permissions found for this role.
+                                            {{ $t('common.not_found', [`${$t('common.role', 1)} ${$t('common.permission',
+                                                1)}`]) }}
                                         </span>
                                     </button>
                                     <div v-else>
@@ -275,15 +280,15 @@ watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 12
                                                 <tr>
                                                     <th scope="col"
                                                         class="py-3.5 pl-3 pr-4 sm:pr-0 text-left text-sm font-semibold text-neutral">
-                                                        Actions
+                                                        {{ $t('common.action', 2) }}
                                                     </th>
                                                     <th scope="col"
                                                         class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                        Name
+                                                        {{ $t('common.name') }}
                                                     </th>
                                                     <th scope="col"
                                                         class="py-3.5 px-2 text-center text-sm font-semibold text-neutral">
-                                                        Description
+                                                        {{ $t('common.description') }}
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -311,15 +316,15 @@ watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 12
                                                 <tr>
                                                     <th scope="col"
                                                         class="py-3.5 pl-3 pr-4 sm:pr-0 text-left text-sm font-semibold text-neutral">
-                                                        Actions
+                                                        {{ $t('common.action', 2) }}
                                                     </th>
                                                     <th scope="col"
                                                         class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                        Name
+                                                        {{ $t('common.name') }}
                                                     </th>
                                                     <th scope="col"
                                                         class="py-3.5 px-2 text-center text-sm font-semibold text-neutral">
-                                                        Description
+                                                        {{ $t('common.description') }}
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -332,5 +337,4 @@ watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 12
                 </div>
             </div>
         </div>
-    </div>
-</template>
+    </div></template>

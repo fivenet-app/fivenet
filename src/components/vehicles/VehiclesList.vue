@@ -142,22 +142,23 @@ watch(selectedChar, () => {
                     <form @submit.prevent="findVehicles()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">License
-                                    Plate</label>
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.license_plate') }}
+                                </label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="search.plate" ref="searchInput" type="text" placeholder="License plate"
+                                    <input v-model="search.plate" ref="searchInput" type="text" :placeholder="$t('common.license_plate')"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
                             <div class="flex-1 form-control">
-                                <label for="model" class="block text-sm font-medium leading-6 text-neutral">Model</label>
+                                <label for="model" class="block text-sm font-medium leading-6 text-neutral">{{ $t('common.model') }}</label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="search.model" type="text" name="model" id="model" placeholder="Model"
+                                    <input v-model="search.model" type="text" name="model" id="model" :placeholder="$t('common.model')"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
                             <div class="flex-1 form-control" v-if="!userId">
-                                <label for="owner" class="block text-sm font-medium leading-6 text-neutral">Owner</label>
+                                <label for="owner" class="block text-sm font-medium leading-6 text-neutral">{{ $t('common.owner') }}</label>
                                 <div class="relative items-center mt-2">
                                     <Combobox as="div" v-model="selectedChar" nullable>
                                         <div class="relative">
@@ -166,7 +167,7 @@ watch(selectedChar, () => {
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     @change="queryChar = $event.target.value"
                                                     :display-value="(char: any) => char ? `${char?.getFirstname()} ${char?.getLastname()}` : ''"
-                                                    placeholder="Owner" />
+                                                    :placeholder="$t('common.owner')" />
                                             </ComboboxButton>
 
                                             <ComboboxOptions v-if="entriesChars.length > 0"
@@ -197,13 +198,13 @@ watch(selectedChar, () => {
             <div class="flow-root mt-2">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <DataPendingBlock v-if="pending" message="Loading vehicles..." />
-                        <DataErrorBlock v-else-if="error" title="Unable to load vehicles!" :retry="refresh" />
+                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.vehicle', 2)])" />
+                        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.vehicle', 2)])" :retry="refresh" />
                         <button v-else-if="vehicles && vehicles.length == 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                Use the search field above to search or update your query.
+                                {{ $t('common.not_found', [$t('common.vehicle', 2)]) }}
                             </span>
                         </button>
                         <div v-else>
@@ -212,22 +213,22 @@ watch(selectedChar, () => {
                                     <tr>
                                         <th v-on:click="toggleOrderBy('plate')" scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                                            Plate
+                                            {{ $t('common.plate') }}
                                         </th>
                                         <th v-on:click="toggleOrderBy('model')" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Model
+                                            {{ $t('common.model') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Type
+                                            {{ $t('common.type') }}
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Owner
+                                            {{ $t('common.owner') }}
                                         </th>
                                         <th v-if="!hideCitizenLink && !hideCopy" scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Actions
+                                            {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
                                 </thead>
@@ -240,22 +241,22 @@ watch(selectedChar, () => {
                                     <tr>
                                         <th v-on:click="toggleOrderBy('plate')" scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                                            Plate
+                                            {{ $t('common.plate') }}
                                         </th>
                                         <th v-on:click="toggleOrderBy('model')" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Model
+                                            {{ $t('common.model') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Type
+                                            {{ $t('common.type') }}
                                         </th>
                                         <th v-if="!hideOwner" scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Owner
+                                            {{ $t('common.owner') }}
                                         </th>
                                         <th v-if="!hideCitizenLink && !hideCopy" scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Actions
+                                            {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
                                 </thead>

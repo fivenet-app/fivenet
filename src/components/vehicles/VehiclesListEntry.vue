@@ -8,6 +8,8 @@ import { toTitleCase } from '~/utils/strings';
 const store = useClipboardStore();
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const props = defineProps({
     vehicle: {
         required: true,
@@ -32,7 +34,7 @@ const props = defineProps({
 
 function addToClipboard(): void {
     store.addVehicle(props.vehicle);
-    notifications.dispatchNotification({ title: 'Clipboard: Vehicle added', content: 'Vehicle has been added to clipboard', duration: 3500, type: 'info' });
+    notifications.dispatchNotification({ title: t('notifications.clipboard.vehicle_added.title'), content: t('notifications.clipboard.vehicle_added.content'), duration: 3500, type: 'info' });
 }
 </script>
 

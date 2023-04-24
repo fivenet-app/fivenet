@@ -6,6 +6,7 @@
         "sign_out": "Sign Out",
         "username": "Username",
         "password": "Password",
+        "home": "Home",
         "overview": "Overview",
         "citizen": "Citizen | Citizens",
         "vehicle": "Vehicle | Vehicles",
@@ -27,13 +28,169 @@
         "wanted": "Wanted",
         "loading": "Loading {0}...",
         "unable_to_load": "Unable to load {0}!",
+        "not_found": "No {0} found!",
         "profile": "Profile",
-        "activity": "Activity"
+        "activity": "Activity",
+        "visum": "Visum",
+        "license": "License | Licenses",
+        "not": "Not",
+        "close": "Close | Closed",
+        "open": "Open",
+        "last_used": "Last Used",
+        "rank": "Rank",
+        "playtime": "Playtime",
+        "choose": "Choose",
+        "clipboard": "Clipboard",
+        "select": "Select | Selected",
+        "title": "Title",
+        "creator": "Creator",
+        "plate": "Plate",
+        "model": "Model",
+        "owner": "Owner",
+        "category": "Category | Categories",
+        "description": "Description",
+        "create": "Create",
+        "account": "Account",
+        "info": "Info",
+        "data": "Data",
+        "your": "your",
+        "character": "Character | Characters",
+        "user": "User | Users",
+        "delete": "Delete",
+        "require": "Require | Requires",
+        "max": "Max",
+        "template": "Template | Templates",
+        "go_back": "Go Back",
+        "content": "Content",
+        "schema": "Schema",
+        "edit": "Edit",
+        "post": "Post",
+        "state": "State",
+        "reference": "Reference | References",
+        "relation": "Relation | Relations",
+        "access": "Access",
+        "submit": "Submit",
+        "save": "Save | Saving",
+        "remove": "Remove",
+        "add": "Add",
+        "created": "Created",
+        "created_at": "Created at",
+        "created_by": "Created by",
+        "updated_at": "Updated at",
+        "target": "Target",
+        "source": "Source",
+        "date": "Date",
+        "comment": "Comment | Comments",
+        "employee": "Employee | Employees",
+        "dispatch": "Dispatch | Dispatches",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "filter": "Filter",
+        "postal": "Postal",
+        "retry": "Retry",
+        "time_range": "Time Range",
+        "from": "From",
+        "to": "To",
+        "audit_log": "Audit Log | Audit Logs",
+        "id": "ID",
+        "time": "Time",
+        "service": "Service",
+        "copy": "Copy",
+        "prop": "Prop",
+        "theme": "Theme",
+        "job_grade": "Job Grade",
+        "role": "Role | Roles",
+        "permission": "Permission | Permissions",
+        "license_plate": "License Plate",
+        "type": "Type",
+        "propertie": "Propertie | Properties"
     },
     "notifications": {
-        "citizen_add": {
-            "title": "Clipboard: Citizen added",
-            "content": "Citizen has been added to clipboard"
+        "clipboard": {
+            "document_added": {
+                "title": "Clipboard: Document added",
+                "content": "Document has been added to clipboard"
+            },
+            "document_removed": {
+                "title": "Clipboard: Document removed",
+                "content": "Selected document removed from clipboard"
+            },
+            "documents_removed": {
+                "title": "Clipboard: Documents removed",
+                "content": "All documents have been removed from your clipboard"
+            },
+            "citizen_add": {
+                "title": "Clipboard: Citizen added",
+                "content": "Citizen has been added to clipboard"
+            },
+            "citizen_removed": {
+                "title": "Clipboard: Citizen removed",
+                "content": "Selected citizen removed from clipboard"
+            },
+            "citizens_removed": {
+                "title": "Clipboard: Citizens removed",
+                "content": "All citizens have been removed from your clipboard"
+            },
+            "vehicle_added": {
+                "title": "Clipboard: Vehicle added",
+                "content": "Vehicle has been added to clipboard"
+            },
+            "vehicle_removed": {
+                "title": "Clipboard: Vehicle removed",
+                "content": "Selected vehicle removed from clipboard"
+            },
+            "vehicles_removed": {
+                "title": "Clipboard: Vehicles removed",
+                "content": "All vehicles have been removed from your clipboard"
+            }
+        },
+        "action_successfull": {
+            "title": "Success!",
+            "content": "Your action was successfully submitted"
+        },
+        "changed_password": {
+            "title": "Password has been changed",
+            "content": "Your new password has been set"
+        },
+        "account_created": {
+            "title": "Account created!",
+            "content": "Your account was successfully created"
+        },
+        "category_deleted": {
+            "title": "Category deleted!",
+            "content": "The Category was successfully deleted"
+        },
+        "category_updated": {
+            "title": "Category updated!",
+            "content": "The Category was successfully updated"
+        },
+        "max_access_entry": {
+            "title": "Maximum amount of Access entries exceeded",
+            "content": "There can only be a maximum of {0} access entries on a Document"
+        },
+        "document_created": {
+            "title": "Document created!",
+            "content": "Document has been created."
+        },
+        "document_updated": {
+            "title": "Document updated!",
+            "content": "Document has been updated."
+        },
+        "failed_loading_postals": {
+            "title": "Failed to load Postals",
+            "content": "Postals Map couldn't be loaded"
+        },
+        "role_created": {
+            "title": "Role: Created",
+            "content": "Role has been created."
+        },
+        "role_updated": {
+            "title": "Role: Permissions Saved",
+            "content": "Permissions have been saved."
+        },
+        "error_logout": {
+            "title": "Logout: Encountered an error",
+            "content": "{0}"
         }
     },
     "pages": {
@@ -96,6 +253,14 @@
             },
             "join_discord": "Join Galexrt Discord server"
         },
+        "documents": {
+            "templates": {
+                "create_template": "Create Template"
+            }
+        },
+        "jobs": {
+            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM"
+        },
         "overview": {
             "features": {
                 "citizens": "Search and find information about Citizens, including basic info, their licenses and related documents.",
@@ -104,12 +269,18 @@
                 "jobs": "Infos about your job and employee management. Coming soon",
                 "livemap": "Live position of dispatches and your colleagues."
             }
+        },
+        "rector": {
+            "features": {
+                "properties": "Set your job properties (e.g., livemap color).",
+                "jobs": "Setup your factions roles job rank permissions.",
+                "audit_log": "An audit trail of everything your colleagues have done."
+            }
         }
     },
     "components": {
         "auth": {
             "account_info": {
-                "no_data": "No account data found!",
                 "title": "Account Info",
                 "subtitle": "Your FiveNet account details.",
                 "license": "Identifier/ License",
@@ -127,26 +298,115 @@
                 "submit_button": "Create Account",
                 "back_to_login_button": "Back to Login",
                 "create_error": "There was an error creating your account, please try again!"
+            },
+            "change_password_modal": {
+                "change_password": "Change Password",
+                "current_password": "Current Password",
+                "new_password": "New Password"
             }
         },
         "citizens": {
             "citizens_list": {
                 "only_wanted": "Only Wanted",
                 "no_citizens": "Use the search field above to search or update your query."
-            }
-        },
-        "partials": {
-            "sidebar": {
-                "change_character": "Change Character",
-                "account_info": "Account Info"
             },
-            "table_pagination": {
-                "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"
+            "citizen_info_profile": {
+                "create_new_document": "Create New Document",
+                "copy_profile_link": "Copy Profile Link",
+                "revoke_wanted": "Revoke Wanted Status",
+                "set_wanted": "Set Person Wanted"
+            },
+            "citizen_info_activity_feed_entry": {
+                "set_citizen_as": "Set the citizen as"
             }
         },
         "clipboard": {
             "clipboard_button": {
                 "add": "Add to Clipboard"
+            },
+            "clipboard_modal": {
+                "clear": "Clear Clipboard",
+                "no_data": "No {0} in clipboard"
+            }
+        },
+        "documents": {
+            "categories": {
+                "categories_list": {
+                    "categories_for_your_job": "{0} for your {1} and {2}"
+                }
+            },
+            "templates": {
+                "templates_modal": {
+                    "no_template": "No Template"
+                }
+            },
+            "document_comment_entry": {
+                "edit_comment": "Edit your comment"
+            },
+            "document_comments": {
+                "add_comment": "Add your comment",
+                "no_comments": "No comments have been posted yet"
+            },
+            "document_editor": {
+                "add_permission": "Add Permission"
+            },
+            "document_managers": {
+                "view_current": "View current",
+                "add_new": "Add new",
+                "links": "Links",
+                "solves": "Solves",
+                "closes": "Closes",
+                "deprecates": "Deprecates",
+                "open_document": "Open Document",
+                "remove_reference": "Remove Reference",
+                "add_reference": "Add Reference",
+                "open_citizen": "Open Citizen",
+                "remove_relation": "Remove Relation",
+                "add_relation": "Add Relation",
+                "mentioned": "Mentioned",
+                "targets": "Targets",
+                "caused": "Caused"
+            },
+            "document_list": {
+                "no_documents_hint": "Either update your search query or create the first document using the above \"Create\"-button."
+            }
+        },
+        "livemap": {
+            "starting_datastream": "Starting Livemap data stream...",
+            "failed_datastream": "Failed to stream Livemap data!",
+            "sent_by": "Sent by",
+            "center_selected_marker": "Center selected Marker"
+        },
+        "partials": {
+            "data_error_block": {
+                "default_title": "Unable to load your data!",
+                "default_message": "Please try again in a moment."
+            },
+            "data_pending_block": {
+                "default_message": "Loading your data..."
+            },
+            "sidebar": {
+                "change_character": "Change Character",
+                "account_info": "Account Info",
+                "open_sidebar": "Open Sidebar",
+                "close_sidebar": "Close Sidebar",
+                "open_usermenu": "Open User menu"
+            },
+            "sidebar_language_switcher": {
+                "open_switcher": "Open language menu"
+            },
+            "table_pagination": {
+                "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"
+            }
+        },
+        "rector": {
+            "job_props": {
+                "job_properties": "Job Properties",
+                "your_job_properties": "Your job's FiveNet properties.",
+                "livemap_marker_color": "Livemap Marker Color"
+            },
+            "role_view": {
+                "add_permission": "Add Permission"
             }
         }
     }

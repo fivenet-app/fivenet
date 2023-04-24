@@ -25,7 +25,7 @@ defineProps({
 
 <template>
     <span v-if="required">
-        Requires
+        {{ $t('common.require', 2) }}
     </span>
     <span v-if="max == min">
         1 {{ name }}
@@ -36,7 +36,7 @@ defineProps({
             max : min }}
         {{ plural ?? name + "(s)" }}
         <span v-if="max! > 0">
-        &nbsp;(Max: {{ max }})
+        &nbsp;({{ $t('common.max') }}: {{ max }})
         </span>
     </span>
 </template>

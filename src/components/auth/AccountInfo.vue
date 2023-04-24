@@ -40,13 +40,13 @@ const changePasswordModal = ref(false);
 <template>
     <div class="py-2 mt-5 max-w-5xl mx-auto">
         <ChangePasswordModal :open="changePasswordModal" @close="changePasswordModal = false" />
-        <DataPendingBlock v-if="pending" message="Loading documents..." />
-        <DataErrorBlock v-else-if="error" title="Unable to load account info!" :retry="refresh" />
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])" />
+        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])" :retry="refresh" />
         <button v-else-if="!account" type="button"
             class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <UserIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold">
-                {{ $t('components.auth.account_info.no_data') }}
+                {{ $t('common.not_found', [`${$t('common.account')} ${$t('common.data')}`]) }}
             </span>
         </button>
         <div v-else>

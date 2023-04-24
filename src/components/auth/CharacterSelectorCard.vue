@@ -59,7 +59,7 @@ async function chooseCharacter(): Promise<void> {
                 <div v-if="lastCharID == char.getUserId()">
                     <span
                         class="inline-flex items-center rounded-full bg-success-100 px-3 py-0.5 text-sm font-medium text-success-800">
-                        Last Used
+                        {{ $t('common.last_used') }}
                     </span>
                 </div>
             </div>
@@ -67,15 +67,15 @@ async function chooseCharacter(): Promise<void> {
                 <dd class="mt-3">
                     <span
                         class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">{{
-                            char.getJobLabel() }} (Rank: {{ char.getJobGradeLabel() }})</span>
+                            char.getJobLabel() }} ({{ $t('common.rank') }}: {{ char.getJobGradeLabel() }})</span>
                 </dd>
-                <dt class="text-sm text-neutral">Date of Birth</dt>
+                <dt class="text-sm text-neutral">{{ $t('common.date_of_birth') }}</dt>
                 <dd class="text-sm text-gray-300">{{ char.getDateofbirth() }}</dd>
-                <dt class="text-sm text-neutral">Height</dt>
+                <dt class="text-sm text-neutral">{{ $t('common.height') }}</dt>
                 <dd class="text-sm text-gray-300">{{ char.getHeight() }}cm</dd>
-                <dt class="text-sm text-neutral">Visum</dt>
+                <dt class="text-sm text-neutral">{{ $t('common.visum') }}</dt>
                 <dd class="text-sm text-gray-300">{{ char.getVisum() }}</dd>
-                <dt class="text-sm text-neutral">Playtime</dt>
+                <dt class="text-sm text-neutral">{{ $t('common.playtime') }}</dt>
                 <dd class="text-sm text-gray-300">{{ fromSecondsToFormattedDuration(char.getPlaytime()) }}</dd>
             </dl>
         </div>
@@ -84,7 +84,7 @@ async function chooseCharacter(): Promise<void> {
                 <div class="flex flex-1 w-0">
                     <button @click="chooseCharacter()"
                         class="relative inline-flex items-center justify-center flex-1 w-0 py-4 text-sm font-semibold transition-colors border border-transparent rounded-b-lg gap-x-3 text-neutral bg-base-700 hover:bg-base-600">
-                        Choose
+                        {{ $t('common.choose') }}
                     </button>
                 </div>
             </div>

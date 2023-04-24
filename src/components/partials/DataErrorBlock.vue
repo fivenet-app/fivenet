@@ -1,16 +1,18 @@
 <script lang="ts" setup>
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 
+const { t } = useI18n();
+
 defineProps({
     title: {
         type: String,
         required: false,
-        default: 'Unable to load your data!',
+        default: t('components.partials.data_error_block.default_title'),
     },
     message: {
         type: String,
         required: false,
-        default: 'Please try again in a moment.',
+        default: t('components.partials.data_error_block.default_message'),
     },
     retry: {
         type: Function,
@@ -19,7 +21,7 @@ defineProps({
     retryMessage: {
         type: String,
         required: false,
-        default: 'Retry',
+        default: t('common.retry'),
     },
 
 });
