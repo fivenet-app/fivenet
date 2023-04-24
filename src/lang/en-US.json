@@ -382,9 +382,6 @@
                 "default_title": "Unable to load your data!",
                 "default_message": "Please try again in a moment."
             },
-            "data_pending_block": {
-                "default_message": "Loading your data..."
-            },
             "sidebar": {
                 "change_character": "Change Character",
                 "account_info": "Account Info",

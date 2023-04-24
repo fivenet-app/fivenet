@@ -1,13 +1,10 @@
 <script lang="ts" setup>
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
 
-const { t } = useI18n();
-
 defineProps({
     message: {
         type: String,
-        required: false,
-        default: t('components.partials.data_pending_block.default_message'),
+        required: true,
     },
 });
 </script>
