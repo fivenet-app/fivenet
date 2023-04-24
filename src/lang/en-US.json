@@ -47,7 +47,13 @@
         "owner": "Owner",
         "category": "Category | Categories",
         "description": "Description",
-        "create": "Create"
+        "create": "Create",
+        "account": "Account",
+        "info": "Info",
+        "data": "Data",
+        "your": "your",
+        "character": "Character | Characters",
+        "user": "User"
     },
     "notifications": {
         "clipboard": {

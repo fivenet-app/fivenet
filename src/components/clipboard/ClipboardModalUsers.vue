@@ -103,7 +103,7 @@ watch(props, async (newVal) => {
         disabled>
         <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
         <span class="block mt-2 text-sm font-semibold text-gray-300">
-            {{ $t('components.clipboard.clipboard_modal.no_data', ['citizens']) }}
+            {{ $t('components.clipboard.clipboard_modal.no_data', [$t('common.citizen', 2)]) }}
         </span>
     </button>
     <table v-else class="min-w-full divide-y divide-gray-700">

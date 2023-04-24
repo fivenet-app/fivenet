@@ -38,14 +38,14 @@ async function getUserActivity(): Promise<Array<UserActivity>> {
 
 <template>
     <div>
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', ['user activity'])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.not_found', ['user activity'])" :retry="refresh" />
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.user')} ${$t('common.activity')}`])" />
+        <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [`${$t('common.user')} ${$t('common.activity')}`])" :retry="refresh" />
         <button v-else-if="activities && activities.length == 0" type="button"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
             disabled>
             <RectangleGroupIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                {{ $t('common.not_found', ['user activity']) }}
+                {{ $t('common.not_found', [`${$t('common.user')} ${$t('common.activity')}`]) }}
             </span>
         </button>
         <ul v-else role="list" class="divide-y divide-gray-200">
