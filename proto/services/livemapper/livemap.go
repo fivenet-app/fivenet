@@ -321,7 +321,7 @@ func (s *Server) refreshDispatches() error {
 			Job:       job,
 			UpdatedAt: timestamp.New(v.Time),
 		}
-		if v.Owner == 1 {
+		if v.Owner == 0 {
 			marker.Active = true
 		}
 
