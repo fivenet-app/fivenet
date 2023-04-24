@@ -73,7 +73,10 @@
         "remove": "Remove",
         "add": "Add",
         "created": "Created",
-        "created_at": "Created at"
+        "created_at": "Created at",
+        "target": "Target",
+        "source": "Source",
+        "date": "Date"
     },
     "notifications": {
         "clipboard": {

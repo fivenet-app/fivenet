@@ -19,7 +19,7 @@ defineProps({
 
 <template>
     <div>
-        <span v-if="references.length == 0" class="text-neutral">No Document References found.</span>
+        <span v-if="references.length == 0" class="text-neutral">{{ $t('common.not_found', [`${$t('common.document', 1)} ${$t('common.reference', 2)}`]) }}</span>
         <!-- Relations list (smallest breakpoint only) -->
         <div v-if="references.length > 0" class="sm:hidden text-neutral">
             <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
@@ -32,14 +32,14 @@ defineProps({
                                 <span class="flex flex-col text-sm truncate">
                                     <span>
                                         {{ reference.getTargetDocument()?.getTitle() }}<span
-                                                    v-if="reference.getTargetDocument()?.getCategory()">&nbsp;(Category: {{
+                                                    v-if="reference.getTargetDocument()?.getCategory()">&nbsp;({{ $t('common.category', 1) }}: {{
                                                         reference.getTargetDocument()?.getCategory()?.getName() }})</span>
                                     </span>
                                     <span class="font-medium ">{{
                                         DOC_REFERENCE_Util.toEnumKey(reference.getReference()) }}</span>
                                     <span v-if="showSource" class="truncate">
                                         {{ reference.getSourceDocument()?.getTitle() }}<span
-                                            v-if="reference.getSourceDocument()?.getCategory()"> (Category: {{
+                                            v-if="reference.getSourceDocument()?.getCategory()"> ({{ $t('common.category', 1) }}: {{
                                                 reference.getSourceDocument()?.getCategory()?.getName() }})</span>
                                     </span>
                                     <span>
@@ -66,19 +66,19 @@ defineProps({
                             <thead>
                                 <tr>
                                     <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
-                                        Target
+                                        {{ $t('common.target') }}
                                     </th>
                                     <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
-                                        Relation
+                                        {{ $t('common.relation', 1) }}
                                     </th>
                                     <th v-if="showSource" class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
-                                        Source
+                                        {{ $t('common.source') }}
                                     </th>
                                     <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
-                                        Creator
+                                        {{ $t('common.creator') }}
                                     </th>
                                     <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
-                                        Date
+                                        {{ $t('common.date') }}
                                     </th>
                                 </tr>
                             </thead>
@@ -90,7 +90,7 @@ defineProps({
                                                 :to="{ name: 'documents-id', params: { id: reference.getTargetDocumentId() } }"
                                                 class="inline-flex space-x-2 text-sm truncate group">
                                                 {{ reference.getTargetDocument()?.getTitle() }}<span
-                                                    v-if="reference.getTargetDocument()?.getCategory()">&nbsp;(Category: {{
+                                                    v-if="reference.getTargetDocument()?.getCategory()">&nbsp;({{ $t('common.category', 1) }}: {{
                                                         reference.getTargetDocument()?.getCategory()?.getName() }})</span>
                                             </NuxtLink>
                                         </div>
@@ -105,7 +105,7 @@ defineProps({
                                                 :to="{ name: 'documents-id', params: { id: reference.getSourceDocumentId() } }"
                                                 class="inline-flex space-x-1 text-sm truncate group">
                                                 {{ reference.getSourceDocument()?.getTitle() }}<span
-                                                    v-if="reference.getSourceDocument()?.getCategory()">&nbsp;(Category: {{
+                                                    v-if="reference.getSourceDocument()?.getCategory()">&nbsp;({{ $t('common.category', 1) }}: {{
                                                         reference.getSourceDocument()?.getCategory()?.getName() }})</span>
                                             </NuxtLink>
                                         </div>
