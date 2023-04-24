@@ -54,7 +54,9 @@
         "your": "your",
         "character": "Character | Characters",
         "user": "User",
-        "delete": "Delete"
+        "delete": "Delete",
+        "require": "Require | Requires",
+        "max": "Max"
     },
     "notifications": {
         "clipboard": {
