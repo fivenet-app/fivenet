@@ -84,7 +84,8 @@
         "latitude": "Latitude",
         "longitude": "Longitude",
         "filter": "Filter",
-        "postal": "Postal"
+        "postal": "Postal",
+        "retry": "Retry"
     },
     "notifications": {
         "clipboard": {
@@ -328,6 +329,13 @@
             "center_selected_marker": "Center selected Marker"
         },
         "partials": {
+            "data_error_block": {
+                "default_title": "Unable to load your data!",
+                "default_message": "Please try again in a moment."
+            },
+            "data_pending_block": {
+                "default_message": "Loading your data..."
+            },
             "sidebar": {
                 "change_character": "Change Character",
                 "account_info": "Account Info"
