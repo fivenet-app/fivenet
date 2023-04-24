@@ -94,7 +94,9 @@
         "id": "ID",
         "time": "Time",
         "service": "Service",
-        "copy": "Copy"
+        "copy": "Copy",
+        "prop": "Prop",
+        "theme": "Theme"
     },
     "notifications": {
         "clipboard": {
@@ -357,6 +359,13 @@
             },
             "table_pagination": {
                 "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"
+            }
+        },
+        "rector": {
+            "job_props": {
+                "job_properties": "Job Properties",
+                "your_job_properties": "Your job's FiveNet properties.",
+                "livemap_marker_color": "Livemap Marker Color"
             }
         }
     }
