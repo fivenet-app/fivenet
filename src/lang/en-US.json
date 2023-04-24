@@ -60,7 +60,8 @@
         "template": "Template | Templates",
         "go_back": "Go Back",
         "content": "Content",
-        "schema": "Schema"
+        "schema": "Schema",
+        "edit": "Edit"
     },
     "notifications": {
         "clipboard": {
@@ -245,6 +246,9 @@
                 "templates_modal": {
                     "no_template": "No Template"
                 }
+            },
+            "document_comment_entry": {
+                "edit_comment": "Edit your comment"
             }
         },
         "partials": {
