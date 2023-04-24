@@ -76,6 +76,7 @@
         "created": "Created",
         "created_at": "Created at",
         "created_by": "Created by",
+        "updated_at": "Updated at",
         "target": "Target",
         "source": "Source",
         "date": "Date",
@@ -96,7 +97,9 @@
         "service": "Service",
         "copy": "Copy",
         "prop": "Prop",
-        "theme": "Theme"
+        "theme": "Theme",
+        "job_grade": "Job Grade",
+        "role": "Role | Roles"
     },
     "notifications": {
         "clipboard": {
@@ -168,6 +171,10 @@
         "failed_loading_postals": {
             "title": "Failed to load Postals",
             "content": "Postals Map couldn't be loaded"
+        },
+        "role_created": {
+            "title": "Role: Created",
+            "content": "Role has been created."
         }
     },
     "pages": {

@@ -20,6 +20,8 @@ const store = useAuthStore();
 const notifications = useNotificationsStore();
 const router = useRouter();
 
+const { t } = useI18n();
+
 const activeChar = computed(() => store.activeChar);
 
 const { data: roles, pending, refresh, error } = await useLazyAsyncData('rector-roles', () => getRoles());
@@ -80,7 +82,7 @@ async function createRole(): Promise<void> {
                 roles.value?.unshift(role.getRole()!);
             }
 
-            notifications.dispatchNotification({ title: 'Role: Created', content: 'Role has been created.', type: 'success' });
+            notifications.dispatchNotification({ title: t('notifications.role_created.title'), content: t('notifications.role_created.content'), type: 'success' });
             await router.push({ name: 'rector-roles-id', params: { id: role.getRole()?.getId()!, } });
 
             return res();
@@ -108,7 +110,7 @@ onMounted(async () => {
                             <div class="flex flex-row gap-4 mx-auto">
                                 <div class="flex-1 form-control">
                                     <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
-                                        Job Grade
+                                        {{ $t('common.job_grade') }}
                                     </label>
                                     <Combobox as="div" v-model="selectedJobGrade"
                                         class="relative flex items-center mt-2 w-full" nullable>
@@ -154,13 +156,14 @@ onMounted(async () => {
                 </div>
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <DataPendingBlock v-if="pending" message="Loading roles..." />
-                        <DataErrorBlock v-else-if="error" title="Unable to load roles!" :retry="refresh" />
+                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
+                        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])"
+                            :retry="refresh" />
                         <button v-else-if="roles && roles.length == 0" type="button"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                Use the search field above to search or update your query.
+                                {{ $t('common.not_found', [$t('common.role', 2)]) }}
                             </span>
                         </button>
                         <div v-else>
@@ -168,14 +171,14 @@ onMounted(async () => {
                                 <thead>
                                     <tr>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Name
+                                            {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Updated At
+                                            {{ $t('common.updated_at') }}
                                         </th>
                                         <th scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Actions
+                                            {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
                                 </thead>
@@ -185,14 +188,14 @@ onMounted(async () => {
                                 <thead>
                                     <tr>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Name
+                                            {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            Updated At
+                                            {{ $t('common.updated_at') }}
                                         </th>
                                         <th scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                            Actions
+                                            {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
                                 </thead>
