@@ -69,7 +69,11 @@
         "relation": "Relation | Relations",
         "access": "Access",
         "submit": "Submit",
-        "save": "Save | Saving"
+        "save": "Save | Saving",
+        "remove": "Remove",
+        "add": "Add",
+        "created": "Created",
+        "created_at": "Created at"
     },
     "notifications": {
         "clipboard": {
@@ -276,6 +280,14 @@
             },
             "document_editor": {
                 "add_permission": "Add Permission"
+            },
+            "document_managers": {
+                "view_current": "View current",
+                "add_new": "Add new",
+                "links": "Links",
+                "solves": "Solves",
+                "closes": "Closes",
+                "deprecates": "Deprecates"
             }
         },
         "partials": {
