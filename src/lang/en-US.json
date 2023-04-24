@@ -182,6 +182,9 @@
         "clipboard": {
             "clipboard_button": {
                 "add": "Add to Clipboard"
+            },
+            "clipboard_modal": {
+                "clear": "Clear Clipboard"
             }
         }
     }
