@@ -222,8 +222,9 @@ async function applySelectedMarkerCentering(): Promise<void> {
 type TMarker<TType> = TType extends 'player' ? UserMarker : TType extends 'dispatch' ? DispatchMarker : never;
 
 function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMarker<TType>): L.DivIcon {
-    let html = ``;
+    let html = '';
     let color = marker.getIconColor();
+    let iconClass = '';
 
     switch (type) {
         case 'player':
@@ -237,6 +238,7 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
 
         case 'dispatch':
             {
+                if ((marker as DispatchMarker).getActive()) iconClass = 'animate-dispatch'
                 html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${color ? '#' + color : 'currentColor'}" class="w-full h-full">
                     <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
                 </svg>`;
@@ -245,7 +247,7 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
     }
 
     return new L.DivIcon({
-        html: '<div>' + html + '</div>',
+        html: `<div class="${iconClass}">` + html + '</div>',
         iconSize: [markerSize.value, markerSize.value],
         popupAnchor: [0, (markerSize.value / 2 * -1)],
     });
@@ -340,7 +342,33 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 }
 
 .leaflet-marker-icon {
-    transition: transform 1000ms ease;
+    transition: transform 1s ease;
+}
+
+.animate-dispatch {
+    animation: wiggle 1s infinite;
+}
+
+@keyframes wiggle {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    80% {
+        transform: rotate(0deg);
+    }
+
+    85% {
+        transform: rotate(5deg);
+    }
+
+    95% {
+        transform: rotate(-5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
 }
 </style>
 
