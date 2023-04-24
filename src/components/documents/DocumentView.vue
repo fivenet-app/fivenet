@@ -34,6 +34,8 @@ const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const document = ref<undefined | Document>(undefined);
 const access = ref<undefined | DocumentAccess>(undefined);
 const comments = ref<DocumentComment[]>([]);
@@ -94,7 +96,7 @@ function addToClipboard(): void {
     if (document.value) {
         clipboardStore.addDocument(document.value);
     }
-    notifications.dispatchNotification({ title: 'Clipboard: Document added', content: 'Document has been added to clipboard', duration: 3500, type: 'info' });
+    notifications.dispatchNotification({ title: t('notifications.clipboard.document_added.title'), content: t('notifications.clipboard.document_added.content'), duration: 3500, type: 'info' });
 }
 
 onMounted(() => {
@@ -112,7 +114,7 @@ onMounted(() => {
                             <div>
                                 <h1 class="text-2xl font-bold text-neutral">{{ document?.getTitle() }}</h1>
                                 <p class="text-sm text-base-300">
-                                    Created by
+                                    {{ $t('common.created_by') }}
                                     {{ ' ' }}
                                     <NuxtLink
                                         :to="{ name: 'citizens-id', params: { id: document?.getCreator()?.getUserId() ?? 0 } }"
@@ -128,7 +130,7 @@ onMounted(() => {
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     v-can="'DocStoreService.CreateDocument'">
                                     <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
-                                    Edit
+                                    {{ $t('common.edit') }}
                                 </NuxtLink>
                             </div>
                         </div>
@@ -136,17 +138,16 @@ onMounted(() => {
                             <div v-if="document?.getClosed()"
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
                                 <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
-                                <span class="text-sm font-medium text-error-700">Closed</span>
+                                <span class="text-sm font-medium text-error-700">{{ $t('common.close', 2) }}</span>
                             </div>
                             <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
                                 <LockOpenIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
-                                <span class="text-sm font-medium text-green-700">Open</span>
+                                <span class="text-sm font-medium text-green-700">{{ $t('common.open') }}</span>
                             </div>
                             <div
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500">
                                 <ChatBubbleLeftEllipsisIcon class="w-5 h-auto" aria-hidden="true" />
-                                <span class="text-sm font-medium text-primary-700">{{ commentCount }}
-                                    comments</span>
+                                <span class="text-sm font-medium text-primary-700">{{ commentCount }} {{ $t('common.comment', 2).toLowerCase() }}</span>
                             </div>
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
@@ -174,7 +175,7 @@ onMounted(() => {
                             </div>
                         </div>
                         <div>
-                            <h2 class="sr-only">Content</h2>
+                            <h2 class="sr-only">{{ $t('common.content') }}</h2>
                             <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
                                 <p v-html="document?.getContent()"></p>
                             </div>
@@ -205,7 +206,7 @@ onMounted(() => {
                             </TabGroup>
                         </div>
                         <div class="mt-4" v-can="'DocStoreService.GetDocumentComments'">
-                            <h2 class="text-lg font-semibold text-neutral">Comments</h2>
+                            <h2 class="text-lg font-semibold text-neutral">{{ $t('common.comment', 2) }}</h2>
                             <DocumentComments :document-id="documentId" :comments="comments" />
                         </div>
                     </div>

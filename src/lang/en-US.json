@@ -74,15 +74,21 @@
         "add": "Add",
         "created": "Created",
         "created_at": "Created at",
+        "created_by": "Created by",
         "target": "Target",
         "source": "Source",
-        "date": "Date"
+        "date": "Date",
+        "comment": "Comment | Comments"
     },
     "notifications": {
         "clipboard": {
             "citizen_add": {
                 "title": "Clipboard: Citizen added",
                 "content": "Citizen has been added to clipboard"
+            },
+            "document_added": {
+                "title": "Clipboard: Document added",
+                "content": "Document has been added to clipboard"
             },
             "document_removed": {
                 "title": "Clipboard: Document removed",
