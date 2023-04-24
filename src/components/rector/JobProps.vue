@@ -5,8 +5,13 @@ import { GetJobPropsRequest, SetJobPropsRequest } from '@fivenet/gen/services/re
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import { AdjustmentsVerticalIcon } from '@heroicons/vue/24/outline';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
+
+const notifications = useNotificationsStore();
+
+const properties = ref<{ theme: string; livemapMarkerColor: string; }>({ theme: 'default', livemapMarkerColor: '#5C7AFF' });
 
 async function getJobProps(): Promise<JobProps> {
     return new Promise(async (res, rej) => {
@@ -16,6 +21,9 @@ async function getJobProps(): Promise<JobProps> {
             const resp = await $grpc.getRectorClient().
                 getJobProps(req, null);
 
+            properties.value.livemapMarkerColor = '#' + resp.getJobProps()?.getLivemapMarkerColor();
+            console.log(resp.getJobProps()?.getLivemapMarkerColor());
+            console.log(properties.value.livemapMarkerColor);
             return res(resp.getJobProps()!);
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -26,21 +34,20 @@ async function getJobProps(): Promise<JobProps> {
 
 const { data: jobProps, pending, refresh, error } = await useLazyAsyncData(`rector-jobprops`, () => getJobProps());
 
-const props = ref<{ theme: string; livemapMarkerColor: string; }>({ theme: 'default', livemapMarkerColor: '#5C7AFF' });
-
 async function saveJobProps(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new SetJobPropsRequest();
         const jProps = new JobProps();
-        jProps.setTheme(props.value.theme);
+        jProps.setTheme(properties.value.theme);
         // Remove '#' from color code
-        jProps.setLivemapMarkerColor(props.value.livemapMarkerColor.substring(1));
+        jProps.setLivemapMarkerColor(properties.value.livemapMarkerColor.substring(1));
         req.setJobProps(jProps);
 
         try {
             await $grpc.getRectorClient().
                 setJobProps(req, null);
 
+            notifications.dispatchNotification({ title: 'Updated Job Props', content: 'Your job properties have been updated.', type: 'success' });
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -48,14 +55,12 @@ async function saveJobProps(): Promise<void> {
         }
     });
 }
-
-watch(jobProps, () => props.value.livemapMarkerColor = '#' + jobProps.value?.getLivemapMarkerColor());
 </script>
 
 <template>
     <div class="py-2 mt-5 max-w-5xl mx-auto">
-        <DataPendingBlock v-if="pending" message="Loading job props..." />
-        <DataErrorBlock v-else-if="error" title="Unable to load job props!" :retry="refresh" />
+        <DataPendingBlock v-if="pending" message="Loading job properties..." />
+        <DataErrorBlock v-else-if="error" title="Unable to load job properties!" :retry="refresh" />
         <button v-else-if="!jobProps" type="button"
             class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <AdjustmentsVerticalIcon class="w-12 h-12 mx-auto text-neutral" />
@@ -88,7 +93,7 @@ watch(jobProps, () => props.value.livemapMarkerColor = '#' + jobProps.value?.get
                                 Livemap Marker Color
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                <input type="color" v-model="props.livemapMarkerColor" />
+                                <input type="color" v-model="properties.livemapMarkerColor" />
                             </dd>
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5"

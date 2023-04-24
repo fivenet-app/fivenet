@@ -19,6 +19,7 @@ var (
 func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*GetJobPropsResponse, error) {
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
+	jobProps := table.FivenetJobProps.AS("jobprops")
 	stmt := jobProps.
 		SELECT(
 			jobProps.AllColumns,
@@ -30,17 +31,15 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 		LIMIT(1)
 
 	resp := &GetJobPropsResponse{
-		JobProps: &jobs.JobProps{
-			Job:                job,
-			Theme:              "default",
-			LivemapMarkerColor: jobs.DefaultLivemapMarkerColor,
-		},
+		JobProps: &jobs.JobProps{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, resp.JobProps); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}
+
+	resp.JobProps.Default(job)
 
 	return resp, nil
 }
