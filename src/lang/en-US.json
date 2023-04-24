@@ -257,6 +257,9 @@
                 "create_template": "Create Template"
             }
         },
+        "jobs": {
+            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM"
+        },
         "overview": {
             "features": {
                 "citizens": "Search and find information about Citizens, including basic info, their licenses and related documents.",
