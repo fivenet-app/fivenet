@@ -1,12 +1,225 @@
 {
+    "pages": {
+        "index": {
+            "welcome": "Welcome to FiveNet!",
+            "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court and a livemap of your colleagues and dispatches.\\n\\nAll that and more, is (mostly) ready in this net, the FiveNet."
+        },
+        "auth": {
+            "logout": {
+                "title": "Signed out",
+                "subtitle": "You will be redirected to the home page in a moment."
+            }
+        },
+        "404": {
+            "page_not_found": "Page Not Found",
+            "error": "4😵‍💫4 Error",
+            "fun_error": "Seems like you got lost. Let's get you back to the start!"
+        },
+        "about": {
+            "sub_title": "About FiveNet and it's creators.",
+            "introduction": {
+                "pre_title": "More time for GTA V RolePlay.",
+                "title": "A better workflow",
+                "content": "Easily search for citizens and vehicles. With the document access system it is easy to create and securely share documents with your colleagues. A livemap that shows last few dispatches and your colleagues locations.",
+                "feature_one": {
+                    "title": "Search State Data.",
+                    "content": "You can search through citizens and vehicles. You can also set a citizen as wanted."
+                },
+                "feature_two": {
+                    "title": "Secure Document Sharing.",
+                    "content": "Documents can easily be shared with your colleagues and other factions on the server."
+                },
+                "feature_three": {
+                    "title": "Livemap.",
+                    "content": "See the location of your colleagues and dispatches live. Different map styles are available as well."
+                }
+            },
+            "faq": {
+                "title": "Frequently asked questions",
+                "one": {
+                    "question": "Who has created FiveNet?",
+                    "answer": "Galexrt and Clover, are the main people working on FiveNet at the moment."
+                },
+                "two": {
+                    "question": "Why was FiveNet created?",
+                    "answer": "It started out as a way for Galexrt to learn frontend development and then it spiraled into a way for ModernV server to have an alternative to VPC CopNet/ MedicNet."
+                },
+                "three": {
+                    "question": "Where can I find the FiveNet development roadmap?",
+                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Click here (GitHub galexrt/fivenet README)</a>."
+                },
+                "four": {
+                    "question": "I found a bug or other issue with FiveNet. Where do I report it?",
+                    "answer": "Please report on <a class=\"underline\" href=\"{discordLink}\">the Galexrt Discord server</a> or on <a class=\"underline\" href=\"{repoLink}\">the FiveNet GitHub project</a>."
+                }
+            },
+            "questions_or_issues": {
+                "title": "Got any questions or issues?",
+                "content": "Be sure to join the Discord server should you encounter any issues or have questions regarding FiveNet."
+            },
+            "join_discord": "Join Galexrt Discord server"
+        },
+        "overview": {
+            "features": {
+                "citizens": "Search and find information about Citizens, including basic info, their licenses and related documents.",
+                "vehicles": "Search and find information about Vehicles.",
+                "documents": "Search and create Documents, using templates or from scratch.",
+                "jobs": "Infos about your job and employee management. Coming soon",
+                "livemap": "Live position of dispatches and your colleagues."
+            }
+        },
+        "documents": {
+            "templates": {
+                "create_template": "Create Template"
+            }
+        },
+        "jobs": {
+            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM"
+        },
+        "rector": {
+            "features": {
+                "properties": "Set your job properties (e.g., livemap color).",
+                "jobs": "Setup your factions roles job rank permissions.",
+                "audit_log": "An audit trail of everything your colleagues have done."
+            }
+        }
+    },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
+    "components": {
+        "auth": {
+            "account_info": {
+                "title": "Account Info",
+                "subtitle": "Your FiveNet account details.",
+                "license": "Identifier/ License",
+                "change_password": "Change Password",
+                "change_password_button": "Change Account Password",
+                "perms": "Your Permissions (debug info)"
+            },
+            "login": {
+                "register_account": "Register Account using Token",
+                "login_error": "There was an error signing you in, please try again!"
+            },
+            "create_account": {
+                "title": "Create Account",
+                "registration_token": "Registration Token",
+                "submit_button": "Create Account",
+                "back_to_login_button": "Back to Login",
+                "create_error": "There was an error creating your account, please try again!"
+            },
+            "change_password_modal": {
+                "change_password": "Change Password",
+                "current_password": "Current Password",
+                "new_password": "New Password"
+            }
+        },
+        "citizens": {
+            "citizens_list": {
+                "only_wanted": "Only Wanted",
+                "no_citizens": "Use the search field above to search or update your query."
+            },
+            "citizen_info_profile": {
+                "create_new_document": "Create New Document",
+                "copy_profile_link": "Copy Profile Link",
+                "revoke_wanted": "Revoke Wanted Status",
+                "set_wanted": "Set Person Wanted"
+            },
+            "citizen_info_activity_feed_entry": {
+                "set_citizen_as": "Set the citizen as"
+            }
+        },
+        "partials": {
+            "sidebar": {
+                "change_character": "Change Character",
+                "account_info": "Account Info",
+                "open_sidebar": "Open Sidebar",
+                "close_sidebar": "Close Sidebar",
+                "open_usermenu": "Open User menu"
+            },
+            "table_pagination": {
+                "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"
+            },
+            "data_error_block": {
+                "default_title": "Unable to load your data!",
+                "default_message": "Please try again in a moment."
+            },
+            "sidebar_language_switcher": {
+                "open_switcher": "Open language menu"
+            }
+        },
+        "clipboard": {
+            "clipboard_button": {
+                "add": "Add to Clipboard"
+            },
+            "clipboard_modal": {
+                "clear": "Clear Clipboard",
+                "no_data": "No {0} in clipboard"
+            }
+        },
+        "documents": {
+            "categories": {
+                "categories_list": {
+                    "categories_for_your_job": "{0} for your {1} and {2}"
+                }
+            },
+            "templates": {
+                "templates_modal": {
+                    "no_template": "Without Template"
+                }
+            },
+            "document_comment_entry": {
+                "edit_comment": "Edit your comment"
+            },
+            "document_comments": {
+                "add_comment": "Add your comment",
+                "no_comments": "No comments have been posted yet"
+            },
+            "document_editor": {
+                "add_permission": "Add Permission"
+            },
+            "document_managers": {
+                "view_current": "View current",
+                "add_new": "Add new",
+                "links": "Links",
+                "solves": "Solves",
+                "closes": "Closes",
+                "deprecates": "Deprecates",
+                "open_document": "Open Document",
+                "remove_reference": "Remove Reference",
+                "add_reference": "Add Reference",
+                "open_citizen": "Open Citizen",
+                "remove_relation": "Remove Relation",
+                "add_relation": "Add Relation",
+                "mentioned": "Mentioned",
+                "targets": "Targets",
+                "caused": "Caused"
+            },
+            "document_list": {
+                "no_documents_hint": "Either update your search query or create the first document using the above \"Create\"-button."
+            }
+        },
+        "livemap": {
+            "starting_datastream": "Starting Livemap data stream...",
+            "failed_datastream": "Failed to stream Livemap data!",
+            "sent_by": "Sent by",
+            "center_selected_marker": "Center selected Marker"
+        },
+        "rector": {
+            "job_props": {
+                "job_properties": "Job Properties",
+                "your_job_properties": "Your job's FiveNet properties.",
+                "livemap_marker_color": "Livemap Marker Color"
+            },
+            "role_view": {
+                "add_permission": "Add Permission"
+            }
+        }
+    },
     "common": {
         "login": "Login",
         "logout": "Logout",
         "sign_out": "Sign Out",
         "username": "Username",
         "password": "Password",
-        "home": "Home",
         "overview": "Overview",
         "citizen": "Citizen | Citizens",
         "vehicle": "Vehicle | Vehicles",
@@ -28,9 +241,10 @@
         "wanted": "Wanted",
         "loading": "Loading {0}...",
         "unable_to_load": "Unable to load {0}!",
-        "not_found": "No {0} found!",
         "profile": "Profile",
         "activity": "Activity",
+        "home": "Home",
+        "not_found": "No {0} found!",
         "visum": "Visum",
         "license": "License | Licenses",
         "not": "Not",
@@ -86,7 +300,7 @@
         "latitude": "Latitude",
         "longitude": "Longitude",
         "filter": "Filter",
-        "postal": "Postal",
+        "postal": "Postal Code",
         "retry": "Retry",
         "time_range": "Time Range",
         "from": "From",
@@ -177,8 +391,8 @@
             "content": "Document has been updated."
         },
         "failed_loading_postals": {
-            "title": "Failed to load Postals",
-            "content": "Postals Map couldn't be loaded"
+            "title": "Failed to load Postal codes",
+            "content": "Postal codes couldn't be loaded"
         },
         "role_created": {
             "title": "Role: Created",
@@ -191,220 +405,6 @@
         "error_logout": {
             "title": "Logout: Encountered an error",
             "content": "{0}"
-        }
-    },
-    "pages": {
-        "index": {
-            "welcome": "Welcome to FiveNet!",
-            "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court and a livemap of your colleagues and dispatches.\\n\\nAll that and more, is (mostly) ready in this net, the FiveNet."
-        },
-        "404": {
-            "page_not_found": "Page Not Found",
-            "error": "4😵‍💫4 Error",
-            "fun_error": "Seems like you got lost. Let's get you back to the start!"
-        },
-        "auth": {
-            "logout": {
-                "title": "Signed out",
-                "subtitle": "You will be redirected to the home page in a moment."
-            }
-        },
-        "about": {
-            "sub_title": "About FiveNet and it's creators.",
-            "introduction": {
-                "pre_title": "More time for GTA V RolePlay.",
-                "title": "A better workflow",
-                "content": "Easily search for citizens and vehicles. With the document access system it is easy to create and securely share documents with your colleagues. A livemap that shows last few dispatches and your colleagues locations.",
-                "feature_one": {
-                    "title": "Search State Data.",
-                    "content": "You can search through citizens and vehicles. You can also set a citizen as wanted."
-                },
-                "feature_two": {
-                    "title": "Secure Document Sharing.",
-                    "content": "Documents can easily be shared with your colleagues and other factions on the server."
-                },
-                "feature_three": {
-                    "title": "Livemap.",
-                    "content": "See the location of your colleagues and dispatches live. Different map styles are available as well."
-                }
-            },
-            "faq": {
-                "title": "Frequently asked questions",
-                "one": {
-                    "question": "Who has created FiveNet?",
-                    "answer": "Galexrt and Clover, are the main people working on FiveNet at the moment."
-                },
-                "two": {
-                    "question": "Why was FiveNet created?",
-                    "answer": "It started out as a way for Galexrt to learn frontend development and then it spiraled into a way for ModernV server to have an alternative to VPC CopNet/ MedicNet."
-                },
-                "three": {
-                    "question": "Where can I find the FiveNet development roadmap?",
-                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Click here (GitHub galexrt/fivenet README)</a>."
-                },
-                "four": {
-                    "question": "I found a bug or other issue with FiveNet. Where do I report it?",
-                    "answer": "Please report on <a class=\"underline\" href=\"{discordLink}\">the Galexrt Discord server</a> or on <a class=\"underline\" href=\"{repoLink}\">the FiveNet GitHub project</a>."
-                }
-            },
-            "questions_or_issues": {
-                "title": "Got any questions or issues?",
-                "content": "Be sure to join the Discord server should you encounter any issues or have questions regarding FiveNet."
-            },
-            "join_discord": "Join Galexrt Discord server"
-        },
-        "documents": {
-            "templates": {
-                "create_template": "Create Template"
-            }
-        },
-        "jobs": {
-            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM"
-        },
-        "overview": {
-            "features": {
-                "citizens": "Search and find information about Citizens, including basic info, their licenses and related documents.",
-                "vehicles": "Search and find information about Vehicles.",
-                "documents": "Search and create Documents, using templates or from scratch.",
-                "jobs": "Infos about your job and employee management. Coming soon",
-                "livemap": "Live position of dispatches and your colleagues."
-            }
-        },
-        "rector": {
-            "features": {
-                "properties": "Set your job properties (e.g., livemap color).",
-                "jobs": "Setup your factions roles job rank permissions.",
-                "audit_log": "An audit trail of everything your colleagues have done."
-            }
-        }
-    },
-    "components": {
-        "auth": {
-            "account_info": {
-                "title": "Account Info",
-                "subtitle": "Your FiveNet account details.",
-                "license": "Identifier/ License",
-                "change_password": "Change Password",
-                "change_password_button": "Change Account Password",
-                "perms": "Your Permissions (debug info)"
-            },
-            "login": {
-                "register_account": "Register Account using Token",
-                "login_error": "There was an error signing you in, please try again!"
-            },
-            "create_account": {
-                "title": "Create Account",
-                "registration_token": "Registration Token",
-                "submit_button": "Create Account",
-                "back_to_login_button": "Back to Login",
-                "create_error": "There was an error creating your account, please try again!"
-            },
-            "change_password_modal": {
-                "change_password": "Change Password",
-                "current_password": "Current Password",
-                "new_password": "New Password"
-            }
-        },
-        "citizens": {
-            "citizens_list": {
-                "only_wanted": "Only Wanted",
-                "no_citizens": "Use the search field above to search or update your query."
-            },
-            "citizen_info_profile": {
-                "create_new_document": "Create New Document",
-                "copy_profile_link": "Copy Profile Link",
-                "revoke_wanted": "Revoke Wanted Status",
-                "set_wanted": "Set Person Wanted"
-            },
-            "citizen_info_activity_feed_entry": {
-                "set_citizen_as": "Set the citizen as"
-            }
-        },
-        "clipboard": {
-            "clipboard_button": {
-                "add": "Add to Clipboard"
-            },
-            "clipboard_modal": {
-                "clear": "Clear Clipboard",
-                "no_data": "No {0} in clipboard"
-            }
-        },
-        "documents": {
-            "categories": {
-                "categories_list": {
-                    "categories_for_your_job": "{0} for your {1} and {2}"
-                }
-            },
-            "templates": {
-                "templates_modal": {
-                    "no_template": "No Template"
-                }
-            },
-            "document_comment_entry": {
-                "edit_comment": "Edit your comment"
-            },
-            "document_comments": {
-                "add_comment": "Add your comment",
-                "no_comments": "No comments have been posted yet"
-            },
-            "document_editor": {
-                "add_permission": "Add Permission"
-            },
-            "document_managers": {
-                "view_current": "View current",
-                "add_new": "Add new",
-                "links": "Links",
-                "solves": "Solves",
-                "closes": "Closes",
-                "deprecates": "Deprecates",
-                "open_document": "Open Document",
-                "remove_reference": "Remove Reference",
-                "add_reference": "Add Reference",
-                "open_citizen": "Open Citizen",
-                "remove_relation": "Remove Relation",
-                "add_relation": "Add Relation",
-                "mentioned": "Mentioned",
-                "targets": "Targets",
-                "caused": "Caused"
-            },
-            "document_list": {
-                "no_documents_hint": "Either update your search query or create the first document using the above \"Create\"-button."
-            }
-        },
-        "livemap": {
-            "starting_datastream": "Starting Livemap data stream...",
-            "failed_datastream": "Failed to stream Livemap data!",
-            "sent_by": "Sent by",
-            "center_selected_marker": "Center selected Marker"
-        },
-        "partials": {
-            "data_error_block": {
-                "default_title": "Unable to load your data!",
-                "default_message": "Please try again in a moment."
-            },
-            "sidebar": {
-                "change_character": "Change Character",
-                "account_info": "Account Info",
-                "open_sidebar": "Open Sidebar",
-                "close_sidebar": "Close Sidebar",
-                "open_usermenu": "Open User menu"
-            },
-            "sidebar_language_switcher": {
-                "open_switcher": "Open language menu"
-            },
-            "table_pagination": {
-                "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"
-            }
-        },
-        "rector": {
-            "job_props": {
-                "job_properties": "Job Properties",
-                "your_job_properties": "Your job's FiveNet properties.",
-                "livemap_marker_color": "Livemap Marker Color"
-            },
-            "role_view": {
-                "add_permission": "Add Permission"
-            }
         }
     }
 }

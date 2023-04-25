@@ -1,12 +1,410 @@
 {
-    "overview": "Übersicht",
-    "login": "Login",
-    "logout": "Logout",
     "pages": {
         "index": {
             "welcome": "Willkommen bei FiveNet!",
-            "subtext": ""
+            "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Livemap Ihrer Kollegen und Einsätze.\\n\\nAll das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit."
+        },
+        "auth": {
+            "logout": {
+                "title": "Abgemeldet",
+                "subtitle": "Du wirst in wenigen Sekunden zur Homepage weitergeleitet"
+            }
+        },
+        "404": {
+            "page_not_found": "Seite nicht gefunden",
+            "error": "404 Error",
+            "fun_error": "Es scheint, als hättest du dich verirrt. Lass uns zurück zum Anfang gehen!"
+        },
+        "about": {
+            "sub_title": "Über FiveNet und seine Ersteller.",
+            "introduction": {
+                "pre_title": "Mehr Zeit für GTA V Roleplay",
+                "title": "Ein besserer Arbeitsablauf",
+                "content": "Einfaches Suchen nach Bürgern und Fahrzeugen. Mit dem Dokumentzugriffssystem ist es einfach, Dokumente zu erstellen und sicher mit Ihren Kollegen zu teilen. Eine Livemap, die die letzten Einsätze und die Standorte Ihrer Kollegen anzeigt.",
+                "feature_one": {
+                    "title": "Suche nach Zustandsdaten.",
+                    "content": "Sie können nach Bürgern und Fahrzeugen suchen. Sie können auch einen Bürger als gesucht markieren."
+                },
+                "feature_two": {
+                    "title": "Sichere Dokumentenfreigabe.",
+                    "content": "Dokumente können einfach mit Ihren Kollegen und anderen Fraktionen auf dem Server geteilt werden."
+                },
+                "feature_three": {
+                    "title": "Livemap.",
+                    "content": "Sehen Sie den Standort Ihrer Kollegen und Einsätze live. Es stehen verschiedene Kartentypen zur Verfügung."
+                }
+            },
+            "faq": {
+                "title": "Häufig gestellte Fragen",
+                "one": {
+                    "question": "Wer hat FiveNet erstellt?",
+                    "answer": "Galexrt und Clover sind derzeit die Hauptverantwortlichen, die an FiveNet arbeiten."
+                },
+                "two": {
+                    "question": "Warum wurde FiveNet erstellt?",
+                    "answer": "Es begann als eine Möglichkeit für Galexrt, die Frontend-Entwicklung zu erlernen, und entwickelte sich dann zu einer Möglichkeit für ModernV Server, eine Alternative zu VPC CopNet/ MedicNet zu haben."
+                },
+                "three": {
+                    "question": "Wo kann ich die Entwicklungs-Roadmap von FiveNet finden?",
+                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Klicken Sie hier (GitHub galexrt/fivenet README)</a>."
+                },
+                "four": {
+                    "question": "Ich habe einen Fehler oder ein anderes Problem mit FiveNet gefunden. Wo melde ich es?",
+                    "answer": "Bitte melden Sie Probleme entweder auf <a class=\"underline\" href=\"{discordLink}\">dem Galexrt Discord-Server</a> oder auf <a class=\"underline\" href=\"{repoLink}\">dem FiveNet GitHub-Projekt</a>."
+                }
+            },
+            "questions_or_issues": {
+                "title": "Hast du Fragen oder Probleme?",
+                "content": "Stelle sicher, dass du dem Discord-Server beitrittst, falls du Probleme hast oder Fragen zu FiveNet hast."
+            },
+            "join_discord": "Tritt dem Discord-Server von Galexrt bei"
+        },
+        "overview": {
+            "features": {
+                "citizens": "Suche und finde Informationen über Bürger, einschließlich grundlegender Informationen, Lizenzen und zugehörigen Dokumenten.",
+                "vehicles": "Suche und finde Informationen zu Fahrzeugen.",
+                "documents": "Suche und erstelle Dokumente, entweder mit Vorlagen oder von Grund auf neu.",
+                "jobs": "Infos über deinen Job und Mitarbeitermanagement. Kommt bald",
+                "livemap": "Live-Positionen von Einsätzen und Kollegen."
+            }
+        },
+        "documents": {
+            "templates": {
+                "create_template": "Vorlage erstellen"
+            }
+        },
+        "jobs": {
+            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM"
+        },
+        "rector": {
+            "features": {
+                "properties": "Stelle deine Job Eigenschaften ein (e.g., Livemap Marker Farbe).",
+                "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
+                "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden."
+            }
         }
     },
-    "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten."
+    "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten.",
+    "components": {
+        "auth": {
+            "account_info": {
+                "title": "Konto Info",
+                "subtitle": "Deine FiveNet Konto Informationen.",
+                "license": "Identifier/ Lizenz",
+                "change_password": "Passwort ändern",
+                "change_password_button": "Konto Passwort ändern",
+                "perms": "Deine Berechtigungen (für die Fehlersuche)"
+            },
+            "login": {
+                "register_account": "Konto mit Token registrieren",
+                "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!"
+            },
+            "create_account": {
+                "title": "Konto erstellen",
+                "registration_token": "Registrierungstoken",
+                "submit_button": "Konto erstellen",
+                "back_to_login_button": "Zurück zur Anmeldung",
+                "create_error": "Es gab einen Fehler während dein Konto erstellt wurde, bitte versuche es erneut!"
+            },
+            "change_password_modal": {
+                "change_password": "Passwort ändern",
+                "current_password": "Momentanes Passwort",
+                "new_password": "Neues Passwort"
+            }
+        },
+        "citizens": {
+            "citizens_list": {
+                "only_wanted": "Nur Gesuchte",
+                "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren."
+            },
+            "citizen_info_profile": {
+                "create_new_document": "Neues Dokument erstellen",
+                "copy_profile_link": "Profil-Link kopieren",
+                "revoke_wanted": "Fahndungsstatus aufheben",
+                "set_wanted": "Person zur Fahndung ausschreiben"
+            },
+            "citizen_info_activity_feed_entry": {
+                "set_citizen_as": "Setze den Bürger als"
+            }
+        },
+        "partials": {
+            "sidebar": {
+                "change_character": "Charakter wechseln",
+                "account_info": "Konto-Informationen",
+                "open_sidebar": "Seitenleiste öffnen",
+                "close_sidebar": "Seitenleiste schließen",
+                "open_usermenu": "Konto Menü öffnen"
+            },
+            "table_pagination": {
+                "showing_results": "Zeige <span class=\"font-medium text-neutral\">{0}</span> bis <span class=\"font-medium text-neutral\">{1}</span> von insgesamt <span class=\"font-medium text-neutral\">{2}</span> Ergebnissen"
+            },
+            "data_error_block": {
+                "default_title": "Ihre Daten konnten nicht geladen werden!",
+                "default_message": "Bitte versuche es gleich noch einmal."
+            },
+            "sidebar_language_switcher": {
+                "open_switcher": "Öffne das Sprachmenü"
+            }
+        },
+        "clipboard": {
+            "clipboard_button": {
+                "add": "Zum Zwischenspeicher hinzufügen"
+            },
+            "clipboard_modal": {
+                "clear": "Zwischenablage leeren",
+                "no_data": "Keine {0} in der Zwischenablage"
+            }
+        },
+        "documents": {
+            "categories": {
+                "categories_list": {
+                    "categories_for_your_job": "{0} für deinen {1} und {2}"
+                }
+            },
+            "templates": {
+                "templates_modal": {
+                    "no_template": "Ohne Vorlage"
+                }
+            },
+            "document_comment_entry": {
+                "edit_comment": "Bearbeite deinen Kommentar"
+            },
+            "document_comments": {
+                "add_comment": "Füge deinen Kommentar hinzu",
+                "no_comments": "Noch keine Kommentare veröffentlicht"
+            },
+            "document_editor": {
+                "add_permission": "Berechtigung hinzufügen"
+            },
+            "document_managers": {
+                "view_current": "Aktuelles anzeigen",
+                "add_new": "Neu hinzufügen",
+                "links": "Verlinkungen",
+                "solves": "Löst",
+                "closes": "Schließt",
+                "deprecates": "veraltet",
+                "open_document": "Dokument öffnen",
+                "remove_reference": "Referenz entfernen",
+                "add_reference": "Referenz hinzufügen",
+                "open_citizen": "Bürger öffnen",
+                "remove_relation": "Beziehung entfernen",
+                "add_relation": "Beziehung hinzufügen",
+                "mentioned": "Erwähnt",
+                "targets": "Zielt",
+                "caused": "Verursacht"
+            },
+            "document_list": {
+                "no_documents_hint": "Entweder aktualisieren Sie Ihre Suchanfrage oder erstellen Sie das erste Dokument mit der oben stehenden Schaltfläche \"Erstellen\"."
+            }
+        },
+        "livemap": {
+            "starting_datastream": "Starte Livemap Datenstrom...",
+            "failed_datastream": "Livemap Datenstrom fehlgeschlagen!",
+            "sent_by": "Gesendet von",
+            "center_selected_marker": "Zentriere ausgewählten Marker"
+        },
+        "rector": {
+            "job_props": {
+                "job_properties": "Job Eigenschaften",
+                "your_job_properties": "Deine FiveNet Job Eigenschaften.",
+                "livemap_marker_color": "Livemap Marker Farbe"
+            },
+            "role_view": {
+                "add_permission": "Berechtigung hinzufügen"
+            }
+        }
+    },
+    "common": {
+        "login": "Anmelden",
+        "logout": "Abmelden",
+        "sign_out": "Abmelden",
+        "username": "Benutzername",
+        "password": "Passwort",
+        "overview": "Übersicht",
+        "citizen": "Bürger | Bürger",
+        "vehicle": "Fahrzeug | Fahrzeuge",
+        "document": "Dokument | Dokumente",
+        "job": "Job | Jobs",
+        "livemap": "Livemap",
+        "control_panel": "Systemsteuerung",
+        "about": "Über",
+        "search": "Suche",
+        "phone": "Telefon",
+        "number": "Nummer",
+        "name": "Name",
+        "sex": "Geschlecht",
+        "height": "Größe",
+        "action": "Aktion | Aktionen",
+        "date_of_birth": "Geburtsdatum",
+        "next": "Weiter",
+        "previous": "Zurück",
+        "wanted": "Gesucht",
+        "loading": "Lade {0}...",
+        "unable_to_load": "{0} konnte nicht geladen werden!",
+        "profile": "Profil",
+        "activity": "Aktivität",
+        "home": "Startseite",
+        "not_found": "Keine {0} gefunden!",
+        "visum": "Visum",
+        "license": "Lizenz | Lizenzen",
+        "not": "Nicht",
+        "close": "Geschlossen",
+        "open": "Offen",
+        "last_used": "Zuletzt Genutzt",
+        "rank": "Rang",
+        "playtime": "Spielzeit",
+        "choose": "Auswählen",
+        "clipboard": "Zwischenablage",
+        "select": "Ausgewählt",
+        "title": "Titel",
+        "creator": "Ersteller",
+        "plate": "Kennzeichen",
+        "model": "Modell",
+        "owner": "Eigentümer",
+        "category": "Kategorie | Kategorien",
+        "description": "Beschreibung",
+        "create": "Erstellen",
+        "account": "Konto",
+        "info": "Info",
+        "data": "Daten",
+        "your": "deine",
+        "character": "Charakter | Charaktere",
+        "user": "Benutzer | Benutzer",
+        "delete": "Löschen",
+        "require": "Erfordert",
+        "max": "Maximal",
+        "template": "Vorlage | Vorlagen",
+        "go_back": "Zurück",
+        "content": "Inhalt",
+        "schema": "Schema",
+        "edit": "Editieren",
+        "post": "Veröffentlichen",
+        "state": "Zustand",
+        "reference": "Referenz | Referenzen",
+        "relation": "Beziehung | Beziehungen",
+        "access": "Zugriff",
+        "submit": "Absenden",
+        "save": "Speichern",
+        "remove": "Entfernen",
+        "add": "Hinzufügen",
+        "created": "Erstellt",
+        "created_at": "Erstellt am",
+        "created_by": "Erstellt bei",
+        "updated_at": "Aktualisiert am",
+        "target": "Ziel",
+        "source": "Quelle",
+        "date": "Datum",
+        "comment": "Kommentar | Kommentare",
+        "employee": "Mitarbeiter",
+        "dispatch": "Einsatz | Einsätze",
+        "latitude": "Breitengrad",
+        "longitude": "Längengrad",
+        "filter": "Filter",
+        "postal": "Postleitzahl",
+        "retry": "Erneut versuchen",
+        "time_range": "Zeitspanne",
+        "from": "Von",
+        "to": "Bis",
+        "audit_log": "Auditprotokoll",
+        "id": "ID",
+        "time": "Zeit",
+        "service": "Service",
+        "copy": "Kopieren",
+        "prop": "Eigenschaft",
+        "theme": "Design",
+        "job_grade": "Arbeitsgrad",
+        "role": "Rolle | Rollen",
+        "permission": "Berechtigung | Berechtigungen",
+        "license_plate": "Kennzeichen",
+        "type": "Art",
+        "propertie": "Eigenschaft | Eigenschaften"
+    },
+    "notifications": {
+        "clipboard": {
+            "document_added": {
+                "title": "Zwischenablage: Dokument hinzugefügt",
+                "content": "Dokument wurde zur Zwischenablage hinzugefügt"
+            },
+            "document_removed": {
+                "title": "Zwischenablage: Dokument entfernt",
+                "content": "Ausgewähltes Dokument wurde aus der Zwischenablage entfernt"
+            },
+            "documents_removed": {
+                "title": "Zwischenablage: Dokumente entfernt",
+                "content": "Alle Dokumente wurden aus der Zwischenablage entfernt"
+            },
+            "citizen_add": {
+                "title": "Zwischenablage: Bürger hinzugefügt",
+                "content": "Bürger wurde der Zwischenablage hinzugefügt"
+            },
+            "citizen_removed": {
+                "title": "Zwischenablage: Bürger entfernt",
+                "content": "Ausgewählter Bürger wurde aus der Zwischenablage entfernt"
+            },
+            "citizens_removed": {
+                "title": "Zwischenablage: Bürger entfernt",
+                "content": "Alle Bürger wurden aus der Zwischenablage entfernt"
+            },
+            "vehicle_added": {
+                "title": "Zwischenablage: Fahrzeug hinzugefügt",
+                "content": "Fahrzeug zur Zwischenablage hinzugefügt"
+            },
+            "vehicle_removed": {
+                "title": "Zwischenablage: Fahrzeug entfernt",
+                "content": "Ausgewählte Fahrzeuge wurden aus der Zwischenablage entfernt"
+            },
+            "vehicles_removed": {
+                "title": "Zwischenablage: Fahrzeuge entfernt",
+                "content": "Alle Fahrzeuge wurden aus der Zwischenablage entfernt"
+            }
+        },
+        "action_successfull": {
+            "title": "Erfolg!",
+            "content": "Ihre Aktion wurde erfolgreich übermittelt"
+        },
+        "changed_password": {
+            "title": "Passwort wurde geändert",
+            "content": "Ihr neues Passwort wurde festgelegt"
+        },
+        "account_created": {
+            "title": "Konto erstellt!",
+            "content": "Dein Konto wurde erfolgreich erstellt"
+        },
+        "category_deleted": {
+            "title": "Kategorie gelöscht!",
+            "content": "Kategorie wurde erfolgreich gelöscht"
+        },
+        "category_updated": {
+            "title": "Kategorie aktualisiert!",
+            "content": "Kategorie wurde erfolgreich aktualisiert"
+        },
+        "max_access_entry": {
+            "title": "Maximale Anzahl an Zugriffseinträgen überschritten",
+            "content": "Es können maximal {0} Zugriffseinträge auf einem Dokument vorhanden sein"
+        },
+        "document_created": {
+            "title": "Dokument erstellt!",
+            "content": "Dokument wurde erstellt."
+        },
+        "document_updated": {
+            "title": "Dokument aktualisiert!",
+            "content": "Dokument wurde aktualisiert."
+        },
+        "failed_loading_postals": {
+            "title": "Laden der Postleitzahlen fehlgeschlagen",
+            "content": "Postleitzahlen konnten nicht geladen werden"
+        },
+        "role_created": {
+            "title": "Rolle: Erstellt",
+            "content": "Rolle wurde erstellt."
+        },
+        "role_updated": {
+            "title": "Rolle: Berechtigungen gespeichert",
+            "content": "Berechtigungen wurden gespeichert."
+        },
+        "error_logout": {
+            "title": "Abmeldung: Ein Fehler ist aufgetreten",
+            "content": "{0}"
+        }
+    }
 }
