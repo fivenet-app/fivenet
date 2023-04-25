@@ -444,7 +444,7 @@
   integrity sha512-FNZw7H3aqhF9OyRQbDDnzUApDXfC1N6fgBhkqEO2jvYCJ+DxMTfZVqg3AX0R1khg1wHTBRD5SdcibSJ+XF6bFg==
 
 "@fivenet/gen@file:./gen":
-  version "0.0.6"
+  version "0.1.0"
 
 "@fontsource/inter@^4.5.15":
   version "4.5.15"
