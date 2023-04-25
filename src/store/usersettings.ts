@@ -9,8 +9,8 @@ export interface UserSettingsState {
 export const useUserSettingsStore = defineStore('userSettings', {
     state: () =>
     ({
-        locale: 'en-US',
-        livemapMarkerSize: 26,
+        locale: 'de',
+        livemapMarkerSize: 22,
         livemapCenterSelectedMarker: false,
     } as UserSettingsState),
     persist: true,
