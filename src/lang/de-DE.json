@@ -6,14 +6,18 @@
         },
         "auth": {
             "logout": {
-                "title": "Abgemeldet",
-                "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet."
+                "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
+                "header": "Abgemeldet"
+            },
+            "account_info": {
+                "title": "Konto-Information"
+            },
+            "character_selector": {
+                "title": "Character Auswahl"
+            },
+            "login": {
+                "title": "Anmeldung"
             }
-        },
-        "404": {
-            "page_not_found": "Seite nicht gefunden",
-            "error": "404 Error",
-            "fun_error": "Es scheint, als hätten Sie sich verirrt. Lass uns zurück zum Anfang gehen!"
         },
         "about": {
             "sub_title": "Über FiveNet und seine Ersteller.",
@@ -70,11 +74,38 @@
         },
         "documents": {
             "templates": {
-                "create_template": "Vorlage erstellen"
+                "create_template": "Vorlage erstellen",
+                "title": "Vorlagen",
+                "edit": {
+                    "title": "Vorlage editieren"
+                },
+                "view": {
+                    "title": "Vorlagenansicht"
+                }
+            },
+            "title": "Dokumente",
+            "create": {
+                "title": "Dokument erstellen"
+            },
+            "edit": {
+                "title": "Dokument editieren"
+            },
+            "id": {
+                "title": "Dokument anzeigen"
+            },
+            "categories": {
+                "title": "Dokumentkategorien"
+            },
+            "roles": {
+                "title": "Rollen",
+                "id": {
+                    "title": "Rolle anzeigen"
+                }
             }
         },
         "jobs": {
-            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM"
+            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM",
+            "title": "Jobs"
         },
         "rector": {
             "features": {
@@ -82,6 +113,21 @@
                 "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
                 "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden."
             }
+        },
+        "notfound": {
+            "title": "404 Nicht gefunden",
+            "page_not_found": "Seite nicht gefunden",
+            "error": "4😵‍💫4 Fehler",
+            "fun_error": "Es scheint, als hätten Sie sich verirrt. Lass uns zurück zum Anfang gehen!"
+        },
+        "citizens": {
+            "title": "Bürger",
+            "id": {
+                "title": "Bürger Akte"
+            }
+        },
+        "vehicles": {
+            "title": "Fahrzeuge"
         }
     },
     "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten.",
@@ -97,7 +143,8 @@
             },
             "login": {
                 "register_account": "Konto mit Token registrieren",
-                "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!"
+                "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!",
+                "title": "Anmeldung"
             },
             "create_account": {
                 "title": "Konto erstellen",
@@ -419,7 +466,7 @@
             },
             "unavailable": {
                 "title": "Server ist nicht erreichbar",
-                "content": "FiveNet Server kann nicht erreicht werden, bitte überprüfe deine Internetverbindung."
+                "content": "FiveNet-Server kann nicht erreicht werden, bitte überprüfen Sie ihre Internetverbindung."
             },
             "default": {
                 "title": "Unbekannter Fehler ist aufgetreten"
