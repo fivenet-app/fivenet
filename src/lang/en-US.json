@@ -6,14 +6,18 @@
         },
         "auth": {
             "logout": {
-                "title": "Signed out",
-                "subtitle": "You will be redirected to the home page in a moment."
+                "subtitle": "You will be redirected to the home page in a moment.",
+                "header": "Signed out"
+            },
+            "account_info": {
+                "title": "Account Info"
+            },
+            "character_selector": {
+                "title": "Character Selector"
+            },
+            "login": {
+                "title": "Login"
             }
-        },
-        "404": {
-            "page_not_found": "Page Not Found",
-            "error": "4😵‍💫4 Error",
-            "fun_error": "Seems like you got lost. Let's get you back to the start!"
         },
         "about": {
             "sub_title": "About FiveNet and it's creators.",
@@ -70,11 +74,38 @@
         },
         "documents": {
             "templates": {
-                "create_template": "Create Template"
+                "create_template": "Create Template",
+                "title": "Templates",
+                "edit": {
+                    "title": "Edit Template"
+                },
+                "view": {
+                    "title": "Template View"
+                }
+            },
+            "title": "Documents",
+            "create": {
+                "title": "Create Document"
+            },
+            "edit": {
+                "title": "Edit Document"
+            },
+            "id": {
+                "title": "Document View"
+            },
+            "categories": {
+                "title": "Document Categories"
+            },
+            "roles": {
+                "title": "Roles",
+                "id": {
+                    "title": "View Role"
+                }
             }
         },
         "jobs": {
-            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM"
+            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM",
+            "title": "Jobs"
         },
         "rector": {
             "features": {
@@ -82,6 +113,21 @@
                 "jobs": "Setup your factions roles job rank permissions.",
                 "audit_log": "An audit trail of everything your colleagues have done."
             }
+        },
+        "notfound": {
+            "title": "404 Not Found",
+            "page_not_found": "Page Not Found",
+            "error": "4😵‍💫4 Error",
+            "fun_error": "Seems like you got lost. Let's get you back to the start!"
+        },
+        "citizens": {
+            "title": "Citizens",
+            "id": {
+                "title": "Citizen File"
+            }
+        },
+        "vehicles": {
+            "title": "Vehicles"
         }
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
@@ -97,7 +143,8 @@
             },
             "login": {
                 "register_account": "Register Account using Token",
-                "login_error": "There was an error signing you in, please try again!"
+                "login_error": "There was an error signing you in, please try again!",
+                "title": "Login"
             },
             "create_account": {
                 "title": "Create Account",
