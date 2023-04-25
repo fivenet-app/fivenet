@@ -47,15 +47,16 @@ export class GRPCClients {
     // Handle GRPC errors
     async handleRPCError(err: RpcError): Promise<void> {
         const notifications = useNotificationsStore();
-        const { t } = useI18n();
 
         switch (err.code) {
             case StatusCode.UNAUTHENTICATED:
                 await useAuthStore().clear();
 
                 notifications.dispatchNotification({
-                    title: t('notifications.grpc_errors.unauthenticated.title'),
-                    content: t('notifications.grpc_errors.unauthenticated.content'),
+                    title: 'notifications.grpc_errors.unauthenticated.title',
+                    titleI18n: true,
+                    content: 'notifications.grpc_errors.unauthenticated.content',
+                    contentI18n: true,
                     type: 'warning',
                 });
 
@@ -66,28 +67,33 @@ export class GRPCClients {
                 break;
             case StatusCode.PERMISSION_DENIED:
                 notifications.dispatchNotification({
-                    title: t('notifications.grpc_errors.permission_denied.title'),
+                    title: 'notifications.grpc_errors.permission_denied.title',
+                    titleI18n: true,
                     content: err.message,
                     type: 'error',
                 });
                 break;
             case StatusCode.INTERNAL:
                 notifications.dispatchNotification({
-                    title: t('notifications.grpc_errors.internal.title'),
+                    title: 'notifications.grpc_errors.internal.title',
+                    titleI18n: true,
                     content: err.message,
                     type: 'error',
                 });
                 break;
             case StatusCode.UNAVAILABLE:
                 notifications.dispatchNotification({
-                    title: t('notifications.grpc_errors.unavailable.title'),
-                    content: t('notifications.grpc_errors.unavailable.content'),
+                    title: 'notifications.grpc_errors.unavailable.title',
+                    titleI18n: true,
+                    content: 'notifications.grpc_errors.unavailable.content',
+                    contentI18n: true,
                     type: 'error',
                 });
                 break;
             default:
                 notifications.dispatchNotification({
-                    title: t('notifications.grpc_errors.default.title'),
+                    title: 'notifications.grpc_errors.default.title',
+                    titleI18n: true,
                     content: err.message,
                     type: 'error',
                 });
