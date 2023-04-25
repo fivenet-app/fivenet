@@ -1,7 +1,7 @@
 <template>
     <footer class="bg-base-850 w-full">
         <div class="py-6 sm:py-8 flex flex-row items-center mx-auto w-fit gap-5">
-            <img class="w-16 h-auto" src="/images/logo.png" alt="FiveNet Logo" />
+            <nuxt-img class="w-16 h-auto" src="/images/logo.png" alt="FiveNet Logo" />
             <p class=" text-center text-s leading-5 text-neutral">
                 {{ $t('copyright') }}
             </p>
