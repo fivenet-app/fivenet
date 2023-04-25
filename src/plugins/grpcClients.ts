@@ -47,13 +47,15 @@ export class GRPCClients {
     // Handle GRPC errors
     async handleRPCError(err: RpcError): Promise<void> {
         const notifications = useNotificationsStore();
+        const { t } = useI18n();
+
         switch (err.code) {
             case StatusCode.UNAUTHENTICATED:
                 await useAuthStore().clear();
 
                 notifications.dispatchNotification({
-                    title: 'Please login again',
-                    content: 'You are not signed in anymore',
+                    title: t('notifications.grpc_errors.unauthenticated.title'),
+                    content: t('notifications.grpc_errors.unauthenticated.content'),
                     type: 'warning',
                 });
 
@@ -61,21 +63,34 @@ export class GRPCClients {
                 const router = useRouter();
                 const redirect = router.currentRoute.value.query.redirect ?? router.currentRoute.value.fullPath;
                 await router.push({ name: 'auth-login', query: { redirect: redirect }, replace: true, force: true });
+                break;
             case StatusCode.PERMISSION_DENIED:
-                notifications.dispatchNotification({ title: 'Permission denied', content: err.message, type: 'error' });
+                notifications.dispatchNotification({
+                    title: t('notifications.grpc_errors.permission_denied.title'),
+                    content: err.message,
+                    type: 'error',
+                });
                 break;
             case StatusCode.INTERNAL:
-                notifications.dispatchNotification({ title: 'Internal server error occured', content: err.message, type: 'error' });
+                notifications.dispatchNotification({
+                    title: t('notifications.grpc_errors.internal.title'),
+                    content: err.message,
+                    type: 'error',
+                });
                 break;
             case StatusCode.UNAVAILABLE:
                 notifications.dispatchNotification({
-                    title: 'Unable to reach server',
-                    content: 'Unable to reach FiveNet server, please check your internet connection.',
+                    title: t('notifications.grpc_errors.unavailable.title'),
+                    content: t('notifications.grpc_errors.unavailable.content'),
                     type: 'error',
                 });
                 break;
             default:
-                notifications.dispatchNotification({ title: 'Unknown error occured', content: err.message, type: 'error' });
+                notifications.dispatchNotification({
+                    title: t('notifications.grpc_errors.default.title'),
+                    content: err.message,
+                    type: 'error',
+                });
                 break;
         }
     }

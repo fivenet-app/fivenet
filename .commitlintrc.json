@@ -37,7 +37,8 @@
                 "notificator",
                 "rector",
                 "version",
-                "rbac"
+                "rbac",
+                "grpc"
             ]
         ]
     }

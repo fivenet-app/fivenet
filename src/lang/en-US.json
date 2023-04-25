@@ -323,39 +323,39 @@
         "clipboard": {
             "document_added": {
                 "title": "Clipboard: Document added",
-                "content": "Document has been added to clipboard"
+                "content": "Document has been added to clipboard."
             },
             "document_removed": {
                 "title": "Clipboard: Document removed",
-                "content": "Selected document removed from clipboard"
+                "content": "Selected document removed from clipboard."
             },
             "documents_removed": {
                 "title": "Clipboard: Documents removed",
-                "content": "All documents have been removed from your clipboard"
+                "content": "All documents have been removed from your clipboard."
             },
             "citizen_add": {
                 "title": "Clipboard: Citizen added",
-                "content": "Citizen has been added to clipboard"
+                "content": "Citizen has been added to clipboard."
             },
             "citizen_removed": {
                 "title": "Clipboard: Citizen removed",
-                "content": "Selected citizen removed from clipboard"
+                "content": "Selected citizen removed from clipboard."
             },
             "citizens_removed": {
                 "title": "Clipboard: Citizens removed",
-                "content": "All citizens have been removed from your clipboard"
+                "content": "All citizens have been removed from your clipboard."
             },
             "vehicle_added": {
                 "title": "Clipboard: Vehicle added",
-                "content": "Vehicle has been added to clipboard"
+                "content": "Vehicle has been added to clipboard."
             },
             "vehicle_removed": {
                 "title": "Clipboard: Vehicle removed",
-                "content": "Selected vehicle removed from clipboard"
+                "content": "Selected vehicle removed from clipboard."
             },
             "vehicles_removed": {
                 "title": "Clipboard: Vehicles removed",
-                "content": "All vehicles have been removed from your clipboard"
+                "content": "All vehicles have been removed from your clipboard."
             }
         },
         "action_successfull": {
@@ -368,19 +368,19 @@
         },
         "account_created": {
             "title": "Account created!",
-            "content": "Your account was successfully created"
+            "content": "Your account was successfully created."
         },
         "category_deleted": {
             "title": "Category deleted!",
-            "content": "The Category was successfully deleted"
+            "content": "The Category was successfully deleted."
         },
         "category_updated": {
             "title": "Category updated!",
-            "content": "The Category was successfully updated"
+            "content": "The Category was successfully updated."
         },
         "max_access_entry": {
             "title": "Maximum amount of Access entries exceeded",
-            "content": "There can only be a maximum of {0} access entries on a Document"
+            "content": "There can only be a maximum of {0} access entries on a Document."
         },
         "document_created": {
             "title": "Document created!",
@@ -392,7 +392,7 @@
         },
         "failed_loading_postals": {
             "title": "Failed to load Postal codes",
-            "content": "Postal codes couldn't be loaded"
+            "content": "Postal codes couldn't be loaded."
         },
         "role_created": {
             "title": "Role: Created",
@@ -405,6 +405,25 @@
         "error_logout": {
             "title": "Logout: Encountered an error",
             "content": "{0}"
+        },
+        "grpc_errors": {
+            "unauthenticated": {
+                "title": "Please login again",
+                "content": "You are not signed in anymore."
+            },
+            "permission_denied": {
+                "title": "Permission denied"
+            },
+            "internal": {
+                "title": "Internal server error occured"
+            },
+            "unavailable": {
+                "title": "Unable to reach server",
+                "content": "Unable to reach FiveNet server, please check your internet connection."
+            },
+            "default": {
+                "title": "Unknown error occured"
+            }
         }
     }
 }
