@@ -71,19 +71,19 @@ watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 14
                             <div class="flex-initial form-control" v-can="'DocStoreService.CreateDocument'">
                                 <button @click="templatesOpen = true"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
-                                    Create
+                                    {{ $t('common.create') }}
                                 </button>
                             </div>
                             <div class="flex-initial" v-can="'CompletorService.CompleteDocumentCategory'">
                                 <NuxtLink :to="{ name: 'documents-categories' }"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
-                                    Categories
+                                    {{ $t('common.category', 2) }}
                                 </NuxtLink>
                             </div>
                             <div class="flex-initial" v-can="'DocStoreService.ListTemplates'">
                                 <NuxtLink :to="{ name: 'documents-templates' }"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
-                                    Templates
+                                    {{ $t('common.template', 2) }}
                                 </NuxtLink>
                             </div>
                         </div>
