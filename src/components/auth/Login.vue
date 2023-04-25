@@ -4,18 +4,18 @@ import { computed, ref, watch } from 'vue';
 import { NavigationFailure } from 'vue-router';
 import LoginForm from './LoginForm.vue';
 import CreateAccountForm from './CreateAccountForm.vue';
+import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 const store = useAuthStore();
-const router = useRouter();
 const route = useRoute();
 
 const accesToken = computed(() => store.$state.accessToken);
 
 const createAccountForm = ref(false);
 
-watch(accesToken, async (): Promise<NavigationFailure | void | undefined> => {
+watch(accesToken, async (): Promise<NavigationFailure | TypedRouteFromName<'auth-character-selector'> | void | undefined> => {
     if (accesToken) {
-        return await router.push({ name: 'auth-character-selector', query: route.query });
+        return await navigateTo({ name: 'auth-character-selector', query: route.query });
     }
 });
 </script>

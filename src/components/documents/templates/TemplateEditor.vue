@@ -8,8 +8,6 @@ import { DocumentTemplate, TemplateSchema } from '@fivenet/gen/resources/documen
 
 const { $grpc } = useNuxtApp();
 
-const router = useRouter();
-
 const props = defineProps({
     templateId: {
         type: Number,
@@ -38,7 +36,8 @@ async function createTemplate(title: string, description: string, contentTitle: 
             const resp = await $grpc.getDocStoreClient().
                 createTemplate(req, null);
 
-            await router.push({ name: 'documents-templates-id', params: { id: resp.getId() } });
+            await navigateTo({ name: 'documents-templates-id', params: { id: resp.getId() } });
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -62,7 +61,8 @@ async function updateTemplate(title: string, description: string, contentTitle: 
             const resp = await $grpc.getDocStoreClient().
                 updateTemplate(req, null);
 
-            await router.push({ name: 'documents-templates-id', params: { id: resp.getId() } });
+            await navigateTo({ name: 'documents-templates-id', params: { id: resp.getId() } });
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);

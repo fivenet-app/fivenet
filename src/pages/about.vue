@@ -117,7 +117,8 @@ const faqs = [
             <div class="bg-gray-900">
                 <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-20">
                     <div class="mx-auto max-w-4xl divide-y divide-white/10">
-                        <h2 class="text-2xl font-bold leading-10 tracking-tight text-white">{{ $t('pages.about.faq.title') }}</h2>
+                        <h2 class="text-2xl font-bold leading-10 tracking-tight text-white">{{ $t('pages.about.faq.title')
+                        }}</h2>
                         <dl class="mt-10 space-y-6 divide-y divide-white/10">
                             <Disclosure as="div" v-for="faq in faqs" :key="faq.question" class="pt-6" v-slot="{ open }">
                                 <dt>
@@ -140,8 +141,10 @@ const faqs = [
             <div class="relative bg-gray-900">
                 <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-20">
                     <div class="mx-auto max-w-4xl">
-                        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ $t('pages.about.questions_or_issues.title') }}</p>
-                        <p class="mt-6 text-base leading-7 text-gray-300">{{ $t('pages.about.questions_or_issues.content') }}</p>
+                        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">{{
+                            $t('pages.about.questions_or_issues.title') }}</p>
+                        <p class="mt-6 text-base leading-7 text-gray-300">{{ $t('pages.about.questions_or_issues.content')
+                        }}</p>
                         <div class="mt-8">
                             <a :href="discordLink"
                                 class="inline-flex items-center gap-x-2 rounded-md bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600">
@@ -154,6 +157,6 @@ const faqs = [
                     </div>
                 </div>
             </div>
-    </div>
-    <Footer />
+        </div>
+        <Footer />
 </div></template>

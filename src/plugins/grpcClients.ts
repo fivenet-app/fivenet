@@ -59,10 +59,10 @@ export class GRPCClients {
                     type: 'warning',
                 });
 
-                // Only update the redirect query param if it isn't set already
-                const router = useRouter();
-                const redirect = router.currentRoute.value.query.redirect ?? router.currentRoute.value.fullPath;
-                await router.push({ name: 'auth-login', query: { redirect: redirect }, replace: true, force: true });
+                // Only update the redirect query param if it isn't already set
+                const route = useRoute();
+                const redirect = route.query.redirect ?? route.fullPath;
+                await navigateTo({ name: 'auth-login', query: { redirect: redirect }, replace: true, force: true });
                 break;
             case StatusCode.PERMISSION_DENIED:
                 notifications.dispatchNotification({

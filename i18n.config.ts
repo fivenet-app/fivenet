@@ -4,8 +4,8 @@ import type { NuxtApp } from 'nuxt/dist/app/index';
 export default function (nuxt: NuxtApp) {
     return {
         legacy: false,
-        locale: 'en',
-        fallbackLocale: 'en-US',
+        locale: 'de',
+        fallbackLocale: 'en',
         escapeParameterHtml: true,
     } as I18nOptions;
 }

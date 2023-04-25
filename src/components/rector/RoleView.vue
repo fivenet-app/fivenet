@@ -15,7 +15,6 @@ import { useNotificationsStore } from '~/store/notifications';
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
-const router = useRouter();
 
 const { t } = useI18n();
 
@@ -55,7 +54,7 @@ async function deleteRole(): Promise<void> {
                 deleteRole(req, null);
 
             notifications.dispatchNotification({ title: 'Role: Deleted', content: 'Role has been successfully deleted.', type: 'success' });
-            await router.push({ name: 'rector-roles' });
+            await navigateTo({ name: 'rector-roles' });
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);

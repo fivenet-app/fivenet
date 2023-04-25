@@ -9,8 +9,6 @@ import ClipboardModalVehicles from '~/components/clipboard/ClipboardModalVehicle
 import TemplateRequirementsList from './TemplateRequirementsList.vue';
 import TemplatesList from './TemplatesList.vue';
 
-const router = useRouter();
-
 const props = defineProps({
     open: {
         required: true,
@@ -78,7 +76,7 @@ function templateSelected(t: DocumentTemplateShort): void {
             steps.value.selectTemplate = false;
             steps.value.selectClipboard = true;
         } else {
-            router.push({ name: 'documents-create', query: { templateId: template.value?.getId() } });
+            navigateTo({ name: 'documents-create', query: { templateId: template.value?.getId() } });
         }
     } else {
         reqStatus.value.documents = false;
@@ -99,7 +97,7 @@ const submit = ref(false);
 
 async function clipboardDialog(): Promise<void> {
     submit.value = true;
-    await router.push({ name: 'documents-create', query: { templateId: template.value?.getId() } });
+    await navigateTo({ name: 'documents-create', query: { templateId: template.value?.getId() } });
 }
 </script>
 

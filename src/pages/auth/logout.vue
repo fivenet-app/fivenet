@@ -19,7 +19,6 @@ definePageMeta({
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
-const router = useRouter();
 const notifications = useNotificationsStore();
 
 const { t }= useI18n();
@@ -28,7 +27,7 @@ const accessToken = computed(() => store.$state.accessToken);
 
 async function redirect() {
     setTimeout(async () => {
-        await router.push({ name: 'index' });
+        await navigateTo({ name: 'index' });
     }, 1500);
 }
 

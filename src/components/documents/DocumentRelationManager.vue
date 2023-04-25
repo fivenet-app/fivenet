@@ -38,7 +38,6 @@ import { toTitleCase } from '~/utils/strings';
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
 const clipboard = useClipboardStore();
-const router = useRouter();
 
 const { t } = useI18n();
 
@@ -193,13 +192,13 @@ function removeRelation(id: number): void {
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
-                                                                                <a :href="router.resolve({ name: 'citizens-id', params: { id: rel.getTargetUserId() } }).href"
+                                                                                <NuxtLink :to="{ name: 'citizens-id', params: { id: rel.getTargetUserId() } }"
                                                                                     target="_blank" data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.open_citizen')">
                                                                                     <ArrowTopRightOnSquareIcon
                                                                                         class="w-6 h-auto text-primary-500 hover:text-primary-300">
                                                                                     </ArrowTopRightOnSquareIcon>
-                                                                                </a>
+                                                                                </NuxtLink>
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"

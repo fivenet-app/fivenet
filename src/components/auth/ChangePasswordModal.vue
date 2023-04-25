@@ -11,7 +11,6 @@ import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
-const router = useRouter();
 const notifications = useNotificationsStore();
 
 defineProps({
@@ -42,7 +41,7 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
             store.updateAccessToken(resp.getToken());
 
             notifications.dispatchNotification({ title: t('notifications.changed_password.title'), content: t('notifications.changed_password.content'), type: 'success' });
-            await router.push({ name: 'overview' });
+            await navigateTo({ name: 'overview' });
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);

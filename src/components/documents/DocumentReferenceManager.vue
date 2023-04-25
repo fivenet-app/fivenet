@@ -35,7 +35,6 @@ import { useClipboardStore } from '~/store/clipboard';
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const clipboard = useClipboardStore();
-const router = useRouter();
 
 const { t } = useI18n();
 
@@ -193,13 +192,13 @@ function removeReference(id: number): void {
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
-                                                                                <a :href="router.resolve({ name: 'documents-id', params: { id: ref.getTargetDocumentId() } }).href"
+                                                                                <NuxtLink :to="{ name: 'documents-id', params: { id: ref.getTargetDocumentId() } }"
                                                                                     target="_blank" data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.open_document')">
                                                                                     <ArrowTopRightOnSquareIcon
                                                                                         class="w-6 h-auto text-primary-500 hover:text-primary-300">
                                                                                     </ArrowTopRightOnSquareIcon>
-                                                                                </a>
+                                                                                </NuxtLink>
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
