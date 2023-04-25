@@ -23,7 +23,6 @@ const config = defineNuxtConfig({
         'nuxt-typed-router',
         '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',
-        '@nuxt/image-edge',
     ],
     pinia: {
         autoImports: [
@@ -62,7 +61,6 @@ const config = defineNuxtConfig({
         langDir: './lang',
         defaultLocale: 'en',
     },
-    image: {},
     vite: {
         define: {
             __APP_VERSION__: '"' + version + '"',

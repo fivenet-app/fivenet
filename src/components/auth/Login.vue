@@ -23,7 +23,7 @@ watch(accesToken, async (): Promise<NavigationFailure | TypedRouteFromName<'auth
 <template>
     <div class="max-w-xl mx-auto">
         <div class="px-4 py-8 rounded-lg bg-base-850 sm:px-10">
-            <nuxt-img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="FiveNet Logo" />
+            <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="FiveNet Logo" />
 
             <div v-if="!createAccountForm">
                 <LoginForm />

@@ -209,7 +209,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
             <div class="flex flex-col items-center w-full py-6 h-full">
                 <div class="flex items-center flex-shrink-0">
                     <NuxtLink :to="{ name: accessToken ? 'overview' : 'index' }" aria-current-value="page">
-                        <nuxt-img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo"
+                        <img class="w-auto h-12" src="/images/logo.png" alt="FiveNet Logo"
                             :title="'FiveNet' + appVersion" />
                     </NuxtLink>
                 </div>
@@ -273,7 +273,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                 </div>
                             </TransitionChild>
                             <div class="flex items-center flex-shrink-0 px-4">
-                                <nuxt-img class="w-16 h-16 mx-auto" src="/images/logo.png" alt="FiveNet Logo" />
+                                <img class="w-16 h-16 mx-auto" src="/images/logo.png" alt="FiveNet Logo" />
                             </div>
                             <div class="flex-grow h-0 px-2 mt-5 overflow-y-auto">
                                 <nav class="flex flex-col h-full">

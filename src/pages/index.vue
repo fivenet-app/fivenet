@@ -23,7 +23,7 @@ const accessToken = computed(() => store.$state.accessToken);
         <HeroFull>
             <ContentCenterWrapper class="max-w-2xl mx-auto text-center">
                 <div class="sm:px-0 px-5">
-                    <nuxt-img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="FiveNet Logo" />
+                    <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="FiveNet Logo" />
                     <h1 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
                         {{ $t('pages.index.welcome') }}
                     </h1>
