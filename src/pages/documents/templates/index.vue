@@ -4,10 +4,10 @@ import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
 import { DocumentTemplateShort } from '@fivenet/gen/resources/documents/templates_pb';
 
 useHead({
-    title: 'Templates',
+    title: 'pages.documents.templates.title',
 });
 definePageMeta({
-    title: 'Templates',
+    title: 'pages.documents.templates.title',
     requiresAuth: true,
     permission: 'DocStoreService.FindDocuments',
 });

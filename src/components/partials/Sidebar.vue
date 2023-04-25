@@ -170,8 +170,12 @@ function updateBread(): void {
             return;
         }
 
+        let title = route.meta.title ?? toTitleCase(breadcrumb);
+        if (title?.includes('.')) {
+            title = t(title);
+        }
         breadcrumbs.value.push({
-            name: route.meta.title ?? toTitleCase(breadcrumb),
+            name: title,
             href: route.path,
             current: false,
         });
@@ -182,8 +186,12 @@ function updateBread(): void {
     })
     if (breadcrumbIdx === -1) {
         if (currentRoute.name !== 'index' && currentRoute.name !== 'overview') {
+            let title = currentRoute.meta.title ?? toTitleCase(currentRoute.name);
+            if (title?.includes('.')) {
+                title = t(title);
+            }
             breadcrumbs.value.push({
-                name: toTitleCase(currentRoute.meta.title ?? currentRoute.name),
+                name: title,
                 href: '#',
                 current: true,
             });

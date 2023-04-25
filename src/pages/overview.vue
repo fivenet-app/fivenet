@@ -5,10 +5,10 @@ import Cards from '~/components/partials/Cards.vue';
 import { CardElements } from '~/utils/types';
 
 useHead({
-    title: 'Overview',
+    title: 'common.overview',
 });
 definePageMeta({
-    title: 'Overview',
+    title: 'common.overview',
     requiresAuth: true,
 });
 

@@ -2,6 +2,8 @@
 import { loadConfig } from './config';
 import { useUserSettingsStore } from './store/usersettings';
 
+const { t, setLocale } = useI18n();
+
 useHead({
     htmlAttrs: {
         class: 'h-full bg-base-900',
@@ -10,15 +12,17 @@ useHead({
     bodyAttrs: {
         class: 'h-full overflow-hidden',
     },
-    titleTemplate: (titleChunk) => {
-        return titleChunk ? `${titleChunk} - FiveNet` : 'FiveNet';
+    titleTemplate: (title) => {
+        if (title?.includes('.')) {
+            title = t(title);
+        }
+        return title ? `${title} - FiveNet` : 'FiveNet';
     },
 });
 
 await loadConfig();
 
 const store = useUserSettingsStore();
-const { setLocale } = useI18n();
 
 // Set locale on load
 const locale = computed(() => store.$state.locale);
@@ -29,7 +33,7 @@ setLocale(locale.value);
     <NuxtLayout>
         <NuxtPage :transition="{
             name: 'page',
-                mode: 'out-in'
+            mode: 'out-in'
         }" />
     </NuxtLayout>
 </template>

@@ -4,10 +4,10 @@ import DocumentEditor from '~/components/documents/DocumentEditor.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 
 useHead({
-    title: 'Create Document',
+    title: 'pages.documents.create.title',
 });
 definePageMeta({
-    title: 'Create Document',
+    title: 'pages.documents.create.title',
     requiresAuth: true,
     permission: 'DocStoreService.CreateDocument',
 });

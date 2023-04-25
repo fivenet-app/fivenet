@@ -4,10 +4,10 @@ import DocumentsList from '~/components/documents/DocumentsList.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 
 useHead({
-    title: 'Documents',
+    title: 'pages.documents.title',
 });
 definePageMeta({
-    title: 'Documents',
+    title: 'pages.documents.title',
     requiresAuth: true,
     permission: 'DocStoreService.FindDocuments',
 });

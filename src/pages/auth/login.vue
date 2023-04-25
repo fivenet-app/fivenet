@@ -4,10 +4,10 @@ import HeroFull from '~/components/partials/HeroFull.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 
 useHead({
-    title: 'Login',
+    title: 'pages.auth.login.title',
 });
 definePageMeta({
-    title: 'Login',
+    title: 'pages.auth.login.title',
     requiresAuth: false,
 });
 </script>

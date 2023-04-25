@@ -7,10 +7,10 @@ import { CardElements } from '~/utils/types';
 const { t } = useI18n();
 
 useHead({
-    title: 'Control Panel',
+    title: 'common.control_panel',
 });
 definePageMeta({
-    title: 'Control Panel',
+    title: 'common.control_panel',
     requiresAuth: true,
     permission: 'RectorService.GetRoles',
 });

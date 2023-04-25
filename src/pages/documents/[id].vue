@@ -6,10 +6,10 @@ import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({
-    title: 'Documents: View',
+    title: 'pages.documents.id.title',
 });
 definePageMeta({
-    title: 'Documents: View',
+    title: 'pages.documents.id.title',
     requiresAuth: true,
     permission: 'DocStoreService.GetDocument',
     validate: async (route) => {

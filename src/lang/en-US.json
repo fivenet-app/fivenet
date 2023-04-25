@@ -5,12 +5,22 @@
             "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a livemap of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet."
         },
         "auth": {
+            "account_info": {
+                "title": "Account Info"
+            },
+            "character_selector": {
+                "title": "Character Selector"
+            },
+            "login": {
+                "title": "Login"
+            },
             "logout": {
-                "title": "Signed out",
+                "header": "Signed out",
                 "subtitle": "You will be redirected to the home page in a moment."
             }
         },
-        "404": {
+        "notfound": {
+            "title": "404 Not Found",
             "page_not_found": "Page Not Found",
             "error": "4😵‍💫4 Error",
             "fun_error": "Seems like you got lost. Let's get you back to the start!"
@@ -68,12 +78,45 @@
                 "livemap": "Live position of dispatches and your colleagues."
             }
         },
+        "citizens": {
+            "title": "Citizens",
+            "id": {
+                "title": "Citizen File"
+            }
+        },
         "documents": {
+            "title": "Documents",
+            "create": {
+                "title": "Create Document"
+            },
+            "edit": {
+                "title": "Edit Document"
+            },
+            "id": {
+                "title": "Document View"
+            },
             "templates": {
-                "create_template": "Create Template"
+                "title": "Templates",
+                "create_template": "Create Template",
+                "edit": {
+                    "title": "Edit Template"
+                },
+                "view": {
+                    "title": "Template View"
+                }
+            },
+            "categories": {
+                "title": "Document Categories"
+            },
+            "roles": {
+                "title": "Roles",
+                "id": {
+                    "title": "View Role"
+                }
             }
         },
         "jobs": {
+            "title": "Jobs",
             "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM"
         },
         "rector": {
@@ -81,7 +124,13 @@
                 "properties": "Set your job properties (e.g., livemap color).",
                 "jobs": "Setup your factions roles job rank permissions.",
                 "audit_log": "An audit trail of everything your colleagues have done."
+            },
+            "props": {
+                "title": "Job Properties"
             }
+        },
+        "vehicles": {
+            "title": "Vehicles"
         }
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
@@ -96,6 +145,7 @@
                 "perms": "Your Permissions (debug info)"
             },
             "login": {
+                "title": "Login",
                 "register_account": "Register Account using Token",
                 "login_error": "There was an error signing you in, please try again!"
             },

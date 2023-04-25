@@ -8,10 +8,10 @@ import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
 const { t } = useI18n();
 
 useHead({
-    title: 'About',
+    title: 'common.about',
 });
 definePageMeta({
-    title: 'About',
+    title: 'common.about',
     requiresAuth: false,
 });
 

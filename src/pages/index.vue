@@ -6,10 +6,10 @@ import HeroFull from '~/components/partials/HeroFull.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 
 useHead({
-    title: 'Home',
+    title: 'common.home',
 });
 definePageMeta({
-    title: 'Home',
+    title: 'common.home',
     requiresAuth: false,
 });
 

@@ -2,10 +2,10 @@
 import AuditLog from '~/components/rector/AuditLog.vue';
 
 useHead({
-    title: 'Audit Log',
+    title: 'common.audit_log',
 });
 definePageMeta({
-    title: 'Audit Log',
+    title: 'common.audit_log',
     requiresAuth: true,
     permission: 'RectorService.ViewAuditLog',
 });

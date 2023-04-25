@@ -2,10 +2,10 @@
 import JobProps from '~/components/rector/JobProps.vue';
 
 useHead({
-    title: 'Job Properties',
+    title: 'components.rector.job_props.job_properties',
 });
 definePageMeta({
-    title: 'Job Properties',
+    title: 'components.rector.job_props.job_properties',
     requiresAuth: true,
     permission: 'RectorService.ViewAuditLog',
 });

@@ -3,10 +3,10 @@ import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 import RoleView from '~/components/rector/RoleView.vue';
 
 useHead({
-    title: 'Role: Info',
+    title: 'pages.rector.roles.id.title',
 });
 definePageMeta({
-    title: 'Role: Info',
+    title: 'pages.rector.roles.id.title',
     requiresAuth: true,
     permission: 'RectorService.GetRoles',
     validate: async (route) => {
