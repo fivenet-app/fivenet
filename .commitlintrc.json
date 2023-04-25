@@ -24,6 +24,7 @@
                 "test",
                 "query",
                 "db",
+                "sql",
                 "proto",
                 "services",
                 "auth",

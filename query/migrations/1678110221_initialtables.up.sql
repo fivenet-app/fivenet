@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_relations` (
   `relation` smallint(2) NOT NULL,
   `target_user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_fivenet_documents_relations_unique` (`source_user_id`, `relation`, `target_user_id`),
+  UNIQUE KEY `idx_fivenet_documents_relations_unique` (`document_id`, `source_user_id`, `relation`, `target_user_id`),
   KEY `idx_fivenet_documents_relations_deleted_at` (`deleted_at`),
   KEY `idx_fivenet_documents_relations_document_id` (`document_id`),
   KEY `idx_fivenet_documents_relations_source_user_id` (`source_user_id`),
