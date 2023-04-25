@@ -7,13 +7,13 @@
         "auth": {
             "logout": {
                 "title": "Abgemeldet",
-                "subtitle": "Du wirst in wenigen Sekunden zur Homepage weitergeleitet"
+                "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet."
             }
         },
         "404": {
             "page_not_found": "Seite nicht gefunden",
             "error": "404 Error",
-            "fun_error": "Es scheint, als hättest du dich verirrt. Lass uns zurück zum Anfang gehen!"
+            "fun_error": "Es scheint, als hätten Sie sich verirrt. Lass uns zurück zum Anfang gehen!"
         },
         "about": {
             "sub_title": "Über FiveNet und seine Ersteller.",
@@ -54,8 +54,8 @@
                 }
             },
             "questions_or_issues": {
-                "title": "Hast du Fragen oder Probleme?",
-                "content": "Stelle sicher, dass du dem Discord-Server beitrittst, falls du Probleme hast oder Fragen zu FiveNet hast."
+                "title": "Haben Sie Fragen oder Probleme?",
+                "content": "Stelle sicher, dass Sie dem Discord-Server beitreten, falls Sie Probleme oder Fragen zu FiveNet haben."
             },
             "join_discord": "Tritt dem Discord-Server von Galexrt bei"
         },
@@ -226,7 +226,7 @@
         "document": "Dokument | Dokumente",
         "job": "Job | Jobs",
         "livemap": "Livemap",
-        "control_panel": "Systemsteuerung",
+        "control_panel": "Kontrollzentrum",
         "about": "Über",
         "search": "Suche",
         "phone": "Telefon",
