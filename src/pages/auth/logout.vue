@@ -9,17 +9,16 @@ import Footer from '~/components/partials/Footer.vue';
 import { useNotificationsStore } from '~/store/notifications';
 
 useHead({
-    title: 'Logout',
+    title: 'pages.auth.logout.title',
 });
 definePageMeta({
-    title: 'Logout',
+    title: 'pages.auth.logout.title',
     requiresAuth: true,
     authOnlyToken: true,
 });
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
-const router = useRouter();
 const notifications = useNotificationsStore();
 
 const { t }= useI18n();
@@ -28,7 +27,7 @@ const accessToken = computed(() => store.$state.accessToken);
 
 async function redirect() {
     setTimeout(async () => {
-        await router.push({ name: 'index' });
+        await navigateTo({ name: 'index' });
     }, 1500);
 }
 
@@ -57,7 +56,7 @@ onBeforeMount(async () => {
         <HeroFull>
             <ContentCenterWrapper class="max-w-2xl mx-auto text-center">
                 <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
-                    {{ $t('pages.auth.logout.title') }}
+                    {{ $t('pages.auth.logout.header') }}
                 </h2>
                 <p class="mt-6 text-lg leading-8 text-gray-300">
                     {{ $t('pages.auth.logout.subtitle') }}

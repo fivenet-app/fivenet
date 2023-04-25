@@ -16,6 +16,7 @@ import { toDateRelativeString } from '~/utils/time';
 import { useUserSettingsStore } from '~/store/usersettings';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
+import LoadingBar from '~/components/partials/LoadingBar.vue';
 
 const { $grpc } = useNuxtApp();
 const userSettings = useUserSettingsStore();
@@ -50,6 +51,8 @@ const customCRS = L.extend({}, L.CRS.Simple, {
     transformation: new L.Transformation(scaleX, centerX, -scaleY, centerY),
     infinite: true,
 });
+
+const loadingShow = ref(true);
 
 const backgroundColorList = {
     Atlas: '#0fa8d2',
@@ -165,6 +168,10 @@ async function onMapReady($event: any): Promise<void> {
     map.on('movestart', async () => { isMoving.value = true });
 
     map.on('moveend', async () => { isMoving.value = false });
+
+    setTimeout(() => {
+        loadingShow.value = false;
+    }, 250);
 
     startDataStream();
 }
@@ -375,11 +382,13 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 </style>
 
 <template>
+    <LoadingBar :duration="1000" :show="loadingShow" :percent="100" />
     <div class="relative w-full h-full z-0">
         <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center z-20"
             style="background-color: rgba(62, 60, 62, 0.5)">
             <DataPendingBlock v-if="!error && stream === null" :message="$t('components.livemap.starting_datastream')" />
-            <DataErrorBlock v-else-if="error" :title="$t('components.livemap.failed_datastream')" :retry="() => { startDataStream() }" />
+            <DataErrorBlock v-else-if="error" :title="$t('components.livemap.failed_datastream')"
+                :retry="() => { startDataStream() }" />
         </div>
 
         <LMap class="z-0" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="1" :max-zoom="6"
@@ -396,8 +405,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 
             <LControlLayers />
 
-            <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`${$t('common.employee', 2)} ${job.getLabel()}`"
-                layer-type="overlay" :visible="true">
+            <LLayerGroup v-for="job in markerJobs" :key="job.getName()"
+                :name="`${$t('common.employee', 2)} ${job.getLabel()}`" layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.getUser()?.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
                     :icon="getIcon('player', marker) as L.Icon" @click="setSelectedMarker(marker.getId())">
@@ -407,8 +416,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 </LMarker>
             </LLayerGroup>
 
-            <LLayerGroup v-for="job in markerJobs" :key="job.getName()" :name="`${$t('common.dispatch', 2)} ${job.getLabel()}`"
-                layer-type="overlay" :visible="true">
+            <LLayerGroup v-for="job in markerJobs" :key="job.getName()"
+                :name="`${$t('common.dispatch', 2)} ${job.getLabel()}`" layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in dispatchMarkersFiltered.filter(m => m.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
                     :icon="getIcon('dispatch', marker) as L.Icon" @click="setSelectedMarker(marker.getId())">
@@ -434,7 +443,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                     <div>
                         <Combobox as="div" class="w-full" v-model="selectedPostal" nullable>
                             <ComboboxInput class="w-full" @change="postalQuery = $event.target.value" @click="loadPostals"
-                                :display-value="(postal: any) => postal ? postal?.code : ''" :placeholder="`${$t('common.postal')} ${$t('common.search')}`" />
+                                :display-value="(postal: any) => postal ? postal?.code : ''"
+                                :placeholder="`${$t('common.postal')} ${$t('common.search')}`" />
                             <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">
                                 <ComboboxOption v-for="postal in filteredPostals" :key="postal.code" :value="postal"
                                     v-slot="{ active }">
@@ -451,7 +461,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
             <LControl position="bottomright">
                 <div class="form-control flex flex-col gap-2">
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
-                        <span class="text-lg mr-2 text-[#6f7683]">{{ $t('components.livemap.center_selected_marker') }}</span>
+                        <span class="text-lg mr-2 text-[#6f7683]">{{ $t('components.livemap.center_selected_marker')
+                        }}</span>
                         <input v-model="centerSelectedMarker" class="my-auto" id="markerSize" name="markerSize"
                             type="checkbox" />
                     </div>

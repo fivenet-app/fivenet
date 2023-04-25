@@ -25,6 +25,8 @@ export class Notification extends jspb.Message {
 
   getType(): string;
   setType(value: string): Notification;
+  hasType(): boolean;
+  clearType(): Notification;
 
   getContent(): string;
   setContent(value: string): Notification;
@@ -49,9 +51,14 @@ export namespace Notification {
     readAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     userId: number,
     title: string,
-    type: string,
+    type?: string,
     content: string,
     data?: string,
+  }
+
+  export enum TypeCase { 
+    _TYPE_NOT_SET = 0,
+    TYPE = 6,
   }
 
   export enum DataCase { 

@@ -28,17 +28,25 @@ async function streamNotifications(): Promise<void> {
             stream.value?.cancel();
         }).
         on('data', async (resp) => {
-            if (resp.getLastId() > store.$state.lastId) {
+            if (resp.getLastId() > store.$state.lastId)
                 store.setLastId(resp.getLastId());
-            }
+
             resp.getNotificationsList().forEach(v => {
-                let nType: NotificationType = 'info';
+                let nType: NotificationType = v.getType() as NotificationType ?? 'info';
                 notifications.dispatchNotification({ title: v.getTitle(), content: v.getContent(), type: nType });
             });
         }).
         on('end', async () => {
             console.debug('Notificator Stream Ended');
+            toggleStream();
         });
+
+    console.debug('Notificator Stream Started');
+}
+
+async function cancelStream(): Promise<void> {
+    stream.value?.cancel();
+    stream.value = undefined;
 }
 
 async function toggleStream(): Promise<void> {
@@ -46,13 +54,16 @@ async function toggleStream(): Promise<void> {
     if (accessToken.value && activeChar.value) {
         streamNotifications();
     } else {
-        stream.value?.cancel();
-        stream.value = undefined;
+        cancelStream();
     }
 }
 
 watch(accessToken, async () => toggleStream());
 watch(activeChar, async () => toggleStream());
+
+onBeforeUnmount(() => {
+    cancelStream();
+});
 </script>
 
 <template></template>

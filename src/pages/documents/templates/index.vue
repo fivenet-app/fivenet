@@ -3,19 +3,17 @@ import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
 import { DocumentTemplateShort } from '@fivenet/gen/resources/documents/templates_pb';
 
-const router = useRouter();
-
 useHead({
-    title: 'Templates',
+    title: 'pages.documents.templates.title',
 });
 definePageMeta({
-    title: 'Templates',
+    title: 'pages.documents.templates.title',
     requiresAuth: true,
     permission: 'DocStoreService.FindDocuments',
 });
 
 async function selected(t: DocumentTemplateShort): Promise<void> {
-    await router.push({ name: 'documents-templates-id', params: { id: t.getId() } });
+    await navigateTo({ name: 'documents-templates-id', params: { id: t.getId() } });
 }
 </script>
 

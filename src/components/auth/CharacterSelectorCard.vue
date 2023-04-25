@@ -11,7 +11,6 @@ import { parseQuery } from 'vue-router';
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
 const route = useRoute();
-const router = useRouter();
 
 const lastCharID = computed(() => store.$state.lastCharID);
 
@@ -37,7 +36,7 @@ async function chooseCharacter(): Promise<void> {
 
             const path = route.query.redirect?.toString() || "/overview";
             const url = new URL("https://example.com" + path);
-            await router.push({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
+            await navigateTo({ path: url.pathname, query: parseQuery(url.search), hash: url.hash });
 
             return res();
         } catch (e) {

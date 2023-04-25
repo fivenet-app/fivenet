@@ -11,7 +11,6 @@ import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
-const router = useRouter();
 
 const activeChar = computed(() => store.$state.activeChar);
 
@@ -41,24 +40,30 @@ onMounted(async () => {
 });
 
 async function setJob(): Promise<void> {
-    const req = new SetJobRequest();
-    req.setCharId(activeChar.value?.getUserId()!);
-    req.setJob(selectedJob.value?.getName()!);
-    const grades = selectedJob.value?.getGradesList()!;
-    req.setJobGrade(grades[grades.length - 1].getGrade());
+    return new Promise(async (res, rej) => {
+        const req = new SetJobRequest();
+        req.setCharId(activeChar.value?.getUserId()!);
+        req.setJob(selectedJob.value?.getName()!);
+        const grades = selectedJob.value?.getGradesList()!;
+        req.setJobGrade(grades[grades.length - 1].getGrade());
 
-    try {
-        const resp = await $grpc.getAuthClient().
-            setJob(req, null);
+        try {
+            const resp = await $grpc.getAuthClient().
+                setJob(req, null);
 
-        await store.updateAccessToken(resp.getToken());
-        await store.updateActiveChar(resp.getChar()!);
+            await Promise.all([
+                store.updateAccessToken(resp.getToken()),
+                store.updateActiveChar(resp.getChar()!),
+            ]);
 
-        await router.push({ name: 'overview' });
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            await navigateTo({ name: 'overview' });
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 watchDebounced(queryJob, async () => { filteredJobs.value = entriesJobs.filter(g => g.getLabel().toLowerCase().includes(queryJob.value.toLowerCase())) }, { debounce: 750, maxWait: 2000 });

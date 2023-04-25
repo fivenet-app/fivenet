@@ -18,7 +18,6 @@ const { $grpc } = useNuxtApp();
 
 const store = useAuthStore();
 const notifications = useNotificationsStore();
-const router = useRouter();
 
 const { t } = useI18n();
 
@@ -83,7 +82,7 @@ async function createRole(): Promise<void> {
             }
 
             notifications.dispatchNotification({ title: t('notifications.role_created.title'), content: t('notifications.role_created.content'), type: 'success' });
-            await router.push({ name: 'rector-roles-id', params: { id: role.getRole()?.getId()!, } });
+            await navigateTo({ name: 'rector-roles-id', params: { id: role.getRole()?.getId()!, } });
 
             return res();
         } catch (e) {

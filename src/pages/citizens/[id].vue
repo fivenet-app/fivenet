@@ -10,10 +10,10 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 
 useHead({
-    title: 'Citizen File',
+    title: 'pages.citizens.id.title',
 });
 definePageMeta({
-    title: 'Citizen File',
+    title: 'pages.citizens.id.title',
     requiresAuth: true,
     permission: 'CitizenStoreService.FindUsers',
     validate: async (route) => {

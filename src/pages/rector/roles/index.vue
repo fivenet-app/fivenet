@@ -2,10 +2,10 @@
 import RolesList from '~/components/rector/RolesList.vue';
 
 useHead({
-    title: 'Roles',
+    title: 'pages.rector.roles.title',
 });
 definePageMeta({
-    title: 'Roles',
+    title: 'pages.rector.roles.title',
     requiresAuth: true,
     permission: 'RectorService.GetRoles',
 });

@@ -2,10 +2,10 @@
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
-    title: 'Jobs',
+    title: 'pages.jobs.title',
 });
 definePageMeta({
-    title: 'Jobs',
+    title: 'pages.jobs.title',
     requiresAuth: true,
     permission: 'Jobs.View',
 });

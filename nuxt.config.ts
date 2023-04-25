@@ -17,7 +17,13 @@ const config = defineNuxtConfig({
     srcDir: 'src/',
     telemetry: false,
     ssr: false,
-    modules: ['@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt', 'nuxt-typed-router', '@nuxtjs/i18n', '@nuxtjs/tailwindcss'],
+    modules: [
+        '@pinia/nuxt',
+        '@pinia-plugin-persistedstate/nuxt',
+        'nuxt-typed-router',
+        '@nuxtjs/i18n',
+        '@nuxtjs/tailwindcss',
+    ],
     pinia: {
         autoImports: [
             // automatically imports `defineStore`
@@ -41,13 +47,13 @@ const config = defineNuxtConfig({
             {
                 name: 'English',
                 code: 'en',
-                iso: 'en-US',
+                iso: 'en',
                 file: 'en-US.json',
             },
             {
                 name: 'German',
                 code: 'de',
-                iso: 'de-DE',
+                iso: 'de',
                 file: 'de-DE.json',
             },
         ],

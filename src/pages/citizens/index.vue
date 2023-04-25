@@ -3,10 +3,10 @@ import CitizensList from '~/components/citizens/CitizensList.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 
 useHead({
-    title: 'Citizens',
+    title: 'pages.citizens.title',
 });
 definePageMeta({
-    title: 'Citizens',
+    title: 'pages.citizens.title',
     requiresAuth: true,
     permission: 'CitizenStoreService.FindUsers',
 });

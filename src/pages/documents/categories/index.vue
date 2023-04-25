@@ -3,10 +3,10 @@ import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import CategoriesList from '~/components/documents/categories/CategoriesList.vue';
 
 useHead({
-    title: 'Categories',
+    title: 'pages.documents.categories.title',
 });
 definePageMeta({
-    title: 'Categories',
+    title: 'pages.documents.categories.title',
     requiresAuth: true,
     permission: 'DocStoreService.ListDocumentCategories',
 });

@@ -54,7 +54,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
 
 <template>
     <h2 class="pb-4 text-3xl text-center text-white">
-        {{ $t('common.login') }}
+        {{ $t('components.auth.login.title') }}
     </h2>
 
     <form @submit="onSubmit" class="my-2 space-y-6">

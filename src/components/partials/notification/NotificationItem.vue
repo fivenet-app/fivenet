@@ -31,16 +31,16 @@ const closeNotification = (id: string) => {
                     </div>
                     <div class="ml-3 w-0 flex-1 pt-0.5">
                         <p class="text-sm font-semibold" v-if="notification.title">
-                            {{ notification.title }}
+                            {{ notification.titleI18n ? $t(notification.title) : notification.title }}
                         </p>
                         <p :class="`${notification.title ? 'mt-1' : ''} text-sm leading-5`">
-                            {{ notification.content }}
+                            {{ notification.contentI18n ? $t(notification.content) : notification.content }}
                         </p>
                     </div>
                     <div class="flex flex-shrink-0 ml-4">
                         <button @click="() => closeNotification(notification.id)" type="button"
                             class="inline-flex text-neutral hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
-                            <span class="sr-only">Close</span>
+                            <span class="sr-only">{{ $t('common.close') }}</span>
                             <XMarkIcon class="w-5 h-5" aria-hidden="true" />
                         </button>
                     </div>

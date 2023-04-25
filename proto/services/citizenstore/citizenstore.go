@@ -333,7 +333,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		values = append(values, *req.Props.Wanted)
 		updateSets = append(updateSets, userProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
 	}
-	if req.Props.Wanted != nil {
+	if req.Props.Job != nil {
 		if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Job") {
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user job!")
 		}

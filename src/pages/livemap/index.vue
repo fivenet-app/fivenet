@@ -5,10 +5,10 @@ import Livemap from '~/components/livemap/Livemap.vue';
 import Notificator from '~/components/partials/Notificator.vue';
 
 useHead({
-    title: 'Livemap',
+    title: 'common.livemap',
 });
 definePageMeta({
-    title: 'Livemap',
+    title: 'common.livemap',
     requiresAuth: true,
     permission: 'LivemapperService.Stream',
     layout: 'blank',

@@ -5,10 +5,10 @@ import TemplateEditor from '~/components/documents/templates/TemplateEditor.vue'
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({
-    title: 'Template: View',
+    title: 'pages.documents.templates.edit.title',
 });
 definePageMeta({
-    title: 'Template: View',
+    title: 'pages.documents.templates.edit.title',
     requiresAuth: true,
     permission: 'DocStoreService.ListTemplates',
     validate: async (route) => {

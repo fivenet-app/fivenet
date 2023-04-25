@@ -3,10 +3,10 @@ import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue
 import CharacterSelector from '~/components/auth/CharacterSelector.vue';
 
 useHead({
-    title: 'Character Selector',
+    title: 'pages.auth.character_selector.title',
 });
 definePageMeta({
-    title: 'Character Selector',
+    title: 'pages.auth.character_selector.title',
     requiresAuth: true,
     authOnlyToken: true,
 });

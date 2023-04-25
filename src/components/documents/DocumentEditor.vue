@@ -44,7 +44,6 @@ const notifications = useNotificationsStore();
 
 const { t } = useI18n();
 
-const router = useRouter();
 const route = useRoute();
 
 const props = defineProps({
@@ -261,46 +260,50 @@ function updateAccessEntryAccess(event: {
     access.value.set(event.id, accessEntry);
 }
 
-function submitForm(): void {
-    const req = new CreateDocumentRequest();
-    req.setTitle(doc.value.title);
-    req.setContent(doc.value.content);
-    req.setContentType(DOC_CONTENT_TYPE.HTML);
-    req.setClosed(doc.value.closed.closed);
-    req.setState(doc.value.state);
-    req.setPublic(isPublic.value);
-    if (selectedCategory.value != undefined)
-        req.setCategoryId(selectedCategory.value.getId());
+async function submitForm(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        // Prepare request
+        const req = new CreateDocumentRequest();
+        req.setTitle(doc.value.title);
+        req.setContent(doc.value.content);
+        req.setContentType(DOC_CONTENT_TYPE.HTML);
+        req.setClosed(doc.value.closed.closed);
+        req.setState(doc.value.state);
+        req.setPublic(isPublic.value);
+        if (selectedCategory.value != undefined)
+            req.setCategoryId(selectedCategory.value.getId());
 
-    const reqAccess = new DocumentAccess();
-    access.value.forEach(entry => {
-        if (entry.values.accessrole === undefined) return;
+        const reqAccess = new DocumentAccess();
+        access.value.forEach(entry => {
+            if (entry.values.accessrole === undefined) return;
 
-        if (entry.type === 0) {
-            if (!entry.values.char) return;
+            if (entry.type === 0) {
+                if (!entry.values.char) return;
 
-            const user = new DocumentUserAccess();
-            user.setUserId(entry.values.char);
-            user.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole.toString()));
+                const user = new DocumentUserAccess();
+                user.setUserId(entry.values.char);
+                user.setAccess(DOC_ACCESS_Util.fromInt(entry.values.accessrole));
 
-            reqAccess.addUsers(user);
-        } else if (entry.type === 1) {
-            if (!entry.values.job) return;
+                reqAccess.addUsers(user);
+            } else if (entry.type === 1) {
+                if (!entry.values.job) return;
 
-            const job = new DocumentJobAccess();
-            job.setJob(entry.values.job);
-            job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-            job.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole.toString()));
+                const job = new DocumentJobAccess();
+                job.setJob(entry.values.job);
+                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
+                job.setAccess(DOC_ACCESS_Util.fromInt(entry.values.accessrole));
 
-            reqAccess.addJobs(job);
-        }
+                reqAccess.addJobs(job);
+            }
 
-    });
-    req.setAccess(reqAccess);
+        });
+        req.setAccess(reqAccess);
 
-    $grpc.getDocStoreClient().
-        createDocument(req, null).
-        then((resp) => {
+        // Try to submit to server
+        try {
+            const resp = await $grpc.getDocStoreClient().
+                createDocument(req, null);
+
             referenceManagerData.value.forEach((ref) => {
                 ref.setSourceDocumentId(resp.getDocumentId());
 
@@ -320,52 +323,61 @@ function submitForm(): void {
             notifications.dispatchNotification({ title: t('notifications.document_created.title'), content: t('notifications.document_created.content') });
             clipboardStore.clearActiveStack();
             documentStore.clear();
-            router.push({ name: 'documents-id', params: { id: resp.getDocumentId(), } });
-        });
-}
 
-function editForm(): void {
-    const req = new UpdateDocumentRequest();
-    req.setDocumentId(props.id!);
-    req.setTitle(doc.value.title);
-    req.setContent(doc.value.content);
-    req.setContentType(DOC_CONTENT_TYPE.HTML);
-    req.setClosed(doc.value.closed.closed);
-    req.setState(doc.value.state);
-    req.setPublic(isPublic.value);
-    if (selectedCategory.value != undefined)
-        req.setCategoryId(selectedCategory.value.getId());
+            await navigateTo({ name: 'documents-id', params: { id: resp.getDocumentId() } });
 
-    const reqAccess = new DocumentAccess();
-    access.value.forEach(entry => {
-        if (entry.values.accessrole === undefined) return;
-
-        if (entry.type === 0) {
-            if (!entry.values.char) return;
-
-            const user = new DocumentUserAccess();
-            user.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole.toString()));
-            user.setUserId(entry.values.char);
-            if (activeChar.value) user.setCreatorId(activeChar.value.getUserId());
-
-            reqAccess.addUsers(user);
-        } else if (entry.type === 1) {
-            if (!entry.values.job) return;
-
-            const job = new DocumentJobAccess();
-            job.setJob(entry.values.job);
-            job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-            job.setAccess(DOC_ACCESS_Util.fromString(entry.values.accessrole.toString()));
-            if (activeChar.value) job.setCreatorId(activeChar.value.getUserId());
-
-            reqAccess.addJobs(job);
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
         }
     });
-    req.setAccess(reqAccess);
+}
 
-    $grpc.getDocStoreClient().
-        updateDocument(req, null).
-        then((resp) => {
+async function editForm(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        const req = new UpdateDocumentRequest();
+        req.setDocumentId(props.id!);
+        req.setTitle(doc.value.title);
+        req.setContent(doc.value.content);
+        req.setContentType(DOC_CONTENT_TYPE.HTML);
+        req.setClosed(doc.value.closed.closed);
+        req.setState(doc.value.state);
+        req.setPublic(isPublic.value);
+        if (selectedCategory.value != undefined)
+            req.setCategoryId(selectedCategory.value.getId());
+
+        const reqAccess = new DocumentAccess();
+        access.value.forEach(entry => {
+            if (entry.values.accessrole === undefined) return;
+
+            if (entry.type === 0) {
+                if (!entry.values.char) return;
+
+                const user = new DocumentUserAccess();
+                user.setAccess(DOC_ACCESS_Util.fromInt(entry.values.accessrole));
+                user.setUserId(entry.values.char);
+                if (activeChar.value) user.setCreatorId(activeChar.value.getUserId());
+
+                reqAccess.addUsers(user);
+            } else if (entry.type === 1) {
+                if (!entry.values.job) return;
+
+                const job = new DocumentJobAccess();
+                job.setJob(entry.values.job);
+                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
+                job.setAccess(DOC_ACCESS_Util.fromInt(entry.values.accessrole));
+                if (activeChar.value) job.setCreatorId(activeChar.value.getUserId());
+
+                reqAccess.addJobs(job);
+            }
+        });
+        req.setAccess(reqAccess);
+
+        try {
+            const resp = await $grpc.getDocStoreClient().
+                updateDocument(req, null);
+
             const referencesToRemove: number[] = [];
             currentReferences.value.forEach((ref) => {
                 if (!referenceManagerData.value.has(ref.getId())) referencesToRemove.push(ref.getId());
@@ -407,8 +419,14 @@ function editForm(): void {
             notifications.dispatchNotification({ title: t('notifications.document_updated.title'), content: t('notifications.document_updated.content') });
             clipboardStore.clearActiveStack();
             documentStore.clear();
-            router.push({ name: 'documents-id', params: { id: resp.getDocumentId(), } });
-        });
+
+            await navigateTo({ name: 'documents-id', params: { id: resp.getDocumentId() } });
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 </script>
 
@@ -527,15 +545,18 @@ function editForm(): void {
             @deleteRequest="removeAccessEntry($event)" />
         <button type="button" :disabled="!canEdit"
             class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-            data-te-toggle="tooltip" :title="$t('components.documents.document_editor.add_permission')" @click="addAccessEntry()">
+            data-te-toggle="tooltip" :title="$t('components.documents.document_editor.add_permission')"
+            @click="addAccessEntry()">
             <PlusIcon class="w-5 h-5" aria-hidden="true" />
         </button>
     </div>
     <div class="sm:flex sm:flex-row-reverse">
         <button v-if="!props.id" @click="submitForm()" :disabled="!canEdit"
-            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">{{ $t('common.submit') }}</button>
+            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">{{
+                $t('common.submit') }}</button>
         <button v-if="props.id" @click="editForm()" :disabled="!canEdit"
-            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">{{ $t('common.edit') }}</button>
+            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">{{
+                $t('common.edit') }}</button>
         <div v-if="saving" class="text-gray-400 mr-4 flex flex-items">
             <ArrowPathIcon class="w-6 h-auto ml-auto mr-2.5 animate-spin" />
             <span class="mt-2">{{ $t('common.save', 2) }}...</span>
