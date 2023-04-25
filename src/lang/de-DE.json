@@ -5,9 +5,6 @@
             "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Livemap Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit."
         },
         "auth": {
-            "character_selector": {
-                "title": "Character Auswahl"
-            },
             "logout": {
                 "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
                 "header": "Abgemeldet"
@@ -21,11 +18,6 @@
             "login": {
                 "title": "Anmeldung"
             }
-        },
-        "notfound": {
-            "page_not_found": "Seite nicht gefunden",
-            "error": "404 Error",
-            "fun_error": "Es scheint, als hätten Sie sich verirrt. Lass uns zurück zum Anfang gehen!"
         },
         "about": {
             "sub_title": "Über FiveNet und seine Ersteller.",
@@ -150,7 +142,6 @@
                 "perms": "Deine Berechtigungen (für die Fehlersuche)"
             },
             "login": {
-                "title": "Anmeldung",
                 "register_account": "Konto mit Token registrieren",
                 "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!",
                 "title": "Anmeldung"
