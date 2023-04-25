@@ -2,11 +2,11 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useAuthStore } from '~/store/auth';
 import { useDocumentEditorStore } from '~/store/documenteditor';
-import { useClipboardStore } from '~/store/clipboard';
+import { useClipboardStore, getUser } from '~/store/clipboard';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE } from '@fivenet/gen/resources/documents/documents_pb';
+import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE, DOC_RELATION } from '@fivenet/gen/resources/documents/documents_pb';
 import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
 import {
     PlusIcon,
@@ -106,7 +106,7 @@ onMounted(async () => {
                 const template = resp.getTemplate();
                 doc.value.title = template?.getContentTitle()!;
                 doc.value.content = template?.getContent()!;
-                selectedCategory.value = entriesCategory.find(e => e.getId() === template?.getCategory()?.getId());;
+                selectedCategory.value = entriesCategory.find(e => e.getId() === template?.getCategory()?.getId());
             }).catch((err: RpcError) => {
                 $grpc.handleRPCError(err);
             });
@@ -159,6 +159,20 @@ onMounted(async () => {
 
         access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: DOC_ACCESS.EDIT } })
     }
+
+    clipboardStore.users.forEach((user, i) => {
+        const rel = new DocumentRelation();
+        rel.setId(i);
+        rel.setDocumentId(props.id!);
+        rel.setTargetUserId(user.id!);
+        rel.setTargetUser(getUser(user));
+        rel.setSourceUserId(authStore.$state.activeChar!.getUserId());
+        rel.setSourceUser(authStore.$state.activeChar!);
+        rel.setRelation(DOC_RELATION.CAUSED);
+
+        relationManagerData.value.set(i, rel);
+    })
+
     canEdit.value = true;
 });
 

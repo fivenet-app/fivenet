@@ -159,7 +159,7 @@ export class ClipboardUser {
     }
 }
 
-function getUser(obj: ClipboardUser): User {
+export function getUser(obj: ClipboardUser): User {
     const u = new User();
     u.setUserId(obj['id']!);
     u.setJob(obj['job']!);

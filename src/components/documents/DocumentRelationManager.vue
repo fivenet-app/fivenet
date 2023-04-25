@@ -31,9 +31,10 @@ import { UsersIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
 import { RpcError } from 'grpc-web';
 import { onMounted, ref, FunctionalComponent } from 'vue';
-import { useClipboardStore } from '~/store/clipboard';
+import { useClipboardStore, getUser } from '~/store/clipboard';
 import { useAuthStore } from '~/store/auth';
 import { toTitleCase } from '~/utils/strings';
+import { ClipboardUser } from '../../store/clipboard';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
@@ -83,7 +84,7 @@ async function findUsers(): Promise<void> {
     }
 }
 
-function addRelation(userId: number, relation: number): void {
+function addRelation(user: User, relation: number): void {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1 : keys[keys.length - 1] + 1;
 
@@ -92,7 +93,8 @@ function addRelation(userId: number, relation: number): void {
     rel.setDocumentId(props.document!);
     rel.setSourceUserId(store.$state.activeChar!.getUserId());
     rel.setSourceUser(store.$state.activeChar!);
-    rel.setTargetUserId(userId);
+    rel.setTargetUserId(user.getUserId());
+    rel.setTargetUser(user);
     rel.setRelation(DOC_RELATION_Util.fromInt(relation));
 
     props.modelValue.set(key, rel);
@@ -192,7 +194,8 @@ function removeRelation(id: number): void {
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
-                                                                                <NuxtLink :to="{ name: 'citizens-id', params: { id: rel.getTargetUserId() } }"
+                                                                                <NuxtLink
+                                                                                    :to="{ name: 'citizens-id', params: { id: rel.getTargetUserId() } }"
                                                                                     target="_blank" data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.open_citizen')">
                                                                                     <ArrowTopRightOnSquareIcon
@@ -271,7 +274,7 @@ function removeRelation(id: number): void {
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addRelation(user.id!, 0)"
+                                                                                    @click="addRelation(getUser(user), 0)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.mentioned')">
                                                                                     <ChatBubbleBottomCenterTextIcon
@@ -281,7 +284,7 @@ function removeRelation(id: number): void {
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addRelation(user.id!, 1)"
+                                                                                    @click="addRelation(getUser(user), 1)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.targets')">
                                                                                     <ExclamationTriangleIcon
@@ -291,7 +294,7 @@ function removeRelation(id: number): void {
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addRelation(user.id!, 2)"
+                                                                                    @click="addRelation(getUser(user), 2)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.caused')">
                                                                                     <ShieldExclamationIcon
@@ -345,7 +348,7 @@ function removeRelation(id: number): void {
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addRelation(user.getUserId(), 0)"
+                                                                                    @click="addRelation(user, 0)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.mentioned')">
                                                                                     <ChatBubbleBottomCenterTextIcon
@@ -355,7 +358,7 @@ function removeRelation(id: number): void {
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addRelation(user.getUserId(), 1)"
+                                                                                    @click="addRelation(user, 1)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.targets')">
                                                                                     <ExclamationTriangleIcon
@@ -365,7 +368,7 @@ function removeRelation(id: number): void {
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="addRelation(user.getUserId(), 2)"
+                                                                                    @click="addRelation(user, 2)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.caused')">
                                                                                     <ShieldExclamationIcon
