@@ -130,17 +130,6 @@ func (m *Notification) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetType()) > 128 {
-		err := NotificationValidationError{
-			field:  "Type",
-			reason: "value length must be at most 128 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if len(m.GetContent()) > 512 {
 		err := NotificationValidationError{
 			field:  "Content",
@@ -150,6 +139,21 @@ func (m *Notification) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.Type != nil {
+
+		if utf8.RuneCountInString(m.GetType()) > 128 {
+			err := NotificationValidationError{
+				field:  "Type",
+				reason: "value length must be at most 128 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Data != nil {

@@ -30,9 +30,9 @@ export default defineNuxtRouteMiddleware(
                             });
 
                             if (store.$state.accessToken) {
-                                return {
+                                return navigateTo({
                                     name: 'overview',
-                                };
+                                });
                             }
                         }
                     } else {
@@ -42,20 +42,20 @@ export default defineNuxtRouteMiddleware(
                 } else {
                     // Only update the redirect query param if it isn't set already
                     const redirect = to.query.redirect ?? to.fullPath;
-                    return {
+                    return navigateTo({
                         name: 'auth-character-selector',
                         query: { redirect: redirect },
-                    };
+                    });
                 }
             }
 
             // Only update the redirect query param if it isn't set already
             const redirect = to.query.redirect ?? to.fullPath;
-            return {
+            return navigateTo({
                 name: 'auth-login',
                 // save the location we were at to come back later
                 query: { redirect: redirect },
-            };
+            });
         }
 
         return true;
