@@ -405,6 +405,25 @@
         "error_logout": {
             "title": "Abmeldung: Ein Fehler ist aufgetreten",
             "content": "{0}"
+        },
+        "grpc_errors": {
+            "unauthenticated": {
+                "title": "Bitte erneut anmelden",
+                "content": "Sie sind nicht mehr angemeldet."
+            },
+            "permission_denied": {
+                "title": "Zugriff verweigert"
+            },
+            "internal": {
+                "title": "Ein interner Serverfehler ist aufgetreten"
+            },
+            "unavailable": {
+                "title": "Server ist nicht erreichbar",
+                "content": "FiveNet Server kann nicht erreicht werden, bitte überprüfe deine Internetverbindung."
+            },
+            "default": {
+                "title": "Unbekannter Fehler ist aufgetreten"
+            }
         }
     }
 }
