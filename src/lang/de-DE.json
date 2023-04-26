@@ -95,12 +95,6 @@
             },
             "categories": {
                 "title": "Dokumentkategorien"
-            },
-            "roles": {
-                "title": "Rollen",
-                "id": {
-                    "title": "Rolle anzeigen"
-                }
             }
         },
         "jobs": {
@@ -112,6 +106,12 @@
                 "properties": "Stelle deine Job Eigenschaften ein (e.g., Livemap Marker Farbe).",
                 "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
                 "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden."
+            },
+            "roles": {
+                "title": "Rollen",
+                "id": {
+                    "title": "Rolle anzeigen"
+                }
             }
         },
         "notfound": {

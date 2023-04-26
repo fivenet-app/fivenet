@@ -8,36 +8,40 @@ import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/complet
 import { watchDebounced } from '@vueuse/shared';
 import { SetJobRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
+const { t } = useI18n();
+
 const store = useAuthStore();
+const notifications = useNotificationsStore();
 
 const activeChar = computed(() => store.$state.activeChar);
 
 let entriesJobs = [] as Job[];
 const filteredJobs = ref<Job[]>([]);
 const queryJob = ref('');
-const selectedJob = ref<Job>();
+const selectedJob = ref<undefined | Job>();
 
 async function findJobs(): Promise<void> {
-    const req = new CompleteJobNamesRequest();
-    req.setSearch(queryJob.value);
+    return new Promise(async (res, rej) => {
+        const req = new CompleteJobNamesRequest();
+        req.setSearch(queryJob.value);
 
-    try {
-        const resp = await $grpc.getCompletorClient().
-            completeJobNames(req, null)
+        try {
+            const resp = await $grpc.getCompletorClient().
+                completeJobNames(req, null)
 
-        entriesJobs = resp.getJobsList();
-        filteredJobs.value = entriesJobs;
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            entriesJobs = resp.getJobsList();
+            filteredJobs.value = entriesJobs;
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e);
+        }
+    });
 }
-
-onMounted(async () => {
-    findJobs();
-});
 
 async function setJob(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -56,6 +60,13 @@ async function setJob(): Promise<void> {
                 store.updateActiveChar(resp.getChar()!),
             ]);
 
+            notifications.dispatchNotification({
+                title: 'notifications.job_switcher.setjob.title',
+                titleI18n: true,
+                content: t('notifications.job_switcher.setjob.title', [selectedJob.value?.getLabel()]),
+                type: 'info'
+            });
+
             await navigateTo({ name: 'overview' });
 
             return res();
@@ -71,12 +82,12 @@ watchDebounced(selectedJob, () => setJob());
 </script>
 
 <template>
-    <Combobox as="div" v-model="selectedJob">
+    <Combobox as="div" v-model="selectedJob" nullable>
         <div class="relative">
             <ComboboxButton as="div">
-                <ComboboxInput
+                <ComboboxInput @click="findJobs"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    @change="queryJob = $event.target.value" :display-value="(job: any) => job?.getLabel()" />
+                    @change="queryJob = $event.target.value" :display-value="(job: any) => job ? job?.getLabel() : ''" />
             </ComboboxButton>
 
             <ComboboxOptions v-if="filteredJobs.length > 0"
