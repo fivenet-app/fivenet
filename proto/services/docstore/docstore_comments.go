@@ -5,6 +5,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
+	"github.com/galexrt/fivenet/proto/resources/common"
 	database "github.com/galexrt/fivenet/proto/resources/common/database"
 	"github.com/galexrt/fivenet/proto/resources/documents"
 	"github.com/galexrt/fivenet/proto/resources/rector"
@@ -237,7 +238,8 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 	if err != nil {
 		return nil, err
 	}
-	if comment.CreatorId != userId {
+	// If the requestor is not the creator nor a superuser
+	if comment.CreatorId != userId && !s.p.Can(userId, common.SuperuserAnyAccess) {
 		return nil, status.Error(codes.PermissionDenied, "You can't delete others document comments!")
 	}
 

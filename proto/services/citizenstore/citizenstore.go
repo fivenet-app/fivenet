@@ -333,7 +333,6 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 	userId := auth.GetUserIDFromContext(ctx)
 
-	values := []interface{}{}
 	updateSets := []jet.ColumnAssigment{}
 
 	// Field Permission Check
@@ -342,7 +341,6 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user wanted status!")
 		}
 
-		values = append(values, *req.Props.Wanted)
 		updateSets = append(updateSets, userProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
 	}
 	if req.Props.Job != nil {
@@ -350,7 +348,6 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user job!")
 		}
 
-		values = append(values, *req.Props.Job)
 		updateSets = append(updateSets, userProps.Job.SET(jet.String(*req.Props.Job)))
 	}
 
@@ -364,11 +361,14 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 	stmt := userProps.
 		INSERT(
-			userProps.AllColumns,
+			userProps.UserID,
+			userProps.Wanted,
+			userProps.Job,
 		).
 		VALUES(
-			values[0],
-			values[1:],
+			req.Props.UserId,
+			req.Props.Wanted,
+			req.Props.Job,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			updateSets...,
@@ -398,6 +398,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	auditState = rector.EVENT_TYPE_UPDATED
+
 	return &SetUserPropsResponse{}, nil
 }
 
