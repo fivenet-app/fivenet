@@ -131,8 +131,41 @@ func (m *AuditEntry) validate(all bool) error {
 
 	}
 
-	if m.TargetJob != nil {
-		// no validation rules for TargetJob
+	if m.TargetUserId != nil {
+		// no validation rules for TargetUserId
+	}
+
+	if m.TargetUser != nil {
+
+		if all {
+			switch v := interface{}(m.GetTargetUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AuditEntryValidationError{
+						field:  "TargetUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AuditEntryValidationError{
+						field:  "TargetUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetTargetUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AuditEntryValidationError{
+					field:  "TargetUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if m.Data != nil {

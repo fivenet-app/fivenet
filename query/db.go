@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"embed"
 	"errors"
+	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
 	_ "github.com/go-sql-driver/mysql"
@@ -30,6 +31,11 @@ func SetupDB(logger *zap.Logger) (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	db.SetMaxOpenConns(32)
+	db.SetMaxIdleConns(6)
+	db.SetConnMaxIdleTime(15 * time.Minute)
+	db.SetConnMaxLifetime(60 * time.Minute)
 
 	return db, nil
 }

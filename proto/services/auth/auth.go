@@ -9,11 +9,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/proto/resources/accounts"
 	"github.com/galexrt/fivenet/proto/resources/jobs"
+	"github.com/galexrt/fivenet/proto/resources/rector"
 	users "github.com/galexrt/fivenet/proto/resources/users"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -54,15 +56,17 @@ type Server struct {
 	tm   *auth.TokenManager
 	p    perms.Permissions
 	c    *mstlystcdata.Enricher
+	a    audit.IAuditer
 }
 
-func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenManager, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
+func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenManager, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
 	return &Server{
 		db:   db,
 		auth: auth,
 		tm:   tm,
 		p:    p,
 		c:    c,
+		a:    aud,
 	}
 }
 
@@ -434,6 +438,8 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	if len(perms) == 0 {
 		return nil, UnableToChooseCharErr
 	}
+
+	defer s.a.Log(ctx, AuthService_ServiceDesc.ServiceName, "ChooseCharacter", rector.EVENT_TYPE_VIEWED, -1, nil)
 
 	return &ChooseCharacterResponse{
 		Token:       token,

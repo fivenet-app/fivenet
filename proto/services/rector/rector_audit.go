@@ -11,8 +11,8 @@ import (
 const AuditLogPageSize = 30
 
 var (
-	audit = table.FivenetAuditLog.AS("auditentry")
-	user  = table.Users.AS("usershort")
+	auditLog = table.FivenetAuditLog.AS("auditentry")
+	user     = table.Users.AS("usershort")
 )
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
@@ -22,25 +22,25 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		for i := 0; i < len(req.UserIds); i++ {
 			ids[i] = jet.Int32(req.UserIds[i])
 		}
-		condition = condition.AND(audit.UserID.IN(ids...))
+		condition = condition.AND(auditLog.UserID.IN(ids...))
 	}
 	if req.From != nil {
-		condition = condition.AND(audit.CreatedAt.GT_EQ(
+		condition = condition.AND(auditLog.CreatedAt.GT_EQ(
 			jet.TimestampT(req.From.AsTime()),
 		))
 	}
 	if req.To != nil {
-		condition = condition.AND(audit.CreatedAt.LT_EQ(
+		condition = condition.AND(auditLog.CreatedAt.LT_EQ(
 			jet.TimestampT(req.To.AsTime()),
 		))
 	}
 
-	countStmt := audit.
+	countStmt := auditLog.
 		SELECT(
-			jet.COUNT(audit.ID).AS("datacount.totalcount"),
+			jet.COUNT(auditLog.ID).AS("datacount.totalcount"),
 		).
 		FROM(
-			audit,
+			auditLog,
 		).
 		WHERE(condition)
 
@@ -60,9 +60,9 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		return resp, nil
 	}
 
-	stmt := audit.
+	stmt := auditLog.
 		SELECT(
-			audit.AllColumns,
+			auditLog.AllColumns,
 			user.ID,
 			user.Identifier,
 			user.Job,
@@ -71,14 +71,14 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 			user.Lastname,
 		).
 		FROM(
-			audit.
+			auditLog.
 				LEFT_JOIN(user,
-					user.ID.EQ(audit.UserID),
+					user.ID.EQ(auditLog.UserID),
 				),
 		).
 		WHERE(condition).
 		ORDER_BY(
-			audit.CreatedAt.DESC(),
+			auditLog.CreatedAt.DESC(),
 		).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(AuditLogPageSize)

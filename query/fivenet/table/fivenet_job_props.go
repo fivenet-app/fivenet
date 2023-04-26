@@ -18,6 +18,7 @@ type fivenetJobPropsTable struct {
 
 	// Columns
 	Job                mysql.ColumnString
+	UpdatedAt          mysql.ColumnTimestamp
 	Theme              mysql.ColumnString
 	LivemapMarkerColor mysql.ColumnString
 
@@ -61,10 +62,11 @@ func newFivenetJobPropsTable(schemaName, tableName, alias string) *FivenetJobPro
 func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJobPropsTable {
 	var (
 		JobColumn                = mysql.StringColumn("job")
+		UpdatedAtColumn          = mysql.TimestampColumn("updated_at")
 		ThemeColumn              = mysql.StringColumn("theme")
 		LivemapMarkerColorColumn = mysql.StringColumn("livemap_marker_color")
-		allColumns               = mysql.ColumnList{JobColumn, ThemeColumn, LivemapMarkerColorColumn}
-		mutableColumns           = mysql.ColumnList{JobColumn, ThemeColumn, LivemapMarkerColorColumn}
+		allColumns               = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn}
+		mutableColumns           = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn}
 	)
 
 	return fivenetJobPropsTable{
@@ -72,6 +74,7 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 
 		//Columns
 		Job:                JobColumn,
+		UpdatedAt:          UpdatedAtColumn,
 		Theme:              ThemeColumn,
 		LivemapMarkerColor: LivemapMarkerColorColumn,
 

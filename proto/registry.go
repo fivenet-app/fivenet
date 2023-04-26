@@ -117,18 +117,18 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 	enricher := mstlystcdata.NewEnricher(cache)
 
 	// Attach our GRPC services
-	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher))
-	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher))
+	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher, aud))
+	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud))
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
-	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher))
+	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), db, p, enricher)
 	go livemapper.Start()
 
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p))
-	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher))
-	pbrector.RegisterRectorServiceServer(grpcServer, pbrector.NewServer(logger, db, p))
+	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher, aud))
+	pbrector.RegisterRectorServiceServer(grpcServer, pbrector.NewServer(logger, db, p, aud))
 
 	// Only run the livemapper random user marker generator in debug mode
 	if config.C.Mode == gin.DebugMode {

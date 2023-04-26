@@ -7,8 +7,13 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FivenetJobProps struct {
-	Job                string  `json:"job"`
-	Theme              *string `json:"theme"`
-	LivemapMarkerColor *string `json:"livemap_marker_color"`
+	Job                string     `json:"job"`
+	UpdatedAt          *time.Time `json:"updated_at"`
+	Theme              *string    `json:"theme"`
+	LivemapMarkerColor *string    `json:"livemap_marker_color"`
 }

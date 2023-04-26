@@ -24,10 +24,15 @@ export class AuditEntry extends jspb.Message {
   getUserJob(): string;
   setUserJob(value: string): AuditEntry;
 
-  getTargetJob(): string;
-  setTargetJob(value: string): AuditEntry;
-  hasTargetJob(): boolean;
-  clearTargetJob(): AuditEntry;
+  getTargetUserId(): string;
+  setTargetUserId(value: string): AuditEntry;
+  hasTargetUserId(): boolean;
+  clearTargetUserId(): AuditEntry;
+
+  getTargetUser(): resources_users_users_pb.UserShort | undefined;
+  setTargetUser(value?: resources_users_users_pb.UserShort): AuditEntry;
+  hasTargetUser(): boolean;
+  clearTargetUser(): AuditEntry;
 
   getService(): string;
   setService(value: string): AuditEntry;
@@ -58,7 +63,8 @@ export namespace AuditEntry {
     userId: number,
     user?: resources_users_users_pb.UserShort.AsObject,
     userJob: string,
-    targetJob?: string,
+    targetUserId?: string,
+    targetUser?: resources_users_users_pb.UserShort.AsObject,
     service: string,
     method: string,
     state: EVENT_TYPE,
@@ -70,14 +76,19 @@ export namespace AuditEntry {
     USER = 4,
   }
 
-  export enum TargetJobCase { 
-    _TARGET_JOB_NOT_SET = 0,
-    TARGET_JOB = 6,
+  export enum TargetUserIdCase { 
+    _TARGET_USER_ID_NOT_SET = 0,
+    TARGET_USER_ID = 6,
+  }
+
+  export enum TargetUserCase { 
+    _TARGET_USER_NOT_SET = 0,
+    TARGET_USER = 7,
   }
 
   export enum DataCase { 
     _DATA_NOT_SET = 0,
-    DATA = 10,
+    DATA = 11,
   }
 }
 

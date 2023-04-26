@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
@@ -41,13 +42,15 @@ type Server struct {
 	db *sql.DB
 	p  perms.Permissions
 	c  *mstlystcdata.Enricher
+	a  audit.IAuditer
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
 	return &Server{
 		db: db,
 		p:  p,
 		c:  c,
+		a:  aud,
 	}
 }
 

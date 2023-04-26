@@ -7,12 +7,14 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/proto/resources/common/database"
+	"github.com/galexrt/fivenet/proto/resources/rector"
 	users "github.com/galexrt/fivenet/proto/resources/users"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -42,13 +44,15 @@ type Server struct {
 	db *sql.DB
 	p  perms.Permissions
 	c  *mstlystcdata.Enricher
+	a  audit.IAuditer
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
 	return &Server{
 		db: db,
 		p:  p,
 		c:  c,
+		a:  aud,
 	}
 }
 
@@ -166,6 +170,9 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 }
 
 func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, CitizenStoreService_ServiceDesc.ServiceName, "GetUser", auditState, req.UserId, nil)
+
 	userId := auth.GetUserIDFromContext(ctx)
 
 	selectors := jet.ProjectionList{
@@ -260,6 +267,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 	}
 
+	auditState = rector.EVENT_TYPE_VIEWED
+
 	return resp, nil
 }
 
@@ -319,6 +328,9 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 }
 
 func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*SetUserPropsResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, CitizenStoreService_ServiceDesc.ServiceName, "SetUserProps", auditState, req.Props.UserId, req.Props)
+
 	userId := auth.GetUserIDFromContext(ctx)
 
 	values := []interface{}{}
@@ -385,6 +397,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		return nil, FailedQueryErr
 	}
 
+	auditState = rector.EVENT_TYPE_UPDATED
 	return &SetUserPropsResponse{}, nil
 }
 

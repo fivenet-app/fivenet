@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_audit_log` (
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `user_id` int(11) NOT NULL,
   `user_job` varchar(20) NOT NULL,
-  `target_job` varchar(20) DEFAULT NULL,
+  `target_user_id` int(11) DEFAULT NULL,
   `service` varchar(255) NOT NULL,
   `method` varchar(255) NOT NULL,
   `state` smallint(2) NOT NULL,

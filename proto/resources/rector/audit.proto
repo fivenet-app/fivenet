@@ -21,9 +21,10 @@ message AuditEntry {
   uint64 user_id = 3; // @gotags: alias:"user_id"
   optional resources.users.UserShort user = 4;
   string user_job = 5; // @gotags: alias:"user_job"
-  optional string target_job = 6; // @gotags: alias:"target_job"
-  string service = 7; // @gotags: alias:"service"
-  string method = 8; // @gotags: alias:"method"
-  EVENT_TYPE state = 9; // @gotags: alias:"state"
-  optional string data = 10; // @gotags: alias:"data"
+  optional string target_user_id = 6; // @gotags: alias:"target_user_id"
+  optional resources.users.UserShort target_user = 7;
+  string service = 8; // @gotags: alias:"service"
+  string method = 9; // @gotags: alias:"method"
+  EVENT_TYPE state = 10; // @gotags: alias:"state"
+  optional string data = 11; // @gotags: alias:"data"
 }

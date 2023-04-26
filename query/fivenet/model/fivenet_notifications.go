@@ -19,5 +19,5 @@ type FivenetNotifications struct {
 	Title     string     `json:"title"`
 	Type      string     `json:"type"`
 	Content   string     `json:"content"`
-	Data      string     `json:"data"`
+	Data      *string    `json:"data"`
 }

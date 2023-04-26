@@ -3,7 +3,6 @@ package audit
 import (
 	"context"
 	"database/sql"
-	"strings"
 	"sync"
 
 	"github.com/galexrt/fivenet/pkg/auth"
@@ -12,7 +11,6 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jsoniter "github.com/json-iterator/go"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
 )
 
 var (
@@ -22,7 +20,7 @@ var (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type IAuditer interface {
-	Log(ctx context.Context, serviceDesc grpc.ServiceDesc, state rector.EVENT_TYPE, targetJob string, data interface{})
+	Log(ctx context.Context, service string, method string, state rector.EVENT_TYPE, targetUserId int32, data interface{})
 }
 
 type AuditStorer struct {
@@ -51,7 +49,7 @@ func (a *AuditStorer) Start() {
 }
 
 func (a *AuditStorer) worker() {
-	a.wg.Done()
+	defer a.wg.Done()
 	for {
 		select {
 		case <-a.ctx.Done():
@@ -69,10 +67,8 @@ func (a *AuditStorer) Stop() {
 	a.wg.Wait()
 }
 
-func (a *AuditStorer) Log(ctx context.Context, serviceDesc grpc.ServiceDesc, state rector.EVENT_TYPE, targetJob string, data interface{}) {
-
-	// TODO don't use interceptors, use defer in the methods we want to audit log
-
+func (a *AuditStorer) Log(ctx context.Context, service string, method string, state rector.EVENT_TYPE, targetUserId int32, data interface{}) {
+	a.input <- a.createAuditLogEntry(ctx, service, method, state, targetUserId, data)
 }
 
 func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
@@ -80,7 +76,7 @@ func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
 		INSERT(
 			audit.UserID,
 			audit.UserJob,
-			audit.TargetJob,
+			audit.TargetUserID,
 			audit.Service,
 			audit.Method,
 			audit.State,
@@ -95,14 +91,15 @@ func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
 	return nil
 }
 
-func (a *AuditStorer) createAuditLogEntry(ctx context.Context, fullMethod string, in interface{}) *model.FivenetAuditLog {
+func (a *AuditStorer) createAuditLogEntry(ctx context.Context, service string, method string, state rector.EVENT_TYPE, targetUserId int32, in interface{}) *model.FivenetAuditLog {
 	userId, job, _ := auth.GetUserInfoFromContext(ctx)
-	service, method := a.getServiceAndMethodFromFullMethod(fullMethod)
+
 	data, err := json.MarshalToString(in)
 	if err != nil {
-		data = "Failed to marshal request data"
+		data = "Failed to marshal data"
 	}
-	return &model.FivenetAuditLog{
+
+	log := &model.FivenetAuditLog{
 		Service: service,
 		Method:  method,
 		UserID:  userId,
@@ -110,10 +107,9 @@ func (a *AuditStorer) createAuditLogEntry(ctx context.Context, fullMethod string
 		State:   int16(rector.EVENT_TYPE_UNKNOWN),
 		Data:    &data,
 	}
-}
+	if targetUserId > 0 {
+		log.TargetUserID = &targetUserId
+	}
 
-func (a *AuditStorer) getServiceAndMethodFromFullMethod(fm string) (string, string) {
-	parts := strings.Split(fm, "/")
-
-	return parts[1], parts[2]
+	return log
 }

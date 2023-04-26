@@ -5,9 +5,11 @@ import (
 	"database/sql"
 	"strings"
 
+	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/proto/resources/common/database"
+	"github.com/galexrt/fivenet/proto/resources/rector"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
@@ -29,17 +31,21 @@ type Server struct {
 	db *sql.DB
 	p  perms.Permissions
 	c  *mstlystcdata.Enricher
+	a  audit.IAuditer
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
 	return &Server{
 		db: db,
 		p:  p,
 		c:  c,
+		a:  aud,
 	}
 }
 
 func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*FindVehiclesResponse, error) {
+	defer s.a.Log(ctx, DMVService_ServiceDesc.ServiceName, "FindVehicles", rector.EVENT_TYPE_VIEWED, -1, req)
+
 	condition := jet.Bool(true)
 	userCondition := user.Identifier.EQ(vehicle.Owner)
 	if req.Search != "" {
