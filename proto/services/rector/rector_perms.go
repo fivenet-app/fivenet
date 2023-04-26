@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/proto/resources/common"
 	"github.com/galexrt/fivenet/proto/resources/permissions"
+	rector "github.com/galexrt/fivenet/proto/resources/rector"
 	"github.com/galexrt/fivenet/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/go-jet/jet/v2/qrm"
@@ -177,6 +178,9 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 }
 
 func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*CreateRoleResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, RectorService_ServiceDesc.ServiceName, "CreateRole", auditState, -1, req)
+
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 	name := fmt.Sprintf("%s - Rank: %d", strings.ToTitle(job), req.Grade)
 
@@ -198,12 +202,16 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_CREATED
 	return &CreateRoleResponse{
 		Role: permissions.ConvertFromRole(cr),
 	}, nil
 }
 
 func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*DeleteRoleResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, RectorService_ServiceDesc.ServiceName, "DeleteRole", auditState, -1, req)
+
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
 		return nil, InvalidRequestErr
@@ -228,10 +236,14 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, InvalidRequestErr
 	}
 
+	auditState = rector.EVENT_TYPE_DELETED
 	return &DeleteRoleResponse{}, nil
 }
 
 func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (*AddPermToRoleResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, RectorService_ServiceDesc.ServiceName, "AddPermToRole", auditState, -1, req)
+
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
 		return nil, InvalidRequestErr
@@ -254,10 +266,14 @@ func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_CREATED
 	return resp, nil
 }
 
 func (s *Server) RemovePermFromRole(ctx context.Context, req *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error) {
+	auditState := rector.EVENT_TYPE_DELETED
+	defer s.a.Log(ctx, RectorService_ServiceDesc.ServiceName, "RemovePermFromRole", auditState, -1, req)
+
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
 		return nil, InvalidRequestErr
@@ -280,6 +296,7 @@ func (s *Server) RemovePermFromRole(ctx context.Context, req *RemovePermFromRole
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_DELETED
 	return resp, nil
 }
 

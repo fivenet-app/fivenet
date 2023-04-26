@@ -6,6 +6,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/proto/resources/rector"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -196,6 +197,9 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 }
 
 func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "AddDocumentReference", auditState, -1, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	if req.Reference.SourceDocumentId == req.Reference.TargetDocumentId {
 		return nil, status.Error(codes.InvalidArgument, "You can't reference a document with itself!")
@@ -238,11 +242,17 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_CREATED
+
 	return &AddDocumentReferenceResponse{
 		Id: uint64(lastId),
 	}, nil
 }
+
 func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumentReferenceRequest) (*RemoveDocumentReferenceResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "RemoveDocumentReference", auditState, -1, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	var docIDs struct {
 		Source uint64
@@ -286,10 +296,15 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		return nil, err
 	}
 
-	resp := &RemoveDocumentReferenceResponse{}
-	return resp, nil
+	auditState = rector.EVENT_TYPE_DELETED
+
+	return &RemoveDocumentReferenceResponse{}, nil
 }
+
 func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "AddDocumentRelation", auditState, req.Relation.TargetUserId, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
 	if err != nil {
@@ -326,11 +341,17 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_CREATED
+
 	return &AddDocumentRelationResponse{
 		Id: uint64(lastId),
 	}, nil
 }
+
 func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "RemoveDocumentRelation", auditState, -1, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	var docID struct {
 		ID uint64
@@ -372,9 +393,9 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		return nil, err
 	}
 
-	resp := &RemoveDocumentRelationResponse{}
+	auditState = rector.EVENT_TYPE_DELETED
 
-	return resp, nil
+	return &RemoveDocumentRelationResponse{}, nil
 }
 
 func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([]*documents.DocumentRelation, error) {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/proto/resources/rector"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -48,6 +49,9 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 }
 
 func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "SetDocumentAccess", auditState, -1, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_ACCESS)
 	if err != nil {
@@ -73,6 +77,8 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 	if err = tx.Commit(); err != nil {
 		return nil, err
 	}
+
+	auditState = rector.EVENT_TYPE_UPDATED
 
 	return &SetDocumentAccessResponse{}, nil
 }

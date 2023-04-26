@@ -6,6 +6,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/proto/resources/rector"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -67,6 +68,9 @@ func (s *Server) getDocumentCategory(ctx context.Context, id uint64) (*documents
 }
 
 func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "CreateDocumentCategory", auditState, -1, req)
+
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	dCategory := table.FivenetDocumentsCategories
@@ -92,12 +96,17 @@ func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocument
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_CREATED
+
 	return &CreateDocumentCategoryResponse{
 		Id: lastId,
 	}, nil
 }
 
 func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocumentCategoryRequest) (*UpdateDocumentCategoryResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "UpdateDocumentCategory", auditState, -1, req)
+
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	dCategory := table.FivenetDocumentsCategories
@@ -123,10 +132,15 @@ func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocument
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_UPDATED
+
 	return &UpdateDocumentCategoryResponse{}, nil
 }
 
 func (s *Server) DeleteDocumentCategory(ctx context.Context, req *DeleteDocumentCategoryRequest) (*DeleteDocumentCategoryResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "DeleteDocumentCategory", auditState, -1, req)
+
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	ids := make([]jet.Expression, len(req.Ids))
@@ -147,6 +161,8 @@ func (s *Server) DeleteDocumentCategory(ctx context.Context, req *DeleteDocument
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
+
+	auditState = rector.EVENT_TYPE_DELETED
 
 	return &DeleteDocumentCategoryResponse{}, nil
 }

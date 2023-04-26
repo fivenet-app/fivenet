@@ -9,6 +9,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/proto/resources/rector"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -151,6 +152,9 @@ func (s *Server) renderDocumentTemplate(docTmpl *documents.DocumentTemplate, dat
 }
 
 func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest) (*CreateTemplateResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "CreateTemplate", auditState, -1, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	categoryId := jet.NULL
@@ -199,12 +203,17 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_CREATED
+
 	return &CreateTemplateResponse{
 		Id: lastId,
 	}, nil
 }
 
 func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest) (*UpdateTemplateResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "UpdateTemplate", auditState, -1, req)
+
 	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	categoryId := jet.NULL
@@ -251,10 +260,15 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_UPDATED
+
 	return &UpdateTemplateResponse{}, nil
 }
 
 func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "DeleteTemplate", auditState, -1, req)
+
 	_, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	dTemplates := table.FivenetDocumentsTemplates
@@ -270,6 +284,8 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
+
+	auditState = rector.EVENT_TYPE_DELETED
 
 	return &DeleteTemplateResponse{}, nil
 }

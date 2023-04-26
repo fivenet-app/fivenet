@@ -7,6 +7,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 	database "github.com/galexrt/fivenet/proto/resources/common/database"
 	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/proto/resources/rector"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
@@ -110,6 +111,9 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 }
 
 func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "PostDocumentComment", auditState, -1, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_COMMENT)
 	if err != nil {
@@ -144,11 +148,17 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_CREATED
+
 	return &PostDocumentCommentResponse{
 		Id: uint64(lastId),
 	}, nil
 }
+
 func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "EditDocumentComment", auditState, -1, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_COMMENT)
 	if err != nil {
@@ -188,6 +198,8 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 		return nil, err
 	}
 
+	auditState = rector.EVENT_TYPE_UPDATED
+
 	return resp, nil
 }
 
@@ -216,6 +228,9 @@ func (s *Server) getDocumentComment(ctx context.Context, id uint64) (*documents.
 }
 
 func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentCommentRequest) (*DeleteDocumentCommentResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "DeleteDocumentComment", auditState, -1, req)
+
 	userId := auth.GetUserIDFromContext(ctx)
 
 	comment, err := s.getDocumentComment(ctx, req.CommentId)
@@ -243,6 +258,8 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
+
+	auditState = rector.EVENT_TYPE_DELETED
 
 	return &DeleteDocumentCommentResponse{}, nil
 }

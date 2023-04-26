@@ -12,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	database "github.com/galexrt/fivenet/proto/resources/common/database"
 	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/proto/resources/rector"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -107,6 +108,9 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 }
 
 func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*GetDocumentResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "GetDocument", auditState, -1, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	condition := docs.ID.EQ(jet.Uint64(req.DocumentId))
@@ -137,6 +141,8 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	resp.Access = docAccess.Access
 
+	auditState = rector.EVENT_TYPE_VIEWED
+
 	return resp, nil
 }
 
@@ -157,6 +163,9 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 }
 
 func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest) (*CreateDocumentResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "CreateDocument", auditState, -1, req)
+
 	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	// Begin transaction
@@ -213,12 +222,17 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, FailedQueryErr
 	}
 
+	auditState = rector.EVENT_TYPE_CREATED
+
 	return &CreateDocumentResponse{
 		DocumentId: uint64(lastId),
 	}, nil
 }
 
 func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "UpdateDocument", auditState, -1, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
 	if err != nil {
@@ -276,12 +290,17 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, FailedQueryErr
 	}
 
+	auditState = rector.EVENT_TYPE_UPDATED
+
 	return &UpdateDocumentResponse{
 		DocumentId: req.DocumentId,
 	}, nil
 }
 
 func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
+	auditState := rector.EVENT_TYPE_ERRORED
+	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "UpdateDocument", auditState, -1, req)
+
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
 	if err != nil {
@@ -305,6 +324,8 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
+
+	auditState = rector.EVENT_TYPE_DELETED
 
 	return nil, nil
 }
