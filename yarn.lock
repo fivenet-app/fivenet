@@ -6431,9 +6431,9 @@ vite-plugin-checker@^0.5.6:
     vscode-uri "^3.0.2"
 
 vite-plugin-mkcert@^1.14.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/vite-plugin-mkcert/-/vite-plugin-mkcert-1.14.0.tgz#e3b09c6cc3d177f969626412076eddda0403c762"
-  integrity sha512-TXLqRYeKKv2kGIpDVMXPLAlTQLXfZ5/VtC4VVhV0ky2vKt5W/TDvFKpmelQPmn0IB7uz9KXvQj8Op+pkT9Ln9A==
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/vite-plugin-mkcert/-/vite-plugin-mkcert-1.14.1.tgz#a2b6ee125c7e9ac1b6a0be6ee4091f8aaffbec70"
+  integrity sha512-s/TmH62VA3DYXaqX2230PomrHXSRwfYyXur1c8hN5fGEUrT+w9KnXHnurZ53AMSUc/bI7RF6bQ1K5J+hZQTjoQ==
   dependencies:
     "@octokit/rest" "^19.0.5"
     axios "^1.2.2"
