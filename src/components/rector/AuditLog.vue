@@ -128,7 +128,7 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                                 <label for="users" class="block text-sm font-medium leading-6 text-neutral">{{
                                     $t('common.user', 2) }}</label>
                                 <div class="relative items-center mt-2">
-                                    <Combobox as="div" v-model="selectedChars" nullable multiple>
+                                    <Combobox as="div" v-model="selectedChars" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput

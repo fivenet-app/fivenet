@@ -95,12 +95,6 @@
             },
             "categories": {
                 "title": "Document Categories"
-            },
-            "roles": {
-                "title": "Roles",
-                "id": {
-                    "title": "View Role"
-                }
             }
         },
         "jobs": {
@@ -112,6 +106,12 @@
                 "properties": "Set your job properties (e.g., livemap color).",
                 "jobs": "Setup your factions roles job rank permissions.",
                 "audit_log": "An audit trail of everything your colleagues have done."
+            },
+            "roles": {
+                "title": "Roles",
+                "id": {
+                    "title": "View Role"
+                }
             }
         },
         "notfound": {
@@ -470,6 +470,12 @@
             },
             "default": {
                 "title": "Unknown error occured"
+            }
+        },
+        "job_switcher": {
+            "setjob": {
+                "title": "Job switched",
+                "content": "Your job has been set to {0}."
             }
         }
     }
