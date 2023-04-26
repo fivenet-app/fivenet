@@ -26,38 +26,47 @@ const editing = ref(false);
 const message = ref(props.comment.getComment());
 
 async function editComment(): Promise<void> {
-    const req = new EditDocumentCommentRequest();
-    const c = new DocumentComment();
-    c.setId(props.comment.getId());
-    c.setDocumentId(props.comment.getDocumentId());
-    c.setComment(message.value);
-    req.setComment(c);
+    return new Promise(async (res, rej) => {
+        const req = new EditDocumentCommentRequest();
+        const c = new DocumentComment();
+        c.setId(props.comment.getId());
+        c.setDocumentId(props.comment.getDocumentId());
+        c.setComment(message.value);
+        req.setComment(c);
 
-    try {
-        const resp = await $grpc.getDocStoreClient().
-            editDocumentComment(req, null);
+        try {
+            await $grpc.getDocStoreClient().
+                editDocumentComment(req, null);
 
-        props.comment.setComment(message.value);
-        editing.value = false;
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            editing.value = false;
+            props.comment.setComment(message.value);
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function deleteComment(): Promise<void> {
-    const req = new DeleteDocumentCommentRequest();
-    req.setCommentId(props.comment.getId());
+    return new Promise(async (res, rej) => {
+        const req = new DeleteDocumentCommentRequest();
+        req.setCommentId(props.comment.getId());
 
-    try {
-        await $grpc.getDocStoreClient().
-            deleteDocumentComment(req, null);
+        try {
+            await $grpc.getDocStoreClient().
+                deleteDocumentComment(req, null);
 
-        emit('removed', props.comment);
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            emit('removed', props.comment);
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 </script>
 
@@ -89,8 +98,8 @@ async function deleteComment(): Promise<void> {
                 <form @submit.prevent="editComment" class="relative">
                     <div
                         class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
-                        <label for="comment"
-                            class="sr-only">{{ $t('components.documents.document_comment_entry.edit_comment') }}</label>
+                        <label for="comment" class="sr-only">{{
+                            $t('components.documents.document_comment_entry.edit_comment') }}</label>
                         <textarea rows="3" name="comment" id="comment"
                             class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
                             v-model="message"
@@ -109,7 +118,8 @@ async function deleteComment(): Promise<void> {
                         <div class="flex items-center space-x-5"></div>
                         <div class="flex-shrink-0">
                             <button type="submit"
-                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{{ $t('common.edit') }}</button>
+                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{{
+                                    $t('common.edit') }}</button>
                         </div>
                     </div>
                 </form>

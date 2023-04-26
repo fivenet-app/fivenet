@@ -37,8 +37,7 @@ const notifications = useNotificationsStore();
 const { t } = useI18n();
 
 const access = ref<undefined | DocumentAccess>(undefined);
-const comments = ref<DocumentComment[]>([]);
-const commentCount = ref(0);
+const commentCount = ref(-1);
 const tabs = ref<{ name: string, icon: typeof LockOpenIcon }[]>([
     { name: t('common.reference', 2), icon: DocumentMagnifyingGlassIcon },
     { name: t('common.relation', 2), icon: UserIcon },
@@ -128,8 +127,10 @@ function addToClipboard(): void {
                             <div
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500">
                                 <ChatBubbleLeftEllipsisIcon class="w-5 h-auto" aria-hidden="true" />
-                                <span class="text-sm font-medium text-primary-700">{{ commentCount }} {{
-                                    $t('common.comment', 2).toLowerCase() }}</span>
+                                <span class="text-sm font-medium text-primary-700">
+                                    {{ commentCount >= 0 ? commentCount : '?' }} {{
+                                        $t('common.comment', 2).toLowerCase() }}
+                                </span>
                             </div>
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
@@ -189,7 +190,7 @@ function addToClipboard(): void {
                         </div>
                         <div class="mt-4" v-can="'DocStoreService.GetDocumentComments'">
                             <h2 class="text-lg font-semibold text-neutral">{{ $t('common.comment', 2) }}</h2>
-                            <DocumentComments :document-id="documentId" :comments="comments" />
+                            <DocumentComments :document-id="documentId" @counted="commentCount = $event" />
                         </div>
                     </div>
                 </div>

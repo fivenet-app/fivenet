@@ -21,6 +21,10 @@ const props = defineProps({
     },
 });
 
+const emit = defineEmits<{
+    (e: 'counted', count: number): void,
+}>();
+
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
@@ -37,6 +41,9 @@ async function getDocumentComments(): Promise<Array<DocumentComment>> {
                 getDocumentComments(creq, null);
 
             pagination.value = resp.getPagination();
+            if (pagination.value) {
+                emit('counted', pagination.value?.getTotalCount());
+            }
 
             return res(resp.getCommentsList());
         } catch (e) {
@@ -98,9 +105,11 @@ async function removeComment(comment: DocumentComment): Promise<void> {
             if (idx > -1) {
                 comments.value.splice(idx, 1);
             }
+
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
-            return;
+            return rej(e as RpcError);
         }
     });
 }

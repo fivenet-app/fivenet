@@ -13,7 +13,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/proto/resources/accounts"
 	"github.com/galexrt/fivenet/proto/resources/jobs"
 	"github.com/galexrt/fivenet/proto/resources/rector"
 	users "github.com/galexrt/fivenet/proto/resources/users"
@@ -263,26 +262,6 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 
 	return &ChangePasswordResponse{
 		Token: token,
-	}, nil
-}
-
-func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
-	if err != nil {
-		return nil, GenericLoginErr
-	}
-
-	// Load account
-	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccountID)))
-	if err != nil {
-		return nil, GenericLoginErr
-	}
-	if acc.ID == 0 {
-		return nil, GenericLoginErr
-	}
-
-	return &GetAccountInfoResponse{
-		Account: accounts.ConvertFromAcc(acc),
 	}, nil
 }
 

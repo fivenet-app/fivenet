@@ -219,6 +219,9 @@ func (s *Server) getDocumentComment(ctx context.Context, id uint64) (*documents.
 		FROM(
 			dComments,
 		).
+		WHERE(
+			dComments.ID.EQ(jet.Uint64(id)),
+		).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, comment); err != nil {

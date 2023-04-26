@@ -34,8 +34,8 @@ var (
 )
 
 var (
-	FailedQueryErr      = status.Error(codes.Internal, "Failed to list/get citizen(s) date!")
-	NotFoundOrNoPermErr = status.Error(codes.NotFound, "Citizen not found or no permission to access")
+	FailedQueryErr          = status.Error(codes.Internal, "Failed to list/get citizen(s) date!")
+	JobGradeNoPermissionErr = status.Error(codes.NotFound, "No permission to access this citizen (based on the citizen's job)")
 )
 
 type Server struct {
@@ -227,7 +227,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		if utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
 			// Make sure user has permission to see that grade
 			if !s.p.Can(userId, CitizenStoreServicePermKey, "GetUser", resp.User.Job, strconv.Itoa(int(resp.User.JobGrade))) {
-				return nil, NotFoundOrNoPermErr
+				return nil, JobGradeNoPermissionErr
 			}
 		} else {
 			resp.User.Job = config.C.Game.UnemployedJob.Name
@@ -242,7 +242,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		s.c.EnrichJobInfo(resp.User)
 	}
 
-	// Check if user can see licenses and fetch them separately
+	// Check if user can see licenses and fetch them
 	if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "Licenses") {
 		stmt := user.
 			SELECT(
