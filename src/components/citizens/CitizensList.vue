@@ -18,7 +18,7 @@ const query = ref<{ name: string; phone: string; wanted: boolean; }>({ name: '',
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-const { data: users, pending, refresh, error } = await useLazyAsyncData(`citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phone}`, () => findUsers());
+const { data: users, pending, refresh, error } = useLazyAsyncData(`citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phone}`, () => findUsers());
 
 async function findUsers(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {

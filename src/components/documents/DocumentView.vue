@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { GetDocumentCommentsRequest, GetDocumentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { Document, DocumentAccess, DocumentComment, DocumentReference, DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb';
+import { Document, DocumentAccess, DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
 import { toDate } from '~/utils/time';
 import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import {
@@ -25,7 +25,6 @@ import DocumentRelations from './DocumentRelations.vue';
 import DocumentReferences from './DocumentReferences.vue';
 import DocumentComments from './DocumentComments.vue';
 import { toTitleCase } from '~/utils/strings';
-import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
 import { useClipboardStore } from '~/store/clipboard';
 import { PlusIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from 'grpc-web';
@@ -37,12 +36,9 @@ const notifications = useNotificationsStore();
 
 const { t } = useI18n();
 
-const document = ref<undefined | Document>(undefined);
 const access = ref<undefined | DocumentAccess>(undefined);
 const comments = ref<DocumentComment[]>([]);
 const commentCount = ref(0);
-const feedReferences = ref<DocumentReference[]>([]);
-const feedRelations = ref<DocumentRelation[]>([]);
 const tabs = ref<{ name: string, icon: typeof LockOpenIcon }[]>([
     { name: t('common.reference', 2), icon: DocumentMagnifyingGlassIcon },
     { name: t('common.relation', 2), icon: UserIcon },
@@ -55,42 +51,25 @@ const props = defineProps({
     },
 });
 
-async function getDocument(): Promise<void> {
-    const req = new GetDocumentRequest();
-    req.setDocumentId(props.documentId);
+const { data: document, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}`, () => getDocument());
 
-    $grpc.getDocStoreClient().
-        getDocument(req, null).
-        then((resp) => {
-            document.value = resp.getDocument();
+async function getDocument(): Promise<Document> {
+    return new Promise(async (res, rej) => {
+        const req = new GetDocumentRequest();
+        req.setDocumentId(props.documentId);
+
+        try {
+            const resp = await $grpc.getDocStoreClient().
+                getDocument(req, null);
+
             access.value = resp.getAccess();
-        }).catch((err: RpcError) => $grpc.handleRPCError(err));
 
-    // Document References
-    $grpc.getDocStoreClient().
-        getDocumentReferences(req, null).
-        then((resp) => {
-            feedReferences.value = resp.getReferencesList();
-        }).catch((err: RpcError) => $grpc.handleRPCError(err));
-
-    // Document Relations
-    $grpc.getDocStoreClient().
-        getDocumentRelations(req, null).
-        then((resp) => {
-            feedRelations.value = resp.getRelationsList();
-        }).catch((err: RpcError) => $grpc.handleRPCError(err));
-
-    // Document Comments
-    const creq = new GetDocumentCommentsRequest();
-    creq.setPagination((new PaginationRequest()).setOffset(0));
-    creq.setDocumentId(props.documentId);
-
-    $grpc.getDocStoreClient().
-        getDocumentComments(creq, null).
-        then((resp) => {
-            comments.value = resp.getCommentsList();
-            commentCount.value = resp.getPagination()!.getTotalCount();
-        }).catch((err: RpcError) => $grpc.handleRPCError(err));
+            return res(resp.getDocument()!);
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 function addToClipboard(): void {
@@ -99,10 +78,6 @@ function addToClipboard(): void {
     }
     notifications.dispatchNotification({ title: t('notifications.clipboard.document_added.title'), content: t('notifications.clipboard.document_added.content'), duration: 3500, type: 'info' });
 }
-
-onMounted(() => {
-    getDocument();
-});
 </script>
 
 <template>
@@ -133,8 +108,7 @@ onMounted(() => {
                                     <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
-                                <button v-can="'DocStoreService.DeleteDocument'"
-                                    type="button"
+                                <button v-can="'DocStoreService.DeleteDocument'" type="button"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400">
                                     <TrashIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.delete') }}
@@ -154,7 +128,8 @@ onMounted(() => {
                             <div
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500">
                                 <ChatBubbleLeftEllipsisIcon class="w-5 h-auto" aria-hidden="true" />
-                                <span class="text-sm font-medium text-primary-700">{{ commentCount }} {{ $t('common.comment', 2).toLowerCase() }}</span>
+                                <span class="text-sm font-medium text-primary-700">{{ commentCount }} {{
+                                    $t('common.comment', 2).toLowerCase() }}</span>
                             </div>
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
@@ -204,10 +179,10 @@ onMounted(() => {
                                 </TabList>
                                 <TabPanels>
                                     <TabPanel>
-                                        <DocumentReferences :references="feedReferences" :show-source="false" />
+                                        <DocumentReferences :document-id="documentId" :show-source="false" />
                                     </TabPanel>
                                     <TabPanel>
-                                        <DocumentRelations :relations="feedRelations" :show-document="false" />
+                                        <DocumentRelations :document-id="documentId" :show-document="false" />
                                     </TabPanel>
                                 </TabPanels>
                             </TabGroup>

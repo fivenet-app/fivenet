@@ -10,7 +10,7 @@ import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
 
-const { data: chars, pending, refresh, error } = await useLazyAsyncData('chars', () => fetchCharacters());
+const { data: chars, pending, refresh, error } = useLazyAsyncData('chars', () => fetchCharacters());
 
 async function fetchCharacters(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {
@@ -27,13 +27,16 @@ async function fetchCharacters(): Promise<Array<User>> {
 }
 
 onBeforeMount(async () => {
-    await store.updateActiveChar(null);
-    await store.updatePermissions([]);
+    await Promise.all([
+        store.updateActiveChar(null),
+        store.updatePermissions([])
+    ]);
 });
 </script>
 
 <template>
-    <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.your')} ${$t('common.character', 2)}`])" />
+    <DataPendingBlock v-if="pending"
+        :message="$t('common.loading', [`${$t('common.your')} ${$t('common.character', 2)}`])" />
     <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [$t('common.character', 2)])" :retry="refresh" />
     <div v-else class="flex flex-row flex-wrap gap-y-2">
         <CharacterSelectorCard v-for="char in chars" :char="char" :key="char.getUserId()"

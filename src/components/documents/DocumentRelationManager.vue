@@ -30,11 +30,10 @@ import {
 import { UsersIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
 import { RpcError } from 'grpc-web';
-import { onMounted, ref, FunctionalComponent } from 'vue';
+import { FunctionalComponent } from 'vue';
 import { useClipboardStore, getUser } from '~/store/clipboard';
 import { useAuthStore } from '~/store/auth';
 import { toTitleCase } from '~/utils/strings';
-import { ClipboardUser } from '../../store/clipboard';
 
 const { $grpc } = useNuxtApp();
 const store = useAuthStore();
@@ -63,6 +62,7 @@ const entriesUsers = ref<User[]>([]);
 const queryChar = ref('');
 
 onMounted(async () => {
+    // TODO Consider using nuxt `useLazyAsyncData` lazy loading
     findUsers();
 });
 

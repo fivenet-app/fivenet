@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue';
 import { useAuthStore } from '~/store/auth';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useClipboardStore, getUser } from '~/store/clipboard';

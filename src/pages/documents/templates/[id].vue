@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import TemplateView from '~/components/documents/templates/TemplateView.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
@@ -19,15 +18,15 @@ definePageMeta({
 });
 
 const route = useRoute('documents-templates-id');
-const templateId = ref(0);
+const id = ref(0);
 
 onMounted(() => {
-    templateId.value = parseInt(route.params.id);
+    id.value = parseInt(route.params.id);
 });
 </script>
 
 <template>
     <ContentWrapper>
-        <TemplateView v-if="templateId > 0" :templateId="templateId" />
+        <TemplateView v-if="id > 0" :templateId="id" />
     </ContentWrapper>
 </template>

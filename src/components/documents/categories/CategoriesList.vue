@@ -14,7 +14,7 @@ import { CreateDocumentCategoryRequest, ListDocumentCategoriesRequest } from '@f
 
 const { $grpc } = useNuxtApp();
 
-const { data: categories, pending, refresh, error } = await useLazyAsyncData(`documents-categories`, () => getCategories());
+const { data: categories, pending, refresh, error } = useLazyAsyncData(`documents-categories`, () => getCategories());
 const items = ref<CardElements>([]);
 
 async function getCategories(): Promise<Array<DocumentCategory>> {

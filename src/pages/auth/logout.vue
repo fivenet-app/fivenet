@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { LogoutRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
-import { onBeforeMount } from 'vue';
 import { useAuthStore } from '~/store/auth';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
@@ -21,33 +20,37 @@ const { $grpc } = useNuxtApp();
 const store = useAuthStore();
 const notifications = useNotificationsStore();
 
-const { t }= useI18n();
+const { t } = useI18n();
 
 const accessToken = computed(() => store.$state.accessToken);
 
-async function redirect() {
+function redirect(): void {
     setTimeout(async () => {
         await navigateTo({ name: 'index' });
     }, 1500);
 }
 
 onBeforeMount(async () => {
-    store.clear();
+    await store.clear();
 
     if (!accessToken.value) {
         redirect();
         return;
     }
 
-    $grpc.getAuthClient()
-        .logout(new LogoutRequest(), null)
-        .then((resp) => {
-            redirect();
-        })
-        .catch((err: RpcError) => {
-            store.loginStop(err.message);
-            notifications.dispatchNotification({ title: t('notifications.error_logout.title'), content: t('notifications.error_logout.content', [err.message]), type: 'error' });
+    try {
+        await $grpc.getAuthClient()
+            .logout(new LogoutRequest(), null);
+    } catch (e) {
+        const err = e as RpcError;
+        store.loginStop(err.message);
+        notifications.dispatchNotification({
+            title: t('notifications.error_logout.title'),
+            content: t('notifications.error_logout.content', [err.message]),
+            type: 'error'
         });
+    }
+    redirect();
 });
 </script>
 

@@ -16,7 +16,7 @@ const props = defineProps({
     },
 });
 
-const { data: activities, pending, refresh, error } = await useLazyAsyncData(`citizeninfo-activity-${props.userId}`, () => getUserActivity());
+const { data: activities, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity-${props.userId}`, () => getUserActivity());
 
 async function getUserActivity(): Promise<Array<UserActivity>> {
     return new Promise(async (res, rej) => {

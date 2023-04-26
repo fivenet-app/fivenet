@@ -42,7 +42,7 @@ async function getRole(): Promise<Role> {
     });
 }
 
-const { data: role, pending, refresh, error } = await useLazyAsyncData(`rector-role-${props.roleId}`, () => getRole());
+const { data: role, pending, refresh, error } = useLazyAsyncData(`rector-role-${props.roleId}`, () => getRole());
 
 async function deleteRole(): Promise<void> {
     return new Promise(async (res, rej) => {

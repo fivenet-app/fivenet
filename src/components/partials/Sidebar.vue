@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, FunctionalComponent, onMounted } from 'vue';
+import { FunctionalComponent } from 'vue';
 import { useAuthStore } from '~/store/auth';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import { toTitleCase } from '~/utils/strings';

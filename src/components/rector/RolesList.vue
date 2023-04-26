@@ -23,7 +23,7 @@ const { t } = useI18n();
 
 const activeChar = computed(() => store.activeChar);
 
-const { data: roles, pending, refresh, error } = await useLazyAsyncData('rector-roles', () => getRoles());
+const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
 
 async function getRoles(): Promise<Array<Role>> {
     return new Promise(async (res, rej) => {

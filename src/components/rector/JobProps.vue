@@ -30,7 +30,7 @@ async function getJobProps(): Promise<JobProps> {
     });
 }
 
-const { data: jobProps, pending, refresh, error } = await useLazyAsyncData(`rector-jobprops`, () => getJobProps());
+const { data: jobProps, pending, refresh, error } = useLazyAsyncData(`rector-jobprops`, () => getJobProps());
 
 async function saveJobProps(): Promise<void> {
     return new Promise(async (res, rej) => {

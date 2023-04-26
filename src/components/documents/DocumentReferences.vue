@@ -1,13 +1,17 @@
 <script lang="ts" setup>
 import { DOC_REFERENCE_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import { DocumentReference } from '@fivenet/gen/resources/documents/documents_pb';
+import { GetDocumentReferencesRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
+import { RpcError } from 'grpc-web';
 import { toDateLocaleString } from '~/utils/time';
 
-defineProps({
-    references: {
+const { $grpc } = useNuxtApp();
+
+const props = defineProps({
+    documentId: {
         required: true,
-        type: Array<DocumentReference>,
+        type: Number,
     },
     showSource: {
         required: false,
@@ -15,13 +19,34 @@ defineProps({
         default: true,
     },
 });
+
+const { data: references, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-references`, () => getDocumentReferences());
+
+async function getDocumentReferences(): Promise<Array<DocumentReference>> {
+    return new Promise(async (res, rej) => {
+        const req = new GetDocumentReferencesRequest();
+        req.setDocumentId(props.documentId);
+
+        try {
+            const resp = await $grpc.getDocStoreClient().
+                getDocumentReferences(req, null);
+
+            return res(resp.getReferencesList());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
 </script>
 
 <template>
     <div>
-        <span v-if="references.length == 0" class="text-neutral">{{ $t('common.not_found', [`${$t('common.document', 1)} ${$t('common.reference', 2)}`]) }}</span>
+        <span v-if="references && references.length == 0" class="text-neutral">{{ $t('common.not_found',
+            [`${$t('common.document', 1)}
+                    ${$t('common.reference', 2)}`]) }}</span>
         <!-- Relations list (smallest breakpoint only) -->
-        <div v-if="references.length > 0" class="sm:hidden text-neutral">
+        <div v-if="references && references.length > 0" class="sm:hidden text-neutral">
             <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
                 <li v-for="reference in references" :key="reference.getId()">
                     <NuxtLink :to="{ name: 'documents-id', params: { id: reference.getTargetDocumentId() } }"
@@ -32,19 +57,22 @@ defineProps({
                                 <span class="flex flex-col text-sm truncate">
                                     <span>
                                         {{ reference.getTargetDocument()?.getTitle() }}<span
-                                                    v-if="reference.getTargetDocument()?.getCategory()">&nbsp;({{ $t('common.category', 1) }}: {{
-                                                        reference.getTargetDocument()?.getCategory()?.getName() }})</span>
+                                            v-if="reference.getTargetDocument()?.getCategory()">&nbsp;({{
+                                                $t('common.category', 1) }}: {{
+        reference.getTargetDocument()?.getCategory()?.getName() }})</span>
                                     </span>
                                     <span class="font-medium ">{{
                                         DOC_REFERENCE_Util.toEnumKey(reference.getReference()) }}</span>
                                     <span v-if="showSource" class="truncate">
                                         {{ reference.getSourceDocument()?.getTitle() }}<span
-                                            v-if="reference.getSourceDocument()?.getCategory()"> ({{ $t('common.category', 1) }}: {{
-                                                reference.getSourceDocument()?.getCategory()?.getName() }})</span>
+                                            v-if="reference.getSourceDocument()?.getCategory()"> ({{ $t('common.category',
+                                                1) }}: {{
+        reference.getSourceDocument()?.getCategory()?.getName() }})</span>
                                     </span>
                                     <span>
-                                        <NuxtLink :to="{ name: 'citizens-id', params: { id: reference.getCreatorId() }} ">
-                                            {{ reference.getCreator()?.getFirstname() }}, {{ reference.getCreator()?.getLastname() }}
+                                        <NuxtLink :to="{ name: 'citizens-id', params: { id: reference.getCreatorId() } }">
+                                            {{ reference.getCreator()?.getFirstname() }}, {{
+                                                reference.getCreator()?.getLastname() }}
                                         </NuxtLink>
                                     </span>
                                     <time datetime="">{{ toDateLocaleString(reference.getCreatedAt()) }}</time>
@@ -58,7 +86,7 @@ defineProps({
         </div>
 
         <!-- Relations table (small breakpoint and up) -->
-        <div v-if="references.length > 0" class="hidden sm:block">
+        <div v-if="references && references.length > 0" class="hidden sm:block">
             <div>
                 <div class="flex flex-col mt-2">
                     <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
@@ -71,7 +99,8 @@ defineProps({
                                     <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
                                         {{ $t('common.relation', 1) }}
                                     </th>
-                                    <th v-if="showSource" class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
+                                    <th v-if="showSource" class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
+                                        scope="col">
                                         {{ $t('common.source') }}
                                     </th>
                                     <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
@@ -90,8 +119,9 @@ defineProps({
                                                 :to="{ name: 'documents-id', params: { id: reference.getTargetDocumentId() } }"
                                                 class="inline-flex space-x-2 text-sm truncate group">
                                                 {{ reference.getTargetDocument()?.getTitle() }}<span
-                                                    v-if="reference.getTargetDocument()?.getCategory()">&nbsp;({{ $t('common.category', 1) }}: {{
-                                                        reference.getTargetDocument()?.getCategory()?.getName() }})</span>
+                                                    v-if="reference.getTargetDocument()?.getCategory()">&nbsp;({{
+                                                        $t('common.category', 1) }}: {{
+        reference.getTargetDocument()?.getCategory()?.getName() }})</span>
                                             </NuxtLink>
                                         </div>
                                     </td>
@@ -105,15 +135,18 @@ defineProps({
                                                 :to="{ name: 'documents-id', params: { id: reference.getSourceDocumentId() } }"
                                                 class="inline-flex space-x-1 text-sm truncate group">
                                                 {{ reference.getSourceDocument()?.getTitle() }}<span
-                                                    v-if="reference.getSourceDocument()?.getCategory()">&nbsp;({{ $t('common.category', 1) }}: {{
-                                                        reference.getSourceDocument()?.getCategory()?.getName() }})</span>
+                                                    v-if="reference.getSourceDocument()?.getCategory()">&nbsp;({{
+                                                        $t('common.category', 1) }}: {{
+        reference.getSourceDocument()?.getCategory()?.getName() }})</span>
                                             </NuxtLink>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
                                         <div class="flex">
-                                            <NuxtLink :to="{ name: 'citizens-id', params: { id: reference.getCreatorId() }} ">
-                                                {{ reference.getCreator()?.getFirstname() }}, {{ reference.getCreator()?.getLastname() }}
+                                            <NuxtLink
+                                                :to="{ name: 'citizens-id', params: { id: reference.getCreatorId() } }">
+                                                {{ reference.getCreator()?.getFirstname() }}, {{
+                                                    reference.getCreator()?.getLastname() }}
                                             </NuxtLink>
                                         </div>
                                     </td>

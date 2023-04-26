@@ -26,7 +26,7 @@ import {
 import { ChevronDoubleUpIcon, DocumentCheckIcon, DocumentTextIcon, LockClosedIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
 import { RpcError } from 'grpc-web';
-import { onMounted, ref, FunctionalComponent } from 'vue';
+import { FunctionalComponent } from 'vue';
 import { ClipboardDocument, getDocument } from '~/store/clipboard';
 import { useAuthStore } from '~/store/auth';
 import { toDateLocaleString, toDateRelativeString } from '~/utils/time';
@@ -59,6 +59,7 @@ const entriesDocuments = ref<Document[]>([]);
 const queryDoc = ref('');
 
 onMounted(async () => {
+    // TODO Consider using nuxt `useLazyAsyncData` lazy loading
     findDocuments();
 });
 

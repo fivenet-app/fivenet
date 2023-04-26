@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/proto/resources/common"
 	database "github.com/galexrt/fivenet/proto/resources/common/database"
 	"github.com/galexrt/fivenet/proto/resources/documents"
 	"github.com/galexrt/fivenet/proto/resources/rector"
@@ -309,7 +310,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
-	if !check {
+	if !check && !s.p.Can(userId, common.SuperuserAnyAccess) {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
 	}
 

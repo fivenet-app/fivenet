@@ -2,7 +2,7 @@
 import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
 import { DeleteDocumentCommentRequest, GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref } from 'vue';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/20/solid';
@@ -19,78 +19,90 @@ const props = defineProps({
         required: true,
         type: Number,
     },
-    comments: {
-        required: false,
-        type: Array<DocumentComment>,
-        default: new Array<DocumentComment>(),
-    }
 });
 
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-// Document Comments
-async function getDocumentComments(): Promise<void> {
-    const req = new GetDocumentCommentsRequest();
-    req.setPagination((new PaginationRequest()).setOffset(offset.value));
-    req.setDocumentId(props.documentId!);
+const { data: comments, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-comments-${offset}`, () => getDocumentComments());
 
-    try {
-        const resp = await $grpc.getDocStoreClient().
-            getDocumentComments(req, null);
+async function getDocumentComments(): Promise<Array<DocumentComment>> {
+    return new Promise(async (res, rej) => {
+        const creq = new GetDocumentCommentsRequest();
+        creq.setPagination((new PaginationRequest()).setOffset(0));
+        creq.setDocumentId(props.documentId);
 
-        resp.getCommentsList().forEach((v) => {
+        try {
+            const resp = await $grpc.getDocStoreClient().
+                getDocumentComments(creq, null);
+
             pagination.value = resp.getPagination();
-            props.comments.push(v);
-        });
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+
+            return res(resp.getCommentsList());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
+
 const message = ref('');
 
 async function addComment(): Promise<void> {
-    const req = new PostDocumentCommentRequest();
-    const com = new DocumentComment();
-    com.setDocumentId(props.documentId);
-    com.setComment(message.value);
-    req.setComment(com);
+    return new Promise(async (res, rej) => {
+        if (!comments.value) {
+            return res();
+        }
 
-    try {
-        const resp = await $grpc.getDocStoreClient().
-            postDocumentComment(req, null);
+        const req = new PostDocumentCommentRequest();
+        const com = new DocumentComment();
+        com.setDocumentId(props.documentId);
+        com.setComment(message.value);
+        req.setComment(com);
 
-        com.setId(resp.getId());
-        com.setCreatorId(activeChar.value!.getUserId());
-        com.setCreator(activeChar.value!);
+        try {
+            const resp = await $grpc.getDocStoreClient().
+                postDocumentComment(req, null);
 
-        props.comments.unshift(com);
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            com.setId(resp.getId());
+            com.setCreatorId(activeChar.value!.getUserId());
+            com.setCreator(activeChar.value!);
+
+            comments.value.unshift(com);
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function removeComment(comment: DocumentComment): Promise<void> {
-    const idx = props.comments.findIndex((c) => {
-        return c.getId() === comment.getId();
-    });
-
-    const req = new DeleteDocumentCommentRequest();
-    req.setCommentId(comment.getId());
-
-    try {
-        await $grpc.getDocStoreClient().
-            deleteDocumentComment(req, null);
-
-        if (idx > -1) {
-            props.comments.splice(idx, 1);
+    return new Promise(async (res, rej) => {
+        if (!comments.value) {
+            return res();
         }
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+
+        const idx = comments.value.findIndex((c) => {
+            return c.getId() === comment.getId();
+        });
+
+        const req = new DeleteDocumentCommentRequest();
+        req.setCommentId(comment.getId());
+
+        try {
+            await $grpc.getDocStoreClient().
+                deleteDocumentComment(req, null);
+
+            if (idx > -1) {
+                comments.value.splice(idx, 1);
+            }
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return;
+        }
+    });
 }
 
 const commentInput = ref<HTMLInputElement | null>(null);
@@ -100,12 +112,7 @@ function focusComment(): void {
     }
 }
 
-watch(offset, async () => getDocumentComments());
-onMounted(async () => {
-    if (props.documentId !== undefined && props.comments === undefined) {
-        getDocumentComments();
-    }
-});
+watch(offset, async () => refresh());
 </script>
 
 <template>
@@ -115,8 +122,8 @@ onMounted(async () => {
                 <form @submit.prevent="addComment()" class="relative">
                     <div
                         class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-indigo-600">
-                        <label for="comment"
-                            class="sr-only">{{ $t('components.documents.document_comments.add_comment') }}</label>
+                        <label for="comment" class="sr-only">{{ $t('components.documents.document_comments.add_comment')
+                        }}</label>
                         <textarea rows="3" name="comment" id="comment"
                             class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
                             ref="commentInput" v-model="message"
@@ -135,7 +142,8 @@ onMounted(async () => {
                         <div class="flex items-center space-x-5"></div>
                         <div class="flex-shrink-0">
                             <button type="submit"
-                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{{ $t('common.post') }}</button>
+                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{{
+                                    $t('common.post') }}</button>
                         </div>
                     </div>
                 </form>
@@ -143,7 +151,7 @@ onMounted(async () => {
         </div>
     </div>
     <div class="bg-base-800">
-        <button v-if="comments.length == 0" type="button" @click="focusComment()"
+        <button v-if="!comments || comments.length == 0" type="button" @click="focusComment()"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
             <ChatBubbleLeftEllipsisIcon class="w-12 h-12 mx-auto text-neutral" />
             <span v-can="'DocStoreService.PostDocumentComment'" class="block mt-2 text-sm font-semibold text-gray-300">
@@ -157,5 +165,6 @@ onMounted(async () => {
             </ul>
         </div>
     </div>
-    <TablePagination v-if="comments.length > 0" :pagination="pagination" @offset-change="offset = $event" class="mt-2" />
+    <TablePagination v-if="comments && comments.length > 0" :pagination="pagination" @offset-change="offset = $event"
+        class="mt-2" />
 </template>

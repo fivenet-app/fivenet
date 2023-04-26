@@ -26,7 +26,7 @@ definePageMeta({
 const { $grpc } = useNuxtApp();
 const route = useRoute('citizens-id');
 
-const { data: user, pending, refresh, error } = await useLazyAsyncData(`citizen-${route.params.id}`, () => getUser());
+const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${route.params.id}`, () => getUser());
 
 async function getUser(): Promise<User> {
     return new Promise(async (res, rej) => {

@@ -58,7 +58,7 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
     });
 }
 
-const { data: logs, pending, refresh, error } = await useLazyAsyncData(`rector-audit-${offset}`, () => getAuditLog());
+const { data: logs, pending, refresh, error } = useLazyAsyncData(`rector-audit-${offset}`, () => getAuditLog());
 
 const entriesChars = ref<UserShort[]>([]);
 const queryChar = ref('');

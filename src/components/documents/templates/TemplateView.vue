@@ -13,7 +13,7 @@ const props = defineProps({
     }
 });
 
-const { data: template, pending, refresh, error } = await useLazyAsyncData(`documents-template-${props.templateId}`, () => getTemplate());
+const { data: template, pending, refresh, error } = useLazyAsyncData(`documents-template-${props.templateId}`, () => getTemplate());
 const reqs = ref<undefined | TemplateRequirements>();
 
 async function getTemplate(): Promise<DocumentTemplate | undefined> {

@@ -63,7 +63,7 @@ const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-const { data: vehicles, pending, refresh, error } = await useLazyAsyncData(`vehicles-${offset.value}`, () => findVehicles());
+const { data: vehicles, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.value}`, () => findVehicles());
 
 async function findVehicles(): Promise<Array<Vehicle>> {
     return new Promise(async (res, rej) => {

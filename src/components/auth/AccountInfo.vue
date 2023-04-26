@@ -16,7 +16,7 @@ const store = useAuthStore();
 const activeChar = computed(() => store.$state.activeChar);
 const perms = computed(() => store.$state.permissions);
 
-const { data: account, pending, refresh, error } = await useLazyAsyncData(`accounmt`, () => getAccountInfo());
+const { data: account, pending, refresh, error } = useLazyAsyncData(`accounmt`, () => getAccountInfo());
 
 async function getAccountInfo(): Promise<Account | undefined> {
     return new Promise(async (res, rej) => {

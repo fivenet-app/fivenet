@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
 import { FindDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Document } from '@fivenet/gen/resources/documents/documents_pb';
-import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
+import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { toDateLocaleString, toDateRelativeString } from '~/utils/time';
@@ -18,7 +18,7 @@ const search = ref({ title: '', });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-const { data: documents, pending, refresh, error } = await useLazyAsyncData(`documents-${offset.value}`, () => findDocuments());
+const { data: documents, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => findDocuments());
 
 async function findDocuments(): Promise<Array<Document>> {
     return new Promise(async (res, rej) => {
