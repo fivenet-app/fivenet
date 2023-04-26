@@ -95,26 +95,16 @@ async function removeComment(comment: DocumentComment): Promise<void> {
             return c.getId() === comment.getId();
         });
 
-        const req = new DeleteDocumentCommentRequest();
-        req.setCommentId(comment.getId());
-
-        try {
-            await $grpc.getDocStoreClient().
-                deleteDocumentComment(req, null);
-
-            if (idx > -1) {
-                comments.value.splice(idx, 1);
-            }
-
-            return res();
-        } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
-            return rej(e as RpcError);
+        if (idx > -1) {
+            comments.value.splice(idx, 1);
         }
+
+        return res();
     });
 }
 
 const commentInput = ref<HTMLInputElement | null>(null);
+
 function focusComment(): void {
     if (commentInput.value) {
         commentInput.value.focus();
@@ -163,11 +153,11 @@ watch(offset, async () => refresh());
         <button v-if="!comments || comments.length == 0" type="button" @click="focusComment()"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
             <ChatBubbleLeftEllipsisIcon class="w-12 h-12 mx-auto text-neutral" />
-            <span v-can="'DocStoreService.PostDocumentComment'" class="block mt-2 text-sm font-semibold text-gray-300">
+            <span class="block mt-2 text-sm font-semibold text-gray-300">
                 {{ $t('components.documents.document_comments.no_comments') }}
             </span>
         </button>
-        <div v-else class="flow-root px-4 rounded-lg text-neutral">
+        <div v-else v-can="'DocStoreService.DeleteDocumentComment'" class="flow-root px-4 rounded-lg text-neutral">
             <ul role="list" class="divide-y divide-gray-200">
                 <DocumentCommentEntry v-for="com in comments" :key="com.getId()" :comment="com"
                     @removed="(c: DocumentComment) => removeComment(c)" />

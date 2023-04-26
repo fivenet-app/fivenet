@@ -129,8 +129,8 @@ func (p *Perms) Can(userId int32, perm ...string) bool {
 	return p.can(userId, helpers.Guard(strings.Join(perm, ".")))
 }
 
-func (p *Perms) can(userId int32, guardName string) bool {
-	cacheKey := buildCanCacheKey(userId, guardName)
+func (p *Perms) can(userId int32, guard string) (result bool) {
+	cacheKey := buildCanCacheKey(userId, guard)
 	if cached, ok := p.canCache.Get(cacheKey); ok {
 		return cached
 	}
@@ -141,9 +141,6 @@ func (p *Perms) can(userId int32, guardName string) bool {
 		).
 		FROM(
 			ap.
-				LEFT_JOIN(aup,
-					aup.PermissionID.EQ(ap.ID),
-				).
 				LEFT_JOIN(aur,
 					aur.UserID.EQ(jet.Int32(userId)),
 				).
@@ -155,23 +152,38 @@ func (p *Perms) can(userId int32, guardName string) bool {
 				),
 		).
 		WHERE(
-			ap.GuardName.EQ(jet.String(guardName)),
+			ap.GuardName.EQ(jet.String(guard)),
 		).
-		LIMIT(1)
+		LIMIT(1).
+		UNION(
+			ap.
+				SELECT(
+					ap.ID.AS("id"),
+				).
+				FROM(ap.
+					INNER_JOIN(aup,
+						aup.PermissionID.EQ(ap.ID),
+					),
+				).
+				WHERE(
+					ap.GuardName.EQ(jet.String(guard)),
+				).
+				LIMIT(1),
+		)
 
 	var dest struct {
 		ID int32
 	}
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
-		return false
+		return result
 	}
 
-	result := dest.ID > 0
+	result = dest.ID > 0
 	p.canCache.Set(cacheKey, result, cache.WithExpiration(p.canCacheTTL))
 
 	return result
 }
 
-func buildCanCacheKey(userId int32, guardName string) string {
-	return strconv.Itoa(int(userId)) + guardName
+func buildCanCacheKey(userId int32, guard string) string {
+	return strconv.Itoa(int(userId)) + guard
 }

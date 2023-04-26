@@ -10,12 +10,26 @@ export default defineNuxtPlugin((nuxtApp) => {
         }
 
         const permissions = useAuthStore().$state.permissions;
-        // TODO allow a list of permissions to be checked in an "OR" fashion
-        const val = slug(binding.value as string);
-        if (permissions && (permissions.includes(val) || val === '')) {
+        if (permissions.includes('superuser-anyaccess')) {
             return (vnode.el.hidden = false);
-        } else {
-            return (vnode.el.hidden = true);
         }
+
+        const input = new Array<String>();
+        if (typeof binding.value === 'string') {
+            input.push(binding.value);
+        } else {
+            const vals = binding.value as Array<String>;
+            input.push(...vals);
+        }
+
+        // Iterate over permissions and check in "OR" condition manner
+        for (let index = 0; index < input.length; index++) {
+            const val = slug(input[index] as string);
+            if (permissions && (permissions.includes(val) || val === '')) {
+                return (vnode.el.hidden = false);
+            }
+        }
+
+        return (vnode.el.hidden = true);
     });
 });

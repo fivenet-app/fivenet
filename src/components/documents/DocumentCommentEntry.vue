@@ -7,9 +7,10 @@ import { computed, ref } from 'vue';
 import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
-const store = useAuthStore();
+const authStore = useAuthStore();
 
-const activeCharId = computed(() => store.$state.activeChar?.getUserId());
+const activeChar = computed(() => authStore.$state.activeChar);
+const permissions = computed(() => authStore.$state.permissions);
 
 const emit = defineEmits<{
     (e: 'removed', comment: DocumentComment): void,
@@ -79,13 +80,12 @@ async function deleteComment(): Promise<void> {
                         class="text-sm font-medium text-primary-400 hover:text-primary-300">
                         {{ comment.getCreator()?.getFirstname() }} {{ comment.getCreator()?.getLastname() }}
                     </NuxtLink>
-                    <div>
-                        <button v-can="'DocStoreService.PostDocumentComment'" v-if="comment.getCreatorId() === activeCharId"
-                            @click="editing = true">
+                    <div
+                        v-if="comment.getCreatorId() === activeChar?.getUserId() || permissions.includes('superuser-anyaccess')">
+                        <button v-can="'DocStoreService.PostDocumentComment'" @click="editing = true">
                             <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
-                        <button v-can="'DocStoreService.DeleteDocumentComment'"
-                            v-if="comment.getCreatorId() === activeCharId" @click="deleteComment()">
+                        <button v-can="'DocStoreService.DeleteDocumentComment'" @click="deleteComment()">
                             <TrashIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
                     </div>
@@ -118,8 +118,9 @@ async function deleteComment(): Promise<void> {
                         <div class="flex items-center space-x-5"></div>
                         <div class="flex-shrink-0">
                             <button type="submit"
-                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{{
-                                    $t('common.edit') }}</button>
+                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                {{ $t('common.edit') }}
+                            </button>
                         </div>
                     </div>
                 </form>

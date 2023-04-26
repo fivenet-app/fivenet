@@ -311,6 +311,9 @@ func (s *Server) GetUserActivity(ctx context.Context, req *GetUserActivityReques
 		WHERE(
 			userAct.TargetUserID.EQ(jet.Int32(req.UserId)),
 		).
+		ORDER_BY(
+			userAct.CreatedAt.DESC(),
+		).
 		LIMIT(12)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
@@ -381,13 +384,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Create user activity
 	if req.Props.Wanted != nil {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "Wanted", strconv.FormatBool(!*req.Props.Wanted), strconv.FormatBool(*req.Props.Wanted)); err != nil {
+			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Wanted", strconv.FormatBool(!*req.Props.Wanted), strconv.FormatBool(*req.Props.Wanted)); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
 	if req.Props.Job != nil {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "Job", *req.Props.Job, *req.Props.Job); err != nil {
+			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Job", *req.Props.Job, *req.Props.Job); err != nil {
 			return nil, FailedQueryErr
 		}
 	}

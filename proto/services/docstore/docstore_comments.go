@@ -242,7 +242,8 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 		return nil, err
 	}
 	// If the requestor is not the creator nor a superuser
-	if comment.CreatorId != userId && !s.p.Can(userId, common.SuperuserAnyAccess) {
+	can := s.p.Can(userId, common.SuperuserAnyAccess)
+	if comment.CreatorId != userId && !can {
 		return nil, status.Error(codes.PermissionDenied, "You can't delete others document comments!")
 	}
 
