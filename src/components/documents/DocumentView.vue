@@ -19,6 +19,7 @@ import {
     CalendarIcon,
     UserIcon,
     DocumentMagnifyingGlassIcon,
+    TrashIcon,
 } from '@heroicons/vue/20/solid';
 import DocumentRelations from './DocumentRelations.vue';
 import DocumentReferences from './DocumentReferences.vue';
@@ -132,6 +133,12 @@ onMounted(() => {
                                     <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
+                                <button v-can="'DocStoreService.DeleteDocument'"
+                                    type="button"
+                                    class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400">
+                                    <TrashIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                    {{ $t('common.delete') }}
+                                </button>
                             </div>
                         </div>
                         <div class="flex flex-row gap-2">

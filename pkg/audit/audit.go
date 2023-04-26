@@ -104,7 +104,7 @@ func (a *AuditStorer) createAuditLogEntry(ctx context.Context, service string, m
 		Method:  method,
 		UserID:  userId,
 		UserJob: job,
-		State:   int16(rector.EVENT_TYPE_UNKNOWN),
+		State:   int16(state),
 		Data:    &data,
 	}
 	if targetUserId > 0 {
