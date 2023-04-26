@@ -13,7 +13,7 @@ const props = defineProps({
 
 async function addToClipboard(): Promise<void> {
     const user = props.log.getUser();
-    const text = `**Audit Log Entry ${props.log.getId()}**
+    const text = `**Audit Log Entry ${props.log.getId()} - ${toDateLocaleString(props.log.getCreatedAt())}**
 User: ${user?.getFirstname()}, ${user?.getLastname()} (${user?.getUserId()}; ${user?.getIdentifier()})
 Action: ${props.log.getMethod()}/${props.log.getService()}
 Event: ${EVENT_TYPE_Util.toEnumKey(props.log.getState())}
