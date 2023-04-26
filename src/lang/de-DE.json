@@ -471,6 +471,12 @@
             "default": {
                 "title": "Unbekannter Fehler ist aufgetreten"
             }
+        },
+        "job_switcher": {
+            "setjob": {
+                "title": "Job gewechselt",
+                "content": "Dein Job ist nun {0}."
+            }
         }
     }
 }
