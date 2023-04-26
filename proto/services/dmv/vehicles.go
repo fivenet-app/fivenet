@@ -44,8 +44,6 @@ func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud au
 }
 
 func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*FindVehiclesResponse, error) {
-	defer s.a.Log(ctx, DMVService_ServiceDesc.ServiceName, "FindVehicles", rector.EVENT_TYPE_VIEWED, -1, req)
-
 	condition := jet.Bool(true)
 	userCondition := user.Identifier.EQ(vehicle.Owner)
 	if req.Search != "" {
@@ -62,6 +60,10 @@ func (s *Server) FindVehicles(ctx context.Context, req *FindVehiclesRequest) (*F
 			user.ID.EQ(jet.Int32(req.UserId)),
 		)
 		userCondition = jet.AND(userCondition, user.ID.EQ(jet.Int32(req.UserId)))
+	}
+
+	if req.Pagination.Offset <= 0 {
+		defer s.a.Log(ctx, DMVService_ServiceDesc.ServiceName, "FindVehicles", rector.EVENT_TYPE_VIEWED, -1, req)
 	}
 
 	countStmt := vehicle.

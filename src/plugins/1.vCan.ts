@@ -10,6 +10,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         }
 
         const permissions = useAuthStore().$state.permissions;
+        // TODO allow a list of permissions to be checked in an "OR" fashion
         const val = slug(binding.value as string);
         if (permissions && (permissions.includes(val) || val === '')) {
             return (vnode.el.hidden = false);

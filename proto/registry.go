@@ -12,6 +12,7 @@ import (
 	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/auth"
 	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/permission"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
+	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
@@ -116,11 +117,14 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 	// Data enricher helper
 	enricher := mstlystcdata.NewEnricher(cache)
 
+	// Notifier
+	notif := notifi.New(db)
+
 	// Attach our GRPC services
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher, aud))
 	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud))
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
-	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud))
+	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, notif))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), db, p, enricher)
 	go livemapper.Start()

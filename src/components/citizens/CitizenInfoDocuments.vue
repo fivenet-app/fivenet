@@ -42,7 +42,7 @@ async function getUserDocuments(): Promise<Array<DocumentRelation>> {
 </script>
 
 <template>
-    <div class="mt-3">
+    <div class="mt-2">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.user',1 )} ${$t('common.document', 2)}`])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [`${$t('common.user', 1)} ${$t('common.document', 2)}`])" :retry="refresh" />
         <button v-else-if="relations && relations.length == 0" type="button"

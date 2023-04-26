@@ -77,9 +77,10 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
-                            <div class="flex-initial form-control">
+                            <div class="flex-initial form-control" v-can="'CitizenStoreService.FindUsers.UserProps.Wanted'">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">{{
-                                    $t('components.citizens.citizens_list.only_wanted') }}</label>
+                                    $t('components.citizens.citizens_list.only_wanted') }}
+                                </label>
                                 <div class="relative flex items-center mt-3">
                                     <Switch v-model="query.wanted"
                                         :class="[query.wanted ? 'bg-error-500' : 'bg-base-700', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2']">

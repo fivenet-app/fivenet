@@ -44,8 +44,8 @@ const commentCount = ref(0);
 const feedReferences = ref<DocumentReference[]>([]);
 const feedRelations = ref<DocumentRelation[]>([]);
 const tabs = ref<{ name: string, icon: typeof LockOpenIcon }[]>([
-    { name: 'References', icon: DocumentMagnifyingGlassIcon },
-    { name: 'Relations', icon: UserIcon },
+    { name: t('common.reference', 2), icon: DocumentMagnifyingGlassIcon },
+    { name: t('common.relation', 2), icon: UserIcon },
 ]);
 
 const props = defineProps({
@@ -106,7 +106,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div>
+    <div class="mt-2">
         <div class="rounded-lg bg-base-850">
             <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                 <div>

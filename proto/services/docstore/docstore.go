@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
+	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
 	database "github.com/galexrt/fivenet/proto/resources/common/database"
 	"github.com/galexrt/fivenet/proto/resources/documents"
@@ -44,14 +45,16 @@ type Server struct {
 	p  perms.Permissions
 	c  *mstlystcdata.Enricher
 	a  audit.IAuditer
+	n  notifi.INotifi
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, n notifi.INotifi) *Server {
 	return &Server{
 		db: db,
 		p:  p,
 		c:  c,
 		a:  aud,
+		n:  n,
 	}
 }
 

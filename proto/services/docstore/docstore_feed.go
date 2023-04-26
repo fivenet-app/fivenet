@@ -343,6 +343,8 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	auditState = rector.EVENT_TYPE_CREATED
 
+	s.notifyUser(ctx, uint64(lastId), req.Relation.TargetUserId)
+
 	return &AddDocumentRelationResponse{
 		Id: uint64(lastId),
 	}, nil
@@ -472,4 +474,16 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([
 	}
 
 	return dest, nil
+}
+
+func (s *Server) notifyUser(ctx context.Context, documentId uint64, targetUserId int32) {
+	// check, err := s.checkIfUserHasAccessToDoc(ctx, documentId, targetUserId, job, jobGrade, false, documents.DOC_ACCESS_VIEW)
+	// if err != nil {
+	// 	return
+	// }
+	// if !check {
+	// 	return
+	// }
+
+	// s.n.Add(targetUserId, "TITLE", "CONTENT", "info")
 }

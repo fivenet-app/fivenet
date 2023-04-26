@@ -37,7 +37,7 @@ async function getUserActivity(): Promise<Array<UserActivity>> {
 </script>
 
 <template>
-    <div class="mt-3">
+    <div class="mt-2">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.user', 1)} ${$t('common.activity')}`])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [`${$t('common.user', 1)} ${$t('common.activity')}`])" :retry="refresh" />
         <button v-else-if="activities && activities.length == 0" type="button"
