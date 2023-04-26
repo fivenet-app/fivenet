@@ -3,6 +3,8 @@ package rector
 import (
 	"context"
 
+	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/proto/resources/common"
 	database "github.com/galexrt/fivenet/proto/resources/common/database"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -16,7 +18,13 @@ var (
 )
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+
 	condition := jet.Bool(true)
+	if !s.p.Can(userId, common.SuperuserAnyAccess) {
+		condition = auditLog.UserJob.EQ(jet.String(job))
+	}
+
 	if len(req.UserIds) > 0 {
 		ids := make([]jet.Expression, len(req.UserIds))
 		for i := 0; i < len(req.UserIds); i++ {
