@@ -61,7 +61,7 @@ message FindDocumentsRequest {
 }
 
 message FindDocumentsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
   repeated resources.documents.Document documents = 2;
 }
 
@@ -91,7 +91,7 @@ message GetDocumentRelationsResponse {
 }
 
 message AddDocumentReferenceRequest {
-  resources.documents.DocumentReference reference = 1;
+  resources.documents.DocumentReference reference = 1 [(validate.rules).message.required = true];
 }
 
 message AddDocumentReferenceResponse {
@@ -105,7 +105,7 @@ message RemoveDocumentReferenceRequest {
 message RemoveDocumentReferenceResponse {}
 
 message AddDocumentRelationRequest {
-  resources.documents.DocumentRelation relation = 1;
+  resources.documents.DocumentRelation relation = 1 [(validate.rules).message.required = true];
 }
 
 message AddDocumentRelationResponse {
@@ -121,7 +121,7 @@ message RemoveDocumentRelationResponse {}
 // Doc Comments ===============================================================
 
 message GetDocumentCommentsRequest {
-  resources.common.database.PaginationRequest pagination = 1;
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 document_id = 2;
 }
 

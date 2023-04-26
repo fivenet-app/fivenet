@@ -139,6 +139,7 @@ if (import.meta.hot) {
 
 export class ClipboardUser {
     public id: number | undefined;
+    public identifier: string | undefined;
     public job: string | undefined;
     public jobLabel: string | undefined;
     public jobGrade: number | undefined;
@@ -148,6 +149,7 @@ export class ClipboardUser {
 
     setUser(u: UserShort | User): ClipboardUser {
         this.id = u.getUserId();
+        this.identifier = u.getIdentifier();
         this.job = u.getJob();
         this.jobLabel = u.getJobLabel();
         this.jobGrade = u.getJobGrade();
@@ -162,6 +164,7 @@ export class ClipboardUser {
 export function getUser(obj: ClipboardUser): User {
     const u = new User();
     u.setUserId(obj['id']!);
+    u.setIdentifier(obj['identifier']!);
     u.setJob(obj['job']!);
     u.setJobLabel(obj['jobLabel']!);
     u.setJobGrade(obj['jobGrade']!);

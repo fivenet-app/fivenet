@@ -100,15 +100,17 @@ onMounted(async () => {
         data.setActivechar(activeChar.value!);
         req.setData(JSON.stringify(data.toObject()));
 
-        await $grpc.getDocStoreClient().
-            getTemplate(req, null).then((resp) => {
-                const template = resp.getTemplate();
-                doc.value.title = template?.getContentTitle()!;
-                doc.value.content = template?.getContent()!;
-                selectedCategory.value = entriesCategory.find(e => e.getId() === template?.getCategory()?.getId());
-            }).catch((err: RpcError) => {
-                $grpc.handleRPCError(err);
-            });
+        try {
+            const resp = await $grpc.getDocStoreClient().
+                getTemplate(req, null);
+
+            const template = resp.getTemplate();
+            doc.value.title = template?.getContentTitle()!;
+            doc.value.content = template?.getContent()!;
+            selectedCategory.value = entriesCategory.find(e => e.getId() === template?.getCategory()?.getId());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+        }
     } else if (props.id) {
         const req = new GetDocumentRequest();
         req.setDocumentId(props.id);
@@ -331,6 +333,8 @@ async function submitForm(): Promise<void> {
                 const req = new AddDocumentRelationRequest();
                 req.setRelation(rel);
                 $grpc.getDocStoreClient().addDocumentRelation(req, null);
+                console.log("RELATION:");
+                console.log(rel);
             });
 
             notifications.dispatchNotification({ title: t('notifications.document_created.title'), content: t('notifications.document_created.content') });

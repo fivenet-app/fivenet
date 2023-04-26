@@ -217,6 +217,14 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 
 	req.Reference.CreatorId = userId
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	docRef := table.FivenetDocumentsReferences
 	stmt := docRef.
 		INSERT(
@@ -240,6 +248,11 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	lastId, err := result.LastInsertId()
 	if err != nil {
 		return nil, err
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, FailedQueryErr
 	}
 
 	auditState = rector.EVENT_TYPE_CREATED
@@ -316,6 +329,14 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	req.Relation.SourceUserId = userId
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	docRel := table.FivenetDocumentsRelations
 	stmt := docRel.
 		INSERT(
@@ -331,7 +352,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 			req.Relation.TargetUserId,
 		)
 
-	result, err := stmt.ExecContext(ctx, s.db)
+	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
 		return nil, err
 	}
@@ -339,6 +360,11 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	lastId, err := result.LastInsertId()
 	if err != nil {
 		return nil, err
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, FailedQueryErr
 	}
 
 	auditState = rector.EVENT_TYPE_CREATED

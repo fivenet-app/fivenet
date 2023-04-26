@@ -1438,6 +1438,17 @@ func (m *FindDocumentsResponse) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetPagination() == nil {
+		err := FindDocumentsResponseValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetPagination()).(type) {
 		case interface{ ValidateAll() error }:
@@ -2351,6 +2362,17 @@ func (m *AddDocumentReferenceRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetReference() == nil {
+		err := AddDocumentReferenceRequestValidationError{
+			field:  "Reference",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetReference()).(type) {
 		case interface{ ValidateAll() error }:
@@ -2796,6 +2818,17 @@ func (m *AddDocumentRelationRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetRelation() == nil {
+		err := AddDocumentRelationRequestValidationError{
+			field:  "Relation",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetRelation()).(type) {
 		case interface{ ValidateAll() error }:
@@ -3239,6 +3272,17 @@ func (m *GetDocumentCommentsRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetPagination() == nil {
+		err := GetDocumentCommentsRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetPagination()).(type) {
