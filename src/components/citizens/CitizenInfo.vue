@@ -32,7 +32,12 @@ const props = defineProps({
 
 function addToClipboard(): void {
     clipboard.addUser(props.user);
-    notifications.dispatchNotification({ title: t('notifications.citizen_add.title'), content: t('notifications.citizen_add.content'), duration: 3500, type: 'info' });
+    notifications.dispatchNotification({
+        title: t('notifications.citizen_add.title'),
+        content: t('notifications.citizen_add.content'),
+        duration: 3500,
+        type: 'info'
+    });
 }
 </script>
 
@@ -42,12 +47,12 @@ function addToClipboard(): void {
             <p class="text-xl font-bold text-neutral sm:text-4xl inline-flex">
                 {{ user?.getFirstname() }}, {{ user?.getLastname() }}
             </p>
-            <span
-                class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">{{
-                    user.getJobLabel() }} (Rank: {{ user.getJobGradeLabel() }})
+            <span class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">
+                {{ user.getJobLabel() }} (Rank: {{ user.getJobGradeLabel() }})
             </span>
             <span v-if="user.getProps()?.getWanted()"
-                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700">{{ $t('common.wanted').toUpperCase() }}</span>
+                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700">
+                {{ $t('common.wanted').toUpperCase() }}</span>
         </div>
         <TabGroup>
             <TabList class="border-b border-base-200 flex flex-row">

@@ -81,7 +81,11 @@ async function createRole(): Promise<void> {
                 roles.value?.unshift(role.getRole()!);
             }
 
-            notifications.dispatchNotification({ title: t('notifications.role_created.title'), content: t('notifications.role_created.content'), type: 'success' });
+            notifications.dispatchNotification({
+                title: t('notifications.rector.role_created.title'),
+                content: t('notifications.rector.role_created.content'),
+                type: 'success'
+            });
             await navigateTo({ name: 'rector-roles-id', params: { id: role.getRole()?.getId()!, } });
 
             return res();

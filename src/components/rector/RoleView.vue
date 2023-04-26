@@ -53,7 +53,11 @@ async function deleteRole(): Promise<void> {
             await $grpc.getRectorClient().
                 deleteRole(req, null);
 
-            notifications.dispatchNotification({ title: 'Role: Deleted', content: 'Role has been successfully deleted.', type: 'success' });
+            notifications.dispatchNotification({
+                title: t('notifications.rector.role_deleted.title'),
+                content: t('notifications.rector.role_deleted.content'),
+                type: 'success'
+            });
             await navigateTo({ name: 'rector-roles' });
             return res();
         } catch (e) {
@@ -173,7 +177,11 @@ async function applyQuery(): Promise<void> {
 
 async function saveRolePermissions(): Promise<void> {
     await Promise.all([saveAddPermissions(), saveRemovePermissions()]);
-    notifications.dispatchNotification({ title: t('notifications.role_updated.title'), content: t('notifications.role_updated.content'), type: 'success' });
+    notifications.dispatchNotification({
+        title: t('notifications.rector.role_updated.title'),
+        content: t('notifications.rector.role_updated.content'),
+        type: 'success'
+    });
 }
 
 onMounted(async () => {
@@ -336,4 +344,5 @@ watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 12
                 </div>
             </div>
         </div>
-    </div></template>
+    </div>
+</template>

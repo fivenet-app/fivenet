@@ -441,13 +441,23 @@
             "title": "Laden der Postleitzahlen fehlgeschlagen",
             "content": "Postleitzahlen konnten nicht geladen werden"
         },
-        "role_created": {
-            "title": "Rolle: Erstellt",
-            "content": "Rolle wurde erstellt."
-        },
-        "role_updated": {
-            "title": "Rolle: Berechtigungen gespeichert",
-            "content": "Berechtigungen wurden gespeichert."
+        "rector": {
+            "role_created": {
+                "title": "Rolle: Erstellt",
+                "content": "Rolle wurde erstellt."
+            },
+            "role_deleted": {
+                "title": "Rolle: Gelöscht",
+                "content": "Rolle wurde gelöscht."
+            },
+            "role_updated": {
+                "title": "Rolle: Berechtigungen gespeichert",
+                "content": "Berechtigungen wurden gespeichert."
+            },
+            "job_props": {
+                "title": "Job Eigenschaften aktualisiert",
+                "content": "Die Job Eigenschaften wurden gespeichert."
+            }
         },
         "error_logout": {
             "title": "Abmeldung: Ein Fehler ist aufgetreten",

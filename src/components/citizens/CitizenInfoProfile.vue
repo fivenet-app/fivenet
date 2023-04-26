@@ -52,7 +52,11 @@ async function toggleWantedStatus(): Promise<void> {
             await $grpc.getCitizenStoreClient().
                 setUserProps(req, null);
 
-            notifications.dispatchNotification({ title: t('notifications.action_successfull.title'), content: t('notifications.action_successfull.content'), type: 'success' });
+            notifications.dispatchNotification({
+                title: t('notifications.action_successfull.title'),
+                content: t('notifications.action_successfull.content'),
+                type: 'success'
+            });
 
             return res();
         } catch (e) {

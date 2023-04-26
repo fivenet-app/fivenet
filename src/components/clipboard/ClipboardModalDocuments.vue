@@ -68,9 +68,14 @@ async function remove(item: ClipboardDocument, notify: boolean): Promise<void> {
         selected.value.splice(idx, 1);
     }
 
-    await store.removeDocument(item.id);
+    store.removeDocument(item.id);
     if (notify) {
-        notifications.dispatchNotification({ title: t('notifications.clipboard.document_removed.title'), content: t('notifications.clipboard.document_removed.content'), duration: 3500, type: 'info' });
+        notifications.dispatchNotification({
+            title: t('notifications.clipboard.document_removed.title'),
+            content: t('notifications.clipboard.document_removed.content'),
+            duration: 3500,
+            type: 'info'
+        });
     }
 }
 
@@ -82,7 +87,12 @@ async function removeAll(): Promise<void> {
     }
 
     emit('statisfied', false);
-    notifications.dispatchNotification({ title: t('notifications.clipboard.documents_removed.title'), content: t('notifications.clipboard.documents_removed.content'), duration: 3500, type: 'info' });
+    notifications.dispatchNotification({
+        title: t('notifications.clipboard.documents_removed.title'),
+        content: t('notifications.clipboard.documents_removed.content'),
+        duration: 3500,
+        type: 'info'
+    });
 }
 
 watch(props, async (newVal) => {

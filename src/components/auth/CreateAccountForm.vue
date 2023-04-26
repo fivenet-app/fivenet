@@ -30,7 +30,12 @@ async function createAccount(regToken: string, username: string, password: strin
             await $grpc.getUnAuthClient().
                 createAccount(req, null);
 
-            notifications.dispatchNotification({ title: t('notifications.account_created.title'), content: t('notifications.account_created.content'), type: 'success' });
+            notifications.dispatchNotification({
+                title: t('notifications.account_created.title'),
+                content: t('notifications.account_created.content'),
+                type: 'success'
+            });
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -78,7 +83,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
                 {{ $t('common.username') }}
             </label>
             <div>
-                <Field id="username" name="username" type="text" autocomplete="username" :placeholder="$t('common.username')"
+                <Field id="username" name="username" type="text" autocomplete="username"
+                    :placeholder="$t('common.username')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <ErrorMessage name="Username" as="p" class="mt-2 text-sm text-error-400" />
             </div>
@@ -88,8 +94,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
                 {{ $t('common.password') }}
             </label>
             <div>
-                <Field id="password" name="password" type="password" autocomplete="current-password" :placeholder="$t('common.password')"
-                    v-model:model-value="currPassword"
+                <Field id="password" name="password" type="password" autocomplete="current-password"
+                    :placeholder="$t('common.password')" v-model:model-value="currPassword"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <PartialsPasswordStrengthMeter :input="currPassword" class="mt-2" />
                 <ErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />

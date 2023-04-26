@@ -290,7 +290,11 @@ async function loadPostals(): Promise<void> {
         const response = await fetch('/data/postals.json');
         postals.value.push(...(await response.json()) as Postal[]);
     } catch (_) {
-        notifications.dispatchNotification({ title: t('notifications.failed_loading_postals.title'), content: t('notifications.failed_loading_postals.content') });
+        notifications.dispatchNotification({
+            title: t('notifications.failed_loading_postals.title'),
+            content: t('notifications.failed_loading_postals.content'),
+            type: 'error'
+        });
         postalsLoaded = false;
     }
 }

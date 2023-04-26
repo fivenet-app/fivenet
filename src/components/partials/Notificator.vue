@@ -33,7 +33,11 @@ async function streamNotifications(): Promise<void> {
 
             resp.getNotificationsList().forEach(v => {
                 let nType: NotificationType = v.getType() as NotificationType ?? 'info';
-                notifications.dispatchNotification({ title: v.getTitle(), content: v.getContent(), type: nType });
+                notifications.dispatchNotification({
+                    title: v.getTitle(),
+                    content: v.getContent(),
+                    type: nType
+                });
             });
         }).
         on('end', async () => {

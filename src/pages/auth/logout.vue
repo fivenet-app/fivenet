@@ -31,7 +31,7 @@ function redirect(): void {
 }
 
 onBeforeMount(async () => {
-    await store.clear();
+    store.clear();
 
     if (!accessToken.value) {
         redirect();

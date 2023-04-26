@@ -36,12 +36,17 @@ async function deleteCategory(): Promise<void> {
         req.setIdsList([props.category?.getId()!]);
 
         try {
-            const resp = await $grpc.getDocStoreClient()
+            await $grpc.getDocStoreClient()
                 .deleteDocumentCategory(req, null);
 
-            notifications.dispatchNotification({ title: t('notifications.category_deleted.title'), content: t('notifications.category_deleted.content'), type: 'success' });
+            notifications.dispatchNotification({
+                title: t('notifications.category_deleted.title'),
+                content: t('notifications.category_deleted.content'),
+                type: 'success'
+            });
             emit('close');
             emit('deleted');
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -61,8 +66,13 @@ async function updateCategory(name: string, description: string): Promise<void> 
             await $grpc.getDocStoreClient()
                 .updateDocumentCategory(req, null);
 
-            notifications.dispatchNotification({ title: t('notifications.category_updated.title'), content: t('notifications.category_updated.content'), type: 'success' });
+            notifications.dispatchNotification({
+                title: t('notifications.category_updated.title'),
+                content: t('notifications.category_updated.content'),
+                type: 'success'
+            });
             emit('close');
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -174,4 +184,5 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                 </div>
             </div>
         </Dialog>
-    </TransitionRoot></template>
+    </TransitionRoot>
+</template>

@@ -75,7 +75,12 @@ function addToClipboard(): void {
     if (document.value) {
         clipboardStore.addDocument(document.value);
     }
-    notifications.dispatchNotification({ title: t('notifications.clipboard.document_added.title'), content: t('notifications.clipboard.document_added.content'), duration: 3500, type: 'info' });
+    notifications.dispatchNotification({
+        title: t('notifications.clipboard.document_added.title'),
+        content: t('notifications.clipboard.document_added.content'),
+        duration: 3500,
+        type: 'info'
+    });
 }
 </script>
 

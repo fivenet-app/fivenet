@@ -441,13 +441,23 @@
             "title": "Failed to load Postal codes",
             "content": "Postal codes couldn't be loaded"
         },
-        "role_created": {
-            "title": "Role: Created",
-            "content": "Role has been created."
-        },
-        "role_updated": {
-            "title": "Role: Permissions Saved",
-            "content": "Permissions have been saved."
+        "rector": {
+            "role_created": {
+                "title": "Role: Created",
+                "content": "Role has been created."
+            },
+            "role_deleted": {
+                "title": "Role: Deleted",
+                "content": "Role has been deleted."
+            },
+            "role_updated": {
+                "title": "Role: Permissions Saved",
+                "content": "Permissions have been saved."
+            },
+            "job_props": {
+                "title": "Updated Job Props",
+                "content": "Your job properties have been updated."
+            }
         },
         "error_logout": {
             "title": "Logout: Encountered an error",

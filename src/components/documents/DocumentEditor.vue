@@ -205,7 +205,11 @@ async function findCategories(): Promise<void> {
 
 function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
-        notifications.dispatchNotification({ title: t('notifications.max_access_entry.title'), content: t('notifications.max_access_entry.content', [maxAccessEntries]), type: 'error' })
+        notifications.dispatchNotification({
+            title: t('notifications.max_access_entry.title'),
+            content: t('notifications.max_access_entry.content', [maxAccessEntries]),
+            type: 'error'
+        });
         return;
     }
 
@@ -319,12 +323,13 @@ async function submitForm(): Promise<void> {
             const resp = await $grpc.getDocStoreClient().
                 createDocument(req, null);
 
+            const promises = new Array<Promise<any>>();
             referenceManagerData.value.forEach((ref) => {
                 ref.setSourceDocumentId(resp.getDocumentId());
 
                 const req = new AddDocumentReferenceRequest();
                 req.setReference(ref);
-                $grpc.getDocStoreClient().addDocumentReference(req, null);
+                promises.push($grpc.getDocStoreClient().addDocumentReference(req, null));
             });
 
             relationManagerData.value.forEach((rel) => {
@@ -332,12 +337,15 @@ async function submitForm(): Promise<void> {
 
                 const req = new AddDocumentRelationRequest();
                 req.setRelation(rel);
-                $grpc.getDocStoreClient().addDocumentRelation(req, null);
-                console.log("RELATION:");
-                console.log(rel);
+                promises.push($grpc.getDocStoreClient().addDocumentRelation(req, null));
             });
+            await Promise.all(promises);
 
-            notifications.dispatchNotification({ title: t('notifications.document_created.title'), content: t('notifications.document_created.content') });
+            notifications.dispatchNotification({
+                title: t('notifications.document_created.title'),
+                content: t('notifications.document_created.content'),
+                type: 'success',
+            });
             clipboardStore.clearActiveStack();
             documentStore.clear();
 
@@ -433,7 +441,11 @@ async function editForm(): Promise<void> {
                 $grpc.getDocStoreClient().addDocumentRelation(req, null);
             });
 
-            notifications.dispatchNotification({ title: t('notifications.document_updated.title'), content: t('notifications.document_updated.content') });
+            notifications.dispatchNotification({
+                title: t('notifications.document_updated.title'),
+                content: t('notifications.document_updated.content'),
+                type: 'success'
+            });
             clipboardStore.clearActiveStack();
             documentStore.clear();
 

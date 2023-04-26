@@ -11,6 +11,8 @@ const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const properties = ref<{ theme: string; livemapMarkerColor: string; }>({ theme: 'default', livemapMarkerColor: '#5C7AFF' });
 
 async function getJobProps(): Promise<JobProps> {
@@ -45,7 +47,12 @@ async function saveJobProps(): Promise<void> {
             await $grpc.getRectorClient().
                 setJobProps(req, null);
 
-            notifications.dispatchNotification({ title: 'Updated Job Props', content: 'Your job properties have been updated.', type: 'success' });
+            notifications.dispatchNotification({
+                title: t('notifications.rector.job_props.title'),
+                content: t('notifications.rector.job_props.content'),
+                type: 'success'
+            });
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -58,7 +65,8 @@ async function saveJobProps(): Promise<void> {
 <template>
     <div class="py-2 mt-5 max-w-5xl mx-auto">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.job', 1)} ${$t('common.prop')}`])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])" :retry="refresh" />
+        <DataErrorBlock v-else-if="error"
+            :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])" :retry="refresh" />
         <button v-else-if="!jobProps" type="button"
             class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <AdjustmentsVerticalIcon class="w-12 h-12 mx-auto text-neutral" />

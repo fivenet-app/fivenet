@@ -40,8 +40,13 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
 
             store.updateAccessToken(resp.getToken());
 
-            notifications.dispatchNotification({ title: t('notifications.changed_password.title'), content: t('notifications.changed_password.content'), type: 'success' });
+            notifications.dispatchNotification({
+                title: t('notifications.changed_password.title'),
+                content: t('notifications.changed_password.content'),
+                type: 'success'
+            });
             await navigateTo({ name: 'overview' });
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -93,7 +98,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                                 <label for="currentPassword" class="sr-only">Password</label>
                                                 <div>
                                                     <Field id="currentPassword" name="currentPassword" type="password"
-                                                        autocomplete="current-password" :placeholder="$t('components.auth.change_password_modal.current_password')"
+                                                        autocomplete="current-password"
+                                                        :placeholder="$t('components.auth.change_password_modal.current_password')"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                                     <ErrorMessage name="currentPassword" as="p"
                                                         class="mt-2 text-sm text-error-400" />
@@ -103,7 +109,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                                 <label for="newPassword" class="sr-only">Password</label>
                                                 <div>
                                                     <Field id="newPassword" name="newPassword" type="password"
-                                                        autocomplete="new-password" :placeholder="$t('components.auth.change_password_modal.new_password')"
+                                                        autocomplete="new-password"
+                                                        :placeholder="$t('components.auth.change_password_modal.new_password')"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         v-model:model-value="newPassword" />
                                                     <PartialsPasswordStrengthMeter :input="newPassword" class="mt-2" />
