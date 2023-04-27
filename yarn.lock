@@ -645,7 +645,7 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
   integrity sha512-YBI/6o2EBz02tdEJRBK8xkt3zvOFOWlLBf7WKYGBsSYSRtjjgrqPe2skp6VLLmKx5WbHHDNcW+6oACaurxGzeA==
 
-"@nuxt/kit@3.4.2", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.2", "@nuxt/kit@^3.2.3", "@nuxt/kit@^3.3.3", "@nuxt/kit@^3.4.1", "@nuxt/kit@^3.4.2":
+"@nuxt/kit@3.4.2", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.2", "@nuxt/kit@^3.2.3", "@nuxt/kit@^3.3.3", "@nuxt/kit@^3.4.2":
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.4.2.tgz#a7ae05f154c43560f18dd56c49df1b23a2c2553b"
   integrity sha512-bFUpkyG2ZF6RYqiW+tXnWssccHQQqMF4kZJJLP/0eKXf+Fkt/Is0R7IY768jy8ylnyqeMBbmpg4Zv5gSZjfZQw==
@@ -2564,9 +2564,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.284:
-  version "1.4.374"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.374.tgz#091b2de9d80b970f9b5e689675ea62622cd1d74b"
-  integrity sha512-dNP9tQNTrjgVlSXMqGaj0BdrCS+9pcUvy5/emB6x8kh0YwCoDZ0Z4ce1+7aod+KhybHUd5o5LgKrc5al4kVmzQ==
+  version "1.4.375"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.375.tgz#69e5928454b0dacde07972310bd526b4516ba507"
+  integrity sha512-czSmDyWG5qmb4TcwD5lhVDP6viDPtHfrIzw0CnzisRpziiUaq+ffptBHs70d9YkFtrxzaDvOmFPeVRVNwMt2rQ==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -4373,7 +4373,7 @@ mkdirp@^1.0.3:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-mkdirp@^3.0.0:
+mkdirp@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-3.0.1.tgz#e44e4c5607fb279c168241713cc6e0fea9adcb50"
   integrity sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==
@@ -4612,19 +4612,19 @@ nuxi@3.4.2:
     fsevents "~2.3.2"
 
 nuxt-typed-router@^3.1.5:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.1.5.tgz#6e604ada2ad18d9a852af78e70ec9b4754757028"
-  integrity sha512-wnI66Or/4bTYZVKpKpQwH5ffeqJuC+sBEc3Bco18iXLb7U1ywh+A7iSMnPDyxoz3BW1QXh4ErlRVXBYU87ORzg==
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.2.0.tgz#96d04bbcb58969eff635fe1a622c1f7aeeaa1209"
+  integrity sha512-f8CSfiAsm6mImeRDaWVVOvd22NlBbVeNRKCOWrU/HbGR4QemRVTj/SGJ/pjc7EPQrJRFMqpfqTKOUkiUwRdkAQ==
   dependencies:
-    "@nuxt/kit" "^3.4.1"
+    "@nuxt/kit" "^3.4.2"
     chalk "^5.2.0"
     defu "^6.1.2"
     lodash-es "^4.17.21"
     log-symbols "^5.1.0"
-    mkdirp "^3.0.0"
+    mkdirp "^3.0.1"
     nanoid "^4.0.2"
     pathe "1.1.0"
-    prettier "2.8.7"
+    prettier "2.8.8"
 
 nuxt@^3.4.2:
   version "3.4.2"
@@ -5340,10 +5340,10 @@ prepend-http@^2.0.0:
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-2.0.0.tgz#e92434bfa5ea8c19f41cdfd401d741a3c819d897"
   integrity sha512-ravE6m9Atw9Z/jjttRUZ+clIXogdghyZAuWJ3qEzjT+jI/dL1ifAqhZeC5VHzQp1MSt1+jxKkFNemj/iO7tVUA==
 
-prettier@2.8.7:
-  version "2.8.7"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.7.tgz#bb79fc8729308549d28fe3a98fce73d2c0656450"
-  integrity sha512-yPngTo3aXUUmyuTjeTUT75txrf+aMh9FiD7q9ZE/i6r0bPb22g4FsE6Y338PQX1bmfy08i9QQCB7/rcUAVntfw==
+prettier@2.8.8:
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
+  integrity sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==
 
 pretty-bytes@^6.1.0:
   version "6.1.0"
