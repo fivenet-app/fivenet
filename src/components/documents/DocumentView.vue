@@ -80,6 +80,14 @@ async function deleteDocument(): Promise<void> {
             await $grpc.getDocStoreClient().
                 deleteDocument(req, null);
 
+            notifications.dispatchNotification({
+                title: t('notifications.document_deleted.title'),
+                content: t('notifications.document_deleted.content'),
+                type: 'success'
+            });
+
+            await navigateTo({ name: 'documents' });
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);

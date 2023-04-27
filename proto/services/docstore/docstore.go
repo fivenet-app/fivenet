@@ -36,7 +36,8 @@ var (
 )
 
 var (
-	FailedQueryErr = status.Error(codes.Internal, "Failed to get/create/update documents!")
+	FailedQueryErr     = status.Error(codes.Internal, "Failed to get/create/update documents!")
+	NoDocOrPermsDocErr = status.Error(codes.NotFound, "No document found or no permissions to access document!")
 )
 
 type Server struct {
@@ -116,6 +117,13 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "GetDocument", auditState, -1, req)
 
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	if !check {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document!")
+	}
 
 	condition := docs.ID.EQ(jet.Uint64(req.DocumentId))
 
@@ -130,10 +138,13 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	resp := &GetDocumentResponse{}
 
-	var err error
 	resp.Document, err = s.getDocument(ctx, condition, userId, job, jobGrade)
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.Document == nil || resp.Document.Id <= 0 {
+		return nil, NoDocOrPermsDocErr
 	}
 
 	docAccess, err := s.GetDocumentAccess(ctx, &GetDocumentAccessRequest{
@@ -161,7 +172,9 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 		}
 	}
 
-	s.c.EnrichJobInfo(doc.Creator)
+	if doc.Creator != nil {
+		s.c.EnrichJobInfo(doc.Creator)
+	}
 
 	return &doc, nil
 }

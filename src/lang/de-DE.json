@@ -433,6 +433,10 @@
             "title": "Dokument erstellt!",
             "content": "Dokument wurde erstellt."
         },
+        "document_deleted": {
+            "title": "Dokument gelöscht!",
+            "content": "Dokument wurde gelöscht."
+        },
         "document_updated": {
             "title": "Dokument aktualisiert!",
             "content": "Dokument wurde aktualisiert."
