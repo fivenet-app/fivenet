@@ -331,5 +331,5 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 
 	auditState = rector.EVENT_TYPE_DELETED
 
-	return nil, nil
+	return &DeleteDocumentResponse{}, nil
 }
