@@ -161,6 +161,10 @@
                 "change_password": "Change Password",
                 "current_password": "Current Password",
                 "new_password": "New Password"
+            },
+            "oauth2_connections": {
+                "title": "Social Login Connections",
+                "subtitle": "Your Social Login connections, for faster login and cool additional features."
             }
         },
         "citizens": {
@@ -368,7 +372,9 @@
         "permission": "Permission | Permissions",
         "license_plate": "License Plate",
         "type": "Type",
-        "propertie": "Propertie | Properties"
+        "propertie": "Propertie | Properties",
+        "connect": "Connect",
+        "disconnect": "Disconnect"
     },
     "notifications": {
         "clipboard": {

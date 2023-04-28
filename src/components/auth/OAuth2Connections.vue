@@ -50,10 +50,10 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
     <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral mt-3">
         <div class="px-4 py-5 sm:px-6">
             <h3 class="text-base font-semibold leading-6">
-                Social Account Connections
+                {{ $t('components.auth.oauth2_connections.title') }}
             </h3>
             <p class="mt-1 max-w-2xl text-sm">
-                Your Social Accounts connections, for faster login.
+                {{ $t('components.auth.oauth2_connections.subtitle') }}
             </p>
         </div>
         <div class="border-t border-base-400 px-4 py-5 sm:p-0">
@@ -67,13 +67,14 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
                             class="flex items-center justify-between">
                             <img :src="getProviderConnection(prov.getName())!.getAvatar()" alt="Avatar"
                                 class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100" />
-                            <span class="text-left" :title="`ID: ${getProviderConnection(prov.getName())?.getExternalId()}`">
+                            <span class="text-left"
+                                :title="`ID: ${getProviderConnection(prov.getName())?.getExternalId()}`">
                                 {{ getProviderConnection(prov.getName())?.getUsername() }}
                             </span>
 
                             <button @click="disconnect(prov)">
-                                Disconnect
                                 <XCircleIcon class="w-6 h-6 mx-auto text-neutral" />
+                                {{ $t('common.disconnect') }}
                             </button>
                         </div>
                         <div v-else>

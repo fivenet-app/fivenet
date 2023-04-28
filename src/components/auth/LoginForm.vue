@@ -14,8 +14,6 @@ const authStore = useAuthStore();
 
 const loginError = computed(() => authStore.$state.loginError);
 
-const providers = config.login.providers;
-
 async function login(username: string, password: string): Promise<void> {
     return new Promise(async (res, rej) => {
         // Start login
@@ -53,6 +51,8 @@ const { handleSubmit } = useForm({
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => await login(values.username, values.password));
+
+const providers = config.login.providers;
 </script>
 
 <template>
