@@ -56,11 +56,12 @@ type HTTP struct {
 
 type GRPC struct {
 	Listen    string `default:":9090" yaml:"listen"`
-	ClientURL string `default:"https://localhost:8181" yaml:"clientURL"`
+	ClientURL string `default:"/grpc" yaml:"clientURL"`
 }
 
 type Sessions struct {
 	CookieSecret string `yaml:"cookieSecret"`
+	Domain       string `default:"localhost" yaml:"domain"`
 }
 
 type Database struct {

@@ -100,6 +100,7 @@ fivenet:
       listen: ":8080"
       sessions:
         cookieSecret: "YOUR_COOKIE_SECRET"
+        domain: "chart-example.local"
     grpc:
       listen: ":9090"
       # Must be https or on the same URL

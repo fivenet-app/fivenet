@@ -10,6 +10,7 @@ http:
   listen: ":8080"
   sessions:
     cookieSecret: "your_generated_cookie_secret"
+    domain: "localhost"
 grpc:
   listen: ":9090"
   # Must be https or on the same URL

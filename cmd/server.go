@@ -166,11 +166,11 @@ func (s *server) setupHTTPServer() *gin.Engine {
 	// Sessions
 	sessStore := cookie.NewStore([]byte(config.C.HTTP.Sessions.CookieSecret))
 	sessStore.Options(sessions.Options{
-		Domain:   "localhost",
+		Domain:   config.C.HTTP.Sessions.Domain,
 		Path:     "/",
-		MaxAge:   int((10 * time.Hour).Seconds()),
+		MaxAge:   int((24 * time.Hour).Seconds()),
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   true,
 	})
 	e.Use(sessions.SessionsMany([]string{"fivenet_oauth2_state", "fivenet_token"}, sessStore))
 
