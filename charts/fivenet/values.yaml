@@ -110,6 +110,8 @@ fivenet:
       dbName: fivem
     jwt:
       secret: "YOUR_JWT_SECRET"
+    oauth2:
+      providers: []
     game:
       superuserGroups:
         - projektleiter
