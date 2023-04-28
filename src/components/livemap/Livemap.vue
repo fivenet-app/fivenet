@@ -25,7 +25,7 @@ const notifications = useNotificationsStore();
 
 const { t } = useI18n();
 
-const activeChar = computed(() => authStore.$state.activeChar);
+const activeChar = computed(() => authStore.getActiveChar);
 
 const stream = ref<ClientReadableStream<StreamResponse> | null>(null);
 const error = ref<RpcError | null>(null);

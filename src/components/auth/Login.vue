@@ -6,10 +6,10 @@ import LoginForm from './LoginForm.vue';
 import CreateAccountForm from './CreateAccountForm.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
-const store = useAuthStore();
+const authStore = useAuthStore();
 const route = useRoute();
 
-const accesToken = computed(() => store.$state.accessToken);
+const accesToken = computed(() => authStore.getAccessToken);
 
 const createAccountForm = ref(false);
 

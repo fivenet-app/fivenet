@@ -49,6 +49,14 @@ export const useAuthStore = defineStore('auth', {
             this.updatePermissions([]);
         },
     },
+    getters: {
+        getAccessToken(): null | string {
+            return this.accessToken;
+        },
+        getActiveChar(): null | User {
+            return this.activeChar;
+        },
+    },
 });
 
 if (import.meta.hot) {

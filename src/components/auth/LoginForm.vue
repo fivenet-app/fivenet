@@ -9,16 +9,16 @@ import { toTypedSchema } from '@vee-validate/yup';
 import Alert from '~/components/partials/Alert.vue';
 
 const { $grpc } = useNuxtApp();
-const store = useAuthStore();
+const authStore = useAuthStore();
 
-const loginError = computed(() => store.$state.loginError);
+const loginError = computed(() => authStore.$state.loginError);
 
 async function login(username: string, password: string): Promise<void> {
     return new Promise(async (res, rej) => {
         // Start login
-        store.loginStart();
-        store.updateActiveChar(null);
-        store.updatePermissions([]);
+        authStore.loginStart();
+        authStore.updateActiveChar(null);
+        authStore.updatePermissions([]);
 
         const req = new LoginRequest();
         req.setUsername(username);
@@ -28,13 +28,13 @@ async function login(username: string, password: string): Promise<void> {
             const resp = await $grpc.getUnAuthClient()
                 .login(req, null);
 
-            store.loginStop(null);
-            store.updateAccessToken(resp.getToken());
+            authStore.loginStop(null);
+            authStore.updateAccessToken(resp.getToken());
 
             return res();
         } catch (e) {
-            store.loginStop((e as RpcError).message);
-            store.updateAccessToken(null);
+            authStore.loginStop((e as RpcError).message);
+            authStore.updateAccessToken(null);
             return rej(e as RpcError);
         }
     });
@@ -63,7 +63,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
                 {{ $t('common.username') }}
             </label>
             <div>
-                <Field id="username" name="username" type="text" autocomplete="username" :placeholder="$t('common.username')"
+                <Field id="username" name="username" type="text" autocomplete="username"
+                    :placeholder="$t('common.username')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <ErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
             </div>
@@ -73,7 +74,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
                 {{ $t('common.password') }}
             </label>
             <div>
-                <Field id="password" name="password" type="password" autocomplete="current-password" :placeholder="$t('common.password')"
+                <Field id="password" name="password" type="password" autocomplete="current-password"
+                    :placeholder="$t('common.password')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <ErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
             </div>
@@ -86,6 +88,16 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
             </button>
         </div>
     </form>
+
+    <a href="/api/oauth2/login/discord"
+        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+        Discord {{ $t('common.login') }}
+    </a>
+
+    <a href="/api/oauth2/login/moderngamingforum"
+        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+        Modern Gaming Forum {{ $t('common.login') }}
+    </a>
 
     <Alert v-if="loginError" :title="$t('components.auth.login.login_error')" :message="loginError" />
 </template>

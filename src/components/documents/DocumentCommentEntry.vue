@@ -9,7 +9,7 @@ import { RpcError } from 'grpc-web';
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 
-const activeChar = computed(() => authStore.$state.activeChar);
+const activeChar = computed(() => authStore.getActiveChar);
 const permissions = computed(() => authStore.$state.permissions);
 
 const emit = defineEmits<{

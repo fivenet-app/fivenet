@@ -13,9 +13,9 @@ definePageMeta({
     requiresAuth: false,
 });
 
-const store = useAuthStore();
+const authStore = useAuthStore();
 
-const accessToken = computed(() => store.$state.accessToken);
+const accessToken = computed(() => authStore.getAccessToken);
 </script>
 
 <template>

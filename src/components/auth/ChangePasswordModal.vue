@@ -10,7 +10,7 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
-const store = useAuthStore();
+const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
 defineProps({
@@ -38,7 +38,7 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
             const resp = await $grpc.getAuthClient()
                 .changePassword(req, null);
 
-            store.updateAccessToken(resp.getToken());
+            authStore.updateAccessToken(resp.getToken());
 
             notifications.dispatchNotification({
                 title: t('notifications.changed_password.title'),

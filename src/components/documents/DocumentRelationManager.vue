@@ -36,7 +36,7 @@ import { useAuthStore } from '~/store/auth';
 import { toTitleCase } from '~/utils/strings';
 
 const { $grpc } = useNuxtApp();
-const store = useAuthStore();
+const authStore = useAuthStore();
 const clipboard = useClipboardStore();
 
 const { t } = useI18n();
@@ -91,8 +91,8 @@ function addRelation(user: User, relation: number): void {
     const rel = new DocumentRelation();
     rel.setId(key);
     rel.setDocumentId(props.document!);
-    rel.setSourceUserId(store.$state.activeChar!.getUserId());
-    rel.setSourceUser(store.$state.activeChar!);
+    rel.setSourceUserId(authStore.getActiveChar!.getUserId());
+    rel.setSourceUser(authStore.getActiveChar!);
     rel.setTargetUserId(user.getUserId());
     rel.setTargetUser(user);
     rel.setRelation(DOC_RELATION_Util.fromInt(relation));

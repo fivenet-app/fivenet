@@ -38,6 +38,7 @@ type Config struct {
 	GRPC     GRPC     `yaml:"grpc"`
 	Database Database `yaml:"database"`
 	JWT      JWT      `yaml:"jwt"`
+	OAuth2   OAuth2   `yaml:"oauth2"`
 
 	Game Game `yaml:"game"`
 }
@@ -83,4 +84,39 @@ type Game struct {
 type UnemployedJob struct {
 	Name  string `default:"unemployed" yaml:"job"`
 	Grade int32  `default:"1" yaml:"grade"`
+}
+
+type OAuth2 struct {
+	Providers []OAuth2Provider
+}
+
+type OAuth2ProviderType string
+
+const (
+	OAuth2ProviderGeneric OAuth2ProviderType = "generic"
+	OAuth2ProviderDiscord OAuth2ProviderType = "discord"
+)
+
+type OAuth2Provider struct {
+	Name         string             `yaml:"name"`
+	Label        string             `yaml:"label"`
+	Type         OAuth2ProviderType `yaml:"type"`
+	RedirectURL  string             `yaml:"redirectURL"`
+	ClientID     string             `yaml:"clientID"`
+	ClientSecret string             `yaml:"clientSecret"`
+	Scopes       []string           `yaml:"scopes"`
+	Endpoints    OAuth2Endpoints    `yaml:"endpoints"`
+	Mapping      *OAuth2Mapping     `yaml:"omitempty,mapping"`
+}
+
+type OAuth2Endpoints struct {
+	AuthURL     string `yaml:"authURL"`
+	TokenURL    string `yaml:"tokenURL"`
+	UserInfoURL string `yaml:"userInfoURL"`
+}
+
+type OAuth2Mapping struct {
+	ID       string `yaml:"id"`
+	Username string `yaml:"username"`
+	Avatar   string `yaml:"avatar"`
 }

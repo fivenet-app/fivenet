@@ -11,10 +11,10 @@ import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
 
-const store = useAuthStore();
+const authStore = useAuthStore();
 
-const activeChar = computed(() => store.$state.activeChar);
-const perms = computed(() => store.$state.permissions);
+const activeChar = computed(() => authStore.getActiveChar);
+const perms = computed(() => authStore.$state.permissions);
 
 const { data: account, pending, refresh, error } = useLazyAsyncData(`accounmt`, () => getAccountInfo());
 

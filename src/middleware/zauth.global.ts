@@ -7,19 +7,19 @@ export default defineNuxtRouteMiddleware(
     (to: RouteLocationNormalized, from: RouteLocationNormalized): ReturnType<NavigationGuard> => {
         // Default is that a page requires authentication
         if (!to.meta.hasOwnProperty('requiresAuth') || to.meta.requiresAuth) {
-            const store = useAuthStore();
-            if (to.meta.authOnlyToken && store.$state.accessToken) {
+            const authStore = useAuthStore();
+            if (to.meta.authOnlyToken && authStore.getAccessToken) {
                 return true;
             }
 
             // Check if user has access token
-            if (store.$state.accessToken) {
+            if (authStore.getAccessToken) {
                 // If the user has an acitve char, check for perms otherwise, redirect to char selector
-                if (store.$state.activeChar) {
+                if (authStore.getActiveChar) {
                     // Route has permission attached to it, check if user has required permission
                     if (to.meta.permission) {
                         const perm = slug(to.meta.permission as string);
-                        if (store.$state.permissions.includes(perm)) {
+                        if (authStore.$state.permissions.includes(perm)) {
                             // User has permission
                             return true;
                         } else {
@@ -29,7 +29,7 @@ export default defineNuxtRouteMiddleware(
                                 type: 'warning',
                             });
 
-                            if (store.$state.accessToken) {
+                            if (authStore.getAccessToken) {
                                 return navigateTo({
                                     name: 'overview',
                                 });

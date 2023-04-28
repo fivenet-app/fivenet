@@ -54,7 +54,7 @@ const props = defineProps({
 
 const maxAccessEntries = 10;
 
-const activeChar = computed(() => authStore.$state.activeChar);
+const activeChar = computed(() => authStore.getActiveChar);
 
 const canEdit = ref(false);
 
@@ -167,8 +167,8 @@ onMounted(async () => {
         rel.setDocumentId(props.id!);
         rel.setTargetUserId(user.id!);
         rel.setTargetUser(getUser(user));
-        rel.setSourceUserId(authStore.$state.activeChar!.getUserId());
-        rel.setSourceUser(authStore.$state.activeChar!);
+        rel.setSourceUserId(authStore.getActiveChar!.getUserId());
+        rel.setSourceUser(authStore.getActiveChar!);
         rel.setRelation(DOC_RELATION.CAUSED);
 
         relationManagerData.value.set(i, rel);

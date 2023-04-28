@@ -31,11 +31,11 @@ import SidebarJobSwitcher from '~/components/partials/SidebarJobSwitcher.vue';
 import SidebarLanguageSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
 
 const { t } = useI18n();
-const store = useAuthStore();
+const authStore = useAuthStore();
 const router = useRouter();
 
-const accessToken = computed(() => store.$state.accessToken);
-const activeChar = computed(() => store.$state.activeChar);
+const accessToken = computed(() => authStore.getAccessToken);
+const activeChar = computed(() => authStore.getActiveChar);
 
 const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, position: 'top' | 'bottom', current: boolean }[] = [
     {

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/auth"
@@ -20,7 +19,6 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/exp/slices"
 	grpc "google.golang.org/grpc"
@@ -87,32 +85,7 @@ func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.Una
 }
 
 func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, activeChar *users.User) (string, error) {
-	claims := &auth.CitizenInfoClaims{
-		AccountID: account.ID,
-		Username:  *account.Username,
-		RegisteredClaims: jwt.RegisteredClaims{
-			// A usual scenario is to set the expiration time relative to the current time
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(10 * time.Hour)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			NotBefore: jwt.NewNumericDate(time.Now()),
-			Issuer:    "fivenet",
-			Subject:   account.License,
-			ID:        strconv.FormatUint(uint64(account.ID), 10),
-			Audience:  []string{"fivenet"},
-		},
-	}
-
-	if activeChar != nil {
-		claims.ActiveCharID = activeChar.UserId
-		claims.ActiveCharJob = activeChar.Job
-		claims.ActiveCharJobGrade = activeChar.JobGrade
-	} else {
-		claims.ActiveCharID = 0
-		claims.ActiveCharJob = ""
-		claims.ActiveCharJobGrade = 0
-	}
-
-	return s.tm.NewWithClaims(claims)
+	return s.tm.NewWithClaims(auth.BuildTokenClaimsFromAccount(account, activeChar))
 }
 
 func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {

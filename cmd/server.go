@@ -13,6 +13,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/oauth2"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/routes"
 	"github.com/galexrt/fivenet/proto"
@@ -171,7 +172,7 @@ func (s *server) setupHTTPServer() *gin.Engine {
 		HttpOnly: true,
 		Secure:   false,
 	})
-	e.Use(sessions.SessionsMany([]string{"fivenet_"}, sessStore))
+	e.Use(sessions.SessionsMany([]string{"fivenet_oauth2_state", "fivenet_token"}, sessStore))
 
 	// GZIP
 	e.Use(gzip.Gzip(gzip.DefaultCompression))
@@ -179,9 +180,11 @@ func (s *server) setupHTTPServer() *gin.Engine {
 	// Prometheus Metrics endpoint
 	e.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
+	oauth := oauth2.New(logger.Named("oauth"), s.db, s.tm)
+
 	// Register app routes
 	rs := routes.New(logger)
-	rs.Register(e)
+	rs.Register(e, oauth)
 	// Register output dir for assets and other static files
 	e.Use(static.Serve("/", static.LocalFile(".output/public/", false)))
 

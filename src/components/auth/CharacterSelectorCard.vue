@@ -9,10 +9,10 @@ import { RpcError } from 'grpc-web';
 import { parseQuery } from 'vue-router';
 
 const { $grpc } = useNuxtApp();
-const store = useAuthStore();
+const authStore = useAuthStore();
 const route = useRoute();
 
-const lastCharID = computed(() => store.$state.lastCharID);
+const lastCharID = computed(() => authStore.$state.lastCharID);
 
 const props = defineProps({
     char: {
@@ -30,9 +30,9 @@ async function chooseCharacter(): Promise<void> {
             const resp = await $grpc.getAuthClient()
                 .chooseCharacter(req, null);
 
-            store.updateAccessToken(resp.getToken());
-            store.updateActiveChar(props.char);
-            store.updatePermissions(resp.getPermissionsList());
+            authStore.updateAccessToken(resp.getToken());
+            authStore.updateActiveChar(props.char);
+            authStore.updatePermissions(resp.getPermissionsList());
 
             const path = route.query.redirect?.toString() || "/overview";
             const url = new URL("https://example.com" + path);
