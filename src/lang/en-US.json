@@ -132,11 +132,6 @@
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
     "components": {
-        "debug_info": {
-            "title": "Debug Info",
-            "subtitle": "Information imporant when reporting issues with FiveNet.",
-            "perms": "Current Permissions"
-        },
         "auth": {
             "account_info": {
                 "title": "Account Info",
@@ -267,6 +262,11 @@
             "role_view": {
                 "add_permission": "Add Permission"
             }
+        },
+        "debug_info": {
+            "title": "Debug Info",
+            "subtitle": "Information imporant when reporting issues with FiveNet.",
+            "perms": "Current Permissions"
         }
     },
     "common": {
@@ -443,10 +443,6 @@
             "title": "Document created!",
             "content": "Document has been created."
         },
-        "document_deleted": {
-            "title": "Document deleted!",
-            "content": "Document has been deleted."
-        },
         "document_updated": {
             "title": "Document updated!",
             "content": "Document has been updated."
@@ -454,24 +450,6 @@
         "failed_loading_postals": {
             "title": "Failed to load Postal codes",
             "content": "Postal codes couldn't be loaded"
-        },
-        "rector": {
-            "role_created": {
-                "title": "Role: Created",
-                "content": "Role has been created."
-            },
-            "role_deleted": {
-                "title": "Role: Deleted",
-                "content": "Role has been deleted."
-            },
-            "role_updated": {
-                "title": "Role: Permissions Saved",
-                "content": "Permissions have been saved."
-            },
-            "job_props": {
-                "title": "Updated Job Props",
-                "content": "Your job properties have been updated."
-            }
         },
         "error_logout": {
             "title": "Logout: Encountered an error",
@@ -501,6 +479,28 @@
                 "title": "Job switched",
                 "content": "Your job has been set to {0}."
             }
+        },
+        "rector": {
+            "role_created": {
+                "title": "Role: Created",
+                "content": "Role has been created."
+            },
+            "role_deleted": {
+                "title": "Role: Deleted",
+                "content": "Role has been deleted."
+            },
+            "role_updated": {
+                "title": "Role: Permissions Saved",
+                "content": "Permissions have been saved."
+            },
+            "job_props": {
+                "title": "Updated Job Props",
+                "content": "Your job properties have been updated."
+            }
+        },
+        "document_deleted": {
+            "title": "Document deleted!",
+            "content": "Document has been deleted."
         }
     }
 }
