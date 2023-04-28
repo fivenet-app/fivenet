@@ -8,7 +8,7 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
-const store = useAuthStore();
+const authStore = useAuthStore();
 
 const { data: chars, pending, refresh, error } = useLazyAsyncData('chars', () => fetchCharacters());
 
@@ -28,8 +28,8 @@ async function fetchCharacters(): Promise<Array<User>> {
 
 onBeforeMount(async () => {
     await Promise.all([
-        store.updateActiveChar(null),
-        store.updatePermissions([])
+        authStore.updateActiveChar(null),
+        authStore.updatePermissions([])
     ]);
 });
 </script>

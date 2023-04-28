@@ -947,6 +947,74 @@ func (m *GetAccountInfoResponse) validate(all bool) error {
 		}
 	}
 
+	for idx, item := range m.GetOauth2Providers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetAccountInfoResponseValidationError{
+						field:  fmt.Sprintf("Oauth2Providers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetAccountInfoResponseValidationError{
+						field:  fmt.Sprintf("Oauth2Providers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetAccountInfoResponseValidationError{
+					field:  fmt.Sprintf("Oauth2Providers[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetOauth2Connections() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetAccountInfoResponseValidationError{
+						field:  fmt.Sprintf("Oauth2Connections[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetAccountInfoResponseValidationError{
+						field:  fmt.Sprintf("Oauth2Connections[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetAccountInfoResponseValidationError{
+					field:  fmt.Sprintf("Oauth2Connections[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return GetAccountInfoResponseMultiError(errors)
 	}
@@ -2005,3 +2073,220 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SetJobResponseValidationError{}
+
+// Validate checks the field values on OAuth2DisconnectRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OAuth2DisconnectRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OAuth2DisconnectRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OAuth2DisconnectRequestMultiError, or nil if none found.
+func (m *OAuth2DisconnectRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OAuth2DisconnectRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetProvider()) > 50 {
+		err := OAuth2DisconnectRequestValidationError{
+			field:  "Provider",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return OAuth2DisconnectRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// OAuth2DisconnectRequestMultiError is an error wrapping multiple validation
+// errors returned by OAuth2DisconnectRequest.ValidateAll() if the designated
+// constraints aren't met.
+type OAuth2DisconnectRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OAuth2DisconnectRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OAuth2DisconnectRequestMultiError) AllErrors() []error { return m }
+
+// OAuth2DisconnectRequestValidationError is the validation error returned by
+// OAuth2DisconnectRequest.Validate if the designated constraints aren't met.
+type OAuth2DisconnectRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OAuth2DisconnectRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OAuth2DisconnectRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OAuth2DisconnectRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OAuth2DisconnectRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OAuth2DisconnectRequestValidationError) ErrorName() string {
+	return "OAuth2DisconnectRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OAuth2DisconnectRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOAuth2DisconnectRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OAuth2DisconnectRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OAuth2DisconnectRequestValidationError{}
+
+// Validate checks the field values on OAuth2DisconnectResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OAuth2DisconnectResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OAuth2DisconnectResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OAuth2DisconnectResponseMultiError, or nil if none found.
+func (m *OAuth2DisconnectResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OAuth2DisconnectResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	if len(errors) > 0 {
+		return OAuth2DisconnectResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// OAuth2DisconnectResponseMultiError is an error wrapping multiple validation
+// errors returned by OAuth2DisconnectResponse.ValidateAll() if the designated
+// constraints aren't met.
+type OAuth2DisconnectResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OAuth2DisconnectResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OAuth2DisconnectResponseMultiError) AllErrors() []error { return m }
+
+// OAuth2DisconnectResponseValidationError is the validation error returned by
+// OAuth2DisconnectResponse.Validate if the designated constraints aren't met.
+type OAuth2DisconnectResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OAuth2DisconnectResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OAuth2DisconnectResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OAuth2DisconnectResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OAuth2DisconnectResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OAuth2DisconnectResponseValidationError) ErrorName() string {
+	return "OAuth2DisconnectResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OAuth2DisconnectResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOAuth2DisconnectResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OAuth2DisconnectResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OAuth2DisconnectResponseValidationError{}

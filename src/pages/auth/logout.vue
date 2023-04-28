@@ -8,21 +8,21 @@ import Footer from '~/components/partials/Footer.vue';
 import { useNotificationsStore } from '~/store/notifications';
 
 useHead({
-    title: 'pages.auth.logout.title',
+    title: 'common.logout',
 });
 definePageMeta({
-    title: 'pages.auth.logout.title',
+    title: 'common.logout',
     requiresAuth: true,
     authOnlyToken: true,
 });
 
 const { $grpc } = useNuxtApp();
-const store = useAuthStore();
+const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
 const { t } = useI18n();
 
-const accessToken = computed(() => store.$state.accessToken);
+const accessToken = computed(() => authStore.getAccessToken);
 
 function redirect(): void {
     setTimeout(async () => {
@@ -31,7 +31,7 @@ function redirect(): void {
 }
 
 onBeforeMount(async () => {
-    store.clear();
+    authStore.clear();
 
     if (!accessToken.value) {
         redirect();
@@ -43,7 +43,7 @@ onBeforeMount(async () => {
             .logout(new LogoutRequest(), null);
     } catch (e) {
         const err = e as RpcError;
-        store.loginStop(err.message);
+        authStore.loginStop(err.message);
         notifications.dispatchNotification({
             title: t('notifications.error_logout.title'),
             content: t('notifications.error_logout.content', [err.message]),

@@ -132,14 +132,18 @@
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
     "components": {
+        "debug_info": {
+            "title": "Debug Info",
+            "subtitle": "Information imporant when reporting issues with FiveNet.",
+            "perms": "Current Permissions"
+        },
         "auth": {
             "account_info": {
                 "title": "Account Info",
                 "subtitle": "Your FiveNet account details.",
                 "license": "Identifier/ License",
                 "change_password": "Change Password",
-                "change_password_button": "Change Account Password",
-                "perms": "Your Permissions (debug info)"
+                "change_password_button": "Change Account Password"
             },
             "login": {
                 "register_account": "Register Account using Token",
@@ -432,6 +436,10 @@
         "document_created": {
             "title": "Document created!",
             "content": "Document has been created."
+        },
+        "document_deleted": {
+            "title": "Document deleted!",
+            "content": "Document has been deleted."
         },
         "document_updated": {
             "title": "Document updated!",

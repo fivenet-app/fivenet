@@ -12,11 +12,6 @@ const props = defineProps({
         type: Number,
         default: 3,
     },
-    percent: {
-        type: Number,
-        default: 0,
-        required: false,
-    },
     show: {
         type: Boolean,
         required: false,
@@ -31,7 +26,7 @@ const props = defineProps({
 
 // Options & Data
 const data = reactive({
-    percent: props.percent,
+    percent: 0,
     left: 0,
     show: props.show,
     canSucceed: props.canSucceed,

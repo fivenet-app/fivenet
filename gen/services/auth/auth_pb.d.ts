@@ -1,6 +1,7 @@
 import * as jspb from 'google-protobuf'
 
 import * as resources_accounts_accounts_pb from '../../resources/accounts/accounts_pb';
+import * as resources_accounts_oauth2_pb from '../../resources/accounts/oauth2_pb';
 import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
@@ -145,6 +146,16 @@ export class GetAccountInfoResponse extends jspb.Message {
   hasAccount(): boolean;
   clearAccount(): GetAccountInfoResponse;
 
+  getOauth2ProvidersList(): Array<resources_accounts_oauth2_pb.OAuth2Provider>;
+  setOauth2ProvidersList(value: Array<resources_accounts_oauth2_pb.OAuth2Provider>): GetAccountInfoResponse;
+  clearOauth2ProvidersList(): GetAccountInfoResponse;
+  addOauth2Providers(value?: resources_accounts_oauth2_pb.OAuth2Provider, index?: number): resources_accounts_oauth2_pb.OAuth2Provider;
+
+  getOauth2ConnectionsList(): Array<resources_accounts_oauth2_pb.OAuth2Account>;
+  setOauth2ConnectionsList(value: Array<resources_accounts_oauth2_pb.OAuth2Account>): GetAccountInfoResponse;
+  clearOauth2ConnectionsList(): GetAccountInfoResponse;
+  addOauth2Connections(value?: resources_accounts_oauth2_pb.OAuth2Account, index?: number): resources_accounts_oauth2_pb.OAuth2Account;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetAccountInfoResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetAccountInfoResponse): GetAccountInfoResponse.AsObject;
@@ -156,6 +167,8 @@ export class GetAccountInfoResponse extends jspb.Message {
 export namespace GetAccountInfoResponse {
   export type AsObject = {
     account?: resources_accounts_accounts_pb.Account.AsObject,
+    oauth2ProvidersList: Array<resources_accounts_oauth2_pb.OAuth2Provider.AsObject>,
+    oauth2ConnectionsList: Array<resources_accounts_oauth2_pb.OAuth2Account.AsObject>,
   }
 }
 
@@ -326,6 +339,42 @@ export namespace SetJobResponse {
     token: string,
     jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
     pb_char?: resources_users_users_pb.User.AsObject,
+  }
+}
+
+export class OAuth2DisconnectRequest extends jspb.Message {
+  getProvider(): string;
+  setProvider(value: string): OAuth2DisconnectRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OAuth2DisconnectRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: OAuth2DisconnectRequest): OAuth2DisconnectRequest.AsObject;
+  static serializeBinaryToWriter(message: OAuth2DisconnectRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OAuth2DisconnectRequest;
+  static deserializeBinaryFromReader(message: OAuth2DisconnectRequest, reader: jspb.BinaryReader): OAuth2DisconnectRequest;
+}
+
+export namespace OAuth2DisconnectRequest {
+  export type AsObject = {
+    provider: string,
+  }
+}
+
+export class OAuth2DisconnectResponse extends jspb.Message {
+  getSuccess(): boolean;
+  setSuccess(value: boolean): OAuth2DisconnectResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OAuth2DisconnectResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: OAuth2DisconnectResponse): OAuth2DisconnectResponse.AsObject;
+  static serializeBinaryToWriter(message: OAuth2DisconnectResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OAuth2DisconnectResponse;
+  static deserializeBinaryFromReader(message: OAuth2DisconnectResponse, reader: jspb.BinaryReader): OAuth2DisconnectResponse;
+}
+
+export namespace OAuth2DisconnectResponse {
+  export type AsObject = {
+    success: boolean,
   }
 }
 

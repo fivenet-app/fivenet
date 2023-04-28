@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
-import { DeleteDocumentCommentRequest, GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { computed, ref } from 'vue';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
 import { useAuthStore } from '~/store/auth';
@@ -10,9 +10,9 @@ import TablePagination from '~/components/partials/TablePagination.vue';
 import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
-const store = useAuthStore();
+const authStore = useAuthStore();
 
-const activeChar = computed(() => store.$state.activeChar);
+const activeChar = computed(() => authStore.getActiveChar);
 
 const props = defineProps({
     documentId: {

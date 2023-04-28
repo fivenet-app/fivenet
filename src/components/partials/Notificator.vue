@@ -11,8 +11,8 @@ const store = useNotificatorStore();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
-const accessToken = computed(() => authStore.$state.accessToken);
-const activeChar = computed(() => authStore.$state.activeChar);
+const accessToken = computed(() => authStore.getAccessToken);
+const activeChar = computed(() => authStore.getActiveChar);
 
 const stream = ref<ClientReadableStream<StreamResponse> | undefined>(undefined);
 

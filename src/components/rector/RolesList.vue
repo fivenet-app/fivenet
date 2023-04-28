@@ -16,12 +16,12 @@ import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 
-const store = useAuthStore();
+const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
 const { t } = useI18n();
 
-const activeChar = computed(() => store.activeChar);
+const activeChar = computed(() => authStore.activeChar);
 
 const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
 

@@ -22,6 +22,21 @@ database:
   dbName: fivenet
 jwt:
   secret: "your_generated_jwt_secret"
+oauth2:
+  providers:
+    - name: "discord"
+      label: "Discord"
+      type: "discord"
+      homepage: "https://discord.com"
+      redirectURL: "https://localhost:3000/api/oauth2/callback/discord"
+      clientID: "your_discord_oauth2_client_id"
+      clientSecret: "your_discord_oauth2_client_secret"
+      scopes:
+        - openid
+        - identify
+      endpoints:
+        authURL: "https://discord.com/api/oauth2/authorize"
+        tokenURL: "https://discord.com/api/oauth2/token"
 game:
   superuserGroups:
     - projektleiter

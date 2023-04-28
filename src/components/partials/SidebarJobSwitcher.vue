@@ -12,10 +12,10 @@ import { useNotificationsStore } from '~/store/notifications';
 const { $grpc } = useNuxtApp();
 const { t } = useI18n();
 
-const store = useAuthStore();
+const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
-const activeChar = computed(() => store.$state.activeChar);
+const activeChar = computed(() => authStore.getActiveChar);
 
 let entriesJobs = [] as Job[];
 const filteredJobs = ref<Job[]>([]);
@@ -55,8 +55,8 @@ async function setJob(): Promise<void> {
                 setJob(req, null);
 
             await Promise.all([
-                store.updateAccessToken(resp.getToken()),
-                store.updateActiveChar(resp.getChar()!),
+                authStore.updateAccessToken(resp.getToken()),
+                authStore.updateActiveChar(resp.getChar()!),
             ]);
 
             notifications.dispatchNotification({

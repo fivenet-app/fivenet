@@ -2,8 +2,12 @@ package auth
 
 import (
 	"errors"
+	"strconv"
 	"strings"
+	"time"
 
+	"github.com/galexrt/fivenet/proto/resources/users"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -49,4 +53,33 @@ func (t *TokenManager) ParseWithClaims(tokenString string) (*CitizenInfoClaims, 
 		return claims, nil
 	}
 	return nil, errors.New("failed to parse token claims")
+}
+
+func BuildTokenClaimsFromAccount(account *model.FivenetAccounts, activeChar *users.User) *CitizenInfoClaims {
+	claims := &CitizenInfoClaims{
+		AccountID: account.ID,
+		Username:  *account.Username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			// A usual scenario is to set the expiration time relative to the current time
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(10 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			Issuer:    "fivenet",
+			Subject:   account.License,
+			ID:        strconv.FormatUint(uint64(account.ID), 10),
+			Audience:  []string{"fivenet"},
+		},
+	}
+
+	if activeChar != nil {
+		claims.ActiveCharID = activeChar.UserId
+		claims.ActiveCharJob = activeChar.Job
+		claims.ActiveCharJobGrade = activeChar.JobGrade
+	} else {
+		claims.ActiveCharID = 0
+		claims.ActiveCharJob = ""
+		claims.ActiveCharJobGrade = 0
+	}
+
+	return claims
 }

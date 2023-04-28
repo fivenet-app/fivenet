@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { GetDocumentCommentsRequest, GetDocumentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { DeleteDocumentRequest, GetDocumentCommentsRequest, GetDocumentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess, DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
 import { toDate } from '~/utils/time';
 import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
@@ -71,6 +71,31 @@ async function getDocument(): Promise<Document> {
     });
 }
 
+async function deleteDocument(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        const req = new DeleteDocumentRequest();
+        req.setDocumentId(props.documentId);
+
+        try {
+            await $grpc.getDocStoreClient().
+                deleteDocument(req, null);
+
+            notifications.dispatchNotification({
+                title: t('notifications.document_deleted.title'),
+                content: t('notifications.document_deleted.content'),
+                type: 'success'
+            });
+
+            await navigateTo({ name: 'documents' });
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
 function addToClipboard(): void {
     if (document.value) {
         clipboardStore.addDocument(document.value);
@@ -112,7 +137,7 @@ function addToClipboard(): void {
                                     <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
-                                <button v-can="'DocStoreService.DeleteDocument'" type="button"
+                                <button v-can="['DocStoreService.DeleteDocument']" type="button" @click="deleteDocument"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400">
                                     <TrashIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.delete') }}
@@ -157,7 +182,8 @@ function addToClipboard(): void {
                             <div v-for="entry in access?.getUsersList()" :key="entry.getId()"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap snap-start">
                                 <span class="w-2 h-2 rounded-full bg-secondary-400" aria-hidden="true" />
-                                <span class="text-sm font-medium text-secondary-700">{{ entry.getUser()?.getFirstname() }}
+                                <span class="text-sm font-medium text-secondary-700">
+                                    {{ entry.getUser()?.getFirstname() }}
                                     {{ entry.getUser()?.getLastname() }} - {{
                                         toTitleCase(DOC_ACCESS_Util.toEnumKey(entry.getAccess())!.toLowerCase()) }}</span>
                             </div>

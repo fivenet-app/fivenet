@@ -383,5 +383,48 @@ export class AuthServiceClient {
     this.methodDescriptorSetJob);
   }
 
+  methodDescriptorOAuth2Disconnect = new grpcWeb.MethodDescriptor(
+    '/services.auth.AuthService/OAuth2Disconnect',
+    grpcWeb.MethodType.UNARY,
+    services_auth_auth_pb.OAuth2DisconnectRequest,
+    services_auth_auth_pb.OAuth2DisconnectResponse,
+    (request: services_auth_auth_pb.OAuth2DisconnectRequest) => {
+      return request.serializeBinary();
+    },
+    services_auth_auth_pb.OAuth2DisconnectResponse.deserializeBinary
+  );
+
+  oAuth2Disconnect(
+    request: services_auth_auth_pb.OAuth2DisconnectRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_auth_auth_pb.OAuth2DisconnectResponse>;
+
+  oAuth2Disconnect(
+    request: services_auth_auth_pb.OAuth2DisconnectRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_auth_auth_pb.OAuth2DisconnectResponse) => void): grpcWeb.ClientReadableStream<services_auth_auth_pb.OAuth2DisconnectResponse>;
+
+  oAuth2Disconnect(
+    request: services_auth_auth_pb.OAuth2DisconnectRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_auth_auth_pb.OAuth2DisconnectResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.auth.AuthService/OAuth2Disconnect',
+        request,
+        metadata || {},
+        this.methodDescriptorOAuth2Disconnect,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.auth.AuthService/OAuth2Disconnect',
+    request,
+    metadata || {},
+    this.methodDescriptorOAuth2Disconnect);
+  }
+
 }
 

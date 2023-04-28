@@ -25,7 +25,7 @@ const notifications = useNotificationsStore();
 
 const { t } = useI18n();
 
-const activeChar = computed(() => authStore.$state.activeChar);
+const activeChar = computed(() => authStore.getActiveChar);
 
 const stream = ref<ClientReadableStream<StreamResponse> | null>(null);
 const error = ref<RpcError | null>(null);
@@ -386,7 +386,7 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 </style>
 
 <template>
-    <LoadingBar :duration="1000" :show="loadingShow" :percent="100" />
+    <LoadingBar :duration="1000" :show="loadingShow" />
     <div class="relative w-full h-full z-0">
         <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center z-20"
             style="background-color: rgba(62, 60, 62, 0.5)">

@@ -90,6 +90,16 @@ export class GRPCClients {
                     type: 'error',
                 });
                 break;
+            case StatusCode.NOT_FOUND:
+                notifications.dispatchNotification({
+                    title: 'notifications.grpc_errors.unavailable.title',
+                    titleI18n: true,
+                    content: err.message,
+                    type: 'error',
+                });
+
+                useRouter().back();
+                break;
             default:
                 notifications.dispatchNotification({
                     title: 'notifications.grpc_errors.default.title',
