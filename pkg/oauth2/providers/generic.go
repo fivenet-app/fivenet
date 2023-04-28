@@ -39,12 +39,19 @@ func (p *Generic) GetUserInfo(code string) (*UserInfo, error) {
 	if !ok {
 		return nil, fmt.Errorf("failed to get username from user info")
 	}
+	if usernameRaw == nil {
+		return nil, fmt.Errorf("no username found in user info")
+	}
+
 	avatarRaw, ok := dest[mapping.Avatar]
 	if !ok {
 		return nil, fmt.Errorf("failed to get avatar from user info")
 	}
 
 	username := usernameRaw.(string)
+	if avatarRaw == nil {
+		avatarRaw = p.BaseProvider.DefaultAvatar
+	}
 	avatar := avatarRaw.(string)
 
 	user := &UserInfo{

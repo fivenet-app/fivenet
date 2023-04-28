@@ -67,8 +67,9 @@ func New(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager) *OAuth2 {
 		default:
 			provider = &providers.Generic{
 				BaseProvider: providers.BaseProvider{
-					Name:        p.Name,
-					UserInfoURL: p.Endpoints.UserInfoURL,
+					Name:          p.Name,
+					UserInfoURL:   p.Endpoints.UserInfoURL,
+					DefaultAvatar: p.DefaultAvatar,
 				},
 			}
 		}

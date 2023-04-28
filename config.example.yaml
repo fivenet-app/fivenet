@@ -27,8 +27,9 @@ oauth2:
   providers:
     - name: "discord"
       label: "Discord"
-      type: "discord"
       homepage: "https://discord.com"
+      #defaultAvatar: ""
+      type: "discord"
       redirectURL: "https://localhost:3000/api/oauth2/callback/discord"
       clientID: "your_discord_oauth2_client_id"
       clientSecret: "your_discord_oauth2_client_secret"

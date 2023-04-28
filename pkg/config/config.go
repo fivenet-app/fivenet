@@ -99,16 +99,17 @@ const (
 )
 
 type OAuth2Provider struct {
-	Name         string             `yaml:"name"`
-	Label        string             `yaml:"label"`
-	Homepage     string             `yaml:"homepage"`
-	Type         OAuth2ProviderType `yaml:"type"`
-	RedirectURL  string             `yaml:"redirectURL"`
-	ClientID     string             `yaml:"clientID"`
-	ClientSecret string             `yaml:"clientSecret"`
-	Scopes       []string           `yaml:"scopes"`
-	Endpoints    OAuth2Endpoints    `yaml:"endpoints"`
-	Mapping      *OAuth2Mapping     `yaml:"omitempty,mapping"`
+	Name          string             `yaml:"name"`
+	Label         string             `yaml:"label"`
+	Homepage      string             `yaml:"homepage"`
+	Type          OAuth2ProviderType `yaml:"type"`
+	DefaultAvatar string             `yaml:"defaultAvatar"`
+	RedirectURL   string             `yaml:"redirectURL"`
+	ClientID      string             `yaml:"clientID"`
+	ClientSecret  string             `yaml:"clientSecret"`
+	Scopes        []string           `yaml:"scopes"`
+	Endpoints     OAuth2Endpoints    `yaml:"endpoints"`
+	Mapping       *OAuth2Mapping     `yaml:"omitempty,mapping"`
 }
 
 type OAuth2Endpoints struct {
