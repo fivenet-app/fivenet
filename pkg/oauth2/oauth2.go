@@ -151,7 +151,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 
 	state, err := utils.GenerateRandomString(64)
 	if err != nil {
-		o.handleRedirect(c, err, false, false, "internal_error")
+		o.handleRedirect(c, err, connectOnly, false, "internal_error")
 		return
 	}
 
@@ -162,7 +162,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 	provider, err := o.GetProvider(c)
 	if err != nil {
 		o.logger.Error("failed to get provider", zap.Error(err))
-		o.handleRedirect(c, err, false, false, "invalid_provider")
+		o.handleRedirect(c, err, connectOnly, false, "invalid_provider")
 		return
 	}
 
