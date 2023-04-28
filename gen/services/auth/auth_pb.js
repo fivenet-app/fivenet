@@ -23,6 +23,8 @@ var global =
 
 var resources_accounts_accounts_pb = require('../../resources/accounts/accounts_pb.js');
 goog.object.extend(proto, resources_accounts_accounts_pb);
+var resources_accounts_oauth2_pb = require('../../resources/accounts/oauth2_pb.js');
+goog.object.extend(proto, resources_accounts_oauth2_pb);
 var resources_jobs_jobs_pb = require('../../resources/jobs/jobs_pb.js');
 goog.object.extend(proto, resources_jobs_jobs_pb);
 var resources_users_users_pb = require('../../resources/users/users_pb.js');
@@ -1401,7 +1403,7 @@ proto.services.auth.GetAccountInfoRequest.serializeBinaryToWriter = function(mes
  * @private {!Array<number>}
  * @const
  */
-proto.services.auth.GetAccountInfoResponse.repeatedFields_ = [2];
+proto.services.auth.GetAccountInfoResponse.repeatedFields_ = [2,3];
 
 
 
@@ -1435,8 +1437,10 @@ proto.services.auth.GetAccountInfoResponse.prototype.toObject = function(opt_inc
 proto.services.auth.GetAccountInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     account: (f = msg.getAccount()) && resources_accounts_accounts_pb.Account.toObject(includeInstance, f),
+    oauth2ProvidersList: jspb.Message.toObjectList(msg.getOauth2ProvidersList(),
+    resources_accounts_oauth2_pb.OAuth2Provider.toObject, includeInstance),
     oauth2ConnectionsList: jspb.Message.toObjectList(msg.getOauth2ConnectionsList(),
-    resources_accounts_accounts_pb.OAuth2Account.toObject, includeInstance)
+    resources_accounts_oauth2_pb.OAuth2Account.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -1479,8 +1483,13 @@ proto.services.auth.GetAccountInfoResponse.deserializeBinaryFromReader = functio
       msg.setAccount(value);
       break;
     case 2:
-      var value = new resources_accounts_accounts_pb.OAuth2Account;
-      reader.readMessage(value,resources_accounts_accounts_pb.OAuth2Account.deserializeBinaryFromReader);
+      var value = new resources_accounts_oauth2_pb.OAuth2Provider;
+      reader.readMessage(value,resources_accounts_oauth2_pb.OAuth2Provider.deserializeBinaryFromReader);
+      msg.addOauth2Providers(value);
+      break;
+    case 3:
+      var value = new resources_accounts_oauth2_pb.OAuth2Account;
+      reader.readMessage(value,resources_accounts_oauth2_pb.OAuth2Account.deserializeBinaryFromReader);
       msg.addOauth2Connections(value);
       break;
     default:
@@ -1520,12 +1529,20 @@ proto.services.auth.GetAccountInfoResponse.serializeBinaryToWriter = function(me
       resources_accounts_accounts_pb.Account.serializeBinaryToWriter
     );
   }
-  f = message.getOauth2ConnectionsList();
+  f = message.getOauth2ProvidersList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       2,
       f,
-      resources_accounts_accounts_pb.OAuth2Account.serializeBinaryToWriter
+      resources_accounts_oauth2_pb.OAuth2Provider.serializeBinaryToWriter
+    );
+  }
+  f = message.getOauth2ConnectionsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      3,
+      f,
+      resources_accounts_oauth2_pb.OAuth2Account.serializeBinaryToWriter
     );
   }
 };
@@ -1569,12 +1586,50 @@ proto.services.auth.GetAccountInfoResponse.prototype.hasAccount = function() {
 
 
 /**
- * repeated resources.accounts.OAuth2Account oauth2_connections = 2;
+ * repeated resources.accounts.OAuth2Provider oauth2_providers = 2;
+ * @return {!Array<!proto.resources.accounts.OAuth2Provider>}
+ */
+proto.services.auth.GetAccountInfoResponse.prototype.getOauth2ProvidersList = function() {
+  return /** @type{!Array<!proto.resources.accounts.OAuth2Provider>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_accounts_oauth2_pb.OAuth2Provider, 2));
+};
+
+
+/**
+ * @param {!Array<!proto.resources.accounts.OAuth2Provider>} value
+ * @return {!proto.services.auth.GetAccountInfoResponse} returns this
+*/
+proto.services.auth.GetAccountInfoResponse.prototype.setOauth2ProvidersList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+};
+
+
+/**
+ * @param {!proto.resources.accounts.OAuth2Provider=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.resources.accounts.OAuth2Provider}
+ */
+proto.services.auth.GetAccountInfoResponse.prototype.addOauth2Providers = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.accounts.OAuth2Provider, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.auth.GetAccountInfoResponse} returns this
+ */
+proto.services.auth.GetAccountInfoResponse.prototype.clearOauth2ProvidersList = function() {
+  return this.setOauth2ProvidersList([]);
+};
+
+
+/**
+ * repeated resources.accounts.OAuth2Account oauth2_connections = 3;
  * @return {!Array<!proto.resources.accounts.OAuth2Account>}
  */
 proto.services.auth.GetAccountInfoResponse.prototype.getOauth2ConnectionsList = function() {
   return /** @type{!Array<!proto.resources.accounts.OAuth2Account>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_accounts_accounts_pb.OAuth2Account, 2));
+    jspb.Message.getRepeatedWrapperField(this, resources_accounts_oauth2_pb.OAuth2Account, 3));
 };
 
 
@@ -1583,7 +1638,7 @@ proto.services.auth.GetAccountInfoResponse.prototype.getOauth2ConnectionsList = 
  * @return {!proto.services.auth.GetAccountInfoResponse} returns this
 */
 proto.services.auth.GetAccountInfoResponse.prototype.setOauth2ConnectionsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+  return jspb.Message.setRepeatedWrapperField(this, 3, value);
 };
 
 
@@ -1593,7 +1648,7 @@ proto.services.auth.GetAccountInfoResponse.prototype.setOauth2ConnectionsList = 
  * @return {!proto.resources.accounts.OAuth2Account}
  */
 proto.services.auth.GetAccountInfoResponse.prototype.addOauth2Connections = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.accounts.OAuth2Account, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 3, opt_value, proto.resources.accounts.OAuth2Account, opt_index);
 };
 
 

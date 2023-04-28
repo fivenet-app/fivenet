@@ -7,11 +7,14 @@ import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { object, string } from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
 import Alert from '~/components/partials/Alert.vue';
+import config from '~/config';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 
 const loginError = computed(() => authStore.$state.loginError);
+
+const providers = config.login.providers;
 
 async function login(username: string, password: string): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -89,15 +92,14 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
         </div>
     </form>
 
-    <a href="/api/oauth2/login/discord"
-        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-        Discord {{ $t('common.login') }}
-    </a>
-
-    <a href="/api/oauth2/login/moderngamingforum"
-        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-        Modern Gaming Forum {{ $t('common.login') }}
-    </a>
+    <form @submit.prevent="" class="my-4 space-y-2">
+        <div v-for="prov in providers" class="">
+            <NuxtLink :external="true" :to="`/api/oauth2/login/${prov.name}`"
+                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+                {{ prov.label }} {{ $t('common.login') }}
+            </NuxtLink>
+        </div>
+    </form>
 
     <Alert v-if="loginError" :title="$t('components.auth.login.login_error')" :message="loginError" />
 </template>

@@ -1,6 +1,7 @@
 import * as jspb from 'google-protobuf'
 
 import * as resources_accounts_accounts_pb from '../../resources/accounts/accounts_pb';
+import * as resources_accounts_oauth2_pb from '../../resources/accounts/oauth2_pb';
 import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
 import * as resources_users_users_pb from '../../resources/users/users_pb';
 
@@ -145,10 +146,15 @@ export class GetAccountInfoResponse extends jspb.Message {
   hasAccount(): boolean;
   clearAccount(): GetAccountInfoResponse;
 
-  getOauth2ConnectionsList(): Array<resources_accounts_accounts_pb.OAuth2Account>;
-  setOauth2ConnectionsList(value: Array<resources_accounts_accounts_pb.OAuth2Account>): GetAccountInfoResponse;
+  getOauth2ProvidersList(): Array<resources_accounts_oauth2_pb.OAuth2Provider>;
+  setOauth2ProvidersList(value: Array<resources_accounts_oauth2_pb.OAuth2Provider>): GetAccountInfoResponse;
+  clearOauth2ProvidersList(): GetAccountInfoResponse;
+  addOauth2Providers(value?: resources_accounts_oauth2_pb.OAuth2Provider, index?: number): resources_accounts_oauth2_pb.OAuth2Provider;
+
+  getOauth2ConnectionsList(): Array<resources_accounts_oauth2_pb.OAuth2Account>;
+  setOauth2ConnectionsList(value: Array<resources_accounts_oauth2_pb.OAuth2Account>): GetAccountInfoResponse;
   clearOauth2ConnectionsList(): GetAccountInfoResponse;
-  addOauth2Connections(value?: resources_accounts_accounts_pb.OAuth2Account, index?: number): resources_accounts_accounts_pb.OAuth2Account;
+  addOauth2Connections(value?: resources_accounts_oauth2_pb.OAuth2Account, index?: number): resources_accounts_oauth2_pb.OAuth2Account;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetAccountInfoResponse.AsObject;
@@ -161,7 +167,8 @@ export class GetAccountInfoResponse extends jspb.Message {
 export namespace GetAccountInfoResponse {
   export type AsObject = {
     account?: resources_accounts_accounts_pb.Account.AsObject,
-    oauth2ConnectionsList: Array<resources_accounts_accounts_pb.OAuth2Account.AsObject>,
+    oauth2ProvidersList: Array<resources_accounts_oauth2_pb.OAuth2Provider.AsObject>,
+    oauth2ConnectionsList: Array<resources_accounts_oauth2_pb.OAuth2Account.AsObject>,
   }
 }
 

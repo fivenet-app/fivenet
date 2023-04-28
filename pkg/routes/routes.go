@@ -16,12 +16,24 @@ type Routes struct {
 }
 
 func New(logger *zap.Logger) *Routes {
+	providers := make([]*ProviderConfig, len(config.C.OAuth2.Providers))
+
+	for k, p := range config.C.OAuth2.Providers {
+		providers[k] = &ProviderConfig{
+			Name:  p.Name,
+			Label: p.Label,
+		}
+	}
+
 	return &Routes{
 		logger: logger,
 
 		clientCfg: &ClientConfig{
 			SentryDSN:   config.C.Sentry.ClientDSN,
 			APIProtoURL: config.C.GRPC.ClientURL,
+			Login: LoginConfig{
+				Providers: providers,
+			},
 		},
 	}
 }
@@ -46,8 +58,18 @@ func (r *Routes) PingGET(c *gin.Context) {
 }
 
 type ClientConfig struct {
-	SentryDSN   string `json:"sentryDSN"`
-	APIProtoURL string `json:"apiProtoURL"`
+	SentryDSN   string      `json:"sentryDSN"`
+	APIProtoURL string      `json:"apiProtoURL"`
+	Login       LoginConfig `json:"login"`
+}
+
+type LoginConfig struct {
+	Providers []*ProviderConfig `json:"providers"`
+}
+
+type ProviderConfig struct {
+	Name  string `json:"name"`
+	Label string `json:"label"`
 }
 
 func (r *Routes) ConfigPOST(c *gin.Context) {

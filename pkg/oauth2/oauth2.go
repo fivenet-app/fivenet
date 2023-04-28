@@ -131,17 +131,18 @@ func (o *OAuth2) handleRedirect(c *gin.Context, err error, connectOnly bool, suc
 func (o *OAuth2) Login(c *gin.Context) {
 	sess := sessions.DefaultMany(c, "fivenet_oauth2_state")
 	connectOnly := false
-	if c.Query("connect-only") != "" {
-		var err error
-		connectOnly, err = strconv.ParseBool(c.Query("connect-only"))
-		if err != nil {
-			o.logger.Error("failed to parse connect only var", zap.Error(err))
-			o.handleRedirect(c, err, false, false, "invalid_request")
-			return
+	if c.Request.Method == http.MethodPost {
+		connectOnlyVal := c.Request.PostFormValue("connect-only")
+		if connectOnlyVal != "" {
+			var err error
+			connectOnly, err = strconv.ParseBool(connectOnlyVal)
+			if err != nil {
+				o.logger.Error("failed to parse connect only var", zap.Error(err))
+				o.handleRedirect(c, err, false, false, "invalid_request")
+				return
+			}
 		}
-	}
 
-	if c.Request.Method == "post" {
 		tokenVal := c.Request.PostFormValue("token")
 		if tokenVal != "" {
 			sess.Set("token", tokenVal)
@@ -215,6 +216,23 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		return
 	}
 
+	if connectOnly {
+		claims, err := o.tm.ParseWithClaims(token)
+		if err != nil {
+			c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth-login=failed&reason=token_invalid")
+			return
+		}
+
+		if err := o.storeUserInfo(c, claims.AccountID, provider.GetName(), userInfo); err != nil {
+			o.handleRedirect(c, err, connectOnly, false, "internal_error")
+			return
+		}
+
+		o.handleRedirect(c, nil, connectOnly, true, "")
+		return
+	}
+
+	// Take care of logging user in
 	account, err := o.getUserInfo(c, provider.GetName(), userInfo)
 	if err != nil {
 		o.logger.Error("failed to store userinfo in database", zap.Error(err))
@@ -226,22 +244,6 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth-login=failed&reason=unconnected")
 		return
 	} else if account.ID == 0 {
-		if connectOnly {
-			claims, err := o.tm.ParseWithClaims(token)
-			if err != nil {
-				c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth-login=failed&reason=token_invalid")
-				return
-			}
-
-			if err := o.storeUserInfo(c, claims.AccountID, provider.GetName(), userInfo); err != nil {
-				o.handleRedirect(c, err, connectOnly, false, "internal_error")
-				return
-			}
-
-			o.handleRedirect(c, nil, connectOnly, true, "")
-			return
-		}
-
 		o.handleRedirect(c, nil, connectOnly, true, "internal_error")
 		return
 	}

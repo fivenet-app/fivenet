@@ -4,6 +4,7 @@ package services.auth;
 option go_package = "github.com/galexrt/fivenet/proto/services/auth;auth";
 
 import "resources/accounts/accounts.proto";
+import "resources/accounts/oauth2.proto";
 import "resources/jobs/jobs.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -45,7 +46,8 @@ message GetAccountInfoRequest {}
 
 message GetAccountInfoResponse {
   resources.accounts.Account account = 1;
-  repeated resources.accounts.OAuth2Account oauth2_connections = 2;
+  repeated resources.accounts.OAuth2Provider oauth2_providers = 2;
+  repeated resources.accounts.OAuth2Account oauth2_connections = 3;
 }
 
 message GetCharactersRequest {}

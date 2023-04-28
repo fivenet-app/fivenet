@@ -100,6 +100,7 @@ const (
 type OAuth2Provider struct {
 	Name         string             `yaml:"name"`
 	Label        string             `yaml:"label"`
+	Homepage     string             `yaml:"homepage"`
 	Type         OAuth2ProviderType `yaml:"type"`
 	RedirectURL  string             `yaml:"redirectURL"`
 	ClientID     string             `yaml:"clientID"`
