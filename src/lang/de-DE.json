@@ -138,8 +138,7 @@
                 "subtitle": "Deine FiveNet Konto Informationen.",
                 "license": "Identifier/ Lizenz",
                 "change_password": "Passwort ändern",
-                "change_password_button": "Konto Passwort ändern",
-                "perms": "Deine Berechtigungen (für die Fehlersuche)"
+                "change_password_button": "Konto Passwort ändern"
             },
             "login": {
                 "register_account": "Konto mit Token registrieren",
@@ -157,6 +156,10 @@
                 "change_password": "Passwort ändern",
                 "current_password": "Momentanes Passwort",
                 "new_password": "Neues Passwort"
+            },
+            "oauth2_connections": {
+                "title": "Third-Party Login",
+                "subtitle": "Ihr Third-Party Login, für schnelleres Anmelden und coole zusätzliche Funktionen."
             }
         },
         "citizens": {
@@ -259,6 +262,11 @@
             "role_view": {
                 "add_permission": "Berechtigung hinzufügen"
             }
+        },
+        "debug_info": {
+            "title": "Debug-Informationen",
+            "subtitle": "Wichtige Informationen bei der Meldung von Problemen mit FiveM.",
+            "perms": "Aktuelle Berechtigungen"
         }
     },
     "common": {
@@ -364,7 +372,9 @@
         "permission": "Berechtigung | Berechtigungen",
         "license_plate": "Kennzeichen",
         "type": "Art",
-        "propertie": "Eigenschaft | Eigenschaften"
+        "propertie": "Eigenschaft | Eigenschaften",
+        "connect": "Verbinden",
+        "disconnect": "Trennen"
     },
     "notifications": {
         "clipboard": {
@@ -433,10 +443,6 @@
             "title": "Dokument erstellt!",
             "content": "Dokument wurde erstellt."
         },
-        "document_deleted": {
-            "title": "Dokument gelöscht!",
-            "content": "Dokument wurde gelöscht."
-        },
         "document_updated": {
             "title": "Dokument aktualisiert!",
             "content": "Dokument wurde aktualisiert."
@@ -444,24 +450,6 @@
         "failed_loading_postals": {
             "title": "Laden der Postleitzahlen fehlgeschlagen",
             "content": "Postleitzahlen konnten nicht geladen werden"
-        },
-        "rector": {
-            "role_created": {
-                "title": "Rolle: Erstellt",
-                "content": "Rolle wurde erstellt."
-            },
-            "role_deleted": {
-                "title": "Rolle: Gelöscht",
-                "content": "Rolle wurde gelöscht."
-            },
-            "role_updated": {
-                "title": "Rolle: Berechtigungen gespeichert",
-                "content": "Berechtigungen wurden gespeichert."
-            },
-            "job_props": {
-                "title": "Job Eigenschaften aktualisiert",
-                "content": "Die Job Eigenschaften wurden gespeichert."
-            }
         },
         "error_logout": {
             "title": "Abmeldung: Ein Fehler ist aufgetreten",
@@ -491,6 +479,28 @@
                 "title": "Job gewechselt",
                 "content": "Dein Job ist nun {0}."
             }
+        },
+        "rector": {
+            "role_created": {
+                "title": "Rolle: Erstellt",
+                "content": "Rolle wurde erstellt."
+            },
+            "role_deleted": {
+                "title": "Rolle: Gelöscht",
+                "content": "Rolle wurde gelöscht."
+            },
+            "role_updated": {
+                "title": "Rolle: Berechtigungen gespeichert",
+                "content": "Berechtigungen wurden gespeichert."
+            },
+            "job_props": {
+                "title": "Job Eigenschaften aktualisiert",
+                "content": "Die Job Eigenschaften wurden gespeichert."
+            }
+        },
+        "document_deleted": {
+            "title": "Dokument gelöscht!",
+            "content": "Dokument wurde gelöscht."
         }
     }
 }
