@@ -32,6 +32,7 @@ type AuthServiceClient interface {
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 	// @perm: description="Superuser: Allow to override their own job on the go."
 	SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error)
+	OAuth2Disconnect(ctx context.Context, in *OAuth2DisconnectRequest, opts ...grpc.CallOption) (*OAuth2DisconnectResponse, error)
 }
 
 type authServiceClient struct {
@@ -114,6 +115,15 @@ func (c *authServiceClient) SetJob(ctx context.Context, in *SetJobRequest, opts 
 	return out, nil
 }
 
+func (c *authServiceClient) OAuth2Disconnect(ctx context.Context, in *OAuth2DisconnectRequest, opts ...grpc.CallOption) (*OAuth2DisconnectResponse, error) {
+	out := new(OAuth2DisconnectResponse)
+	err := c.cc.Invoke(ctx, "/services.auth.AuthService/OAuth2Disconnect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -128,6 +138,7 @@ type AuthServiceServer interface {
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	// @perm: description="Superuser: Allow to override their own job on the go."
 	SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error)
+	OAuth2Disconnect(context.Context, *OAuth2DisconnectRequest) (*OAuth2DisconnectResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -158,6 +169,9 @@ func (UnimplementedAuthServiceServer) Logout(context.Context, *LogoutRequest) (*
 }
 func (UnimplementedAuthServiceServer) SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetJob not implemented")
+}
+func (UnimplementedAuthServiceServer) OAuth2Disconnect(context.Context, *OAuth2DisconnectRequest) (*OAuth2DisconnectResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OAuth2Disconnect not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -316,6 +330,24 @@ func _AuthService_SetJob_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_OAuth2Disconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OAuth2DisconnectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).OAuth2Disconnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.auth.AuthService/OAuth2Disconnect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).OAuth2Disconnect(ctx, req.(*OAuth2DisconnectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -354,6 +386,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetJob",
 			Handler:    _AuthService_SetJob_Handler,
+		},
+		{
+			MethodName: "OAuth2Disconnect",
+			Handler:    _AuthService_OAuth2Disconnect_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -51,3 +51,48 @@ export namespace Account {
   }
 }
 
+export class OAuth2Account extends jspb.Message {
+  getAccountId(): number;
+  setAccountId(value: number): OAuth2Account;
+
+  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): OAuth2Account;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): OAuth2Account;
+
+  getProvider(): string;
+  setProvider(value: string): OAuth2Account;
+
+  getExternalId(): number;
+  setExternalId(value: number): OAuth2Account;
+
+  getUsername(): string;
+  setUsername(value: string): OAuth2Account;
+
+  getAvatar(): string;
+  setAvatar(value: string): OAuth2Account;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OAuth2Account.AsObject;
+  static toObject(includeInstance: boolean, msg: OAuth2Account): OAuth2Account.AsObject;
+  static serializeBinaryToWriter(message: OAuth2Account, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OAuth2Account;
+  static deserializeBinaryFromReader(message: OAuth2Account, reader: jspb.BinaryReader): OAuth2Account;
+}
+
+export namespace OAuth2Account {
+  export type AsObject = {
+    accountId: number,
+    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    provider: string,
+    externalId: number,
+    username: string,
+    avatar: string,
+  }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+}
+

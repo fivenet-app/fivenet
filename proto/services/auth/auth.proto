@@ -45,6 +45,7 @@ message GetAccountInfoRequest {}
 
 message GetAccountInfoResponse {
   resources.accounts.Account account = 1;
+  repeated resources.accounts.OAuth2Account oauth2_connections = 2;
 }
 
 message GetCharactersRequest {}
@@ -81,6 +82,14 @@ message SetJobResponse {
   resources.users.User char = 3;
 }
 
+message OAuth2DisconnectRequest {
+  string provider = 1 [(validate.rules).string.max_len = 50];
+}
+
+message OAuth2DisconnectResponse {
+  bool success = 1;
+}
+
 service AuthService {
   rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
@@ -92,6 +101,9 @@ service AuthService {
   // @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
   rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
+
   // @perm: description="Superuser: Allow to override their own job on the go."
   rpc SetJob(SetJobRequest) returns (SetJobResponse);
+
+  rpc OAuth2Disconnect(OAuth2DisconnectRequest) returns (OAuth2DisconnectResponse);
 }

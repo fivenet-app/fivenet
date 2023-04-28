@@ -18,6 +18,7 @@ type fivenetOauth2AccountsTable struct {
 
 	// Columns
 	AccountID  mysql.ColumnInteger
+	CreatedAt  mysql.ColumnTimestamp
 	Provider   mysql.ColumnString
 	ExternalID mysql.ColumnInteger
 	Username   mysql.ColumnString
@@ -63,12 +64,13 @@ func newFivenetOauth2AccountsTable(schemaName, tableName, alias string) *Fivenet
 func newFivenetOauth2AccountsTableImpl(schemaName, tableName, alias string) fivenetOauth2AccountsTable {
 	var (
 		AccountIDColumn  = mysql.IntegerColumn("account_id")
+		CreatedAtColumn  = mysql.TimestampColumn("created_at")
 		ProviderColumn   = mysql.StringColumn("provider")
 		ExternalIDColumn = mysql.IntegerColumn("external_id")
 		UsernameColumn   = mysql.StringColumn("username")
 		AvatarColumn     = mysql.StringColumn("avatar")
-		allColumns       = mysql.ColumnList{AccountIDColumn, ProviderColumn, ExternalIDColumn, UsernameColumn, AvatarColumn}
-		mutableColumns   = mysql.ColumnList{AccountIDColumn, ProviderColumn, ExternalIDColumn, UsernameColumn, AvatarColumn}
+		allColumns       = mysql.ColumnList{AccountIDColumn, CreatedAtColumn, ProviderColumn, ExternalIDColumn, UsernameColumn, AvatarColumn}
+		mutableColumns   = mysql.ColumnList{AccountIDColumn, CreatedAtColumn, ProviderColumn, ExternalIDColumn, UsernameColumn, AvatarColumn}
 	)
 
 	return fivenetOauth2AccountsTable{
@@ -76,6 +78,7 @@ func newFivenetOauth2AccountsTableImpl(schemaName, tableName, alias string) five
 
 		//Columns
 		AccountID:  AccountIDColumn,
+		CreatedAt:  CreatedAtColumn,
 		Provider:   ProviderColumn,
 		ExternalID: ExternalIDColumn,
 		Username:   UsernameColumn,

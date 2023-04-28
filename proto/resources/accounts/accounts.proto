@@ -13,3 +13,12 @@ message Account {
 	string username = 4 [(validate.rules).string.max_len = 24];
 	string license = 5 [(validate.rules).string.max_len = 64];
 }
+
+message OAuth2Account {
+  uint64 account_id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  string provider = 3;
+  uint64 external_id = 4;
+  string username = 5;
+  string avatar = 6;
+}
