@@ -19,7 +19,7 @@ export default defineNuxtRouteMiddleware(
                     // Route has permission attached to it, check if user has required permission
                     if (to.meta.permission) {
                         const perm = slug(to.meta.permission as string);
-                        if (authStore.$state.permissions.includes(perm)) {
+                        if (authStore.getPermissions.includes(perm)) {
                             // User has permission
                             return true;
                         } else {

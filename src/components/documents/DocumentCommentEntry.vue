@@ -10,7 +10,7 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 
 const activeChar = computed(() => authStore.getActiveChar);
-const permissions = computed(() => authStore.$state.permissions);
+const permissions = computed(() => authStore.getPermissions);
 
 const emit = defineEmits<{
     (e: 'removed', comment: DocumentComment): void,

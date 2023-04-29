@@ -50,12 +50,9 @@ export const useAuthStore = defineStore('auth', {
         },
     },
     getters: {
-        getAccessToken(): null | string {
-            return this.accessToken;
-        },
-        getActiveChar(): null | User {
-            return this.activeChar;
-        },
+        getAccessToken: (state): null | string => state.accessToken,
+        getActiveChar: (state): null | User => state.activeChar,
+        getPermissions: (state): Array<String> => state.permissions,
     },
 });
 

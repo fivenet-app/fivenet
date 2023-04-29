@@ -11,12 +11,19 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+const (
+	TokenExpireTime  = 16 * time.Hour
+	TokenRenewalTime = 3 * time.Hour
+	TokenMaxRenews   = 5
+)
+
 type CitizenInfoClaims struct {
 	AccountID          uint64 `json:"accid"`
-	Username           string `json:"usrname"`
+	Username           string `json:"usrnm"`
 	ActiveCharID       int32  `json:"chrid"`
-	ActiveCharJob      string `json:"chrjob"`
-	ActiveCharJobGrade int32  `json:"chrjobg"`
+	ActiveCharJob      string `json:"chrjb"`
+	ActiveCharJobGrade int32  `json:"chrjbg"`
+	RenewedCount       int32  `json:"renwc"`
 
 	jwt.RegisteredClaims
 }
@@ -57,19 +64,17 @@ func (t *TokenManager) ParseWithClaims(tokenString string) (*CitizenInfoClaims, 
 
 func BuildTokenClaimsFromAccount(account *model.FivenetAccounts, activeChar *users.User) *CitizenInfoClaims {
 	claims := &CitizenInfoClaims{
-		AccountID: account.ID,
-		Username:  *account.Username,
+		AccountID:    account.ID,
+		Username:     *account.Username,
+		RenewedCount: 0,
 		RegisteredClaims: jwt.RegisteredClaims{
-			// A usual scenario is to set the expiration time relative to the current time
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(10 * time.Hour)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			NotBefore: jwt.NewNumericDate(time.Now()),
-			Issuer:    "fivenet",
-			Subject:   account.License,
-			ID:        strconv.FormatUint(uint64(account.ID), 10),
-			Audience:  []string{"fivenet"},
+			Issuer:   "fivenet",
+			Subject:  account.License,
+			ID:       strconv.FormatUint(uint64(account.ID), 10),
+			Audience: []string{"fivenet"},
 		},
 	}
+	SetTokenClaimsTimes(claims)
 
 	if activeChar != nil {
 		claims.ActiveCharID = activeChar.UserId
@@ -82,4 +87,12 @@ func BuildTokenClaimsFromAccount(account *model.FivenetAccounts, activeChar *use
 	}
 
 	return claims
+}
+
+func SetTokenClaimsTimes(claims *CitizenInfoClaims) {
+	now := time.Now()
+	// A usual scenario is to set the expiration time relative to the current time
+	claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(now.Add(TokenExpireTime))
+	claims.RegisteredClaims.IssuedAt = jwt.NewNumericDate(now)
+	claims.RegisteredClaims.NotBefore = jwt.NewNumericDate(now)
 }

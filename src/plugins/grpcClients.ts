@@ -220,9 +220,9 @@ export class AuthInterceptor implements UnaryInterceptor<any, any> {
     }
 
     intercept(request: any, invoker: any) {
-        if (this.store.$state.accessToken) {
+        if (this.store.getAccessToken !== null) {
             const metadata = request.getMetadata();
-            metadata.Authorization = 'Bearer ' + this.store.$state.accessToken;
+            metadata.Authorization = 'Bearer ' + this.store.getAccessToken;
         }
         return invoker(request);
     }

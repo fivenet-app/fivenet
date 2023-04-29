@@ -4,6 +4,7 @@ import * as resources_accounts_accounts_pb from '../../resources/accounts/accoun
 import * as resources_accounts_oauth2_pb from '../../resources/accounts/oauth2_pb';
 import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
 import * as resources_users_users_pb from '../../resources/users/users_pb';
+import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
 
 
 export class CreateAccountRequest extends jspb.Message {
@@ -123,6 +124,61 @@ export class ChangePasswordResponse extends jspb.Message {
 export namespace ChangePasswordResponse {
   export type AsObject = {
     token: string,
+  }
+}
+
+export class CheckTokenRequest extends jspb.Message {
+  getToken(): string;
+  setToken(value: string): CheckTokenRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CheckTokenRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: CheckTokenRequest): CheckTokenRequest.AsObject;
+  static serializeBinaryToWriter(message: CheckTokenRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CheckTokenRequest;
+  static deserializeBinaryFromReader(message: CheckTokenRequest, reader: jspb.BinaryReader): CheckTokenRequest;
+}
+
+export namespace CheckTokenRequest {
+  export type AsObject = {
+    token: string,
+  }
+}
+
+export class CheckTokenResponse extends jspb.Message {
+  getNewToken(): string;
+  setNewToken(value: string): CheckTokenResponse;
+  hasNewToken(): boolean;
+  clearNewToken(): CheckTokenResponse;
+
+  getExpires(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setExpires(value?: resources_timestamp_timestamp_pb.Timestamp): CheckTokenResponse;
+  hasExpires(): boolean;
+  clearExpires(): CheckTokenResponse;
+
+  getPermissionsList(): Array<string>;
+  setPermissionsList(value: Array<string>): CheckTokenResponse;
+  clearPermissionsList(): CheckTokenResponse;
+  addPermissions(value: string, index?: number): CheckTokenResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CheckTokenResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: CheckTokenResponse): CheckTokenResponse.AsObject;
+  static serializeBinaryToWriter(message: CheckTokenResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CheckTokenResponse;
+  static deserializeBinaryFromReader(message: CheckTokenResponse, reader: jspb.BinaryReader): CheckTokenResponse;
+}
+
+export namespace CheckTokenResponse {
+  export type AsObject = {
+    newToken?: string,
+    expires?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    permissionsList: Array<string>,
+  }
+
+  export enum NewTokenCase { 
+    _NEW_TOKEN_NOT_SET = 0,
+    NEW_TOKEN = 1,
   }
 }
 

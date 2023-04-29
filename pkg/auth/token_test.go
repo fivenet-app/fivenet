@@ -15,6 +15,7 @@ var basicCitizenInfoClaim = &CitizenInfoClaims{
 	ActiveCharID:       987654,
 	ActiveCharJob:      "ambulance",
 	ActiveCharJobGrade: 3,
+	RenewedCount:       0,
 	RegisteredClaims: jwt.RegisteredClaims{
 		Subject: "example-subject",
 	},

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/auth"
@@ -14,6 +15,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/proto/resources/jobs"
 	"github.com/galexrt/fivenet/proto/resources/rector"
+	"github.com/galexrt/fivenet/proto/resources/timestamp"
 	users "github.com/galexrt/fivenet/proto/resources/users"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -181,7 +183,12 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 }
 
 func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest) (*ChangePasswordResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -228,18 +235,76 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		return nil, UpdateAccountErr
 	}
 
-	token, err := s.createTokenFromAccountAndChar(acc, nil)
+	newToken, err := s.createTokenFromAccountAndChar(acc, nil)
 	if err != nil {
 		return nil, ChangePasswordErr
 	}
 
 	return &ChangePasswordResponse{
-		Token: token,
+		Token: newToken,
 	}, nil
 }
 
+func (s *Server) CheckToken(ctx context.Context, req *CheckTokenRequest) (*CheckTokenResponse, error) {
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	resp := &CheckTokenResponse{
+		Permissions: []string{},
+	}
+
+	// If the user is logged into a character, get permissions
+	if claims.ActiveCharID > 0 {
+		if err := s.ensureUserHasRole(claims.ActiveCharID, claims.ActiveCharJob, claims.ActiveCharJobGrade); err != nil {
+			return nil, GenericLoginErr
+		}
+
+		// Load permissions of user
+		perms, err := s.p.GetAllPermissionsOfUser(claims.ActiveCharID)
+		if err != nil {
+			return nil, auth.CheckTokenErr
+		}
+
+		if len(perms) == 0 {
+			return nil, auth.CheckTokenErr
+		}
+
+		resp.Permissions = perms.GuardNames()
+	}
+
+	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
+		if claims.RenewedCount >= auth.TokenMaxRenews {
+			return nil, auth.InvalidTokenErr
+		}
+
+		auth.SetTokenClaimsTimes(claims)
+		newToken, err := s.tm.NewWithClaims(claims)
+		if err != nil {
+			return nil, auth.CheckTokenErr
+		}
+
+		resp.NewToken = &newToken
+	}
+
+	resp.Expires = timestamp.New(claims.ExpiresAt.Time)
+
+	return resp, nil
+}
+
 func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -351,7 +416,12 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
 		return nil, err
 	}
@@ -372,7 +442,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, NoCharacterFoundErr
 	}
 
-	token, err := s.createTokenFromAccountAndChar(account, char)
+	newToken, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -394,7 +464,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	defer s.a.Log(ctx, AuthService_ServiceDesc.ServiceName, "ChooseCharacter", rector.EVENT_TYPE_VIEWED, -1, char.UserShort())
 
 	return &ChooseCharacterResponse{
-		Token:       token,
+		Token:       newToken,
 		Permissions: perms.GuardNames(),
 		JobProps:    jProps,
 	}, nil
@@ -479,7 +549,12 @@ func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutRespons
 }
 
 func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
 		return nil, err
 	}
@@ -500,13 +575,13 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		return nil, err
 	}
 
-	token, err := s.createTokenFromAccountAndChar(account, char)
+	newToken, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
 		return nil, err
 	}
 
 	return &SetJobResponse{
-		Token:    token,
+		Token:    newToken,
 		JobProps: jProps,
 		Char:     char,
 	}, nil

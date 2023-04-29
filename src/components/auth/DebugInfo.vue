@@ -5,7 +5,7 @@ import { useAuthStore } from '~/store/auth';
 const authStore = useAuthStore();
 
 const activeChar = computed(() => authStore.getActiveChar);
-const perms = computed(() => authStore.$state.permissions);
+const perms = computed(() => authStore.getPermissions);
 </script>
 
 <template>

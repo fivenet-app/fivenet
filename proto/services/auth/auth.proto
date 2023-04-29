@@ -7,6 +7,7 @@ import "resources/accounts/accounts.proto";
 import "resources/accounts/oauth2.proto";
 import "resources/jobs/jobs.proto";
 import "resources/users/users.proto";
+import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 message CreateAccountRequest {
@@ -40,6 +41,16 @@ message ChangePasswordRequest {
 
 message ChangePasswordResponse {
   string token = 1;
+}
+
+message CheckTokenRequest {
+  string token = 1;
+}
+
+message CheckTokenResponse {
+  optional string new_token = 1;
+  resources.timestamp.Timestamp expires = 2;
+  repeated string permissions = 3;
 }
 
 message GetAccountInfoRequest {}
@@ -96,6 +107,7 @@ service AuthService {
   rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+  rpc CheckToken(CheckTokenRequest) returns (CheckTokenResponse);
 
   rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
 
