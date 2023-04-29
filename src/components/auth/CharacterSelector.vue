@@ -28,8 +28,8 @@ async function fetchCharacters(): Promise<Array<User>> {
 
 onBeforeMount(async () => {
     await Promise.all([
-        authStore.updateActiveChar(null),
-        authStore.updatePermissions([])
+        authStore.setActiveChar(null),
+        authStore.setPermissions([])
     ]);
 });
 </script>

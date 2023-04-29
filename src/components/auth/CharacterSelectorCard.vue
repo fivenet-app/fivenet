@@ -30,9 +30,9 @@ async function chooseCharacter(): Promise<void> {
             const resp = await $grpc.getAuthClient()
                 .chooseCharacter(req, null);
 
-            authStore.updateAccessToken(resp.getToken());
-            authStore.updateActiveChar(props.char);
-            authStore.updatePermissions(resp.getPermissionsList());
+            authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
+            authStore.setActiveChar(props.char);
+            authStore.setPermissions(resp.getPermissionsList());
 
             const path = route.query.redirect?.toString() || "/overview";
             const url = new URL("https://example.com" + path);

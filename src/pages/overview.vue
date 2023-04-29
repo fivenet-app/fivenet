@@ -3,8 +3,6 @@ import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue
 import { BriefcaseIcon, DocumentTextIcon, UsersIcon, MapIcon, TruckIcon } from '@heroicons/vue/24/outline';
 import Cards from '~/components/partials/Cards.vue';
 import { CardElements } from '~/utils/types';
-import { CheckTokenRequest } from '@fivenet/gen/services/auth/auth_pb';
-import { RpcError } from 'grpc-web';
 
 useHead({
     title: 'common.overview',
@@ -63,34 +61,10 @@ const features = [
         iconBackground: 'bg-teal-50',
     },
 ] as CardElements;
-
-const { $grpc } = useNuxtApp();
-
-async function checkToken(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        const req = new CheckTokenRequest();
-
-        try {
-            const resp = await $grpc.getAuthClient().
-                checkToken(req, null);
-
-            console.log(toDateLocaleString(resp.getExpires()));
-
-            return res();
-        } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
 </script>
 
 <template>
     <ContentCenterWrapper>
-        <button type="button" @click="checkToken"
-            class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-            CHECK TOKEN
-        </button>
         <Cards :items="features" />
     </ContentCenterWrapper>
 </template>

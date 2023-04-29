@@ -55,8 +55,8 @@ async function setJob(): Promise<void> {
                 setJob(req, null);
 
             await Promise.all([
-                authStore.updateAccessToken(resp.getToken()),
-                authStore.updateActiveChar(resp.getChar()!),
+                authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date),
+                authStore.setActiveChar(resp.getChar()!),
             ]);
 
             notifications.dispatchNotification({

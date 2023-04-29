@@ -35,24 +35,32 @@ export const useAuthStore = defineStore('auth', {
             this.loggingIn = false;
             this.loginError = errorMessage;
         },
-        updateAccessToken(accessToken: null | string): void {
+        setAccessToken(accessToken: null | string, expiration: null | number | Date): void {
             this.accessToken = accessToken;
+            if (typeof expiration === 'number') expiration = new Date(expiration);
+            this.accessTokenExpiration = expiration;
         },
-        updateActiveChar(char: null | User): void {
+        setActiveChar(char: null | User): void {
             this.activeChar = char;
             this.lastCharID = char ? char.getUserId() : this.lastCharID;
         },
-        updatePermissions(permissions: string[]): void {
+        setPermissions(permissions: string[]): void {
             this.permissions = permissions;
         },
         async clear(): Promise<void> {
-            this.updateAccessToken(null);
-            this.updateActiveChar(null);
-            this.updatePermissions([]);
+            this.setAccessToken(null, null);
+            this.setActiveChar(null);
+            this.setPermissions([]);
         },
     },
     getters: {
         getAccessToken: (state): null | string => state.accessToken,
+        getAccessTokenExpiration(state): null | Date {
+            if (typeof state.accessTokenExpiration === 'string')
+                state.accessTokenExpiration = new Date(Date.parse(state.accessTokenExpiration));
+
+            return state.accessTokenExpiration;
+        },
         getActiveChar: (state): null | User => state.activeChar,
         getPermissions: (state): Array<String> => state.permissions,
     },

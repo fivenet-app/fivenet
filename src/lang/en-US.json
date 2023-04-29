@@ -266,7 +266,9 @@
         "debug_info": {
             "title": "Debug Info",
             "subtitle": "Information imporant when reporting issues with FiveNet.",
-            "perms": "Current Permissions"
+            "perms": "Current Permissions",
+            "active_char_id": "Active Character ID",
+            "access_token_expiration": "Access Token Expiration"
         }
     },
     "common": {

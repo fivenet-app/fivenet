@@ -249,13 +249,17 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		return
 	}
 
-	newToken, err := o.tm.NewWithClaims(auth.BuildTokenClaimsFromAccount(account, nil))
+	claims := auth.BuildTokenClaimsFromAccount(account, nil)
+	newToken, err := o.tm.NewWithClaims(claims)
 	if err != nil {
 		o.handleRedirect(c, err, connectOnly, true, "internal_error")
 		return
 	}
 
-	c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth-connect=success&token="+url.QueryEscape(newToken))
+	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf(LoginRedirBase+"?oauth-connect=success&t=%s&exp=%d",
+		url.QueryEscape(newToken),
+		claims.ExpiresAt.Time.UTC().UnixNano()/1e6,
+	))
 }
 
 func (o *OAuth2) getUserInfo(ctx context.Context, provider string, userInfo *providers.UserInfo) (*model.FivenetAccounts, error) {
