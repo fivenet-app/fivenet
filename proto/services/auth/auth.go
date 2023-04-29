@@ -86,13 +86,15 @@ func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.Una
 	return ctx, nil
 }
 
-func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, activeChar *users.User) (string, error) {
-	return s.tm.NewWithClaims(auth.BuildTokenClaimsFromAccount(account, activeChar))
+func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, activeChar *users.User) (string, *auth.CitizenInfoClaims, error) {
+	claims := auth.BuildTokenClaimsFromAccount(account, activeChar)
+	token, err := s.tm.NewWithClaims(claims)
+	return token, claims, err
 }
 
 func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {
 	acc, err := s.getAccountFromDB(ctx, jet.AND(
-		account.RegToken.EQ(jet.String(req.RegToken)),
+		account.RegToken.EQ(jet.String(req.RegCode)),
 	))
 	if err != nil {
 		return nil, AccountCreateFailedErr
@@ -119,7 +121,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		WHERE(
 			jet.AND(
 				account.ID.EQ(jet.Uint64(acc.ID)),
-				account.RegToken.EQ(jet.String(req.RegToken)),
+				account.RegToken.EQ(jet.String(req.RegCode)),
 			),
 		)
 
@@ -172,13 +174,14 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 		return nil, InvalidLoginErr
 	}
 
-	token, err := s.createTokenFromAccountAndChar(account, nil)
+	token, claims, err := s.createTokenFromAccountAndChar(account, nil)
 	if err != nil {
 		return nil, InvalidLoginErr
 	}
 
 	return &LoginResponse{
-		Token: token,
+		Token:   token,
+		Expires: timestamp.New(claims.ExpiresAt.Time),
 	}, nil
 }
 
@@ -235,13 +238,14 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		return nil, UpdateAccountErr
 	}
 
-	newToken, err := s.createTokenFromAccountAndChar(acc, nil)
+	newToken, newClaims, err := s.createTokenFromAccountAndChar(acc, nil)
 	if err != nil {
 		return nil, ChangePasswordErr
 	}
 
 	return &ChangePasswordResponse{
-		Token: newToken,
+		Token:   newToken,
+		Expires: timestamp.New(newClaims.ExpiresAt.Time),
 	}, nil
 }
 
@@ -442,7 +446,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, NoCharacterFoundErr
 	}
 
-	newToken, err := s.createTokenFromAccountAndChar(account, char)
+	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -465,6 +469,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 
 	return &ChooseCharacterResponse{
 		Token:       newToken,
+		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
 		Permissions: perms.GuardNames(),
 		JobProps:    jProps,
 	}, nil
@@ -575,13 +580,14 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		return nil, err
 	}
 
-	newToken, err := s.createTokenFromAccountAndChar(account, char)
+	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
 		return nil, err
 	}
 
 	return &SetJobResponse{
 		Token:    newToken,
+		Expires:  timestamp.New(newClaims.ExpiresAt.Time),
 		JobProps: jProps,
 		Char:     char,
 	}, nil

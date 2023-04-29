@@ -4,6 +4,7 @@ import { defineStore } from 'pinia';
 
 export interface AuthState {
     accessToken: null | string;
+    accessTokenExpiration: null | Date;
     lastCharID: number;
     activeChar: null | User;
     loggingIn: boolean;
@@ -15,6 +16,7 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
         // Persisted to Local Storage
         accessToken: null as null | string,
+        accessTokenExpiration: null as null | Date,
         lastCharID: 0 as number,
         // Temporary
         activeChar: null as null | User,
@@ -23,7 +25,7 @@ export const useAuthStore = defineStore('auth', {
         permissions: [] as Array<String>,
     }),
     persist: {
-        paths: ['accessToken', 'lastCharID'],
+        paths: ['accessToken', 'accessTokenExpiration', 'lastCharID'],
     },
     actions: {
         loginStart(): void {

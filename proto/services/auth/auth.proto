@@ -11,7 +11,7 @@ import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 message CreateAccountRequest {
-  string reg_token = 1 [(validate.rules).string = {
+  string reg_code = 1 [(validate.rules).string = {
     len: 6,
     pattern: "^[0-9]{6}$",
   }];
@@ -32,6 +32,7 @@ message LoginRequest {
 
 message LoginResponse {
   string token = 1;
+  resources.timestamp.Timestamp expires = 2;
 }
 
 message ChangePasswordRequest {
@@ -41,6 +42,7 @@ message ChangePasswordRequest {
 
 message ChangePasswordResponse {
   string token = 1;
+  resources.timestamp.Timestamp expires = 2;
 }
 
 message CheckTokenRequest {
@@ -73,8 +75,9 @@ message ChooseCharacterRequest {
 
 message ChooseCharacterResponse {
   string token = 1;
-  repeated string permissions = 2;
-  resources.jobs.JobProps job_props = 3;
+  resources.timestamp.Timestamp expires = 2;
+  repeated string permissions = 3;
+  resources.jobs.JobProps job_props = 4;
 }
 
 message LogoutRequest {}
@@ -91,8 +94,9 @@ message SetJobRequest {
 
 message SetJobResponse {
   string token = 1;
-  resources.jobs.JobProps job_props = 2;
-  resources.users.User char = 3;
+  resources.timestamp.Timestamp expires = 2;
+  resources.jobs.JobProps job_props = 3;
+  resources.users.User char = 4;
 }
 
 message OAuth2DisconnectRequest {

@@ -8,8 +8,8 @@ import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/tim
 
 
 export class CreateAccountRequest extends jspb.Message {
-  getRegToken(): string;
-  setRegToken(value: string): CreateAccountRequest;
+  getRegCode(): string;
+  setRegCode(value: string): CreateAccountRequest;
 
   getUsername(): string;
   setUsername(value: string): CreateAccountRequest;
@@ -27,7 +27,7 @@ export class CreateAccountRequest extends jspb.Message {
 
 export namespace CreateAccountRequest {
   export type AsObject = {
-    regToken: string,
+    regCode: string,
     username: string,
     password: string,
   }
@@ -73,6 +73,11 @@ export class LoginResponse extends jspb.Message {
   getToken(): string;
   setToken(value: string): LoginResponse;
 
+  getExpires(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setExpires(value?: resources_timestamp_timestamp_pb.Timestamp): LoginResponse;
+  hasExpires(): boolean;
+  clearExpires(): LoginResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): LoginResponse.AsObject;
   static toObject(includeInstance: boolean, msg: LoginResponse): LoginResponse.AsObject;
@@ -84,6 +89,7 @@ export class LoginResponse extends jspb.Message {
 export namespace LoginResponse {
   export type AsObject = {
     token: string,
+    expires?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
   }
 }
 
@@ -113,6 +119,11 @@ export class ChangePasswordResponse extends jspb.Message {
   getToken(): string;
   setToken(value: string): ChangePasswordResponse;
 
+  getExpires(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setExpires(value?: resources_timestamp_timestamp_pb.Timestamp): ChangePasswordResponse;
+  hasExpires(): boolean;
+  clearExpires(): ChangePasswordResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ChangePasswordResponse.AsObject;
   static toObject(includeInstance: boolean, msg: ChangePasswordResponse): ChangePasswordResponse.AsObject;
@@ -124,6 +135,7 @@ export class ChangePasswordResponse extends jspb.Message {
 export namespace ChangePasswordResponse {
   export type AsObject = {
     token: string,
+    expires?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
   }
 }
 
@@ -284,6 +296,11 @@ export class ChooseCharacterResponse extends jspb.Message {
   getToken(): string;
   setToken(value: string): ChooseCharacterResponse;
 
+  getExpires(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setExpires(value?: resources_timestamp_timestamp_pb.Timestamp): ChooseCharacterResponse;
+  hasExpires(): boolean;
+  clearExpires(): ChooseCharacterResponse;
+
   getPermissionsList(): Array<string>;
   setPermissionsList(value: Array<string>): ChooseCharacterResponse;
   clearPermissionsList(): ChooseCharacterResponse;
@@ -305,6 +322,7 @@ export class ChooseCharacterResponse extends jspb.Message {
 export namespace ChooseCharacterResponse {
   export type AsObject = {
     token: string,
+    expires?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     permissionsList: Array<string>,
     jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
   }
@@ -372,6 +390,11 @@ export class SetJobResponse extends jspb.Message {
   getToken(): string;
   setToken(value: string): SetJobResponse;
 
+  getExpires(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setExpires(value?: resources_timestamp_timestamp_pb.Timestamp): SetJobResponse;
+  hasExpires(): boolean;
+  clearExpires(): SetJobResponse;
+
   getJobProps(): resources_jobs_jobs_pb.JobProps | undefined;
   setJobProps(value?: resources_jobs_jobs_pb.JobProps): SetJobResponse;
   hasJobProps(): boolean;
@@ -393,6 +416,7 @@ export class SetJobResponse extends jspb.Message {
 export namespace SetJobResponse {
   export type AsObject = {
     token: string,
+    expires?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
     pb_char?: resources_users_users_pb.User.AsObject,
   }

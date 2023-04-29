@@ -503,7 +503,7 @@ proto.services.auth.CreateAccountRequest.prototype.toObject = function(opt_inclu
  */
 proto.services.auth.CreateAccountRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    regToken: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    regCode: jspb.Message.getFieldWithDefault(msg, 1, ""),
     username: jspb.Message.getFieldWithDefault(msg, 2, ""),
     password: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
@@ -544,7 +544,7 @@ proto.services.auth.CreateAccountRequest.deserializeBinaryFromReader = function(
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setRegToken(value);
+      msg.setRegCode(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
@@ -583,7 +583,7 @@ proto.services.auth.CreateAccountRequest.prototype.serializeBinary = function() 
  */
 proto.services.auth.CreateAccountRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getRegToken();
+  f = message.getRegCode();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -608,10 +608,10 @@ proto.services.auth.CreateAccountRequest.serializeBinaryToWriter = function(mess
 
 
 /**
- * optional string reg_token = 1;
+ * optional string reg_code = 1;
  * @return {string}
  */
-proto.services.auth.CreateAccountRequest.prototype.getRegToken = function() {
+proto.services.auth.CreateAccountRequest.prototype.getRegCode = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -620,7 +620,7 @@ proto.services.auth.CreateAccountRequest.prototype.getRegToken = function() {
  * @param {string} value
  * @return {!proto.services.auth.CreateAccountRequest} returns this
  */
-proto.services.auth.CreateAccountRequest.prototype.setRegToken = function(value) {
+proto.services.auth.CreateAccountRequest.prototype.setRegCode = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -954,7 +954,8 @@ proto.services.auth.LoginResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.services.auth.LoginResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    token: jspb.Message.getFieldWithDefault(msg, 1, "")
+    token: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    expires: (f = msg.getExpires()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -995,6 +996,11 @@ proto.services.auth.LoginResponse.deserializeBinaryFromReader = function(msg, re
       var value = /** @type {string} */ (reader.readString());
       msg.setToken(value);
       break;
+    case 2:
+      var value = new resources_timestamp_timestamp_pb.Timestamp;
+      reader.readMessage(value,resources_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setExpires(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1031,6 +1037,14 @@ proto.services.auth.LoginResponse.serializeBinaryToWriter = function(message, wr
       f
     );
   }
+  f = message.getExpires();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
 };
 
 
@@ -1049,6 +1063,43 @@ proto.services.auth.LoginResponse.prototype.getToken = function() {
  */
 proto.services.auth.LoginResponse.prototype.setToken = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional resources.timestamp.Timestamp expires = 2;
+ * @return {?proto.resources.timestamp.Timestamp}
+ */
+proto.services.auth.LoginResponse.prototype.getExpires = function() {
+  return /** @type{?proto.resources.timestamp.Timestamp} */ (
+    jspb.Message.getWrapperField(this, resources_timestamp_timestamp_pb.Timestamp, 2));
+};
+
+
+/**
+ * @param {?proto.resources.timestamp.Timestamp|undefined} value
+ * @return {!proto.services.auth.LoginResponse} returns this
+*/
+proto.services.auth.LoginResponse.prototype.setExpires = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.auth.LoginResponse} returns this
+ */
+proto.services.auth.LoginResponse.prototype.clearExpires = function() {
+  return this.setExpires(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.auth.LoginResponse.prototype.hasExpires = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
@@ -1244,7 +1295,8 @@ proto.services.auth.ChangePasswordResponse.prototype.toObject = function(opt_inc
  */
 proto.services.auth.ChangePasswordResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    token: jspb.Message.getFieldWithDefault(msg, 1, "")
+    token: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    expires: (f = msg.getExpires()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1285,6 +1337,11 @@ proto.services.auth.ChangePasswordResponse.deserializeBinaryFromReader = functio
       var value = /** @type {string} */ (reader.readString());
       msg.setToken(value);
       break;
+    case 2:
+      var value = new resources_timestamp_timestamp_pb.Timestamp;
+      reader.readMessage(value,resources_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setExpires(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1321,6 +1378,14 @@ proto.services.auth.ChangePasswordResponse.serializeBinaryToWriter = function(me
       f
     );
   }
+  f = message.getExpires();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
 };
 
 
@@ -1339,6 +1404,43 @@ proto.services.auth.ChangePasswordResponse.prototype.getToken = function() {
  */
 proto.services.auth.ChangePasswordResponse.prototype.setToken = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional resources.timestamp.Timestamp expires = 2;
+ * @return {?proto.resources.timestamp.Timestamp}
+ */
+proto.services.auth.ChangePasswordResponse.prototype.getExpires = function() {
+  return /** @type{?proto.resources.timestamp.Timestamp} */ (
+    jspb.Message.getWrapperField(this, resources_timestamp_timestamp_pb.Timestamp, 2));
+};
+
+
+/**
+ * @param {?proto.resources.timestamp.Timestamp|undefined} value
+ * @return {!proto.services.auth.ChangePasswordResponse} returns this
+*/
+proto.services.auth.ChangePasswordResponse.prototype.setExpires = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.auth.ChangePasswordResponse} returns this
+ */
+proto.services.auth.ChangePasswordResponse.prototype.clearExpires = function() {
+  return this.setExpires(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.auth.ChangePasswordResponse.prototype.hasExpires = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
@@ -2489,7 +2591,7 @@ proto.services.auth.ChooseCharacterRequest.prototype.setCharId = function(value)
  * @private {!Array<number>}
  * @const
  */
-proto.services.auth.ChooseCharacterResponse.repeatedFields_ = [2];
+proto.services.auth.ChooseCharacterResponse.repeatedFields_ = [3];
 
 
 
@@ -2523,7 +2625,8 @@ proto.services.auth.ChooseCharacterResponse.prototype.toObject = function(opt_in
 proto.services.auth.ChooseCharacterResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     token: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    permissionsList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f,
+    expires: (f = msg.getExpires()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    permissionsList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
     jobProps: (f = msg.getJobProps()) && resources_jobs_jobs_pb.JobProps.toObject(includeInstance, f)
   };
 
@@ -2566,10 +2669,15 @@ proto.services.auth.ChooseCharacterResponse.deserializeBinaryFromReader = functi
       msg.setToken(value);
       break;
     case 2:
+      var value = new resources_timestamp_timestamp_pb.Timestamp;
+      reader.readMessage(value,resources_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setExpires(value);
+      break;
+    case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.addPermissions(value);
       break;
-    case 3:
+    case 4:
       var value = new resources_jobs_jobs_pb.JobProps;
       reader.readMessage(value,resources_jobs_jobs_pb.JobProps.deserializeBinaryFromReader);
       msg.setJobProps(value);
@@ -2610,17 +2718,25 @@ proto.services.auth.ChooseCharacterResponse.serializeBinaryToWriter = function(m
       f
     );
   }
+  f = message.getExpires();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
   f = message.getPermissionsList();
   if (f.length > 0) {
     writer.writeRepeatedString(
-      2,
+      3,
       f
     );
   }
   f = message.getJobProps();
   if (f != null) {
     writer.writeMessage(
-      3,
+      4,
       f,
       resources_jobs_jobs_pb.JobProps.serializeBinaryToWriter
     );
@@ -2647,11 +2763,48 @@ proto.services.auth.ChooseCharacterResponse.prototype.setToken = function(value)
 
 
 /**
- * repeated string permissions = 2;
+ * optional resources.timestamp.Timestamp expires = 2;
+ * @return {?proto.resources.timestamp.Timestamp}
+ */
+proto.services.auth.ChooseCharacterResponse.prototype.getExpires = function() {
+  return /** @type{?proto.resources.timestamp.Timestamp} */ (
+    jspb.Message.getWrapperField(this, resources_timestamp_timestamp_pb.Timestamp, 2));
+};
+
+
+/**
+ * @param {?proto.resources.timestamp.Timestamp|undefined} value
+ * @return {!proto.services.auth.ChooseCharacterResponse} returns this
+*/
+proto.services.auth.ChooseCharacterResponse.prototype.setExpires = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.auth.ChooseCharacterResponse} returns this
+ */
+proto.services.auth.ChooseCharacterResponse.prototype.clearExpires = function() {
+  return this.setExpires(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.auth.ChooseCharacterResponse.prototype.hasExpires = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * repeated string permissions = 3;
  * @return {!Array<string>}
  */
 proto.services.auth.ChooseCharacterResponse.prototype.getPermissionsList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 2));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 3));
 };
 
 
@@ -2660,7 +2813,7 @@ proto.services.auth.ChooseCharacterResponse.prototype.getPermissionsList = funct
  * @return {!proto.services.auth.ChooseCharacterResponse} returns this
  */
 proto.services.auth.ChooseCharacterResponse.prototype.setPermissionsList = function(value) {
-  return jspb.Message.setField(this, 2, value || []);
+  return jspb.Message.setField(this, 3, value || []);
 };
 
 
@@ -2670,7 +2823,7 @@ proto.services.auth.ChooseCharacterResponse.prototype.setPermissionsList = funct
  * @return {!proto.services.auth.ChooseCharacterResponse} returns this
  */
 proto.services.auth.ChooseCharacterResponse.prototype.addPermissions = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 2, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 3, value, opt_index);
 };
 
 
@@ -2684,12 +2837,12 @@ proto.services.auth.ChooseCharacterResponse.prototype.clearPermissionsList = fun
 
 
 /**
- * optional resources.jobs.JobProps job_props = 3;
+ * optional resources.jobs.JobProps job_props = 4;
  * @return {?proto.resources.jobs.JobProps}
  */
 proto.services.auth.ChooseCharacterResponse.prototype.getJobProps = function() {
   return /** @type{?proto.resources.jobs.JobProps} */ (
-    jspb.Message.getWrapperField(this, resources_jobs_jobs_pb.JobProps, 3));
+    jspb.Message.getWrapperField(this, resources_jobs_jobs_pb.JobProps, 4));
 };
 
 
@@ -2698,7 +2851,7 @@ proto.services.auth.ChooseCharacterResponse.prototype.getJobProps = function() {
  * @return {!proto.services.auth.ChooseCharacterResponse} returns this
 */
 proto.services.auth.ChooseCharacterResponse.prototype.setJobProps = function(value) {
-  return jspb.Message.setWrapperField(this, 3, value);
+  return jspb.Message.setWrapperField(this, 4, value);
 };
 
 
@@ -2716,7 +2869,7 @@ proto.services.auth.ChooseCharacterResponse.prototype.clearJobProps = function()
  * @return {boolean}
  */
 proto.services.auth.ChooseCharacterResponse.prototype.hasJobProps = function() {
-  return jspb.Message.getField(this, 3) != null;
+  return jspb.Message.getField(this, 4) != null;
 };
 
 
@@ -3174,6 +3327,7 @@ proto.services.auth.SetJobResponse.prototype.toObject = function(opt_includeInst
 proto.services.auth.SetJobResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     token: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    expires: (f = msg.getExpires()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     jobProps: (f = msg.getJobProps()) && resources_jobs_jobs_pb.JobProps.toObject(includeInstance, f),
     pb_char: (f = msg.getChar()) && resources_users_users_pb.User.toObject(includeInstance, f)
   };
@@ -3217,11 +3371,16 @@ proto.services.auth.SetJobResponse.deserializeBinaryFromReader = function(msg, r
       msg.setToken(value);
       break;
     case 2:
+      var value = new resources_timestamp_timestamp_pb.Timestamp;
+      reader.readMessage(value,resources_timestamp_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setExpires(value);
+      break;
+    case 3:
       var value = new resources_jobs_jobs_pb.JobProps;
       reader.readMessage(value,resources_jobs_jobs_pb.JobProps.deserializeBinaryFromReader);
       msg.setJobProps(value);
       break;
-    case 3:
+    case 4:
       var value = new resources_users_users_pb.User;
       reader.readMessage(value,resources_users_users_pb.User.deserializeBinaryFromReader);
       msg.setChar(value);
@@ -3262,10 +3421,18 @@ proto.services.auth.SetJobResponse.serializeBinaryToWriter = function(message, w
       f
     );
   }
-  f = message.getJobProps();
+  f = message.getExpires();
   if (f != null) {
     writer.writeMessage(
       2,
+      f,
+      resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getJobProps();
+  if (f != null) {
+    writer.writeMessage(
+      3,
       f,
       resources_jobs_jobs_pb.JobProps.serializeBinaryToWriter
     );
@@ -3273,7 +3440,7 @@ proto.services.auth.SetJobResponse.serializeBinaryToWriter = function(message, w
   f = message.getChar();
   if (f != null) {
     writer.writeMessage(
-      3,
+      4,
       f,
       resources_users_users_pb.User.serializeBinaryToWriter
     );
@@ -3300,12 +3467,49 @@ proto.services.auth.SetJobResponse.prototype.setToken = function(value) {
 
 
 /**
- * optional resources.jobs.JobProps job_props = 2;
+ * optional resources.timestamp.Timestamp expires = 2;
+ * @return {?proto.resources.timestamp.Timestamp}
+ */
+proto.services.auth.SetJobResponse.prototype.getExpires = function() {
+  return /** @type{?proto.resources.timestamp.Timestamp} */ (
+    jspb.Message.getWrapperField(this, resources_timestamp_timestamp_pb.Timestamp, 2));
+};
+
+
+/**
+ * @param {?proto.resources.timestamp.Timestamp|undefined} value
+ * @return {!proto.services.auth.SetJobResponse} returns this
+*/
+proto.services.auth.SetJobResponse.prototype.setExpires = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.auth.SetJobResponse} returns this
+ */
+proto.services.auth.SetJobResponse.prototype.clearExpires = function() {
+  return this.setExpires(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.auth.SetJobResponse.prototype.hasExpires = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * optional resources.jobs.JobProps job_props = 3;
  * @return {?proto.resources.jobs.JobProps}
  */
 proto.services.auth.SetJobResponse.prototype.getJobProps = function() {
   return /** @type{?proto.resources.jobs.JobProps} */ (
-    jspb.Message.getWrapperField(this, resources_jobs_jobs_pb.JobProps, 2));
+    jspb.Message.getWrapperField(this, resources_jobs_jobs_pb.JobProps, 3));
 };
 
 
@@ -3314,7 +3518,7 @@ proto.services.auth.SetJobResponse.prototype.getJobProps = function() {
  * @return {!proto.services.auth.SetJobResponse} returns this
 */
 proto.services.auth.SetJobResponse.prototype.setJobProps = function(value) {
-  return jspb.Message.setWrapperField(this, 2, value);
+  return jspb.Message.setWrapperField(this, 3, value);
 };
 
 
@@ -3332,17 +3536,17 @@ proto.services.auth.SetJobResponse.prototype.clearJobProps = function() {
  * @return {boolean}
  */
 proto.services.auth.SetJobResponse.prototype.hasJobProps = function() {
-  return jspb.Message.getField(this, 2) != null;
+  return jspb.Message.getField(this, 3) != null;
 };
 
 
 /**
- * optional resources.users.User char = 3;
+ * optional resources.users.User char = 4;
  * @return {?proto.resources.users.User}
  */
 proto.services.auth.SetJobResponse.prototype.getChar = function() {
   return /** @type{?proto.resources.users.User} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.User, 3));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.User, 4));
 };
 
 
@@ -3351,7 +3555,7 @@ proto.services.auth.SetJobResponse.prototype.getChar = function() {
  * @return {!proto.services.auth.SetJobResponse} returns this
 */
 proto.services.auth.SetJobResponse.prototype.setChar = function(value) {
-  return jspb.Message.setWrapperField(this, 3, value);
+  return jspb.Message.setWrapperField(this, 4, value);
 };
 
 
@@ -3369,7 +3573,7 @@ proto.services.auth.SetJobResponse.prototype.clearChar = function() {
  * @return {boolean}
  */
 proto.services.auth.SetJobResponse.prototype.hasChar = function() {
-  return jspb.Message.getField(this, 3) != null;
+  return jspb.Message.getField(this, 4) != null;
 };
 
 

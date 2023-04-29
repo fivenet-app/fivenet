@@ -57,9 +57,9 @@ func (m *CreateAccountRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetRegToken()) != 6 {
+	if utf8.RuneCountInString(m.GetRegCode()) != 6 {
 		err := CreateAccountRequestValidationError{
-			field:  "RegToken",
+			field:  "RegCode",
 			reason: "value length must be 6 runes",
 		}
 		if !all {
@@ -69,9 +69,9 @@ func (m *CreateAccountRequest) validate(all bool) error {
 
 	}
 
-	if !_CreateAccountRequest_RegToken_Pattern.MatchString(m.GetRegToken()) {
+	if !_CreateAccountRequest_RegCode_Pattern.MatchString(m.GetRegCode()) {
 		err := CreateAccountRequestValidationError{
-			field:  "RegToken",
+			field:  "RegCode",
 			reason: "value does not match regex pattern \"^[0-9]{6}$\"",
 		}
 		if !all {
@@ -204,7 +204,7 @@ var _ interface {
 	ErrorName() string
 } = CreateAccountRequestValidationError{}
 
-var _CreateAccountRequest_RegToken_Pattern = regexp.MustCompile("^[0-9]{6}$")
+var _CreateAccountRequest_RegCode_Pattern = regexp.MustCompile("^[0-9]{6}$")
 
 var _CreateAccountRequest_Username_Pattern = regexp.MustCompile("^[a-zA-Z0-9-_]{3,24}$")
 
@@ -466,6 +466,35 @@ func (m *LoginResponse) validate(all bool) error {
 
 	// no validation rules for Token
 
+	if all {
+		switch v := interface{}(m.GetExpires()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, LoginResponseValidationError{
+					field:  "Expires",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, LoginResponseValidationError{
+					field:  "Expires",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExpires()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return LoginResponseValidationError{
+				field:  "Expires",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return LoginResponseMultiError(errors)
 	}
@@ -713,6 +742,35 @@ func (m *ChangePasswordResponse) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for Token
+
+	if all {
+		switch v := interface{}(m.GetExpires()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ChangePasswordResponseValidationError{
+					field:  "Expires",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ChangePasswordResponseValidationError{
+					field:  "Expires",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExpires()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ChangePasswordResponseValidationError{
+				field:  "Expires",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return ChangePasswordResponseMultiError(errors)
@@ -1710,6 +1768,35 @@ func (m *ChooseCharacterResponse) validate(all bool) error {
 	// no validation rules for Token
 
 	if all {
+		switch v := interface{}(m.GetExpires()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ChooseCharacterResponseValidationError{
+					field:  "Expires",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ChooseCharacterResponseValidationError{
+					field:  "Expires",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExpires()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ChooseCharacterResponseValidationError{
+				field:  "Expires",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
 		switch v := interface{}(m.GetJobProps()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -2176,6 +2263,35 @@ func (m *SetJobResponse) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for Token
+
+	if all {
+		switch v := interface{}(m.GetExpires()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetJobResponseValidationError{
+					field:  "Expires",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetJobResponseValidationError{
+					field:  "Expires",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExpires()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetJobResponseValidationError{
+				field:  "Expires",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if all {
 		switch v := interface{}(m.GetJobProps()).(type) {
