@@ -67,8 +67,9 @@ func New(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager) *OAuth2 {
 		default:
 			provider = &providers.Generic{
 				BaseProvider: providers.BaseProvider{
-					Name:        p.Name,
-					UserInfoURL: p.Endpoints.UserInfoURL,
+					Name:          p.Name,
+					UserInfoURL:   p.Endpoints.UserInfoURL,
+					DefaultAvatar: p.DefaultAvatar,
 				},
 			}
 		}
@@ -151,7 +152,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 
 	state, err := utils.GenerateRandomString(64)
 	if err != nil {
-		o.handleRedirect(c, err, false, false, "internal_error")
+		o.handleRedirect(c, err, connectOnly, false, "internal_error")
 		return
 	}
 
@@ -162,7 +163,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 	provider, err := o.GetProvider(c)
 	if err != nil {
 		o.logger.Error("failed to get provider", zap.Error(err))
-		o.handleRedirect(c, err, false, false, "invalid_provider")
+		o.handleRedirect(c, err, connectOnly, false, "invalid_provider")
 		return
 	}
 
@@ -248,13 +249,17 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		return
 	}
 
-	newToken, err := o.tm.NewWithClaims(auth.BuildTokenClaimsFromAccount(account, nil))
+	claims := auth.BuildTokenClaimsFromAccount(account, nil)
+	newToken, err := o.tm.NewWithClaims(claims)
 	if err != nil {
 		o.handleRedirect(c, err, connectOnly, true, "internal_error")
 		return
 	}
 
-	c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth-connect=success&token="+url.QueryEscape(newToken))
+	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf(LoginRedirBase+"?oauth-connect=success&t=%s&exp=%d",
+		url.QueryEscape(newToken),
+		claims.ExpiresAt.Time.UTC().UnixNano()/1e6,
+	))
 }
 
 func (o *OAuth2) getUserInfo(ctx context.Context, provider string, userInfo *providers.UserInfo) (*model.FivenetAccounts, error) {

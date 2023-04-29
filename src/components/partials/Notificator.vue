@@ -20,7 +20,7 @@ async function streamNotifications(): Promise<void> {
     if (stream.value !== undefined) return;
 
     const request = new StreamRequest();
-    request.setLastId(store.$state.lastId);
+    request.setLastId(store.getLastId);
 
     stream.value = $grpc.getNotificatorClient().
         stream(request).
@@ -28,7 +28,7 @@ async function streamNotifications(): Promise<void> {
             stream.value?.cancel();
         }).
         on('data', async (resp) => {
-            if (resp.getLastId() > store.$state.lastId)
+            if (resp.getLastId() > store.getLastId)
                 store.setLastId(resp.getLastId());
 
             resp.getNotificationsList().forEach(v => {

@@ -24,6 +24,7 @@ const (
 var (
 	AuthInfoKey     struct{}
 	InvalidTokenErr = status.Error(codes.Unauthenticated, "Token invalid/ expired!")
+	CheckTokenErr   = status.Error(codes.Unauthenticated, "Token check failed!")
 )
 
 type GRPCAuth struct {
@@ -125,11 +126,6 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}
 
 func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
 	return grpc_auth.AuthFromMD(ctx, "bearer")
-}
-
-func MustGetTokenFromGRPCContext(ctx context.Context) string {
-	token, _ := GetTokenFromGRPCContext(ctx)
-	return token
 }
 
 func GetUserIDFromContext(ctx context.Context) int32 {

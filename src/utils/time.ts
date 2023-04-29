@@ -12,12 +12,23 @@ export function fromSecondsToFormattedDuration(seconds: number): string {
     var m = Math.floor((seconds % 3600) / 60);
     var s = Math.floor(seconds % 60);
 
-    var dWeeks = w > 0 ? w + (w == 1 ? ' week, ' : ' weeks, ') : '';
-    var dDisplay = d > 0 ? d + (d == 1 ? ' day, ' : ' days, ') : '';
-    var hDisplay = h > 0 ? h + (h == 1 ? ' hour, ' : ' hours, ') : '';
-    var mDisplay = m > 0 ? m + (m == 1 ? ' minute, ' : ' minutes, ') : '';
-    var sDisplay = s > 0 ? s + (s == 1 ? ' second' : ' seconds') : '';
-    return dWeeks + dDisplay + hDisplay + mDisplay + sDisplay;
+    const parts = new Array<string>();
+    if (w > 0) {
+        parts.push(w + (w == 1 ? ' week' : ' weeks'));
+    }
+    if (d > 0) {
+        parts.push(d + (d == 1 ? ' day' : ' days'));
+    }
+    if (h > 0) {
+        parts.push(h + (h == 1 ? ' hour' : ' hours'));
+    }
+    if (m > 0) {
+        parts.push(m + (m == 1 ? ' minute' : ' minutes'));
+    }
+    if (s > 0) {
+        parts.push(s + (s == 1 ? ' second' : ' seconds'));
+    }
+    return parts.join(', ');
 }
 
 export function toDate(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | Date {
@@ -45,6 +56,6 @@ export function toDateRelativeString(ts: resources_timestamp_timestamp_pb.Timest
     return timeAgo.format(date, 'round');
 }
 
-export function fromString(time: string): undefined | Date{
+export function fromString(time: string): undefined | Date {
     return new Date(Date.parse(time));
 }

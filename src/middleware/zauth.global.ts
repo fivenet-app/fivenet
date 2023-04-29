@@ -8,18 +8,18 @@ export default defineNuxtRouteMiddleware(
         // Default is that a page requires authentication
         if (!to.meta.hasOwnProperty('requiresAuth') || to.meta.requiresAuth) {
             const authStore = useAuthStore();
-            if (to.meta.authOnlyToken && authStore.getAccessToken) {
+            if (to.meta.authOnlyToken && authStore.getAccessToken !== null) {
                 return true;
             }
 
             // Check if user has access token
-            if (authStore.getAccessToken) {
+            if (authStore.getAccessToken !== null) {
                 // If the user has an acitve char, check for perms otherwise, redirect to char selector
-                if (authStore.getActiveChar) {
+                if (authStore.getActiveChar !== null) {
                     // Route has permission attached to it, check if user has required permission
                     if (to.meta.permission) {
                         const perm = slug(to.meta.permission as string);
-                        if (authStore.$state.permissions.includes(perm)) {
+                        if (authStore.getPermissions.includes(perm)) {
                             // User has permission
                             return true;
                         } else {

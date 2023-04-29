@@ -18,10 +18,16 @@ var (
 	oAuth2Accounts = table.FivenetOauth2Accounts
 
 	GenericAccountErr = status.Error(codes.Internal, "Failed to get/update your account, please try again.")
+	InvalidTokenErr   = status.Error(codes.Unauthenticated, "")
 )
 
 func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
 		return nil, GenericAccountErr
 	}
@@ -84,30 +90,5 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 		Account:           accounts.ConvertFromAcc(acc),
 		Oauth2Providers:   oauth2Providers,
 		Oauth2Connections: oauth2Conns,
-	}, nil
-}
-
-func (s *Server) OAuth2Disconnect(ctx context.Context, req *OAuth2DisconnectRequest) (*OAuth2DisconnectResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
-	if err != nil {
-		return nil, GenericAccountErr
-	}
-
-	// TODO validate provider name in some way..
-
-	stmt := oAuth2Accounts.
-		DELETE().
-		WHERE(jet.AND(
-			oAuth2Accounts.AccountID.EQ(jet.Uint64(claims.AccountID)),
-			oAuth2Accounts.Provider.EQ(jet.String(req.Provider)),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, GenericAccountErr
-	}
-
-	return &OAuth2DisconnectResponse{
-		Success: true,
 	}, nil
 }

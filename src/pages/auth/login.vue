@@ -17,15 +17,17 @@ const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 const route = useRoute();
 
-const token = route.query.token;
-if (token && token !== "") {
-    authStore.updateAccessToken(token as string);
+const token = route.query.t;
+const expire = route.query.exp;
+if (token && token !== "" && expire) {
+    authStore.setAccessToken(token as string, parseInt(expire as string));
 
     notifications.dispatchNotification({
         title: 'Successfully logged in',
         content: 'Successfully logged in using social login provider.',
         type: 'info',
     });
+
     await navigateTo({ name: 'auth-character-selector' });
 }
 </script>

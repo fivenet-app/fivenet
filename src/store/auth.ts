@@ -4,6 +4,7 @@ import { defineStore } from 'pinia';
 
 export interface AuthState {
     accessToken: null | string;
+    accessTokenExpiration: null | Date;
     lastCharID: number;
     activeChar: null | User;
     loggingIn: boolean;
@@ -15,6 +16,7 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
         // Persisted to Local Storage
         accessToken: null as null | string,
+        accessTokenExpiration: null as null | Date,
         lastCharID: 0 as number,
         // Temporary
         activeChar: null as null | User,
@@ -23,7 +25,7 @@ export const useAuthStore = defineStore('auth', {
         permissions: [] as Array<String>,
     }),
     persist: {
-        paths: ['accessToken', 'lastCharID'],
+        paths: ['accessToken', 'accessTokenExpiration', 'lastCharID'],
     },
     actions: {
         loginStart(): void {
@@ -33,29 +35,34 @@ export const useAuthStore = defineStore('auth', {
             this.loggingIn = false;
             this.loginError = errorMessage;
         },
-        updateAccessToken(accessToken: null | string): void {
+        setAccessToken(accessToken: null | string, expiration: null | number | Date): void {
             this.accessToken = accessToken;
+            if (typeof expiration === 'number') expiration = new Date(expiration);
+            this.accessTokenExpiration = expiration;
         },
-        updateActiveChar(char: null | User): void {
+        setActiveChar(char: null | User): void {
             this.activeChar = char;
             this.lastCharID = char ? char.getUserId() : this.lastCharID;
         },
-        updatePermissions(permissions: string[]): void {
+        setPermissions(permissions: string[]): void {
             this.permissions = permissions;
         },
         async clear(): Promise<void> {
-            this.updateAccessToken(null);
-            this.updateActiveChar(null);
-            this.updatePermissions([]);
+            this.setAccessToken(null, null);
+            this.setActiveChar(null);
+            this.setPermissions([]);
         },
     },
     getters: {
-        getAccessToken(): null | string {
-            return this.accessToken;
+        getAccessToken: (state): null | string => state.accessToken,
+        getAccessTokenExpiration(state): null | Date {
+            if (typeof state.accessTokenExpiration === 'string')
+                state.accessTokenExpiration = new Date(Date.parse(state.accessTokenExpiration));
+
+            return state.accessTokenExpiration;
         },
-        getActiveChar(): null | User {
-            return this.activeChar;
-        },
+        getActiveChar: (state): null | User => state.activeChar,
+        getPermissions: (state): Array<String> => state.permissions,
     },
 });
 

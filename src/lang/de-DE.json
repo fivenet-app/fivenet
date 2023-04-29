@@ -266,7 +266,9 @@
         "debug_info": {
             "title": "Debug-Informationen",
             "subtitle": "Wichtige Informationen bei der Meldung von Problemen mit FiveM.",
-            "perms": "Aktuelle Berechtigungen"
+            "perms": "Aktuelle Berechtigungen",
+            "active_char_id": "ID des aktiven Characters",
+            "access_token_expiration": "Ablauf des Zugangstokens"
         }
     },
     "common": {

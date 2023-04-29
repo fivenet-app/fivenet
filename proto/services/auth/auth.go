@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/auth"
@@ -14,6 +15,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/proto/resources/jobs"
 	"github.com/galexrt/fivenet/proto/resources/rector"
+	"github.com/galexrt/fivenet/proto/resources/timestamp"
 	users "github.com/galexrt/fivenet/proto/resources/users"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -84,13 +86,15 @@ func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.Una
 	return ctx, nil
 }
 
-func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, activeChar *users.User) (string, error) {
-	return s.tm.NewWithClaims(auth.BuildTokenClaimsFromAccount(account, activeChar))
+func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, activeChar *users.User) (string, *auth.CitizenInfoClaims, error) {
+	claims := auth.BuildTokenClaimsFromAccount(account, activeChar)
+	token, err := s.tm.NewWithClaims(claims)
+	return token, claims, err
 }
 
 func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {
 	acc, err := s.getAccountFromDB(ctx, jet.AND(
-		account.RegToken.EQ(jet.String(req.RegToken)),
+		account.RegToken.EQ(jet.String(req.RegCode)),
 	))
 	if err != nil {
 		return nil, AccountCreateFailedErr
@@ -117,7 +121,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		WHERE(
 			jet.AND(
 				account.ID.EQ(jet.Uint64(acc.ID)),
-				account.RegToken.EQ(jet.String(req.RegToken)),
+				account.RegToken.EQ(jet.String(req.RegCode)),
 			),
 		)
 
@@ -170,18 +174,24 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 		return nil, InvalidLoginErr
 	}
 
-	token, err := s.createTokenFromAccountAndChar(account, nil)
+	token, claims, err := s.createTokenFromAccountAndChar(account, nil)
 	if err != nil {
 		return nil, InvalidLoginErr
 	}
 
 	return &LoginResponse{
-		Token: token,
+		Token:   token,
+		Expires: timestamp.New(claims.ExpiresAt.Time),
 	}, nil
 }
 
 func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest) (*ChangePasswordResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -228,18 +238,77 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		return nil, UpdateAccountErr
 	}
 
-	token, err := s.createTokenFromAccountAndChar(acc, nil)
+	newToken, newClaims, err := s.createTokenFromAccountAndChar(acc, nil)
 	if err != nil {
 		return nil, ChangePasswordErr
 	}
 
 	return &ChangePasswordResponse{
-		Token: token,
+		Token:   newToken,
+		Expires: timestamp.New(newClaims.ExpiresAt.Time),
 	}, nil
 }
 
+func (s *Server) CheckToken(ctx context.Context, req *CheckTokenRequest) (*CheckTokenResponse, error) {
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	resp := &CheckTokenResponse{
+		Permissions: []string{},
+	}
+
+	// If the user is logged into a character, get permissions
+	if claims.ActiveCharID > 0 {
+		if err := s.ensureUserHasRole(claims.ActiveCharID, claims.ActiveCharJob, claims.ActiveCharJobGrade); err != nil {
+			return nil, GenericLoginErr
+		}
+
+		// Load permissions of user
+		perms, err := s.p.GetAllPermissionsOfUser(claims.ActiveCharID)
+		if err != nil {
+			return nil, auth.CheckTokenErr
+		}
+
+		if len(perms) == 0 {
+			return nil, auth.CheckTokenErr
+		}
+
+		resp.Permissions = perms.GuardNames()
+	}
+
+	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
+		if claims.RenewedCount >= auth.TokenMaxRenews {
+			return nil, auth.InvalidTokenErr
+		}
+
+		auth.SetTokenClaimsTimes(claims)
+		newToken, err := s.tm.NewWithClaims(claims)
+		if err != nil {
+			return nil, auth.CheckTokenErr
+		}
+
+		resp.NewToken = &newToken
+	}
+
+	resp.Expires = timestamp.New(claims.ExpiresAt.Time)
+
+	return resp, nil
+}
+
 func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -351,7 +420,12 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
 		return nil, err
 	}
@@ -372,7 +446,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, NoCharacterFoundErr
 	}
 
-	token, err := s.createTokenFromAccountAndChar(account, char)
+	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -394,7 +468,8 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	defer s.a.Log(ctx, AuthService_ServiceDesc.ServiceName, "ChooseCharacter", rector.EVENT_TYPE_VIEWED, -1, char.UserShort())
 
 	return &ChooseCharacterResponse{
-		Token:       token,
+		Token:       newToken,
+		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
 		Permissions: perms.GuardNames(),
 		JobProps:    jProps,
 	}, nil
@@ -479,7 +554,12 @@ func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutRespons
 }
 
 func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobResponse, error) {
-	claims, err := s.tm.ParseWithClaims(auth.MustGetTokenFromGRPCContext(ctx))
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
 		return nil, err
 	}
@@ -500,13 +580,14 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		return nil, err
 	}
 
-	token, err := s.createTokenFromAccountAndChar(account, char)
+	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
 		return nil, err
 	}
 
 	return &SetJobResponse{
-		Token:    token,
+		Token:    newToken,
+		Expires:  timestamp.New(newClaims.ExpiresAt.Time),
 		JobProps: jProps,
 		Char:     char,
 	}, nil

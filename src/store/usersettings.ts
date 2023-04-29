@@ -26,12 +26,9 @@ export const useUserSettingsStore = defineStore('userSettings', {
         },
     },
     getters: {
-        getLivemapMarkerSize(state): number {
-            return state.livemapMarkerSize;
-        },
-        getLivemapCenterSelectedMarker(state): boolean {
-            return state.livemapCenterSelectedMarker;
-        },
+        getLocale: (state): string => state.locale,
+        getLivemapMarkerSize: (state): number => state.livemapMarkerSize,
+        getLivemapCenterSelectedMarker: (state): boolean => state.livemapCenterSelectedMarker,
     },
 });
 

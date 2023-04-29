@@ -22,10 +22,10 @@ useHead({
 
 await loadConfig();
 
-const store = useUserSettingsStore();
+const userSettings = useUserSettingsStore();
 
-// Set locale on load
-const locale = computed(() => store.$state.locale);
+// Set user setting locale on load of app
+const locale = computed(() => userSettings.getLocale);
 setLocale(locale.value);
 </script>
 

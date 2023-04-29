@@ -38,7 +38,7 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
             const resp = await $grpc.getAuthClient()
                 .changePassword(req, null);
 
-            authStore.updateAccessToken(resp.getToken());
+            authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
 
             notifications.dispatchNotification({
                 title: t('notifications.changed_password.title'),

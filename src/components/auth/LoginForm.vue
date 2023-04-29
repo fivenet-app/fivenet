@@ -18,8 +18,8 @@ async function login(username: string, password: string): Promise<void> {
     return new Promise(async (res, rej) => {
         // Start login
         authStore.loginStart();
-        authStore.updateActiveChar(null);
-        authStore.updatePermissions([]);
+        authStore.setActiveChar(null);
+        authStore.setPermissions([]);
 
         const req = new LoginRequest();
         req.setUsername(username);
@@ -30,12 +30,12 @@ async function login(username: string, password: string): Promise<void> {
                 .login(req, null);
 
             authStore.loginStop(null);
-            authStore.updateAccessToken(resp.getToken());
+            authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
 
             return res();
         } catch (e) {
             authStore.loginStop((e as RpcError).message);
-            authStore.updateAccessToken(null);
+            authStore.setAccessToken(null, null);
             return rej(e as RpcError);
         }
     });

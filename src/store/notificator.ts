@@ -1,3 +1,4 @@
+import { StatusCode } from 'grpc-web';
 import { StoreDefinition, defineStore } from 'pinia';
 
 export interface NotificatorState {
@@ -15,6 +16,9 @@ export const useNotificatorStore = defineStore('notificator', {
             this.lastId = lastId;
         },
     },
+    getters: {
+        getLastId: (state): number => state.lastId,
+    }
 });
 
 if (import.meta.hot) {
