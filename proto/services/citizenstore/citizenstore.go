@@ -367,6 +367,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	if err != nil {
 		return nil, FailedQueryErr
 	}
+	if props.Wanted == nil {
+		wanted := false
+		props.Wanted = &wanted
+	}
 	if props.JobName == nil {
 		props.JobName = &config.C.Game.UnemployedJob.Name
 	}
@@ -429,13 +433,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	// Create user activity
-	if req.Props.Wanted != nil {
+	if req.Props.Wanted != props.Wanted {
 		if err := s.addUserAcitvity(ctx, tx,
 			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Wanted", strconv.FormatBool(!*props.Wanted), strconv.FormatBool(*req.Props.Wanted)); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
-	if req.Props.JobName != nil {
+	if req.Props.JobName != props.JobName {
 		if err := s.addUserAcitvity(ctx, tx,
 			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Job", *props.JobName, req.Props.Job.Name); err != nil {
 			return nil, FailedQueryErr
