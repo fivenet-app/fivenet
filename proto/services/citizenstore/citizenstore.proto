@@ -37,11 +37,11 @@ message GetUserActivityResponse {
 }
 
 message SetUserPropsRequest {
-  resources.users.UserProps props = 1;
+  resources.users.UserProps props = 1 ;
 }
 
 message SetUserPropsResponse {
-  resources.users.UserProps props = 1;
+  resources.users.UserProps props = 1 [(validate.rules).message.required = true];
 }
 
 service CitizenStoreService {

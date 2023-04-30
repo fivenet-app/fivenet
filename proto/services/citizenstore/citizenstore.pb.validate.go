@@ -1006,6 +1006,17 @@ func (m *SetUserPropsResponse) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetProps() == nil {
+		err := SetUserPropsResponseValidationError{
+			field:  "Props",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetProps()).(type) {
 		case interface{ ValidateAll() error }:
