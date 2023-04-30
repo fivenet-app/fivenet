@@ -288,6 +288,9 @@ func (s *Server) CheckToken(ctx context.Context, req *CheckTokenRequest) (*Check
 			return nil, auth.InvalidTokenErr
 		}
 
+		// Increase re-newed count
+		claims.RenewedCount++
+
 		auth.SetTokenClaimsTimes(claims)
 		newToken, err := s.tm.NewWithClaims(claims)
 		if err != nil {

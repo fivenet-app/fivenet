@@ -34,7 +34,7 @@ var (
 )
 
 var (
-	FailedQueryErr          = status.Error(codes.Internal, "Failed to list/get citizen(s) date!")
+	FailedQueryErr          = status.Error(codes.Internal, "Failed to list/get citizen(s) data!")
 	JobGradeNoPermissionErr = status.Error(codes.NotFound, "No permission to access this citizen (based on the citizen's job)")
 )
 

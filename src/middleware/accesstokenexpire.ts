@@ -13,8 +13,6 @@ export default defineNuxtRouteMiddleware(
             const now = new Date();
             // Token expired, redirect to login
             if (expiration <= now) {
-                console.log('TOKEN EXPIRED');
-
                 authStore.setAccessToken(null, null);
 
                 // Only update the redirect query param if it isn't set already
@@ -27,7 +25,7 @@ export default defineNuxtRouteMiddleware(
             }
 
             // If expiration is in range of less than 4 hours, check token against server
-            const renewTime = 4 * 60 * 60 * 1000;
+            const renewTime = 24 * 60 * 60 * 1000;
             if (expiration.valueOf() - now.valueOf() < renewTime && !tokenCheckInProgress) {
                 tokenCheckInProgress = true;
                 setTimeout(async () => {
@@ -50,6 +48,7 @@ async function checkToken(): Promise<void> {
 
         const req = new CheckTokenRequest();
         req.setToken(authStore.getAccessToken!);
+
         try {
             const resp = await $grpc.getAuthClient().checkToken(req, null);
 

@@ -66,7 +66,7 @@ watch(selectedJob, async () => {
     userProps.setJob(selectedJob.value.getName());
 
     const req = new SetUserPropsRequest();
-    req.setProps(userProps)
+    req.setProps(userProps);
 
     try {
         await $grpc.getCitizenStoreClient().setUserProps(req, null);

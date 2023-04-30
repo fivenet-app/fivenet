@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
 -- Table: fivenet_user_props
 CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
   `user_id` int(11) NOT NULL,
-  `wanted` tinyint(1) NOT NULL DEFAULT 0,
+  `wanted` tinyint(1) DEFAULT 0,
   `job` varchar(20) DEFAULT NULL,
   UNIQUE KEY `idx_fivenet_user_props_unique` (`user_id`),
   KEY `idx_fivenet_user_props_wanted` (`wanted`),
