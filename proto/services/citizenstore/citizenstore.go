@@ -159,7 +159,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		}
 
 		if resp.Users[i].Props != nil && resp.Users[i].Props.Job != nil {
-			resp.Users[i].Job = *resp.Users[i].Props.Job
+			resp.Users[i].Job = *resp.Users[i].Props.JobName
 			resp.Users[i].JobGrade = -1
 		}
 
@@ -235,7 +235,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 
 		if resp.User.Props != nil && resp.User.Props.Job != nil {
-			resp.User.Job = *resp.User.Props.Job
+			resp.User.Job = *resp.User.Props.JobName
 			resp.User.JobGrade = -1
 		}
 
