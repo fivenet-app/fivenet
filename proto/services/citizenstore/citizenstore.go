@@ -90,7 +90,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 			}
 		}
 		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Job") {
-			selectors = append(selectors, userProps.Job)
+			selectors = append(selectors, userProps.Job.AS("jobname"))
 		}
 	}
 
@@ -158,7 +158,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 			resp.Users[i].JobGrade = config.C.Game.UnemployedJob.Grade
 		}
 
-		if resp.Users[i].Props != nil && resp.Users[i].Props.Job != nil {
+		if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
 			resp.Users[i].Job = *resp.Users[i].Props.JobName
 			resp.Users[i].JobGrade = -1
 		}
@@ -199,7 +199,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			selectors = append(selectors, userProps.Wanted)
 		}
 		if s.p.Can(userId, CitizenStoreServicePermKey, "FindUsers", "UserProps", "Job") {
-			selectors = append(selectors, userProps.Job)
+			selectors = append(selectors, userProps.Job.AS("userprops.job_name"))
 		}
 	}
 
@@ -362,6 +362,15 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		Props: &users.UserProps{},
 	}
 
+	// Use getUserProps
+	props, err := s.getUserProps(ctx, userId)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	if props.JobName == nil {
+		props.JobName = &config.C.Game.UnemployedJob.Name
+	}
+
 	updateSets := []jet.ColumnAssigment{}
 	// Field Permission Check
 	if req.Props.Wanted != nil {
@@ -370,6 +379,8 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		}
 
 		updateSets = append(updateSets, userProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
+	} else {
+		req.Props.Wanted = props.Wanted
 	}
 	if req.Props.JobName != nil {
 		if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Job") {
@@ -386,6 +397,8 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		}
 
 		updateSets = append(updateSets, userProps.Job.SET(jet.String(resp.Props.Job.Name)))
+	} else {
+		req.Props.JobName = props.JobName
 	}
 
 	// Begin transaction
@@ -405,7 +418,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		VALUES(
 			req.Props.UserId,
 			req.Props.Wanted,
-			req.Props.Job,
+			req.Props.JobName,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			updateSets...,
@@ -418,13 +431,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Create user activity
 	if req.Props.Wanted != nil {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Wanted", strconv.FormatBool(!*req.Props.Wanted), strconv.FormatBool(*req.Props.Wanted)); err != nil {
+			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Wanted", strconv.FormatBool(!*props.Wanted), strconv.FormatBool(*req.Props.Wanted)); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
-	if req.Props.Job != nil {
+	if req.Props.JobName != nil {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Job", req.Props.Job.Name, req.Props.Job.Name); err != nil {
+			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Job", *props.JobName, req.Props.Job.Name); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
@@ -437,6 +450,30 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	auditState = rector.EVENT_TYPE_UPDATED
 
 	return resp, nil
+}
+
+func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserProps, error) {
+	stmt := userProps.
+		SELECT(
+			userProps.UserID,
+			userProps.Wanted,
+			userProps.Job,
+		).
+		FROM(userProps).
+		WHERE(
+			userProps.UserID.EQ(jet.Int32(userId)),
+		).
+		LIMIT(1)
+
+	var dest users.UserProps
+	dest.UserId = userId
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	return &dest, nil
 }
 
 func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType int16, key string, oldValue string, newValue string) error {
