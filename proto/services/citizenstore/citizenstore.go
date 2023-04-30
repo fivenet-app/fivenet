@@ -376,6 +376,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user job!")
 		}
 
+		if utils.InStringSlice(config.C.Game.PublicJobs, *req.Props.JobName) {
+			return nil, status.Error(codes.InvalidArgument, "You can't set a state job!")
+		}
+
 		resp.Props.Job = s.c.GetJobByName(*req.Props.JobName)
 		if resp.Props.Job == nil {
 			return nil, status.Error(codes.PermissionDenied, "Invalid job set!")
