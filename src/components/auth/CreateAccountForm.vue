@@ -22,7 +22,7 @@ const currPassword = ref<string>('');
 async function createAccount(regToken: string, username: string, password: string): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new CreateAccountRequest();
-        req.setRegToken(regToken);
+        req.setRegCode(regToken);
         req.setUsername(username);
         req.setPassword(password);
 
