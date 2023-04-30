@@ -226,7 +226,29 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	if resp.User != nil {
 		if utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
 			// Make sure user has permission to see that grade
-			if !s.p.Can(userId, CitizenStoreServicePermKey, "GetUser", resp.User.Job, strconv.Itoa(int(resp.User.JobGrade))) {
+			grades, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, CitizenStoreServicePermKey+".GetUser."+resp.User.Job)
+			if err != nil {
+				return nil, FailedQueryErr
+			}
+
+			if len(grades) == 0 {
+				return nil, JobGradeNoPermissionErr
+			}
+
+			allowed := false
+
+			for _, grade := range grades {
+				i, err := strconv.Atoi(grade)
+				if err != nil {
+					return nil, FailedQueryErr
+				}
+
+				if resp.User.JobGrade <= int32(i) {
+					allowed = true
+				}
+			}
+
+			if !allowed {
 				return nil, JobGradeNoPermissionErr
 			}
 		} else {
@@ -349,7 +371,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 		updateSets = append(updateSets, userProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
 	}
-	if req.Props.Job != nil {
+	if req.Props.JobName != nil {
 		if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Job") {
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user job!")
 		}

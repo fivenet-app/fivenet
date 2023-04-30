@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { Job, JobProps } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { User, UserProps } from '@fivenet/gen/resources/users/users_pb';
 import { SetUserPropsRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
-import { SetJobPropsRequest } from '@fivenet/gen/services/rector/rector_pb';
 import {
     Dialog,
     DialogPanel,
@@ -34,35 +33,41 @@ defineEmits<{
     (e: 'close'): void,
 }>();
 
-let initializing = true;
-
-const entriesJobs = ref<Job[]>([]);
 const queryJob = ref<string>('');
-const selectedJob = ref<Job>();
+const selectedJob = ref<undefined | Job>();
 
-async function getJobs(): Promise<void> {
-    const req = new CompleteJobNamesRequest();
-    req.setSearch(queryJob.value);
+const { data: jobs } = useLazyAsyncData('jobs', () => getJobs());
 
-    const resp = await $grpc.getCompletorClient().completeJobNames(req, null);
-    entriesJobs.value = resp.getJobsList();
+async function getJobs(): Promise<Array<Job>> {
+    return new Promise(async (res, rej) => {
+        const req = new CompleteJobNamesRequest();
+        req.setSearch(queryJob.value);
+        try {
+            const resp = await $grpc.getCompletorClient().
+                completeJobNames(req, null);
+
+            return res(resp.getJobsList());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
-onMounted(async () => {
-    await getJobs();
-
-    initializing = true;
-    selectedJob.value = entriesJobs.value.find(j => j.getName() === props.user.getJob());
+watch(jobs, () => {
+    if (jobs.value) {
+        selectedJob.value = jobs.value.find(j => j.getName() === props.user.getJob());
+    }
 });
 
 watchDebounced(queryJob, async () => await getJobs(), { debounce: 750, maxWait: 2000 });
 
 watch(selectedJob, async () => {
-    if (!selectedJob.value || initializing) return initializing = false;
+    if (!selectedJob.value || selectedJob.value.getName() === props.user.getJob()) return;
 
     const userProps = new UserProps();
     userProps.setUserId(props.user.getUserId());
-    userProps.setJob(selectedJob.value.getName());
+    userProps.setJobName(selectedJob.value.getName());
 
     const req = new SetUserPropsRequest();
     req.setProps(userProps);
@@ -99,7 +104,7 @@ watch(selectedJob, async () => {
                         <DialogPanel
                             class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 h-96">
                             <div>
-                                <Combobox as="div" v-model="selectedJob">
+                                <Combobox as="div" v-model="selectedJob" nullable>
                                     <div class="relative">
                                         <ComboboxButton as="div">
                                             <ComboboxInput
@@ -108,10 +113,10 @@ watch(selectedJob, async () => {
                                                 :display-value="(job: any) => job.getLabel()" autocomplete="off" />
                                         </ComboboxButton>
 
-                                        <ComboboxOptions v-if="entriesJobs.length > 0"
+                                        <ComboboxOptions v-if="jobs"
                                             class="absolute z-10 w-full py-1 mt-5 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                            <ComboboxOption v-for="job in entriesJobs" :key="job.getName()" :value="job"
-                                                as="char" v-slot="{ active, selected }">
+                                            <ComboboxOption v-for="job in jobs" :key="job.getName()" :value="job" as="char"
+                                                v-slot="{ active, selected }">
                                                 <li
                                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                                     <span :class="['block truncate', selected && 'font-semibold']">
