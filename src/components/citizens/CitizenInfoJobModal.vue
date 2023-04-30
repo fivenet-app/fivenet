@@ -53,13 +53,12 @@ onMounted(async () => {
 
     initializing = true;
     selectedJob.value = entriesJobs.value.find(j => j.getName() === props.user.getJob());
-    initializing = false;
 });
 
 watchDebounced(queryJob, async () => await getJobs(), { debounce: 750, maxWait: 2000 });
 
 watch(selectedJob, async () => {
-    if (!selectedJob.value || initializing) return;
+    if (!selectedJob.value || initializing) return initializing = false;
 
     const userProps = new UserProps();
     userProps.setUserId(props.user.getUserId());
