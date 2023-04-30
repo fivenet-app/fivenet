@@ -62,7 +62,7 @@ watch(selectedJob, async () => {
 
     const userProps = new UserProps();
     userProps.setUserId(props.user.getUserId());
-    userProps.setJob(selectedJob.value.getName());
+    userProps.setJobName(selectedJob.value.getName());
 
     const req = new SetUserPropsRequest();
     req.setProps(userProps);
