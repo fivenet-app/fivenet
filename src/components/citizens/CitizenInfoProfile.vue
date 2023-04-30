@@ -6,6 +6,7 @@ import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
+import CitizenInfoJobModal from '~/components/citizens/CitizenInfoJobModal.vue'
 import { useClipboardStore } from '~/store/clipboard';
 import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
@@ -27,6 +28,7 @@ const props = defineProps({
 });
 
 const wantedState = ref(props.user.getProps() ? props.user.getProps()?.getWanted() : false);
+const jobModal = ref<boolean>(false);
 
 async function toggleWantedStatus(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -77,6 +79,7 @@ function openTemplates(): void {
 
 <template>
     <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" :auto-fill="true" />
+    <CitizenInfoJobModal :open="jobModal" @close="jobModal = false" :user="user" />
     <div class="w-full mx-auto max-w-7xl grow lg:flex xl:px-2">
         <div class="flex-1 xl:flex">
             <div class="px-2 py-3 xl:flex-1">
@@ -143,6 +146,21 @@ function openTemplates(): void {
 
         <div class="flex flex-col gap-2 px-2 py-4 pr-2 shrink-0 lg:w-96">
             <div class="flex-initial">
+                <button v-can="'CitizenStoreService.SetUserProps.Job'" type="button"
+                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
+                    @click="jobModal = true">
+                    Set Person's Job
+                </button>
+            </div>
+            <div class="flex-initial" v-can="'CitizenStoreService.SetUserProps.Wanted'">
+                <button type="button"
+                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
+                    @click="toggleWantedStatus()">{{ wantedState ?
+                        $t('components.citizens.citizen_info_profile.revoke_wanted') :
+                        $t('components.citizens.citizen_info_profile.set_wanted') }}
+                </button>
+            </div>
+            <div class="flex-initial">
                 <button v-can="'DocStoreService.CreateDocument'" type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="openTemplates()">
@@ -154,14 +172,6 @@ function openTemplates(): void {
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="clipboard.copy(w.location.href)">
                     {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
-                </button>
-            </div>
-            <div class="flex-initial" v-can="'CitizenStoreService.SetUserProps.Wanted'">
-                <button type="button"
-                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
-                    @click="toggleWantedStatus()">{{ wantedState ?
-                        $t('components.citizens.citizen_info_profile.revoke_wanted') :
-                        $t('components.citizens.citizen_info_profile.set_wanted') }}
                 </button>
             </div>
         </div>
