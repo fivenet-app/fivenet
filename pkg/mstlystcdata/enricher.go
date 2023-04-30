@@ -5,6 +5,7 @@ import (
 
 	"github.com/galexrt/fivenet/proto/resources/common"
 	"github.com/galexrt/fivenet/proto/resources/documents"
+	"github.com/galexrt/fivenet/proto/resources/jobs"
 )
 
 type Enricher struct {
@@ -66,4 +67,13 @@ func (e *Enricher) EnrichDocumentCategory(doc common.IDocumentCategory) {
 	} else {
 		doc.SetCategory(dc)
 	}
+}
+
+func (e *Enricher) GetJobByName(name string) *jobs.Job {
+	job, ok := e.c.jobs.Get(name)
+	if !ok {
+		return nil
+	}
+
+	return job
 }

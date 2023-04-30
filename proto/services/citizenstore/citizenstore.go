@@ -336,8 +336,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 	userId := auth.GetUserIDFromContext(ctx)
 
-	updateSets := []jet.ColumnAssigment{}
+	resp := &SetUserPropsResponse{
+		Props: &users.UserProps{},
+	}
 
+	updateSets := []jet.ColumnAssigment{}
 	// Field Permission Check
 	if req.Props.Wanted != nil {
 		if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
@@ -351,7 +354,12 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user job!")
 		}
 
-		updateSets = append(updateSets, userProps.Job.SET(jet.String(*req.Props.Job)))
+		resp.Props.Job = s.c.GetJobByName(*req.Props.JobName)
+		if resp.Props.Job == nil {
+			return nil, status.Error(codes.PermissionDenied, "Invalid job set!")
+		}
+
+		updateSets = append(updateSets, userProps.Job.SET(jet.String(resp.Props.Job.Name)))
 	}
 
 	// Begin transaction
@@ -390,7 +398,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	if req.Props.Job != nil {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Job", *req.Props.Job, *req.Props.Job); err != nil {
+			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Job", req.Props.Job.Name, req.Props.Job.Name); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
@@ -402,7 +410,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 	auditState = rector.EVENT_TYPE_UPDATED
 
-	return &SetUserPropsResponse{}, nil
+	return resp, nil
 }
 
 func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType int16, key string, oldValue string, newValue string) error {

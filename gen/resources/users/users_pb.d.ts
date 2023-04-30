@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
 import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
 
 
@@ -176,8 +177,13 @@ export class UserProps extends jspb.Message {
   hasWanted(): boolean;
   clearWanted(): UserProps;
 
-  getJob(): string;
-  setJob(value: string): UserProps;
+  getJobName(): string;
+  setJobName(value: string): UserProps;
+  hasJobName(): boolean;
+  clearJobName(): UserProps;
+
+  getJob(): resources_jobs_jobs_pb.Job | undefined;
+  setJob(value?: resources_jobs_jobs_pb.Job): UserProps;
   hasJob(): boolean;
   clearJob(): UserProps;
 
@@ -193,7 +199,8 @@ export namespace UserProps {
   export type AsObject = {
     userId: number,
     wanted?: boolean,
-    job?: string,
+    jobName?: string,
+    job?: resources_jobs_jobs_pb.Job.AsObject,
   }
 
   export enum WantedCase { 
@@ -201,9 +208,14 @@ export namespace UserProps {
     WANTED = 2,
   }
 
+  export enum JobNameCase { 
+    _JOB_NAME_NOT_SET = 0,
+    JOB_NAME = 3,
+  }
+
   export enum JobCase { 
     _JOB_NOT_SET = 0,
-    JOB = 3,
+    JOB = 4,
   }
 }
 

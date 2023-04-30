@@ -1407,7 +1407,7 @@ proto.services.citizenstore.SetUserPropsResponse.prototype.toObject = function(o
  */
 proto.services.citizenstore.SetUserPropsResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    props: (f = msg.getProps()) && resources_users_users_pb.UserProps.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1444,6 +1444,11 @@ proto.services.citizenstore.SetUserPropsResponse.deserializeBinaryFromReader = f
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = new resources_users_users_pb.UserProps;
+      reader.readMessage(value,resources_users_users_pb.UserProps.deserializeBinaryFromReader);
+      msg.setProps(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1473,6 +1478,51 @@ proto.services.citizenstore.SetUserPropsResponse.prototype.serializeBinary = fun
  */
 proto.services.citizenstore.SetUserPropsResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getProps();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      resources_users_users_pb.UserProps.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional resources.users.UserProps props = 1;
+ * @return {?proto.resources.users.UserProps}
+ */
+proto.services.citizenstore.SetUserPropsResponse.prototype.getProps = function() {
+  return /** @type{?proto.resources.users.UserProps} */ (
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserProps, 1));
+};
+
+
+/**
+ * @param {?proto.resources.users.UserProps|undefined} value
+ * @return {!proto.services.citizenstore.SetUserPropsResponse} returns this
+*/
+proto.services.citizenstore.SetUserPropsResponse.prototype.setProps = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.citizenstore.SetUserPropsResponse} returns this
+ */
+proto.services.citizenstore.SetUserPropsResponse.prototype.clearProps = function() {
+  return this.setProps(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.citizenstore.SetUserPropsResponse.prototype.hasProps = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 

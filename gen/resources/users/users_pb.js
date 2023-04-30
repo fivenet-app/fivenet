@@ -21,6 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
+var resources_jobs_jobs_pb = require('../../resources/jobs/jobs_pb.js');
+goog.object.extend(proto, resources_jobs_jobs_pb);
 var resources_timestamp_timestamp_pb = require('../../resources/timestamp/timestamp_pb.js');
 goog.object.extend(proto, resources_timestamp_timestamp_pb);
 goog.exportSymbol('proto.resources.users.License', null, global);
@@ -1335,7 +1337,8 @@ proto.resources.users.UserProps.toObject = function(includeInstance, msg) {
   var f, obj = {
     userId: jspb.Message.getFieldWithDefault(msg, 1, 0),
     wanted: jspb.Message.getBooleanFieldWithDefault(msg, 2, false),
-    job: jspb.Message.getFieldWithDefault(msg, 3, "")
+    jobName: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    job: (f = msg.getJob()) && resources_jobs_jobs_pb.Job.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1382,6 +1385,11 @@ proto.resources.users.UserProps.deserializeBinaryFromReader = function(msg, read
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
+      msg.setJobName(value);
+      break;
+    case 4:
+      var value = new resources_jobs_jobs_pb.Job;
+      reader.readMessage(value,resources_jobs_jobs_pb.Job.deserializeBinaryFromReader);
       msg.setJob(value);
       break;
     default:
@@ -1432,6 +1440,14 @@ proto.resources.users.UserProps.serializeBinaryToWriter = function(message, writ
     writer.writeString(
       3,
       f
+    );
+  }
+  f = message.getJob();
+  if (f != null) {
+    writer.writeMessage(
+      4,
+      f,
+      resources_jobs_jobs_pb.Job.serializeBinaryToWriter
     );
   }
 };
@@ -1492,10 +1508,10 @@ proto.resources.users.UserProps.prototype.hasWanted = function() {
 
 
 /**
- * optional string job = 3;
+ * optional string job_name = 3;
  * @return {string}
  */
-proto.resources.users.UserProps.prototype.getJob = function() {
+proto.resources.users.UserProps.prototype.getJobName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -1504,7 +1520,7 @@ proto.resources.users.UserProps.prototype.getJob = function() {
  * @param {string} value
  * @return {!proto.resources.users.UserProps} returns this
  */
-proto.resources.users.UserProps.prototype.setJob = function(value) {
+proto.resources.users.UserProps.prototype.setJobName = function(value) {
   return jspb.Message.setField(this, 3, value);
 };
 
@@ -1513,7 +1529,7 @@ proto.resources.users.UserProps.prototype.setJob = function(value) {
  * Clears the field making it undefined.
  * @return {!proto.resources.users.UserProps} returns this
  */
-proto.resources.users.UserProps.prototype.clearJob = function() {
+proto.resources.users.UserProps.prototype.clearJobName = function() {
   return jspb.Message.setField(this, 3, undefined);
 };
 
@@ -1522,8 +1538,45 @@ proto.resources.users.UserProps.prototype.clearJob = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.resources.users.UserProps.prototype.hasJob = function() {
+proto.resources.users.UserProps.prototype.hasJobName = function() {
   return jspb.Message.getField(this, 3) != null;
+};
+
+
+/**
+ * optional resources.jobs.Job job = 4;
+ * @return {?proto.resources.jobs.Job}
+ */
+proto.resources.users.UserProps.prototype.getJob = function() {
+  return /** @type{?proto.resources.jobs.Job} */ (
+    jspb.Message.getWrapperField(this, resources_jobs_jobs_pb.Job, 4));
+};
+
+
+/**
+ * @param {?proto.resources.jobs.Job|undefined} value
+ * @return {!proto.resources.users.UserProps} returns this
+*/
+proto.resources.users.UserProps.prototype.setJob = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.resources.users.UserProps} returns this
+ */
+proto.resources.users.UserProps.prototype.clearJob = function() {
+  return this.setJob(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.users.UserProps.prototype.hasJob = function() {
+  return jspb.Message.getField(this, 4) != null;
 };
 
 

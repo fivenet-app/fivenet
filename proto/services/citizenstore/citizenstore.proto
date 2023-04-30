@@ -40,7 +40,9 @@ message SetUserPropsRequest {
   resources.users.UserProps props = 1;
 }
 
-message SetUserPropsResponse {}
+message SetUserPropsResponse {
+  resources.users.UserProps props = 1;
+}
 
 service CitizenStoreService {
   // @perm: fields=PhoneNumber,Licenses,UserProps.Wanted,UserProps.Job;description="Citizens List and Search"

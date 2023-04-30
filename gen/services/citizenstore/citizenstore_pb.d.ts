@@ -159,6 +159,11 @@ export namespace SetUserPropsRequest {
 }
 
 export class SetUserPropsResponse extends jspb.Message {
+  getProps(): resources_users_users_pb.UserProps | undefined;
+  setProps(value?: resources_users_users_pb.UserProps): SetUserPropsResponse;
+  hasProps(): boolean;
+  clearProps(): SetUserPropsResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SetUserPropsResponse.AsObject;
   static toObject(includeInstance: boolean, msg: SetUserPropsResponse): SetUserPropsResponse.AsObject;
@@ -169,6 +174,7 @@ export class SetUserPropsResponse extends jspb.Message {
 
 export namespace SetUserPropsResponse {
   export type AsObject = {
+    props?: resources_users_users_pb.UserProps.AsObject,
   }
 }
 

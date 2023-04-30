@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.users;
 option go_package = "github.com/galexrt/fivenet/proto/resources/users;users";
 
+import "resources/jobs/jobs.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -11,7 +12,7 @@ message UserShort {
   string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
   string job = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
   string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
-  int32 job_grade = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"job_grade"
+  int32 job_grade = 5 [(validate.rules).int32.gt = -1]; // @gotags: alias:"job_grade"
   string job_grade_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
   string firstname = 7 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"firstname"
   string lastname = 8 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"lastname"
@@ -22,7 +23,7 @@ message User {
   string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
   string job = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
   string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
-  int32 job_grade = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"job_grade"
+  int32 job_grade = 5 [(validate.rules).int32.gt = -1]; // @gotags: alias:"job_grade"
   string job_grade_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
   string firstname = 7 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"firstname"
   string lastname = 8 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"lastname"
@@ -45,7 +46,8 @@ message License {
 message UserProps {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
   optional bool wanted = 2; // @gotags: alias:"wanted"
-  optional string job = 3; // @gotags: alias:"job"
+  optional string job_name = 3; // @gotags: alias:"job"
+  optional resources.jobs.Job job = 4;
 }
 
 enum USER_ACTIVITY_TYPE {

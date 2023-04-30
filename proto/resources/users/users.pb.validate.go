@@ -102,10 +102,10 @@ func (m *UserShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetJobGrade() <= 0 {
+	if m.GetJobGrade() <= -1 {
 		err := UserShortValidationError{
 			field:  "JobGrade",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than -1",
 		}
 		if !all {
 			return err
@@ -289,10 +289,10 @@ func (m *User) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetJobGrade() <= 0 {
+	if m.GetJobGrade() <= -1 {
 		err := UserValidationError{
 			field:  "JobGrade",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than -1",
 		}
 		if !all {
 			return err
@@ -687,8 +687,41 @@ func (m *UserProps) validate(all bool) error {
 		// no validation rules for Wanted
 	}
 
+	if m.JobName != nil {
+		// no validation rules for JobName
+	}
+
 	if m.Job != nil {
-		// no validation rules for Job
+
+		if all {
+			switch v := interface{}(m.GetJob()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserPropsValidationError{
+						field:  "Job",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserPropsValidationError{
+						field:  "Job",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJob()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserPropsValidationError{
+					field:  "Job",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {

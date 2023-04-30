@@ -1006,6 +1006,35 @@ func (m *SetUserPropsResponse) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetProps()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetUserPropsResponseValidationError{
+					field:  "Props",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetUserPropsResponseValidationError{
+					field:  "Props",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetProps()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetUserPropsResponseValidationError{
+				field:  "Props",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return SetUserPropsResponseMultiError(errors)
 	}
