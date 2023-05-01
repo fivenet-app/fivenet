@@ -8,8 +8,8 @@ import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/tim
 
 
 export class CreateAccountRequest extends jspb.Message {
-  getRegCode(): string;
-  setRegCode(value: string): CreateAccountRequest;
+  getRegToken(): string;
+  setRegToken(value: string): CreateAccountRequest;
 
   getUsername(): string;
   setUsername(value: string): CreateAccountRequest;
@@ -27,7 +27,7 @@ export class CreateAccountRequest extends jspb.Message {
 
 export namespace CreateAccountRequest {
   export type AsObject = {
-    regCode: string,
+    regToken: string,
     username: string,
     password: string,
   }
@@ -191,6 +191,46 @@ export namespace CheckTokenResponse {
   export enum NewTokenCase { 
     _NEW_TOKEN_NOT_SET = 0,
     NEW_TOKEN = 1,
+  }
+}
+
+export class ForgotPasswordRequest extends jspb.Message {
+  getRegToken(): string;
+  setRegToken(value: string): ForgotPasswordRequest;
+
+  getUsername(): string;
+  setUsername(value: string): ForgotPasswordRequest;
+
+  getNew(): string;
+  setNew(value: string): ForgotPasswordRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ForgotPasswordRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ForgotPasswordRequest): ForgotPasswordRequest.AsObject;
+  static serializeBinaryToWriter(message: ForgotPasswordRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ForgotPasswordRequest;
+  static deserializeBinaryFromReader(message: ForgotPasswordRequest, reader: jspb.BinaryReader): ForgotPasswordRequest;
+}
+
+export namespace ForgotPasswordRequest {
+  export type AsObject = {
+    regToken: string,
+    username: string,
+    pb_new: string,
+  }
+}
+
+export class ForgotPasswordResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ForgotPasswordResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ForgotPasswordResponse): ForgotPasswordResponse.AsObject;
+  static serializeBinaryToWriter(message: ForgotPasswordResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ForgotPasswordResponse;
+  static deserializeBinaryFromReader(message: ForgotPasswordResponse, reader: jspb.BinaryReader): ForgotPasswordResponse;
+}
+
+export namespace ForgotPasswordResponse {
+  export type AsObject = {
   }
 }
 
@@ -360,6 +400,42 @@ export namespace LogoutResponse {
   }
 }
 
+export class OAuth2DisconnectRequest extends jspb.Message {
+  getProvider(): string;
+  setProvider(value: string): OAuth2DisconnectRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OAuth2DisconnectRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: OAuth2DisconnectRequest): OAuth2DisconnectRequest.AsObject;
+  static serializeBinaryToWriter(message: OAuth2DisconnectRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OAuth2DisconnectRequest;
+  static deserializeBinaryFromReader(message: OAuth2DisconnectRequest, reader: jspb.BinaryReader): OAuth2DisconnectRequest;
+}
+
+export namespace OAuth2DisconnectRequest {
+  export type AsObject = {
+    provider: string,
+  }
+}
+
+export class OAuth2DisconnectResponse extends jspb.Message {
+  getSuccess(): boolean;
+  setSuccess(value: boolean): OAuth2DisconnectResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OAuth2DisconnectResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: OAuth2DisconnectResponse): OAuth2DisconnectResponse.AsObject;
+  static serializeBinaryToWriter(message: OAuth2DisconnectResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OAuth2DisconnectResponse;
+  static deserializeBinaryFromReader(message: OAuth2DisconnectResponse, reader: jspb.BinaryReader): OAuth2DisconnectResponse;
+}
+
+export namespace OAuth2DisconnectResponse {
+  export type AsObject = {
+    success: boolean,
+  }
+}
+
 export class SetJobRequest extends jspb.Message {
   getCharId(): number;
   setCharId(value: number): SetJobRequest;
@@ -419,42 +495,6 @@ export namespace SetJobResponse {
     expires?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
     pb_char?: resources_users_users_pb.User.AsObject,
-  }
-}
-
-export class OAuth2DisconnectRequest extends jspb.Message {
-  getProvider(): string;
-  setProvider(value: string): OAuth2DisconnectRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): OAuth2DisconnectRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: OAuth2DisconnectRequest): OAuth2DisconnectRequest.AsObject;
-  static serializeBinaryToWriter(message: OAuth2DisconnectRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): OAuth2DisconnectRequest;
-  static deserializeBinaryFromReader(message: OAuth2DisconnectRequest, reader: jspb.BinaryReader): OAuth2DisconnectRequest;
-}
-
-export namespace OAuth2DisconnectRequest {
-  export type AsObject = {
-    provider: string,
-  }
-}
-
-export class OAuth2DisconnectResponse extends jspb.Message {
-  getSuccess(): boolean;
-  setSuccess(value: boolean): OAuth2DisconnectResponse;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): OAuth2DisconnectResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: OAuth2DisconnectResponse): OAuth2DisconnectResponse.AsObject;
-  static serializeBinaryToWriter(message: OAuth2DisconnectResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): OAuth2DisconnectResponse;
-  static deserializeBinaryFromReader(message: OAuth2DisconnectResponse, reader: jspb.BinaryReader): OAuth2DisconnectResponse;
-}
-
-export namespace OAuth2DisconnectResponse {
-  export type AsObject = {
-    success: boolean,
   }
 }
 

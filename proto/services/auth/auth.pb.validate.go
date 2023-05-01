@@ -57,9 +57,9 @@ func (m *CreateAccountRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetRegCode()) != 6 {
+	if utf8.RuneCountInString(m.GetRegToken()) != 6 {
 		err := CreateAccountRequestValidationError{
-			field:  "RegCode",
+			field:  "RegToken",
 			reason: "value length must be 6 runes",
 		}
 		if !all {
@@ -69,9 +69,9 @@ func (m *CreateAccountRequest) validate(all bool) error {
 
 	}
 
-	if !_CreateAccountRequest_RegCode_Pattern.MatchString(m.GetRegCode()) {
+	if !_CreateAccountRequest_RegToken_Pattern.MatchString(m.GetRegToken()) {
 		err := CreateAccountRequestValidationError{
-			field:  "RegCode",
+			field:  "RegToken",
 			reason: "value does not match regex pattern \"^[0-9]{6}$\"",
 		}
 		if !all {
@@ -204,7 +204,7 @@ var _ interface {
 	ErrorName() string
 } = CreateAccountRequestValidationError{}
 
-var _CreateAccountRequest_RegCode_Pattern = regexp.MustCompile("^[0-9]{6}$")
+var _CreateAccountRequest_RegToken_Pattern = regexp.MustCompile("^[0-9]{6}$")
 
 var _CreateAccountRequest_Username_Pattern = regexp.MustCompile("^[a-zA-Z0-9-_]{3,24}$")
 
@@ -1090,6 +1090,268 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CheckTokenResponseValidationError{}
+
+// Validate checks the field values on ForgotPasswordRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ForgotPasswordRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ForgotPasswordRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ForgotPasswordRequestMultiError, or nil if none found.
+func (m *ForgotPasswordRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ForgotPasswordRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetRegToken()) != 6 {
+		err := ForgotPasswordRequestValidationError{
+			field:  "RegToken",
+			reason: "value length must be 6 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if !_ForgotPasswordRequest_RegToken_Pattern.MatchString(m.GetRegToken()) {
+		err := ForgotPasswordRequestValidationError{
+			field:  "RegToken",
+			reason: "value does not match regex pattern \"^[0-9]{6}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetUsername()); l < 3 || l > 24 {
+		err := ForgotPasswordRequestValidationError{
+			field:  "Username",
+			reason: "value length must be between 3 and 24 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetNew()) < 6 {
+		err := ForgotPasswordRequestValidationError{
+			field:  "New",
+			reason: "value length must be at least 6 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetNew()) > 70 {
+		err := ForgotPasswordRequestValidationError{
+			field:  "New",
+			reason: "value length must be at most 70 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return ForgotPasswordRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ForgotPasswordRequestMultiError is an error wrapping multiple validation
+// errors returned by ForgotPasswordRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ForgotPasswordRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ForgotPasswordRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ForgotPasswordRequestMultiError) AllErrors() []error { return m }
+
+// ForgotPasswordRequestValidationError is the validation error returned by
+// ForgotPasswordRequest.Validate if the designated constraints aren't met.
+type ForgotPasswordRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ForgotPasswordRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ForgotPasswordRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ForgotPasswordRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ForgotPasswordRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ForgotPasswordRequestValidationError) ErrorName() string {
+	return "ForgotPasswordRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ForgotPasswordRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sForgotPasswordRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ForgotPasswordRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ForgotPasswordRequestValidationError{}
+
+var _ForgotPasswordRequest_RegToken_Pattern = regexp.MustCompile("^[0-9]{6}$")
+
+// Validate checks the field values on ForgotPasswordResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ForgotPasswordResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ForgotPasswordResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ForgotPasswordResponseMultiError, or nil if none found.
+func (m *ForgotPasswordResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ForgotPasswordResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ForgotPasswordResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ForgotPasswordResponseMultiError is an error wrapping multiple validation
+// errors returned by ForgotPasswordResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ForgotPasswordResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ForgotPasswordResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ForgotPasswordResponseMultiError) AllErrors() []error { return m }
+
+// ForgotPasswordResponseValidationError is the validation error returned by
+// ForgotPasswordResponse.Validate if the designated constraints aren't met.
+type ForgotPasswordResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ForgotPasswordResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ForgotPasswordResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ForgotPasswordResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ForgotPasswordResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ForgotPasswordResponseValidationError) ErrorName() string {
+	return "ForgotPasswordResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ForgotPasswordResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sForgotPasswordResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ForgotPasswordResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ForgotPasswordResponseValidationError{}
 
 // Validate checks the field values on GetAccountInfoRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -2107,6 +2369,223 @@ var _ interface {
 	ErrorName() string
 } = LogoutResponseValidationError{}
 
+// Validate checks the field values on OAuth2DisconnectRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OAuth2DisconnectRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OAuth2DisconnectRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OAuth2DisconnectRequestMultiError, or nil if none found.
+func (m *OAuth2DisconnectRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OAuth2DisconnectRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetProvider()) > 50 {
+		err := OAuth2DisconnectRequestValidationError{
+			field:  "Provider",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return OAuth2DisconnectRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// OAuth2DisconnectRequestMultiError is an error wrapping multiple validation
+// errors returned by OAuth2DisconnectRequest.ValidateAll() if the designated
+// constraints aren't met.
+type OAuth2DisconnectRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OAuth2DisconnectRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OAuth2DisconnectRequestMultiError) AllErrors() []error { return m }
+
+// OAuth2DisconnectRequestValidationError is the validation error returned by
+// OAuth2DisconnectRequest.Validate if the designated constraints aren't met.
+type OAuth2DisconnectRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OAuth2DisconnectRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OAuth2DisconnectRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OAuth2DisconnectRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OAuth2DisconnectRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OAuth2DisconnectRequestValidationError) ErrorName() string {
+	return "OAuth2DisconnectRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OAuth2DisconnectRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOAuth2DisconnectRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OAuth2DisconnectRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OAuth2DisconnectRequestValidationError{}
+
+// Validate checks the field values on OAuth2DisconnectResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OAuth2DisconnectResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OAuth2DisconnectResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OAuth2DisconnectResponseMultiError, or nil if none found.
+func (m *OAuth2DisconnectResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OAuth2DisconnectResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	if len(errors) > 0 {
+		return OAuth2DisconnectResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// OAuth2DisconnectResponseMultiError is an error wrapping multiple validation
+// errors returned by OAuth2DisconnectResponse.ValidateAll() if the designated
+// constraints aren't met.
+type OAuth2DisconnectResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OAuth2DisconnectResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OAuth2DisconnectResponseMultiError) AllErrors() []error { return m }
+
+// OAuth2DisconnectResponseValidationError is the validation error returned by
+// OAuth2DisconnectResponse.Validate if the designated constraints aren't met.
+type OAuth2DisconnectResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OAuth2DisconnectResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OAuth2DisconnectResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OAuth2DisconnectResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OAuth2DisconnectResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OAuth2DisconnectResponseValidationError) ErrorName() string {
+	return "OAuth2DisconnectResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OAuth2DisconnectResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOAuth2DisconnectResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OAuth2DisconnectResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OAuth2DisconnectResponseValidationError{}
+
 // Validate checks the field values on SetJobRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -2428,220 +2907,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SetJobResponseValidationError{}
-
-// Validate checks the field values on OAuth2DisconnectRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *OAuth2DisconnectRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on OAuth2DisconnectRequest with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// OAuth2DisconnectRequestMultiError, or nil if none found.
-func (m *OAuth2DisconnectRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *OAuth2DisconnectRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if utf8.RuneCountInString(m.GetProvider()) > 50 {
-		err := OAuth2DisconnectRequestValidationError{
-			field:  "Provider",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(errors) > 0 {
-		return OAuth2DisconnectRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// OAuth2DisconnectRequestMultiError is an error wrapping multiple validation
-// errors returned by OAuth2DisconnectRequest.ValidateAll() if the designated
-// constraints aren't met.
-type OAuth2DisconnectRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m OAuth2DisconnectRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m OAuth2DisconnectRequestMultiError) AllErrors() []error { return m }
-
-// OAuth2DisconnectRequestValidationError is the validation error returned by
-// OAuth2DisconnectRequest.Validate if the designated constraints aren't met.
-type OAuth2DisconnectRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e OAuth2DisconnectRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e OAuth2DisconnectRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e OAuth2DisconnectRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e OAuth2DisconnectRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e OAuth2DisconnectRequestValidationError) ErrorName() string {
-	return "OAuth2DisconnectRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e OAuth2DisconnectRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sOAuth2DisconnectRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = OAuth2DisconnectRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = OAuth2DisconnectRequestValidationError{}
-
-// Validate checks the field values on OAuth2DisconnectResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *OAuth2DisconnectResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on OAuth2DisconnectResponse with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// OAuth2DisconnectResponseMultiError, or nil if none found.
-func (m *OAuth2DisconnectResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *OAuth2DisconnectResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Success
-
-	if len(errors) > 0 {
-		return OAuth2DisconnectResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// OAuth2DisconnectResponseMultiError is an error wrapping multiple validation
-// errors returned by OAuth2DisconnectResponse.ValidateAll() if the designated
-// constraints aren't met.
-type OAuth2DisconnectResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m OAuth2DisconnectResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m OAuth2DisconnectResponseMultiError) AllErrors() []error { return m }
-
-// OAuth2DisconnectResponseValidationError is the validation error returned by
-// OAuth2DisconnectResponse.Validate if the designated constraints aren't met.
-type OAuth2DisconnectResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e OAuth2DisconnectResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e OAuth2DisconnectResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e OAuth2DisconnectResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e OAuth2DisconnectResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e OAuth2DisconnectResponseValidationError) ErrorName() string {
-	return "OAuth2DisconnectResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e OAuth2DisconnectResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sOAuth2DisconnectResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = OAuth2DisconnectResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = OAuth2DisconnectResponseValidationError{}

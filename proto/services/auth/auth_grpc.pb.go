@@ -26,14 +26,15 @@ type AuthServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
 	CheckToken(ctx context.Context, in *CheckTokenRequest, opts ...grpc.CallOption) (*CheckTokenResponse, error)
+	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*ForgotPasswordResponse, error)
 	GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountInfoResponse, error)
 	GetCharacters(ctx context.Context, in *GetCharactersRequest, opts ...grpc.CallOption) (*GetCharactersResponse, error)
 	// @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
 	ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
+	OAuth2Disconnect(ctx context.Context, in *OAuth2DisconnectRequest, opts ...grpc.CallOption) (*OAuth2DisconnectResponse, error)
 	// @perm: description="Superuser: Allow to override their own job on the go."
 	SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error)
-	OAuth2Disconnect(ctx context.Context, in *OAuth2DisconnectRequest, opts ...grpc.CallOption) (*OAuth2DisconnectResponse, error)
 }
 
 type authServiceClient struct {
@@ -80,6 +81,15 @@ func (c *authServiceClient) CheckToken(ctx context.Context, in *CheckTokenReques
 	return out, nil
 }
 
+func (c *authServiceClient) ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*ForgotPasswordResponse, error) {
+	out := new(ForgotPasswordResponse)
+	err := c.cc.Invoke(ctx, "/services.auth.AuthService/ForgotPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authServiceClient) GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountInfoResponse, error) {
 	out := new(GetAccountInfoResponse)
 	err := c.cc.Invoke(ctx, "/services.auth.AuthService/GetAccountInfo", in, out, opts...)
@@ -116,18 +126,18 @@ func (c *authServiceClient) Logout(ctx context.Context, in *LogoutRequest, opts 
 	return out, nil
 }
 
-func (c *authServiceClient) SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error) {
-	out := new(SetJobResponse)
-	err := c.cc.Invoke(ctx, "/services.auth.AuthService/SetJob", in, out, opts...)
+func (c *authServiceClient) OAuth2Disconnect(ctx context.Context, in *OAuth2DisconnectRequest, opts ...grpc.CallOption) (*OAuth2DisconnectResponse, error) {
+	out := new(OAuth2DisconnectResponse)
+	err := c.cc.Invoke(ctx, "/services.auth.AuthService/OAuth2Disconnect", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authServiceClient) OAuth2Disconnect(ctx context.Context, in *OAuth2DisconnectRequest, opts ...grpc.CallOption) (*OAuth2DisconnectResponse, error) {
-	out := new(OAuth2DisconnectResponse)
-	err := c.cc.Invoke(ctx, "/services.auth.AuthService/OAuth2Disconnect", in, out, opts...)
+func (c *authServiceClient) SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error) {
+	out := new(SetJobResponse)
+	err := c.cc.Invoke(ctx, "/services.auth.AuthService/SetJob", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -142,14 +152,15 @@ type AuthServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
 	CheckToken(context.Context, *CheckTokenRequest) (*CheckTokenResponse, error)
+	ForgotPassword(context.Context, *ForgotPasswordRequest) (*ForgotPasswordResponse, error)
 	GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error)
 	GetCharacters(context.Context, *GetCharactersRequest) (*GetCharactersResponse, error)
 	// @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
 	ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
+	OAuth2Disconnect(context.Context, *OAuth2DisconnectRequest) (*OAuth2DisconnectResponse, error)
 	// @perm: description="Superuser: Allow to override their own job on the go."
 	SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error)
-	OAuth2Disconnect(context.Context, *OAuth2DisconnectRequest) (*OAuth2DisconnectResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -169,6 +180,9 @@ func (UnimplementedAuthServiceServer) ChangePassword(context.Context, *ChangePas
 func (UnimplementedAuthServiceServer) CheckToken(context.Context, *CheckTokenRequest) (*CheckTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckToken not implemented")
 }
+func (UnimplementedAuthServiceServer) ForgotPassword(context.Context, *ForgotPasswordRequest) (*ForgotPasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForgotPassword not implemented")
+}
 func (UnimplementedAuthServiceServer) GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountInfo not implemented")
 }
@@ -181,11 +195,11 @@ func (UnimplementedAuthServiceServer) ChooseCharacter(context.Context, *ChooseCh
 func (UnimplementedAuthServiceServer) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedAuthServiceServer) SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetJob not implemented")
-}
 func (UnimplementedAuthServiceServer) OAuth2Disconnect(context.Context, *OAuth2DisconnectRequest) (*OAuth2DisconnectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OAuth2Disconnect not implemented")
+}
+func (UnimplementedAuthServiceServer) SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetJob not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -272,6 +286,24 @@ func _AuthService_CheckToken_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_ForgotPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForgotPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ForgotPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.auth.AuthService/ForgotPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ForgotPassword(ctx, req.(*ForgotPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AuthService_GetAccountInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAccountInfoRequest)
 	if err := dec(in); err != nil {
@@ -344,24 +376,6 @@ func _AuthService_Logout_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_SetJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetJobRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).SetJob(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.auth.AuthService/SetJob",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).SetJob(ctx, req.(*SetJobRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AuthService_OAuth2Disconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OAuth2DisconnectRequest)
 	if err := dec(in); err != nil {
@@ -376,6 +390,24 @@ func _AuthService_OAuth2Disconnect_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).OAuth2Disconnect(ctx, req.(*OAuth2DisconnectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_SetJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).SetJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.auth.AuthService/SetJob",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).SetJob(ctx, req.(*SetJobRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -404,6 +436,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_CheckToken_Handler,
 		},
 		{
+			MethodName: "ForgotPassword",
+			Handler:    _AuthService_ForgotPassword_Handler,
+		},
+		{
 			MethodName: "GetAccountInfo",
 			Handler:    _AuthService_GetAccountInfo_Handler,
 		},
@@ -420,12 +456,12 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_Logout_Handler,
 		},
 		{
-			MethodName: "SetJob",
-			Handler:    _AuthService_SetJob_Handler,
-		},
-		{
 			MethodName: "OAuth2Disconnect",
 			Handler:    _AuthService_OAuth2Disconnect_Handler,
+		},
+		{
+			MethodName: "SetJob",
+			Handler:    _AuthService_SetJob_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

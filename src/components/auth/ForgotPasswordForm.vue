@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CreateAccountRequest } from '@fivenet/gen/services/auth/auth_pb';
+import { ForgotPasswordRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
 import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { object, string } from 'yup';
@@ -19,16 +19,16 @@ const { t } = useI18n();
 
 const currPassword = ref<string>('');
 
-async function createAccount(regToken: string, username: string, password: string): Promise<void> {
+async function forgotPassword(regToken: string, username: string, password: string): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new CreateAccountRequest();
+        const req = new ForgotPasswordRequest();
         req.setRegToken(regToken);
         req.setUsername(username);
-        req.setPassword(password);
+        req.setNew(password);
 
         try {
             await $grpc.getUnAuthClient().
-                createAccount(req, null);
+                forgotPassword(req, null);
 
             notifications.dispatchNotification({
                 title: t('notifications.account_created.title'),
@@ -57,27 +57,27 @@ const { handleSubmit } = useForm({
     ),
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await createAccount(values.registrationToken, values.username, values.password));
+const onSubmit = handleSubmit(async (values): Promise<void> => await forgotPassword(values.registrationToken, values.username, values.password));
 </script>
 
 <template>
     <h2 class="pb-4 text-3xl text-center text-white">
-        {{ $t('components.auth.create_account.title') }}
+        {{ $t('components.auth.forgot_password.title') }}
     </h2>
 
     <p class="pb-4 text-sm text-white">
-        {{ $t('components.auth.create_account.subtitle') }}
+        {{ $t('components.auth.forgot_password.subtitle') }}
     </p>
 
     <form @submit="onSubmit" class="my-2 space-y-6">
         <div>
             <label for="registrationToken" class="sr-only">
-                {{ $t('components.auth.create_account.registration_token') }}
+                {{ $t('components.auth.forgot_password.registration_token') }}
             </label>
             <div>
                 <Field id="registrationToken" name="registrationToken" type="text" inputmode="numeric"
                     aria-describedby="hint" pattern="[0-9]*" autocomplete="registrationToken"
-                    :placeholder="$t('components.auth.create_account.registration_token')"
+                    :placeholder="$t('components.auth.forgot_password.registration_token')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6" />
                 <ErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
             </div>
@@ -109,7 +109,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
         <div>
             <button type="submit"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-                {{ $t('components.auth.create_account.submit_button') }}
+                {{ $t('components.auth.forgot_password.submit_button') }}
             </button>
         </div>
     </form>
@@ -117,9 +117,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
     <div class="mt-6">
         <button type="button" @click="$emit('back')"
             class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
-            {{ $t('components.auth.create_account.back_to_login_button') }}
+            {{ $t('components.auth.forgot_password.back_to_login_button') }}
         </button>
     </div>
 
-    <Alert v-if="accountError" :title="$t('components.auth.create_account.create_error')" :message="accountError" />
+    <Alert v-if="accountError" :title="$t('components.auth.forgot_password.create_error')" :message="accountError" />
 </template>

@@ -93,9 +93,9 @@ func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, a
 }
 
 func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {
-	acc, err := s.getAccountFromDB(ctx, jet.AND(
-		account.RegToken.EQ(jet.String(req.RegCode)),
-	))
+	acc, err := s.getAccountFromDB(ctx,
+		account.RegToken.EQ(jet.String(req.RegToken)),
+	)
 	if err != nil {
 		return nil, AccountCreateFailedErr
 	}
@@ -121,7 +121,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		WHERE(
 			jet.AND(
 				account.ID.EQ(jet.Uint64(acc.ID)),
-				account.RegToken.EQ(jet.String(req.RegCode)),
+				account.RegToken.EQ(jet.String(req.RegToken)),
 			),
 		)
 
@@ -155,7 +155,10 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error) {
 	req.Username = strings.TrimSpace(req.Username)
 
-	account, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(req.Username)))
+	account, err := s.getAccountFromDB(ctx, jet.AND(
+		account.Username.EQ(jet.String(req.Username)),
+		account.RegToken.IS_NULL(),
+	))
 	if err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
 			return nil, InvalidLoginErr
@@ -303,6 +306,52 @@ func (s *Server) CheckToken(ctx context.Context, req *CheckTokenRequest) (*Check
 	resp.Expires = timestamp.New(claims.ExpiresAt.Time)
 
 	return resp, nil
+}
+
+func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest) (*ForgotPasswordResponse, error) {
+	acc, err := s.getAccountFromDB(ctx, jet.AND(
+		account.Username.EQ(jet.String(req.Username)),
+		account.RegToken.EQ(jet.String(req.RegToken)),
+	))
+	if err != nil {
+		if errors.Is(qrm.ErrNoRows, err) {
+			return nil, ChangePasswordErr
+		}
+
+		return nil, err
+	}
+
+	// No password set
+	if acc.Password == nil {
+		return nil, NoAccountErr
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.New), 14)
+	if err != nil {
+		return nil, ChangePasswordErr
+	}
+
+	pass := string(hashedPassword)
+	acc.Password = &pass
+
+	stmt := account.
+		UPDATE(
+			account.Password,
+			account.RegToken,
+		).
+		SET(
+			account.Password.SET(jet.String(pass)),
+			account.RegToken.SET(jet.StringExp(jet.NULL)),
+		).
+		WHERE(
+			account.ID.EQ(jet.Uint64(acc.ID)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, ChangePasswordErr
+	}
+
+	return &ForgotPasswordResponse{}, nil
 }
 
 func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (*GetCharactersResponse, error) {

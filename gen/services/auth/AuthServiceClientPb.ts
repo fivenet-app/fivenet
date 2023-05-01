@@ -211,6 +211,49 @@ export class AuthServiceClient {
     this.methodDescriptorCheckToken);
   }
 
+  methodDescriptorForgotPassword = new grpcWeb.MethodDescriptor(
+    '/services.auth.AuthService/ForgotPassword',
+    grpcWeb.MethodType.UNARY,
+    services_auth_auth_pb.ForgotPasswordRequest,
+    services_auth_auth_pb.ForgotPasswordResponse,
+    (request: services_auth_auth_pb.ForgotPasswordRequest) => {
+      return request.serializeBinary();
+    },
+    services_auth_auth_pb.ForgotPasswordResponse.deserializeBinary
+  );
+
+  forgotPassword(
+    request: services_auth_auth_pb.ForgotPasswordRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_auth_auth_pb.ForgotPasswordResponse>;
+
+  forgotPassword(
+    request: services_auth_auth_pb.ForgotPasswordRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_auth_auth_pb.ForgotPasswordResponse) => void): grpcWeb.ClientReadableStream<services_auth_auth_pb.ForgotPasswordResponse>;
+
+  forgotPassword(
+    request: services_auth_auth_pb.ForgotPasswordRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_auth_auth_pb.ForgotPasswordResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.auth.AuthService/ForgotPassword',
+        request,
+        metadata || {},
+        this.methodDescriptorForgotPassword,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.auth.AuthService/ForgotPassword',
+    request,
+    metadata || {},
+    this.methodDescriptorForgotPassword);
+  }
+
   methodDescriptorGetAccountInfo = new grpcWeb.MethodDescriptor(
     '/services.auth.AuthService/GetAccountInfo',
     grpcWeb.MethodType.UNARY,
@@ -383,49 +426,6 @@ export class AuthServiceClient {
     this.methodDescriptorLogout);
   }
 
-  methodDescriptorSetJob = new grpcWeb.MethodDescriptor(
-    '/services.auth.AuthService/SetJob',
-    grpcWeb.MethodType.UNARY,
-    services_auth_auth_pb.SetJobRequest,
-    services_auth_auth_pb.SetJobResponse,
-    (request: services_auth_auth_pb.SetJobRequest) => {
-      return request.serializeBinary();
-    },
-    services_auth_auth_pb.SetJobResponse.deserializeBinary
-  );
-
-  setJob(
-    request: services_auth_auth_pb.SetJobRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_auth_auth_pb.SetJobResponse>;
-
-  setJob(
-    request: services_auth_auth_pb.SetJobRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: services_auth_auth_pb.SetJobResponse) => void): grpcWeb.ClientReadableStream<services_auth_auth_pb.SetJobResponse>;
-
-  setJob(
-    request: services_auth_auth_pb.SetJobRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: services_auth_auth_pb.SetJobResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/services.auth.AuthService/SetJob',
-        request,
-        metadata || {},
-        this.methodDescriptorSetJob,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/services.auth.AuthService/SetJob',
-    request,
-    metadata || {},
-    this.methodDescriptorSetJob);
-  }
-
   methodDescriptorOAuth2Disconnect = new grpcWeb.MethodDescriptor(
     '/services.auth.AuthService/OAuth2Disconnect',
     grpcWeb.MethodType.UNARY,
@@ -467,6 +467,49 @@ export class AuthServiceClient {
     request,
     metadata || {},
     this.methodDescriptorOAuth2Disconnect);
+  }
+
+  methodDescriptorSetJob = new grpcWeb.MethodDescriptor(
+    '/services.auth.AuthService/SetJob',
+    grpcWeb.MethodType.UNARY,
+    services_auth_auth_pb.SetJobRequest,
+    services_auth_auth_pb.SetJobResponse,
+    (request: services_auth_auth_pb.SetJobRequest) => {
+      return request.serializeBinary();
+    },
+    services_auth_auth_pb.SetJobResponse.deserializeBinary
+  );
+
+  setJob(
+    request: services_auth_auth_pb.SetJobRequest,
+    metadata: grpcWeb.Metadata | null): Promise<services_auth_auth_pb.SetJobResponse>;
+
+  setJob(
+    request: services_auth_auth_pb.SetJobRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: services_auth_auth_pb.SetJobResponse) => void): grpcWeb.ClientReadableStream<services_auth_auth_pb.SetJobResponse>;
+
+  setJob(
+    request: services_auth_auth_pb.SetJobRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: services_auth_auth_pb.SetJobResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/services.auth.AuthService/SetJob',
+        request,
+        metadata || {},
+        this.methodDescriptorSetJob,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/services.auth.AuthService/SetJob',
+    request,
+    metadata || {},
+    this.methodDescriptorSetJob);
   }
 
 }
