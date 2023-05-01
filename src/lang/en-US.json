@@ -148,11 +148,11 @@
             },
             "create_account": {
                 "title": "Create Account",
-                "subtitle": "To create an account join the FiveM server and run /fivenet command.",
                 "registration_token": "Registration Token",
                 "submit_button": "Create Account",
                 "back_to_login_button": "Back to Login",
-                "create_error": "There was an error creating your account, please try again!"
+                "create_error": "There was an error creating your account, please try again!",
+                "subtitle": "To create an account join the FiveM server and run /fivenet command."
             },
             "change_password_modal": {
                 "change_password": "Change Password",
