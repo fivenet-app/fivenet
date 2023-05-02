@@ -33,8 +33,8 @@ const props = defineProps({
 function addToClipboard(): void {
     clipboard.addUser(props.user);
     notifications.dispatchNotification({
-        title: t('notifications.citizen_add.title'),
-        content: t('notifications.citizen_add.content'),
+        title: t('notifications.clipboard.citizen_add.title'),
+        content: t('notifications.clipboard.citizen_add.content'),
         duration: 3500,
         type: 'info'
     });

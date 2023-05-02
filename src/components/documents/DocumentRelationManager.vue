@@ -58,30 +58,30 @@ const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
     { name: t('components.documents.document_managers.add_new'), icon: UserPlusIcon },
 ]);
 
-const entriesUsers = ref<User[]>([]);
 const queryChar = ref('');
 
-onMounted(async () => {
-    // TODO Consider using nuxt `useLazyAsyncData` lazy loading
-    findUsers();
-});
+const { data: users, pending, refresh, error } = useLazyAsyncData(`document-${props.document}-relations-citzens-${queryChar}`, () => findUsers());
 
-watchDebounced(queryChar, async () => await findUsers(), { debounce: 750, maxWait: 2000 });
+watchDebounced(queryChar, async () => await refresh(), { debounce: 700, maxWait: 1850 });
 
-async function findUsers(): Promise<void> {
-    const req = new FindUsersRequest();
-    req.setPagination((new PaginationRequest()).setOffset(0));
-    req.setSearchName(queryChar.value);
+async function findUsers(): Promise<Array<User>> {
+    return new Promise(async (res, rej) => {
+        const req = new FindUsersRequest();
+        req.setPagination((new PaginationRequest()).setOffset(0));
+        req.setSearchName(queryChar.value);
 
-    try {
-        const resp = await $grpc.getCitizenStoreClient().
-            findUsers(req, null);
+        try {
+            const resp = await $grpc.getCitizenStoreClient().
+                findUsers(req, null);
 
-        entriesUsers.value = resp.getUsersList().filter(user => !Array.from(props.modelValue.values()).find(r => r.getTargetUserId() === user.getUserId()));
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            return res(
+                resp.getUsersList().filter(user => !Array.from(props.modelValue.values()).find(r => r.getTargetUserId() === user.getUserId()))
+            );
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 function addRelation(user: User, relation: number): void {
@@ -98,12 +98,12 @@ function addRelation(user: User, relation: number): void {
     rel.setRelation(DOC_RELATION_Util.fromInt(relation));
 
     props.modelValue.set(key, rel);
-    findUsers();
+    refresh();
 }
 
 function removeRelation(id: number): void {
     props.modelValue.delete(id);
-    findUsers();
+    refresh();
 }
 </script>
 
@@ -223,13 +223,6 @@ function removeRelation(id: number): void {
                                             </div>
                                         </TabPanel>
                                         <TabPanel class="w-full">
-                                            <div>
-                                                <label for="name" class="sr-only">Name</label>
-                                                <input type="text" name="name" id="name"
-                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                                                    v-model="queryChar" />
-                                            </div>
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle"><button
@@ -312,6 +305,13 @@ function removeRelation(id: number): void {
                                             </div>
                                         </TabPanel>
                                         <TabPanel class="w-full">
+                                            <div>
+                                                <label for="name" class="sr-only">Name</label>
+                                                <input type="text" name="name" id="name"
+                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
+                                                    v-model="queryChar" />
+                                            </div>
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
@@ -334,8 +334,8 @@ function removeRelation(id: number): void {
                                                                     </th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="user in entriesUsers.slice(0, 8)"
+                                                            <tbody v-if="users" class="divide-y divide-base-500">
+                                                                <tr v-for="user in users.slice(0, 8)"
                                                                     :key="user.getUserId()">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
