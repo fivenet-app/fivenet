@@ -37,6 +37,7 @@ message CompleteDocumentCategoriesResponse {
 service CompletorService {
   // @perm: description="Complete Citizen Names"
   rpc CompleteCitizens(CompleteCitizensRequest) returns (CompleteCitizensRespoonse);
+  // @perm: description="Complete Job Names and Grades/Ranks"
   rpc CompleteJobs(CompleteJobsRequest) returns (CompleteJobsResponse);
   // @perm: PerJob=true;description="Complete a Jobs Document Categories"
   rpc CompleteDocumentCategories(CompleteDocumentCategoriesRequest) returns (CompleteDocumentCategoriesResponse);

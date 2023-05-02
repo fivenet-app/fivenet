@@ -31,7 +31,7 @@ const (
 
 var (
 	locs     = table.FivenetUserLocations
-	users    = table.Users.AS("usershort")
+	users    = table.Users.AS("user")
 	jobProps = table.FivenetJobProps
 )
 
@@ -190,8 +190,8 @@ func (s *Server) refreshUserLocations() error {
 			locs.X,
 			locs.Y,
 			locs.UpdatedAt,
+			users.ID.AS("user.id"),
 			users.ID.AS("usermarker.id"),
-			users.ID.AS("usershort.userid"),
 			users.Identifier,
 			users.Job,
 			users.JobGrade,

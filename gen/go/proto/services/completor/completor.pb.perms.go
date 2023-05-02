@@ -23,5 +23,10 @@ func init() {
 			PerJob:      true,
 			Description: "Complete a Jobs Document Categories",
 		},
+		{
+			Key:         CompletorServicePermKey,
+			Name:        "CompleteJobs",
+			Description: "Complete Job Names and Grades/Ranks",
+		},
 	})
 }
