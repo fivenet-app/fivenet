@@ -25,6 +25,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	DispatchMarkerLimit = 40
+)
+
 var (
 	locs     = table.FivenetUserLocations
 	users    = table.Users.AS("user")
@@ -267,7 +271,7 @@ func (s *Server) refreshDispatches() error {
 			d.Owner.ASC(),
 			d.Time.DESC(),
 		).
-		LIMIT(40)
+		LIMIT(DispatchMarkerLimit)
 
 	var dest []*model.GksphoneJobMessage
 	if err := stmt.QueryContext(s.ctx, s.db, &dest); err != nil {

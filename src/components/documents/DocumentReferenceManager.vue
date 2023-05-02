@@ -64,7 +64,7 @@ watchDebounced(queryDoc, async () => findDocuments(), { debounce: 700, maxWait: 
 async function findDocuments(): Promise<Array<Document>> {
     return new Promise(async (res, rej) => {
         const req = new FindDocumentsRequest();
-        req.setPagination((new PaginationRequest()).setOffset(0));
+        req.setPagination((new PaginationRequest()).setOffset(0).setPageSize(8));
         req.setSearch(queryDoc.value);
 
         try {
@@ -358,58 +358,61 @@ function removeReference(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="doc in documents.slice(0, 8)" :key="doc.getId()">
-                                                                    <td
-                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
-                                                                        {{ doc.getTitle() }}</td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ doc.getCreator()?.getFirstname() }} {{
-                                                                            doc.getCreator()?.getLastname() }}
-                                                                    </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ doc.getState() }}
-                                                                    </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ $t('common.created') }} <time
-                                                                            :datetime="toDateLocaleString(doc.getCreatedAt())">{{
-                                                                                toDateRelativeString(doc.getCreatedAt())
-                                                                            }}</time>
-                                                                    </td>
-                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        <div class="flex flex-row gap-2">
-                                                                            <div class="flex">
-                                                                                <button role="button"
-                                                                                    @click="addReference(doc, 0)"
-                                                                                    data-te-toggle="tooltip"
-                                                                                    :title="$t('components.documents.document_managers.links')">
-                                                                                    <DocumentPlusIcon
-                                                                                        class="w-6 h-auto text-info-500 hover:text-info-300" />
-                                                                                </button>
-                                                                                <button role="button"
-                                                                                    @click="addReference(doc, 1)"
-                                                                                    data-te-toggle="tooltip"
-                                                                                    :title="$t('components.documents.document_managers.solves')">
-                                                                                    <DocumentCheckIcon
-                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300" />
-                                                                                </button>
-                                                                                <button role="button"
-                                                                                    @click="addReference(doc, 2)"
-                                                                                    data-te-toggle="tooltip"
-                                                                                    :title="$t('components.documents.document_managers.closes')">
-                                                                                    <LockClosedIcon
-                                                                                        class="w-6 h-auto text-error-500 hover:text-error-300" />
-                                                                                </button>
-                                                                                <button role="button"
-                                                                                    @click="addReference(doc, 3)"
-                                                                                    data-te-toggle="tooltip"
-                                                                                    :title="$t('components.documents.document_managers.deprecates')">
-                                                                                    <ChevronDoubleUpIcon
-                                                                                        class="w-6 h-auto text-warn-500 hover:text-warn-300" />
-                                                                                </button>
+                                                                <template v-if="documents">
+                                                                    <tr v-for="doc in documents.slice(0, 8)"
+                                                                        :key="doc.getId()">
+                                                                        <td
+                                                                            class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
+                                                                            {{ doc.getTitle() }}</td>
+                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                            {{ doc.getCreator()?.getFirstname() }} {{
+                                                                                doc.getCreator()?.getLastname() }}
+                                                                        </td>
+                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                            {{ doc.getState() }}
+                                                                        </td>
+                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                            {{ $t('common.created') }} <time
+                                                                                :datetime="toDateLocaleString(doc.getCreatedAt())">{{
+                                                                                    toDateRelativeString(doc.getCreatedAt())
+                                                                                }}</time>
+                                                                        </td>
+                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                            <div class="flex flex-row gap-2">
+                                                                                <div class="flex">
+                                                                                    <button role="button"
+                                                                                        @click="addReference(doc, 0)"
+                                                                                        data-te-toggle="tooltip"
+                                                                                        :title="$t('components.documents.document_managers.links')">
+                                                                                        <DocumentPlusIcon
+                                                                                            class="w-6 h-auto text-info-500 hover:text-info-300" />
+                                                                                    </button>
+                                                                                    <button role="button"
+                                                                                        @click="addReference(doc, 1)"
+                                                                                        data-te-toggle="tooltip"
+                                                                                        :title="$t('components.documents.document_managers.solves')">
+                                                                                        <DocumentCheckIcon
+                                                                                            class="w-6 h-auto text-success-500 hover:text-success-300" />
+                                                                                    </button>
+                                                                                    <button role="button"
+                                                                                        @click="addReference(doc, 2)"
+                                                                                        data-te-toggle="tooltip"
+                                                                                        :title="$t('components.documents.document_managers.closes')">
+                                                                                        <LockClosedIcon
+                                                                                            class="w-6 h-auto text-error-500 hover:text-error-300" />
+                                                                                    </button>
+                                                                                    <button role="button"
+                                                                                        @click="addReference(doc, 3)"
+                                                                                        data-te-toggle="tooltip"
+                                                                                        :title="$t('components.documents.document_managers.deprecates')">
+                                                                                        <ChevronDoubleUpIcon
+                                                                                            class="w-6 h-auto text-warn-500 hover:text-warn-300" />
+                                                                                    </button>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
+                                                                        </td>
+                                                                    </tr>
+                                                                </template>
                                                             </tbody>
                                                         </table>
                                                     </div>

@@ -83,8 +83,9 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		return nil, FailedQueryErr
 	}
 
+	pag, limit := req.Pagination.GetResponseWithPageSize(DocsDefaultPageLimit)
 	resp := &FindDocumentsResponse{
-		Pagination: database.EmptyPaginationResponseWithPageSize(req.Pagination.Offset, DocsDefaultPageLimit),
+		Pagination: pag,
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -92,7 +93,8 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 
 	stmt := s.getDocumentsQuery(condition, nil,
 		DocShortContentLength, userId, job, jobGrade).
-		OFFSET(req.Pagination.Offset)
+		OFFSET(req.Pagination.Offset).
+		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
 		return nil, FailedQueryErr
@@ -102,12 +104,7 @@ func (s *Server) FindDocuments(ctx context.Context, req *FindDocumentsRequest) (
 		s.c.EnrichJobInfo(resp.Documents[i].Creator)
 	}
 
-	database.PaginationHelperWithPageSize(resp.Pagination,
-		count.TotalCount,
-		req.Pagination.Offset,
-		len(resp.Documents),
-		DocsDefaultPageLimit,
-	)
+	resp.Pagination.Update(count.TotalCount, len(resp.Documents))
 
 	return resp, nil
 }
@@ -125,20 +122,10 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document!")
 	}
 
-	condition := docs.ID.EQ(jet.Uint64(req.DocumentId))
-
-	countStmt := s.getDocumentsQuery(condition,
-		jet.ProjectionList{jet.COUNT(docs.ID).AS("datacount.totalcount")},
-		-1, userId, job, jobGrade)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, FailedQueryErr
-	}
-
 	resp := &GetDocumentResponse{}
-
-	resp.Document, err = s.getDocument(ctx, condition, userId, job, jobGrade)
+	resp.Document, err = s.getDocument(ctx,
+		docs.ID.EQ(jet.Uint64(req.DocumentId)),
+		userId, job, jobGrade)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +151,8 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, userId int32, job string, jobGrade int32) (*documents.Document, error) {
 	var doc documents.Document
 
-	stmt := s.getDocumentsQuery(condition, nil, -1, userId, job, jobGrade)
+	stmt := s.getDocumentsQuery(condition, nil, -1, userId, job, jobGrade).
+		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -259,7 +247,9 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
 	}
 
-	doc, err := s.getDocument(ctx, docs.ID.EQ(jet.Uint64(req.DocumentId)), userId, job, jobGrade)
+	doc, err := s.getDocument(ctx,
+		docs.ID.EQ(jet.Uint64(req.DocumentId)),
+		userId, job, jobGrade)
 	if err != nil {
 		return nil, err
 	}

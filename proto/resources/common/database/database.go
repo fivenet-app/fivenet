@@ -8,32 +8,35 @@ type DataCount struct {
 	TotalCount int64 // alias:"total_count"
 }
 
-func EmptyPaginationResponse(offset int64) *PaginationResponse {
-	return EmptyPaginationResponseWithPageSize(offset, DefaultPageLimit)
+func (p *PaginationRequest) GetResponse() (*PaginationResponse, int64) {
+	return p.GetResponseWithPageSize(DefaultPageLimit)
 }
 
-func EmptyPaginationResponseWithPageSize(offset int64, pageSize int64) *PaginationResponse {
+func (p *PaginationRequest) GetResponseWithPageSize(maxPageSize int64) (*PaginationResponse, int64) {
+	if p.PageSize != nil {
+		if *p.PageSize <= 0 {
+			p.PageSize = &maxPageSize
+		} else if *p.PageSize > maxPageSize {
+			p.PageSize = &maxPageSize
+		}
+	} else {
+		p.PageSize = &maxPageSize
+	}
+
 	return &PaginationResponse{
 		TotalCount: 0,
-		Offset:     offset,
+		Offset:     p.Offset,
 		End:        0,
-		PageSize:   pageSize,
-	}
+		PageSize:   *p.PageSize,
+	}, *p.PageSize
 }
 
-func PaginationHelper(pag *PaginationResponse, totalCount int64, offset int64, length int) {
-	PaginationHelperWithPageSize(pag, totalCount, offset, length, DefaultPageLimit)
-}
+func (p *PaginationResponse) Update(totalCount int64, length int) {
+	p.TotalCount = totalCount
 
-func PaginationHelperWithPageSize(pag *PaginationResponse, totalCount int64, offset int64, length int, pageSize int64) {
-	pag.TotalCount = totalCount
-	pag.PageSize = pageSize
-
-	if offset >= pag.TotalCount {
-		pag.Offset = 0
-	} else {
-		pag.Offset = offset
+	if p.Offset >= p.TotalCount {
+		p.Offset = 0
 	}
 
-	pag.End = pag.Offset + int64(length)
+	p.End = p.Offset + int64(length)
 }

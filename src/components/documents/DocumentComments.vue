@@ -19,6 +19,11 @@ const props = defineProps({
         required: true,
         type: Number,
     },
+    closed: {
+        required: false,
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emit = defineEmits<{
@@ -33,7 +38,7 @@ const { data: comments, pending, refresh, error } = useLazyAsyncData(`document-$
 async function getDocumentComments(): Promise<Array<DocumentComment>> {
     return new Promise(async (res, rej) => {
         const creq = new GetDocumentCommentsRequest();
-        creq.setPagination((new PaginationRequest()).setOffset(0));
+        creq.setPagination((new PaginationRequest()).setOffset(0).setPageSize(5));
         creq.setDocumentId(props.documentId);
 
         try {
@@ -116,7 +121,7 @@ watch(offset, async () => refresh());
 
 <template>
     <div class="pb-2">
-        <div v-can="'DocStoreService.PostDocumentComment'" class="flex items-start space-x-4">
+        <div v-if="!closed" v-can="'DocStoreService.PostDocumentComment'" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
                 <form @submit.prevent="addComment()" class="relative">
                     <div

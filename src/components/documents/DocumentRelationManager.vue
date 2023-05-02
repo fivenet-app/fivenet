@@ -67,7 +67,7 @@ watchDebounced(queryChar, async () => await refresh(), { debounce: 700, maxWait:
 async function findUsers(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {
         const req = new FindUsersRequest();
-        req.setPagination((new PaginationRequest()).setOffset(0));
+        req.setPagination((new PaginationRequest()).setOffset(0).setPageSize(8));
         req.setSearchName(queryChar.value);
 
         try {

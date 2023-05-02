@@ -6,6 +6,11 @@ export class PaginationRequest extends jspb.Message {
   getOffset(): number;
   setOffset(value: number): PaginationRequest;
 
+  getPageSize(): number;
+  setPageSize(value: number): PaginationRequest;
+  hasPageSize(): boolean;
+  clearPageSize(): PaginationRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): PaginationRequest.AsObject;
   static toObject(includeInstance: boolean, msg: PaginationRequest): PaginationRequest.AsObject;
@@ -17,6 +22,12 @@ export class PaginationRequest extends jspb.Message {
 export namespace PaginationRequest {
   export type AsObject = {
     offset: number,
+    pageSize?: number,
+  }
+
+  export enum PageSizeCase { 
+    _PAGE_SIZE_NOT_SET = 0,
+    PAGE_SIZE = 2,
   }
 }
 

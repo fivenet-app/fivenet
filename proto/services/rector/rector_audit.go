@@ -57,8 +57,9 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		return nil, err
 	}
 
+	pag, limit := req.Pagination.GetResponseWithPageSize(AuditLogPageSize)
 	resp := &ViewAuditLogResponse{
-		Pagination: database.EmptyPaginationResponseWithPageSize(req.Pagination.Offset, AuditLogPageSize),
+		Pagination: pag,
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -89,17 +90,13 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 			auditLog.CreatedAt.DESC(),
 		).
 		OFFSET(req.Pagination.Offset).
-		LIMIT(AuditLogPageSize)
+		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Logs); err != nil {
 		return nil, err
 	}
 
-	database.PaginationHelperWithPageSize(resp.Pagination,
-		count.TotalCount,
-		req.Pagination.Offset,
-		len(resp.Logs),
-		AuditLogPageSize)
+	resp.Pagination.Update(count.TotalCount, len(resp.Logs))
 
 	return resp, nil
 }

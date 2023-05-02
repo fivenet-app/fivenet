@@ -68,6 +68,21 @@ func (m *PaginationRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.PageSize != nil {
+
+		if m.GetPageSize() < 0 {
+			err := PaginationRequestValidationError{
+				field:  "PageSize",
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return PaginationRequestMultiError(errors)
 	}
