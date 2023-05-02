@@ -60,7 +60,7 @@ watch(jobs, () => {
     }
 });
 
-watchDebounced(queryJob, async () => await getJobs(), { debounce: 750, maxWait: 2000 });
+watchDebounced(queryJob, async () => await getJobs(), { debounce: 700, maxWait: 1850 });
 
 watch(selectedJob, async () => {
     if (!selectedJob.value || selectedJob.value.getName() === props.user.getJob()) return;

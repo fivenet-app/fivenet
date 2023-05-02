@@ -53,8 +53,9 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		return nil, err
 	}
 
+	pag, limit := req.Pagination.GetResponseWithPageSize(CommentsDefaultPageLimit)
 	resp := &GetDocumentCommentsResponse{
-		Pagination: database.EmptyPaginationResponseWithPageSize(req.Pagination.Offset, CommentsDefaultPageLimit),
+		Pagination: pag,
 		Comments:   []*documents.DocumentComment{},
 	}
 	if count.TotalCount <= 0 {
@@ -89,18 +90,13 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		ORDER_BY(
 			dComments.CreatedAt.DESC(),
 		).
-		LIMIT(CommentsDefaultPageLimit)
+		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Comments); err != nil {
 		return nil, err
 	}
 
-	database.PaginationHelperWithPageSize(resp.Pagination,
-		count.TotalCount,
-		req.Pagination.Offset,
-		len(resp.Comments),
-		CommentsDefaultPageLimit,
-	)
+	resp.Pagination.Update(count.TotalCount, len(resp.Comments))
 
 	for i := 0; i < len(resp.Comments); i++ {
 		if resp.Comments[i].Creator != nil {

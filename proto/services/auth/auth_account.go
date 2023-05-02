@@ -67,7 +67,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 		WHERE(
 			oAuth2Accounts.AccountID.EQ(jet.Uint64(acc.ID)),
 		).
-		LIMIT(3)
+		LIMIT(5)
 
 	oauth2Conns := []*accounts.OAuth2Account{}
 	if err := stmt.QueryContext(ctx, s.db, &oauth2Conns); err != nil {

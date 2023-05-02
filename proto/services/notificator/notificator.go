@@ -58,8 +58,9 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 		return nil, err
 	}
 
+	pag, limit := req.Pagination.GetResponse()
 	resp := &GetNotificationsResponse{
-		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
+		Pagination: pag,
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -74,7 +75,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 			condition,
 		).
 		OFFSET(req.Pagination.Offset).
-		LIMIT(database.DefaultPageLimit)
+		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.Notifications); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
@@ -82,10 +83,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 		}
 	}
 
-	database.PaginationHelper(resp.Pagination,
-		count.TotalCount,
-		req.Pagination.Offset,
-		len(resp.Notifications))
+	resp.Pagination.Update(count.TotalCount, len(resp.Notifications))
 
 	return resp, nil
 }

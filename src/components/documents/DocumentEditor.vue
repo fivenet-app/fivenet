@@ -191,7 +191,7 @@ function saveToStore(): void {
     }, 750);
 }
 
-watchDebounced(doc.value, () => saveToStore(), { debounce: 1000, maxWait: 3000 });
+watchDebounced(doc.value, () => saveToStore(), { debounce: 1250, maxWait: 3500 });
 
 watchDebounced(queryCategory, () => findCategories(), { debounce: 600, maxWait: 1400 });
 
@@ -472,14 +472,15 @@ async function editForm(): Promise<void> {
         @close="referenceManagerShow = false" />
     <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
         <div>
-            <label for="name" class="block font-medium sr-only text-s">{{ $t('common.title') }}</label>
+            <label for="name" class="block font-medium text-base">{{ $t('common.title') }}</label>
             <input v-model="doc.title" type="text" name="name"
                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                 :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`" :disabled="!canEdit" />
         </div>
         <div class="flex flex-row gap-2">
             <div class="flex-1">
-                <Combobox as="div" v-model="selectedCategory" :disabled="!canEdit">
+                <label for="category" class="block font-medium text-sm">{{ $t('common.category') }}</label>
+                <Combobox as="div" v-model="selectedCategory" :disabled="!canEdit" nullable>
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
@@ -509,12 +510,13 @@ async function editForm(): Promise<void> {
                 </Combobox>
             </div>
             <div class="flex-1">
-                <label for="name" class="block font-medium sr-only text-s">{{ $t('common.state') }}</label>
+                <label for="name" class="block font-medium text-sm">{{ $t('common.state') }}</label>
                 <input v-model="doc.state" type="text" name="state"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`" :disabled="!canEdit" />
             </div>
             <div class="flex-1">
+                <label for="closed" class="block font-medium text-sm">{{ $t('common.close', 2) }}?</label>
                 <Listbox as="div" v-model="doc.closed">
                     <div class="relative">
                         <ListboxButton :disabled="!canEdit"

@@ -18,8 +18,6 @@ func (s *Server) OAuth2Disconnect(ctx context.Context, req *OAuth2DisconnectRequ
 		return nil, GenericAccountErr
 	}
 
-	// TODO validate provider name in some way..
-
 	stmt := oAuth2Accounts.
 		DELETE().
 		WHERE(jet.AND(

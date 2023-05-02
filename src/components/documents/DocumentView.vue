@@ -221,7 +221,7 @@ function addToClipboard(): void {
                         </div>
                         <div class="mt-4" v-can="'DocStoreService.GetDocumentComments'">
                             <h2 class="text-lg font-semibold text-neutral">{{ $t('common.comment', 2) }}</h2>
-                            <DocumentComments :document-id="documentId" @counted="commentCount = $event" />
+                            <DocumentComments :document-id="documentId" :closed="document?.getClosed()" @counted="commentCount = $event" />
                         </div>
                     </div>
                 </div>

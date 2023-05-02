@@ -119,7 +119,8 @@ proto.resources.common.database.PaginationRequest.prototype.toObject = function(
  */
 proto.resources.common.database.PaginationRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    offset: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    offset: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    pageSize: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -160,6 +161,10 @@ proto.resources.common.database.PaginationRequest.deserializeBinaryFromReader = 
       var value = /** @type {number} */ (reader.readInt64());
       msg.setOffset(value);
       break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setPageSize(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -196,6 +201,13 @@ proto.resources.common.database.PaginationRequest.serializeBinaryToWriter = func
       f
     );
   }
+  f = /** @type {number} */ (jspb.Message.getField(message, 2));
+  if (f != null) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -214,6 +226,42 @@ proto.resources.common.database.PaginationRequest.prototype.getOffset = function
  */
 proto.resources.common.database.PaginationRequest.prototype.setOffset = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional int64 page_size = 2;
+ * @return {number}
+ */
+proto.resources.common.database.PaginationRequest.prototype.getPageSize = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.resources.common.database.PaginationRequest} returns this
+ */
+proto.resources.common.database.PaginationRequest.prototype.setPageSize = function(value) {
+  return jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.common.database.PaginationRequest} returns this
+ */
+proto.resources.common.database.PaginationRequest.prototype.clearPageSize = function() {
+  return jspb.Message.setField(this, 2, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.common.database.PaginationRequest.prototype.hasPageSize = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 

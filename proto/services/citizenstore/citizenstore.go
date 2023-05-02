@@ -117,8 +117,9 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		return nil, FailedQueryErr
 	}
 
+	pag, limit := req.Pagination.GetResponse()
 	resp := &FindUsersResponse{
-		Pagination: database.EmptyPaginationResponse(req.Pagination.Offset),
+		Pagination: pag,
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -136,22 +137,19 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
-		LIMIT(database.DefaultPageLimit)
+		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
 		return nil, FailedQueryErr
 	}
 
-	database.PaginationHelper(resp.Pagination,
-		count.TotalCount,
-		req.Pagination.Offset,
-		len(resp.Users))
+	resp.Pagination.Update(count.TotalCount, len(resp.Users))
 
 	for i := 0; i < len(resp.Users); i++ {
 		if utils.InStringSlice(config.C.Game.PublicJobs, resp.Users[i].Job) {
 			// Make sure user has permission to see that grade, otherwise "hide" the user's job
 			if !s.p.Can(userId, CitizenStoreServicePermKey, "GetUser", resp.Users[i].Job, strconv.Itoa(int(resp.Users[i].JobGrade))) {
-				resp.Users[i].JobGrade = -1
+				resp.Users[i].JobGrade = 0
 			}
 		} else {
 			resp.Users[i].Job = config.C.Game.UnemployedJob.Name
@@ -160,7 +158,7 @@ func (s *Server) FindUsers(ctx context.Context, req *FindUsersRequest) (*FindUse
 
 		if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
 			resp.Users[i].Job = *resp.Users[i].Props.JobName
-			resp.Users[i].JobGrade = -1
+			resp.Users[i].JobGrade = 0
 		}
 
 		s.c.EnrichJobInfo(resp.Users[i])
@@ -258,7 +256,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 		if resp.User.Props != nil && resp.User.Props.Job != nil {
 			resp.User.Job = *resp.User.Props.JobName
-			resp.User.JobGrade = -1
+			resp.User.JobGrade = 0
 		}
 
 		s.c.EnrichJobInfo(resp.User)
