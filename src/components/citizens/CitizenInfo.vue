@@ -16,10 +16,10 @@ const notifications = useNotificationsStore();
 const { t } = useI18n();
 
 const tabs = [
-    { name: t('common.profile'), icon: UserIcon, permission: 'CitizenStoreService.FindUsers' },
-    { name: t('common.vehicle', 2), icon: TruckIcon, permission: 'DMVService.FindVehicles' },
-    { name: t('common.document', 2), icon: DocumentTextIcon, permission: 'DocStoreService.GetUserDocuments' },
-    { name: t('common.activity'), icon: RectangleGroupIcon, permission: 'CitizenStoreService.GetUserActivity' },
+    { name: t('common.profile'), icon: UserIcon, permission: 'CitizenStoreService.ListCitizens' },
+    { name: t('common.vehicle', 2), icon: TruckIcon, permission: 'DMVService.ListVehicles' },
+    { name: t('common.document', 2), icon: DocumentTextIcon, permission: 'DocStoreService.ListUserDocuments' },
+    { name: t('common.activity'), icon: RectangleGroupIcon, permission: 'CitizenStoreService.ListUserActivity' },
 ];
 
 
@@ -71,13 +71,13 @@ function addToClipboard(): void {
                 <TabPanel>
                     <CitizenInfoProfile :user="user" />
                 </TabPanel>
-                <TabPanel v-can="'DMVService.FindVehicles'">
+                <TabPanel v-can="'DMVService.ListVehicles'">
                     <VehiclesList :userId="user.getUserId()" :hide-owner="true" :hide-citizen-link="true" />
                 </TabPanel>
-                <TabPanel v-can="'DocStoreService.GetUserDocuments'">
+                <TabPanel v-can="'DocStoreService.ListUserDocuments'">
                     <CitizenInfoDocuments :userId="user.getUserId()" />
                 </TabPanel>
-                <TabPanel v-can="'CitizenStoreService.GetUserActivity'">
+                <TabPanel v-can="'CitizenStoreService.ListUserActivity'">
                     <CitizenInfoActivityFeed :userId="user.getUserId()" />
                 </TabPanel>
             </TabPanels>

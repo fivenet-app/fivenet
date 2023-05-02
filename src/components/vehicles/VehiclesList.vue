@@ -3,13 +3,13 @@ import { ref, watch } from 'vue';
 import { Vehicle } from '@fivenet/gen/resources/vehicles/vehicles_pb';
 import { OrderBy, PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
-import { FindVehiclesRequest } from '@fivenet/gen/services/dmv/vehicles_pb';
+import { ListVehiclesRequest } from '@fivenet/gen/services/dmv/vehicles_pb';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import VehiclesListEntry from './VehiclesListEntry.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { UserShort } from '@fivenet/gen/resources/users/users_pb';
-import { CompleteCharNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CompleteCitizensRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
@@ -49,11 +49,11 @@ async function findChars(): Promise<void> {
         return;
     }
 
-    const req = new CompleteCharNamesRequest();
+    const req = new CompleteCitizensRequest();
     req.setSearch(queryChar.value);
 
     const resp = await $grpc.getCompletorClient().
-        completeCharNames(req, null);
+        completeCitizens(req, null);
 
     entriesChars.value = resp.getUsersList();
 }
@@ -63,11 +63,11 @@ const orderBys = ref<Array<OrderBy>>([]);
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-const { data: vehicles, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.value}`, () => findVehicles());
+const { data: vehicles, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.value}`, () => listVehicles());
 
-async function findVehicles(): Promise<Array<Vehicle>> {
+async function listVehicles(): Promise<Array<Vehicle>> {
     return new Promise(async (res, rej) => {
-        const req = new FindVehiclesRequest();
+        const req = new ListVehiclesRequest();
         req.setPagination((new PaginationRequest()).setOffset(offset.value));
         if (props.userId && props.userId > 0) {
             req.setUserId(props.userId);
@@ -80,7 +80,7 @@ async function findVehicles(): Promise<Array<Vehicle>> {
 
         try {
             const resp = await $grpc.getDMVClient().
-                findVehicles(req, null);
+                listVehicles(req, null);
 
             pagination.value = resp.getPagination();
             return res(resp.getVehiclesList());
@@ -139,7 +139,7 @@ watch(selectedChar, () => {
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <form @submit.prevent="findVehicles()">
+                    <form @submit.prevent="listVehicles()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">

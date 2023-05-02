@@ -3,7 +3,7 @@ import { PaginationRequest } from '@fivenet/gen/resources/common/database/databa
 import { DOC_RELATION_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import { DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb';
 import { User } from '@fivenet/gen/resources/users/users_pb';
-import { FindUsersRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
+import { ListCitizensRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import {
     Dialog,
     DialogPanel,
@@ -60,19 +60,19 @@ const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
 
 const queryChar = ref('');
 
-const { data: users, pending, refresh, error } = useLazyAsyncData(`document-${props.document}-relations-citzens-${queryChar}`, () => findUsers());
+const { data: users, pending, refresh, error } = useLazyAsyncData(`document-${props.document}-relations-citzens-${queryChar}`, () => listCitizens());
 
 watchDebounced(queryChar, async () => await refresh(), { debounce: 700, maxWait: 1850 });
 
-async function findUsers(): Promise<Array<User>> {
+async function listCitizens(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {
-        const req = new FindUsersRequest();
+        const req = new ListCitizensRequest();
         req.setPagination((new PaginationRequest()).setOffset(0).setPageSize(8));
         req.setSearchName(queryChar.value);
 
         try {
             const resp = await $grpc.getCitizenStoreClient().
-                findUsers(req, null);
+                listCitizens(req, null);
 
             return res(
                 resp.getUsersList().filter(user => !Array.from(props.modelValue.values()).find(r => r.getTargetUserId() === user.getUserId()))

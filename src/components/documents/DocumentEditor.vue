@@ -25,7 +25,7 @@ import {
     ComboboxOption,
     ComboboxOptions
 } from '@headlessui/vue';
-import { CompleteDocumentCategoryRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CompleteDocumentCategoriesRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/core';
 import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import DocumentReferenceManager from './DocumentReferenceManager.vue';
@@ -196,10 +196,10 @@ watchDebounced(doc.value, () => saveToStore(), { debounce: 1250, maxWait: 3500 }
 watchDebounced(queryCategory, () => findCategories(), { debounce: 600, maxWait: 1400 });
 
 async function findCategories(): Promise<void> {
-    const req = new CompleteDocumentCategoryRequest();
+    const req = new CompleteDocumentCategoriesRequest();
     req.setSearch(queryCategory.value);
 
-    const resp = await $grpc.getCompletorClient().completeDocumentCategory(req, null)
+    const resp = await $grpc.getCompletorClient().completeDocumentCategories(req, null)
     entriesCategory = resp.getCategoriesList();
 }
 

@@ -1,13 +1,13 @@
 syntax = "proto3";
 
 package services.dmv;
-option go_package = "github.com/galexrt/fivenet/proto/services/dmv;dmv";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/dmv;dmv";
 
 import "resources/common/database/database.proto";
 import "resources/vehicles/vehicles.proto";
 import "validate/validate.proto";
 
-message FindVehiclesRequest {
+message ListVehiclesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
   // Search params
@@ -16,12 +16,12 @@ message FindVehiclesRequest {
   int32 user_id = 5;
 }
 
-message FindVehiclesResponse {
+message ListVehiclesResponse {
   resources.common.database.PaginationResponse pagination = 1;
   repeated resources.vehicles.Vehicle vehicles = 2;
 }
 
 service DMVService {
-  // @perm: description="Search and list citizen's vehicles"
-  rpc FindVehicles(FindVehiclesRequest) returns (FindVehiclesResponse);
+  // @perm: description="Search and find citizen's vehicles"
+  rpc ListVehicles(ListVehiclesRequest) returns (ListVehiclesResponse);
 }

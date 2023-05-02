@@ -22,25 +22,25 @@ LOCK TABLES `fivenet_permissions` WRITE;
 /*!40000 ALTER TABLE `fivenet_permissions` DISABLE KEYS */;
 INSERT INTO `fivenet_permissions` VALUES
 (1,'2023-03-18 16:37:43.273',NULL,'AuthService.GetCharacters','authservice-getcharacters',''),
-(3,'2023-03-18 16:37:43.290',NULL,'CitizenStoreService.FindUsers','citizenstoreservice-findusers',''),
-(4,'2023-03-18 16:37:43.299',NULL,'CitizenStoreService.FindUsers.Licenses','citizenstoreservice-findusers-licenses',''),
-(5,'2023-03-18 16:37:43.307',NULL,'CitizenStoreService.FindUsers.UserProps','citizenstoreservice-findusers-userprops',''),
-(7,'2023-03-18 16:37:43.316',NULL,'CitizenStoreService.GetUserActivity','citizenstoreservice-getuseractivity',''),
-(8,'2023-03-18 16:37:43.325',NULL,'CitizenStoreService.GetUserActivity.SourceUser','citizenstoreservice-getuseractivity-sourceuser',''),
-(9,'2023-03-18 16:37:43.333',NULL,'CitizenStoreService.GetUserDocuments','citizenstoreservice-getuserdocuments',''),
+(3,'2023-03-18 16:37:43.290',NULL,'CitizenStoreService.ListCitizens','citizenstoreservice-listusers',''),
+(4,'2023-03-18 16:37:43.299',NULL,'CitizenStoreService.ListCitizens.Licenses','citizenstoreservice-listusers-licenses',''),
+(5,'2023-03-18 16:37:43.307',NULL,'CitizenStoreService.ListCitizens.UserProps','citizenstoreservice-listusers-userprops',''),
+(7,'2023-03-18 16:37:43.316',NULL,'CitizenStoreService.ListUserActivity','citizenstoreservice-listuseractivity',''),
+(8,'2023-03-18 16:37:43.325',NULL,'CitizenStoreService.ListUserActivity.SourceUser','citizenstoreservice-listuseractivity-sourceuser',''),
+(9,'2023-03-18 16:37:43.333',NULL,'CitizenStoreService.ListUserDocuments','citizenstoreservice-getuserdocuments',''),
 (10,'2023-03-18 16:37:43.342',NULL,'CitizenStoreService.SetUserProps','citizenstoreservice-setuserprops',''),
 (11,'2023-03-18 16:37:43.350',NULL,'CitizenStoreService.SetUserProps.Wanted','citizenstoreservice-setuserprops-wanted',''),
-(12,'2023-03-18 16:37:43.359',NULL,'CompletorService.CompleteDocumentCategory','completorservice-completedocumentcategory',''),
-(13,'2023-03-18 16:37:43.367',NULL,'CompletorService.CompleteDocumentCategory.ambulance','completorservice-completedocumentcategory-ambulance',''),
-(14,'2023-03-18 16:37:43.376',NULL,'CompletorService.CompleteDocumentCategory.doj','completorservice-completedocumentcategory-doj',''),
-(15,'2023-03-18 16:37:43.384',NULL,'CompletorService.CompleteDocumentCategory.fib','completorservice-completedocumentcategory-fib',''),
-(16,'2023-03-18 16:37:43.393',NULL,'CompletorService.CompleteDocumentCategory.police','completorservice-completedocumentcategory-police',''),
+(12,'2023-03-18 16:37:43.359',NULL,'CompletorService.CompleteDocumentCategories','completorservice-completedocumentcategory',''),
+(13,'2023-03-18 16:37:43.367',NULL,'CompletorService.CompleteDocumentCategories.ambulance','completorservice-completedocumentcategory-ambulance',''),
+(14,'2023-03-18 16:37:43.376',NULL,'CompletorService.CompleteDocumentCategories.doj','completorservice-completedocumentcategory-doj',''),
+(15,'2023-03-18 16:37:43.384',NULL,'CompletorService.CompleteDocumentCategories.fib','completorservice-completedocumentcategory-fib',''),
+(16,'2023-03-18 16:37:43.393',NULL,'CompletorService.CompleteDocumentCategories.police','completorservice-completedocumentcategory-police',''),
 (17,'2023-03-18 16:37:43.401',NULL,'CompletorService.CompleteJobGrades','completorservice-completejobgrades',''),
 (19,'2023-03-18 16:37:43.418',NULL,'DocStoreService.AddDocumentReference','docstoreservice-adddocumentreference',''),
 (20,'2023-03-18 16:37:43.426',NULL,'DocStoreService.AddDocumentRelation','docstoreservice-adddocumentrelation',''),
 (21,'2023-03-18 16:37:43.435',NULL,'DocStoreService.CreateDocument','docstoreservice-createorupdatedocument',''),
 (22,'2023-03-18 16:37:43.443',NULL,'DocStoreService.PostDocumentComment','docstoreservice-postdocumentcomment',''),
-(23,'2023-03-18 16:37:43.460',NULL,'DocStoreService.FindDocuments','docstoreservice-finddocuments',''),
+(23,'2023-03-18 16:37:43.460',NULL,'DocStoreService.ListDocuments','docstoreservice-listdocuments',''),
 (24,'2023-03-18 16:37:43.478',NULL,'DocStoreService.GetDocument','docstoreservice-getdocument',''),
 (25,'2023-03-18 16:37:43.497',NULL,'DocStoreService.GetDocumentAccess','docstoreservice-getdocumentaccess',''),
 (26,'2023-03-18 16:37:43.514',NULL,'DocStoreService.GetDocumentComments','docstoreservice-getdocumentcomments',''),
@@ -54,7 +54,7 @@ INSERT INTO `fivenet_permissions` VALUES
 (40,'2023-03-18 16:37:43.576',NULL,'LivemapperService.Stream.police','livemapperservice-stream-police',''),
 (41,'2023-03-18 16:37:43.585',NULL,'NotificatorService.GetNotifications','notificatorservice-getnotifications',''),
 (44,'2023-03-18 16:37:43.594',NULL,'Overview.View','overview-view',''),
-(45,'2023-03-18 18:00:58.866',NULL,'CompletorService.CompleteCharNames','completorservice-completecharnames','');
+(45,'2023-03-18 18:00:58.866',NULL,'CompletorService.CompleteCitizens','completorservice-completecharnames','');
 /*!40000 ALTER TABLE `fivenet_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 

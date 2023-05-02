@@ -4,7 +4,7 @@
 syntax = "proto3";
 
 package resources.timestamp;
-option go_package = "github.com/galexrt/fivenet/proto/resources/timestamp;timestamp";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp;timestamp";
 
 import "google/protobuf/timestamp.proto";
 

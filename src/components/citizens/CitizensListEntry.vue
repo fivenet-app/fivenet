@@ -53,7 +53,7 @@ function addToClipboard(): void {
                 <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">
                     <ClipboardDocumentIcon class="w-6 h-auto ml-auto mr-2.5" />
                 </button>
-                <NuxtLink v-can="'CitizenStoreService.FindUsers'"
+                <NuxtLink v-can="'CitizenStoreService.ListCitizens'"
                     :to="{ name: 'citizens-id', params: { id: user.getUserId() ?? 0 } }"
                     class="flex-initial text-primary-500 hover:text-primary-400">
                     <EyeIcon class="w-6 h-auto ml-auto mr-2.5" />

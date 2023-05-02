@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package services.docstore;
-option go_package = "github.com/galexrt/fivenet/proto/services/docstore;docstore";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/docstore;docstore";
 
 import "resources/common/database/database.proto";
 import "resources/documents/category.proto";
@@ -10,7 +10,6 @@ import "resources/documents/templates.proto";
 import "validate/validate.proto";
 
 // Templates ==================================================================
-
 message ListTemplatesRequest {}
 
 message ListTemplatesResponse {
@@ -51,8 +50,7 @@ message DeleteTemplateRequest {
 message DeleteTemplateResponse {}
 
 // Documents ==================================================================
-
-message FindDocumentsRequest {
+message ListDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
   // Search param
@@ -60,7 +58,7 @@ message FindDocumentsRequest {
   repeated uint64 category_ids = 4;
 }
 
-message FindDocumentsResponse {
+message ListDocumentsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
   repeated resources.documents.Document documents = 2;
 }
@@ -118,8 +116,7 @@ message RemoveDocumentRelationRequest {
 
 message RemoveDocumentRelationResponse {}
 
-// Doc Comments ===============================================================
-
+// Comments ===============================================================
 message GetDocumentCommentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 document_id = 2;
@@ -191,8 +188,7 @@ message DeleteDocumentRequest {
 
 message DeleteDocumentResponse {}
 
-// Doc Access =================================================================
-
+// Access =================================================================
 message GetDocumentAccessRequest {
   uint64 document_id = 1;
 }
@@ -215,17 +211,18 @@ message SetDocumentAccessRequest {
 
 message SetDocumentAccessResponse {}
 
-message GetUserDocumentsRequest {
+message ListUserDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   int32 user_id = 2 [(validate.rules).int32.gt = 0];
   repeated resources.documents.DOC_RELATION relations = 3 [(validate.rules).repeated.max_items = 3];
 }
 
-message GetUserDocumentsResponse {
+message ListUserDocumentsResponse {
   resources.common.database.PaginationResponse pagination = 1;
   repeated resources.documents.DocumentRelation relations = 2;
 }
 
+// Categories
 message ListDocumentCategoriesRequest {}
 
 message ListDocumentCategoriesResponse {
@@ -265,7 +262,7 @@ service DocStoreService {
   rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse);
 
   // @perm: description="List/ Find documents"
-  rpc FindDocuments(FindDocumentsRequest) returns (FindDocumentsResponse);
+  rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse);
   // @perm: description="View a document"
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
   // @perm: description="Create a new document"
@@ -303,7 +300,7 @@ service DocStoreService {
   rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
 
   // @perm: description="View the documents linked to a citizen"
-  rpc GetUserDocuments(GetUserDocumentsRequest) returns (GetUserDocumentsResponse);
+  rpc ListUserDocuments(ListUserDocumentsRequest) returns (ListUserDocumentsResponse);
 
   // @perm: description="List document categories"
   rpc ListDocumentCategories(ListDocumentCategoriesRequest) returns (ListDocumentCategoriesResponse);

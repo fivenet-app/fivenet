@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package services.livemapper;
-option go_package = "github.com/galexrt/fivenet/proto/services/livemapper;livemapper";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/livemapper;livemapper";
 
 import "resources/jobs/jobs.proto";
 import "resources/livemap/livemap.proto";

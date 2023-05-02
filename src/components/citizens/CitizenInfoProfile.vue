@@ -108,7 +108,7 @@ function openTemplates(): void {
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
                                     user?.getHeight() }}cm</dd>
                             </div>
-                            <div v-can="'CitizenStoreService.FindUsers.PhoneNumber'" class="sm:flex sm:px-6 sm:py-5">
+                            <div v-can="'CitizenStoreService.ListCitizens.PhoneNumber'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.phone') }} {{ $t('common.number') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
@@ -120,7 +120,7 @@ function openTemplates(): void {
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                                     {{ user?.getVisum() }}</dd>
                             </div>
-                            <div v-can="'CitizenStoreService.FindUsers.Licenses'" class="sm:flex sm:px-6 sm:py-5">
+                            <div v-can="'CitizenStoreService.ListCitizens.Licenses'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.license', 2) }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">

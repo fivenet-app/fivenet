@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package resources.documents;
-option go_package = "github.com/galexrt/fivenet/proto/resources/documents;documents";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/documents;documents";
 
 import "validate/validate.proto";
 

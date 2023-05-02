@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.title',
     requiresAuth: true,
-    permission: 'DocStoreService.FindDocuments',
+    permission: 'DocStoreService.ListDocuments',
 });
 </script>
 

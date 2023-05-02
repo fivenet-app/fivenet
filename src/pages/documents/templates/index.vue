@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.templates.title',
     requiresAuth: true,
-    permission: 'DocStoreService.FindDocuments',
+    permission: 'DocStoreService.ListDocuments',
 });
 
 async function selected(t: DocumentTemplateShort): Promise<void> {

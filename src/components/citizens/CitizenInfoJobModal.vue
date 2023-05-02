@@ -2,7 +2,7 @@
 import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { User, UserProps } from '@fivenet/gen/resources/users/users_pb';
 import { SetUserPropsRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
-import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
 import {
     Dialog,
     DialogPanel,
@@ -40,11 +40,11 @@ const { data: jobs } = useLazyAsyncData('jobs', () => getJobs());
 
 async function getJobs(): Promise<Array<Job>> {
     return new Promise(async (res, rej) => {
-        const req = new CompleteJobNamesRequest();
+        const req = new CompleteJobsRequest();
         req.setSearch(queryJob.value);
         try {
             const resp = await $grpc.getCompletorClient().
-                completeJobNames(req, null);
+                completeJobs(req, null);
 
             return res(resp.getJobsList());
         } catch (e) {

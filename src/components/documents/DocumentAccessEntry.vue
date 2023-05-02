@@ -16,7 +16,7 @@ import {
     XMarkIcon,
 } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/core';
-import { CompleteCharNamesRequest, CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CompleteCitizensRequest, CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@fivenet/gen/resources/users/users_pb';
 import { DOC_ACCESS } from '@fivenet/gen/resources/documents/documents_pb';
@@ -61,20 +61,20 @@ const queryAccessRole = ref('');
 const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRole>>();
 
 async function findJobs(): Promise<void> {
-    const req = new CompleteJobNamesRequest();
+    const req = new CompleteJobsRequest();
     req.setSearch(queryJob.value);
 
     const resp = await $grpc.getCompletorClient().
-        completeJobNames(req, null);
+        completeJobs(req, null);
     entriesJobs = resp.getJobsList();
 }
 
 async function findChars(): Promise<void> {
-    const req = new CompleteCharNamesRequest();
+    const req = new CompleteCitizensRequest();
     req.setSearch(queryChar.value);
 
     const resp = await $grpc.getCompletorClient().
-        completeCharNames(req, null);
+        completeCitizens(req, null);
     entriesChars = resp.getUsersList();
 }
 

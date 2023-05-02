@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package resources.notifications;
-option go_package = "github.com/galexrt/fivenet/proto/resources/notifications;notifications";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/notifications;notifications";
 
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";

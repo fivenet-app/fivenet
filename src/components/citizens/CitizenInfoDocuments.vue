@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb';
-import { GetUserDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { ListUserDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
 import { RpcError } from 'grpc-web';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
@@ -24,13 +24,13 @@ const { data: relations, pending, refresh, error } = useLazyAsyncData(`user-${pr
 
 async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
     return new Promise(async (res, rej) => {
-        const req = new GetUserDocumentsRequest();
+        const req = new ListUserDocumentsRequest();
         req.setPagination((new PaginationRequest()).setOffset(offset.value))
         req.setUserId(props.userId);
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                getUserDocuments(req, null);
+                listUserDocuments(req, null);
 
             return res(resp.getRelationsList());
         } catch (e) {

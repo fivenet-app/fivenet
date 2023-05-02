@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package resources.users;
-option go_package = "github.com/galexrt/fivenet/proto/resources/users;users";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/users;users";
 
 import "resources/jobs/jobs.proto";
 import "resources/timestamp/timestamp.proto";

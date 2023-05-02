@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package services.auth;
-option go_package = "github.com/galexrt/fivenet/proto/services/auth;auth";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/auth;auth";
 
 import "resources/accounts/accounts.proto";
 import "resources/accounts/oauth2.proto";
@@ -97,11 +97,11 @@ message LogoutResponse {
   bool success = 1;
 }
 
-message OAuth2DisconnectRequest {
+message DeleteOAuth2ConnectionRequest {
   string provider = 1 [(validate.rules).string.max_len = 50];
 }
 
-message OAuth2DisconnectResponse {
+message DeleteOAuth2ConnectionResponse {
   bool success = 1;
 }
 
@@ -119,20 +119,21 @@ message SetJobResponse {
 }
 
 service AuthService {
-  rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
-  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
   rpc CheckToken(CheckTokenRequest) returns (CheckTokenResponse);
-  rpc ForgotPassword(ForgotPasswordRequest) returns (ForgotPasswordResponse);
 
-  rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
+  rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+  rpc ForgotPassword(ForgotPasswordRequest) returns (ForgotPasswordResponse);
 
   rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse);
   // @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
   rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);
-  rpc Logout(LogoutRequest) returns (LogoutResponse);
 
-  rpc OAuth2Disconnect(OAuth2DisconnectRequest) returns (OAuth2DisconnectResponse);
+  rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
+
+  rpc DeleteOAuth2Connection(DeleteOAuth2ConnectionRequest) returns (DeleteOAuth2ConnectionResponse);
 
   // @perm: description="Superuser: Allow to override their own job on the go."
   rpc SetJob(SetJobRequest) returns (SetJobResponse);

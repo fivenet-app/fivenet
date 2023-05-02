@@ -49,7 +49,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
     {
         name: t('common.citizen', 2),
         href: { name: 'citizens' },
-        permission: 'CitizenStoreService.FindUsers',
+        permission: 'CitizenStoreService.ListCitizens',
         icon: UsersIcon,
         position: 'top',
         current: false,
@@ -57,7 +57,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
     {
         name: t('common.vehicle', 2),
         href: { name: 'vehicles' },
-        permission: 'DMVService.FindVehicles',
+        permission: 'DMVService.ListVehicles',
         icon: TruckIcon,
         position: 'top',
         current: false,
@@ -65,7 +65,7 @@ const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission:
     {
         name: t('common.document', 2),
         href: { name: 'documents' },
-        permission: 'DocStoreService.FindDocuments',
+        permission: 'DocStoreService.ListDocuments',
         icon: DocumentTextIcon,
         position: 'top',
         current: false,

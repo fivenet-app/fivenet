@@ -1,13 +1,13 @@
 syntax = "proto3";
 
 package services.citizenstore;
-option go_package = "github.com/galexrt/fivenet/proto/services/citizenstore;citizenstore";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore;citizenstore";
 
 import "resources/common/database/database.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-message FindUsersRequest {
+message ListCitizensRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
   string search_name = 2 [(validate.rules).string.max_len = 50];
@@ -15,7 +15,7 @@ message FindUsersRequest {
   string phone_number = 4 [(validate.rules).string.max_len = 20];
 }
 
-message FindUsersResponse {
+message ListCitizensResponse {
   resources.common.database.PaginationResponse pagination = 1;
   repeated resources.users.User users = 2;
 }
@@ -28,11 +28,11 @@ message GetUserResponse {
   resources.users.User user = 1;
 }
 
-message GetUserActivityRequest {
+message ListUserActivityRequest {
   int32 user_id = 1 [(validate.rules).int32.gt = 0];
 }
 
-message GetUserActivityResponse {
+message ListUserActivityResponse {
   repeated resources.users.UserActivity activity = 1;
 }
 
@@ -46,11 +46,11 @@ message SetUserPropsResponse {
 
 service CitizenStoreService {
   // @perm: fields=PhoneNumber,Licenses,UserProps.Wanted,UserProps.Job;description="Citizens List and Search"
-  rpc FindUsers(FindUsersRequest) returns (FindUsersResponse);
+  rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse);
   // @perm: PerJob=true;PerJobGrade=true;description="See a user's profile/ up to a certain job rank"
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // @perm: fields=SourceUser;description="Citizen Info Activity Feed"
-  rpc GetUserActivity(GetUserActivityRequest) returns (GetUserActivityResponse);
+  rpc ListUserActivity(ListUserActivityRequest) returns (ListUserActivityResponse);
   // @perm: fields=Wanted,Job;description="Set Citizen Props (e.g., wanted status)"
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 }

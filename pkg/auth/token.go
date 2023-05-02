@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/galexrt/fivenet/proto/resources/users"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/golang-jwt/jwt/v5"
 )

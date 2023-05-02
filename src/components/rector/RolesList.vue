@@ -8,7 +8,7 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import RolesListEntry from './RolesListEntry.vue';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { useAuthStore } from '~/store/auth';
 import { watchDebounced } from '@vueuse/core';
@@ -48,13 +48,13 @@ const selectedJobGrade = ref<JobGrade>();
 
 async function findJobGrades(): Promise<void> {
 
-    const req = new CompleteJobNamesRequest();
+    const req = new CompleteJobsRequest();
     req.setExactMatch(true);
     req.setCurrentJob(true);
 
     try {
         const resp = await $grpc.getCompletorClient().
-            completeJobNames(req, null);
+            completeJobs(req, null);
 
         entriesJobGrades = resp.getJobsList()[0].getGradesList();
         filteredJobGrades.value = entriesJobGrades;

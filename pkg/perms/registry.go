@@ -6,8 +6,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/proto/resources/jobs"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"

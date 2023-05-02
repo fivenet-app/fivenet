@@ -13,7 +13,7 @@ import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/t
 import { UserShort } from '@fivenet/gen/resources/users/users_pb';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/20/solid';
-import { CompleteCharNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CompleteCitizensRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/core';
 
 const { $grpc } = useNuxtApp();
@@ -69,11 +69,11 @@ async function findChars(): Promise<void> {
         return;
     }
 
-    const req = new CompleteCharNamesRequest();
+    const req = new CompleteCitizensRequest();
     req.setSearch(queryChar.value);
 
     const resp = await $grpc.getCompletorClient().
-        completeCharNames(req, null);
+        completeCitizens(req, null);
 
     entriesChars.value = resp.getUsersList();
 }

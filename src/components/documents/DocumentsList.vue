@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
-import { FindDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { ListDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Document } from '@fivenet/gen/resources/documents/documents_pb';
 import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import TablePagination from '~/components/partials/TablePagination.vue';
@@ -18,18 +18,18 @@ const search = ref({ title: '', });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-const { data: documents, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => findDocuments());
+const { data: documents, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
 
-async function findDocuments(): Promise<Array<Document>> {
+async function listDocuments(): Promise<Array<Document>> {
     return new Promise(async (res, rej) => {
-        const req = new FindDocumentsRequest();
+        const req = new ListDocumentsRequest();
         req.setPagination((new PaginationRequest()).setOffset(offset.value));
         req.setOrderbyList([]);
         req.setSearch(search.value.title);
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                findDocuments(req, null);
+                listDocuments(req, null);
 
             pagination.value = resp.getPagination();
             return res(resp.getDocumentsList());
@@ -74,7 +74,7 @@ watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 14
                                     {{ $t('common.create') }}
                                 </button>
                             </div>
-                            <div class="flex-initial" v-can="'CompletorService.CompleteDocumentCategory'">
+                            <div class="flex-initial" v-can="'CompletorService.CompleteDocumentCategories'">
                                 <NuxtLink :to="{ name: 'documents-categories' }"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                     {{ $t('common.category', 2) }}

@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.citizens.title',
     requiresAuth: true,
-    permission: 'CitizenStoreService.FindUsers',
+    permission: 'CitizenStoreService.ListCitizens',
 });
 </script>
 

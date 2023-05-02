@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package resources.vehicles;
-option go_package = "github.com/galexrt/fivenet/proto/resources/vehicles;vehicles";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/vehicles;vehicles";
 
 import "resources/users/users.proto";
 

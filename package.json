@@ -11,7 +11,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@fivenet/gen": "file:./gen",
+    "@fivenet/gen": "file:./gen/js",
     "@fontsource/inter": "^4.5.15",
     "@headlessui/vue": "^1.7.13",
     "@heroicons/vue": "^2.0.17",

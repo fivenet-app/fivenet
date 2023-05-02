@@ -2,7 +2,7 @@
 import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
 import { DOC_REFERENCE_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import { Document, DocumentReference } from '@fivenet/gen/resources/documents/documents_pb';
-import { FindDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { ListDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import {
     Dialog,
     DialogPanel,
@@ -57,19 +57,19 @@ const tabs = ref<{ name: string, icon: FunctionalComponent }[]>([
 
 const queryDoc = ref('');
 
-const { data: documents, pending, refresh, error } = useLazyAsyncData(`document-${props.document}-references-docs-${queryDoc}`, () => findDocuments());
+const { data: documents, pending, refresh, error } = useLazyAsyncData(`document-${props.document}-references-docs-${queryDoc}`, () => listDocuments());
 
-watchDebounced(queryDoc, async () => findDocuments(), { debounce: 700, maxWait: 1850 });
+watchDebounced(queryDoc, async () => listDocuments(), { debounce: 700, maxWait: 1850 });
 
-async function findDocuments(): Promise<Array<Document>> {
+async function listDocuments(): Promise<Array<Document>> {
     return new Promise(async (res, rej) => {
-        const req = new FindDocumentsRequest();
+        const req = new ListDocumentsRequest();
         req.setPagination((new PaginationRequest()).setOffset(0).setPageSize(8));
         req.setSearch(queryDoc.value);
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                findDocuments(req, null);
+                listDocuments(req, null);
 
             return res(resp.getDocumentsList().
                 filter(doc => !(Array.from(props.modelValue.values()).
@@ -95,7 +95,7 @@ function addReference(doc: Document, reference: number): void {
     ref.setReference(DOC_REFERENCE_Util.fromInt(reference));
 
     props.modelValue.set(key, ref);
-    findDocuments();
+    listDocuments();
 }
 
 function addReferenceClipboard(doc: ClipboardDocument, reference: number): void {
@@ -104,7 +104,7 @@ function addReferenceClipboard(doc: ClipboardDocument, reference: number): void 
 
 function removeReference(id: number): void {
     props.modelValue.delete(id);
-    findDocuments();
+    listDocuments();
 }
 </script>
 

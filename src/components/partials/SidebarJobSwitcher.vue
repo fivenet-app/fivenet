@@ -3,7 +3,7 @@ import { useAuthStore } from '~/store/auth';
 import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/20/solid';
-import { CompleteJobNamesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/shared';
 import { SetJobRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
@@ -24,12 +24,12 @@ const selectedJob = ref<undefined | Job>();
 
 async function findJobs(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new CompleteJobNamesRequest();
+        const req = new CompleteJobsRequest();
         req.setSearch(queryJob.value);
 
         try {
             const resp = await $grpc.getCompletorClient().
-                completeJobNames(req, null)
+                completeJobs(req, null)
 
             entriesJobs = resp.getJobsList();
             filteredJobs.value = entriesJobs;

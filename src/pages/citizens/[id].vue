@@ -15,7 +15,7 @@ useHead({
 definePageMeta({
     title: 'pages.citizens.id.title',
     requiresAuth: true,
-    permission: 'CitizenStoreService.FindUsers',
+    permission: 'CitizenStoreService.ListCitizens',
     validate: async (route) => {
         route = route as TypedRouteFromName<'citizens-id'>;
         // Check if the id is made up of digits

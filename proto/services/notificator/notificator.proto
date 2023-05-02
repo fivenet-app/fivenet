@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package services.notificator;
-option go_package = "github.com/galexrt/fivenet/proto/services/notificator;notificator";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/notificator;notificator";
 
 import "resources/common/database/database.proto";
 import "resources/notifications/notifications.proto";

@@ -3,9 +3,9 @@ package mstlystcdata
 import (
 	"strconv"
 
-	"github.com/galexrt/fivenet/proto/resources/common"
-	"github.com/galexrt/fivenet/proto/resources/documents"
-	"github.com/galexrt/fivenet/proto/resources/jobs"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 )
 
 type Enricher struct {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { GetUserActivityRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
+import { ListUserActivityRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import { UserActivity } from '@fivenet/gen/resources/users/users_pb';
 import { RectangleGroupIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
@@ -16,16 +16,16 @@ const props = defineProps({
     },
 });
 
-const { data: activities, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity-${props.userId}`, () => getUserActivity());
+const { data: activities, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity-${props.userId}`, () => listUserActivity());
 
-async function getUserActivity(): Promise<Array<UserActivity>> {
+async function listUserActivity(): Promise<Array<UserActivity>> {
     return new Promise(async (res, rej) => {
-        const req = new GetUserActivityRequest();
+        const req = new ListUserActivityRequest();
         req.setUserId(props.userId);
 
         try {
             const resp = await $grpc.getCitizenStoreClient().
-                getUserActivity(req, null);
+                listUserActivity(req, null);
 
             return res(resp.getActivityList());
         } catch (e) {

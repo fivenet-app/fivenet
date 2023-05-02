@@ -8,15 +8,15 @@ import (
 
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
-	"github.com/galexrt/fivenet/proto/resources/documents"
-	"github.com/galexrt/fivenet/proto/resources/jobs"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"go.uber.org/zap"
 )
 
 var (
 	j   = table.Jobs.AS("job")
-	jg  = table.JobGrades.AS("job_grade")
+	jg  = table.JobGrades.AS("jobgrade")
 	adc = table.FivenetDocumentsCategories.AS("documentcategory")
 )
 
@@ -92,7 +92,7 @@ func (c *Cache) refreshCache() error {
 		return err
 	}
 
-	if err := c.refreshJobsCache(); err != nil {
+	if err := c.refreshJobs(); err != nil {
 		return err
 	}
 
@@ -104,8 +104,6 @@ func (c *Cache) refreshCache() error {
 }
 
 func (c *Cache) refreshDocumentCategories() error {
-	var dest []*documents.DocumentCategory
-
 	stmt := adc.
 		SELECT(
 			adc.ID,
@@ -119,7 +117,8 @@ func (c *Cache) refreshDocumentCategories() error {
 			adc.Name.ASC(),
 		)
 
-	if err := stmt.Query(c.db, &dest); err != nil {
+	var dest []*documents.DocumentCategory
+	if err := stmt.QueryContext(c.ctx, c.db, &dest); err != nil {
 		return err
 	}
 
@@ -141,9 +140,7 @@ func (c *Cache) refreshDocumentCategories() error {
 	return nil
 }
 
-func (c *Cache) refreshJobsCache() error {
-	var dest []*jobs.Job
-
+func (c *Cache) refreshJobs() error {
 	stmt := j.
 		SELECT(
 			j.Name,
@@ -153,7 +150,7 @@ func (c *Cache) refreshJobsCache() error {
 			jg.Label,
 		).
 		FROM(j.
-			LEFT_JOIN(jg,
+			INNER_JOIN(jg,
 				jg.JobName.EQ(j.Name),
 			),
 		).
@@ -162,7 +159,8 @@ func (c *Cache) refreshJobsCache() error {
 			jg.Grade.ASC(),
 		)
 
-	if err := stmt.Query(c.db, &dest); err != nil {
+	var dest []*jobs.Job
+	if err := stmt.QueryContext(c.ctx, c.db, &dest); err != nil {
 		return err
 	}
 

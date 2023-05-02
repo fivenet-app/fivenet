@@ -65,18 +65,18 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-customizerweb
 	protoc \
 		--proto_path=./validate \
 		--proto_path=./proto \
-		--go_out=./proto \
+		--go_out=./gen/go/proto \
 		--go_opt=paths=source_relative \
-		--go-grpc_out=./proto \
+		--go-grpc_out=./gen/go/proto \
 		--go-grpc_opt=paths=source_relative \
 		--validate_opt=paths=source_relative \
-		--validate_out="lang=go:./proto" \
+		--validate_out="lang=go:./gen/go/proto" \
 		--customizer_opt=paths=source_relative \
-		--customizer_out="./proto" \
+		--customizer_out=./gen/go/proto \
 		$(shell find proto/ -iname "*.proto")
 
 	# Inject Go field tags into generated fields
-	find proto/ -iname "*.pb.go" \
+	find ./gen/go/proto/ -iname "*.pb.go" \
 		-exec protoc-go-inject-tag \
 			-input={} \;
 
@@ -84,17 +84,17 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-customizerweb
 	protoc \
 		--proto_path=./validate \
 		--proto_path=./proto \
-		--js_out=import_style=commonjs,binary:./gen \
-		--grpc-web_out=import_style=typescript,mode=grpcwebtext:./gen \
+		--js_out=import_style=commonjs,binary:./gen/js \
+		--grpc-web_out=import_style=typescript,mode=grpcwebtext:./gen/js \
 		--customizerweb_opt=paths=source_relative \
-		--customizerweb_out="./gen" \
+		--customizerweb_out=./gen/js \
 		$(shell find proto/ -iname "*.proto")
 
 	# Remove validate_pb imports from JS files
 	find ./gen -type f \( -iname '*.js' -o -iname '*.ts' \) -exec sed -i '/validate_pb/d' {} +
 
 	# Update local yarn package
-	yarn upgrade '@fivenet/gen@file:./gen'
+	yarn upgrade '@fivenet/gen@file:./gen/js'
 
 gdal2tiles-leaflet:
 	if test ! -d gdal2tiles-leaflet/; then \

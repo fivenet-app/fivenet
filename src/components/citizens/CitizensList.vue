@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { User } from '@fivenet/gen/resources/users/users_pb';
 import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import { watchDebounced } from '@vueuse/core'
-import { FindUsersRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
+import { ListCitizensRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';
@@ -18,11 +18,11 @@ const query = ref<{ name: string; phone: string; wanted: boolean; }>({ name: '',
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-const { data: users, pending, refresh, error } = useLazyAsyncData(`citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phone}`, () => findUsers());
+const { data: users, pending, refresh, error } = useLazyAsyncData(`citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phone}`, () => listCitizens());
 
-async function findUsers(): Promise<Array<User>> {
+async function listCitizens(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {
-        const req = new FindUsersRequest();
+        const req = new ListCitizensRequest();
         req.setPagination((new PaginationRequest()).setOffset(offset.value));
         req.setSearchName(query.value.name);
         req.setWanted(query.value.wanted);
@@ -30,7 +30,7 @@ async function findUsers(): Promise<Array<User>> {
 
         try {
             const resp = await $grpc.getCitizenStoreClient().
-                findUsers(req, null);
+                listCitizens(req, null);
 
             pagination.value = resp.getPagination();
             return res(resp.getUsersList());
@@ -68,7 +68,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control" v-can="'CitizenStoreService.FindUsers.PhoneNumber'">
+                            <div class="flex-1 form-control" v-can="'CitizenStoreService.ListCitizens.PhoneNumber'">
                                 <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">{{
                                     $t('common.search') }} {{ $t('common.phone') }}</label>
                                 <div class="relative flex items-center mt-2">
@@ -77,7 +77,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
-                            <div class="flex-initial form-control" v-can="'CitizenStoreService.FindUsers.UserProps.Wanted'">
+                            <div class="flex-initial form-control" v-can="'CitizenStoreService.ListCitizens.UserProps.Wanted'">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">{{
                                     $t('components.citizens.citizens_list.only_wanted') }}
                                 </label>

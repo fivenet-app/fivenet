@@ -2,7 +2,7 @@
 import { OAuth2Account, OAuth2Provider } from '@fivenet/gen/resources/accounts/oauth2_pb';
 import OAuth2ConnectButton from './OAuth2ConnectButton.vue';
 import { XCircleIcon } from '@heroicons/vue/24/solid';
-import { OAuth2DisconnectRequest } from '@fivenet/gen/services/auth/auth_pb';
+import { DeleteOAuth2ConnectionRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
@@ -28,12 +28,12 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
 
 async function disconnect(provider: OAuth2Provider): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new OAuth2DisconnectRequest();
+        const req = new DeleteOAuth2ConnectionRequest();
         req.setProvider(provider.getName());
 
         try {
             await $grpc.getAuthClient().
-                oAuth2Disconnect(req, null);
+                deleteOAuth2Connection(req, null);
 
             emit('disconnected', provider.getName());
 

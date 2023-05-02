@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"sync"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/auth"
-	"github.com/galexrt/fivenet/proto/resources/rector"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jsoniter "github.com/json-iterator/go"
@@ -20,7 +20,7 @@ var (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type IAuditer interface {
-	Log(ctx context.Context, service string, method string, state rector.EVENT_TYPE, targetUserId int32, data interface{})
+	Log(ctx context.Context, service string, method string, state *rector.EVENT_TYPE, targetUserId int32, data interface{})
 }
 
 type AuditStorer struct {
@@ -67,7 +67,7 @@ func (a *AuditStorer) Stop() {
 	a.wg.Wait()
 }
 
-func (a *AuditStorer) Log(ctx context.Context, service string, method string, state rector.EVENT_TYPE, targetUserId int32, data interface{}) {
+func (a *AuditStorer) Log(ctx context.Context, service string, method string, state *rector.EVENT_TYPE, targetUserId int32, data interface{}) {
 	a.input <- a.createAuditLogEntry(ctx, service, method, state, targetUserId, data)
 }
 
@@ -91,8 +91,12 @@ func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
 	return nil
 }
 
-func (a *AuditStorer) createAuditLogEntry(ctx context.Context, service string, method string, state rector.EVENT_TYPE, targetUserId int32, in interface{}) *model.FivenetAuditLog {
+func (a *AuditStorer) createAuditLogEntry(ctx context.Context, service string, method string, state *rector.EVENT_TYPE, targetUserId int32, in interface{}) *model.FivenetAuditLog {
 	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	if state == nil {
+		state = rector.EVENT_TYPE_UNKNOWN.Enum()
+	}
 
 	data, err := json.MarshalToString(in)
 	if err != nil {
@@ -104,7 +108,7 @@ func (a *AuditStorer) createAuditLogEntry(ctx context.Context, service string, m
 		Method:  method,
 		UserID:  userId,
 		UserJob: job,
-		State:   int16(state),
+		State:   int16(*state),
 		Data:    &data,
 	}
 	if targetUserId > 0 {

@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package resources.permissions;
-option go_package = "github.com/galexrt/fivenet/proto/resources/permissions;permissions";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/permissions;permissions";
 
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";

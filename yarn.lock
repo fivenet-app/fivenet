@@ -427,7 +427,7 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.17.18.tgz#3a8e57153905308db357fd02f57c180ee3a0a1fa"
   integrity sha512-qU25Ma1I3NqTSHJUOKi9sAH1/Mzuvlke0ioMJRthLXKm7JiSKVwFghlGbDLOO2sARECGhja4xYfRAZNPAkooYg==
 
-"@fivenet/gen@file:./gen":
+"@fivenet/gen@file:./gen/js":
   version "0.1.0"
 
 "@fontsource/inter@^4.5.15":

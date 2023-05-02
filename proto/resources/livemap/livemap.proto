@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package resources.livemap;
-option go_package = "github.com/galexrt/fivenet/proto/resources/livemap;livemap";
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/livemap;livemap";
 
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
@@ -25,7 +25,7 @@ message UserMarker {
   float x = 1; // @gotags: alias:"x"
   float y = 2; // @gotags: alias:"y"
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  int32 id = 4 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
+  int32 id = 4 [(validate.rules).int32.gt = 0];
   string name = 5;
   string icon = 6;
   string icon_color = 7; // @gotags: alias:"icon_color"
