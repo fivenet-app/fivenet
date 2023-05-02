@@ -7,6 +7,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -68,10 +69,16 @@ func (s *Server) getDocumentCategory(ctx context.Context, id uint64) (*documents
 }
 
 func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "CreateDocumentCategory", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "CreateDocumentCategory",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	dCategory := table.FivenetDocumentsCategories
 	stmt := dCategory.
@@ -96,7 +103,7 @@ func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocument
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_CREATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
 	return &CreateDocumentCategoryResponse{
 		Id: lastId,
@@ -104,10 +111,16 @@ func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocument
 }
 
 func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocumentCategoryRequest) (*UpdateDocumentCategoryResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "UpdateDocumentCategory", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "UpdateDocumentCategory",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	dCategory := table.FivenetDocumentsCategories
 	stmt := dCategory.
@@ -132,16 +145,22 @@ func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocument
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_UPDATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return &UpdateDocumentCategoryResponse{}, nil
 }
 
 func (s *Server) DeleteDocumentCategory(ctx context.Context, req *DeleteDocumentCategoryRequest) (*DeleteDocumentCategoryResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "DeleteDocumentCategory", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "DeleteDocumentCategory",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	ids := make([]jet.Expression, len(req.Ids))
 	for i := 0; i < len(req.Ids); i++ {
@@ -162,7 +181,7 @@ func (s *Server) DeleteDocumentCategory(ctx context.Context, req *DeleteDocument
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_DELETED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
 	return &DeleteDocumentCategoryResponse{}, nil
 }

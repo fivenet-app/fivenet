@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -45,10 +46,17 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 	return resp, nil
 }
 func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*SetJobPropsResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, RectorService_ServiceDesc.ServiceName, "SetJobProps", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	auditEntry := &model.FivenetAuditLog{
+		Service: RectorService_ServiceDesc.ServiceName,
+		Method:  "SetJobProps",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
 	// Ensure that the job is the user's job
 	req.JobProps.Job = job
 
@@ -74,7 +82,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_UPDATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return &SetJobPropsResponse{}, nil
 }

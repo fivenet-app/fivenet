@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
@@ -108,10 +109,17 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 }
 
 func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "PostDocumentComment", auditState, -1, req)
-
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "PostDocumentComment",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_COMMENT)
 	if err != nil {
 		return nil, err
@@ -145,7 +153,7 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_CREATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
 	return &PostDocumentCommentResponse{
 		Id: uint64(lastId),
@@ -153,10 +161,17 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 }
 
 func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "EditDocumentComment", auditState, -1, req)
-
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "EditDocumentComment",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_COMMENT)
 	if err != nil {
 		return nil, err
@@ -195,7 +210,7 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_UPDATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return resp, nil
 }
@@ -228,10 +243,16 @@ func (s *Server) getDocumentComment(ctx context.Context, id uint64) (*documents.
 }
 
 func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentCommentRequest) (*DeleteDocumentCommentResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "DeleteDocumentComment", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	userId := auth.GetUserIDFromContext(ctx)
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "DeleteDocumentComment",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	comment, err := s.getDocumentComment(ctx, req.CommentId)
 	if err != nil {
@@ -261,7 +282,7 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_DELETED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
 	return &DeleteDocumentCommentResponse{}, nil
 }

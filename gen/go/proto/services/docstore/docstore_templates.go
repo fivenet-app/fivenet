@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -152,10 +153,16 @@ func (s *Server) renderDocumentTemplate(docTmpl *documents.DocumentTemplate, dat
 }
 
 func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest) (*CreateTemplateResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "CreateTemplate", auditState, -1, req)
-
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "CreateTemplate",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	categoryId := jet.NULL
 	if req.Template.Category != nil {
@@ -203,7 +210,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_CREATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
 	return &CreateTemplateResponse{
 		Id: lastId,
@@ -211,10 +218,16 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 }
 
 func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest) (*UpdateTemplateResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "UpdateTemplate", auditState, -1, req)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
-	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "UpdateTemplate",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	categoryId := jet.NULL
 	if req.Template.Category != nil {
@@ -260,16 +273,22 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_UPDATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return &UpdateTemplateResponse{}, nil
 }
 
 func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "DeleteTemplate", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "DeleteTemplate",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	dTemplates := table.FivenetDocumentsTemplates
 	stmt := dTemplates.
@@ -285,7 +304,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_DELETED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
 	return &DeleteTemplateResponse{}, nil
 }

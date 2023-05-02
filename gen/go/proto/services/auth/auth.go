@@ -524,7 +524,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, UnableToChooseCharErr
 	}
 
-	defer s.a.Log(ctx, AuthService_ServiceDesc.ServiceName, "ChooseCharacter", rector.EVENT_TYPE_VIEWED.Enum(), -1, char.UserShort())
+	defer s.a.Log(AuthService_ServiceDesc.ServiceName, "ChooseCharacter", rector.EVENT_TYPE_VIEWED, -1, char.UserShort())
 
 	return &ChooseCharacterResponse{
 		Token:       newToken,

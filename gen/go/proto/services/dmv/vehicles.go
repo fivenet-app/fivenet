@@ -63,7 +63,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	}
 
 	if req.Pagination.Offset <= 0 {
-		defer s.a.Log(ctx, DMVService_ServiceDesc.ServiceName, "ListVehicles", rector.EVENT_TYPE_VIEWED.Enum(), -1, req)
+		defer s.a.Log(DMVService_ServiceDesc.ServiceName, "ListVehicles", rector.EVENT_TYPE_VIEWED, -1, req)
 	}
 
 	countStmt := vehicle.

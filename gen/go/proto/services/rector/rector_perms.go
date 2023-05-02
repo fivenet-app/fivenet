@@ -178,10 +178,17 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 }
 
 func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*CreateRoleResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, RectorService_ServiceDesc.ServiceName, "CreateRole", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	auditEntry := &model.FivenetAuditLog{
+		Service: RectorService_ServiceDesc.ServiceName,
+		Method:  "CreateRole",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
 	name := fmt.Sprintf("%s - Rank: %d", strings.ToTitle(job), req.Grade)
 
 	role, err := s.p.GetRoleByGuardName(name)
@@ -202,15 +209,23 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_CREATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 	return &CreateRoleResponse{
 		Role: permissions.ConvertFromRole(cr),
 	}, nil
 }
 
 func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*DeleteRoleResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, RectorService_ServiceDesc.ServiceName, "DeleteRole", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: RectorService_ServiceDesc.ServiceName,
+		Method:  "DeleteRole",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
@@ -220,7 +235,6 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, NoPermissionErr
 	}
 
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
 	jobRoleKey := fmt.Sprintf("job-%s-", job)
 	roleCount, err := s.p.CountRoles(jobRoleKey)
 	if err != nil {
@@ -236,13 +250,22 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, InvalidRequestErr
 	}
 
-	auditState = rector.EVENT_TYPE_DELETED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+
 	return &DeleteRoleResponse{}, nil
 }
 
 func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (*AddPermToRoleResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, RectorService_ServiceDesc.ServiceName, "AddPermToRole", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: RectorService_ServiceDesc.ServiceName,
+		Method:  "AddPermToRole",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
@@ -266,13 +289,22 @@ func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_CREATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+
 	return resp, nil
 }
 
 func (s *Server) RemovePermFromRole(ctx context.Context, req *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error) {
-	auditState := rector.EVENT_TYPE_DELETED.Enum()
-	defer s.a.Log(ctx, RectorService_ServiceDesc.ServiceName, "RemovePermFromRole", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: RectorService_ServiceDesc.ServiceName,
+		Method:  "RemovePermFromRole",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
@@ -296,7 +328,8 @@ func (s *Server) RemovePermFromRole(ctx context.Context, req *RemovePermFromRole
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_DELETED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+
 	return resp, nil
 }
 

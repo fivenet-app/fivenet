@@ -168,10 +168,17 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 }
 
 func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, CitizenStoreService_ServiceDesc.ServiceName, "GetUser", auditState, req.UserId, nil)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	userId := auth.GetUserIDFromContext(ctx)
+	auditEntry := &model.FivenetAuditLog{
+		Service:      CitizenStoreService_ServiceDesc.ServiceName,
+		Method:       "GetUser",
+		UserID:       userId,
+		UserJob:      job,
+		TargetUserID: &req.UserId,
+		State:        int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	selectors := jet.ProjectionList{
 		user.ID,
@@ -287,7 +294,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 	}
 
-	auditState = rector.EVENT_TYPE_VIEWED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)
 
 	return resp, nil
 }
@@ -351,10 +358,17 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 }
 
 func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*SetUserPropsResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, CitizenStoreService_ServiceDesc.ServiceName, "SetUserProps", auditState, req.Props.UserId, req.Props)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
-	userId := auth.GetUserIDFromContext(ctx)
+	auditEntry := &model.FivenetAuditLog{
+		Service:      CitizenStoreService_ServiceDesc.ServiceName,
+		Method:       "SetUserProps",
+		UserID:       userId,
+		UserJob:      job,
+		TargetUserID: &req.Props.UserId,
+		State:        int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	resp := &SetUserPropsResponse{
 		Props: &users.UserProps{},
@@ -449,7 +463,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		return nil, FailedQueryErr
 	}
 
-	auditState = rector.EVENT_TYPE_UPDATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return resp, nil
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -110,10 +111,17 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 }
 
 func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*GetDocumentResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "GetDocument", auditState, -1, req)
-
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "GetDocument",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, FailedQueryErr
@@ -143,7 +151,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	resp.Access = docAccess.Access
 
-	auditState = rector.EVENT_TYPE_VIEWED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)
 
 	return resp, nil
 }
@@ -168,10 +176,16 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 }
 
 func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest) (*CreateDocumentResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "CreateDocument", auditState, -1, req)
-
 	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "CreateDocument",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -227,7 +241,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, FailedQueryErr
 	}
 
-	auditState = rector.EVENT_TYPE_CREATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
 	return &CreateDocumentResponse{
 		DocumentId: uint64(lastId),
@@ -235,10 +249,17 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 }
 
 func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "UpdateDocument", auditState, -1, req)
-
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "UpdateDocument",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, FailedQueryErr
@@ -297,7 +318,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, FailedQueryErr
 	}
 
-	auditState = rector.EVENT_TYPE_UPDATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return &UpdateDocumentResponse{
 		DocumentId: req.DocumentId,
@@ -305,10 +326,17 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 }
 
 func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "UpdateDocument", auditState, -1, req)
-
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "DeleteDocument",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, FailedQueryErr
@@ -332,7 +360,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_DELETED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
 	return &DeleteDocumentResponse{}, nil
 }

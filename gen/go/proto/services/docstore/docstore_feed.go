@@ -7,6 +7,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -197,8 +198,16 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 }
 
 func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "AddDocumentReference", auditState, -1, req)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "AddDocumentReference",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	if req.Reference.SourceDocumentId == req.Reference.TargetDocumentId {
@@ -255,7 +264,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		return nil, FailedQueryErr
 	}
 
-	auditState = rector.EVENT_TYPE_CREATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
 	return &AddDocumentReferenceResponse{
 		Id: uint64(lastId),
@@ -263,10 +272,17 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 }
 
 func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumentReferenceRequest) (*RemoveDocumentReferenceResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "RemoveDocumentReference", auditState, -1, req)
-
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "RemoveDocumentReference",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
 	var docIDs struct {
 		Source uint64
 		Target uint64
@@ -309,16 +325,23 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_DELETED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
 	return &RemoveDocumentReferenceResponse{}, nil
 }
 
 func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "AddDocumentRelation", auditState, req.Relation.TargetUserId, req)
-
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "AddDocumentRelation",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
 	if err != nil {
 		return nil, err
@@ -367,7 +390,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		return nil, FailedQueryErr
 	}
 
-	auditState = rector.EVENT_TYPE_CREATED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
 	s.notifyUser(ctx, uint64(lastId), req.Relation.TargetUserId)
 
@@ -377,10 +400,17 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 }
 
 func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error) {
-	auditState := rector.EVENT_TYPE_ERRORED.Enum()
-	defer s.a.Log(ctx, DocStoreService_ServiceDesc.ServiceName, "RemoveDocumentRelation", auditState, -1, req)
-
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "RemoveDocumentRelation",
+		UserID:  userId,
+		UserJob: job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
 	var docID struct {
 		ID uint64
 	}
@@ -421,7 +451,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		return nil, err
 	}
 
-	auditState = rector.EVENT_TYPE_DELETED.Enum()
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
 	return &RemoveDocumentRelationResponse{}, nil
 }

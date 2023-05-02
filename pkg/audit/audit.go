@@ -20,7 +20,9 @@ var (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type IAuditer interface {
-	Log(ctx context.Context, service string, method string, state *rector.EVENT_TYPE, targetUserId int32, data interface{})
+	Log(service string, method string, state rector.EVENT_TYPE, targetUserId int32, data any)
+	AddEntry(in *model.FivenetAuditLog)
+	AddEntryWithData(in *model.FivenetAuditLog, data any)
 }
 
 type AuditStorer struct {
@@ -67,8 +69,17 @@ func (a *AuditStorer) Stop() {
 	a.wg.Wait()
 }
 
-func (a *AuditStorer) Log(ctx context.Context, service string, method string, state *rector.EVENT_TYPE, targetUserId int32, data interface{}) {
-	a.input <- a.createAuditLogEntry(ctx, service, method, state, targetUserId, data)
+func (a *AuditStorer) Log(service string, method string, state rector.EVENT_TYPE, targetUserId int32, data any) {
+	a.input <- a.createAuditLogEntry(service, method, state, targetUserId, data)
+}
+
+func (a *AuditStorer) AddEntry(in *model.FivenetAuditLog) {
+	a.AddEntryWithData(in, nil)
+}
+
+func (a *AuditStorer) AddEntryWithData(in *model.FivenetAuditLog, data any) {
+	in.Data = a.toJson(data)
+	a.input <- in
 }
 
 func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
@@ -91,29 +102,33 @@ func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
 	return nil
 }
 
-func (a *AuditStorer) createAuditLogEntry(ctx context.Context, service string, method string, state *rector.EVENT_TYPE, targetUserId int32, in interface{}) *model.FivenetAuditLog {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
-
-	if state == nil {
-		state = rector.EVENT_TYPE_UNKNOWN.Enum()
-	}
-
-	data, err := json.MarshalToString(in)
-	if err != nil {
-		data = "Failed to marshal data"
-	}
+func (a *AuditStorer) createAuditLogEntry(service string, method string, state rector.EVENT_TYPE, targetUserId int32, data any) *model.FivenetAuditLog {
+	userId, job, _ := auth.GetUserInfoFromContext(a.ctx)
 
 	log := &model.FivenetAuditLog{
 		Service: service,
 		Method:  method,
 		UserID:  userId,
 		UserJob: job,
-		State:   int16(*state),
-		Data:    &data,
+		State:   int16(state),
+		Data:    a.toJson(data),
 	}
 	if targetUserId > 0 {
 		log.TargetUserID = &targetUserId
 	}
 
 	return log
+}
+
+func (a *AuditStorer) toJson(data any) *string {
+	if data != nil {
+		data, err := json.MarshalToString(data)
+		if err != nil {
+			data = "Failed to marshal data"
+		}
+		return &data
+	}
+
+	noData := "No Data"
+	return &noData
 }
