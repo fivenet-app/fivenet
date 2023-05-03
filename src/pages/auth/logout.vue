@@ -26,7 +26,10 @@ const accessToken = computed(() => authStore.getAccessToken);
 
 function redirect(): void {
     setTimeout(async () => {
-        await navigateTo({ name: 'index' });
+        const route = useRoute();
+        if (route.name == 'auth-logout') {
+            await navigateTo({ name: 'index' });
+        }
     }, 1500);
 }
 
@@ -42,14 +45,16 @@ onBeforeMount(async () => {
         await $grpc.getAuthClient()
             .logout(new LogoutRequest(), null);
     } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
+
         const err = e as RpcError;
-        authStore.loginStop(err.message);
         notifications.dispatchNotification({
             title: t('notifications.auth.error_logout.title'),
             content: t('notifications.auth.error_logout.content', [err.message]),
             type: 'error'
         });
     }
+
     redirect();
 });
 </script>

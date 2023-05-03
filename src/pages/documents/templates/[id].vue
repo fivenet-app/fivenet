@@ -18,15 +18,10 @@ definePageMeta({
 });
 
 const route = useRoute('documents-templates-id');
-const id = ref(0);
-
-onMounted(() => {
-    id.value = parseInt(route.params.id);
-});
 </script>
 
 <template>
     <ContentWrapper>
-        <TemplateView v-if="id > 0" :templateId="id" />
+        <TemplateView :templateId="parseInt(route.params.id)" />
     </ContentWrapper>
 </template>

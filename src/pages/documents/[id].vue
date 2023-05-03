@@ -19,16 +19,11 @@ definePageMeta({
 });
 
 const route = useRoute('documents-id');
-const documentId = ref(0);
-
-onMounted(() => {
-    documentId.value = parseInt(route.params.id);
-});
 </script>
 
 <template>
     <ContentWrapper>
-        <DocumentView v-if="documentId > 0" :documentId="documentId" />
+        <DocumentView :documentId="parseInt(route.params.id)" />
         <ClipboardButton />
     </ContentWrapper>
 </template>

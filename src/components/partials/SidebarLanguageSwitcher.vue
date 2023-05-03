@@ -11,7 +11,7 @@ const notifications = useNotificationsStore();
 
 const languages: { name: string, iso: string }[] = [];
 
-onMounted(() => {
+onMounted(async () => {
     locales.value.forEach((lang) => {
         lang = lang as LocaleObject;
 
