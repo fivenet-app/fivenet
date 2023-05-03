@@ -44,4 +44,7 @@ defineProps({
             </span>
         </span>
     </span>
+    <span v-else>
+        {{ plural ?? name + "(s)" }} {{ $t('common.not').toLocaleLowerCase() }} {{ $t('common.require', 2) }}
+    </span>
 </template>
