@@ -340,6 +340,7 @@
         "delete": "Delete",
         "require": "Require | Requires",
         "max": "Max",
+        "min": "Min",
         "template": "Template | Templates",
         "go_back": "Go Back",
         "content": "Content",

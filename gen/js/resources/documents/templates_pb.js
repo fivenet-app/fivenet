@@ -1809,8 +1809,8 @@ proto.resources.documents.ObjectSpecs.prototype.serializeBinary = function() {
  */
 proto.resources.documents.ObjectSpecs.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getRequired();
-  if (f) {
+  f = /** @type {boolean} */ (jspb.Message.getField(message, 1));
+  if (f != null) {
     writer.writeBool(
       1,
       f
@@ -1847,7 +1847,25 @@ proto.resources.documents.ObjectSpecs.prototype.getRequired = function() {
  * @return {!proto.resources.documents.ObjectSpecs} returns this
  */
 proto.resources.documents.ObjectSpecs.prototype.setRequired = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 1, value);
+  return jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.resources.documents.ObjectSpecs} returns this
+ */
+proto.resources.documents.ObjectSpecs.prototype.clearRequired = function() {
+  return jspb.Message.setField(this, 1, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.ObjectSpecs.prototype.hasRequired = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 

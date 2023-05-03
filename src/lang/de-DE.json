@@ -340,6 +340,7 @@
         "delete": "Löschen",
         "require": "Erfordert",
         "max": "Maximal",
+        "min": "Minimum",
         "template": "Vorlage | Vorlagen",
         "go_back": "Zurück",
         "content": "Inhalt",

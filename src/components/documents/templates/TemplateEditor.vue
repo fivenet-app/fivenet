@@ -6,7 +6,7 @@ import { CreateTemplateRequest, GetTemplateRequest, UpdateTemplateRequest } from
 import { RpcError } from 'grpc-web';
 import { DocumentTemplate, ObjectSpecs, TemplateRequirements, TemplateSchema } from '@fivenet/gen/resources/documents/templates_pb';
 import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
-import { TemplateSchemaEditorValue } from './TemplateSchemaEditor.vue';
+import { TemplateSchemaEditorValue, ObjectSpecsValue } from './TemplateSchemaEditor.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
@@ -54,9 +54,19 @@ const filteredRank = ref<JobGrade[]>([]);
 const queryRank = ref('');
 const selectedRank = ref<JobGrade>();
 
-async function createTemplate(): Promise<void> {
-    if (props.templateId) return updateTemplate();
+function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
+    const o = new ObjectSpecs();
+    o.setRequired(v.req ?? false);
+    if (v.min > 0) {
+        o.setMin(v.min);
+    }
+    if (v.max > 0) {
+        o.setMax(v.max);
+    }
+    return o;
+}
 
+async function createTemplate(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new CreateTemplateRequest();
         const tpl = new DocumentTemplate();
@@ -67,9 +77,9 @@ async function createTemplate(): Promise<void> {
         if (selectedRank.value) tpl.setJobGrade(selectedRank.value.getGrade());
 
         const tRequirements = new TemplateRequirements();
-        tRequirements.setUsers((new ObjectSpecs).setRequired(schema.value.users.req).setMin(schema.value.users.req ? schema.value.users.min : 0).setMax(schema.value.users.max));
-        tRequirements.setDocuments((new ObjectSpecs).setRequired(schema.value.documents.req).setMin(schema.value.documents.req ? schema.value.documents.min : 0).setMax(schema.value.documents.max));
-        tRequirements.setVehicles((new ObjectSpecs).setRequired(schema.value.vehicles.req).setMin(schema.value.vehicles.req ? schema.value.vehicles.min : 0).setMax(schema.value.vehicles.max));
+        tRequirements.setUsers(createObjectSpec(schema.value.users));
+        tRequirements.setDocuments(createObjectSpec(schema.value.documents));
+        tRequirements.setVehicles(createObjectSpec(schema.value.vehicles));
 
         const tSchema = new TemplateSchema();
         tSchema.setRequirements(tRequirements);
@@ -109,9 +119,9 @@ async function updateTemplate(): Promise<void> {
         if (selectedRank.value) tpl.setJobGrade(selectedRank.value.getGrade());
 
         const tRequirements = new TemplateRequirements();
-        tRequirements.setUsers((new ObjectSpecs).setRequired(schema.value.users.req).setMin(schema.value.users.req ? schema.value.users.min : 0).setMax(schema.value.users.max));
-        tRequirements.setDocuments((new ObjectSpecs).setRequired(schema.value.documents.req).setMin(schema.value.documents.req ? schema.value.documents.min : 0).setMax(schema.value.documents.max));
-        tRequirements.setVehicles((new ObjectSpecs).setRequired(schema.value.vehicles.req).setMin(schema.value.vehicles.req ? schema.value.vehicles.min : 0).setMax(schema.value.vehicles.max));
+        tRequirements.setUsers(createObjectSpec(schema.value.users));
+        tRequirements.setDocuments(createObjectSpec(schema.value.documents));
+        tRequirements.setVehicles(createObjectSpec(schema.value.vehicles));
 
         const tSchema = new TemplateSchema();
         tSchema.setRequirements(tRequirements);
@@ -122,7 +132,7 @@ async function updateTemplate(): Promise<void> {
             const resp = await $grpc.getDocStoreClient().
                 updateTemplate(req, null);
 
-                notifications.dispatchNotification({
+            notifications.dispatchNotification({
                 title: 'Template: Updated',
                 content: 'Template updated successfully.',
                 type: 'success',
@@ -145,12 +155,18 @@ const { handleSubmit } = useForm({
             description: string().required(),
             contentTitle: string().required().min(3).max(24),
             content: string().required().min(6).max(70),
-            schema: string(),
+            schema: object().optional(),
         }),
     ),
 });
 
-const onSubmit = handleSubmit(async (): Promise<void> => await createTemplate());
+const onSubmit = handleSubmit(async (): Promise<void> => {
+    if (props.templateId && props.templateId > 0) {
+        return updateTemplate();
+    } else {
+        await createTemplate();
+    }
+});
 
 onMounted(async () => {
     if (props.templateId) {
@@ -184,7 +200,7 @@ onMounted(async () => {
 
     const req = new CompleteJobsRequest();
     req.setExactMatch(true);
-    req.setCurrentJob(true)
+    req.setCurrentJob(true);
 
     try {
         const resp = await $grpc.getCompletorClient().completeJobs(req, null);

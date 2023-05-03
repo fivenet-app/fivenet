@@ -220,7 +220,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 }
 
 func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest) (*UpdateTemplateResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
@@ -256,7 +256,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		).
 		SET(
 			job,
-			jobGrade,
+			req.Template.JobGrade,
 			categoryId,
 			req.Template.Title,
 			req.Template.Description,

@@ -1023,7 +1023,9 @@ func (m *ObjectSpecs) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Required
+	if m.Required != nil {
+		// no validation rules for Required
+	}
 
 	if m.Min != nil {
 		// no validation rules for Min

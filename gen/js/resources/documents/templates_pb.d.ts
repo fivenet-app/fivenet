@@ -251,6 +251,8 @@ export namespace TemplateRequirements {
 export class ObjectSpecs extends jspb.Message {
   getRequired(): boolean;
   setRequired(value: boolean): ObjectSpecs;
+  hasRequired(): boolean;
+  clearRequired(): ObjectSpecs;
 
   getMin(): number;
   setMin(value: number): ObjectSpecs;
@@ -272,9 +274,14 @@ export class ObjectSpecs extends jspb.Message {
 
 export namespace ObjectSpecs {
   export type AsObject = {
-    required: boolean,
+    required?: boolean,
     min?: number,
     max?: number,
+  }
+
+  export enum RequiredCase { 
+    _REQUIRED_NOT_SET = 0,
+    REQUIRED = 1,
   }
 
   export enum MinCase { 

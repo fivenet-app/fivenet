@@ -1,29 +1,23 @@
 <script lang="ts" setup>
 export interface TemplateSchemaEditorValue {
-    users: {
-        req: boolean;
-        min: number;
-        max: number;
-    };
+    users: ObjectSpecsValue;
 
-    documents: {
-        req: boolean;
-        min: number;
-        max: number;
-    };
+    documents: ObjectSpecsValue;
 
-    vehicles: {
-        req: boolean;
-        min: number;
-        max: number;
-    };
+    vehicles: ObjectSpecsValue;
 }
 
-const props = defineProps<{
+export interface ObjectSpecsValue {
+    req: boolean;
+    min: number;
+    max: number;
+}
+
+defineProps<{
     modelValue: TemplateSchemaEditorValue,
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
     (e: 'update:modelValue', payload: TemplateSchemaEditorValue): void,
 }>();
 </script>
@@ -39,14 +33,18 @@ const emit = defineEmits<{
                     class="h-8 w-8 rounded-md transition-colors bg-base-700 text-primary-600 hover:text-primary-500 hover:bg-base-600 focus:ring-2 focus:ring-inset focus:ring-base-300 border-0" />
                 <div class="flex flex-row">
                     <span
-                        :class="[modelValue.users.req ? 'text-neutral' : 'text-base-400', 'transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm']">Min</span>
+                        :class="[modelValue.users.req ? 'text-neutral' : 'text-base-400', 'transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm']">
+                        {{ $t('common.min') }}
+                    </span>
                     <input v-model="modelValue.users.min" :disabled="!modelValue.users.req" type="number" min="0"
                         oninput="validity.valid||(value='');" name="users" id="users"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
                 <div class="flex flex-row">
                     <span
-                        class="text-neutral transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm">Max</span>
+                        class="text-neutral transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm">
+                        {{ $t('common.max') }}
+                    </span>
                     <input v-model="modelValue.users.max" type="number" min="0"
                         oninput="validity.valid||(value='');" name="users" id="users"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
@@ -63,14 +61,18 @@ const emit = defineEmits<{
                     class="h-8 w-8 rounded-md transition-colors bg-base-700 text-primary-600 hover:text-primary-500 hover:bg-base-600 focus:ring-2 focus:ring-inset focus:ring-base-300 border-0" />
                 <div class="flex flex-row">
                     <span
-                        :class="[modelValue.documents.req ? 'text-neutral' : 'text-base-400', 'transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm']">Min</span>
+                        :class="[modelValue.documents.req ? 'text-neutral' : 'text-base-400', 'transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm']">
+                        {{ $t('common.min') }}
+                    </span>
                     <input v-model="modelValue.documents.min" :disabled="!modelValue.documents.req" type="number" min="0"
                         oninput="validity.valid||(value='');" name="documents" id="documents"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
                 <div class="flex flex-row">
                     <span
-                        class="text-neutral transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm">Max</span>
+                        class="text-neutral transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm">
+                        {{ $t('common.max') }}
+                    </span>
                     <input v-model="modelValue.documents.max" type="number" min="0"
                         oninput="validity.valid||(value='');" name="documents" id="documents"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
@@ -87,14 +89,18 @@ const emit = defineEmits<{
                     class="h-8 w-8 rounded-md transition-colors bg-base-700 text-primary-600 hover:text-primary-500 hover:bg-base-600 focus:ring-2 focus:ring-inset focus:ring-base-300 border-0" />
                 <div class="flex flex-row">
                     <span
-                        :class="[modelValue.vehicles.req ? 'text-neutral' : 'text-base-400', 'transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm']">Min</span>
+                        :class="[modelValue.vehicles.req ? 'text-neutral' : 'text-base-400', 'transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm']">
+                        {{ $t('common.min') }}
+                    </span>
                     <input v-model="modelValue.vehicles.min" :disabled="!modelValue.vehicles.req" type="number" min="0"
                         oninput="validity.valid||(value='');" name="vehicles" id="vehicles"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
                 <div class="flex flex-row">
                     <span
-                        class="text-neutral transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm">Max</span>
+                        class="text-neutral transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm">
+                        {{ $t('common.max') }}
+                    </span>
                     <input v-model="modelValue.vehicles.max" type="number" min="0"
                         oninput="validity.valid||(value='');" name="vehicles" id="vehicles"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />

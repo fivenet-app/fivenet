@@ -105,15 +105,15 @@ async function editTemplate(): Promise<void> {
                         <div class="mt-2">
                             <ul
                                 class="text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300">
-                                <li v-if="reqs.getUsers()">
+                                <li v-if="reqs.hasUsers()">
                                     <TemplateRequirementsList name="User" :required="reqs.getUsers()?.getRequired()!"
                                         :min="reqs.getUsers()?.getMin()!" :max="reqs.getUsers()?.getMax()!" />
                                 </li>
-                                <li v-if="reqs.getVehicles()">
+                                <li v-if="reqs.hasVehicles()">
                                     <TemplateRequirementsList name="Vehicle" :required="reqs.getVehicles()?.getRequired()!"
                                         :min="reqs.getVehicles()?.getMin()!" :max="reqs.getVehicles()?.getMax()!" />
                                 </li>
-                                <li v-if="reqs.getDocuments()">
+                                <li v-if="reqs.hasDocuments()">
                                     <TemplateRequirementsList name="User" :required="reqs.getDocuments()?.getRequired()!"
                                         :min="reqs.getDocuments()?.getMin()!" :max="reqs.getDocuments()?.getMax()!" />
                                 </li>
