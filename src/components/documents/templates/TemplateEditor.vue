@@ -2,7 +2,7 @@
 import { ErrorMessage, Field, useForm } from 'vee-validate';
 import { object, string } from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
-import { CreateTemplateRequest, UpdateTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { CreateTemplateRequest, GetTemplateRequest, UpdateTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { RpcError } from 'grpc-web';
 import { DocumentTemplate, TemplateSchema } from '@fivenet/gen/resources/documents/templates_pb';
 import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
@@ -16,20 +16,23 @@ const props = defineProps({
     }
 });
 
-async function createTemplate(title: string, description: string, contentTitle: string, content: string, schema: string): Promise<void> {
-    if (props.templateId) {
-        return updateTemplate(title, description, contentTitle, content, schema);
-    }
+const title = ref<string>('');
+const description = ref<string>('');
+const contentTitle = ref<string>('');
+const content = ref<string>('');
+const schema = ref<TemplateSchema>(new TemplateSchema());
+
+async function createTemplate(): Promise<void> {
+    if (props.templateId) return updateTemplate();
 
     return new Promise(async (res, rej) => {
         const req = new CreateTemplateRequest();
         const tpl = new DocumentTemplate();
-        tpl.setTitle(title);
-        tpl.setDescription(description);
-        tpl.setContentTitle(contentTitle);
-        tpl.setContent(content);
-        const tplSchema = new TemplateSchema();
-        tpl.setSchema(tplSchema);
+        tpl.setTitle(title.value);
+        tpl.setDescription(description.value);
+        tpl.setContentTitle(contentTitle.value);
+        tpl.setContent(content.value);
+        tpl.setSchema(schema.value);
 
         req.setTemplate(tpl);
 
@@ -47,16 +50,15 @@ async function createTemplate(title: string, description: string, contentTitle: 
     });
 }
 
-async function updateTemplate(title: string, description: string, contentTitle: string, content: string, schema: string): Promise<void> {
+async function updateTemplate(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new UpdateTemplateRequest();
         const tpl = new DocumentTemplate();
-        tpl.setTitle(title);
-        tpl.setDescription(description);
-        tpl.setContentTitle(contentTitle);
-        tpl.setContent(content);
-        const tplSchema = new TemplateSchema();
-        tpl.setSchema(tplSchema);
+        tpl.setTitle(title.value);
+        tpl.setDescription(description.value);
+        tpl.setContentTitle(contentTitle.value);
+        tpl.setContent(content.value);
+        tpl.setSchema(schema.value);
 
         try {
             const resp = await $grpc.getDocStoreClient().
@@ -84,42 +86,66 @@ const { handleSubmit } = useForm({
     ),
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await createTemplate(values.title, values.description, values.contentTitle, values.content, values.schema!));
+const onSubmit = handleSubmit(async (): Promise<void> => await createTemplate());
+
+onMounted(async () => {
+    if (props.templateId) {
+        const req = new GetTemplateRequest();
+        req.setTemplateId(props.templateId);
+
+        try {
+            const resp = (await $grpc.getDocStoreClient().getTemplate(req, null)).getTemplate();
+            if (!resp) return;
+
+            title.value = resp.getTitle()
+            description.value = resp.getDescription()
+            contentTitle.value = resp.getContentTitle()
+            content.value = resp.getContent()
+            schema.value = resp.getSchema() ?? new TemplateSchema();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+        }
+    }
+});
 </script>
 
 <template>
-    <div>
+    <div class="text-neutral">
         <form @submit="onSubmit">
-            <label for="title" class="block text-sm font-medium leading-6 text-gray-100">Title</label>
-            <div class="mt-2">
-                <Field as="textarea" rows="4" name="title" id="title"
-                    class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
+            <label for="title" class="block font-medium text-sm mt-2">Title</label>
+            <div>
+                <Field as="textarea" rows="1" name="title" id="title"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    v-model="title" />
                 <ErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
             </div>
-            <label for="title" class="block text-sm font-medium leading-6 text-gray-100">Description</label>
-            <div class="mt-2">
+            <label for="description" class="block font-medium text-sm mt-2">Description</label>
+            <div>
                 <Field as="textarea" rows="4" name="description" id="description"
-                    class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    v-model="description" />
                 <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
             </div>
-            <label for="contentTitle" class="block text-sm font-medium leading-6 text-gray-100">Content Title</label>
-            <div class="mt-2">
-                <Field as="textarea" rows="4" name="contentTitle" id="contentTitle"
-                    class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
+            <label for="contentTitle" class="block font-medium text-sm mt-2">Content Title</label>
+            <div>
+                <Field as="textarea" rows="1" name="contentTitle" id="contentTitle"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    v-model="contentTitle" />
                 <ErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
             </div>
-            <label for="content" class="block text-sm font-medium leading-6 text-gray-100">Content</label>
-            <div class="mt-2">
+            <label for="content" class="block font-medium text-sm mt-2">Content</label>
+            <div>
                 <Field as="textarea" rows="4" name="content" id="content"
-                    class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    v-model="content" />
                 <ErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
             </div>
-            <label for="schema" class="block text-sm font-medium leading-6 text-gray-100">Schema</label>
-            <div class="mt-2">
-                <TemplateSchemaEditor />
+            <label for="schema" class="block font-medium text-sm mt-2">Schema</label>
+            <div>
+                <TemplateSchemaEditor v-model="schema" />
             </div>
             <button type="submit"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 mt-2">
                 {{ $t('common.create') }}
             </button>
         </form>
