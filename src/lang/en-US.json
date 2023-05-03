@@ -447,17 +447,31 @@
                 "content": "All vehicles have been removed from your clipboard"
             }
         },
+        "renewed_token": {
+            "title": "Access Token renewed",
+            "content": "Your access token has been automatically renewed."
+        },
         "action_successfull": {
             "title": "Success!",
             "content": "Your action was successfully submitted"
         },
-        "changed_password": {
-            "title": "Password has been changed",
-            "content": "Your new password has been set"
+        "auth": {
+            "changed_password": {
+                "title": "Password has been changed",
+                "content": "Your new password has been set"
+            },
+            "account_created": {
+                "title": "Account created!",
+                "content": "Your account was successfully created"
+            },
+            "error_logout": {
+                "title": "Logout: Encountered an error",
+                "content": "{0}"
+            }
         },
-        "account_created": {
-            "title": "Account created!",
-            "content": "Your account was successfully created"
+        "language_switched": {
+            "title": "Language switched",
+            "content": "Language will be switched to {0}."
         },
         "category_deleted": {
             "title": "Category deleted!",
@@ -482,10 +496,6 @@
         "failed_loading_postals": {
             "title": "Failed to load Postal codes",
             "content": "Postal codes couldn't be loaded"
-        },
-        "error_logout": {
-            "title": "Logout: Encountered an error",
-            "content": "{0}"
         },
         "grpc_errors": {
             "unauthenticated": {

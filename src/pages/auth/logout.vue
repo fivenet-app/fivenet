@@ -45,8 +45,8 @@ onBeforeMount(async () => {
         const err = e as RpcError;
         authStore.loginStop(err.message);
         notifications.dispatchNotification({
-            title: t('notifications.error_logout.title'),
-            content: t('notifications.error_logout.content', [err.message]),
+            title: t('notifications.auth.error_logout.title'),
+            content: t('notifications.auth.error_logout.content', [err.message]),
             type: 'error'
         });
     }

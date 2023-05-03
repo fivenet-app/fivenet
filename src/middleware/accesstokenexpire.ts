@@ -2,6 +2,7 @@ import { NavigationGuard, RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 import { CheckTokenRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
+import { useNotificationsStore } from '~/store/notifications';
 
 export default defineNuxtRouteMiddleware(
     (to: RouteLocationNormalized, from: RouteLocationNormalized): ReturnType<NavigationGuard> => {
@@ -31,7 +32,7 @@ export default defineNuxtRouteMiddleware(
                 setTimeout(async () => {
                     await checkToken();
                     tokenCheckInProgress = false;
-                }, 1);
+                }, 100);
             }
 
             return;
@@ -45,6 +46,7 @@ async function checkToken(): Promise<void> {
     return new Promise(async (res, rej) => {
         const { $grpc } = useNuxtApp();
         const authStore = useAuthStore();
+        const notifications = useNotificationsStore();
 
         const req = new CheckTokenRequest();
         req.setToken(authStore.getAccessToken!);
@@ -53,8 +55,15 @@ async function checkToken(): Promise<void> {
             const resp = await $grpc.getAuthClient().checkToken(req, null);
 
             if (resp.hasNewToken() && resp.hasExpires()) {
-                console.log('Token successfully renewed');
                 authStore.setAccessToken(resp.getNewToken(), toDate(resp.getExpires()) as null | Date);
+
+                notifications.dispatchNotification({
+                    title: 'notifications.renewed_token.title',
+                    titleI18n: true,
+                    content: 'notifications.renewed_token.content',
+                    contentI18n: true,
+                    type: 'info'
+                });
             }
 
             return res();

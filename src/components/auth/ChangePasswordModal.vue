@@ -41,8 +41,8 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
             authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
 
             notifications.dispatchNotification({
-                title: t('notifications.changed_password.title'),
-                content: t('notifications.changed_password.content'),
+                title: t('notifications.auth.changed_password.title'),
+                content: t('notifications.auth.changed_password.content'),
                 type: 'success'
             });
             await navigateTo({ name: 'overview' });

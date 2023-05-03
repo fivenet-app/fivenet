@@ -22,7 +22,6 @@ export class LoadingManager {
     }
 
     async start(): Promise<void> {
-        console.log('data:loading:start:', this.counted);
         this.counted++;
         if (this.counted == 1) {
             useNuxtApp().callHook('data:loading:start');
@@ -30,7 +29,6 @@ export class LoadingManager {
     }
 
     async finish(): Promise<void> {
-        console.log('data:loading:finish:', this.counted);
         if (this.counted > 0) {
             this.counted--;
             useNuxtApp().callHook('data:loading:finish');
@@ -38,7 +36,6 @@ export class LoadingManager {
     }
 
     async errored(): Promise<void> {
-        console.log('data:loading:finish_error:', this.counted);
         this.counted = 0;
         useNuxtApp().callHook('data:loading:finish_error');
     }

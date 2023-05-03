@@ -5,7 +5,7 @@ import { LocaleObject } from 'vue-i18n-routing';
 import { useUserSettingsStore } from '~/store/usersettings';
 import { useNotificationsStore } from '~/store/notifications';
 
-const { locales, setLocale } = useI18n();
+const { t, locales, setLocale } = useI18n();
 const settings = useUserSettingsStore();
 const notifications = useNotificationsStore();
 
@@ -26,7 +26,11 @@ async function switchLanguage(lang: { name: string, iso: string }): Promise<void
     settings.setLocale(lang.iso);
     setLocale(lang.iso);
 
-    notifications.dispatchNotification({ title: 'Language', content: `Switched Language to ${lang.name}`, type: 'success' });
+    notifications.dispatchNotification({
+        title: t('notifications.language_switched.title'),
+        content: t('notifications.language_switched.content', [lang.name]),
+        type: 'success',
+    });
 }
 </script>
 

@@ -96,10 +96,6 @@ nuxt.hook('data:loading:finish_error', () => {
     }, 1100);
 });
 
-watch(data, () => {
-    console.log(data.canSucceed);
-});
-
 onBeforeUnmount(() => clear);
 </script>
 

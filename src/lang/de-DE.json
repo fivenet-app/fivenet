@@ -447,17 +447,31 @@
                 "content": "Alle Fahrzeuge wurden aus der Zwischenablage entfernt"
             }
         },
+        "renewed_token": {
+            "title": "Zugangstokens erneuert",
+            "content": "Dein Zugangstokens wurde automatisch erneuert."
+        },
         "action_successfull": {
             "title": "Erfolg!",
             "content": "Ihre Aktion wurde erfolgreich übermittelt"
         },
-        "changed_password": {
-            "title": "Passwort wurde geändert",
-            "content": "Ihr neues Passwort wurde festgelegt"
+        "auth": {
+            "changed_password": {
+                "title": "Passwort wurde geändert",
+                "content": "Ihr neues Passwort wurde festgelegt"
+            },
+            "account_created": {
+                "title": "Konto erstellt!",
+                "content": "Dein Konto wurde erfolgreich erstellt"
+            },
+            "error_logout": {
+                "title": "Abmeldung: Ein Fehler ist aufgetreten",
+                "content": "{0}"
+            }
         },
-        "account_created": {
-            "title": "Konto erstellt!",
-            "content": "Dein Konto wurde erfolgreich erstellt"
+        "language_switched": {
+            "title": "Sprache gewechselt",
+            "content": "Sprache wird zu {0} gewechselt."
         },
         "category_deleted": {
             "title": "Kategorie gelöscht!",
@@ -482,10 +496,6 @@
         "failed_loading_postals": {
             "title": "Laden der Postleitzahlen fehlgeschlagen",
             "content": "Postleitzahlen konnten nicht geladen werden"
-        },
-        "error_logout": {
-            "title": "Abmeldung: Ein Fehler ist aufgetreten",
-            "content": "{0}"
         },
         "grpc_errors": {
             "unauthenticated": {

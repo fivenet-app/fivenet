@@ -30,8 +30,8 @@ async function forgotPassword(regToken: string, password: string): Promise<void>
                 forgotPassword(req, null);
 
             notifications.dispatchNotification({
-                title: t('notifications.account_created.title'),
-                content: t('notifications.account_created.content'),
+                title: t('notifications.auth.account_created.title'),
+                content: t('notifications.auth.account_created.content'),
                 type: 'success'
             });
 
