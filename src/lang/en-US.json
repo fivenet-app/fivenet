@@ -447,41 +447,9 @@
                 "content": "All vehicles have been removed from your clipboard"
             }
         },
-        "renewed_token": {
-            "title": "Access Token renewed",
-            "content": "Your access token has been automatically renewed."
-        },
         "action_successfull": {
             "title": "Success!",
             "content": "Your action was successfully submitted"
-        },
-        "auth": {
-            "changed_password": {
-                "title": "Password has been changed",
-                "content": "Your new password has been set"
-            },
-            "account_created": {
-                "title": "Account created!",
-                "content": "Your account was successfully created"
-            },
-            "error_logout": {
-                "title": "Logout: Encountered an error",
-                "content": "{0}"
-            },
-            "oauth2_login": {
-                "success": {
-                    "title": "Successfully logged in",
-                    "content": "Successfully logged in using social login provider."
-                },
-                "failed": {
-                    "title": "Failed to login using provider",
-                    "content": "Error during social login ({0}), please try again."
-                }
-            }
-        },
-        "language_switched": {
-            "title": "Language switched",
-            "content": "Language will be switched to {0}."
         },
         "category_deleted": {
             "title": "Category deleted!",
@@ -553,6 +521,38 @@
         "document_deleted": {
             "title": "Document deleted!",
             "content": "Document has been deleted."
+        },
+        "renewed_token": {
+            "title": "Access Token renewed",
+            "content": "Your access token has been automatically renewed."
+        },
+        "auth": {
+            "changed_password": {
+                "title": "Password has been changed",
+                "content": "Your new password has been set"
+            },
+            "account_created": {
+                "title": "Account created!",
+                "content": "Your account was successfully created"
+            },
+            "error_logout": {
+                "title": "Logout: Encountered an error",
+                "content": "{0}"
+            },
+            "oauth2_login": {
+                "success": {
+                    "title": "Successfully logged in",
+                    "content": "Successfully logged in using social login provider."
+                },
+                "failed": {
+                    "title": "Failed to login using provider",
+                    "content": "Error during social login ({0}), please try again."
+                }
+            }
+        },
+        "language_switched": {
+            "title": "Language switched",
+            "content": "Language will be switched to {0}."
         }
     }
 }
