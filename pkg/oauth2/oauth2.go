@@ -102,17 +102,17 @@ const (
 	LoginRedirBase       string = "/auth/login"
 )
 
-func (o *OAuth2) handleRedirect(c *gin.Context, err error, connectOnly bool, success bool, message string) {
+func (o *OAuth2) handleRedirect(c *gin.Context, err error, connectOnly bool, success bool, reason string) {
 	if !success {
 		redirURL := ""
 		if connectOnly {
-			redirURL = AccountInfoRedirBase + "?oauth-connect=failed"
+			redirURL = AccountInfoRedirBase + "?oauth2Connect=failed"
 		} else {
-			redirURL = LoginRedirBase + "?oauth-login=failed"
+			redirURL = LoginRedirBase + "?oauth2Login=failed"
 		}
 
-		if message != "" {
-			redirURL = redirURL + "&message=" + url.QueryEscape(message)
+		if reason != "" {
+			redirURL = redirURL + "&reason=" + url.QueryEscape(reason)
 		}
 
 		c.Redirect(http.StatusTemporaryRedirect, redirURL)
@@ -121,9 +121,9 @@ func (o *OAuth2) handleRedirect(c *gin.Context, err error, connectOnly bool, suc
 
 	redirURL := ""
 	if connectOnly {
-		redirURL = AccountInfoRedirBase + "?oauth-connect=success"
+		redirURL = AccountInfoRedirBase + "?oauth2Connect=success"
 	} else {
-		redirURL = LoginRedirBase + "?oauth-login=success"
+		redirURL = LoginRedirBase + "?oauth2Login=success"
 	}
 
 	c.Redirect(http.StatusTemporaryRedirect, redirURL)
@@ -220,7 +220,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 	if connectOnly {
 		claims, err := o.tm.ParseWithClaims(token)
 		if err != nil {
-			c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth-login=failed&reason=token_invalid")
+			c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth2Login=failed&reason=token_invalid")
 			return
 		}
 
@@ -242,7 +242,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 	}
 
 	if account == nil {
-		c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth-login=failed&reason=unconnected")
+		c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth2Login=failed&reason=unconnected")
 		return
 	} else if account.ID == 0 {
 		o.handleRedirect(c, nil, connectOnly, true, "internal_error")
@@ -256,7 +256,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf(LoginRedirBase+"?oauth-connect=success&t=%s&exp=%d",
+	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf(LoginRedirBase+"?oauth2Connect=success&t=%s&exp=%d",
 		url.QueryEscape(newToken),
 		claims.ExpiresAt.Time.UTC().UnixNano()/1e6,
 	))

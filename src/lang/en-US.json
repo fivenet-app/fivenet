@@ -467,6 +467,16 @@
             "error_logout": {
                 "title": "Logout: Encountered an error",
                 "content": "{0}"
+            },
+            "oauth2_login": {
+                "success": {
+                    "title": "Successfully logged in",
+                    "content": "Successfully logged in using social login provider."
+                },
+                "failed": {
+                    "title": "Failed to login using provider",
+                    "content": "Error during social login ({0}), please try again."
+                }
             }
         },
         "language_switched": {

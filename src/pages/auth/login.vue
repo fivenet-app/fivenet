@@ -17,18 +17,27 @@ const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 const route = useRoute();
 
-const token = route.query.t;
-const expire = route.query.exp;
-if (token && token !== "" && expire) {
-    authStore.setAccessToken(token as string, parseInt(expire as string));
+const { t } = useI18n();
+
+const query = route.query;
+if (query.t && query.t !== "" && query.exp) {
+    authStore.setAccessToken(query.t as string, parseInt(query.exp as string));
 
     notifications.dispatchNotification({
-        title: 'Successfully logged in',
-        content: 'Successfully logged in using social login provider.',
+        title: t('notifications.auth.oauth2_login.success.title'),
+        content: t('notifications.auth.oauth2_login.success.content'),
         type: 'info',
     });
 
     await navigateTo({ name: 'auth-character-selector' });
+} else if (query.oauth2Login && query.oauth2Login == "failed") {
+    const reason = query.reason ?? "N/A";
+
+    notifications.dispatchNotification({
+        title: t('notifications.auth.oauth2_login.failed.title'),
+        content: t('notifications.auth.oauth2_login.failed.content', [reason]),
+        type: 'error',
+    });
 }
 </script>
 
