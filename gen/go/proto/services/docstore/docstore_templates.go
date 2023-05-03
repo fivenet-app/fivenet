@@ -164,6 +164,8 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
+	req.Template.Job = job
+
 	categoryId := jet.NULL
 	if req.Template.Category != nil {
 		cat, err := s.getDocumentCategory(ctx, req.Template.Category.Id)
