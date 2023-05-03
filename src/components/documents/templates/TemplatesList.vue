@@ -14,10 +14,10 @@ defineEmits<{
     (e: 'selected', t: DocumentTemplateShort): void,
 }>();
 
-const { data: templates, pending, refresh, error } = useLazyAsyncData(`documents-templates`, () => findTemplates());
+const { data: templates, pending, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
 const items = ref<CardElements>([]);
 
-async function findTemplates(): Promise<Array<DocumentTemplateShort>> {
+async function listTemplates(): Promise<Array<DocumentTemplateShort>> {
     return new Promise(async (res, rej) => {
         const req = new ListTemplatesRequest();
 
