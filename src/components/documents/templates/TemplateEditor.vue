@@ -53,9 +53,9 @@ async function createTemplate(): Promise<void> {
         tpl.setContent(content.value);
 
         const tRequirements = new TemplateRequirements();
-        if (schema.value.users.req) tRequirements.setUsers((new ObjectSpecs).setRequired(schema.value.users.req).setMin(schema.value.users.min).setMax(schema.value.users.max));
-        if (schema.value.documents.req) tRequirements.setDocuments((new ObjectSpecs).setRequired(schema.value.documents.req).setMin(schema.value.documents.min).setMax(schema.value.documents.max));
-        if (schema.value.vehicles.req) tRequirements.setVehicles((new ObjectSpecs).setRequired(schema.value.vehicles.req).setMin(schema.value.vehicles.min).setMax(schema.value.vehicles.max));
+        tRequirements.setUsers((new ObjectSpecs).setRequired(schema.value.users.req).setMin(schema.value.users.min).setMax(schema.value.users.max));
+        tRequirements.setDocuments((new ObjectSpecs).setRequired(schema.value.documents.req).setMin(schema.value.documents.min).setMax(schema.value.documents.max));
+        tRequirements.setVehicles((new ObjectSpecs).setRequired(schema.value.vehicles.req).setMin(schema.value.vehicles.min).setMax(schema.value.vehicles.max));
 
         const tSchema = new TemplateSchema();
         tSchema.setRequirements(tRequirements);
@@ -88,9 +88,9 @@ async function updateTemplate(): Promise<void> {
         tpl.setContent(content.value);
 
         const tRequirements = new TemplateRequirements();
-        if (schema.value.users.req) tRequirements.setUsers((new ObjectSpecs).setRequired(schema.value.users.req).setMin(schema.value.users.min).setMax(schema.value.users.max));
-        if (schema.value.documents.req) tRequirements.setDocuments((new ObjectSpecs).setRequired(schema.value.documents.req).setMin(schema.value.documents.min).setMax(schema.value.documents.max));
-        if (schema.value.vehicles.req) tRequirements.setVehicles((new ObjectSpecs).setRequired(schema.value.vehicles.req).setMin(schema.value.vehicles.min).setMax(schema.value.vehicles.max));
+        tRequirements.setUsers((new ObjectSpecs).setRequired(schema.value.users.req).setMin(schema.value.users.min).setMax(schema.value.users.max));
+        tRequirements.setDocuments((new ObjectSpecs).setRequired(schema.value.documents.req).setMin(schema.value.documents.min).setMax(schema.value.documents.max));
+        tRequirements.setVehicles((new ObjectSpecs).setRequired(schema.value.vehicles.req).setMin(schema.value.vehicles.min).setMax(schema.value.vehicles.max));
 
         const tSchema = new TemplateSchema();
         tSchema.setRequirements(tRequirements);

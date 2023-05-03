@@ -46,8 +46,8 @@ const emit = defineEmits<{
                 </div>
                 <div class="flex flex-row">
                     <span
-                        :class="[modelValue.users.req ? 'text-neutral' : 'text-base-400', 'transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm']">Max</span>
-                    <input v-model="modelValue.users.max" :disabled="!modelValue.users.req" type="number" min="0"
+                        class="text-neutral transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm">Max</span>
+                    <input v-model="modelValue.users.max" type="number" min="0"
                         oninput="validity.valid||(value='');" name="users" id="users"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
@@ -70,8 +70,8 @@ const emit = defineEmits<{
                 </div>
                 <div class="flex flex-row">
                     <span
-                        :class="[modelValue.documents.req ? 'text-neutral' : 'text-base-400', 'transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm']">Max</span>
-                    <input v-model="modelValue.documents.max" :disabled="!modelValue.documents.req" type="number" min="0"
+                        class="text-neutral transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm">Max</span>
+                    <input v-model="modelValue.documents.max" type="number" min="0"
                         oninput="validity.valid||(value='');" name="documents" id="documents"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
@@ -94,8 +94,8 @@ const emit = defineEmits<{
                 </div>
                 <div class="flex flex-row">
                     <span
-                        :class="[modelValue.vehicles.req ? 'text-neutral' : 'text-base-400', 'transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm']">Max</span>
-                    <input v-model="modelValue.vehicles.max" :disabled="!modelValue.vehicles.req" type="number" min="0"
+                        class="text-neutral transition-colors inline-flex h-9 items-center rounded-l-md border-0 px-3 bg-base-800 sm:text-sm">Max</span>
+                    <input v-model="modelValue.vehicles.max" type="number" min="0"
                         oninput="validity.valid||(value='');" name="vehicles" id="vehicles"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
