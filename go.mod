@@ -24,7 +24,7 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/microcosm-cc/bluemonday v1.0.23
 	github.com/ory/dockertest/v3 v3.10.0
-	github.com/prometheus/client_golang v1.15.0
+	github.com/prometheus/client_golang v1.15.1
 	github.com/prometheus/common v0.42.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.15.0
