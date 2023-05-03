@@ -88,7 +88,9 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                             +
                                             ", " +
                                             relation.getSourceUser()?.getLastname() }}</span>
-                                        <time datetime="">{{ toDateLocaleString(relation.getCreatedAt()) }}</time>
+                                        <time :datetime="toDateLocaleString(relation.getCreatedAt())">
+                                            {{ useLocaleTimeAgo(toDate(relation.getCreatedAt())!).value }}
+                                        </time>
                                     </span>
                                 </span>
                                 <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
@@ -99,7 +101,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
             </div>
 
             <!-- Relations table (small breakpoint and up) -->
-            <div v-if="relations.length > 0" class="hidden sm:block">
+            <div v-if="relations && relations.length > 0" class="hidden sm:block">
                 <div>
                     <div class="flex flex-col mt-2">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
@@ -131,8 +133,8 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                                 {{ relation.getDocument()?.getTitle() }}<span
                                                     v-if="relation.getDocument()?.getCategory()"> ({{ $t('common.category',
                                                         1)
-                                                    }}: {{
-    relation.getDocument()?.getCategory()?.getName() }})</span>
+                                                    }}: {{ relation.getDocument()?.getCategory()?.getName() }})
+                                                </span>
                                             </NuxtLink>
                                         </td>
                                         <td class="px-6 py-4 text-sm ">
@@ -160,7 +162,9 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
-                                            <time datetime="">{{ toDateLocaleString(relation.getCreatedAt()) }}</time>
+                                            <time :datetime="toDateLocaleString(relation.getCreatedAt())">
+                                            {{ useLocaleTimeAgo(toDate(relation.getCreatedAt())!).value }}
+                                        </time>
                                         </td>
                                     </tr>
                                 </tbody>

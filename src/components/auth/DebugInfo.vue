@@ -33,8 +33,7 @@ const perms = computed(() => authStore.getPermissions);
                         {{ $t('components.debug_info.access_token_expiration') }}
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        {{ fromSecondsToFormattedDuration((accessTokenExpiration.getTime() - (new Date()).getTime()) / 1000)
-                        }}
+                        {{ useLocaleTimeAgo(accessTokenExpiration!).value }}
                     </dd>
                 </div>
                 <div v-if="perms.length > 0" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">

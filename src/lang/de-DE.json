@@ -386,7 +386,27 @@
         "type": "Art",
         "propertie": "Eigenschaft | Eigenschaften",
         "connect": "Verbinden",
-        "disconnect": "Trennen"
+        "disconnect": "Trennen",
+        "time_ago": {
+            "just-now": "gerade jetzt",
+            "ago": "vor {0}",
+            "in": "in {0}",
+            "last-month": "Letzter Monat",
+            "next-month": "Nächster Monat",
+            "month": "Monat | Monate",
+            "last-year": "Letztes Jahr",
+            "next-year": "Nächstes Jahr",
+            "year": "Jahr | Jahre",
+            "yesterday": "gestern",
+            "tomorrow": "morgen",
+            "day": "Tag | Tage",
+            "last-week": "Letzte Woche",
+            "next-week": "Nächste Woche",
+            "week": "Woche | Wochen",
+            "hour": "Stunde | Stunden",
+            "minute": "Minute | Minuten",
+            "second": "Sekunde | Sekunden"
+        }
     },
     "notifications": {
         "clipboard": {

@@ -12,7 +12,6 @@ import { DispatchMarker, UserMarker } from '@fivenet/gen/resources/livemap/livem
 import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { watchDebounced } from '@vueuse/core';
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { toDateRelativeString } from '~/utils/time';
 import { useUserSettingsStore } from '~/store/usersettings';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
@@ -22,6 +21,7 @@ const { $grpc } = useNuxtApp();
 const userSettings = useUserSettingsStore();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
+const route = useRoute();
 
 const { t } = useI18n();
 
@@ -154,7 +154,7 @@ function parseHash(hash: string): { latlng: L.LatLng, zoom: number } | undefined
 async function onMapReady($event: any): Promise<void> {
     map = $event as L.Map;
 
-    const startingHash = window.location.hash;
+    const startingHash = route.hash;
     const startPos = parseHash(startingHash);
     if (startPos) $event.setView(startPos.latlng, startPos.zoom);
 
@@ -426,7 +426,7 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
                     :icon="getIcon('dispatch', marker) as L.Icon" @click="setSelectedMarker(marker.getId())">
                     <LPopup :options="{ closeButton: false }"
-                        :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span>${toDateRelativeString(marker.getUpdatedAt())}</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.getName()}</span>`">
+                        :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span>${useLocaleTimeAgo(toDate(marker.getUpdatedAt())!).value}</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.getName()}</span>`">
                     </LPopup>
                 </LMarker>
             </LLayerGroup>

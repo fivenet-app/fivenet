@@ -29,7 +29,7 @@ import { RpcError } from 'grpc-web';
 import { FunctionalComponent } from 'vue';
 import { ClipboardDocument, getDocument } from '~/store/clipboard';
 import { useAuthStore } from '~/store/auth';
-import { toDateLocaleString, toDateRelativeString } from '~/utils/time';
+import { toDateLocaleString } from '~/utils/time';
 import { useClipboardStore } from '~/store/clipboard';
 
 const { $grpc } = useNuxtApp();
@@ -373,9 +373,11 @@ function removeReference(id: number): void {
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                             {{ $t('common.created') }} <time
-                                                                                :datetime="toDateLocaleString(doc.getCreatedAt())">{{
-                                                                                    toDateRelativeString(doc.getCreatedAt())
-                                                                                }}</time>
+                                                                                :datetime="toDateLocaleString(doc.getCreatedAt())">
+                                                                                {{
+                                                                                    useLocaleTimeAgo(toDate(doc.getCreatedAt())!).value
+                                                                                }}
+                                                                            </time>
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                             <div class="flex flex-row gap-2">

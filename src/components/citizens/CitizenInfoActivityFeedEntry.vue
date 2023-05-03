@@ -42,7 +42,9 @@ switch (props.activity.getKey()) {
             <div class="flex items-center justify-between">
                 <h3 class="text-sm font-medium text-neutral">{{ activity.getSourceUser()?.getFirstname() }} {{
                     activity.getSourceUser()?.getLastname() }}</h3>
-                <p class="text-sm text-gray-400">{{ toDateRelativeString(activity.getCreatedAt()) }}</p>
+                <p class="text-sm text-gray-400">
+                    {{ useLocaleTimeAgo(toDate(activity.getCreatedAt())!).value }}
+                </p>
             </div>
             <p class="text-sm text-gray-300">{{ actionText }} <span class="font-bold">{{ actionValue }}</span></p>
         </div>

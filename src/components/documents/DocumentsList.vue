@@ -6,7 +6,6 @@ import { Document } from '@fivenet/gen/resources/documents/documents_pb';
 import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
-import { toDateLocaleString, toDateRelativeString } from '~/utils/time';
 import TemplatesModal from './templates/TemplatesModal.vue';
 import { RpcError } from 'grpc-web';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
@@ -137,8 +136,10 @@ watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 14
                                                     <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
                                                     <p>
-                                                        {{ $t('common.created') }} <time :datetime="toDateLocaleString(doc.getCreatedAt())">{{
-                                                            toDateRelativeString(doc.getCreatedAt()) }}</time>
+                                                        {{ $t('common.created') }} <time
+                                                            :datetime="toDateLocaleString(doc.getCreatedAt())">
+                                                            {{ useLocaleTimeAgo(toDate(doc.getCreatedAt())!).value }}
+                                                        </time>
                                                     </p>
                                                 </div>
                                             </div>
