@@ -7,8 +7,11 @@ import { RpcError } from 'grpc-web';
 import { DocumentTemplate, ObjectSpecs, TemplateRequirements, TemplateSchema } from '@fivenet/gen/resources/documents/templates_pb';
 import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
 import { TemplateSchemaEditorValue } from './TemplateSchemaEditor.vue';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
+
+const notifications = useNotificationsStore();
 
 const props = defineProps({
     templateId: {
@@ -68,6 +71,12 @@ async function createTemplate(): Promise<void> {
             const resp = await $grpc.getDocStoreClient().
                 createTemplate(req, null);
 
+            notifications.dispatchNotification({
+                title: 'Template: Created',
+                content: 'Template created successfully.',
+                type: 'success',
+            });
+
             await navigateTo({ name: 'documents-templates-id', params: { id: resp.getId() } });
 
             return res();
@@ -100,6 +109,12 @@ async function updateTemplate(): Promise<void> {
         try {
             const resp = await $grpc.getDocStoreClient().
                 updateTemplate(req, null);
+
+                notifications.dispatchNotification({
+                title: 'Template: Updated',
+                content: 'Template updated successfully.',
+                type: 'success',
+            });
 
             await navigateTo({ name: 'documents-templates-id', params: { id: resp.getId() } });
 

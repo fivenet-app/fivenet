@@ -6,6 +6,8 @@ import TemplateRequirementsList from './TemplateRequirementsList.vue';
 
 const { $grpc } = useNuxtApp();
 
+const notifications = useNotificationsStore();
+
 const props = defineProps({
     templateId: {
         type: Number,
@@ -45,6 +47,13 @@ async function deleteTemplate(): Promise<void> {
         try {
             await $grpc.getDocStoreClient().
                 deleteTemplate(req, null);
+
+            notifications.dispatchNotification({
+                title: 'Template: Deleted',
+                content: 'Template deleted successfully.',
+                type: 'success',
+            });
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
