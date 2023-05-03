@@ -447,31 +447,9 @@
                 "content": "Alle Fahrzeuge wurden aus der Zwischenablage entfernt"
             }
         },
-        "renewed_token": {
-            "title": "Zugangstokens erneuert",
-            "content": "Dein Zugangstokens wurde automatisch erneuert."
-        },
         "action_successfull": {
             "title": "Erfolg!",
             "content": "Ihre Aktion wurde erfolgreich übermittelt"
-        },
-        "auth": {
-            "changed_password": {
-                "title": "Passwort wurde geändert",
-                "content": "Ihr neues Passwort wurde festgelegt"
-            },
-            "account_created": {
-                "title": "Konto erstellt!",
-                "content": "Dein Konto wurde erfolgreich erstellt"
-            },
-            "error_logout": {
-                "title": "Abmeldung: Ein Fehler ist aufgetreten",
-                "content": "{0}"
-            }
-        },
-        "language_switched": {
-            "title": "Sprache gewechselt",
-            "content": "Sprache wird zu {0} gewechselt."
         },
         "category_deleted": {
             "title": "Kategorie gelöscht!",
@@ -543,6 +521,38 @@
         "document_deleted": {
             "title": "Dokument gelöscht!",
             "content": "Dokument wurde gelöscht."
+        },
+        "renewed_token": {
+            "title": "Zugangstokens erneuert",
+            "content": "Dein Zugangstokens wurde automatisch erneuert."
+        },
+        "auth": {
+            "changed_password": {
+                "title": "Passwort wurde geändert",
+                "content": "Ihr neues Passwort wurde festgelegt"
+            },
+            "account_created": {
+                "title": "Konto erstellt!",
+                "content": "Dein Konto wurde erfolgreich erstellt"
+            },
+            "error_logout": {
+                "title": "Abmeldung: Ein Fehler ist aufgetreten",
+                "content": "{0}"
+            },
+            "oauth2_login": {
+                "success": {
+                    "title": "Erfolgreich angemeldet",
+                    "content": "Third-Party Anmeldung erfolgreich."
+                },
+                "failed": {
+                    "title": "Anmeldung fehlgeschlagen",
+                    "content": "Third-Party Anmeldung fehlgeschlagen ({0}), bitte erneut versuchen."
+                }
+            }
+        },
+        "language_switched": {
+            "title": "Sprache gewechselt",
+            "content": "Sprache wird zu {0} gewechselt."
         }
     }
 }
