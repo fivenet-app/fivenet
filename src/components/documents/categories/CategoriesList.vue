@@ -94,8 +94,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                         <form @submit="onSubmit">
                             <div class="flex flex-row gap-4 mx-auto">
                                 <div class="flex-1 form-control">
-                                    <label for="name" class="block text-sm font-medium leading-6 text-neutral">{{
-                                        $t('common.category', 1) }}</label>
+                                    <label for="name" class="block text-sm font-medium leading-6 text-neutral">
+                                        {{ $t('common.category', 1) }}
+                                    </label>
                                     <div class="relative flex items-center mt-2">
                                         <Field type="text" name="name" id="name" :placeholder="$t('common.category', 1)"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
@@ -103,8 +104,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                     </div>
                                 </div>
                                 <div class="flex-1 form-control">
-                                    <label for="description" class="block text-sm font-medium leading-6 text-neutral">{{
-                                        $t('common.description') }}</label>
+                                    <label for="description" class="block text-sm font-medium leading-6 text-neutral">
+                                        {{ $t('common.description') }}
+                                    </label>
                                     <div class="relative flex items-center mt-2">
                                         <Field type="text" name="description" id="description"
                                             :placeholder="$t('common.description')"
@@ -113,9 +115,12 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                     </div>
                                 </div>
                                 <div class="flex-1 form-control">
+                                    <label for="submit" class="block text-sm font-medium leading-6 text-neutral">
+                                        &nbsp;
+                                    </label>
                                     <div class="relative flex items-center mt-2">
                                         <button type="submit"
-                                            class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
+                                            class="block w-full px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                             {{ $t('common.create') }}
                                         </button>
                                     </div>
@@ -147,4 +152,5 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                 </div>
             </div>
         </div>
-</div></template>
+    </div>
+</template>

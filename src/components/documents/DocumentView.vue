@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import { DeleteDocumentRequest, GetDocumentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess } from '@fivenet/gen/resources/documents/documents_pb';
-import { toDate } from '~/utils/time';
 import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import {
     TabGroup,
@@ -20,6 +19,7 @@ import {
     UserIcon,
     DocumentMagnifyingGlassIcon,
     TrashIcon,
+    MagnifyingGlassIcon,
 } from '@heroicons/vue/20/solid';
 import DocumentRelations from './DocumentRelations.vue';
 import DocumentReferences from './DocumentReferences.vue';
@@ -29,6 +29,8 @@ import { useClipboardStore } from '~/store/clipboard';
 import { PlusIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
+import DataPendingBlock from '../partials/DataPendingBlock.vue';
+import DataErrorBlock from '../partials/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -111,7 +113,17 @@ function addToClipboard(): void {
 
 <template>
     <div class="mt-2">
-        <div class="rounded-lg bg-base-850">
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
+        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])"
+            :retry="refresh" />
+        <button v-else-if="!document" type="button"
+            class="relative block w-full p-12 text-center rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
+            <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
+            <span class="block mt-2 text-sm font-semibold text-base-200">
+                {{ $t('common.not_found', [$t('common.document', 2)]) }}
+            </span>
+        </button>
+        <div v-else class="rounded-lg bg-base-850">
             <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                 <div>
                     <div>

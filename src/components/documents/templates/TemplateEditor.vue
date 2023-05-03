@@ -5,6 +5,7 @@ import { toTypedSchema } from '@vee-validate/yup';
 import { CreateTemplateRequest, UpdateTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { RpcError } from 'grpc-web';
 import { DocumentTemplate, TemplateSchema } from '@fivenet/gen/resources/documents/templates_pb';
+import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -115,9 +116,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createTempl
             </div>
             <label for="schema" class="block text-sm font-medium leading-6 text-gray-100">Schema</label>
             <div class="mt-2">
-                <Field as="textarea" rows="4" name="schema" id="schema"
-                    class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
-                <ErrorMessage name="schema" as="p" class="mt-2 text-sm text-error-400" />
+                <TemplateSchemaEditor />
             </div>
             <button type="submit"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
