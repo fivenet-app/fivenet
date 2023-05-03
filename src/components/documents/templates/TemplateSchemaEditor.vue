@@ -29,7 +29,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <div class="flex flex-row flex-initial gap-3">
+    <div class="flex flex-row gap-3 flex-wrap">
         <div class="flex-1">
             <label for="users" class="block text-sm font-medium leading-6 text-neutral">
                 {{ $t('common.citizen', 2) }}
