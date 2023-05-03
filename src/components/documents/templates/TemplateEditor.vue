@@ -183,6 +183,7 @@ onMounted(async () => {
     }
 
     const req = new CompleteJobsRequest();
+    req.setExactMatch(true);
     req.setCurrentJob(true)
 
     try {
