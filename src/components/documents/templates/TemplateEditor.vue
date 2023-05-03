@@ -8,6 +8,11 @@ import { DocumentTemplate, ObjectSpecs, TemplateRequirements, TemplateSchema } f
 import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
 import { TemplateSchemaEditorValue } from './TemplateSchemaEditor.vue';
 import { useNotificationsStore } from '~/store/notifications';
+import { JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { watchDebounced } from '@vueuse/core';
+import { Combobox, ComboboxInput, ComboboxButton, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { CheckIcon } from '@heroicons/vue/24/solid';
 
 const { $grpc } = useNuxtApp();
 
@@ -44,6 +49,11 @@ const schema = ref<TemplateSchemaEditorValue>({
     },
 });
 
+const entriesRank = ref<JobGrade[]>([]);
+const filteredRank = ref<JobGrade[]>([]);
+const queryRank = ref('');
+const selectedRank = ref<JobGrade>();
+
 async function createTemplate(): Promise<void> {
     if (props.templateId) return updateTemplate();
 
@@ -54,6 +64,7 @@ async function createTemplate(): Promise<void> {
         tpl.setDescription(description.value);
         tpl.setContentTitle(contentTitle.value);
         tpl.setContent(content.value);
+        if (selectedRank.value) tpl.setJobGrade(selectedRank.value.getGrade());
 
         const tRequirements = new TemplateRequirements();
         tRequirements.setUsers((new ObjectSpecs).setRequired(schema.value.users.req).setMin(schema.value.users.req ? schema.value.users.min : 0).setMax(schema.value.users.max));
@@ -95,6 +106,7 @@ async function updateTemplate(): Promise<void> {
         tpl.setDescription(description.value);
         tpl.setContentTitle(contentTitle.value);
         tpl.setContent(content.value);
+        if (selectedRank.value) tpl.setJobGrade(selectedRank.value.getGrade());
 
         const tRequirements = new TemplateRequirements();
         tRequirements.setUsers((new ObjectSpecs).setRequired(schema.value.users.req).setMin(schema.value.users.req ? schema.value.users.min : 0).setMax(schema.value.users.max));
@@ -169,7 +181,19 @@ onMounted(async () => {
             $grpc.handleRPCError(e as RpcError);
         }
     }
+
+    const req = new CompleteJobsRequest();
+    req.setCurrentJob(true)
+
+    try {
+        const resp = await $grpc.getCompletorClient().completeJobs(req, null);
+        entriesRank.value = resp.getJobsList()[0].getGradesList();
+    } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
+    }
 });
+
+watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.filter(r => r.getLabel().startsWith(queryRank.value)), { debounce: 700, maxWait: 1850 });
 </script>
 
 <template>
@@ -203,6 +227,34 @@ onMounted(async () => {
                     v-model="content" />
                 <ErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
             </div>
+            <label for="rank" class="block font-medium text-sm mt-2">Minimum Rank</label>
+            <Combobox as="div" v-model="selectedRank">
+                <div class="relative">
+                    <ComboboxButton as="div">
+                        <ComboboxInput
+                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            @change="queryRank = $event.target.value" :display-value="(rank: any) => rank?.getLabel()" />
+                    </ComboboxButton>
+
+                    <ComboboxOptions v-if="entriesRank.length > 0"
+                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
+                        <ComboboxOption v-for="rank in entriesRank" :key="rank.getGrade()" :value="rank" as="minimumrank"
+                            v-slot="{ active, selected }">
+                            <li
+                                :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                <span :class="['block truncate', selected && 'font-semibold']">
+                                    {{ rank.getLabel() }}
+                                </span>
+
+                                <span v-if="selected"
+                                    :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                    <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                </span>
+                            </li>
+                        </ComboboxOption>
+                    </ComboboxOptions>
+                </div>
+            </Combobox>
             <div>
                 <TemplateSchemaEditor v-model="schema" class="mt-2" />
             </div>
