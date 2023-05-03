@@ -3,6 +3,7 @@ import { DocumentTemplate, TemplateRequirements } from '@fivenet/gen/resources/d
 import { DeleteTemplateRequest, GetTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { RpcError } from 'grpc-web';
 import TemplateRequirementsList from './TemplateRequirementsList.vue';
+import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -61,6 +62,10 @@ async function deleteTemplate(): Promise<void> {
         }
     });
 }
+
+async function editTemplate(): Promise<void> {
+    await navigateTo({ name: 'documents-templates-edit-id', params: { id: props.templateId } });
+}
 </script>
 
 <template>
@@ -68,6 +73,10 @@ async function deleteTemplate(): Promise<void> {
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
+                    <button type="submit" v-can="'DocStoreService.CreateTemplate'" @click="editTemplate()"
+                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+                        {{ $t('common.edit') }}
+                    </button>
                     <button type="submit" v-can="'DocStoreService.DeleteTemplate'" @click="deleteTemplate()"
                         class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-600 text-neutral hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
                         {{ $t('common.delete') }}
