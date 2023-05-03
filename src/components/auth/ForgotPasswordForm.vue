@@ -19,11 +19,10 @@ const { t } = useI18n();
 
 const currPassword = ref<string>('');
 
-async function forgotPassword(regToken: string, username: string, password: string): Promise<void> {
+async function forgotPassword(regToken: string, password: string): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new ForgotPasswordRequest();
         req.setRegToken(regToken);
-        req.setUsername(username);
         req.setNew(password);
 
         try {
@@ -51,13 +50,12 @@ const { handleSubmit } = useForm({
     validationSchema: toTypedSchema(
         object({
             registrationToken: string().required().length(6),
-            username: string().required().min(3).max(24),
             password: string().required().min(6).max(70),
         }),
     ),
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await forgotPassword(values.registrationToken, values.username, values.password));
+const onSubmit = handleSubmit(async (values): Promise<void> => await forgotPassword(values.registrationToken, values.password));
 </script>
 
 <template>
@@ -80,17 +78,6 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await forgotPassw
                     :placeholder="$t('components.auth.forgot_password.registration_token')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6" />
                 <ErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
-            </div>
-        </div>
-        <div>
-            <label for="username" class="sr-only">
-                {{ $t('common.username') }}
-            </label>
-            <div>
-                <Field id="username" name="username" type="text" autocomplete="username"
-                    :placeholder="$t('common.username')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                <ErrorMessage name="Username" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
         <div>

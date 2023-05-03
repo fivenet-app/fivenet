@@ -28,9 +28,11 @@ export class GRPCClients {
     constructor() {
         this.authInterceptor = new AuthInterceptor();
 
+        const { $loading } = useNuxtApp();
+
         // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
         this.grpcClientOptions = {
-            unaryInterceptors: [this.authInterceptor],
+            unaryInterceptors: [this.authInterceptor, $loading],
             streamInterceptors: [this.authInterceptor],
         };
 
@@ -47,6 +49,8 @@ export class GRPCClients {
     // Handle GRPC errors
     async handleRPCError(err: RpcError): Promise<void> {
         const notifications = useNotificationsStore();
+
+        const { $loading } = useNuxtApp();
 
         switch (err.code) {
             case StatusCode.UNAUTHENTICATED:
@@ -98,7 +102,6 @@ export class GRPCClients {
                     type: 'error',
                 });
 
-                useRouter().back();
                 break;
             default:
                 notifications.dispatchNotification({
@@ -109,6 +112,8 @@ export class GRPCClients {
                 });
                 break;
         }
+
+        $loading.errored();
     }
 
     // GRPC Clients ===============================================================

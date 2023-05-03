@@ -2,25 +2,15 @@
 const props = defineProps({
     throttle: {
         type: Number,
-        default: 200,
+        default: 150,
     },
     duration: {
         type: Number,
-        default: 2000,
+        default: 2250,
     },
     height: {
         type: Number,
         default: 3,
-    },
-    show: {
-        type: Boolean,
-        required: false,
-        default: false,
-    },
-    canSucceed: {
-        type: Boolean,
-        required: false,
-        default: true,
     },
 });
 
@@ -28,8 +18,8 @@ const props = defineProps({
 const data = reactive({
     percent: 0,
     left: 0,
-    show: props.show,
-    canSucceed: props.canSucceed,
+    show: true,
+    canSucceed: true,
 });
 
 // Local variables
@@ -46,7 +36,6 @@ const clear = () => {
 const start = () => {
     clear();
     data.percent = 0;
-    data.canSucceed = true;
 
     if (props.throttle) {
         _throttle = setTimeout(startTimer, props.throttle);
@@ -77,7 +66,7 @@ const hide = () => {
         data.show = false;
         setTimeout(() => {
             data.percent = 0;
-        }, 400);
+        }, 550);
     }, 500);
 };
 const startTimer = () => {
@@ -87,39 +76,32 @@ const startTimer = () => {
     }, 100);
 };
 
+const delayedFinish = () => {
+    data.percent = 70;
+    setTimeout(() => {
+        finish();
+    }, 500);
+}
+
 // Hooks
 const nuxt = useNuxtApp();
 
-nuxt.hook('page:start', start);
-nuxt.hook('page:finish', () => {
+nuxt.hook('data:loading:start', start);
+nuxt.hook('data:loading:finish', delayedFinish);
+nuxt.hook('data:loading:finish_error', () => {
+    data.canSucceed = false;
+    delayedFinish();
     setTimeout(() => {
-        finish();
-    }, 250);
+        data.canSucceed = true;
+    }, 1100);
 });
+
 watch(data, () => {
-    if (props.show) {
-        start();
-    } else {
-        setTimeout(() => {
-            finish();
-        }, 250);
-    }
+    console.log(data.canSucceed);
 });
 
 onBeforeUnmount(() => clear);
 </script>
-
-<template>
-    <div class="nuxt-progress" :class="{
-            'nuxt-progress-failed': !data.canSucceed,
-        }" :style="{
-        width: data.percent + '%',
-        left: data.left,
-        height: props.height + 'px',
-        opacity: data.show ? 1 : 0,
-        backgroundSize: (100 / data.percent) * 100 + '% auto',
-    }" />
-</template>
 
 <style scoped>
 .nuxt-progress {
@@ -136,4 +118,21 @@ onBeforeUnmount(() => clear);
             #7161ef 100%);
     z-index: 999999;
 }
+
+.nuxt-progress-failed {
+    background: repeating-linear-gradient(to right,
+            #d72638 0%,
+            #ac1e2d 50%,
+            #d72638 100%);
+}
 </style>
+
+<template>
+    <div :class="['nuxt-progress', !data.canSucceed ? 'nuxt-progress-failed' : '']" :style="{
+            width: data.percent + '%',
+            left: data.left,
+            height: props.height + 'px',
+            opacity: data.show ? 1 : 0,
+            backgroundSize: (100 / data.percent) * 100 + '% auto',
+        }" />
+</template>

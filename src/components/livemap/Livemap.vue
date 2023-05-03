@@ -17,13 +17,15 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
 
-const { $grpc } = useNuxtApp();
+const { $grpc, $loading } = useNuxtApp();
 const userSettings = useUserSettingsStore();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 const route = useRoute();
 
 const { t } = useI18n();
+
+$loading.start();
 
 const activeChar = computed(() => authStore.getActiveChar);
 
@@ -51,8 +53,6 @@ const customCRS = L.extend({}, L.CRS.Simple, {
     transformation: new L.Transformation(scaleX, centerX, -scaleY, centerY),
     infinite: true,
 });
-
-const loadingShow = ref(true);
 
 const backgroundColorList = {
     Atlas: '#0fa8d2',
@@ -170,8 +170,8 @@ async function onMapReady($event: any): Promise<void> {
     map.on('moveend', async () => { isMoving.value = false });
 
     setTimeout(() => {
-        loadingShow.value = false;
-    }, 250);
+        $loading.finish();
+    }, 500);
 
     startDataStream();
 }
@@ -188,6 +188,7 @@ async function startDataStream(): Promise<void> {
         on('error', async (err: RpcError) => {
             $grpc.handleRPCError(err);
             error.value = err;
+            $loading.errored();
             stopDataStream();
         }).
         on('data', async (resp) => {
@@ -386,7 +387,7 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 </style>
 
 <template>
-    <LoadingBar :duration="1000" :show="loadingShow" />
+    <LoadingBar />
     <div class="relative w-full h-full z-0">
         <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center z-20"
             style="background-color: rgba(62, 60, 62, 0.5)">

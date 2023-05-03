@@ -9,7 +9,7 @@ import Notificator from '~/components/partials/Notificator.vue';
     <NotificationProvider>
         <Sidebar>
             <div class="h-full">
-                <LoadingBar :duration="1000" />
+                <LoadingBar />
                 <slot />
             </div>
         </Sidebar>

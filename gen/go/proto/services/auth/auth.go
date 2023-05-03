@@ -44,7 +44,8 @@ var (
 	GenericLoginErr        = status.Error(codes.Internal, "Failed to login you in, please try again.")
 	UnableToChooseCharErr  = status.Error(codes.PermissionDenied, "You don't have permission to select this character!")
 	UpdateAccountErr       = status.Error(codes.InvalidArgument, "Failed to update your account!")
-	ChangePasswordErr      = status.Error(codes.InvalidArgument, "Failed to change your password")
+	ChangePasswordErr      = status.Error(codes.InvalidArgument, "Failed to change your password!")
+	ForgotPasswordErr      = status.Error(codes.InvalidArgument, "Failed to reset password!")
 )
 
 type Server struct {
@@ -74,7 +75,8 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 	// Skip authentication for the anon accessible endpoints
 	if fullMethod == "/services.auth.AuthService/CreateAccount" ||
 		fullMethod == "/services.auth.AuthService/Login" ||
-		fullMethod == "/services.auth.AuthService/Logout" {
+		fullMethod == "/services.auth.AuthService/Logout" ||
+		fullMethod == "/services.auth.AuthService/ForgotPassword" {
 		return ctx, nil
 	}
 
@@ -118,6 +120,7 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 	account, err := s.getAccountFromDB(ctx, jet.AND(
 		account.Username.EQ(jet.String(req.Username)),
 		account.RegToken.IS_NULL(),
+		account.Password.IS_NOT_NULL(),
 	))
 	if err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
@@ -211,9 +214,11 @@ func (s *Server) CheckToken(ctx context.Context, req *CheckTokenRequest) (*Check
 }
 
 func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {
-	acc, err := s.getAccountFromDB(ctx,
+	acc, err := s.getAccountFromDB(ctx, jet.AND(
 		account.RegToken.EQ(jet.String(req.RegToken)),
-	)
+		account.Username.IS_NULL(),
+		account.Password.IS_NULL(),
+	))
 	if err != nil {
 		return nil, AccountCreateFailedErr
 	}
@@ -316,18 +321,16 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 
 func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest) (*ForgotPasswordResponse, error) {
 	acc, err := s.getAccountFromDB(ctx, jet.AND(
-		account.Username.EQ(jet.String(req.Username)),
 		account.RegToken.EQ(jet.String(req.RegToken)),
+		account.Username.IS_NOT_NULL(),
+		account.Password.IS_NULL(),
 	))
 	if err != nil {
-		if errors.Is(qrm.ErrNoRows, err) {
-			return nil, ChangePasswordErr
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, ForgotPasswordErr
 		}
-
-		return nil, err
 	}
 
-	// A password is set on the account, so don't continue
 	// We expect the account to not have a password for a "forgot password" request via token
 	if acc.Password != nil {
 		return nil, NoAccountErr
@@ -335,7 +338,7 @@ func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest)
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.New), 14)
 	if err != nil {
-		return nil, ChangePasswordErr
+		return nil, ForgotPasswordErr
 	}
 
 	pass := string(hashedPassword)
@@ -355,7 +358,7 @@ func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, ChangePasswordErr
+		return nil, ForgotPasswordErr
 	}
 
 	return &ForgotPasswordResponse{}, nil
