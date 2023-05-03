@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { DeleteDocumentRequest, GetDocumentCommentsRequest, GetDocumentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { Document, DocumentAccess, DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
+import { DeleteDocumentRequest, GetDocumentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { Document, DocumentAccess } from '@fivenet/gen/resources/documents/documents_pb';
 import { toDate } from '~/utils/time';
 import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import {
@@ -159,15 +159,16 @@ function addToClipboard(): void {
                                 <ChatBubbleLeftEllipsisIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-primary-700">
                                     {{ commentCount >= 0 ? commentCount : '?' }} {{
-                                        $t('common.comment', 2).toLowerCase() }}
+                                        $t('common.comment', 2) }}
                                 </span>
                             </div>
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700"><time
-                                        :datetime="toDate(document?.getCreatedAt())?.toLocaleString('de-DE')">{{
-                                            toDate(document?.getCreatedAt())?.toLocaleString('de-DE')
-                                        }}</time></span>
+                                        :datetime="toDateLocaleString(document?.getCreatedAt())">
+                                        {{ toDateLocaleString(document?.getCreatedAt()) }}
+                                    </time>
+                                </span>
                             </div>
                         </div>
                         <div class="flex flex-row gap-2 pb-3 mt-2 overflow-x-auto snap-x sm:pb-0">
@@ -221,7 +222,8 @@ function addToClipboard(): void {
                         </div>
                         <div class="mt-4" v-can="'DocStoreService.GetDocumentComments'">
                             <h2 class="text-lg font-semibold text-neutral">{{ $t('common.comment', 2) }}</h2>
-                            <DocumentComments :document-id="documentId" :closed="document?.getClosed()" @counted="commentCount = $event" />
+                            <DocumentComments :document-id="documentId" :closed="document?.getClosed()"
+                                @counted="commentCount = $event" />
                         </div>
                     </div>
                 </div>

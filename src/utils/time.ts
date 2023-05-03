@@ -37,7 +37,9 @@ export function toDateLocaleString(ts: resources_timestamp_timestamp_pb.Timestam
     if (typeof ts === undefined) {
         return '-';
     }
-    return ts?.getTimestamp()?.toDate().toLocaleString('de-DE');
+
+    const { d } = useI18n();
+    return d(ts?.getTimestamp()?.toDate()!, 'short');
 }
 
 export function fromString(time: string): undefined | Date {
