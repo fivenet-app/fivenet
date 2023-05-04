@@ -373,7 +373,7 @@ function removeReference(id: number): void {
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                             {{ $t('common.created') }} <time
-                                                                                :datetime="toDateLocaleString(doc.getCreatedAt())">
+                                                                                :datetime="$d(doc.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')">
                                                                                 {{
                                                                                     useLocaleTimeAgo(toDate(doc.getCreatedAt())!).value
                                                                                 }}

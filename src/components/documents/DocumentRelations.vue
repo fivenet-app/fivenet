@@ -78,7 +78,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                     <span v-if="showSource" class="truncate">{{ relation.getSourceUser()?.getFirstname() +
                                         ", " +
                                         relation.getSourceUser()?.getLastname() }}</span>
-                                    <time datetime="">{{ toDateLocaleString(relation.getCreatedAt()) }}</time>
+                                    <time datetime="">{{ $d(relation.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}</time>
                                 </span>
                             </span>
                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
@@ -149,7 +149,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
-                                        <time datetime="">{{ toDateLocaleString(relation.getCreatedAt()) }}</time>
+                                        <time datetime="">{{ $d(relation.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}</time>
                                     </td>
                                 </tr>
                             </tbody>

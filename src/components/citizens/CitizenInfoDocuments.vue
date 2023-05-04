@@ -88,7 +88,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                             +
                                             ", " +
                                             relation.getSourceUser()?.getLastname() }}</span>
-                                        <time :datetime="toDateLocaleString(relation.getCreatedAt())">
+                                        <time :datetime="toDateLocaleString(relation.getCreatedAt(), $d)">
                                             {{ useLocaleTimeAgo(toDate(relation.getCreatedAt())!).value }}
                                         </time>
                                     </span>
@@ -162,7 +162,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
-                                            <time :datetime="toDateLocaleString(relation.getCreatedAt())">
+                                            <time :datetime="$d(relation.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')">
                                             {{ useLocaleTimeAgo(toDate(relation.getCreatedAt())!).value }}
                                         </time>
                                         </td>

@@ -34,6 +34,7 @@ const props = defineProps({
 
 function addToClipboard(): void {
     store.addVehicle(props.vehicle);
+
     notifications.dispatchNotification({
         title: t('notifications.clipboard.vehicle_added.title'),
         content: t('notifications.clipboard.vehicle_added.content'),

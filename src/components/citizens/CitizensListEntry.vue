@@ -18,6 +18,7 @@ const props = defineProps({
 
 function addToClipboard(): void {
     store.addUser(props.user);
+
     notifications.dispatchNotification({
         title: t('notifications.clipboard.citizen_add.title'),
         content: t('notifications.clipboard.citizen_add.content'),

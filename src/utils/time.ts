@@ -35,13 +35,15 @@ export function toDate(ts: resources_timestamp_timestamp_pb.Timestamp | undefine
     return ts?.getTimestamp()?.toDate();
 }
 
-export function toDateLocaleString(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | string {
+export function toDateLocaleString(ts: resources_timestamp_timestamp_pb.Timestamp | undefined, d?: Function): undefined | string {
     if (typeof ts === undefined) {
         return '-';
     }
 
-    const { d } = useI18n();
-    return d(ts?.getTimestamp()?.toDate()!, 'short');
+    if (d) {
+        return d(ts?.getTimestamp()?.toDate()!, 'short');
+    }
+    return ts?.getTimestamp()?.toDate().toLocaleDateString();
 }
 
 export function fromString(time: string): undefined | Date {

@@ -184,7 +184,7 @@ export class ClipboardDocument {
 
     constructor(d: Document) {
         this.id = d.getId();
-        this.createdAt = toDateLocaleString(d.getCreatedAt())!;
+        this.createdAt = d.getCreatedAt()?.getTimestamp()?.toDate().toLocaleTimeString()!;
         this.title = d.getTitle();
         this.state = d.getState();
         const creator = new ClipboardUser();

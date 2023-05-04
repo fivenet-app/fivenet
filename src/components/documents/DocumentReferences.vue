@@ -75,7 +75,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                                 reference.getCreator()?.getLastname() }}
                                         </NuxtLink>
                                     </span>
-                                    <time datetime="">{{ toDateLocaleString(reference.getCreatedAt()) }}</time>
+                                    <time datetime="">{{ $d(reference.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}</time>
                                 </span>
                             </span>
                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
@@ -151,7 +151,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
-                                        <time datetime="">{{ toDateLocaleString(reference.getCreatedAt()) }}</time>
+                                        <time datetime="">{{ $d(reference.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}</time>
                                     </td>
                                 </tr>
                             </tbody>

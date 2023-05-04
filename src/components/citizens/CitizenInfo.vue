@@ -32,6 +32,7 @@ const props = defineProps({
 
 function addToClipboard(): void {
     clipboard.addUser(props.user);
+
     notifications.dispatchNotification({
         title: t('notifications.clipboard.citizen_add.title'),
         content: t('notifications.clipboard.citizen_add.content'),
@@ -83,8 +84,5 @@ function addToClipboard(): void {
             </TabPanels>
         </TabGroup>
     </div>
-    <button :title="$t('components.clipboard.clipboard_button.add')" @click="addToClipboard()"
-        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-24 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400">
-        <PlusIcon class="w-10 h-auto" />
-    </button>
+    <AddToClipboardButton :callback="addToClipboard" :title="$t('components.clipboard.clipboard_button.add')" />
 </template>

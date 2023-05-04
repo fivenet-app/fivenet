@@ -26,11 +26,11 @@ import DocumentReferences from './DocumentReferences.vue';
 import DocumentComments from './DocumentComments.vue';
 import { toTitleCase } from '~/utils/strings';
 import { useClipboardStore } from '~/store/clipboard';
-import { PlusIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import AddToClipboardButton from '../clipboard/AddToClipboardButton.vue';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -102,6 +102,7 @@ function addToClipboard(): void {
     if (document.value) {
         clipboardStore.addDocument(document.value);
     }
+
     notifications.dispatchNotification({
         title: t('notifications.clipboard.document_added.title'),
         content: t('notifications.clipboard.document_added.content'),
@@ -177,8 +178,8 @@ function addToClipboard(): void {
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700"><time
-                                        :datetime="toDateLocaleString(document?.getCreatedAt())">
-                                        {{ toDateLocaleString(document?.getCreatedAt()) }}
+                                        :datetime="$d(document?.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')">
+                                        {{ $d(document?.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}
                                     </time>
                                 </span>
                             </div>
@@ -242,8 +243,5 @@ function addToClipboard(): void {
             </div>
         </div>
     </div>
-    <button title="Add to Clipboard" @click="addToClipboard()"
-        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-24 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400">
-        <PlusIcon class="w-10 h-auto" />
-    </button>
+    <AddToClipboardButton :callback="addToClipboard" :title="$t('components.clipboard.clipboard_button.add')" />
 </template>

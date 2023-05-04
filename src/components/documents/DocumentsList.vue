@@ -137,7 +137,7 @@ watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 14
                                                         aria-hidden="true" />
                                                     <p>
                                                         {{ $t('common.created') }} <time
-                                                            :datetime="toDateLocaleString(doc.getCreatedAt())">
+                                                            :datetime="$d(doc.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')">
                                                             {{ useLocaleTimeAgo(toDate(doc.getCreatedAt())!).value }}
                                                         </time>
                                                     </p>
