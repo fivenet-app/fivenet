@@ -128,6 +128,12 @@
         },
         "vehicles": {
             "title": "Fahrzeuge"
+        },
+        "error": {
+            "title": "Fehler aufgetreten",
+            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuchen sie es erneut.",
+            "error_message": "Fehlermeldung:",
+            "copy_error": "Fehlerbericht kopieren"
         }
     },
     "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten.",
@@ -340,7 +346,6 @@
         "delete": "Löschen",
         "require": "Erfordert",
         "max": "Maximal",
-        "min": "Minimum",
         "template": "Vorlage | Vorlagen",
         "go_back": "Zurück",
         "content": "Inhalt",
@@ -407,7 +412,8 @@
             "hour": "Stunde | Stunden",
             "minute": "Minute | Minuten",
             "second": "Sekunde | Sekunden"
-        }
+        },
+        "min": "Minimum"
     },
     "notifications": {
         "clipboard": {
