@@ -8,8 +8,10 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/audit"
+	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
@@ -63,7 +65,15 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	}
 
 	if req.Pagination.Offset <= 0 {
-		defer s.a.Log(DMVService_ServiceDesc.ServiceName, "ListVehicles", rector.EVENT_TYPE_VIEWED, -1, req)
+		userId, job, _ := auth.GetUserInfoFromContext(ctx)
+
+		s.a.AddEntryWithData(&model.FivenetAuditLog{
+			Service: DMVService_ServiceDesc.ServiceName,
+			Method:  "ListVehicles",
+			UserID:  userId,
+			UserJob: job,
+			State:   int16(rector.EVENT_TYPE_VIEWED),
+		}, req)
 	}
 
 	countStmt := vehicle.

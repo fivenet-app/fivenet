@@ -527,7 +527,13 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, UnableToChooseCharErr
 	}
 
-	defer s.a.Log(AuthService_ServiceDesc.ServiceName, "ChooseCharacter", rector.EVENT_TYPE_VIEWED, -1, char.UserShort())
+	s.a.AddEntryWithData(&model.FivenetAuditLog{
+		Service: AuthService_ServiceDesc.ServiceName,
+		Method:  "ChooseCharacter",
+		UserID:  char.UserId,
+		UserJob: char.Job,
+		State:   int16(rector.EVENT_TYPE_VIEWED),
+	}, char.UserShort())
 
 	return &ChooseCharacterResponse{
 		Token:       newToken,
