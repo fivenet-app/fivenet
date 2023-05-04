@@ -428,7 +428,7 @@
   integrity sha512-qU25Ma1I3NqTSHJUOKi9sAH1/Mzuvlke0ioMJRthLXKm7JiSKVwFghlGbDLOO2sARECGhja4xYfRAZNPAkooYg==
 
 "@fivenet/gen@file:./gen/js":
-  version "0.1.0"
+  version "0.2.0"
 
 "@fontsource/inter@^4.5.15":
   version "4.5.15"
@@ -6490,9 +6490,9 @@ vite-plugin-checker@^0.5.6:
     vscode-uri "^3.0.2"
 
 vite-plugin-mkcert@^1.14.1:
-  version "1.14.1"
-  resolved "https://registry.yarnpkg.com/vite-plugin-mkcert/-/vite-plugin-mkcert-1.14.1.tgz#a2b6ee125c7e9ac1b6a0be6ee4091f8aaffbec70"
-  integrity sha512-s/TmH62VA3DYXaqX2230PomrHXSRwfYyXur1c8hN5fGEUrT+w9KnXHnurZ53AMSUc/bI7RF6bQ1K5J+hZQTjoQ==
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-mkcert/-/vite-plugin-mkcert-1.15.0.tgz#629da7cf77f15af65ebd8d476d1f68af901874d4"
+  integrity sha512-0Pz7iExvo7pS2HsxMe6Y/HIrsFJidXN8Sju7tsL1XYQdbUKb/D0L5Wkj3UoGQmbbWZUFf8nHHa0XYbd4FH6ZrA==
   dependencies:
     "@octokit/rest" "^19.0.5"
     axios "^1.2.2"
