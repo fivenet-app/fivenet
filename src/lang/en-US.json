@@ -128,6 +128,12 @@
         },
         "vehicles": {
             "title": "Vehicles"
+        },
+        "error": {
+            "title": "Error occured",
+            "subtitle": "A fatal error occured, please try again in a few seconds.",
+            "error_message": "Error message:",
+            "copy_error": "Copy Error message"
         }
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
@@ -340,7 +346,6 @@
         "delete": "Delete",
         "require": "Require | Requires",
         "max": "Max",
-        "min": "Min",
         "template": "Template | Templates",
         "go_back": "Go Back",
         "content": "Content",
@@ -407,7 +412,8 @@
             "hour": "hour | hours",
             "minute": "minute | minutes",
             "second": "second | seconds"
-        }
+        },
+        "min": "Min"
     },
     "notifications": {
         "clipboard": {
