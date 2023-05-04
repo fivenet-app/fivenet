@@ -92,14 +92,14 @@ const providers = config.login.providers;
         </div>
     </form>
 
-    <form @submit.prevent="" class="my-4 space-y-2">
+    <div class="my-4 space-y-2">
         <div v-for="prov in providers" class="">
             <NuxtLink :external="true" :to="`/api/oauth2/login/${prov.name}`"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
                 {{ prov.label }} {{ $t('common.login') }}
             </NuxtLink>
         </div>
-    </form>
+    </div>
 
     <Alert v-if="loginError" :title="$t('components.auth.login.login_error')" :message="loginError" />
 </template>

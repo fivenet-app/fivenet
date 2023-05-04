@@ -132,22 +132,20 @@ func (o *OAuth2) handleRedirect(c *gin.Context, err error, connectOnly bool, suc
 func (o *OAuth2) Login(c *gin.Context) {
 	sess := sessions.DefaultMany(c, "fivenet_oauth2_state")
 	connectOnly := false
-	if c.Request.Method == http.MethodPost {
-		connectOnlyVal := c.Request.PostFormValue("connect-only")
-		if connectOnlyVal != "" {
-			var err error
-			connectOnly, err = strconv.ParseBool(connectOnlyVal)
-			if err != nil {
-				o.logger.Error("failed to parse connect only var", zap.Error(err))
-				o.handleRedirect(c, err, false, false, "invalid_request")
-				return
-			}
+	connectOnlyVal := c.Query("connect-only")
+	if connectOnlyVal != "" {
+		var err error
+		connectOnly, err = strconv.ParseBool(connectOnlyVal)
+		if err != nil {
+			o.logger.Error("failed to parse connect only var", zap.Error(err))
+			o.handleRedirect(c, err, false, false, "invalid_request")
+			return
 		}
+	}
 
-		tokenVal := c.Request.PostFormValue("token")
-		if tokenVal != "" {
-			sess.Set("token", tokenVal)
-		}
+	tokenVal := c.Query("token")
+	if tokenVal != "" {
+		sess.Set("token", tokenVal)
 	}
 
 	state, err := utils.GenerateRandomString(64)
