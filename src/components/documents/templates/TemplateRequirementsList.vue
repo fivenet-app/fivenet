@@ -24,7 +24,7 @@ defineProps({
 </script>
 
 <template>
-    <span v-tag v-if="required || (min > 0 && max > 0)">
+    <span v-if="required || (min > 0 && max > 0)">
         <span v-if="required">
             {{ $t('common.require', 2) }}{{ ' ' }}
         </span>
