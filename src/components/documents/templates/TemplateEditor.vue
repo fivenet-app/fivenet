@@ -216,35 +216,55 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
 <template>
     <div class="text-neutral">
         <form @submit="onSubmit">
-            <label for="title" class="block font-medium text-sm mt-2">Title</label>
+            <label for="title" class="block font-medium text-sm mt-2">
+                {{ $t('common.template') }} {{ $t('common.title') }}
+            </label>
             <div>
                 <Field as="textarea" rows="1" name="title" id="title"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="title" />
                 <ErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
             </div>
-            <label for="description" class="block font-medium text-sm mt-2">Description</label>
+            <label for="description" class="block font-medium text-sm mt-2">
+                {{ $t('common.template') }} {{ $t('common.description') }}
+            </label>
             <div>
                 <Field as="textarea" rows="4" name="description" id="description"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="description" />
                 <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
             </div>
-            <label for="contentTitle" class="block font-medium text-sm mt-2">Content Title</label>
+            <label for="contentTitle" class="block font-medium text-sm mt-2">
+                {{ $t('common.content') }} {{ $t('common.title') }}
+            </label>
             <div>
                 <Field as="textarea" rows="1" name="contentTitle" id="contentTitle"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="contentTitle" />
                 <ErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
+                <p class="text-neutral">
+                    <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
+                        Golang {{ $t('common.template') }}
+                    </NuxtLink>
+                </p>
             </div>
-            <label for="content" class="block font-medium text-sm mt-2">Content</label>
+            <label for="content" class="block font-medium text-sm mt-2">
+                {{ $t('common.content') }} {{ $t('common.template') }}
+            </label>
             <div>
                 <Field as="textarea" rows="4" name="content" id="content"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="content" />
                 <ErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
+                <p class="text-neutral">
+                    <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
+                        Golang {{ $t('common.template') }}
+                    </NuxtLink>
+                </p>
             </div>
-            <label for="rank" class="block font-medium text-sm mt-2">Minimum Rank</label>
+            <label for="rank" class="block font-medium text-sm mt-2">
+                {{ $t('common.min') }} {{ $t('common.rank') }}
+            </label>
             <Combobox as="div" v-model="selectedRank">
                 <div class="relative">
                     <ComboboxButton as="div">

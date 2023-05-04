@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_job_access` (
   `access` smallint(2) NOT NULL,
   `creator_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_fivenet_documents_job_access` (`document_id`, `job`),
+  UNIQUE KEY `idx_fivenet_documents_job_access` (`document_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_documents_job_access_deleted_at` (`deleted_at`),
   KEY `idx_fivenet_documents_job_access_document_id` (`document_id`),
   CONSTRAINT `fk_fivenet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

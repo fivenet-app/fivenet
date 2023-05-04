@@ -265,7 +265,9 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, FailedQueryErr
 	}
 	if !check {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
+		if !s.p.Can(userId, common.SuperuserAnyAccess) {
+			return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
+		}
 	}
 
 	doc, err := s.getDocument(ctx,
