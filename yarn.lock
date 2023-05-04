@@ -6494,7 +6494,7 @@ vite-plugin-checker@^0.5.6:
     vscode-languageserver-textdocument "^1.0.1"
     vscode-uri "^3.0.2"
 
-vite-plugin-mkcert@^1.14.1:
+vite-plugin-mkcert@^1.15.0:
   version "1.15.0"
   resolved "https://registry.yarnpkg.com/vite-plugin-mkcert/-/vite-plugin-mkcert-1.15.0.tgz#629da7cf77f15af65ebd8d476d1f68af901874d4"
   integrity sha512-0Pz7iExvo7pS2HsxMe6Y/HIrsFJidXN8Sju7tsL1XYQdbUKb/D0L5Wkj3UoGQmbbWZUFf8nHHa0XYbd4FH6ZrA==
@@ -6617,7 +6617,7 @@ vue-template-compiler@^2.7.14:
     de-indent "^1.0.2"
     he "^1.2.0"
 
-vue-tsc@^1.6.3:
+vue-tsc@^1.6.4:
   version "1.6.4"
   resolved "https://registry.yarnpkg.com/vue-tsc/-/vue-tsc-1.6.4.tgz#ca4e931e9d3b9c55cd7a0f551bc0c9536edb6386"
   integrity sha512-8rg8S1AhRJ6/WriENQEhyqH5wsxSxuD5iaD+QnkZn2ArZ6evlhqfBAIcVN8mfSyCV9DeLkQXkOSv/MaeJiJPAQ==

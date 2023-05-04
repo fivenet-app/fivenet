@@ -58,11 +58,11 @@ $loading.errored();
 
                 <div class="flex justify-center">
                     <button @click="handleError" :disabled="buttonDisabled"
-                        :class="[buttonDisabled ? 'bg-base-600 hover:bg-base-500 focus-visible:outline-base-500': 'bg-primary-600 hover:bg-primary-500 focus-visible:outline-primary-500', 'rounded-md w-60 px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2']">
+                        :class="[buttonDisabled ? 'bg-base-600 hover:bg-base-500 focus-visible:outline-base-500' : 'bg-primary-600 hover:bg-primary-500 focus-visible:outline-primary-500', 'rounded-md w-60 px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2']">
                         {{ $t('common.home') }}
                     </button>
 
-                    <button @click="copyError" v-if="error && error.message"
+                    <button @click="copyError" v-if="error && (error.statusMessage || error.message)"
                         class="rounded-md w-60 bg-base-600 sm:ml-4 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500">
                         {{ $t('pages.error.copy_error') }}
                     </button>
