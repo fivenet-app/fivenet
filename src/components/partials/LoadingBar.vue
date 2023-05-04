@@ -93,7 +93,7 @@ nuxt.hook('data:loading:finish_error', () => {
     delayedFinish();
     setTimeout(() => {
         data.canSucceed = true;
-    }, 1100);
+    }, 1250);
 });
 
 onBeforeUnmount(() => clear);
