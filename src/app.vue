@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { loadConfig } from './config';
+import { loadConfig } from '~/config';
 import { useUserSettingsStore } from './store/usersettings';
+import { NuxtError } from 'nuxt/app';
 
 const { t, setLocale } = useI18n();
 
@@ -20,7 +21,11 @@ useHead({
     },
 });
 
-await loadConfig();
+try {
+    await loadConfig();
+} catch (e) {
+    showError(e as NuxtError);
+}
 
 const userSettings = useUserSettingsStore();
 

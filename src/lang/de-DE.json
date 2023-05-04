@@ -4,6 +4,12 @@
             "welcome": "Willkommen bei FiveNet!",
             "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Livemap Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit."
         },
+        "error": {
+            "title": "Fehler aufgetreten",
+            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuchen sie es erneut.",
+            "error_message": "Fehlermeldung:",
+            "copy_error": "Fehlerbericht kopieren"
+        },
         "auth": {
             "logout": {
                 "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
