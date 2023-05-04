@@ -43,6 +43,6 @@ func (p *Discord) GetUserInfo(code string) (*UserInfo, error) {
 	return &UserInfo{
 		ID:       int64(id),
 		Username: dest.Username + "#" + dest.Discriminator,
-		Avatar:   fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/user_avatar.png", dest.Avatar),
+		Avatar:   fmt.Sprintf("https://cdn.discordapp.com/avatars/%d/%s.png", id, dest.Avatar),
 	}, nil
 }
