@@ -1,11 +1,11 @@
 <script lang="ts" setup>
+import { useAuthStore } from '~/store/auth';
+import { useNotificationsStore } from '~/store/notifications';
 import { LogoutRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
-import { useAuthStore } from '~/store/auth';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import Footer from '~/components/partials/Footer.vue';
-import { useNotificationsStore } from '~/store/notifications';
 
 useHead({
     title: 'common.logout',

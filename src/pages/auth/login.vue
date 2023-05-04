@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import Login from '~/components/auth/Login.vue';
-import HeroFull from '~/components/partials/HeroFull.vue';
-import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
+import HeroFull from '~/components/partials/HeroFull.vue';
+import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
+import Login from '~/components/auth/Login.vue';
+import Footer from '~/components/partials/Footer.vue';
 
 useHead({
     title: 'pages.auth.login.title',
@@ -42,9 +43,12 @@ if (query.t && query.t !== "" && query.exp) {
 </script>
 
 <template>
-    <HeroFull>
-        <ContentCenterWrapper>
-            <Login />
-        </ContentCenterWrapper>
-    </HeroFull>
+    <div class="h-full justify-between flex flex-col">
+        <HeroFull>
+            <ContentCenterWrapper>
+                <Login />
+            </ContentCenterWrapper>
+        </HeroFull>
+        <Footer />
+    </div>
 </template>

@@ -45,7 +45,7 @@ export const useAuthStore = defineStore('auth', {
             this.lastCharID = char ? char.getUserId() : this.lastCharID;
         },
         setPermissions(permissions: string[]): void {
-            this.permissions = permissions;
+            this.permissions = permissions.sort();
         },
         async clear(): Promise<void> {
             this.setAccessToken(null, null);
