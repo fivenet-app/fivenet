@@ -4,12 +4,6 @@
             "welcome": "Welcome to FiveNet!",
             "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a livemap of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet."
         },
-        "error": {
-            "title": "Error occured",
-            "subtitle": "A fatal error occured, please try again in a few seconds.",
-            "error_message": "Error message:",
-            "copy_error": "Copy Error message"
-        },
         "auth": {
             "logout": {
                 "subtitle": "You will be redirected to the home page in a moment.",
@@ -134,6 +128,12 @@
         },
         "vehicles": {
             "title": "Vehicles"
+        },
+        "error": {
+            "title": "Error occured",
+            "subtitle": "A fatal error occured, please try again in a few seconds.",
+            "error_message": "Error message:",
+            "copy_error": "Copy Error message"
         }
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
