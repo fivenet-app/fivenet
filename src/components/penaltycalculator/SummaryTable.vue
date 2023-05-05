@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { CubeTransparentIcon } from '@heroicons/vue/24/solid';
 import { SelectedPenalty } from '~/utils/penalty';
 
 defineProps<{
@@ -9,7 +10,7 @@ defineProps<{
 <template>
     <button v-if="selectedPenalties.length == 0" type="button" disabled
             class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-            <UserIcon class="w-12 h-12 mx-auto text-neutral" />
+            <CubeTransparentIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold text-gray-300">
                 Keine Verbrechen ausgewählt
             </span>
