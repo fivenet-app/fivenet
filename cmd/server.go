@@ -191,16 +191,16 @@ func (s *server) setupHTTPServer() *gin.Engine {
 	fs := static.LocalFile(".output/public/", false)
 	fileserver := http.FileServer(fs)
 	fileserver = http.StripPrefix("/", fileserver)
-	staticServe := static.Serve("", fs)
 
 	e.NoRoute(func(c *gin.Context) {
-		if strings.HasPrefix(c.Request.URL.Path, "/api") {
+		requestPath := c.Request.URL.Path
+		if strings.HasPrefix(requestPath, "/api") || requestPath == "/" {
 			return
 		}
 
-		pathComponents := strings.Split(c.Request.URL.Path, "/")
+		pathComponents := strings.Split(requestPath[1:], "/")
 		newPath := "/"
-		if len(pathComponents) > 0 {
+		if requestPath != "/" && len(pathComponents) > 0 {
 			newPath += path.Join(pathComponents[:len(pathComponents)-1]...) + "/"
 		}
 
@@ -211,7 +211,7 @@ func (s *server) setupHTTPServer() *gin.Engine {
 		}
 	})
 	// Register output dir for assets and other static files
-	e.Use(staticServe)
+	e.Use(static.Serve("/", fs))
 
 	return e
 }
