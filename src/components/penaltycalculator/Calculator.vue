@@ -389,7 +389,7 @@ const summary = ref<PenaltiesSummary>({
 });
 
 function calculate(e: SelectedPenalty) {
-    const idx = selectedPenalties.value.findIndex((v) => v.penalty.name == e.penalty.name);
+    const idx = selectedPenalties.value.findIndex((v) => v.penalty.category == e.penalty.category && v.penalty.name == e.penalty.name);
     let count = e.count;
     if (idx > -1) {
         const existing = selectedPenalties.value.at(idx)!;
