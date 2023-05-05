@@ -29,7 +29,6 @@ import { RpcError } from 'grpc-web';
 import { FunctionalComponent } from 'vue';
 import { ClipboardDocument, getDocument } from '~/store/clipboard';
 import { useAuthStore } from '~/store/auth';
-import { toDateLocaleString } from '~/utils/time';
 import { useClipboardStore } from '~/store/clipboard';
 
 const { $grpc } = useNuxtApp();

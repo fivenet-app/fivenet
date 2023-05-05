@@ -1,7 +1,7 @@
 package database
 
 const (
-	DefaultPageLimit int64 = 15
+	DefaultPageLimit int64 = 20
 )
 
 type DataCount struct {

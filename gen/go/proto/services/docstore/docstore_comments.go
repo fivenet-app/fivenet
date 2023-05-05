@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	CommentsDefaultPageLimit = 5
+	CommentsDefaultPageLimit = 7
 )
 
 var (
