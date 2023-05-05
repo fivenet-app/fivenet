@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import PenaltyCalculator from '~/components/PenaltyCalculator.vue';
+import Calculator from '~/components/penaltycalculator/Calculator.vue';
 </script>
 
 <template>
-    <PenaltyCalculator />
+    <div class="w-full">
+        <Calculator />
+    </div>
 </template>

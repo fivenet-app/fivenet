@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/vue/24/outline';
-import { watchDebounced } from '@vueuse/core';
-import PenaltyCalculatorEntry from '~/components/PenaltyCalculatorEntry.vue';
-import { Penalties, Penalty, SelectedPenalty } from '~/utils/penalty';
+import ListEntry from '~/components/penaltycalculator/ListEntry.vue';
+import { Penalties, PenaltiesSummary, SelectedPenalty } from '~/utils/penalty';
+import Stats from '~/components/penaltycalculator/Stats.vue';
+import SummaryTable from './SummaryTable.vue';
 
 const penalties: Penalties = [
     {
@@ -372,106 +373,128 @@ const penalties: Penalties = [
     },
 ];
 
+penalties.forEach((ps) => {
+    ps.penalties.forEach((p) => {
+        p.category = ps.name;
+    });
+});
+
 const selectedPenalties = ref<Array<SelectedPenalty>>([]);
 
-const summary = ref<{
-    fine: number;
-    detentionTime: number;
-    stvoPoints: number;
-}>({
+const summary = ref<PenaltiesSummary>({
     fine: 0,
     detentionTime: 0,
     stvoPoints: 0,
+    count: 0,
 });
 
 function calculate(e: SelectedPenalty) {
-    const existing = selectedPenalties.value.find((v) => v.penalty.name == e.penalty.name);
-    if (existing !== undefined) {
+    const idx = selectedPenalties.value.findIndex((v) => v.penalty.name == e.penalty.name);
+    let count = e.count;
+    if (idx > -1) {
+        const existing = selectedPenalties.value.at(idx)!;
+        selectedPenalties.value[idx] = e;
         if (existing.count != e.count) {
-            e.count = e.count - existing.count;
+            count = e.count - existing.count;
         }
     } else {
         selectedPenalties.value.push(e);
     }
 
     if (e.penalty.fine) {
-        summary.value.fine += (e.count * e.penalty.fine);
+        summary.value.fine += (count * e.penalty.fine);
     }
     if (e.penalty.detentionTime) {
-        summary.value.detentionTime += (e.count * e.penalty.detentionTime);
+        summary.value.detentionTime += (count * e.penalty.detentionTime);
     }
     if (e.penalty.stvoPoints) {
-        summary.value.stvoPoints += (e.count * e.penalty.stvoPoints);
+        summary.value.stvoPoints += (count * e.penalty.stvoPoints);
     }
+    summary.value.count = +summary.value.count + +count;
 }
 </script>
 
 <template>
-    <div>
-        <div class="text-neutral text-xl">
-            Total Fine: ${{ summary.fine }}, Total Detention: {{ summary.detentionTime }}, Total StVo-Points: {{
-                summary.stvoPoints }}
-        </div>
-        <div v-for="ps in penalties" :key="ps.name" class="mt-2 mx-auto mx-4 divide-y divide-white/10">
-            <dl class="space-y-2 divide-y divide-white/10">
-                <Disclosure as="div" class="pt-2" v-slot="{ open }">
-                    <dt>
-                        <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
-                            <span class="text-base font-semibold leading-7">{{ ps.name }}</span>
-                            <span class="ml-6 flex h-7 items-center">
-                                <PlusSmallIcon v-if="!open" class="h-6 w-6" aria-hidden="true" />
-                                <MinusSmallIcon v-else class="h-6 w-6" aria-hidden="true" />
-                            </span>
-                        </DisclosureButton>
-                    </dt>
-                    <DisclosurePanel as="dd" class="mt-2 pr-12">
-                        <div class="py-2">
-                            <div class="px-2 sm:px-6 lg:px-8">
-                                <div class="flow-root mt-2">
-                                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                                            <table class="min-w-full divide-y divide-base-600">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col"
-                                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                                                            Straftat
-                                                        </th>
-                                                        <th scope="col"
-                                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                            Geldstrafe
-                                                        </th>
-                                                        <th scope="col"
-                                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                            Haftzeit
-                                                        </th>
-                                                        <th scope="col"
-                                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                            StVo-Punkte
-                                                        </th>
-                                                        <th scope="col"
-                                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                            Sonstige
-                                                        </th>
-                                                        <th scope="col"
-                                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                                            Anzahl
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="divide-y divide-base-800">
-                                                    <PenaltyCalculatorEntry v-for="penalty, idx in ps.penalties" :key="idx"
-                                                        :penalty="penalty" @selected="calculate($event)" />
-                                                </tbody>
-                                            </table>
+    <div class="py-2">
+        <div class="px-2 sm:px-6 lg:px-8">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <div v-for="ps in penalties" :key="ps.name">
+                        <dl class="space-y-2 divide-y divide-white/10">
+                            <Disclosure as="div" class="pt-2" v-slot="{ open }">
+                                <dt>
+                                    <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
+                                        <span class="text-base font-semibold leading-7">{{ ps.name }}</span>
+                                        <span class="ml-6 flex h-7 items-center">
+                                            <PlusSmallIcon v-if="!open" class="h-6 w-6" aria-hidden="true" />
+                                            <MinusSmallIcon v-else class="h-6 w-6" aria-hidden="true" />
+                                        </span>
+                                    </DisclosureButton>
+                                </dt>
+                                <DisclosurePanel as="dd" class="mt-2 pr-12">
+                                    <div class="py-2">
+                                        <div class="px-2 sm:px-6 lg:px-8">
+                                            <div class="flow-root mt-2">
+                                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                                                        <table class="min-w-full divide-y divide-base-600">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col"
+                                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                                                                        Straftat
+                                                                    </th>
+                                                                    <th scope="col"
+                                                                        class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                                                        Geldstrafe
+                                                                    </th>
+                                                                    <th scope="col"
+                                                                        class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                                                        Haftzeit
+                                                                    </th>
+                                                                    <th scope="col"
+                                                                        class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                                                        StVo-Punkte
+                                                                    </th>
+                                                                    <th scope="col"
+                                                                        class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                                                        Sonstige
+                                                                    </th>
+                                                                    <th scope="col"
+                                                                        class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
+                                                                        Anzahl
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-base-800">
+                                                                <ListEntry v-for="penalty, idx in ps.penalties"
+                                                                    :key="idx" :penalty="penalty"
+                                                                    @selected="calculate($event)" />
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </DisclosurePanel>
+                            </Disclosure>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="flow-root mt-2">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                        <div class="text-neutral text-xl">
+                            <Stats :summary="summary" />
+                            <div>
+                                <SummaryTable :selected-penalties="selectedPenalties" />
                             </div>
                         </div>
-                    </DisclosurePanel>
-                </Disclosure>
-            </dl>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>

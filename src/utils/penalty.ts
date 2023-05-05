@@ -1,4 +1,5 @@
 export type Penalty = {
+    category?: string;
     name: string;
     description: string;
     fine?: number;
@@ -12,5 +13,12 @@ export type Penalties = Array<PenaltyCategory>;
 
 export type SelectedPenalty = {
     penalty: Penalty;
+    count: number;
+};
+
+export type PenaltiesSummary = {
+    fine: number;
+    detentionTime: number;
+    stvoPoints: number;
     count: number;
 };
