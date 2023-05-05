@@ -3,6 +3,7 @@ package docstore
 import (
 	context "context"
 	"errors"
+	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/pkg/auth"
@@ -19,9 +20,12 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		return resp, nil
 	}
 
-	condition := jet.OR(
-		docRel.SourceUserID.EQ(jet.Int32(req.UserId)),
-		docRel.TargetUserID.EQ(jet.Int32(req.UserId)),
+	condition := jet.AND(
+		docRel.DeletedAt.IS_NULL(),
+		jet.OR(
+			docRel.SourceUserID.EQ(jet.Int32(req.UserId)),
+			docRel.TargetUserID.EQ(jet.Int32(req.UserId)),
+		),
 	)
 
 	var docIds []uint64
@@ -32,9 +36,11 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		FROM(
 			docRel,
 		).
-		WHERE(
+		WHERE(jet.AND(
 			condition,
-		)
+		))
+
+	fmt.Println(idStmt.DebugSql())
 
 	if err := idStmt.QueryContext(ctx, s.db, &docIds); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
@@ -125,6 +131,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			jet.AND(
 				docRel.DocumentID.IN(dIds...),
 				condition,
+				docs.DeletedAt.IS_NULL(),
 			),
 		).
 		ORDER_BY(

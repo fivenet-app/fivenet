@@ -425,7 +425,8 @@
         "other": "Andere",
         "result": "Ergebnis",
         "total_count": "Gesamtanzahl",
-        "none_selected": "Keine {0} ausgewählt"
+        "none_selected": "Keine {0} ausgewählt",
+        "no_licenses": "Keine Lizensen."
     },
     "notifications": {
         "clipboard": {

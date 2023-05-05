@@ -425,7 +425,8 @@
         "other": "Other",
         "result": "Result",
         "total_count": "Total count",
-        "none_selected": "No {0} selected"
+        "none_selected": "No {0} selected",
+        "no_licenses": "No Licenses."
     },
     "notifications": {
         "clipboard": {

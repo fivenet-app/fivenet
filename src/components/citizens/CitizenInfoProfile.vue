@@ -124,7 +124,9 @@ function openTemplates(): void {
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.license', 2) }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                    <span v-if="user?.getLicensesList().length == 0">No Licenses.</span>
+                                    <span v-if="user?.getLicensesList().length == 0">
+                                        {{ $t('common.no_licenses') }}
+                                    </span>
                                     <ul v-else role="list"
                                         class="border divide-y rounded-md divide-base-200 border-base-200">
                                         <li v-for="license in user?.getLicensesList()"
