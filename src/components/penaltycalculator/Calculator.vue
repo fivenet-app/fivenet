@@ -419,9 +419,9 @@ function calculate(e: SelectedPenalty) {
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center pb-4">
                 <div class="sm:flex-auto">
-                    <div v-for="ps in penalties" :key="ps.name">
-                        <dl class="space-y-2 divide-y divide-white/10">
-                            <Disclosure as="div" class="pt-3 border-2 border-base-500" v-slot="{ open }">
+                    <div class="divide-y divide-white/10">
+                        <dl class="mt-1 space-y-2 divide-y divide-white/10">
+                            <Disclosure as="div" v-for="ps in penalties" :key="ps.name" class="pt-3" v-slot="{ open }">
                                 <dt>
                                     <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
                                         <span class="text-base font-semibold leading-7">{{ ps.name }}</span>
@@ -431,7 +431,7 @@ function calculate(e: SelectedPenalty) {
                                         </span>
                                     </DisclosureButton>
                                 </dt>
-                                <DisclosurePanel as="dd" class="mt-2 px-4 border-2 border-base-500">
+                                <DisclosurePanel as="dd" class="mt-2 px-4">
                                     <div class="flow-root mt-2">
                                         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                             <div class="inline-block min-w-full align-middle sm:px-6 lg:px-8">
