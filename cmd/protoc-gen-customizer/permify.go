@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"text/template"
@@ -79,10 +78,12 @@ func (p *PermifyModule) generate(f pgs.File) {
 
 			perm, err := p.parseComment(sName, mName, comment)
 			if err != nil {
-				panic(fmt.Sprintf("failed to parse comment in %s method %s (comment: '%s'), error: %+v", f.InputPath(), mName, comment, err))
+				p.Failf("failed to parse comment in %s method %s (comment: '%s'), error: %w", f.InputPath(), mName, comment, err)
+				return
 			}
 			if perm == nil {
-				panic(fmt.Sprintf("failed to parse comment in %s method %s (comment: '%s')", f.InputPath(), mName, comment))
+				p.Failf("failed to parse comment in %s method %s (comment: '%s')", f.InputPath(), mName, comment)
+				return
 			}
 
 			if perm.Name != mName {

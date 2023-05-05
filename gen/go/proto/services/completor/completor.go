@@ -6,7 +6,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/table"

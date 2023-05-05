@@ -29,13 +29,13 @@ func Execute() {
 	loggerConfig := zap.NewProductionConfig()
 	level, err := zapcore.ParseLevel(config.C.LogLevel)
 	if err != nil {
-		panic("failed to parse log level from config")
+		panic(fmt.Errorf("failed to parse log level from config. %w", err))
 	}
 	loggerConfig.Level.SetLevel(level)
 
 	logger, err = loggerConfig.Build()
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("failed to configure logger. %w", err))
 	}
 	defer logger.Sync()
 

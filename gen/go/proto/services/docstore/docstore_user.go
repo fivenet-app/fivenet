@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
-	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

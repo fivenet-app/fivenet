@@ -28,22 +28,22 @@ type CitizenInfoClaims struct {
 	jwt.RegisteredClaims
 }
 
-type TokenManager struct {
+type TokenMgr struct {
 	jwtSigningKey []byte
 }
 
-func NewTokenManager(jwtSecret string) *TokenManager {
-	return &TokenManager{
+func NewTokenMgr(jwtSecret string) *TokenMgr {
+	return &TokenMgr{
 		jwtSigningKey: []byte(strings.TrimSpace(jwtSecret)),
 	}
 }
 
-func (t *TokenManager) NewWithClaims(claims *CitizenInfoClaims) (string, error) {
+func (t *TokenMgr) NewWithClaims(claims *CitizenInfoClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(t.jwtSigningKey)
 }
 
-func (t *TokenManager) ParseWithClaims(tokenString string) (*CitizenInfoClaims, error) {
+func (t *TokenMgr) ParseWithClaims(tokenString string) (*CitizenInfoClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &CitizenInfoClaims{}, func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {

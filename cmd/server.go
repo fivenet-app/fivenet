@@ -14,8 +14,8 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto"
 	"github.com/galexrt/fivenet/pkg/audit"
-	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/oauth2"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/routes"
@@ -61,8 +61,8 @@ var serverCmd = &cobra.Command{
 		// Setup SQL Prometheus metrics collector
 		prometheus.MustRegister(collectors.NewDBStatsCollector(db, config.C.Database.DBName))
 
-		// Create JWT Token TokenManager
-		tm := auth.NewTokenManager(config.C.JWT.Secret)
+		// Create JWT Token TokenMgr
+		tm := auth.NewTokenMgr(config.C.JWT.Secret)
 
 		// Setup permissions system
 		p := perms.New(ctx, db)
@@ -94,7 +94,7 @@ func init() {
 
 type server struct {
 	db    *sql.DB
-	tm    *auth.TokenManager
+	tm    *auth.TokenMgr
 	p     perms.Permissions
 	audit *audit.AuditStorer
 }

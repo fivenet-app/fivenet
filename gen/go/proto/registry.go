@@ -7,10 +7,10 @@ import (
 	"net"
 
 	"github.com/galexrt/fivenet/pkg/audit"
-	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/config"
-	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/auth"
-	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/permission"
+	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/interceptors/auth"
+	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -45,9 +45,13 @@ func init() {
 	})
 }
 
+var (
+	GenericInternalServerError = status.Error(codes.Internal, "Internal server error")
+)
+
 type RegisterFunc func() error
 
-func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth.TokenManager, p perms.Permissions, aud audit.IAuditer) (*grpc.Server, net.Listener) {
+func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth.TokenMgr, p perms.Permissions, aud audit.IAuditer) (*grpc.Server, net.Listener) {
 	// Create GRPC Server
 	lis, err := net.Listen("tcp", config.C.GRPC.Listen)
 	if err != nil {
@@ -73,7 +77,8 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 		if e, ok := p.(error); ok {
 			sentry.CaptureException(e)
 		}
-		return status.Errorf(codes.Internal, "%v", p)
+
+		return GenericInternalServerError
 	}
 
 	grpcAuth := auth.NewGRPCAuth(tm)
@@ -165,7 +170,7 @@ func InterceptorLogger(l *zap.Logger) logging.Logger {
 		case logging.LevelError:
 			l.Error(msg)
 		default:
-			panic(fmt.Sprintf("unknown level %v", lvl))
+			l.Error(fmt.Sprintf("unknown log level '%v' for message", lvl), zap.String("msg", msg))
 		}
 	})
 }

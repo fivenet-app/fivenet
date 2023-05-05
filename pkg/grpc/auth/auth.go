@@ -1,70 +1,145 @@
-// Copyright 2016 Michal Witkowski. All Rights Reserved.
-// See LICENSE for licensing terms.
-
-package grpc_auth
+package auth
 
 import (
 	"context"
+	"strings"
 
-	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
+	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
+	"github.com/galexrt/fivenet/pkg/perms"
+	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-// AuthFunc is the pluggable function that performs authentication.
-//
-// The passed in `Context` will contain the gRPC metadata.MD object (for header-based authentication) and
-// the peer.Peer information that can contain transport-based credentials (e.g. `credentials.AuthInfo`).
-//
-// The returned context will be propagated to handlers, allowing user changes to `Context`. However,
-// please make sure that the `Context` returned is a child `Context` of the one passed in.
-//
-// If error is returned, its `grpc.Code()` will be returned to the user as well as the verbatim message.
-// Please make sure you use `codes.Unauthenticated` (lacking auth) and `codes.PermissionDenied`
-// (authed, but lacking perms) appropriately.
-type AuthFunc func(ctx context.Context, fullMethod string) (context.Context, error)
+const (
+	AuthAccIDCtxTag              = "auth.accid"
+	AuthActiveCharIDCtxTag       = "auth.chrid"
+	AuthActiveCharJobCtxTag      = "auth.chrjob"
+	AuthActiveCharJobGradeCtxTag = "auth.chrjobg"
+	AuthSubCtxTag                = "auth.sub"
+)
 
-// ServiceAuthFuncOverride allows a given gRPC service implementation to override the global `AuthFunc`.
-//
-// If a service implements the AuthFuncOverride method, it takes precedence over the `AuthFunc` method,
-// and will be called instead of AuthFunc for all method invocations within that service.
-type ServiceAuthFuncOverride interface {
-	AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error)
+var (
+	AuthInfoKey     struct{}
+	InvalidTokenErr = status.Error(codes.Unauthenticated, "Token invalid/ expired!")
+	CheckTokenErr   = status.Error(codes.Unauthenticated, "Token check failed!")
+)
+
+type GRPCAuth struct {
+	tm *TokenMgr
 }
 
-// UnaryServerInterceptor returns a new unary server interceptors that performs per-request auth.
-// NOTE(bwplotka): For more complex auth interceptor see https://github.com/grpc/grpc-go/blob/master/authz/grpc_authz_server_interceptors.go.
-func UnaryServerInterceptor(authFunc AuthFunc) grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		var newCtx context.Context
-		var err error
-		if overrideSrv, ok := info.Server.(ServiceAuthFuncOverride); ok {
-			newCtx, err = overrideSrv.AuthFuncOverride(ctx, info.FullMethod)
-		} else {
-			newCtx, err = authFunc(ctx, info.FullMethod)
-		}
-		if err != nil {
-			return nil, err
-		}
-		return handler(newCtx, req)
+func NewGRPCAuth(tm *TokenMgr) *GRPCAuth {
+	return &GRPCAuth{
+		tm: tm,
 	}
 }
 
-// StreamServerInterceptor returns a new unary server interceptors that performs per-request auth.
-// NOTE(bwplotka): For more complex auth interceptor see https://github.com/grpc/grpc-go/blob/master/authz/grpc_authz_server_interceptors.go.
-func StreamServerInterceptor(authFunc AuthFunc) grpc.StreamServerInterceptor {
-	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-		var newCtx context.Context
-		var err error
-		if overrideSrv, ok := srv.(ServiceAuthFuncOverride); ok {
-			newCtx, err = overrideSrv.AuthFuncOverride(stream.Context(), info.FullMethod)
-		} else {
-			newCtx, err = authFunc(stream.Context(), info.FullMethod)
-		}
-		if err != nil {
-			return err
-		}
-		wrapped := middleware.WrapServerStream(stream)
-		wrapped.WrappedContext = newCtx
-		return handler(srv, wrapped)
+func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context.Context, error) {
+	t, err := GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, err
 	}
+
+	if t == "" {
+		return nil, status.Errorf(codes.Unauthenticated, "authorization string must not be empty")
+	}
+
+	// Parse token only returns the token info when the token is still valid
+	tInfo, err := g.tm.ParseWithClaims(t)
+	if err != nil {
+		return nil, InvalidTokenErr
+	}
+
+	ctx = logging.InjectFields(ctx, logging.Fields{
+		AuthSubCtxTag, tInfo.Subject,
+		AuthAccIDCtxTag, tInfo.ActiveCharID,
+	})
+
+	return context.WithValue(ctx, AuthInfoKey, tInfo), nil
+}
+
+type GRPCPerm struct {
+	p perms.Permissions
+}
+
+func NewGRPCPerms(p perms.Permissions) *GRPCPerm {
+	return &GRPCPerm{
+		p: p,
+	}
+}
+
+func FromContext(ctx context.Context) (*CitizenInfoClaims, bool) {
+	c, ok := ctx.Value(AuthInfoKey).(*CitizenInfoClaims)
+	return c, ok
+}
+
+func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+	// Check if the method is from a service otherwise the request must be invalid
+	if strings.HasPrefix(info.FullMethod, "/services") {
+		claims, ok := FromContext(ctx)
+		if ok {
+			split := strings.Split(info.FullMethod[10:], ".")
+			perm := strings.Join(split[1:], "-")
+
+			if overrideSrv, ok := info.Server.(grpc_permission.GetPermsRemapFunc); ok {
+				remap := overrideSrv.GetPermsRemap()
+				if _, ok := remap[perm]; ok {
+					perm = remap[perm]
+				}
+			}
+
+			if g.p.Can(claims.ActiveCharID, perm) {
+				return ctx, nil
+			}
+		}
+	}
+
+	return nil, status.Errorf(codes.PermissionDenied, "You don't have permission to do that! Permission: "+info.FullMethod)
+}
+
+func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
+	// Check if the method is from a service otherwise the request must be invalid
+	if strings.HasPrefix(info.FullMethod, "/services") {
+		claims, ok := FromContext(ctx)
+		if ok {
+			split := strings.Split(info.FullMethod[10:], ".")
+			perm := strings.Join(split[1:], "-")
+
+			if overrideSrv, ok := srv.(grpc_permission.GetPermsRemapFunc); ok {
+				remap := overrideSrv.GetPermsRemap()
+				if _, ok := remap[perm]; ok {
+					perm = remap[perm]
+				}
+			}
+
+			if g.p.Can(claims.ActiveCharID, perm) {
+				return ctx, nil
+			}
+		}
+	}
+
+	return nil, status.Errorf(codes.PermissionDenied, "You don't have permission to do that! Permission: "+info.FullMethod)
+}
+
+func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
+	return grpc_auth.AuthFromMD(ctx, "bearer")
+}
+
+func GetUserIDFromContext(ctx context.Context) int32 {
+	claims, ok := FromContext(ctx)
+	if !ok {
+		return -1
+	}
+	return claims.ActiveCharID
+}
+
+func GetUserInfoFromContext(ctx context.Context) (int32, string, int32) {
+	claims, ok := FromContext(ctx)
+	if !ok {
+		return -1, "N/A", 1
+	}
+	return claims.ActiveCharID, claims.ActiveCharJob, claims.ActiveCharJobGrade
 }

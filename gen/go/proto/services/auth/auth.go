@@ -14,7 +14,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/audit"
-	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -53,13 +53,13 @@ type Server struct {
 
 	db   *sql.DB
 	auth *auth.GRPCAuth
-	tm   *auth.TokenManager
+	tm   *auth.TokenMgr
 	p    perms.Permissions
 	c    *mstlystcdata.Enricher
 	a    audit.IAuditer
 }
 
-func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenManager, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
+func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
 	return &Server{
 		db:   db,
 		auth: auth,

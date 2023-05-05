@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/galexrt/fivenet/pkg/audit"
-	"github.com/galexrt/fivenet/pkg/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms/mock"
 	"github.com/galexrt/fivenet/tests/dbmanager"
@@ -33,7 +33,7 @@ func TestFullAuthFlow(t *testing.T) {
 	db := dbmanager.TestDBManager.DB()
 
 	ctx := context.Background()
-	tm := auth.NewTokenManager("")
+	tm := auth.NewTokenMgr("")
 	p := mock.NewMock()
 	aud := &audit.Noop{}
 	c, err := mstlystcdata.NewCache(ctx, zap.NewNop(), db)

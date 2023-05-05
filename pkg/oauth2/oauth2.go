@@ -9,8 +9,8 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/galexrt/fivenet/pkg/auth"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/oauth2/providers"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -31,12 +31,12 @@ var (
 type OAuth2 struct {
 	logger *zap.Logger
 	db     *sql.DB
-	tm     *auth.TokenManager
+	tm     *auth.TokenMgr
 
 	oauthConfigs map[string]providers.IProvider
 }
 
-func New(logger *zap.Logger, db *sql.DB, tm *auth.TokenManager) *OAuth2 {
+func New(logger *zap.Logger, db *sql.DB, tm *auth.TokenMgr) *OAuth2 {
 	o := &OAuth2{
 		logger:       logger,
 		db:           db,
