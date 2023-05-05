@@ -4,12 +4,6 @@
             "welcome": "Willkommen bei FiveNet!",
             "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Livemap Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit."
         },
-        "error": {
-            "title": "Fehler aufgetreten",
-            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuchen sie es erneut.",
-            "error_message": "Fehlermeldung:",
-            "copy_error": "Fehlerbericht kopieren"
-        },
         "auth": {
             "logout": {
                 "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
@@ -134,6 +128,12 @@
         },
         "vehicles": {
             "title": "Fahrzeuge"
+        },
+        "error": {
+            "title": "Fehler aufgetreten",
+            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuchen sie es erneut.",
+            "error_message": "Fehlermeldung:",
+            "copy_error": "Fehlerbericht kopieren"
         }
     },
     "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten.",
@@ -285,6 +285,13 @@
             "perms": "Aktuelle Berechtigungen",
             "active_char_id": "ID des aktiven Characters",
             "access_token_expiration": "Ablauf des Zugangstokens"
+        },
+        "penaltycalculator": {
+            "title": "Strafenrechner",
+            "crime": "Verbrechen",
+            "fine": "Strafe",
+            "detention_time": "Gefängniszeit",
+            "stvo_points": "StVO Punkte"
         }
     },
     "common": {
@@ -413,7 +420,12 @@
             "minute": "Minute | Minuten",
             "second": "Sekunde | Sekunden"
         },
-        "min": "Minimum"
+        "min": "Minimum",
+        "count": "Anzahl",
+        "other": "Andere",
+        "result": "Ergebnus",
+        "total_count": "Gesamtanzahl",
+        "none_selected": "Keine {0} ausgewählt"
     },
     "notifications": {
         "clipboard": {
@@ -560,6 +572,10 @@
         "language_switched": {
             "title": "Sprache gewechselt",
             "content": "Sprache wird zu {0} gewechselt."
+        },
+        "penaltycalculator": {
+            "title": "Strafenrechner: Kopiert",
+            "content": "Zusammenfassung in die Zwischenablage"
         }
     }
 }
