@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	cache "github.com/Code-Hex/go-generics-cache"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -126,7 +127,13 @@ func (p *Perms) GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix string
 }
 
 func (p *Perms) Can(userId int32, perm ...string) bool {
-	return p.can(userId, helpers.Guard(strings.Join(perm, ".")))
+	result := p.can(userId, helpers.Guard(strings.Join(perm, ".")))
+
+	if !result {
+		return p.can(userId, common.SuperuserAnyAccessGuard)
+	}
+
+	return result
 }
 
 func (p *Perms) can(userId int32, guard string) (result bool) {
