@@ -1906,8 +1906,7 @@ proto.services.auth.ForgotPasswordRequest.prototype.toObject = function(opt_incl
 proto.services.auth.ForgotPasswordRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     regToken: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    username: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    pb_new: jspb.Message.getFieldWithDefault(msg, 3, "")
+    pb_new: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -1950,10 +1949,6 @@ proto.services.auth.ForgotPasswordRequest.deserializeBinaryFromReader = function
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setUsername(value);
-      break;
-    case 3:
-      var value = /** @type {string} */ (reader.readString());
       msg.setNew(value);
       break;
     default:
@@ -1992,17 +1987,10 @@ proto.services.auth.ForgotPasswordRequest.serializeBinaryToWriter = function(mes
       f
     );
   }
-  f = message.getUsername();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
-    );
-  }
   f = message.getNew();
   if (f.length > 0) {
     writer.writeString(
-      3,
+      2,
       f
     );
   }
@@ -2028,10 +2016,10 @@ proto.services.auth.ForgotPasswordRequest.prototype.setRegToken = function(value
 
 
 /**
- * optional string username = 2;
+ * optional string new = 2;
  * @return {string}
  */
-proto.services.auth.ForgotPasswordRequest.prototype.getUsername = function() {
+proto.services.auth.ForgotPasswordRequest.prototype.getNew = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -2040,26 +2028,8 @@ proto.services.auth.ForgotPasswordRequest.prototype.getUsername = function() {
  * @param {string} value
  * @return {!proto.services.auth.ForgotPasswordRequest} returns this
  */
-proto.services.auth.ForgotPasswordRequest.prototype.setUsername = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
-};
-
-
-/**
- * optional string new = 3;
- * @return {string}
- */
-proto.services.auth.ForgotPasswordRequest.prototype.getNew = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.services.auth.ForgotPasswordRequest} returns this
- */
 proto.services.auth.ForgotPasswordRequest.prototype.setNew = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

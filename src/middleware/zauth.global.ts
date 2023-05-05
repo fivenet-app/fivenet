@@ -16,6 +16,11 @@ export default defineNuxtRouteMiddleware(
             if (authStore.getAccessToken !== null) {
                 // If the user has an acitve char, check for perms otherwise, redirect to char selector
                 if (authStore.getActiveChar !== null) {
+                    const permissions = useAuthStore().getPermissions;
+                    if (permissions.includes('superuser-anyaccess')) {
+                        return true;
+                    }
+
                     // Route has permission attached to it, check if user has required permission
                     if (to.meta.permission) {
                         const perm = slug(to.meta.permission as string);

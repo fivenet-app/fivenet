@@ -1136,17 +1136,6 @@ func (m *ForgotPasswordRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetUsername()); l < 3 || l > 24 {
-		err := ForgotPasswordRequestValidationError{
-			field:  "Username",
-			reason: "value length must be between 3 and 24 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if utf8.RuneCountInString(m.GetNew()) < 6 {
 		err := ForgotPasswordRequestValidationError{
 			field:  "New",

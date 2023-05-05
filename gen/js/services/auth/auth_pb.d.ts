@@ -198,9 +198,6 @@ export class ForgotPasswordRequest extends jspb.Message {
   getRegToken(): string;
   setRegToken(value: string): ForgotPasswordRequest;
 
-  getUsername(): string;
-  setUsername(value: string): ForgotPasswordRequest;
-
   getNew(): string;
   setNew(value: string): ForgotPasswordRequest;
 
@@ -215,7 +212,6 @@ export class ForgotPasswordRequest extends jspb.Message {
 export namespace ForgotPasswordRequest {
   export type AsObject = {
     regToken: string,
-    username: string,
     pb_new: string,
   }
 }
