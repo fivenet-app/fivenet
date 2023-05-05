@@ -15,23 +15,415 @@ const notifications = useNotificationsStore();
 
 const penalties: Penalties = [
     {
-        name: 'STGB',
+        name: "StGB",
         penalties: [
             {
                 name: '§12 Mord',
                 description: 'Freiheitsstrafe nötig',
                 fine: 0,
                 detentionTime: 45,
-                stvoPoints: 0,
+                stvoPoints: 0
             },
             {
                 name: '§13 Totschlag',
                 description: 'Freiheitsstrafe nötig',
                 fine: 0,
                 detentionTime: 20,
-                stvoPoints: 0,
+                stvoPoints: 0
             },
-        ],
+            {
+                name: '§13a Fahrlässige Tötung',
+                description: 'Geldstrafe möglich',
+                fine: 0,
+                detentionTime: 30,
+                stvoPoints: 0
+            },
+            {
+                name: '§14 Körperverletzung',
+                description: 'Geldstrafe möglich',
+                fine: 5000,
+                detentionTime: 15,
+                stvoPoints: 0
+            },
+            {
+                name: '§14a Fahrlässige Körperverletzung',
+                description: 'Geldstrafe möglich',
+                fine: 5000,
+                detentionTime: 20,
+                stvoPoints: 0
+            },
+            {
+                name: '§15 Gefährliche Körperverletzung',
+                description: 'Geldstrafe möglich',
+                fine: 20000,
+                detentionTime: 30,
+                stvoPoints: 0
+            },
+            {
+                name: '§16 Schwere Körperverletzung',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 30,
+                stvoPoints: 0
+            },
+            {
+                name: '§17 Unterlassene Hilfeleistung',
+                description: 'Geldstrafe möglich',
+                fine: 5000,
+                detentionTime: 10,
+                stvoPoints: 0
+            },
+            {
+                name: '§18 Missbrauch von Notrufen',
+                description: 'Geldstrafe möglich',
+                fine: 5000,
+                detentionTime: 5,
+                stvoPoints: 0
+            },
+            {
+                name: '§19 Diebstahl',
+                description: 'Geldstrafe möglich, an Wert des Diebesgut orientieren',
+                fine: 15000,
+                detentionTime: 15,
+                stvoPoints: 0
+            },
+            {
+                name: '§20 Unterschlagung',
+                description: 'Geldstrafe möglich',
+                fine: 5000,
+                detentionTime: 10,
+                stvoPoints: 0
+            },
+            {
+                name: '§21 Besonders schwerer Fall des Diebstahls',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 20,
+                stvoPoints: 0
+            },
+            {
+                name: '§22 Wohnungseinbruchsdiebstahl',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 10,
+                stvoPoints: 0
+            },
+            {
+                name: '§23 Hausfriedensbruch',
+                description: 'Gelstrafe möglich',
+                fine: 5000,
+                detentionTime: 10,
+                stvoPoints: 0
+            },
+            {
+                name: '§24 Raub',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 5,
+                stvoPoints: 0
+            },
+            {
+                name: '§25 Schwerer Raub',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 10,
+                stvoPoints: 0
+            },
+            {
+                name: '§26 Betrug',
+                description: 'Geldstrafe möglich',
+                fine: 10000,
+                detentionTime: 15,
+                stvoPoints: 0
+            },
+            {
+                name: '§27 Menschenhandel',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 30,
+                stvoPoints: 0
+            },
+            {
+                name: '§28 Freiheitsberaubung',
+                description: 'Geldstrafe möglich',
+                fine: 13000,
+                detentionTime: 15,
+                stvoPoints: 0
+            },
+            {
+                name: '§29 Geiselnahme',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 30,
+                stvoPoints: 0
+            },
+            {
+                name: '§30 Beleidigung, üble Nachrede und Verleumdunng',
+                description: 'Geldstrafe möglich',
+                fine: 1500,
+                detentionTime: 5,
+                stvoPoints: 0
+            },
+            {
+                name: '§30a Abs. 1 Bedrohung',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 20,
+                stvoPoints: 0
+            },
+            {
+                name: '§30a Abs. 2 Bedrohung',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 30,
+                stvoPoints: 0
+            },
+            {
+                name: '§30a Abs. 4 Bedrohung',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 40,
+                stvoPoints: 0
+            },
+            {
+                name: '§31 Nötigung',
+                description: 'Geldstrafe möglich',
+                fine: 10000,
+                detentionTime: 15,
+                stvoPoints: 0
+            },
+            {
+                name: '§32 Gefährlicher Eingriff in den Straßenverkehr',
+                description: 'Geldstrafe möglich',
+                fine: 10000,
+                detentionTime: 15,
+                stvoPoints: 2
+            },
+            {
+                name: '§33 Gefährdung des Straßenverkehrs',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 20,
+                stvoPoints: 0
+            },
+            {
+                name: '§34 Verbotenes Kraftfahrzeugsrennen',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 15,
+                stvoPoints: 0
+            },
+            {
+                name: '§35 Abs. 1 Vorteilsgewährung',
+                description: 'Geldstrafe möglich',
+                fine: 0,
+                detentionTime: 20,
+                stvoPoints: 0
+            },
+            {
+                name: '§35 Abs. 2 Vorteilsgewährung',
+                description: 'Geldstrafe möglich',
+                fine: 0,
+                detentionTime: 35,
+                stvoPoints: 0
+            },
+            {
+                name: '§35a Abs. 1 Vorteilsannahme',
+                description: 'Geldstrafe möglich',
+                fine: 0,
+                detentionTime: 60,
+                stvoPoints: 0
+            },
+            {
+                name: '§35 Abs. 2 Vorteilsgewährung',
+                description: 'Geldstrafe möglich',
+                fine: 0,
+                detentionTime: 35,
+                stvoPoints: 0
+            },
+            {
+                name: '§35a Abs. 1 Vorteilsannahme',
+                description: 'Geldstrafe möglich',
+                fine: 0,
+                detentionTime: 60,
+                stvoPoints: 0
+            },
+            {
+                name: '§35a Abs. 2 Vorteilsannahme',
+                description: 'Geldstrafe möglich',
+                fine: 0,
+                detentionTime: 60,
+                stvoPoints: 0
+            },
+            {
+                name: '§36 Bildung krimineller Vereinigungen',
+                description: 'Geldstrafe möglich',
+                fine: 30000,
+                detentionTime: 15,
+                stvoPoints: 0
+            },
+            {
+                name: '§37 Amtsanmaßung',
+                description: 'Geldstrafe möglich',
+                fine: 0,
+                detentionTime: 20,
+                stvoPoints: 0
+            },
+            {
+                name: '§38 Unerlaubtes Entfernen vom Unfallort',
+                description: 'Freiheitsstrafe nötig',
+                fine: 5000,
+                detentionTime: 15,
+                stvoPoints: 0
+            },
+            {
+                name: '§39 Fahren ohne Fahrerlaubnis',
+                description: 'Geldstrafe möglich',
+                fine: 15000,
+                detentionTime: 10,
+                stvoPoints: 0
+            },
+            {
+                name: '§40 Strafvereitelung',
+                description: 'Geldstrafe möglich',
+                fine: 0,
+                detentionTime: 20,
+                stvoPoints: 0
+            },
+            {
+                name: '§41 Strafvereitelung im Amt',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 20,
+                stvoPoints: 0
+            },
+            {
+                name: '§42 Landfriedensbruch',
+                description: 'Geldstrafe möglich',
+                fine: 0,
+                detentionTime: 20,
+                stvoPoints: 0
+            },
+            {
+                name: '§43 Falsche uneidliche Aussage',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 10,
+                stvoPoints: 0
+            },
+            {
+                name: '§45 Sachbeschädigung',
+                description: 'Geldstrafe nötig, abhängig vom Sachwert',
+                fine: 0,
+                detentionTime: 0,
+                stvoPoints: 0
+            },
+            {
+                name: '§45a Abs. 1 Brandstiftung',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 35,
+                stvoPoints: 0
+            },
+            {
+                name: '§45a Abs. 2 Brandstiftung',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 20,
+                stvoPoints: 0
+            },
+            {
+                name: '§46 Terroristische Straftaten',
+                description: 'NUR VON STAATSANWALTSCHAFT/RICHTER',
+                fine: 0,
+                detentionTime: 120,
+                stvoPoints: 0
+            },
+            {
+                name: '§47 Aufforderung zu terroristischen Straftaten und Gutheißung terroristischer Straftaten',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 80,
+                stvoPoints: 0
+            },
+            {
+                name: '§48 Mißbrauch der Amtsgewalt',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 40,
+                stvoPoints: 0
+            },
+            {
+                name: '§49 Sperrzonen',
+                description: 'Bußgeld möglich. Haftzeit nötig bei Wiederholungstätern/bei Behinderung der Einsatzkräfte.',
+                fine: 25000,
+                detentionTime: 30,
+                stvoPoints: 0
+            },
+            {
+                name: '§50a Verbot von Vermummung im öffentlichen Raum',
+                description: 'Bußgeld möglich. Freiheitsstrafe nötig bei Wiederholungstätern/wenn die Vermummung im Zusammenhang mit einer Straftat (wie Raub, Körperverletzung, Diebstahl, etc.) in der Öffentlichkeit getragen worden ist.',
+                fine: 5000,
+                detentionTime: 10,
+                stvoPoints: 0
+            },
+            {
+                name: '§50b Verbot von Vermummung auf staatlichem Gelände',
+                description: 'Bußgeld möglich',
+                fine: 10000,
+                detentionTime: 15,
+                stvoPoints: 0
+            },
+            {
+                name: '§51 Verbotene Mitteilungen über Gerichtsverhandlungen',
+                description: 'Bußgeld möglich',
+                fine: 0,
+                detentionTime: 30,
+                stvoPoints: 0
+            },
+            {
+                name: '§51a Weitergabe geheimer Informationen',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 30,
+                stvoPoints: 0
+            },
+            {
+                name: '§52 Widerstand gegen Vollstreckungsbeamte',
+                description: 'Freiheitsstrafe nötig. Wenn die Ausübung der Staatsgewalt unrechtmäßig ist, dann nicht strafbar | Bei einem besonders schwerem Fall bis zu 30 HE, ansonsten bis zu 25!',
+                fine: 0,
+                detentionTime: 30,
+                stvoPoints: 0
+            },
+            {
+                name: '§53 Umgehung der Haftzeit',
+                description: 'Bußgeld möglich',
+                fine: 0,
+                detentionTime: 35,
+                stvoPoints: 0
+            },
+            {
+                name: '§54 Besitz von polizeilichen Mitteln',
+                description: 'Bußgeld möglich',
+                fine: 0,
+                detentionTime: 25,
+                stvoPoints: 0
+            },
+            {
+                name: '§54a Besitz von illegalen Gegenständen',
+                description: 'Freiheitsstrafe nötig',
+                fine: 0,
+                detentionTime: 25,
+                stvoPoints: 0
+            },
+            {
+                name: '§55 Unbefugter Gebrauch eines Fahrzeugs',
+                description: 'Bußgeld möglich',
+                fine: 0,
+                detentionTime: 25,
+                stvoPoints: 0
+            }
+        ]
     },
     {
         name: 'WaffG',

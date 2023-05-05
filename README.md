@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="FiveNet Logo" src="src/public/images/open-graph-image.png" width="500" />
+    <img alt="FiveNet Logo" src="src/public/images/open-graph-image.png" width="640" />
 </p>
 
 # FiveNet
