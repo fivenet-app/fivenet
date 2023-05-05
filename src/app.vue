@@ -20,6 +20,9 @@ useHead({
         return title ? `${title} - FiveNet` : 'FiveNet';
     },
 });
+useSeoMeta({
+    ogImage: '/images/open-graph-image.png',
+});
 
 try {
     await loadConfig();
