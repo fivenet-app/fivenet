@@ -1096,7 +1096,7 @@
   dependencies:
     "@types/geojson" "*"
 
-"@types/node@^18.16.4":
+"@types/node@^18.16.5":
   version "18.16.5"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.5.tgz#bf64e42719dc2e74da24709a2e1c0b50a966120a"
   integrity sha512-seOA34WMo9KB+UA78qaJoCO20RJzZGVXQ5Sh6FWu0g/hfT44nKXnej3/tCQl7FL97idFpBhisLYCTB50S0EirA==
