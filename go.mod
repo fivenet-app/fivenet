@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/Code-Hex/go-generics-cache v1.3.0
 	github.com/Masterminds/sprig/v3 v3.2.3
-	github.com/blevesearch/bleve/v2 v2.3.7
+	github.com/blevesearch/bleve/v2 v2.3.8
 	github.com/creasty/defaults v1.7.0
 	github.com/envoyproxy/protoc-gen-validate v1.0.0
 	github.com/getsentry/sentry-go v0.20.0
@@ -64,7 +64,7 @@ require (
 	github.com/blevesearch/zapx/v12 v12.3.7 // indirect
 	github.com/blevesearch/zapx/v13 v13.3.7 // indirect
 	github.com/blevesearch/zapx/v14 v14.3.7 // indirect
-	github.com/blevesearch/zapx/v15 v15.3.9 // indirect
+	github.com/blevesearch/zapx/v15 v15.3.10 // indirect
 	github.com/bytedance/sonic v1.8.6 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
