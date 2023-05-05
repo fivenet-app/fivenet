@@ -285,6 +285,13 @@
             "perms": "Current Permissions",
             "active_char_id": "Active Character ID",
             "access_token_expiration": "Access Token Expiration"
+        },
+        "penaltycalculator": {
+            "title": "Strafenrechner",
+            "crime": "Crime | Crimes",
+            "fine": "Fine | Fines",
+            "detention_time": "Jail Time",
+            "stvo_points": "StVo point | StVo points"
         }
     },
     "common": {
@@ -413,7 +420,12 @@
             "minute": "minute | minutes",
             "second": "second | seconds"
         },
-        "min": "Min"
+        "min": "Min",
+        "count": "Count",
+        "other": "Other",
+        "result": "Result",
+        "total_count": "Total count",
+        "none_selected": "No {0} selected"
     },
     "notifications": {
         "clipboard": {
@@ -560,6 +572,10 @@
         "language_switched": {
             "title": "Language switched",
             "content": "Language will be switched to {0}."
+        },
+        "penaltycalculator": {
+            "title": "Penalty Calculator: Copied to clipboard",
+            "content": "Summary copied to clipboard."
         }
     }
 }

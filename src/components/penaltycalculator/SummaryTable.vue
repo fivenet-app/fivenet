@@ -12,29 +12,29 @@ defineProps<{
             class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <CubeTransparentIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold text-gray-300">
-                Keine Verbrechen ausgewählt
+                {{ $t('common.none_selected', [`${$t('components.penaltycalculator.crime')}`]) }}
             </span>
         </button>
     <table v-else class="min-w-full divide-y divide-base-600">
         <thead>
             <tr>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                    Straftat
+                    {{ $t('components.penaltycalculator.crime') }}
                 </th>
                 <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                    Geldstrafe
+                    {{ $t('components.penaltycalculator.fine') }}
                 </th>
                 <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                    Haftzeit
+                    {{ $t('components.penaltycalculator.detention_time') }}
                 </th>
                 <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                    StVo-Punkte
+                    {{ $t('components.penaltycalculator.stvo_points', 2) }}
                 </th>
                 <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                    Sonstige
+                    {{ $t('common.other') }}
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                    Anzahl
+                    {{ $t('common.count') }}
                 </th>
             </tr>
         </thead>

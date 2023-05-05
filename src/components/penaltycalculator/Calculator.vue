@@ -5,6 +5,13 @@ import ListEntry from '~/components/penaltycalculator/ListEntry.vue';
 import { Penalties, PenaltiesSummary, SelectedPenalty } from '~/utils/penalty';
 import Stats from '~/components/penaltycalculator/Stats.vue';
 import SummaryTable from './SummaryTable.vue';
+import { useClipboard } from '@vueuse/core';
+import { useNotificationsStore } from '~/store/notifications';
+
+const { t, d } = useI18n();
+const clipboard = useClipboard();
+
+const notifications = useNotificationsStore();
 
 const penalties: Penalties = [
     {
@@ -388,7 +395,7 @@ const summary = ref<PenaltiesSummary>({
     count: 0,
 });
 
-function calculate(e: SelectedPenalty) {
+function calculate(e: SelectedPenalty): void {
     const idx = selectedPenalties.value.findIndex((v) => v.penalty.category == e.penalty.category && v.penalty.name == e.penalty.name);
     let count = e.count;
     if (idx > -1) {
@@ -411,6 +418,35 @@ function calculate(e: SelectedPenalty) {
         summary.value.stvoPoints += (count * e.penalty.stvoPoints);
     }
     summary.value.count = +summary.value.count + +count;
+}
+
+async function copyToClipboard(): Promise<void> {
+    let text = t('components.penaltycalculator.title') + ` (` + d(new Date(), 'long') + `)
+
+${t('components.penaltycalculator.fine')}: $${summary.value.fine}
+${t('components.penaltycalculator.detention_time')}: ${summary.value.detentionTime} ${t('common.time_ago.month', summary.value.detentionTime)}
+${t('components.penaltycalculator.stvo_points', 2)}: ${summary.value.stvoPoints}
+${t('common.total_count')}: ${summary.value.count}
+`;
+
+    if (selectedPenalties.value.length > 0) {
+        text += `
+${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
+`;
+
+        selectedPenalties.value.forEach((v) => {
+            text += `* ${v.penalty.category} - ${v.penalty.name} (${v.count}x)
+`;
+        });
+    }
+
+    notifications.dispatchNotification({
+        title: t('notifications.penaltycalculator.title'),
+        content: t('notifications.penaltycalculator.content'),
+        type: 'info',
+    });
+
+    return clipboard.copy(text);
 }
 </script>
 
@@ -440,27 +476,27 @@ function calculate(e: SelectedPenalty) {
                                                         <tr>
                                                             <th scope="col"
                                                                 class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                                                                Straftat
+                                                                {{ $t('components.penaltycalculator.crime') }}
                                                             </th>
                                                             <th scope="col"
                                                                 class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                                Geldstrafe
+                                                                {{ $t('components.penaltycalculator.fine') }}
                                                             </th>
                                                             <th scope="col"
                                                                 class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                                Haftzeit
+                                                                {{ $t('components.penaltycalculator.detention_time') }}
                                                             </th>
                                                             <th scope="col"
                                                                 class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                                StVo-Punkte
+                                                                {{ $t('components.penaltycalculator.stvo_points', 2) }}
                                                             </th>
                                                             <th scope="col"
                                                                 class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                                Sonstige
+                                                                {{ $t('common.other') }}
                                                             </th>
                                                             <th scope="col"
                                                                 class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                                                Anzahl
+                                                                {{ $t('common.count') }}
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -483,7 +519,9 @@ function calculate(e: SelectedPenalty) {
                     <div class="w-full border-t border-gray-300" />
                 </div>
                 <div class="relative flex justify-center">
-                    <span class="bg-white px-3 text-base font-semibold leading-6 text-gray-900">Ergebnis</span>
+                    <span class="bg-white px-3 text-base font-semibold leading-6 text-gray-900">
+                        {{ $t('common.result') }}
+                    </span>
                 </div>
             </div>
             <div class="flow-root mt-2">
@@ -496,6 +534,14 @@ function calculate(e: SelectedPenalty) {
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="flow-root mt-2">
+                <div class="flex items-center">
+                    <button type="button" @click="copyToClipboard()"
+                        class="flex-1 rounded-md bg-info-700 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-info-600">
+                        {{ $t('common.copy') }}
+                    </button>
                 </div>
             </div>
         </div>
