@@ -166,7 +166,7 @@ function updateBread(): void {
             return;
         }
 
-        if (route.path.toLowerCase() === currentRoute.path.toLowerCase()) {
+        if (route.path.toLowerCase() === currentRoute.path.replace(/\/$/, '').toLowerCase()) {
             return;
         }
 

@@ -134,12 +134,6 @@
         },
         "vehicles": {
             "title": "Vehicles"
-        },
-        "error": {
-            "title": "Error occured",
-            "subtitle": "A fatal error occured, please try again in a few seconds.",
-            "error_message": "Error message:",
-            "copy_error": "Copy Error message"
         }
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
