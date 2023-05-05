@@ -164,7 +164,9 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32,
 						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
 				),
 		).
-		WHERE(condition)
+		WHERE(condition).
+		GROUP_BY(docs.ID).
+		ORDER_BY(docs.ID.DESC(), dJobAccess.MinimumGrade)
 
 	var dest struct {
 		IDs []uint64 `alias:"document.id"`
