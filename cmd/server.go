@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
+	"strings"
 	"syscall"
 	"time"
 
@@ -185,8 +187,31 @@ func (s *server) setupHTTPServer() *gin.Engine {
 	// Register app routes
 	rs := routes.New(logger)
 	rs.Register(e, oauth)
+
+	fs := static.LocalFile(".output/public/", false)
+	fileserver := http.FileServer(fs)
+	fileserver = http.StripPrefix("/", fileserver)
+	staticServe := static.Serve("", fs)
+
+	e.NoRoute(func(c *gin.Context) {
+		if strings.HasPrefix(c.Request.URL.Path, "/api") {
+			return
+		}
+
+		pathComponents := strings.Split(c.Request.URL.Path, "/")
+		newPath := "/"
+		if len(pathComponents) > 0 {
+			newPath += path.Join(pathComponents[:len(pathComponents)-1]...) + "/"
+		}
+
+		if fs.Exists("/", newPath) {
+			c.Request.URL.Path = newPath
+			fileserver.ServeHTTP(c.Writer, c.Request)
+			c.Abort()
+		}
+	})
 	// Register output dir for assets and other static files
-	e.Use(static.Serve("/", static.LocalFile(".output/public/", false)))
+	e.Use(staticServe)
 
 	return e
 }

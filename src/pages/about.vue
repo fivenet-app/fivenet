@@ -117,8 +117,9 @@ const faqs = [
             <div class="bg-gray-900">
                 <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-20">
                     <div class="mx-auto max-w-4xl divide-y divide-white/10">
-                        <h2 class="text-2xl font-bold leading-10 tracking-tight text-white">{{ $t('pages.about.faq.title')
-                        }}</h2>
+                        <h2 class="text-2xl font-bold leading-10 tracking-tight text-white">
+                            {{ $t('pages.about.faq.title') }}
+                        </h2>
                         <dl class="mt-10 space-y-6 divide-y divide-white/10">
                             <Disclosure as="div" v-for="faq in faqs" :key="faq.question" class="pt-6" v-slot="{ open }">
                                 <dt>
@@ -159,4 +160,5 @@ const faqs = [
             </div>
         </div>
         <Footer />
-</div></template>
+    </div>
+</template>
