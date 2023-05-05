@@ -8,8 +8,7 @@ defineProps<{
 
 <template>
     <div class="mx-auto max-w-7xl">
-        <h3 class="text-base font-semibold leading-6 text-white-900">Ergebnis</h3>
-        <div class="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-4">
+        <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-4">
             <div class="bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
                 <p class="text-sm font-medium leading-6 text-gray-400">
                     Geldsumme

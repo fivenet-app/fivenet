@@ -417,11 +417,11 @@ function calculate(e: SelectedPenalty) {
 <template>
     <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
-            <div class="sm:flex sm:items-center">
+            <div class="sm:flex sm:items-center pb-4">
                 <div class="sm:flex-auto">
                     <div v-for="ps in penalties" :key="ps.name">
                         <dl class="space-y-2 divide-y divide-white/10">
-                            <Disclosure as="div" class="pt-2" v-slot="{ open }">
+                            <Disclosure as="div" class="pt-3 border-2 border-base-500" v-slot="{ open }">
                                 <dt>
                                     <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
                                         <span class="text-base font-semibold leading-7">{{ ps.name }}</span>
@@ -431,49 +431,44 @@ function calculate(e: SelectedPenalty) {
                                         </span>
                                     </DisclosureButton>
                                 </dt>
-                                <DisclosurePanel as="dd" class="mt-2 pr-12">
-                                    <div class="py-2">
-                                        <div class="px-2 sm:px-6 lg:px-8">
-                                            <div class="flow-root mt-2">
-                                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                                    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                                                        <table class="min-w-full divide-y divide-base-600">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th scope="col"
-                                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                                                                        Straftat
-                                                                    </th>
-                                                                    <th scope="col"
-                                                                        class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                                        Geldstrafe
-                                                                    </th>
-                                                                    <th scope="col"
-                                                                        class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                                        Haftzeit
-                                                                    </th>
-                                                                    <th scope="col"
-                                                                        class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                                        StVo-Punkte
-                                                                    </th>
-                                                                    <th scope="col"
-                                                                        class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                                                        Sonstige
-                                                                    </th>
-                                                                    <th scope="col"
-                                                                        class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
-                                                                        Anzahl
-                                                                    </th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody class="divide-y divide-base-800">
-                                                                <ListEntry v-for="penalty, idx in ps.penalties"
-                                                                    :key="idx" :penalty="penalty"
-                                                                    @selected="calculate($event)" />
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+                                <DisclosurePanel as="dd" class="mt-2 px-4 border-2 border-base-500">
+                                    <div class="flow-root mt-2">
+                                        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                            <div class="inline-block min-w-full align-middle sm:px-6 lg:px-8">
+                                                <table class="min-w-full divide-y divide-base-600">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col"
+                                                                class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                                                                Straftat
+                                                            </th>
+                                                            <th scope="col"
+                                                                class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                                                Geldstrafe
+                                                            </th>
+                                                            <th scope="col"
+                                                                class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                                                Haftzeit
+                                                            </th>
+                                                            <th scope="col"
+                                                                class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                                                StVo-Punkte
+                                                            </th>
+                                                            <th scope="col"
+                                                                class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                                                Sonstige
+                                                            </th>
+                                                            <th scope="col"
+                                                                class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
+                                                                Anzahl
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="divide-y divide-base-800">
+                                                        <ListEntry v-for="penalty, idx in ps.penalties" :key="idx"
+                                                            :penalty="penalty" @selected="calculate($event)" />
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
@@ -483,12 +478,20 @@ function calculate(e: SelectedPenalty) {
                     </div>
                 </div>
             </div>
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-300" />
+                </div>
+                <div class="relative flex justify-center">
+                    <span class="bg-white px-3 text-base font-semibold leading-6 text-gray-900">Ergebnis</span>
+                </div>
+            </div>
             <div class="flow-root mt-2">
-                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <div class="text-neutral text-xl">
                             <Stats :summary="summary" />
-                            <div>
+                            <div class="mt-4">
                                 <SummaryTable :selected-penalties="selectedPenalties" />
                             </div>
                         </div>

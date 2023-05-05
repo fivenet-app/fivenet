@@ -7,7 +7,14 @@ defineProps<{
 </script>
 
 <template>
-    <table class="min-w-full divide-y divide-base-600">
+    <button v-if="selectedPenalties.length == 0" type="button" disabled
+            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <UserIcon class="w-12 h-12 mx-auto text-neutral" />
+            <span class="block mt-2 text-sm font-semibold text-gray-300">
+                Keine Verbrechen ausgewählt
+            </span>
+        </button>
+    <table v-else class="min-w-full divide-y divide-base-600">
         <thead>
             <tr>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
