@@ -13,7 +13,7 @@ import "validate/validate.proto";
 message ListTemplatesRequest {}
 
 message ListTemplatesResponse {
-  repeated resources.documents.TemplateShort templates = 1; // @gotags: alias:"template"
+  repeated resources.documents.TemplateShort templates = 1;
 }
 
 message GetTemplateRequest {

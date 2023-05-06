@@ -4,6 +4,7 @@ import (
 	"bytes"
 	context "context"
 	"encoding/json"
+	"errors"
 	"html/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -13,17 +14,18 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 var (
-	dTemplates          = table.FivenetDocumentsTemplates.AS("documenttemplateshort")
+	dTemplates          = table.FivenetDocumentsTemplates.AS("templateshort")
 	dTemplatesJobAccess = table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
 )
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	stmt := dTemplates.
 		SELECT(
@@ -40,24 +42,23 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 		FROM(
 			dTemplates.
 				INNER_JOIN(dTemplatesJobAccess,
-					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID)).
+					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID).
+						AND(dTemplatesJobAccess.Job.EQ(jet.String(job))).
+						AND(dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
+				).
 				LEFT_JOIN(dCategory,
 					dCategory.ID.EQ(dTemplates.CategoryID),
 				),
 		).
 		WHERE(
-			jet.AND(
-				dTemplates.DeletedAt.IS_NULL(),
-				dTemplates.CreatorID.EQ(jet.Int32(userId)),
-				dTemplates.CreatorJob.EQ(jet.String(job)),
-				dTemplatesJobAccess.Job.EQ(jet.String(job)),
-				dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade)),
-			),
+			dTemplates.DeletedAt.IS_NULL(),
 		)
 
 	resp := &ListTemplatesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return resp, nil
@@ -74,7 +75,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this template!")
 	}
 
-	dTemplates := dTemplates.AS("documenttemplate")
+	dTemplates := dTemplates.AS("template")
 	stmt := dTemplates.
 		SELECT(
 			dTemplates.ID,

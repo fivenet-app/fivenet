@@ -15,7 +15,6 @@ defineEmits<{
 }>();
 
 const { data: templates, pending, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
-const items = ref<CardElements>([]);
 
 async function listTemplates(): Promise<Array<TemplateShort>> {
     return new Promise(async (res, rej) => {
@@ -33,6 +32,7 @@ async function listTemplates(): Promise<Array<TemplateShort>> {
     });
 }
 
+const items = ref<CardElements>([]);
 watch(templates, () => templates.value?.forEach((v) => {
     items.value.push({ title: v?.getTitle(), description: v?.getDescription(), });
 }));

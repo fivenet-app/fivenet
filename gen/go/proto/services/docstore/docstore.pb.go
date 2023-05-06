@@ -116,7 +116,7 @@ type ListTemplatesResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Templates []*documents.TemplateShort `protobuf:"bytes,1,rep,name=templates,proto3" json:"templates,omitempty" alias:"template"` // @gotags: alias:"template"
+	Templates []*documents.TemplateShort `protobuf:"bytes,1,rep,name=templates,proto3" json:"templates,omitempty"`
 }
 
 func (x *ListTemplatesResponse) Reset() {
