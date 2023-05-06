@@ -29,6 +29,7 @@ var resources_documents_documents_pb = require('../../resources/documents/docume
 goog.object.extend(proto, resources_documents_documents_pb);
 var resources_documents_templates_pb = require('../../resources/documents/templates_pb.js');
 goog.object.extend(proto, resources_documents_templates_pb);
+goog.exportSymbol('proto.services.docstore.ACCESS_LEVEL_UPDATE_MODE', null, global);
 goog.exportSymbol('proto.services.docstore.AddDocumentReferenceRequest', null, global);
 goog.exportSymbol('proto.services.docstore.AddDocumentReferenceResponse', null, global);
 goog.exportSymbol('proto.services.docstore.AddDocumentRelationRequest', null, global);
@@ -39,7 +40,6 @@ goog.exportSymbol('proto.services.docstore.CreateDocumentRequest', null, global)
 goog.exportSymbol('proto.services.docstore.CreateDocumentResponse', null, global);
 goog.exportSymbol('proto.services.docstore.CreateTemplateRequest', null, global);
 goog.exportSymbol('proto.services.docstore.CreateTemplateResponse', null, global);
-goog.exportSymbol('proto.services.docstore.DOC_ACCESS_UPDATE_MODE', null, global);
 goog.exportSymbol('proto.services.docstore.DeleteDocumentCategoryRequest', null, global);
 goog.exportSymbol('proto.services.docstore.DeleteDocumentCategoryResponse', null, global);
 goog.exportSymbol('proto.services.docstore.DeleteDocumentCommentRequest', null, global);
@@ -1359,7 +1359,7 @@ proto.services.docstore.ListTemplatesResponse.prototype.toObject = function(opt_
 proto.services.docstore.ListTemplatesResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     templatesList: jspb.Message.toObjectList(msg.getTemplatesList(),
-    resources_documents_templates_pb.DocumentTemplateShort.toObject, includeInstance)
+    resources_documents_templates_pb.TemplateShort.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -1397,8 +1397,8 @@ proto.services.docstore.ListTemplatesResponse.deserializeBinaryFromReader = func
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_documents_templates_pb.DocumentTemplateShort;
-      reader.readMessage(value,resources_documents_templates_pb.DocumentTemplateShort.deserializeBinaryFromReader);
+      var value = new resources_documents_templates_pb.TemplateShort;
+      reader.readMessage(value,resources_documents_templates_pb.TemplateShort.deserializeBinaryFromReader);
       msg.addTemplates(value);
       break;
     default:
@@ -1435,24 +1435,24 @@ proto.services.docstore.ListTemplatesResponse.serializeBinaryToWriter = function
     writer.writeRepeatedMessage(
       1,
       f,
-      resources_documents_templates_pb.DocumentTemplateShort.serializeBinaryToWriter
+      resources_documents_templates_pb.TemplateShort.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * repeated resources.documents.DocumentTemplateShort templates = 1;
- * @return {!Array<!proto.resources.documents.DocumentTemplateShort>}
+ * repeated resources.documents.TemplateShort templates = 1;
+ * @return {!Array<!proto.resources.documents.TemplateShort>}
  */
 proto.services.docstore.ListTemplatesResponse.prototype.getTemplatesList = function() {
-  return /** @type{!Array<!proto.resources.documents.DocumentTemplateShort>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_documents_templates_pb.DocumentTemplateShort, 1));
+  return /** @type{!Array<!proto.resources.documents.TemplateShort>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_documents_templates_pb.TemplateShort, 1));
 };
 
 
 /**
- * @param {!Array<!proto.resources.documents.DocumentTemplateShort>} value
+ * @param {!Array<!proto.resources.documents.TemplateShort>} value
  * @return {!proto.services.docstore.ListTemplatesResponse} returns this
 */
 proto.services.docstore.ListTemplatesResponse.prototype.setTemplatesList = function(value) {
@@ -1461,12 +1461,12 @@ proto.services.docstore.ListTemplatesResponse.prototype.setTemplatesList = funct
 
 
 /**
- * @param {!proto.resources.documents.DocumentTemplateShort=} opt_value
+ * @param {!proto.resources.documents.TemplateShort=} opt_value
  * @param {number=} opt_index
- * @return {!proto.resources.documents.DocumentTemplateShort}
+ * @return {!proto.resources.documents.TemplateShort}
  */
 proto.services.docstore.ListTemplatesResponse.prototype.addTemplates = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.resources.documents.DocumentTemplateShort, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.resources.documents.TemplateShort, opt_index);
 };
 
 
@@ -1719,7 +1719,7 @@ proto.services.docstore.GetTemplateResponse.prototype.toObject = function(opt_in
  */
 proto.services.docstore.GetTemplateResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    template: (f = msg.getTemplate()) && resources_documents_templates_pb.DocumentTemplate.toObject(includeInstance, f),
+    template: (f = msg.getTemplate()) && resources_documents_templates_pb.Template.toObject(includeInstance, f),
     rendered: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
@@ -1758,8 +1758,8 @@ proto.services.docstore.GetTemplateResponse.deserializeBinaryFromReader = functi
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_documents_templates_pb.DocumentTemplate;
-      reader.readMessage(value,resources_documents_templates_pb.DocumentTemplate.deserializeBinaryFromReader);
+      var value = new resources_documents_templates_pb.Template;
+      reader.readMessage(value,resources_documents_templates_pb.Template.deserializeBinaryFromReader);
       msg.setTemplate(value);
       break;
     case 2:
@@ -1800,7 +1800,7 @@ proto.services.docstore.GetTemplateResponse.serializeBinaryToWriter = function(m
     writer.writeMessage(
       1,
       f,
-      resources_documents_templates_pb.DocumentTemplate.serializeBinaryToWriter
+      resources_documents_templates_pb.Template.serializeBinaryToWriter
     );
   }
   f = message.getRendered();
@@ -1814,17 +1814,17 @@ proto.services.docstore.GetTemplateResponse.serializeBinaryToWriter = function(m
 
 
 /**
- * optional resources.documents.DocumentTemplate template = 1;
- * @return {?proto.resources.documents.DocumentTemplate}
+ * optional resources.documents.Template template = 1;
+ * @return {?proto.resources.documents.Template}
  */
 proto.services.docstore.GetTemplateResponse.prototype.getTemplate = function() {
-  return /** @type{?proto.resources.documents.DocumentTemplate} */ (
-    jspb.Message.getWrapperField(this, resources_documents_templates_pb.DocumentTemplate, 1));
+  return /** @type{?proto.resources.documents.Template} */ (
+    jspb.Message.getWrapperField(this, resources_documents_templates_pb.Template, 1));
 };
 
 
 /**
- * @param {?proto.resources.documents.DocumentTemplate|undefined} value
+ * @param {?proto.resources.documents.Template|undefined} value
  * @return {!proto.services.docstore.GetTemplateResponse} returns this
 */
 proto.services.docstore.GetTemplateResponse.prototype.setTemplate = function(value) {
@@ -1900,7 +1900,7 @@ proto.services.docstore.CreateTemplateRequest.prototype.toObject = function(opt_
  */
 proto.services.docstore.CreateTemplateRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    template: (f = msg.getTemplate()) && resources_documents_templates_pb.DocumentTemplate.toObject(includeInstance, f)
+    template: (f = msg.getTemplate()) && resources_documents_templates_pb.Template.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1938,8 +1938,8 @@ proto.services.docstore.CreateTemplateRequest.deserializeBinaryFromReader = func
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_documents_templates_pb.DocumentTemplate;
-      reader.readMessage(value,resources_documents_templates_pb.DocumentTemplate.deserializeBinaryFromReader);
+      var value = new resources_documents_templates_pb.Template;
+      reader.readMessage(value,resources_documents_templates_pb.Template.deserializeBinaryFromReader);
       msg.setTemplate(value);
       break;
     default:
@@ -1976,24 +1976,24 @@ proto.services.docstore.CreateTemplateRequest.serializeBinaryToWriter = function
     writer.writeMessage(
       1,
       f,
-      resources_documents_templates_pb.DocumentTemplate.serializeBinaryToWriter
+      resources_documents_templates_pb.Template.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * optional resources.documents.DocumentTemplate template = 1;
- * @return {?proto.resources.documents.DocumentTemplate}
+ * optional resources.documents.Template template = 1;
+ * @return {?proto.resources.documents.Template}
  */
 proto.services.docstore.CreateTemplateRequest.prototype.getTemplate = function() {
-  return /** @type{?proto.resources.documents.DocumentTemplate} */ (
-    jspb.Message.getWrapperField(this, resources_documents_templates_pb.DocumentTemplate, 1));
+  return /** @type{?proto.resources.documents.Template} */ (
+    jspb.Message.getWrapperField(this, resources_documents_templates_pb.Template, 1));
 };
 
 
 /**
- * @param {?proto.resources.documents.DocumentTemplate|undefined} value
+ * @param {?proto.resources.documents.Template|undefined} value
  * @return {!proto.services.docstore.CreateTemplateRequest} returns this
 */
 proto.services.docstore.CreateTemplateRequest.prototype.setTemplate = function(value) {
@@ -2181,7 +2181,7 @@ proto.services.docstore.UpdateTemplateRequest.prototype.toObject = function(opt_
  */
 proto.services.docstore.UpdateTemplateRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    template: (f = msg.getTemplate()) && resources_documents_templates_pb.DocumentTemplate.toObject(includeInstance, f)
+    template: (f = msg.getTemplate()) && resources_documents_templates_pb.Template.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -2219,8 +2219,8 @@ proto.services.docstore.UpdateTemplateRequest.deserializeBinaryFromReader = func
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new resources_documents_templates_pb.DocumentTemplate;
-      reader.readMessage(value,resources_documents_templates_pb.DocumentTemplate.deserializeBinaryFromReader);
+      var value = new resources_documents_templates_pb.Template;
+      reader.readMessage(value,resources_documents_templates_pb.Template.deserializeBinaryFromReader);
       msg.setTemplate(value);
       break;
     default:
@@ -2257,24 +2257,24 @@ proto.services.docstore.UpdateTemplateRequest.serializeBinaryToWriter = function
     writer.writeMessage(
       1,
       f,
-      resources_documents_templates_pb.DocumentTemplate.serializeBinaryToWriter
+      resources_documents_templates_pb.Template.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * optional resources.documents.DocumentTemplate template = 1;
- * @return {?proto.resources.documents.DocumentTemplate}
+ * optional resources.documents.Template template = 1;
+ * @return {?proto.resources.documents.Template}
  */
 proto.services.docstore.UpdateTemplateRequest.prototype.getTemplate = function() {
-  return /** @type{?proto.resources.documents.DocumentTemplate} */ (
-    jspb.Message.getWrapperField(this, resources_documents_templates_pb.DocumentTemplate, 1));
+  return /** @type{?proto.resources.documents.Template} */ (
+    jspb.Message.getWrapperField(this, resources_documents_templates_pb.Template, 1));
 };
 
 
 /**
- * @param {?proto.resources.documents.DocumentTemplate|undefined} value
+ * @param {?proto.resources.documents.Template|undefined} value
  * @return {!proto.services.docstore.UpdateTemplateRequest} returns this
 */
 proto.services.docstore.UpdateTemplateRequest.prototype.setTemplate = function(value) {
@@ -8096,7 +8096,7 @@ proto.services.docstore.SetDocumentAccessRequest.deserializeBinaryFromReader = f
       msg.setDocumentId(value);
       break;
     case 2:
-      var value = /** @type {!proto.services.docstore.DOC_ACCESS_UPDATE_MODE} */ (reader.readEnum());
+      var value = /** @type {!proto.services.docstore.ACCESS_LEVEL_UPDATE_MODE} */ (reader.readEnum());
       msg.setMode(value);
       break;
     case 3:
@@ -8177,16 +8177,16 @@ proto.services.docstore.SetDocumentAccessRequest.prototype.setDocumentId = funct
 
 
 /**
- * optional DOC_ACCESS_UPDATE_MODE mode = 2;
- * @return {!proto.services.docstore.DOC_ACCESS_UPDATE_MODE}
+ * optional ACCESS_LEVEL_UPDATE_MODE mode = 2;
+ * @return {!proto.services.docstore.ACCESS_LEVEL_UPDATE_MODE}
  */
 proto.services.docstore.SetDocumentAccessRequest.prototype.getMode = function() {
-  return /** @type {!proto.services.docstore.DOC_ACCESS_UPDATE_MODE} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+  return /** @type {!proto.services.docstore.ACCESS_LEVEL_UPDATE_MODE} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /**
- * @param {!proto.services.docstore.DOC_ACCESS_UPDATE_MODE} value
+ * @param {!proto.services.docstore.ACCESS_LEVEL_UPDATE_MODE} value
  * @return {!proto.services.docstore.SetDocumentAccessRequest} returns this
  */
 proto.services.docstore.SetDocumentAccessRequest.prototype.setMode = function(value) {
@@ -9838,7 +9838,7 @@ proto.services.docstore.DeleteDocumentCategoryResponse.serializeBinaryToWriter =
 /**
  * @enum {number}
  */
-proto.services.docstore.DOC_ACCESS_UPDATE_MODE = {
+proto.services.docstore.ACCESS_LEVEL_UPDATE_MODE = {
   UPDATE: 0,
   DELETE: 1,
   CLEAR: 2

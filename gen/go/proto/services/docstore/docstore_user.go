@@ -52,7 +52,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		return resp, nil
 	}
 
-	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, true, documents.DOC_ACCESS_VIEW, docIds...)
+	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, true, documents.ACCESS_LEVEL_VIEW, docIds...)
 	if err != nil {
 		return nil, err
 	}

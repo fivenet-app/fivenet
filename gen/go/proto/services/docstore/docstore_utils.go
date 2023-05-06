@@ -22,12 +22,12 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 				jet.OR(
 					jet.AND(
 						dUserAccess.Access.IS_NOT_NULL(),
-						dUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.DOC_ACCESS_BLOCKED))),
+						dUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
 					),
 					jet.AND(
 						dUserAccess.Access.IS_NULL(),
 						dJobAccess.Access.IS_NOT_NULL(),
-						dJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.DOC_ACCESS_BLOCKED))),
+						dJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
 					),
 				),
 			),
@@ -106,17 +106,17 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		)
 }
 
-func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS) (bool, error) {
+func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userId int32, job string, jobGrade int32, publicOk bool, access documents.ACCESS_LEVEL) (bool, error) {
 	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, publicOk, access, documentId)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS, documentIds ...uint64) (bool, error) {
+func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.ACCESS_LEVEL, documentIds ...uint64) (bool, error) {
 	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, publicOk, access, documentIds...)
 	return len(out) == len(documentIds), err
 }
 
-func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.DOC_ACCESS, documentIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.ACCESS_LEVEL, documentIds ...uint64) ([]uint64, error) {
 	if len(documentIds) == 0 {
 		return documentIds, nil
 	}

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { DeleteDocumentRequest, GetDocumentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess } from '@fivenet/gen/resources/documents/documents_pb';
-import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
+import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import {
     TabGroup,
     TabList,
@@ -191,7 +191,7 @@ function addToClipboard(): void {
                                 <span class="text-sm font-medium text-info-800">{{ entry.getJobLabel() }}<span
                                         v-if="entry.getMinimumgrade() > 0"> (Rank: {{ entry.getMinimumgrade() }})</span> -
                                     {{
-                                        toTitleCase(DOC_ACCESS_Util.toEnumKey(entry.getAccess())!.toLowerCase()) }}</span>
+                                        toTitleCase(ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!.toLowerCase()) }}</span>
                             </div>
                             <div v-for="entry in access?.getUsersList()" :key="entry.getId()"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap snap-start">
@@ -199,7 +199,7 @@ function addToClipboard(): void {
                                 <span class="text-sm font-medium text-secondary-700">
                                     {{ entry.getUser()?.getFirstname() }}
                                     {{ entry.getUser()?.getLastname() }} - {{
-                                        toTitleCase(DOC_ACCESS_Util.toEnumKey(entry.getAccess())!.toLowerCase()) }}</span>
+                                        toTitleCase(ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!.toLowerCase()) }}</span>
                             </div>
                         </div>
                         <div>

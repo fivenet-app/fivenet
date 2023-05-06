@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.documents;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/documents;documents";
 
+import "resources/documents/access.proto";
 import "resources/documents/category.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
@@ -53,14 +54,6 @@ message DocumentShort {
   bool closed = 10; // @gotags: alias:"closed"
 }
 
-enum DOC_ACCESS {
-  BLOCKED = 0;
-  VIEW = 1;
-  COMMENT = 2;
-  ACCESS = 3;
-  EDIT = 4;
-}
-
 message DocumentAccess {
   repeated DocumentJobAccess jobs = 1; // @gotags: alias:"job_access"
   repeated DocumentUserAccess users = 2; // @gotags: alias:"user_access"
@@ -75,7 +68,7 @@ message DocumentJobAccess {
   string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 minimumGrade = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
   string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
-  DOC_ACCESS access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  resources.documents.ACCESS_LEVEL access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
   int32 creator_id = 10; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
 }
@@ -87,7 +80,7 @@ message DocumentUserAccess {
   uint64 document_id = 4; // @gotags: alias:"document_id"
   int32 user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
   optional resources.users.UserShort user = 6;
-  DOC_ACCESS access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  resources.documents.ACCESS_LEVEL access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
   int32 creator_id = 8; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 9; // @gotags: alias:"creator"
 }

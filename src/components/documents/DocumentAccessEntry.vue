@@ -19,29 +19,27 @@ import { watchDebounced } from '@vueuse/core';
 import { CompleteCitizensRequest, CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@fivenet/gen/resources/users/users_pb';
-import { DOC_ACCESS } from '@fivenet/gen/resources/documents/documents_pb';
+import { ACCESS_LEVEL } from '@fivenet/gen/resources/documents/access_pb';
 import { toTitleCase } from '~/utils/strings';
 import { ArrayElement } from '~/utils/types';
-import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
+import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
 
 const { $grpc } = useNuxtApp();
 
 const props = defineProps<{
-    init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }
+    init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: ACCESS_LEVEL, minimumrank?: number } },
+    accessTypes: { id: number, name: string }[],
+    accessRoles?: ACCESS_LEVEL[],
 }>();
 
 const emit = defineEmits<{
     (e: 'typeChange', payload: { id: number, type: number }): void,
     (e: 'nameChange', payload: { id: number, job: Job | undefined, char: UserShort | undefined }): void,
     (e: 'rankChange', payload: { id: number, rank: JobGrade }): void,
-    (e: 'accessChange', payload: { id: number, access: DOC_ACCESS }): void,
+    (e: 'accessChange', payload: { id: number, access: ACCESS_LEVEL }): void,
     (e: 'deleteRequest', payload: { id: number }): void,
 }>();
 
-const accessTypes = [
-    { id: 0, name: 'Citizen' },
-    { id: 1, name: 'Jobs' },
-];
 const selectedAccessType = ref<{ id: number, name: string }>({ id: -1, name: '' });
 
 let entriesChars = [] as UserShort[];
@@ -56,9 +54,12 @@ let entriesMinimumRank = [] as JobGrade[];
 const queryMinimumRank = ref('');
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
-let entriesAccessRole = Object.keys(DOC_ACCESS).map(e => { return { id: DOC_ACCESS_Util.fromString(e), value: e } });
+let entriesAccessRoles = new Array<{ id: ACCESS_LEVEL; value: string }>();
+if (props.accessRoles && props.accessRoles.length == 0) {
+    entriesAccessRoles = Object.keys(ACCESS_LEVEL).map(e => { return { id: ACCESS_LEVEL_Util.fromString(e), value: e } });
+}
 const queryAccessRole = ref('');
-const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRole>>();
+const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRoles>>();
 
 async function findJobs(): Promise<void> {
     const req = new CompleteJobsRequest();
@@ -79,19 +80,19 @@ async function findChars(): Promise<void> {
 }
 
 onMounted(async () => {
-    const passedType = accessTypes.find(e => e.id === props.init.type);
+    const passedType = props.accessTypes.find(e => e.id === props.init.type);
     if (passedType) selectedAccessType.value = passedType;
 
     if (props.init.type === 0 && props.init.values.char !== undefined && props.init.values.accessrole !== undefined) {
         await findChars();
         selectedChar.value = entriesChars.find(char => char.getUserId() === props.init.values.char);
-        selectedAccessRole.value = entriesAccessRole.find(type => type.id === props.init.values.accessrole);
+        selectedAccessRole.value = entriesAccessRoles.find(type => type.id === props.init.values.accessrole);
     } else if (props.init.type === 1 && props.init.values.job !== undefined && props.init.values.minimumrank !== undefined && props.init.values.accessrole !== undefined) {
         await findJobs();
         selectedJob.value = entriesJobs.find(job => job.getName() === props.init.values.job);
         if (selectedJob.value) entriesMinimumRank = selectedJob.value.getGradesList();
         selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.getGrade() === props.init.values.minimumrank);
-        selectedAccessRole.value = entriesAccessRole.find(type => type.id === props.init.values.accessrole);
+        selectedAccessRole.value = entriesAccessRoles.find(type => type.id === props.init.values.accessrole);
     }
 });
 
@@ -141,7 +142,9 @@ watch(selectedAccessRole, () => {
 <template>
     <div class="flex flex-row items-center my-2">
         <div class="flex-initial mr-2 w-60">
-            <Listbox as="div" v-model="selectedAccessType">
+            <input v-if="accessTypes.length == 1" type="text" disabled :value="accessTypes[0].name"
+                class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+            <Listbox v-else as="div" v-model="selectedAccessType">
                 <div class="relative">
                     <ListboxButton
                         class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
@@ -277,9 +280,9 @@ watch(selectedAccessRole, () => {
                             :display-value="(role: any) => toTitleCase(role.value?.toLowerCase())" />
                     </ComboboxButton>
 
-                    <ComboboxOptions v-if="entriesAccessRole.length > 0"
+                    <ComboboxOptions v-if="entriesAccessRoles.length > 0"
                         class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                        <ComboboxOption v-for="role in entriesAccessRole" :key="role.id" :value="role" as="accessrole"
+                        <ComboboxOption v-for="role in entriesAccessRoles" :key="role.id" :value="role" as="accessrole"
                             v-slot="{ active, selected }">
                             <li
                                 :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">

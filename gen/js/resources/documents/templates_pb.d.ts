@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as resources_documents_access_pb from '../../resources/documents/access_pb';
 import * as resources_documents_category_pb from '../../resources/documents/category_pb';
 import * as resources_documents_documents_pb from '../../resources/documents/documents_pb';
 import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
@@ -7,71 +8,71 @@ import * as resources_users_users_pb from '../../resources/users/users_pb';
 import * as resources_vehicles_vehicles_pb from '../../resources/vehicles/vehicles_pb';
 
 
-export class DocumentTemplate extends jspb.Message {
+export class Template extends jspb.Message {
   getId(): number;
-  setId(value: number): DocumentTemplate;
+  setId(value: number): Template;
 
   getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentTemplate;
+  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): Template;
   hasCreatedAt(): boolean;
-  clearCreatedAt(): DocumentTemplate;
+  clearCreatedAt(): Template;
 
   getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentTemplate;
+  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): Template;
   hasUpdatedAt(): boolean;
-  clearUpdatedAt(): DocumentTemplate;
-
-  getJob(): string;
-  setJob(value: string): DocumentTemplate;
-
-  getJobGrade(): number;
-  setJobGrade(value: number): DocumentTemplate;
+  clearUpdatedAt(): Template;
 
   getCategory(): resources_documents_category_pb.DocumentCategory | undefined;
-  setCategory(value?: resources_documents_category_pb.DocumentCategory): DocumentTemplate;
+  setCategory(value?: resources_documents_category_pb.DocumentCategory): Template;
   hasCategory(): boolean;
-  clearCategory(): DocumentTemplate;
+  clearCategory(): Template;
 
   getTitle(): string;
-  setTitle(value: string): DocumentTemplate;
+  setTitle(value: string): Template;
 
   getDescription(): string;
-  setDescription(value: string): DocumentTemplate;
+  setDescription(value: string): Template;
 
   getContentTitle(): string;
-  setContentTitle(value: string): DocumentTemplate;
+  setContentTitle(value: string): Template;
 
   getContent(): string;
-  setContent(value: string): DocumentTemplate;
+  setContent(value: string): Template;
 
   getSchema(): TemplateSchema | undefined;
-  setSchema(value?: TemplateSchema): DocumentTemplate;
+  setSchema(value?: TemplateSchema): Template;
   hasSchema(): boolean;
-  clearSchema(): DocumentTemplate;
+  clearSchema(): Template;
 
   getCreatorId(): number;
-  setCreatorId(value: number): DocumentTemplate;
+  setCreatorId(value: number): Template;
 
   getCreator(): resources_users_users_pb.UserShort | undefined;
-  setCreator(value?: resources_users_users_pb.UserShort): DocumentTemplate;
+  setCreator(value?: resources_users_users_pb.UserShort): Template;
   hasCreator(): boolean;
-  clearCreator(): DocumentTemplate;
+  clearCreator(): Template;
+
+  getJob(): string;
+  setJob(value: string): Template;
+
+  getJobAccessList(): Array<TemplateJobAccess>;
+  setJobAccessList(value: Array<TemplateJobAccess>): Template;
+  clearJobAccessList(): Template;
+  addJobAccess(value?: TemplateJobAccess, index?: number): TemplateJobAccess;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): DocumentTemplate.AsObject;
-  static toObject(includeInstance: boolean, msg: DocumentTemplate): DocumentTemplate.AsObject;
-  static serializeBinaryToWriter(message: DocumentTemplate, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): DocumentTemplate;
-  static deserializeBinaryFromReader(message: DocumentTemplate, reader: jspb.BinaryReader): DocumentTemplate;
+  toObject(includeInstance?: boolean): Template.AsObject;
+  static toObject(includeInstance: boolean, msg: Template): Template.AsObject;
+  static serializeBinaryToWriter(message: Template, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Template;
+  static deserializeBinaryFromReader(message: Template, reader: jspb.BinaryReader): Template;
 }
 
-export namespace DocumentTemplate {
+export namespace Template {
   export type AsObject = {
     id: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    job: string,
-    jobGrade: number,
     category?: resources_documents_category_pb.DocumentCategory.AsObject,
     title: string,
     description: string,
@@ -80,89 +81,8 @@ export namespace DocumentTemplate {
     schema?: TemplateSchema.AsObject,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
-  }
-
-  export enum CreatedAtCase { 
-    _CREATED_AT_NOT_SET = 0,
-    CREATED_AT = 2,
-  }
-
-  export enum UpdatedAtCase { 
-    _UPDATED_AT_NOT_SET = 0,
-    UPDATED_AT = 3,
-  }
-
-  export enum CreatorCase { 
-    _CREATOR_NOT_SET = 0,
-    CREATOR = 13,
-  }
-}
-
-export class DocumentTemplateShort extends jspb.Message {
-  getId(): number;
-  setId(value: number): DocumentTemplateShort;
-
-  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentTemplateShort;
-  hasCreatedAt(): boolean;
-  clearCreatedAt(): DocumentTemplateShort;
-
-  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): DocumentTemplateShort;
-  hasUpdatedAt(): boolean;
-  clearUpdatedAt(): DocumentTemplateShort;
-
-  getJob(): string;
-  setJob(value: string): DocumentTemplateShort;
-
-  getCategoryId(): number;
-  setCategoryId(value: number): DocumentTemplateShort;
-
-  getCategory(): resources_documents_category_pb.DocumentCategory | undefined;
-  setCategory(value?: resources_documents_category_pb.DocumentCategory): DocumentTemplateShort;
-  hasCategory(): boolean;
-  clearCategory(): DocumentTemplateShort;
-
-  getTitle(): string;
-  setTitle(value: string): DocumentTemplateShort;
-
-  getDescription(): string;
-  setDescription(value: string): DocumentTemplateShort;
-
-  getSchema(): TemplateSchema | undefined;
-  setSchema(value?: TemplateSchema): DocumentTemplateShort;
-  hasSchema(): boolean;
-  clearSchema(): DocumentTemplateShort;
-
-  getCreatorId(): number;
-  setCreatorId(value: number): DocumentTemplateShort;
-
-  getCreator(): resources_users_users_pb.UserShort | undefined;
-  setCreator(value?: resources_users_users_pb.UserShort): DocumentTemplateShort;
-  hasCreator(): boolean;
-  clearCreator(): DocumentTemplateShort;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): DocumentTemplateShort.AsObject;
-  static toObject(includeInstance: boolean, msg: DocumentTemplateShort): DocumentTemplateShort.AsObject;
-  static serializeBinaryToWriter(message: DocumentTemplateShort, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): DocumentTemplateShort;
-  static deserializeBinaryFromReader(message: DocumentTemplateShort, reader: jspb.BinaryReader): DocumentTemplateShort;
-}
-
-export namespace DocumentTemplateShort {
-  export type AsObject = {
-    id: number,
-    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     job: string,
-    categoryId: number,
-    category?: resources_documents_category_pb.DocumentCategory.AsObject,
-    title: string,
-    description: string,
-    schema?: TemplateSchema.AsObject,
-    creatorId: number,
-    creator?: resources_users_users_pb.UserShort.AsObject,
+    jobAccessList: Array<TemplateJobAccess.AsObject>,
   }
 
   export enum CreatedAtCase { 
@@ -178,6 +98,85 @@ export namespace DocumentTemplateShort {
   export enum CreatorCase { 
     _CREATOR_NOT_SET = 0,
     CREATOR = 11,
+  }
+}
+
+export class TemplateShort extends jspb.Message {
+  getId(): number;
+  setId(value: number): TemplateShort;
+
+  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): TemplateShort;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): TemplateShort;
+
+  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): TemplateShort;
+  hasUpdatedAt(): boolean;
+  clearUpdatedAt(): TemplateShort;
+
+  getCategory(): resources_documents_category_pb.DocumentCategory | undefined;
+  setCategory(value?: resources_documents_category_pb.DocumentCategory): TemplateShort;
+  hasCategory(): boolean;
+  clearCategory(): TemplateShort;
+
+  getTitle(): string;
+  setTitle(value: string): TemplateShort;
+
+  getDescription(): string;
+  setDescription(value: string): TemplateShort;
+
+  getSchema(): TemplateSchema | undefined;
+  setSchema(value?: TemplateSchema): TemplateShort;
+  hasSchema(): boolean;
+  clearSchema(): TemplateShort;
+
+  getCreatorId(): number;
+  setCreatorId(value: number): TemplateShort;
+
+  getCreator(): resources_users_users_pb.UserShort | undefined;
+  setCreator(value?: resources_users_users_pb.UserShort): TemplateShort;
+  hasCreator(): boolean;
+  clearCreator(): TemplateShort;
+
+  getJob(): string;
+  setJob(value: string): TemplateShort;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): TemplateShort.AsObject;
+  static toObject(includeInstance: boolean, msg: TemplateShort): TemplateShort.AsObject;
+  static serializeBinaryToWriter(message: TemplateShort, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): TemplateShort;
+  static deserializeBinaryFromReader(message: TemplateShort, reader: jspb.BinaryReader): TemplateShort;
+}
+
+export namespace TemplateShort {
+  export type AsObject = {
+    id: number,
+    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    category?: resources_documents_category_pb.DocumentCategory.AsObject,
+    title: string,
+    description: string,
+    schema?: TemplateSchema.AsObject,
+    creatorId: number,
+    creator?: resources_users_users_pb.UserShort.AsObject,
+    job: string,
+  }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum UpdatedAtCase { 
+    _UPDATED_AT_NOT_SET = 0,
+    UPDATED_AT = 3,
+  }
+
+  export enum CreatorCase { 
+    _CREATOR_NOT_SET = 0,
+    CREATOR = 9,
   }
 }
 
@@ -330,6 +329,85 @@ export namespace TemplateData {
     documentsList: Array<resources_documents_documents_pb.DocumentShort.AsObject>,
     usersList: Array<resources_users_users_pb.User.AsObject>,
     vehiclesList: Array<resources_vehicles_vehicles_pb.Vehicle.AsObject>,
+  }
+}
+
+export class TemplateJobAccess extends jspb.Message {
+  getId(): number;
+  setId(value: number): TemplateJobAccess;
+
+  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): TemplateJobAccess;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): TemplateJobAccess;
+
+  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): TemplateJobAccess;
+  hasUpdatedAt(): boolean;
+  clearUpdatedAt(): TemplateJobAccess;
+
+  getTemplateId(): number;
+  setTemplateId(value: number): TemplateJobAccess;
+
+  getJob(): string;
+  setJob(value: string): TemplateJobAccess;
+
+  getJobLabel(): string;
+  setJobLabel(value: string): TemplateJobAccess;
+
+  getMinimumgrade(): number;
+  setMinimumgrade(value: number): TemplateJobAccess;
+
+  getJobGradeLabel(): string;
+  setJobGradeLabel(value: string): TemplateJobAccess;
+
+  getAccess(): resources_documents_access_pb.ACCESS_LEVEL;
+  setAccess(value: resources_documents_access_pb.ACCESS_LEVEL): TemplateJobAccess;
+
+  getCreatorId(): number;
+  setCreatorId(value: number): TemplateJobAccess;
+
+  getCreator(): resources_users_users_pb.UserShort | undefined;
+  setCreator(value?: resources_users_users_pb.UserShort): TemplateJobAccess;
+  hasCreator(): boolean;
+  clearCreator(): TemplateJobAccess;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): TemplateJobAccess.AsObject;
+  static toObject(includeInstance: boolean, msg: TemplateJobAccess): TemplateJobAccess.AsObject;
+  static serializeBinaryToWriter(message: TemplateJobAccess, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): TemplateJobAccess;
+  static deserializeBinaryFromReader(message: TemplateJobAccess, reader: jspb.BinaryReader): TemplateJobAccess;
+}
+
+export namespace TemplateJobAccess {
+  export type AsObject = {
+    id: number,
+    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    templateId: number,
+    job: string,
+    jobLabel: string,
+    minimumgrade: number,
+    jobGradeLabel: string,
+    access: resources_documents_access_pb.ACCESS_LEVEL,
+    creatorId: number,
+    creator?: resources_users_users_pb.UserShort.AsObject,
+  }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+
+  export enum UpdatedAtCase { 
+    _UPDATED_AT_NOT_SET = 0,
+    UPDATED_AT = 3,
+  }
+
+  export enum CreatorCase { 
+    _CREATOR_NOT_SET = 0,
+    CREATOR = 11,
   }
 }
 

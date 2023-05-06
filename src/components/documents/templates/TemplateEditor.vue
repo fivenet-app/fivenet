@@ -4,17 +4,23 @@ import { object, string } from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
 import { CreateTemplateRequest, GetTemplateRequest, UpdateTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { RpcError } from 'grpc-web';
-import { DocumentTemplate, ObjectSpecs, TemplateRequirements, TemplateSchema } from '@fivenet/gen/resources/documents/templates_pb';
+import { Template, ObjectSpecs, TemplateRequirements, TemplateSchema } from '@fivenet/gen/resources/documents/templates_pb';
 import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
 import { TemplateSchemaEditorValue, ObjectSpecsValue } from './TemplateSchemaEditor.vue';
 import { useNotificationsStore } from '~/store/notifications';
-import { JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/core';
 import { Combobox, ComboboxInput, ComboboxButton, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { CheckIcon } from '@heroicons/vue/24/solid';
+import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
+import { ACCESS_LEVEL } from '@fivenet/gen/resources/documents/access_pb';
+import {
+    PlusIcon,
+    CheckIcon,
+} from '@heroicons/vue/20/solid';
 
 const { $grpc } = useNuxtApp();
+const { t } = useI18n();
 
 const notifications = useNotificationsStore();
 
@@ -24,6 +30,8 @@ const props = defineProps({
         required: false,
     }
 });
+
+const maxAccessEntries = 5;
 
 const title = ref<string>('');
 const description = ref<string>('');
@@ -48,11 +56,86 @@ const schema = ref<TemplateSchemaEditorValue>({
         max: 0,
     },
 });
+const access = ref<Map<number, { id: number, type: number, values: { job?: string, accessrole?: ACCESS_LEVEL, minimumrank?: number } }>>(new Map());
+
+const accessTypes = [
+    { id: 1, name: 'Jobs' },
+];
+
+function addAccessEntry(): void {
+    if (access.value.size > maxAccessEntries - 1) {
+        notifications.dispatchNotification({
+            title: t('notifications.max_access_entry.title'),
+            content: t('notifications.max_access_entry.content', [maxAccessEntries]),
+            type: 'error'
+        });
+        return;
+    }
+
+    let id = access.value.size > 0 ? [...access.value.keys()].pop() as number + 1 : 0;
+    access.value.set(id, {
+        id,
+        type: 1,
+        values: {}
+    })
+}
+
+function removeAccessEntry(event: {
+    id: number
+}): void {
+    access.value.delete(event.id);
+}
+
+function updateAccessEntryType(event: {
+    id: number,
+    type: number
+}): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) return;
+
+    accessEntry.type = event.type;
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryName(event: {
+    id: number,
+    job?: Job,
+}): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) return;
+
+    if (event.job) {
+        accessEntry.values.job = event.job.getName();
+
+        access.value.set(event.id, accessEntry);
+    }
+}
+
+function updateAccessEntryRank(event: {
+    id: number,
+    rank: JobGrade
+}): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) return;
+
+    accessEntry.values.minimumrank = event.rank.getGrade();
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryAccess(event: {
+    id: number,
+    access: ACCESS_LEVEL
+}): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) return;
+
+    accessEntry.values.accessrole = event.access;
+    access.value.set(event.id, accessEntry);
+}
 
 const entriesRank = ref<JobGrade[]>([]);
 const filteredRank = ref<JobGrade[]>([]);
 const queryRank = ref('');
-const selectedRank = ref<JobGrade>();
 
 function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
     const o = new ObjectSpecs();
@@ -69,12 +152,11 @@ function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
 async function createTemplate(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new CreateTemplateRequest();
-        const tpl = new DocumentTemplate();
+        const tpl = new Template();
         tpl.setTitle(title.value);
         tpl.setDescription(description.value);
         tpl.setContentTitle(contentTitle.value);
         tpl.setContent(content.value);
-        if (selectedRank.value) tpl.setJobGrade(selectedRank.value.getGrade());
 
         const tRequirements = new TemplateRequirements();
         tRequirements.setUsers(createObjectSpec(schema.value.users));
@@ -111,12 +193,11 @@ async function createTemplate(): Promise<void> {
 async function updateTemplate(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new UpdateTemplateRequest();
-        const tpl = new DocumentTemplate();
+        const tpl = new Template();
         tpl.setTitle(title.value);
         tpl.setDescription(description.value);
         tpl.setContentTitle(contentTitle.value);
         tpl.setContent(content.value);
-        if (selectedRank.value) tpl.setJobGrade(selectedRank.value.getGrade());
 
         const tRequirements = new TemplateRequirements();
         tRequirements.setUsers(createObjectSpec(schema.value.users));
@@ -262,38 +343,22 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                     </NuxtLink>
                 </p>
             </div>
-            <label for="rank" class="block font-medium text-sm mt-2">
-                {{ $t('common.min') }} {{ $t('common.rank') }}
-            </label>
-            <Combobox as="div" v-model="selectedRank">
-                <div class="relative">
-                    <ComboboxButton as="div">
-                        <ComboboxInput
-                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                            @change="queryRank = $event.target.value" :display-value="(rank: any) => rank?.getLabel()" />
-                    </ComboboxButton>
-
-                    <ComboboxOptions v-if="entriesRank.length > 0"
-                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                        <ComboboxOption v-for="rank in entriesRank" :key="rank.getGrade()" :value="rank" as="minimumrank"
-                            v-slot="{ active, selected }">
-                            <li
-                                :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
-                                <span :class="['block truncate', selected && 'font-semibold']">
-                                    {{ rank.getLabel() }}
-                                </span>
-
-                                <span v-if="selected"
-                                    :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
-                                    <CheckIcon class="w-5 h-5" aria-hidden="true" />
-                                </span>
-                            </li>
-                        </ComboboxOption>
-                    </ComboboxOptions>
-                </div>
-            </Combobox>
             <div>
                 <TemplateSchemaEditor v-model="schema" class="mt-2" />
+            </div>
+            <div class="my-3">
+                <h2 class="text-neutral">{{ $t('common.access') }}</h2>
+                <DocumentAccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry"
+                    :access-types="accessTypes" :access-roles="[ACCESS_LEVEL.VIEW, ACCESS_LEVEL.EDIT]"
+                    @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
+                    @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
+                    @deleteRequest="removeAccessEntry($event)" />
+                <button type="button"
+                    class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                    data-te-toggle="tooltip" :title="$t('components.documents.document_editor.add_permission')"
+                    @click="addAccessEntry()">
+                    <PlusIcon class="w-5 h-5" aria-hidden="true" />
+                </button>
             </div>
             <button type="submit"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 mt-4">

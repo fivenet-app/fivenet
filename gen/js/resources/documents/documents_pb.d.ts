@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as resources_documents_access_pb from '../../resources/documents/access_pb';
 import * as resources_documents_category_pb from '../../resources/documents/category_pb';
 import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
 import * as resources_users_users_pb from '../../resources/users/users_pb';
@@ -263,8 +264,8 @@ export class DocumentJobAccess extends jspb.Message {
   getJobGradeLabel(): string;
   setJobGradeLabel(value: string): DocumentJobAccess;
 
-  getAccess(): DOC_ACCESS;
-  setAccess(value: DOC_ACCESS): DocumentJobAccess;
+  getAccess(): resources_documents_access_pb.ACCESS_LEVEL;
+  setAccess(value: resources_documents_access_pb.ACCESS_LEVEL): DocumentJobAccess;
 
   getCreatorId(): number;
   setCreatorId(value: number): DocumentJobAccess;
@@ -292,7 +293,7 @@ export namespace DocumentJobAccess {
     jobLabel: string,
     minimumgrade: number,
     jobGradeLabel: string,
-    access: DOC_ACCESS,
+    access: resources_documents_access_pb.ACCESS_LEVEL,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
@@ -338,8 +339,8 @@ export class DocumentUserAccess extends jspb.Message {
   hasUser(): boolean;
   clearUser(): DocumentUserAccess;
 
-  getAccess(): DOC_ACCESS;
-  setAccess(value: DOC_ACCESS): DocumentUserAccess;
+  getAccess(): resources_documents_access_pb.ACCESS_LEVEL;
+  setAccess(value: resources_documents_access_pb.ACCESS_LEVEL): DocumentUserAccess;
 
   getCreatorId(): number;
   setCreatorId(value: number): DocumentUserAccess;
@@ -365,7 +366,7 @@ export namespace DocumentUserAccess {
     documentId: number,
     userId: number,
     user?: resources_users_users_pb.UserShort.AsObject,
-    access: DOC_ACCESS,
+    access: resources_documents_access_pb.ACCESS_LEVEL,
     creatorId: number,
     creator?: resources_users_users_pb.UserShort.AsObject,
   }
@@ -559,13 +560,6 @@ export namespace DocumentRelation {
 export enum DOC_CONTENT_TYPE { 
   HTML = 0,
   PLAIN = 1,
-}
-export enum DOC_ACCESS { 
-  BLOCKED = 0,
-  VIEW = 1,
-  COMMENT = 2,
-  ACCESS = 3,
-  EDIT = 4,
 }
 export enum DOC_REFERENCE { 
   LINKED = 0,

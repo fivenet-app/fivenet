@@ -21,8 +21,6 @@ type fivenetDocumentsTemplatesTable struct {
 	CreatedAt    mysql.ColumnTimestamp
 	UpdatedAt    mysql.ColumnTimestamp
 	DeletedAt    mysql.ColumnTimestamp
-	Job          mysql.ColumnString
-	JobGrade     mysql.ColumnInteger
 	CategoryID   mysql.ColumnInteger
 	Title        mysql.ColumnString
 	Description  mysql.ColumnString
@@ -30,6 +28,7 @@ type fivenetDocumentsTemplatesTable struct {
 	Content      mysql.ColumnString
 	Schema       mysql.ColumnString
 	CreatorID    mysql.ColumnInteger
+	CreatorJob   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -74,8 +73,6 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
-		JobColumn          = mysql.StringColumn("job")
-		JobGradeColumn     = mysql.IntegerColumn("job_grade")
 		CategoryIDColumn   = mysql.IntegerColumn("category_id")
 		TitleColumn        = mysql.StringColumn("title")
 		DescriptionColumn  = mysql.StringColumn("description")
@@ -83,8 +80,9 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		ContentColumn      = mysql.StringColumn("content")
 		SchemaColumn       = mysql.StringColumn("schema")
 		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, SchemaColumn, CreatorIDColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, JobGradeColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, SchemaColumn, CreatorIDColumn}
+		CreatorJobColumn   = mysql.StringColumn("creator_job")
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, SchemaColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, SchemaColumn, CreatorIDColumn, CreatorJobColumn}
 	)
 
 	return fivenetDocumentsTemplatesTable{
@@ -95,8 +93,6 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		CreatedAt:    CreatedAtColumn,
 		UpdatedAt:    UpdatedAtColumn,
 		DeletedAt:    DeletedAtColumn,
-		Job:          JobColumn,
-		JobGrade:     JobGradeColumn,
 		CategoryID:   CategoryIDColumn,
 		Title:        TitleColumn,
 		Description:  DescriptionColumn,
@@ -104,6 +100,7 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		Content:      ContentColumn,
 		Schema:       SchemaColumn,
 		CreatorID:    CreatorIDColumn,
+		CreatorJob:   CreatorJobColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

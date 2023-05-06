@@ -21,10 +21,10 @@ export namespace ListTemplatesRequest {
 }
 
 export class ListTemplatesResponse extends jspb.Message {
-  getTemplatesList(): Array<resources_documents_templates_pb.DocumentTemplateShort>;
-  setTemplatesList(value: Array<resources_documents_templates_pb.DocumentTemplateShort>): ListTemplatesResponse;
+  getTemplatesList(): Array<resources_documents_templates_pb.TemplateShort>;
+  setTemplatesList(value: Array<resources_documents_templates_pb.TemplateShort>): ListTemplatesResponse;
   clearTemplatesList(): ListTemplatesResponse;
-  addTemplates(value?: resources_documents_templates_pb.DocumentTemplateShort, index?: number): resources_documents_templates_pb.DocumentTemplateShort;
+  addTemplates(value?: resources_documents_templates_pb.TemplateShort, index?: number): resources_documents_templates_pb.TemplateShort;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ListTemplatesResponse.AsObject;
@@ -36,7 +36,7 @@ export class ListTemplatesResponse extends jspb.Message {
 
 export namespace ListTemplatesResponse {
   export type AsObject = {
-    templatesList: Array<resources_documents_templates_pb.DocumentTemplateShort.AsObject>,
+    templatesList: Array<resources_documents_templates_pb.TemplateShort.AsObject>,
   }
 }
 
@@ -74,8 +74,8 @@ export namespace GetTemplateRequest {
 }
 
 export class GetTemplateResponse extends jspb.Message {
-  getTemplate(): resources_documents_templates_pb.DocumentTemplate | undefined;
-  setTemplate(value?: resources_documents_templates_pb.DocumentTemplate): GetTemplateResponse;
+  getTemplate(): resources_documents_templates_pb.Template | undefined;
+  setTemplate(value?: resources_documents_templates_pb.Template): GetTemplateResponse;
   hasTemplate(): boolean;
   clearTemplate(): GetTemplateResponse;
 
@@ -92,14 +92,14 @@ export class GetTemplateResponse extends jspb.Message {
 
 export namespace GetTemplateResponse {
   export type AsObject = {
-    template?: resources_documents_templates_pb.DocumentTemplate.AsObject,
+    template?: resources_documents_templates_pb.Template.AsObject,
     rendered: boolean,
   }
 }
 
 export class CreateTemplateRequest extends jspb.Message {
-  getTemplate(): resources_documents_templates_pb.DocumentTemplate | undefined;
-  setTemplate(value?: resources_documents_templates_pb.DocumentTemplate): CreateTemplateRequest;
+  getTemplate(): resources_documents_templates_pb.Template | undefined;
+  setTemplate(value?: resources_documents_templates_pb.Template): CreateTemplateRequest;
   hasTemplate(): boolean;
   clearTemplate(): CreateTemplateRequest;
 
@@ -113,7 +113,7 @@ export class CreateTemplateRequest extends jspb.Message {
 
 export namespace CreateTemplateRequest {
   export type AsObject = {
-    template?: resources_documents_templates_pb.DocumentTemplate.AsObject,
+    template?: resources_documents_templates_pb.Template.AsObject,
   }
 }
 
@@ -136,8 +136,8 @@ export namespace CreateTemplateResponse {
 }
 
 export class UpdateTemplateRequest extends jspb.Message {
-  getTemplate(): resources_documents_templates_pb.DocumentTemplate | undefined;
-  setTemplate(value?: resources_documents_templates_pb.DocumentTemplate): UpdateTemplateRequest;
+  getTemplate(): resources_documents_templates_pb.Template | undefined;
+  setTemplate(value?: resources_documents_templates_pb.Template): UpdateTemplateRequest;
   hasTemplate(): boolean;
   clearTemplate(): UpdateTemplateRequest;
 
@@ -151,7 +151,7 @@ export class UpdateTemplateRequest extends jspb.Message {
 
 export namespace UpdateTemplateRequest {
   export type AsObject = {
-    template?: resources_documents_templates_pb.DocumentTemplate.AsObject,
+    template?: resources_documents_templates_pb.Template.AsObject,
   }
 }
 
@@ -979,8 +979,8 @@ export class SetDocumentAccessRequest extends jspb.Message {
   getDocumentId(): number;
   setDocumentId(value: number): SetDocumentAccessRequest;
 
-  getMode(): DOC_ACCESS_UPDATE_MODE;
-  setMode(value: DOC_ACCESS_UPDATE_MODE): SetDocumentAccessRequest;
+  getMode(): ACCESS_LEVEL_UPDATE_MODE;
+  setMode(value: ACCESS_LEVEL_UPDATE_MODE): SetDocumentAccessRequest;
 
   getAccess(): resources_documents_documents_pb.DocumentAccess | undefined;
   setAccess(value?: resources_documents_documents_pb.DocumentAccess): SetDocumentAccessRequest;
@@ -998,7 +998,7 @@ export class SetDocumentAccessRequest extends jspb.Message {
 export namespace SetDocumentAccessRequest {
   export type AsObject = {
     documentId: number,
-    mode: DOC_ACCESS_UPDATE_MODE,
+    mode: ACCESS_LEVEL_UPDATE_MODE,
     access?: resources_documents_documents_pb.DocumentAccess.AsObject,
   }
 }
@@ -1213,7 +1213,7 @@ export namespace DeleteDocumentCategoryResponse {
   }
 }
 
-export enum DOC_ACCESS_UPDATE_MODE { 
+export enum ACCESS_LEVEL_UPDATE_MODE { 
   UPDATE = 0,
   DELETE = 1,
   CLEAR = 2,

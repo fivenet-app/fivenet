@@ -21,13 +21,14 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
+var resources_documents_access_pb = require('../../resources/documents/access_pb.js');
+goog.object.extend(proto, resources_documents_access_pb);
 var resources_documents_category_pb = require('../../resources/documents/category_pb.js');
 goog.object.extend(proto, resources_documents_category_pb);
 var resources_timestamp_timestamp_pb = require('../../resources/timestamp/timestamp_pb.js');
 goog.object.extend(proto, resources_timestamp_timestamp_pb);
 var resources_users_users_pb = require('../../resources/users/users_pb.js');
 goog.object.extend(proto, resources_users_users_pb);
-goog.exportSymbol('proto.resources.documents.DOC_ACCESS', null, global);
 goog.exportSymbol('proto.resources.documents.DOC_CONTENT_TYPE', null, global);
 goog.exportSymbol('proto.resources.documents.DOC_REFERENCE', null, global);
 goog.exportSymbol('proto.resources.documents.DOC_RELATION', null, global);
@@ -1995,7 +1996,7 @@ proto.resources.documents.DocumentJobAccess.deserializeBinaryFromReader = functi
       msg.setJobGradeLabel(value);
       break;
     case 9:
-      var value = /** @type {!proto.resources.documents.DOC_ACCESS} */ (reader.readEnum());
+      var value = /** @type {!proto.resources.documents.ACCESS_LEVEL} */ (reader.readEnum());
       msg.setAccess(value);
       break;
     case 10:
@@ -2302,16 +2303,16 @@ proto.resources.documents.DocumentJobAccess.prototype.setJobGradeLabel = functio
 
 
 /**
- * optional DOC_ACCESS access = 9;
- * @return {!proto.resources.documents.DOC_ACCESS}
+ * optional ACCESS_LEVEL access = 9;
+ * @return {!proto.resources.documents.ACCESS_LEVEL}
  */
 proto.resources.documents.DocumentJobAccess.prototype.getAccess = function() {
-  return /** @type {!proto.resources.documents.DOC_ACCESS} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+  return /** @type {!proto.resources.documents.ACCESS_LEVEL} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
 };
 
 
 /**
- * @param {!proto.resources.documents.DOC_ACCESS} value
+ * @param {!proto.resources.documents.ACCESS_LEVEL} value
  * @return {!proto.resources.documents.DocumentJobAccess} returns this
  */
 proto.resources.documents.DocumentJobAccess.prototype.setAccess = function(value) {
@@ -2479,7 +2480,7 @@ proto.resources.documents.DocumentUserAccess.deserializeBinaryFromReader = funct
       msg.setUser(value);
       break;
     case 7:
-      var value = /** @type {!proto.resources.documents.DOC_ACCESS} */ (reader.readEnum());
+      var value = /** @type {!proto.resources.documents.ACCESS_LEVEL} */ (reader.readEnum());
       msg.setAccess(value);
       break;
     case 8:
@@ -2756,16 +2757,16 @@ proto.resources.documents.DocumentUserAccess.prototype.hasUser = function() {
 
 
 /**
- * optional DOC_ACCESS access = 7;
- * @return {!proto.resources.documents.DOC_ACCESS}
+ * optional ACCESS_LEVEL access = 7;
+ * @return {!proto.resources.documents.ACCESS_LEVEL}
  */
 proto.resources.documents.DocumentUserAccess.prototype.getAccess = function() {
-  return /** @type {!proto.resources.documents.DOC_ACCESS} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+  return /** @type {!proto.resources.documents.ACCESS_LEVEL} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
 /**
- * @param {!proto.resources.documents.DOC_ACCESS} value
+ * @param {!proto.resources.documents.ACCESS_LEVEL} value
  * @return {!proto.resources.documents.DocumentUserAccess} returns this
  */
 proto.resources.documents.DocumentUserAccess.prototype.setAccess = function(value) {
@@ -3778,17 +3779,6 @@ proto.resources.documents.DocumentRelation.prototype.hasTargetUser = function() 
 proto.resources.documents.DOC_CONTENT_TYPE = {
   HTML: 0,
   PLAIN: 1
-};
-
-/**
- * @enum {number}
- */
-proto.resources.documents.DOC_ACCESS = {
-  BLOCKED: 0,
-  VIEW: 1,
-  COMMENT: 2,
-  ACCESS: 3,
-  EDIT: 4
 };
 
 /**

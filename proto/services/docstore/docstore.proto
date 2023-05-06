@@ -13,7 +13,7 @@ import "validate/validate.proto";
 message ListTemplatesRequest {}
 
 message ListTemplatesResponse {
-  repeated resources.documents.DocumentTemplateShort templates = 1; // @gotags: alias:"template"
+  repeated resources.documents.TemplateShort templates = 1; // @gotags: alias:"template"
 }
 
 message GetTemplateRequest {
@@ -23,12 +23,12 @@ message GetTemplateRequest {
 }
 
 message GetTemplateResponse {
-  resources.documents.DocumentTemplate template = 1;
+  resources.documents.Template template = 1;
   bool rendered = 2;
 }
 
 message CreateTemplateRequest {
-  resources.documents.DocumentTemplate template = 1 [(validate.rules).message.required = true];
+  resources.documents.Template template = 1 [(validate.rules).message.required = true];
 }
 
 message CreateTemplateResponse {
@@ -36,7 +36,7 @@ message CreateTemplateResponse {
 }
 
 message UpdateTemplateRequest {
-  resources.documents.DocumentTemplate template = 1 [(validate.rules).message.required = true];
+  resources.documents.Template template = 1 [(validate.rules).message.required = true];
 }
 
 message UpdateTemplateResponse {
@@ -197,7 +197,7 @@ message GetDocumentAccessResponse {
   resources.documents.DocumentAccess access = 1 [(validate.rules).message.required = true];
 }
 
-enum DOC_ACCESS_UPDATE_MODE {
+enum ACCESS_LEVEL_UPDATE_MODE {
   UPDATE = 0;
   DELETE = 1;
   CLEAR = 2;
@@ -205,7 +205,7 @@ enum DOC_ACCESS_UPDATE_MODE {
 
 message SetDocumentAccessRequest {
   uint64 document_id = 1;
-  DOC_ACCESS_UPDATE_MODE mode = 2 [(validate.rules).enum.defined_only = true];
+  ACCESS_LEVEL_UPDATE_MODE mode = 2 [(validate.rules).enum.defined_only = true];
   resources.documents.DocumentAccess access = 3;
 }
 

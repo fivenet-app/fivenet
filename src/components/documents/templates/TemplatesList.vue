@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DocumentTemplateShort } from '@fivenet/gen/resources/documents/templates_pb';
+import { TemplateShort } from '@fivenet/gen/resources/documents/templates_pb';
 import { ListTemplatesRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
@@ -11,13 +11,13 @@ import { CardElements } from '~/utils/types';
 const { $grpc } = useNuxtApp();
 
 defineEmits<{
-    (e: 'selected', t: DocumentTemplateShort): void,
+    (e: 'selected', t: TemplateShort): void,
 }>();
 
 const { data: templates, pending, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
 const items = ref<CardElements>([]);
 
-async function listTemplates(): Promise<Array<DocumentTemplateShort>> {
+async function listTemplates(): Promise<Array<TemplateShort>> {
     return new Promise(async (res, rej) => {
         const req = new ListTemplatesRequest();
 
@@ -37,7 +37,7 @@ watch(templates, () => templates.value?.forEach((v) => {
     items.value.push({ title: v?.getTitle(), description: v?.getDescription(), });
 }));
 
-function selected(idx: number): DocumentTemplateShort {
+function selected(idx: number): TemplateShort {
     return templates.value![idx];
 }
 </script>

@@ -5327,7 +5327,7 @@ func (m *SetDocumentAccessRequest) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
-	if _, ok := DOC_ACCESS_UPDATE_MODE_name[int32(m.GetMode())]; !ok {
+	if _, ok := ACCESS_LEVEL_UPDATE_MODE_name[int32(m.GetMode())]; !ok {
 		err := SetDocumentAccessRequestValidationError{
 			field:  "Mode",
 			reason: "value must be one of the defined enum values",

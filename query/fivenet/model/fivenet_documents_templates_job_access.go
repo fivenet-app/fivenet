@@ -11,17 +11,14 @@ import (
 	"time"
 )
 
-type FivenetDocumentsTemplates struct {
+type FivenetDocumentsTemplatesJobAccess struct {
 	ID           uint64     `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
 	UpdatedAt    *time.Time `json:"updated_at"`
 	DeletedAt    *time.Time `json:"deleted_at"`
-	CategoryID   *uint64    `json:"category_id"`
-	Title        string     `json:"title"`
-	Description  string     `json:"description"`
-	ContentTitle string     `json:"content_title"`
-	Content      string     `json:"content"`
-	Schema       *string    `json:"schema"`
+	TemplateID   uint64     `json:"template_id"`
+	Job          string     `json:"job"`
+	MinimumGrade int32      `json:"minimum_grade"`
+	Access       int16      `json:"access"`
 	CreatorID    int32      `json:"creator_id"`
-	CreatorJob   string     `json:"creator_job"`
 }

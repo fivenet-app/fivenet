@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DocumentTemplateShort, TemplateRequirements } from '@fivenet/gen/resources/documents/templates_pb';
+import { TemplateShort, TemplateRequirements } from '@fivenet/gen/resources/documents/templates_pb';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { PencilIcon } from '@heroicons/vue/24/solid';
 import { ref, watch } from 'vue';
@@ -25,7 +25,7 @@ const emit = defineEmits<{
     (e: 'close'): void,
 }>();
 
-const template = ref<undefined | DocumentTemplateShort>();
+const template = ref<undefined | TemplateShort>();
 const reqs = ref<undefined | TemplateRequirements>();
 
 const steps = ref<{ selectTemplate: boolean, selectClipboard: boolean }>({
@@ -58,7 +58,7 @@ function closeDialog(): void {
     emit('close');
 }
 
-function templateSelected(t: DocumentTemplateShort): void {
+function templateSelected(t: TemplateShort): void {
     if (t) {
         template.value = t;
         if (t.getSchema()) {
@@ -136,7 +136,7 @@ async function clipboardDialog(): Promise<void> {
                                                 </NuxtLink>
                                                 <div class="pt-4">
                                                     <TemplatesList
-                                                        @selected="(t: DocumentTemplateShort) => templateSelected(t)" />
+                                                        @selected="(t: TemplateShort) => templateSelected(t)" />
                                                 </div>
                                             </div>
                                         </div>

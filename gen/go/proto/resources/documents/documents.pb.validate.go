@@ -1028,7 +1028,7 @@ func (m *DocumentJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := DOC_ACCESS_name[int32(m.GetAccess())]; !ok {
+	if _, ok := ACCESS_LEVEL_name[int32(m.GetAccess())]; !ok {
 		err := DocumentJobAccessValidationError{
 			field:  "Access",
 			reason: "value must be one of the defined enum values",
@@ -1257,7 +1257,7 @@ func (m *DocumentUserAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := DOC_ACCESS_name[int32(m.GetAccess())]; !ok {
+	if _, ok := ACCESS_LEVEL_name[int32(m.GetAccess())]; !ok {
 		err := DocumentUserAccessValidationError{
 			field:  "Access",
 			reason: "value must be one of the defined enum values",

@@ -2,7 +2,6 @@
 // source: resources/documents/documents.proto
 
 import { DOC_CONTENT_TYPE } from './documents_pb';
-import { DOC_ACCESS } from './documents_pb';
 import { DOC_REFERENCE } from './documents_pb';
 import { DOC_RELATION } from './documents_pb';
 
@@ -36,55 +35,6 @@ export class DOC_CONTENT_TYPE_Util {
                 return DOC_CONTENT_TYPE.PLAIN;
             }
         return DOC_CONTENT_TYPE.HTML;
-    }
-}// DOC_ACCESS
-export class DOC_ACCESS_Util {
-    public static toEnumKey(input: DOC_ACCESS): string | undefined {
-        const index = Object.values(DOC_ACCESS).indexOf(input);
-        if (index <= -1) {
-            return "N/A";
-        }
-        return Object.keys(DOC_ACCESS)[index];
-    }
-
-    public static fromInt(input: Number): DOC_ACCESS {
-        switch (input) {
-            case 0:
-                return DOC_ACCESS.BLOCKED;
-            
-            case 1:
-                return DOC_ACCESS.VIEW;
-            
-            case 2:
-                return DOC_ACCESS.COMMENT;
-            
-            case 3:
-                return DOC_ACCESS.ACCESS;
-            
-            case 4:
-                return DOC_ACCESS.EDIT;
-            }
-        return DOC_ACCESS.BLOCKED;
-    }
-
-    public static fromString(input: String): DOC_ACCESS {
-        switch (input) {
-            case 'BLOCKED':
-                return DOC_ACCESS.BLOCKED;
-            
-            case 'VIEW':
-                return DOC_ACCESS.VIEW;
-            
-            case 'COMMENT':
-                return DOC_ACCESS.COMMENT;
-            
-            case 'ACCESS':
-                return DOC_ACCESS.ACCESS;
-            
-            case 'EDIT':
-                return DOC_ACCESS.EDIT;
-            }
-        return DOC_ACCESS.BLOCKED;
     }
 }// DOC_REFERENCE
 export class DOC_REFERENCE_Util {

@@ -22,7 +22,7 @@ var (
 
 func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, true, documents.DOC_ACCESS_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, true, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		}
 	}
 
-	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, true, documents.DOC_ACCESS_VIEW, docIds...)
+	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, true, documents.ACCESS_LEVEL_VIEW, docIds...)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +179,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, true, documents.DOC_ACCESS_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, true, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +215,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	}
 
 	// Check if user has access to both documents
-	check, err := s.checkIfUserHasAccessToDocs(ctx, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT,
+	check, err := s.checkIfUserHasAccessToDocs(ctx, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT,
 		req.Reference.SourceDocumentId, req.Reference.TargetDocumentId)
 	if err != nil {
 		return nil, err
@@ -302,7 +302,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		return nil, err
 	}
 
-	check, err := s.checkIfUserHasAccessToDocs(ctx, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT, docIDs.Source, docIDs.Target)
+	check, err := s.checkIfUserHasAccessToDocs(ctx, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT, docIDs.Source, docIDs.Target)
 	if err != nil {
 		return nil, err
 	}
@@ -342,7 +342,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -428,7 +428,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		return nil, err
 	}
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, docID.ID, userId, job, jobGrade, false, documents.DOC_ACCESS_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, docID.ID, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -533,7 +533,7 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([
 }
 
 func (s *Server) notifyUser(ctx context.Context, documentId uint64, targetUserId int32) {
-	// check, err := s.checkIfUserHasAccessToDoc(ctx, documentId, targetUserId, job, jobGrade, false, documents.DOC_ACCESS_VIEW)
+	// check, err := s.checkIfUserHasAccessToDoc(ctx, documentId, targetUserId, job, jobGrade, false, documents.ACCESS_LEVEL_VIEW)
 	// if err != nil {
 	// 	return
 	// }

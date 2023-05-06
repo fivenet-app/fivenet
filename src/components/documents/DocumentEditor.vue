@@ -5,7 +5,7 @@ import { useClipboardStore, getUser } from '~/store/clipboard';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_ACCESS, DOC_CONTENT_TYPE, DOC_RELATION } from '@fivenet/gen/resources/documents/documents_pb';
+import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_CONTENT_TYPE, DOC_RELATION } from '@fivenet/gen/resources/documents/documents_pb';
 import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
 import {
     PlusIcon,
@@ -27,13 +27,14 @@ import {
 } from '@headlessui/vue';
 import { CompleteDocumentCategoriesRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/core';
-import { DOC_ACCESS_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
+import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
 import DocumentReferenceManager from './DocumentReferenceManager.vue';
 import DocumentRelationManager from './DocumentRelationManager.vue';
 import DocumentAccessEntry from './DocumentAccessEntry.vue';
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
+import { ACCESS_LEVEL } from '@fivenet/gen/resources/documents/access_pb';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -70,7 +71,7 @@ const doc = ref<{ title: string, content: string, closed: { id: number, label: s
     state: '',
 });
 const isPublic = ref(false);
-const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: DOC_ACCESS, minimumrank?: number } }>>(new Map());
+const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: ACCESS_LEVEL, minimumrank?: number } }>>(new Map());
 
 const relationManagerShow = ref<boolean>(false);
 const relationManagerData = ref<Map<number, DocumentRelation>>(new Map());
@@ -158,7 +159,7 @@ onMounted(async () => {
             }
         }
 
-        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: DOC_ACCESS.EDIT } })
+        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: ACCESS_LEVEL.EDIT } })
     }
 
     clipboardStore.users.forEach((user, i) => {
@@ -202,6 +203,11 @@ async function findCategories(): Promise<void> {
     const resp = await $grpc.getCompletorClient().completeDocumentCategories(req, null)
     entriesCategory = resp.getCategoriesList();
 }
+
+const accessTypes = [
+    { id: 0, name: 'Citizen' },
+    { id: 1, name: 'Jobs' },
+];
 
 function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
@@ -270,7 +276,7 @@ function updateAccessEntryRank(event: {
 
 function updateAccessEntryAccess(event: {
     id: number,
-    access: DOC_ACCESS
+    access: ACCESS_LEVEL
 }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
@@ -301,7 +307,7 @@ async function submitForm(): Promise<void> {
 
                 const user = new DocumentUserAccess();
                 user.setUserId(entry.values.char);
-                user.setAccess(DOC_ACCESS_Util.fromInt(entry.values.accessrole));
+                user.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
 
                 reqAccess.addUsers(user);
             } else if (entry.type === 1) {
@@ -310,7 +316,7 @@ async function submitForm(): Promise<void> {
                 const job = new DocumentJobAccess();
                 job.setJob(entry.values.job);
                 job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-                job.setAccess(DOC_ACCESS_Util.fromInt(entry.values.accessrole));
+                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
 
                 reqAccess.addJobs(job);
             }
@@ -380,7 +386,7 @@ async function editForm(): Promise<void> {
                 if (!entry.values.char) return;
 
                 const user = new DocumentUserAccess();
-                user.setAccess(DOC_ACCESS_Util.fromInt(entry.values.accessrole));
+                user.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
                 user.setUserId(entry.values.char);
                 if (activeChar.value) user.setCreatorId(activeChar.value.getUserId());
 
@@ -391,7 +397,7 @@ async function editForm(): Promise<void> {
                 const job = new DocumentJobAccess();
                 job.setJob(entry.values.job);
                 job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-                job.setAccess(DOC_ACCESS_Util.fromInt(entry.values.accessrole));
+                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
                 if (activeChar.value) job.setCreatorId(activeChar.value.getUserId());
 
                 reqAccess.addJobs(job);
@@ -570,7 +576,7 @@ async function editForm(): Promise<void> {
     </div>
     <div class="my-3">
         <h2 class="text-neutral">{{ $t('common.access') }}</h2>
-        <DocumentAccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry"
+        <DocumentAccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry" :access-types="accessTypes"
             @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
             @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
             @deleteRequest="removeAccessEntry($event)" />

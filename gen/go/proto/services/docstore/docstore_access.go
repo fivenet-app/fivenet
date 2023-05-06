@@ -19,7 +19,7 @@ import (
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_ACCESS)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_ACCESS)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.DOC_ACCESS_ACCESS)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_ACCESS)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 	return &SetDocumentAccessResponse{}, nil
 }
 
-func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mode DOC_ACCESS_UPDATE_MODE, documentId uint64, access *documents.DocumentAccess) error {
+func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mode ACCESS_LEVEL_UPDATE_MODE, documentId uint64, access *documents.DocumentAccess) error {
 	userId := auth.GetUserIDFromContext(ctx)
 
 	// Get existing job and user accesses from database
@@ -101,7 +101,7 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mo
 	}
 
 	switch mode {
-	case DOC_ACCESS_UPDATE_MODE_UPDATE:
+	case ACCESS_LEVEL_UPDATE_MODE_UPDATE:
 		toCreate, toUpdate, toDelete := s.compareDocumentAccess(tx, current, access)
 
 		if err := s.createDocumentAccess(ctx, tx, documentId, userId, toCreate); err != nil {
@@ -116,12 +116,12 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mo
 			return err
 		}
 
-	case DOC_ACCESS_UPDATE_MODE_DELETE:
+	case ACCESS_LEVEL_UPDATE_MODE_DELETE:
 		if err := s.deleteDocumentAccess(ctx, tx, documentId, access); err != nil {
 			return err
 		}
 
-	case DOC_ACCESS_UPDATE_MODE_CLEAR:
+	case ACCESS_LEVEL_UPDATE_MODE_CLEAR:
 		if err := s.clearDocumentAccess(ctx, tx, documentId); err != nil {
 			return err
 		}

@@ -35,22 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on DocumentTemplate with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *DocumentTemplate) Validate() error {
+// Validate checks the field values on Template with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Template) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DocumentTemplate with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DocumentTemplateMultiError, or nil if none found.
-func (m *DocumentTemplate) ValidateAll() error {
+// ValidateAll checks the field values on Template with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TemplateMultiError, or nil
+// if none found.
+func (m *Template) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DocumentTemplate) validate(all bool) error {
+func (m *Template) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -59,33 +59,11 @@ func (m *DocumentTemplate) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
-		err := DocumentTemplateValidationError{
-			field:  "Job",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.GetJobGrade() < 0 {
-		err := DocumentTemplateValidationError{
-			field:  "JobGrade",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if all {
 		switch v := interface{}(m.GetCategory()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentTemplateValidationError{
+				errors = append(errors, TemplateValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -93,7 +71,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentTemplateValidationError{
+				errors = append(errors, TemplateValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -102,7 +80,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return DocumentTemplateValidationError{
+			return TemplateValidationError{
 				field:  "Category",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -111,7 +89,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
-		err := DocumentTemplateValidationError{
+		err := TemplateValidationError{
 			field:  "Title",
 			reason: "value length must be at least 3 runes",
 		}
@@ -122,7 +100,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetDescription()) > 255 {
-		err := DocumentTemplateValidationError{
+		err := TemplateValidationError{
 			field:  "Description",
 			reason: "value length must be at most 255 runes",
 		}
@@ -133,7 +111,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetContentTitle()) < 3 {
-		err := DocumentTemplateValidationError{
+		err := TemplateValidationError{
 			field:  "ContentTitle",
 			reason: "value length must be at least 3 runes",
 		}
@@ -144,7 +122,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetContent()) < 12 {
-		err := DocumentTemplateValidationError{
+		err := TemplateValidationError{
 			field:  "Content",
 			reason: "value length must be at least 12 runes",
 		}
@@ -155,7 +133,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 	}
 
 	if len(m.GetContent()) > 12288 {
-		err := DocumentTemplateValidationError{
+		err := TemplateValidationError{
 			field:  "Content",
 			reason: "value length must be at most 12288 bytes",
 		}
@@ -169,7 +147,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 		switch v := interface{}(m.GetSchema()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentTemplateValidationError{
+				errors = append(errors, TemplateValidationError{
 					field:  "Schema",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -177,7 +155,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentTemplateValidationError{
+				errors = append(errors, TemplateValidationError{
 					field:  "Schema",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -186,7 +164,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetSchema()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return DocumentTemplateValidationError{
+			return TemplateValidationError{
 				field:  "Schema",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -196,13 +174,58 @@ func (m *DocumentTemplate) validate(all bool) error {
 
 	// no validation rules for CreatorId
 
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
+		err := TemplateValidationError{
+			field:  "Job",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetJobAccess() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TemplateValidationError{
+						field:  fmt.Sprintf("JobAccess[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TemplateValidationError{
+						field:  fmt.Sprintf("JobAccess[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TemplateValidationError{
+					field:  fmt.Sprintf("JobAccess[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {
 			switch v := interface{}(m.GetCreatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DocumentTemplateValidationError{
+					errors = append(errors, TemplateValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -210,7 +233,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DocumentTemplateValidationError{
+					errors = append(errors, TemplateValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -219,7 +242,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DocumentTemplateValidationError{
+				return TemplateValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -235,7 +258,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 			switch v := interface{}(m.GetUpdatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DocumentTemplateValidationError{
+					errors = append(errors, TemplateValidationError{
 						field:  "UpdatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -243,7 +266,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DocumentTemplateValidationError{
+					errors = append(errors, TemplateValidationError{
 						field:  "UpdatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -252,7 +275,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DocumentTemplateValidationError{
+				return TemplateValidationError{
 					field:  "UpdatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -268,7 +291,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 			switch v := interface{}(m.GetCreator()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DocumentTemplateValidationError{
+					errors = append(errors, TemplateValidationError{
 						field:  "Creator",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -276,7 +299,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DocumentTemplateValidationError{
+					errors = append(errors, TemplateValidationError{
 						field:  "Creator",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -285,7 +308,7 @@ func (m *DocumentTemplate) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DocumentTemplateValidationError{
+				return TemplateValidationError{
 					field:  "Creator",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -296,19 +319,18 @@ func (m *DocumentTemplate) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return DocumentTemplateMultiError(errors)
+		return TemplateMultiError(errors)
 	}
 
 	return nil
 }
 
-// DocumentTemplateMultiError is an error wrapping multiple validation errors
-// returned by DocumentTemplate.ValidateAll() if the designated constraints
-// aren't met.
-type DocumentTemplateMultiError []error
+// TemplateMultiError is an error wrapping multiple validation errors returned
+// by Template.ValidateAll() if the designated constraints aren't met.
+type TemplateMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DocumentTemplateMultiError) Error() string {
+func (m TemplateMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -317,11 +339,11 @@ func (m DocumentTemplateMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DocumentTemplateMultiError) AllErrors() []error { return m }
+func (m TemplateMultiError) AllErrors() []error { return m }
 
-// DocumentTemplateValidationError is the validation error returned by
-// DocumentTemplate.Validate if the designated constraints aren't met.
-type DocumentTemplateValidationError struct {
+// TemplateValidationError is the validation error returned by
+// Template.Validate if the designated constraints aren't met.
+type TemplateValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -329,22 +351,22 @@ type DocumentTemplateValidationError struct {
 }
 
 // Field function returns field value.
-func (e DocumentTemplateValidationError) Field() string { return e.field }
+func (e TemplateValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DocumentTemplateValidationError) Reason() string { return e.reason }
+func (e TemplateValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DocumentTemplateValidationError) Cause() error { return e.cause }
+func (e TemplateValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DocumentTemplateValidationError) Key() bool { return e.key }
+func (e TemplateValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DocumentTemplateValidationError) ErrorName() string { return "DocumentTemplateValidationError" }
+func (e TemplateValidationError) ErrorName() string { return "TemplateValidationError" }
 
 // Error satisfies the builtin error interface
-func (e DocumentTemplateValidationError) Error() string {
+func (e TemplateValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -356,14 +378,14 @@ func (e DocumentTemplateValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDocumentTemplate.%s: %s%s",
+		"invalid %sTemplate.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DocumentTemplateValidationError{}
+var _ error = TemplateValidationError{}
 
 var _ interface {
 	Field() string
@@ -371,24 +393,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DocumentTemplateValidationError{}
+} = TemplateValidationError{}
 
-// Validate checks the field values on DocumentTemplateShort with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DocumentTemplateShort) Validate() error {
+// Validate checks the field values on TemplateShort with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *TemplateShort) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DocumentTemplateShort with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DocumentTemplateShortMultiError, or nil if none found.
-func (m *DocumentTemplateShort) ValidateAll() error {
+// ValidateAll checks the field values on TemplateShort with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TemplateShortMultiError, or
+// nil if none found.
+func (m *TemplateShort) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DocumentTemplateShort) validate(all bool) error {
+func (m *TemplateShort) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -397,24 +419,11 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
-		err := DocumentTemplateShortValidationError{
-			field:  "Job",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for CategoryId
-
 	if all {
 		switch v := interface{}(m.GetCategory()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentTemplateShortValidationError{
+				errors = append(errors, TemplateShortValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -422,7 +431,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentTemplateShortValidationError{
+				errors = append(errors, TemplateShortValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -431,7 +440,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return DocumentTemplateShortValidationError{
+			return TemplateShortValidationError{
 				field:  "Category",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -440,7 +449,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
-		err := DocumentTemplateShortValidationError{
+		err := TemplateShortValidationError{
 			field:  "Title",
 			reason: "value length must be at least 3 runes",
 		}
@@ -451,7 +460,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetDescription()) > 255 {
-		err := DocumentTemplateShortValidationError{
+		err := TemplateShortValidationError{
 			field:  "Description",
 			reason: "value length must be at most 255 runes",
 		}
@@ -465,7 +474,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 		switch v := interface{}(m.GetSchema()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentTemplateShortValidationError{
+				errors = append(errors, TemplateShortValidationError{
 					field:  "Schema",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -473,7 +482,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentTemplateShortValidationError{
+				errors = append(errors, TemplateShortValidationError{
 					field:  "Schema",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -482,7 +491,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetSchema()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return DocumentTemplateShortValidationError{
+			return TemplateShortValidationError{
 				field:  "Schema",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -492,13 +501,24 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 
 	// no validation rules for CreatorId
 
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
+		err := TemplateShortValidationError{
+			field:  "Job",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {
 			switch v := interface{}(m.GetCreatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DocumentTemplateShortValidationError{
+					errors = append(errors, TemplateShortValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -506,7 +526,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DocumentTemplateShortValidationError{
+					errors = append(errors, TemplateShortValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -515,7 +535,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DocumentTemplateShortValidationError{
+				return TemplateShortValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -531,7 +551,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 			switch v := interface{}(m.GetUpdatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DocumentTemplateShortValidationError{
+					errors = append(errors, TemplateShortValidationError{
 						field:  "UpdatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -539,7 +559,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DocumentTemplateShortValidationError{
+					errors = append(errors, TemplateShortValidationError{
 						field:  "UpdatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -548,7 +568,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DocumentTemplateShortValidationError{
+				return TemplateShortValidationError{
 					field:  "UpdatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -564,7 +584,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 			switch v := interface{}(m.GetCreator()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DocumentTemplateShortValidationError{
+					errors = append(errors, TemplateShortValidationError{
 						field:  "Creator",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -572,7 +592,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DocumentTemplateShortValidationError{
+					errors = append(errors, TemplateShortValidationError{
 						field:  "Creator",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -581,7 +601,7 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DocumentTemplateShortValidationError{
+				return TemplateShortValidationError{
 					field:  "Creator",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -592,19 +612,19 @@ func (m *DocumentTemplateShort) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return DocumentTemplateShortMultiError(errors)
+		return TemplateShortMultiError(errors)
 	}
 
 	return nil
 }
 
-// DocumentTemplateShortMultiError is an error wrapping multiple validation
-// errors returned by DocumentTemplateShort.ValidateAll() if the designated
-// constraints aren't met.
-type DocumentTemplateShortMultiError []error
+// TemplateShortMultiError is an error wrapping multiple validation errors
+// returned by TemplateShort.ValidateAll() if the designated constraints
+// aren't met.
+type TemplateShortMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DocumentTemplateShortMultiError) Error() string {
+func (m TemplateShortMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -613,11 +633,11 @@ func (m DocumentTemplateShortMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DocumentTemplateShortMultiError) AllErrors() []error { return m }
+func (m TemplateShortMultiError) AllErrors() []error { return m }
 
-// DocumentTemplateShortValidationError is the validation error returned by
-// DocumentTemplateShort.Validate if the designated constraints aren't met.
-type DocumentTemplateShortValidationError struct {
+// TemplateShortValidationError is the validation error returned by
+// TemplateShort.Validate if the designated constraints aren't met.
+type TemplateShortValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -625,24 +645,22 @@ type DocumentTemplateShortValidationError struct {
 }
 
 // Field function returns field value.
-func (e DocumentTemplateShortValidationError) Field() string { return e.field }
+func (e TemplateShortValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DocumentTemplateShortValidationError) Reason() string { return e.reason }
+func (e TemplateShortValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DocumentTemplateShortValidationError) Cause() error { return e.cause }
+func (e TemplateShortValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DocumentTemplateShortValidationError) Key() bool { return e.key }
+func (e TemplateShortValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DocumentTemplateShortValidationError) ErrorName() string {
-	return "DocumentTemplateShortValidationError"
-}
+func (e TemplateShortValidationError) ErrorName() string { return "TemplateShortValidationError" }
 
 // Error satisfies the builtin error interface
-func (e DocumentTemplateShortValidationError) Error() string {
+func (e TemplateShortValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -654,14 +672,14 @@ func (e DocumentTemplateShortValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDocumentTemplateShort.%s: %s%s",
+		"invalid %sTemplateShort.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DocumentTemplateShortValidationError{}
+var _ error = TemplateShortValidationError{}
 
 var _ interface {
 	Field() string
@@ -669,7 +687,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DocumentTemplateShortValidationError{}
+} = TemplateShortValidationError{}
 
 // Validate checks the field values on TemplateSchema with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -1374,3 +1392,265 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = TemplateDataValidationError{}
+
+// Validate checks the field values on TemplateJobAccess with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *TemplateJobAccess) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TemplateJobAccess with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TemplateJobAccessMultiError, or nil if none found.
+func (m *TemplateJobAccess) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TemplateJobAccess) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for TemplateId
+
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
+		err := TemplateJobAccessValidationError{
+			field:  "Job",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+		err := TemplateJobAccessValidationError{
+			field:  "JobLabel",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetMinimumGrade() <= 0 {
+		err := TemplateJobAccessValidationError{
+			field:  "MinimumGrade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
+		err := TemplateJobAccessValidationError{
+			field:  "JobGradeLabel",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := ACCESS_LEVEL_name[int32(m.GetAccess())]; !ok {
+		err := TemplateJobAccessValidationError{
+			field:  "Access",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for CreatorId
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TemplateJobAccessValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TemplateJobAccessValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TemplateJobAccessValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TemplateJobAccessValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TemplateJobAccessValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TemplateJobAccessValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Creator != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreator()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TemplateJobAccessValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TemplateJobAccessValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TemplateJobAccessValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return TemplateJobAccessMultiError(errors)
+	}
+
+	return nil
+}
+
+// TemplateJobAccessMultiError is an error wrapping multiple validation errors
+// returned by TemplateJobAccess.ValidateAll() if the designated constraints
+// aren't met.
+type TemplateJobAccessMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TemplateJobAccessMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TemplateJobAccessMultiError) AllErrors() []error { return m }
+
+// TemplateJobAccessValidationError is the validation error returned by
+// TemplateJobAccess.Validate if the designated constraints aren't met.
+type TemplateJobAccessValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TemplateJobAccessValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TemplateJobAccessValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TemplateJobAccessValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TemplateJobAccessValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TemplateJobAccessValidationError) ErrorName() string {
+	return "TemplateJobAccessValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TemplateJobAccessValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTemplateJobAccess.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TemplateJobAccessValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TemplateJobAccessValidationError{}

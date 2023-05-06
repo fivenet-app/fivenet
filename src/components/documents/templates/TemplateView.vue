@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DocumentTemplate, TemplateRequirements } from '@fivenet/gen/resources/documents/templates_pb';
+import { Template, TemplateRequirements } from '@fivenet/gen/resources/documents/templates_pb';
 import { DeleteTemplateRequest, GetTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { RpcError } from 'grpc-web';
 import TemplateRequirementsList from './TemplateRequirementsList.vue';
@@ -19,7 +19,7 @@ const props = defineProps({
 const { data: template, pending, refresh, error } = useLazyAsyncData(`documents-template-${props.templateId}`, () => getTemplate());
 const reqs = ref<undefined | TemplateRequirements>();
 
-async function getTemplate(): Promise<DocumentTemplate | undefined> {
+async function getTemplate(): Promise<Template | undefined> {
     return new Promise(async (res, rej) => {
         const req = new GetTemplateRequest();
         req.setTemplateId(props.templateId);

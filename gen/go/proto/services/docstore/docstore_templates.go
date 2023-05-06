@@ -16,17 +16,16 @@ import (
 )
 
 var (
-	dTemplates = table.FivenetDocumentsTemplates.AS("documenttemplateshort")
+	dTemplates          = table.FivenetDocumentsTemplates.AS("documenttemplateshort")
+	dTemplatesJobAccess = table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
 )
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
-	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	stmt := dTemplates.
 		SELECT(
 			dTemplates.ID,
-			dTemplates.Job,
-			dTemplates.JobGrade,
 			dCategory.ID,
 			dCategory.Name,
 			dCategory.Description,
@@ -38,14 +37,18 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 		).
 		FROM(
 			dTemplates.
+				INNER_JOIN(dTemplatesJobAccess,
+					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID)).
 				LEFT_JOIN(dCategory,
 					dCategory.ID.EQ(dTemplates.CategoryID),
 				),
 		).
 		WHERE(
 			jet.AND(
-				dTemplates.Job.EQ(jet.String(job)),
-				dTemplates.JobGrade.LT_EQ(jet.Int32(jobGrade)),
+				dTemplates.CreatorID.EQ(jet.Int32(userId)),
+				dTemplates.CreatorJob.EQ(jet.String(job)),
+				dTemplatesJobAccess.Job.EQ(jet.String(job)),
+				dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade)),
 			),
 		)
 
@@ -66,8 +69,6 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			dTemplates.ID,
 			dTemplates.CreatedAt,
 			dTemplates.UpdatedAt,
-			dTemplates.Job,
-			dTemplates.JobGrade,
 			dCategory.ID,
 			dCategory.Name,
 			dCategory.Description,
@@ -78,9 +79,12 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			dTemplates.Content,
 			dTemplates.Schema,
 			dTemplates.CreatorID,
+			dTemplates.CreatorJob,
 		).
 		FROM(
 			dTemplates.
+				INNER_JOIN(dTemplatesJobAccess,
+					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID)).
 				LEFT_JOIN(dCategory,
 					dCategory.ID.EQ(dTemplates.CategoryID),
 				),
@@ -88,8 +92,8 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		WHERE(
 			jet.AND(
 				dTemplates.ID.EQ(jet.Uint64(req.TemplateId)),
-				dTemplates.Job.EQ(jet.String(job)),
-				dTemplates.JobGrade.LT_EQ(jet.Int32(jobGrade)),
+				dTemplatesJobAccess.Job.EQ(jet.String(job)),
+				dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade)),
 			),
 		)
 
@@ -106,7 +110,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			return nil, err
 		}
 
-		resp.Template.ContentTitle, resp.Template.Content, err = s.renderDocumentTemplate(resp.Template, data)
+		resp.Template.ContentTitle, resp.Template.Content, err = s.renderTemplate(resp.Template, data)
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +121,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 	return resp, nil
 }
 
-func (s *Server) renderDocumentTemplate(docTmpl *documents.DocumentTemplate, data map[string]interface{}) (outTile string, out string, err error) {
+func (s *Server) renderTemplate(docTmpl *documents.Template, data map[string]interface{}) (outTile string, out string, err error) {
 	// Render Title template
 	tmplTitle, err := template.
 		New("title").
@@ -180,8 +184,6 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	dTemplates := table.FivenetDocumentsTemplates
 	stmt := dTemplates.
 		INSERT(
-			dTemplates.Job,
-			dTemplates.JobGrade,
 			dTemplates.CategoryID,
 			dTemplates.Title,
 			dTemplates.Description,
@@ -189,6 +191,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			dTemplates.Content,
 			dTemplates.Schema,
 			dTemplates.CreatorID,
+			dTemplates.CreatorJob,
 		).
 		VALUES(
 			job,
@@ -200,6 +203,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			req.Template.Content,
 			req.Template.Schema,
 			userId,
+			job,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -245,8 +249,6 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 	dTemplates := table.FivenetDocumentsTemplates
 	stmt := dTemplates.
 		UPDATE(
-			dTemplates.Job,
-			dTemplates.JobGrade,
 			dTemplates.CategoryID,
 			dTemplates.Title,
 			dTemplates.Description,
@@ -255,8 +257,6 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 			dTemplates.Schema,
 		).
 		SET(
-			job,
-			req.Template.JobGrade,
 			categoryId,
 			req.Template.Title,
 			req.Template.Description,
@@ -267,7 +267,6 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		WHERE(
 			jet.AND(
 				dTemplates.ID.EQ(jet.Uint64(req.Template.Id)),
-				dTemplates.Job.EQ(jet.String(job)),
 			),
 		)
 
@@ -297,7 +296,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		DELETE().
 		WHERE(
 			jet.AND(
-				dTemplates.Job.EQ(jet.String(job)),
+				dTemplates.CreatorJob.EQ(jet.String(job)),
 				dTemplates.ID.EQ(jet.Uint64(req.Id)),
 			),
 		)
