@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { DeleteDocumentRequest, GetDocumentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { Document, DocumentAccess } from '@fivenet/gen/resources/documents/documents_pb';
-import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
+import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
 import {
     TabGroup,
     TabList,

@@ -4,7 +4,6 @@ import { DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb'
 import { GetDocumentRelationsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
-import { toDateLocaleString } from '~/utils/time';
 
 const { $grpc } = useNuxtApp();
 
