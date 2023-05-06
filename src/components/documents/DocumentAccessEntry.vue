@@ -55,8 +55,12 @@ const queryMinimumRank = ref('');
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
 let entriesAccessRoles = new Array<{ id: ACCESS_LEVEL; value: string }>();
-if (props.accessRoles && props.accessRoles.length == 0) {
+if (!props.accessRoles || props.accessRoles.length == 0) {
     entriesAccessRoles = Object.keys(ACCESS_LEVEL).map(e => { return { id: ACCESS_LEVEL_Util.fromString(e), value: e } });
+} else {
+    props.accessRoles.forEach((v) => {
+        entriesAccessRoles.push({ id: v, value: ACCESS_LEVEL_Util.toEnumKey(v)! });
+    });
 }
 const queryAccessRole = ref('');
 const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRoles>>();

@@ -11,16 +11,16 @@ import { useNotificationsStore } from '~/store/notifications';
 import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/core';
-import { Combobox, ComboboxInput, ComboboxButton, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import { ACCESS_LEVEL } from '@fivenet/gen/resources/documents/access_pb';
 import {
     PlusIcon,
-    CheckIcon,
 } from '@heroicons/vue/20/solid';
+import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
 const { t } = useI18n();
+const authStore = useAuthStore();
 
 const notifications = useNotificationsStore();
 
@@ -30,6 +30,8 @@ const props = defineProps({
         required: false,
     }
 });
+
+const activeChar = computed(() => authStore.getActiveChar);
 
 const maxAccessEntries = 5;
 
@@ -277,6 +279,8 @@ onMounted(async () => {
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
         }
+    } else {
+        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: ACCESS_LEVEL.VIEW } });
     }
 
     const req = new CompleteJobsRequest();
