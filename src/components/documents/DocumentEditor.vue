@@ -53,9 +53,9 @@ const props = defineProps({
     },
 });
 
-const maxAccessEntries = 10;
-
 const activeChar = computed(() => authStore.getActiveChar);
+
+const maxAccessEntries = 10;
 
 const canEdit = ref(false);
 
@@ -138,12 +138,12 @@ onMounted(async () => {
                 let accessId = 0;
 
                 docAccess.getUsersList().forEach(user => {
-                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } })
+                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } });
                     accessId++;
                 });
 
                 docAccess.getJobsList().forEach(job => {
-                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } })
+                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
                     accessId++;
                 });
             }
@@ -159,7 +159,7 @@ onMounted(async () => {
             }
         }
 
-        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: ACCESS_LEVEL.EDIT } })
+        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: ACCESS_LEVEL.EDIT } });
     }
 
     clipboardStore.users.forEach((user, i) => {

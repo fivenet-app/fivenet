@@ -13,6 +13,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
@@ -45,6 +47,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 		).
 		WHERE(
 			jet.AND(
+				dTemplates.DeletedAt.IS_NULL(),
 				dTemplates.CreatorID.EQ(jet.Int32(userId)),
 				dTemplates.CreatorJob.EQ(jet.String(job)),
 				dTemplatesJobAccess.Job.EQ(jet.String(job)),
@@ -61,7 +64,15 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 }
 
 func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*GetTemplateResponse, error) {
-	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.TemplateId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_VIEW)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	if !check {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this template!")
+	}
 
 	dTemplates := dTemplates.AS("documenttemplate")
 	stmt := dTemplates.
@@ -84,7 +95,10 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		FROM(
 			dTemplates.
 				INNER_JOIN(dTemplatesJobAccess,
-					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID)).
+					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID).
+						AND(dTemplatesJobAccess.Job.EQ(jet.String(job))).
+						AND(dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
+				).
 				LEFT_JOIN(dCategory,
 					dCategory.ID.EQ(dTemplates.CategoryID),
 				),
@@ -168,6 +182,14 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	req.Template.Job = job
 
 	categoryId := jet.NULL
@@ -206,7 +228,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			job,
 		)
 
-	res, err := stmt.ExecContext(ctx, s.db)
+	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
 		return nil, err
 	}
@@ -214,6 +236,15 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	lastId, err := res.LastInsertId()
 	if err != nil {
 		return nil, err
+	}
+
+	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(lastId), req.Template.JobAccess); err != nil {
+		return nil, FailedQueryErr
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, FailedQueryErr
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
@@ -224,7 +255,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 }
 
 func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest) (*UpdateTemplateResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
@@ -234,6 +265,14 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
+
+	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	if !check {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this template!")
+	}
 
 	categoryId := jet.NULL
 	if req.Template.Category != nil {
@@ -280,7 +319,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 }
 
 func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
@@ -290,6 +329,14 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
+
+	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	if !check {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this template!")
+	}
 
 	dTemplates := table.FivenetDocumentsTemplates
 	stmt := dTemplates.
