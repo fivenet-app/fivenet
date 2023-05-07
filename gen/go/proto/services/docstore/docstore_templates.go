@@ -330,7 +330,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
 	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(req.Template.Id), req.Template.JobAccess); err != nil {
@@ -366,7 +366,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		return nil, FailedQueryErr
 	}
 	if !check {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this template!")
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this template!")
 	}
 
 	dTemplates := table.FivenetDocumentsTemplates
