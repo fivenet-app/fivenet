@@ -3,9 +3,11 @@ package docstore
 import (
 	context "context"
 	"errors"
+	"strconv"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -385,6 +387,12 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		return nil, err
 	}
 
+	lastIdVal := strconv.Itoa(int(lastId))
+	if err := s.addUserAcitvity(ctx, tx,
+		userId, req.Relation.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "", lastIdVal); err != nil {
+		return nil, FailedQueryErr
+	}
+
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
 		return nil, FailedQueryErr
@@ -436,6 +444,14 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := docRel.
 		UPDATE(
 			docRel.DeletedAt,
@@ -449,6 +465,17 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
+	}
+
+	idVal := strconv.Itoa(int(docID.ID))
+	if err := s.addUserAcitvity(ctx, tx,
+		userId, int32(docID.ID), users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", idVal, ""); err != nil {
+		return nil, FailedQueryErr
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, FailedQueryErr
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)

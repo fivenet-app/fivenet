@@ -2,13 +2,21 @@ package docstore
 
 import (
 	context "context"
+	"database/sql"
 	"errors"
 	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+)
+
+var (
+	userAct = table.FivenetUserActivity
 )
 
 func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
@@ -150,4 +158,27 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	}
 
 	return resp, nil
+}
+
+func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string) error {
+	stmt := userAct.
+		INSERT(
+			userAct.SourceUserID,
+			userAct.TargetUserID,
+			userAct.Type,
+			userAct.Key,
+			userAct.OldValue,
+			userAct.NewValue,
+		).
+		MODEL(&model.FivenetUserActivity{
+			SourceUserID: userId,
+			TargetUserID: targetUserId,
+			Type:         int16(activityType),
+			Key:          key,
+			OldValue:     &oldValue,
+			NewValue:     &newValue,
+		})
+
+	_, err := stmt.ExecContext(ctx, s.db)
+	return err
 }

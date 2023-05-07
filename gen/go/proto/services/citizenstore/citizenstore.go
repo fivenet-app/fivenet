@@ -453,13 +453,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Create user activity
 	if req.Props.Wanted != props.Wanted {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Wanted", strconv.FormatBool(!*props.Wanted), strconv.FormatBool(*req.Props.Wanted)); err != nil {
+			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted", strconv.FormatBool(!*props.Wanted), strconv.FormatBool(*req.Props.Wanted)); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
 	if req.Props.JobName != props.JobName {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, int16(users.USER_ACTIVITY_TYPE_CHANGED), "UserProps.Job", *props.JobName, req.Props.Job.Name); err != nil {
+			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job", *props.JobName, req.Props.Job.Name); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
@@ -498,7 +498,7 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 	return &dest, nil
 }
 
-func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType int16, key string, oldValue string, newValue string) error {
+func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string) error {
 	stmt := userAct.
 		INSERT(
 			userAct.SourceUserID,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { UserActivity } from '@fivenet/gen/resources/users/users_pb';
-import { QuestionMarkCircleIcon, BellAlertIcon, BellSnoozeIcon } from '@heroicons/vue/24/outline'
+import { QuestionMarkCircleIcon, BellAlertIcon, BellSnoozeIcon, AtSymbolIcon } from '@heroicons/vue/24/outline'
 import { FunctionalComponent } from 'vue';
 
 const props = defineProps<{
@@ -20,11 +20,25 @@ switch (props.activity.getKey()) {
 
         if (props.activity.getNewvalue() === 'true') {
             icon.value = BellAlertIcon;
-            iconColor.value = 'text-error-400'
+            iconColor.value = 'text-error-400';
             actionValue.value = props.activity.getNewvalue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
         } else {
             icon.value = BellSnoozeIcon;
-            iconColor.value = 'text-success-400'
+            iconColor.value = 'text-success-400';
+            actionValue.value = props.activity.getNewvalue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
+        }
+
+        break;
+    };
+    case 'DocStore.Relation': {
+        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.set_citizen_as');
+        icon.value = AtSymbolIcon;
+
+        if (props.activity.getNewvalue() !== '') {
+            iconColor.value = 'text-info-600';
+            actionValue.value = props.activity.getNewvalue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
+        } else if (props.activity.getOldvalue() !== '') {
+            iconColor.value = 'text-base-600';
             actionValue.value = props.activity.getNewvalue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
         }
 
