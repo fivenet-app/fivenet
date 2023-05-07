@@ -426,7 +426,8 @@
         "result": "Ergebnis",
         "total_count": "Gesamtanzahl",
         "none_selected": "Keine {0} ausgewählt",
-        "no_licenses": "Keine Lizensen."
+        "no_licenses": "Keine Lizenzen.",
+        "available": "verfügbar"
     },
     "notifications": {
         "clipboard": {
