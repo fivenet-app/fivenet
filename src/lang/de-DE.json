@@ -190,7 +190,8 @@
                 "set_wanted": "Person zur Fahndung ausschreiben"
             },
             "citizen_info_activity_feed_entry": {
-                "set_citizen_as": "Setze den Bürger als"
+                "set_citizen_as": "Setze den Bürger als",
+                "document_relation": "Bürger zugehörig zu"
             }
         },
         "partials": {
