@@ -75,23 +75,21 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	condition := jet.Bool(true)
 	// Field Permission Check
-	if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps") {
+	if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "PhoneNumber") {
+		selectors = append(selectors, user.PhoneNumber)
 		if req.PhoneNumber != "" {
-			if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "PhoneNumber") {
-				selectors = append(selectors, user.PhoneNumber)
-				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(req.PhoneNumber, "%", ""), " ", "") + "%"
-				condition = condition.AND(user.PhoneNumber.LIKE(jet.String(phoneNumber)))
-			}
+			phoneNumber := strings.ReplaceAll(strings.ReplaceAll(req.PhoneNumber, "%", ""), " ", "") + "%"
+			condition = condition.AND(user.PhoneNumber.LIKE(jet.String(phoneNumber)))
 		}
-		if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps", "Wanted") {
-			selectors = append(selectors, userProps.Wanted)
-			if req.Wanted {
-				condition = condition.AND(userProps.Wanted.IS_TRUE())
-			}
+	}
+	if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps", "Wanted") {
+		selectors = append(selectors, userProps.Wanted)
+		if req.Wanted {
+			condition = condition.AND(userProps.Wanted.IS_TRUE())
 		}
-		if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps", "Job") {
-			selectors = append(selectors, userProps.Job.AS("jobname"))
-		}
+	}
+	if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps", "Job") {
+		selectors = append(selectors, userProps.Job.AS("jobname"))
 	}
 
 	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
