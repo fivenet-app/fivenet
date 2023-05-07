@@ -55,6 +55,8 @@ async function deleteTemplate(): Promise<void> {
                 type: 'success',
             });
 
+            await navigateTo({ name: 'documents-templates' });
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
