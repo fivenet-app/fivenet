@@ -80,10 +80,6 @@ func (s *Server) compareTemplateJobAccess(tx *sql.Tx, current, in []*documents.T
 	toUpdate = []*documents.TemplateJobAccess{}
 	toDelete = []*documents.TemplateJobAccess{}
 
-	if current == nil {
-		return
-	}
-
 	if len(current) == 0 {
 		return in, toUpdate, toDelete
 	}

@@ -135,11 +135,7 @@ func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.Docume
 	toUpdate = &documents.DocumentAccess{}
 	toDelete = &documents.DocumentAccess{}
 
-	if current == nil {
-		return
-	}
-
-	if len(current.Jobs) == 0 && len(current.Users) == 0 {
+	if current == nil || (len(current.Jobs) == 0 && len(current.Users) == 0) {
 		return in, toUpdate, toDelete
 	}
 

@@ -100,23 +100,16 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		).
 		FROM(
 			dTemplates.
-				INNER_JOIN(dTemplatesJobAccess,
-					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID).
-						AND(dTemplatesJobAccess.Job.EQ(jet.String(job))).
-						AND(dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
-				).
 				LEFT_JOIN(dCategory,
 					dCategory.ID.EQ(dTemplates.CategoryID),
 				),
 		).
 		WHERE(
-			jet.AND(
-				dTemplates.ID.EQ(jet.Uint64(req.TemplateId)),
-				dTemplatesJobAccess.Job.EQ(jet.String(job)),
-				dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade)),
-			),
+			dTemplates.ID.EQ(jet.Uint64(req.TemplateId)),
 		).
 		LIMIT(1)
+
+	fmt.Println(stmt.DebugSql())
 
 	resp := &GetTemplateResponse{}
 	if err := stmt.QueryContext(ctx, s.db, resp); err != nil {
