@@ -279,7 +279,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	// Either the document is closed and the update request isn't re-opening the document
-	if doc.GetClosed() && req.Closed != nil && !*req.Closed {
+	if doc.Closed && req.Closed != nil && *req.Closed {
 		return nil, status.Error(codes.Canceled, "Document is closed and can't be edited!")
 	}
 
