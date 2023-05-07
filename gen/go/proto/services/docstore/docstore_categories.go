@@ -106,7 +106,7 @@ func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocument
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
 	return &CreateDocumentCategoryResponse{
-		Id: lastId,
+		Id: uint64(lastId),
 	}, nil
 }
 

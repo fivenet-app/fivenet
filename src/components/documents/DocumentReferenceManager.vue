@@ -58,7 +58,7 @@ const queryDoc = ref('');
 
 const { data: documents, pending, refresh, error } = useLazyAsyncData(`document-${props.document}-references-docs-${queryDoc}`, () => listDocuments());
 
-watchDebounced(queryDoc, async () => listDocuments(), { debounce: 700, maxWait: 1850 });
+watchDebounced(queryDoc, async () => listDocuments(), { debounce: 600, maxWait: 1750 });
 
 async function listDocuments(): Promise<Array<Document>> {
     return new Promise(async (res, rej) => {

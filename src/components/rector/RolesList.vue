@@ -96,7 +96,7 @@ async function createRole(): Promise<void> {
     });
 }
 
-watchDebounced(queryJobGrade, async () => { filteredJobGrades.value = entriesJobGrades.filter(g => g.getLabel().toLowerCase().includes(queryJobGrade.value.toLowerCase())) }, { debounce: 700, maxWait: 1850 });
+watchDebounced(queryJobGrade, async () => { filteredJobGrades.value = entriesJobGrades.filter(g => g.getLabel().toLowerCase().includes(queryJobGrade.value.toLowerCase())) }, { debounce: 600, maxWait: 1750 });
 
 onMounted(async () => {
     await findJobGrades();

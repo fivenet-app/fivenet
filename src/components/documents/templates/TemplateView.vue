@@ -86,14 +86,16 @@ async function editTemplate(): Promise<void> {
             <div class="flow-root mt-2">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
-                        {{ $t('common.content') }} {{ $t('common.title') }}</label>
+                        {{ $t('common.content') }} {{ $t('common.title') }}
+                    </label>
                     <div class="mt-2">
                         <textarea rows="4" name="content" id="content"
                             class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6"
                             disabled :value="template.getContentTitle()" />
                     </div>
                     <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
-                        {{ $t('common.content') }}</label>
+                        {{ $t('common.content') }}
+                    </label>
                     <div class="mt-2">
                         <textarea rows="4" name="content" id="content"
                             class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6"
@@ -101,7 +103,8 @@ async function editTemplate(): Promise<void> {
                     </div>
                     <div v-if="reqs">
                         <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
-                            {{ $t('common.schema') }}</label>
+                            {{ $t('common.schema') }}
+                        </label>
                         <div class="mt-2">
                             <ul
                                 class="text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300">

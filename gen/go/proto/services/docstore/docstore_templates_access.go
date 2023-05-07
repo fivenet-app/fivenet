@@ -41,7 +41,7 @@ func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx *sql.Tx, te
 }
 
 func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([]*documents.TemplateJobAccess, error) {
-	dTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess.AS("documentjobaccess")
+	dTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
 	jobStmt := dTemplatesJobAccess.
 		SELECT(
 			dTemplatesJobAccess.AllColumns,

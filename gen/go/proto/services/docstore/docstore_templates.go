@@ -5,6 +5,7 @@ import (
 	context "context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"html/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -52,7 +53,10 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 		).
 		WHERE(
 			dTemplates.DeletedAt.IS_NULL(),
-		)
+		).
+		GROUP_BY(dTemplates.ID)
+
+	fmt.Println(stmt.DebugSql())
 
 	resp := &ListTemplatesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
@@ -111,14 +115,20 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 				dTemplatesJobAccess.Job.EQ(jet.String(job)),
 				dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade)),
 			),
-		)
+		).
+		LIMIT(1)
 
 	resp := &GetTemplateResponse{}
 	if err := stmt.QueryContext(ctx, s.db, resp); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
 	}
 
-	if req.Render != nil && *req.Render {
+	if req.Render == nil || !*req.Render {
+		resp.Template.JobAccess, err = s.getTemplateJobAccess(ctx, req.TemplateId)
+		if err != nil {
+			return nil, FailedQueryErr
+		}
+	} else if req.Render != nil && *req.Render {
 		// Parse data as json for the templating process
 		var data map[string]interface{}
 		err := json.Unmarshal([]byte(req.Data), &data)
@@ -252,7 +262,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
 	return &CreateTemplateResponse{
-		Id: lastId,
+		Id: uint64(lastId),
 	}, nil
 }
 
@@ -334,7 +344,9 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
-	return &UpdateTemplateResponse{}, nil
+	return &UpdateTemplateResponse{
+		Id: req.Template.Id,
+	}, nil
 }
 
 func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {

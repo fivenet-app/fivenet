@@ -87,8 +87,8 @@ const dispatchMarkersFiltered = ref<DispatchMarker[]>([]);
 async function applyPlayerQuery(): Promise<void> { playerMarkersFiltered.value = playerMarkers.filter(m => (m.getUser()?.getFirstname() + ' ' + m.getUser()?.getLastname()).includes(playerQuery.value)) }
 async function applyDispatchQuery(): Promise<void> { dispatchMarkersFiltered.value = dispatchMarkers.filter(m => m.getPopup().includes(dispatchQuery.value) || m.getName().includes(dispatchQuery.value)) }
 
-watchDebounced(playerQuery, async () => { applyPlayerQuery() }, { debounce: 700, maxWait: 1850 });
-watchDebounced(dispatchQuery, async () => { applyDispatchQuery() }, { debounce: 700, maxWait: 1850 });
+watchDebounced(playerQuery, async () => { applyPlayerQuery() }, { debounce: 600, maxWait: 1750 });
+watchDebounced(dispatchQuery, async () => { applyDispatchQuery() }, { debounce: 600, maxWait: 1750 });
 
 const mouseLat = ref<string>((0).toFixed(3));
 const mouseLong = ref<string>((0).toFixed(3));

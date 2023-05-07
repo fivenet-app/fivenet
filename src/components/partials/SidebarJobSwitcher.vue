@@ -76,7 +76,7 @@ async function setJob(): Promise<void> {
     });
 }
 
-watchDebounced(queryJob, async () => { filteredJobs.value = entriesJobs.filter(g => g.getLabel().toLowerCase().includes(queryJob.value.toLowerCase())) }, { debounce: 700, maxWait: 1850 });
+watchDebounced(queryJob, async () => { filteredJobs.value = entriesJobs.filter(g => g.getLabel().toLowerCase().includes(queryJob.value.toLowerCase())) }, { debounce: 600, maxWait: 1750 });
 watchDebounced(selectedJob, () => setJob());
 </script>
 

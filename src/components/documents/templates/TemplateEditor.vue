@@ -248,7 +248,6 @@ async function createTemplate(): Promise<void> {
         const tSchema = new TemplateSchema();
         tSchema.setRequirements(tRequirements);
         tpl.setSchema(tSchema);
-        req.setTemplate(tpl);
 
         const jobAccesses = new Array<TemplateJobAccess>();
         access.value.forEach(entry => {
@@ -292,6 +291,7 @@ async function createTemplate(): Promise<void> {
         });
         tpl.setContentAccess(reqAccess);
 
+        req.setTemplate(tpl);
         try {
             const resp = await $grpc.getDocStoreClient().
                 createTemplate(req, null);
@@ -316,6 +316,7 @@ async function updateTemplate(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new UpdateTemplateRequest();
         const tpl = new Template();
+        tpl.setId(props.templateId!);
         tpl.setTitle(title.value);
         tpl.setDescription(description.value);
         tpl.setContentTitle(contentTitle.value);
@@ -328,9 +329,51 @@ async function updateTemplate(): Promise<void> {
 
         const tSchema = new TemplateSchema();
         tSchema.setRequirements(tRequirements);
-
         tpl.setSchema(tSchema);
 
+        const jobAccesses = new Array<TemplateJobAccess>();
+        access.value.forEach(entry => {
+            if (entry.values.accessrole === undefined) return;
+
+            if (entry.type === 1) {
+                if (!entry.values.job) return;
+
+                const job = new TemplateJobAccess();
+                job.setJob(entry.values.job);
+                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
+                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
+
+                jobAccesses.push(job);
+            }
+        });
+        tpl.setJobAccessList(jobAccesses);
+
+        const reqAccess = new DocumentAccess();
+        contentAccess.value.forEach(entry => {
+            if (entry.values.accessrole === undefined) return;
+
+            if (entry.type === 0) {
+                if (!entry.values.char) return;
+
+                const user = new DocumentUserAccess();
+                user.setUserId(entry.values.char);
+                user.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
+
+                reqAccess.addUsers(user);
+            } else if (entry.type === 1) {
+                if (!entry.values.job) return;
+
+                const job = new DocumentJobAccess();
+                job.setJob(entry.values.job);
+                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
+                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
+
+                reqAccess.addJobs(job);
+            }
+        });
+        tpl.setContentAccess(reqAccess);
+
+        req.setTemplate(tpl);
         try {
             const resp = await $grpc.getDocStoreClient().
                 updateTemplate(req, null);
@@ -378,25 +421,53 @@ onMounted(async () => {
         req.setRender(false);
 
         try {
-            const resp = (await $grpc.getDocStoreClient().getTemplate(req, null)).getTemplate();
+            const resp = (await $grpc.getDocStoreClient().getTemplate(req, null));
             if (!resp) return;
 
-            title.value = resp.getTitle();
-            description.value = resp.getDescription();
-            contentTitle.value = resp.getContentTitle();
-            content.value = resp.getContent();
+            const tpl = resp.getTemplate();
+            if (!tpl) return;
 
-            schema.value.users.req = resp.getSchema()?.getRequirements()?.getUsers()?.getRequired() ?? false;
-            schema.value.users.min = resp.getSchema()?.getRequirements()?.getUsers()?.getMin() ?? 0;
-            schema.value.users.max = resp.getSchema()?.getRequirements()?.getUsers()?.getMax() ?? 0;
+            title.value = tpl.getTitle();
+            description.value = tpl.getDescription();
+            contentTitle.value = tpl.getContentTitle();
+            content.value = tpl.getContent();
 
-            schema.value.documents.req = resp.getSchema()?.getRequirements()?.getDocuments()?.getRequired() ?? false;
-            schema.value.documents.min = resp.getSchema()?.getRequirements()?.getDocuments()?.getMin() ?? 0;
-            schema.value.documents.max = resp.getSchema()?.getRequirements()?.getDocuments()?.getMax() ?? 0;
+            const tplAccess = tpl.getJobAccessList();
+            if (tplAccess) {
+                let accessId = 0;
 
-            schema.value.vehicles.req = resp.getSchema()?.getRequirements()?.getVehicles()?.getRequired() ?? false;
-            schema.value.vehicles.min = resp.getSchema()?.getRequirements()?.getVehicles()?.getMin() ?? 0;
-            schema.value.vehicles.max = resp.getSchema()?.getRequirements()?.getVehicles()?.getMax() ?? 0;
+                tplAccess.forEach(job => {
+                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                    accessId++;
+                });
+            }
+
+            const ctAccess = tpl.getContentAccess();
+            if (ctAccess) {
+                let accessId = 0;
+
+                ctAccess.getUsersList().forEach(user => {
+                    contentAccess.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } });
+                    accessId++;
+                });
+
+                ctAccess.getJobsList().forEach(job => {
+                    contentAccess.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                    accessId++;
+                });
+            }
+
+            schema.value.users.req = tpl.getSchema()?.getRequirements()?.getUsers()?.getRequired() ?? false;
+            schema.value.users.min = tpl.getSchema()?.getRequirements()?.getUsers()?.getMin() ?? 0;
+            schema.value.users.max = tpl.getSchema()?.getRequirements()?.getUsers()?.getMax() ?? 0;
+
+            schema.value.documents.req = tpl.getSchema()?.getRequirements()?.getDocuments()?.getRequired() ?? false;
+            schema.value.documents.min = tpl.getSchema()?.getRequirements()?.getDocuments()?.getMin() ?? 0;
+            schema.value.documents.max = tpl.getSchema()?.getRequirements()?.getDocuments()?.getMax() ?? 0;
+
+            schema.value.vehicles.req = tpl.getSchema()?.getRequirements()?.getVehicles()?.getRequired() ?? false;
+            schema.value.vehicles.min = tpl.getSchema()?.getRequirements()?.getVehicles()?.getMin() ?? 0;
+            schema.value.vehicles.max = tpl.getSchema()?.getRequirements()?.getVehicles()?.getMax() ?? 0;
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
         }
@@ -416,7 +487,7 @@ onMounted(async () => {
     }
 });
 
-watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.filter(r => r.getLabel().startsWith(queryRank.value)), { debounce: 700, maxWait: 1850 });
+watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.filter(r => r.getLabel().startsWith(queryRank.value)), { debounce: 600, maxWait: 1750 });
 </script>
 
 <template>
@@ -505,7 +576,7 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
             </div>
             <button type="submit"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 mt-4">
-                {{ $t('common.create') }}
+                {{ templateId ? $t('common.save') : $t('common.create') }}
             </button>
         </form>
     </div>

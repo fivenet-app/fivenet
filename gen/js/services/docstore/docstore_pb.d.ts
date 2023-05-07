@@ -82,9 +82,6 @@ export class GetTemplateResponse extends jspb.Message {
   getRendered(): boolean;
   setRendered(value: boolean): GetTemplateResponse;
 
-  getAccess(): boolean;
-  setAccess(value: boolean): GetTemplateResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetTemplateResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetTemplateResponse): GetTemplateResponse.AsObject;
@@ -97,7 +94,6 @@ export namespace GetTemplateResponse {
   export type AsObject = {
     template?: resources_documents_templates_pb.Template.AsObject,
     rendered: boolean,
-    access: boolean,
   }
 }
 

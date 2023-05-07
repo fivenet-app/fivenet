@@ -100,8 +100,8 @@ onMounted(async () => {
     }
 });
 
-watchDebounced(queryJob, async () => await findJobs(), { debounce: 700, maxWait: 1850 });
-watchDebounced(queryChar, async () => await findChars(), { debounce: 700, maxWait: 1850 });
+watchDebounced(queryJob, async () => await findJobs(), { debounce: 600, maxWait: 1750 });
+watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWait: 1750 });
 
 watch(selectedAccessType, () => {
     emit('typeChange', { id: props.init.id, type: selectedAccessType.value.id });

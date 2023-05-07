@@ -1720,8 +1720,7 @@ proto.services.docstore.GetTemplateResponse.prototype.toObject = function(opt_in
 proto.services.docstore.GetTemplateResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     template: (f = msg.getTemplate()) && resources_documents_templates_pb.Template.toObject(includeInstance, f),
-    rendered: jspb.Message.getBooleanFieldWithDefault(msg, 2, false),
-    access: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
+    rendered: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {
@@ -1767,10 +1766,6 @@ proto.services.docstore.GetTemplateResponse.deserializeBinaryFromReader = functi
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setRendered(value);
       break;
-    case 3:
-      var value = /** @type {boolean} */ (reader.readBool());
-      msg.setAccess(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -1812,13 +1807,6 @@ proto.services.docstore.GetTemplateResponse.serializeBinaryToWriter = function(m
   if (f) {
     writer.writeBool(
       2,
-      f
-    );
-  }
-  f = message.getAccess();
-  if (f) {
-    writer.writeBool(
-      3,
       f
     );
   }
@@ -1877,24 +1865,6 @@ proto.services.docstore.GetTemplateResponse.prototype.getRendered = function() {
  */
 proto.services.docstore.GetTemplateResponse.prototype.setRendered = function(value) {
   return jspb.Message.setProto3BooleanField(this, 2, value);
-};
-
-
-/**
- * optional bool access = 3;
- * @return {boolean}
- */
-proto.services.docstore.GetTemplateResponse.prototype.getAccess = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 3, false));
-};
-
-
-/**
- * @param {boolean} value
- * @return {!proto.services.docstore.GetTemplateResponse} returns this
- */
-proto.services.docstore.GetTemplateResponse.prototype.setAccess = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 3, value);
 };
 
 
@@ -2119,7 +2089,7 @@ proto.services.docstore.CreateTemplateResponse.deserializeBinaryFromReader = fun
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readUint64());
       msg.setId(value);
       break;
     default:
@@ -2153,7 +2123,7 @@ proto.services.docstore.CreateTemplateResponse.serializeBinaryToWriter = functio
   var f = undefined;
   f = message.getId();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeUint64(
       1,
       f
     );
@@ -2162,7 +2132,7 @@ proto.services.docstore.CreateTemplateResponse.serializeBinaryToWriter = functio
 
 
 /**
- * optional int64 id = 1;
+ * optional uint64 id = 1;
  * @return {number}
  */
 proto.services.docstore.CreateTemplateResponse.prototype.getId = function() {
@@ -2400,7 +2370,7 @@ proto.services.docstore.UpdateTemplateResponse.deserializeBinaryFromReader = fun
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readUint64());
       msg.setId(value);
       break;
     default:
@@ -2434,7 +2404,7 @@ proto.services.docstore.UpdateTemplateResponse.serializeBinaryToWriter = functio
   var f = undefined;
   f = message.getId();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeUint64(
       1,
       f
     );
@@ -2443,7 +2413,7 @@ proto.services.docstore.UpdateTemplateResponse.serializeBinaryToWriter = functio
 
 
 /**
- * optional int64 id = 1;
+ * optional uint64 id = 1;
  * @return {number}
  */
 proto.services.docstore.UpdateTemplateResponse.prototype.getId = function() {
@@ -9294,7 +9264,7 @@ proto.services.docstore.CreateDocumentCategoryResponse.deserializeBinaryFromRead
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readUint64());
       msg.setId(value);
       break;
     default:
@@ -9328,7 +9298,7 @@ proto.services.docstore.CreateDocumentCategoryResponse.serializeBinaryToWriter =
   var f = undefined;
   f = message.getId();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeUint64(
       1,
       f
     );
@@ -9337,7 +9307,7 @@ proto.services.docstore.CreateDocumentCategoryResponse.serializeBinaryToWriter =
 
 
 /**
- * optional int64 id = 1;
+ * optional uint64 id = 1;
  * @return {number}
  */
 proto.services.docstore.CreateDocumentCategoryResponse.prototype.getId = function() {

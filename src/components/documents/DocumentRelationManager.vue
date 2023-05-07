@@ -62,7 +62,7 @@ const queryChar = ref('');
 
 const { data: users, pending, refresh, error } = useLazyAsyncData(`document-${props.document}-relations-citzens-${queryChar}`, () => listCitizens());
 
-watchDebounced(queryChar, async () => await refresh(), { debounce: 700, maxWait: 1850 });
+watchDebounced(queryChar, async () => await refresh(), { debounce: 600, maxWait: 1750 });
 
 async function listCitizens(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {
