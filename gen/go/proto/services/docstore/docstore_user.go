@@ -4,7 +4,6 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -47,8 +46,6 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		WHERE(jet.AND(
 			condition,
 		))
-
-	fmt.Println(idStmt.DebugSql())
 
 	if err := idStmt.QueryContext(ctx, s.db, &docIds); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {

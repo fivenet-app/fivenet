@@ -627,13 +627,18 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		return nil, err
 	}
 
-	char, jProps, err := s.getCharacter(ctx, claims.ActiveCharID)
+	char, _, err := s.getCharacter(ctx, claims.ActiveCharID)
 	if err != nil {
 		return nil, err
 	}
 
-	char.Job = req.Job
-	char.JobGrade = req.JobGrade
+	job, jobGrade, jProps, err := s.getJobWithProps(ctx, req.Job)
+	if err != nil {
+		return nil, err
+	}
+
+	char.Job = job.Name
+	char.JobGrade = jobGrade
 
 	s.c.EnrichJobInfo(char)
 
@@ -654,4 +659,39 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		JobProps: jProps,
 		Char:     char,
 	}, nil
+}
+
+func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*jobs.Job, int32, *jobs.JobProps, error) {
+	js := js.AS("job")
+	stmt := js.
+		SELECT(
+			js.Name,
+			js.Label,
+			jobGrades.Grade.AS("job_grade"),
+			jobProps.AllColumns,
+		).
+		FROM(
+			js.
+				INNER_JOIN(jobGrades,
+					jobGrades.JobName.EQ(js.Name),
+				).
+				LEFT_JOIN(jobProps,
+					jobProps.Job.EQ(js.Name)),
+		).
+		WHERE(
+			js.Name.EQ(jet.String(jobName)),
+		).
+		ORDER_BY(jobGrades.Grade.DESC()).
+		LIMIT(1)
+
+	var dest struct {
+		Job      *jobs.Job
+		JobGrade int32 `alias:"job_grade"`
+		JobProps *jobs.JobProps
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, 0, nil, err
+	}
+
+	return dest.Job, dest.JobGrade, dest.JobProps, nil
 }

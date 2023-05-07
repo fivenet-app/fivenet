@@ -5,7 +5,6 @@ import (
 	context "context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"html/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -55,8 +54,6 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 			dTemplates.DeletedAt.IS_NULL(),
 		).
 		GROUP_BY(dTemplates.ID)
-
-	fmt.Println(stmt.DebugSql())
 
 	resp := &ListTemplatesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
@@ -108,8 +105,6 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			dTemplates.ID.EQ(jet.Uint64(req.TemplateId)),
 		).
 		LIMIT(1)
-
-	fmt.Println(stmt.DebugSql())
 
 	resp := &GetTemplateResponse{}
 	if err := stmt.QueryContext(ctx, s.db, resp); err != nil {
