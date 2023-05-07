@@ -190,7 +190,8 @@
                 "set_wanted": "Set Person Wanted"
             },
             "citizen_info_activity_feed_entry": {
-                "set_citizen_as": "Set the citizen as"
+                "set_citizen_as": "Set the citizen as",
+                "document_relation": "Related the cititzen in"
             }
         },
         "partials": {
@@ -273,7 +274,8 @@
             "job_props": {
                 "job_properties": "Job Properties",
                 "your_job_properties": "Your job's FiveNet properties.",
-                "livemap_marker_color": "Livemap Marker Color"
+                "livemap_marker_color": "Livemap Marker Color",
+                "component_buttons": "Quick Access Buttons"
             },
             "role_view": {
                 "add_permission": "Add Permission"

@@ -31,7 +31,7 @@ switch (props.activity.getKey()) {
         break;
     };
     case 'DocStore.Relation': {
-        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.set_citizen_as');
+        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation');
         icon.value = AtSymbolIcon;
 
         if (props.activity.getNewvalue() !== '') {
@@ -54,8 +54,9 @@ switch (props.activity.getKey()) {
         </div>
         <div class="flex-1 space-y-1">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-medium text-neutral">{{ activity.getSourceUser()?.getFirstname() }} {{
-                    activity.getSourceUser()?.getLastname() }}</h3>
+                <h3 class="text-sm font-medium text-neutral">
+                    {{ activity.getSourceUser()?.getFirstname() }} {{ activity.getSourceUser()?.getLastname() }}
+                </h3>
                 <p class="text-sm text-gray-400">
                     {{ useLocaleTimeAgo(toDate(activity.getCreatedAt())!).value }}
                 </p>

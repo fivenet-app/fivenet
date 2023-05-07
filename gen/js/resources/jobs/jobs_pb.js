@@ -531,7 +531,8 @@ proto.resources.jobs.JobProps.toObject = function(includeInstance, msg) {
   var f, obj = {
     job: jspb.Message.getFieldWithDefault(msg, 1, ""),
     theme: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    livemapMarkerColor: jspb.Message.getFieldWithDefault(msg, 3, "")
+    livemapMarkerColor: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    componentButtons: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -580,6 +581,10 @@ proto.resources.jobs.JobProps.deserializeBinaryFromReader = function(msg, reader
       var value = /** @type {string} */ (reader.readString());
       msg.setLivemapMarkerColor(value);
       break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setComponentButtons(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -627,6 +632,13 @@ proto.resources.jobs.JobProps.serializeBinaryToWriter = function(message, writer
   if (f.length > 0) {
     writer.writeString(
       3,
+      f
+    );
+  }
+  f = message.getComponentButtons();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
       f
     );
   }
@@ -684,6 +696,24 @@ proto.resources.jobs.JobProps.prototype.getLivemapMarkerColor = function() {
  */
 proto.resources.jobs.JobProps.prototype.setLivemapMarkerColor = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string component_buttons = 4;
+ * @return {string}
+ */
+proto.resources.jobs.JobProps.prototype.getComponentButtons = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.jobs.JobProps} returns this
+ */
+proto.resources.jobs.JobProps.prototype.setComponentButtons = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 

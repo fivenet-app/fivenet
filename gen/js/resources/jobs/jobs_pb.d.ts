@@ -66,6 +66,9 @@ export class JobProps extends jspb.Message {
   getLivemapMarkerColor(): string;
   setLivemapMarkerColor(value: string): JobProps;
 
+  getComponentButtons(): string;
+  setComponentButtons(value: string): JobProps;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): JobProps.AsObject;
   static toObject(includeInstance: boolean, msg: JobProps): JobProps.AsObject;
@@ -79,6 +82,7 @@ export namespace JobProps {
     job: string,
     theme: string,
     livemapMarkerColor: string,
+    componentButtons: string,
   }
 }
 

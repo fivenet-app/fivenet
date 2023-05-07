@@ -13,7 +13,19 @@ const notifications = useNotificationsStore();
 
 const { t } = useI18n();
 
-const properties = ref<{ theme: string; livemapMarkerColor: string; }>({ theme: 'default', livemapMarkerColor: '#5C7AFF' });
+const properties = ref<{
+    theme: string;
+    livemapMarkerColor: string;
+    componentButtons: {
+        'PenaltyCalculator': boolean,
+    };
+}>({
+    theme: 'default',
+    livemapMarkerColor: '#5C7AFF',
+    componentButtons: {
+        PenaltyCalculator: false
+    },
+});
 
 async function getJobProps(): Promise<JobProps> {
     return new Promise(async (res, rej) => {
@@ -23,7 +35,21 @@ async function getJobProps(): Promise<JobProps> {
             const resp = await $grpc.getRectorClient().
                 getJobProps(req, null);
 
-            properties.value.livemapMarkerColor = '#' + resp.getJobProps()?.getLivemapMarkerColor();
+            if (resp.hasJobProps()) {
+                properties.value.livemapMarkerColor = '#' + resp.getJobProps()?.getLivemapMarkerColor();
+
+                const components = resp.getJobProps()!.getComponentButtons().split(';').filter(v => v !== '');
+                components.forEach((v) => {
+                    switch (v) {
+                        case 'PenaltyCalculator':
+                            properties.value.componentButtons.PenaltyCalculator = true;
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            }
+
             return res(resp.getJobProps()!);
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -41,6 +67,14 @@ async function saveJobProps(): Promise<void> {
         jProps.setTheme(properties.value.theme);
         // Remove '#' from color code
         jProps.setLivemapMarkerColor(properties.value.livemapMarkerColor.substring(1));
+
+        // How scuffed do you want this code to be: "Yes"
+        let componentButtons = '';
+        if (properties.value.componentButtons.PenaltyCalculator) {
+            componentButtons += 'PenaltyCalculator;';
+        }
+        jProps.setComponentButtons(componentButtons.replace(/;$/, ''));
+
         req.setJobProps(jProps);
 
         try {
@@ -68,7 +102,7 @@ async function saveJobProps(): Promise<void> {
         <DataErrorBlock v-else-if="error"
             :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])" :retry="refresh" />
         <button v-else-if="!jobProps" type="button"
-            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
             <AdjustmentsVerticalIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold">
 
@@ -100,6 +134,29 @@ async function saveJobProps(): Promise<void> {
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <input type="color" v-model="properties.livemapMarkerColor" />
+                            </dd>
+                        </div>
+                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <dt class="text-sm font-medium">
+                                {{ $t('components.rector.job_props.component_buttons') }}
+                            </dt>
+                            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                <fieldset>
+                                    <div class="space-y-5">
+                                        <div class="relative flex items-start">
+                                            <div class="flex h-6 items-center">
+                                                <input id="comments" aria-describedby="comments-description" name="comments"
+                                                    type="checkbox" v-model="properties.componentButtons.PenaltyCalculator"
+                                                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600" />
+                                            </div>
+                                            <div class="ml-3 text-sm leading-6">
+                                                <label for="comments" class="font-medium text-white">
+                                                    {{ $t('components.penaltycalculator.title') }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
                             </dd>
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5"

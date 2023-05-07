@@ -33,7 +33,7 @@ var (
 	user      = table.Users.AS("user")
 	js        = table.Jobs
 	jobGrades = table.JobGrades
-	jobProps  = table.FivenetJobProps
+	jobProps  = table.FivenetJobProps.AS("jobprops")
 )
 
 var (
@@ -446,6 +446,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			js.Label.AS("user.job_label"),
 			jobGrades.Label.AS("user.job_grade_label"),
 			jobProps.Theme,
+			jobProps.ComponentButtons,
 		).
 		FROM(
 			user.

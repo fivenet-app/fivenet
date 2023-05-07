@@ -1,6 +1,11 @@
+import { JobProps } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { User } from '@fivenet/gen/resources/users/users_pb';
 import { StoreDefinition } from 'pinia';
 import { defineStore } from 'pinia';
+
+export type JobPropsState = {
+    componentButtons: Array<String>;
+};
 
 export interface AuthState {
     accessToken: null | string;
@@ -10,6 +15,7 @@ export interface AuthState {
     loggingIn: boolean;
     loginError: null | string;
     permissions: Array<String>;
+    jobProps: null | JobPropsState;
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -23,6 +29,9 @@ export const useAuthStore = defineStore('auth', {
         loggingIn: false as boolean,
         loginError: null as null | string,
         permissions: [] as Array<String>,
+        jobProps: {
+            componentButtons: [],
+        } as null | JobPropsState,
     }),
     persist: {
         paths: ['accessToken', 'accessTokenExpiration', 'lastCharID'],
@@ -47,6 +56,18 @@ export const useAuthStore = defineStore('auth', {
         setPermissions(permissions: string[]): void {
             this.permissions = permissions.sort();
         },
+        setJobProps(jobProps: null | JobProps): void {
+            if (jobProps === null) {
+                this.jobProps = null;
+            } else {
+                this.jobProps = {
+                    componentButtons: jobProps
+                        .getComponentButtons()
+                        .split(';')
+                        .filter((v) => v !== ''),
+                };
+            }
+        },
         async clear(): Promise<void> {
             this.setAccessToken(null, null);
             this.setActiveChar(null);
@@ -63,6 +84,7 @@ export const useAuthStore = defineStore('auth', {
         },
         getActiveChar: (state): null | User => state.activeChar,
         getPermissions: (state): Array<String> => state.permissions,
+        getJobProps: (state): null | JobPropsState => state.jobProps,
     },
 });
 

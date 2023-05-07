@@ -273,7 +273,8 @@
             "job_props": {
                 "job_properties": "Job Eigenschaften",
                 "your_job_properties": "Deine FiveNet Job Eigenschaften.",
-                "livemap_marker_color": "Livemap Marker Farbe"
+                "livemap_marker_color": "Livemap Marker Farbe",
+                "component_buttons": "Schnellzugriff Knöpfe"
             },
             "role_view": {
                 "add_permission": "Berechtigung hinzufügen"

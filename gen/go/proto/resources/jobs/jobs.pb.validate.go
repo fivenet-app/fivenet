@@ -376,6 +376,8 @@ func (m *JobProps) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for ComponentButtons
+
 	if len(errors) > 0 {
 		return JobPropsMultiError(errors)
 	}

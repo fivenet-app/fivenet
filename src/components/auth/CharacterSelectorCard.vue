@@ -33,6 +33,9 @@ async function chooseCharacter(): Promise<void> {
             authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
             authStore.setActiveChar(props.char);
             authStore.setPermissions(resp.getPermissionsList());
+            if (resp.hasJobProps()) {
+                authStore.setJobProps(resp.getJobProps()!);
+            }
 
             const path = route.query.redirect?.toString() || "/overview";
             const url = new URL("https://example.com" + path);

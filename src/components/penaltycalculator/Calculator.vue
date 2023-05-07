@@ -845,6 +845,11 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
 <template>
     <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
+            <div class="relative">
+                <h3 class="text-2xl font-semibold leading-6">
+                    {{ $t('components.penaltycalculator.title') }}
+                </h3>
+            </div>
             <div class="sm:flex sm:items-center pb-4">
                 <div class="sm:flex-auto">
                     <div class="divide-y divide-white/10">

@@ -12,6 +12,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
@@ -62,20 +64,27 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 
 	req.JobProps.LivemapMarkerColor = strings.ReplaceAll(req.JobProps.LivemapMarkerColor, "#", "")
 
+	if !s.validateJobPropsComponentButtons(req.JobProps.ComponentButtons) {
+		return nil, status.Error(codes.InvalidArgument, "Invalid component button found!")
+	}
+
 	stmt := jobProps.
 		INSERT(
 			jobProps.Job,
 			jobProps.Theme,
 			jobProps.LivemapMarkerColor,
+			jobProps.ComponentButtons,
 		).
 		VALUES(
 			req.JobProps.Job,
 			req.JobProps.Theme,
 			req.JobProps.LivemapMarkerColor,
+			req.JobProps.ComponentButtons,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			jobProps.Theme.SET(jet.String(req.JobProps.Theme)),
 			jobProps.LivemapMarkerColor.SET(jet.String(req.JobProps.LivemapMarkerColor)),
+			jobProps.ComponentButtons.SET(jet.String(req.JobProps.ComponentButtons)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -85,4 +94,14 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return &SetJobPropsResponse{}, nil
+}
+
+func (s *Server) validateJobPropsComponentButtons(in string) bool {
+	for _, comp := range strings.Split(in, ";") {
+		if comp != "PenaltyCalculator" {
+			return false
+		}
+	}
+
+	return true
 }

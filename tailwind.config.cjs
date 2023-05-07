@@ -113,6 +113,9 @@ module.exports = {
                     900: '#072915',
                 },
             },
+            maxWidth: {
+                '8xl': '88rem',
+            },
         },
     },
 };
