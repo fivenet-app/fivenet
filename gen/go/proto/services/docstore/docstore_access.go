@@ -158,6 +158,9 @@ func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.Docume
 				if cj.Job != uj.Job {
 					continue
 				}
+				if cj.MinimumGrade != uj.MinimumGrade {
+					continue
+				}
 				found = uj
 				foundIdx = k
 				break

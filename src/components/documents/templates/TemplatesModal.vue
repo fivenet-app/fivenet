@@ -8,6 +8,9 @@ import ClipboardModalUsers from '~/components/clipboard/ClipboardModalUsers.vue'
 import ClipboardModalVehicles from '~/components/clipboard/ClipboardModalVehicles.vue';
 import TemplateRequirementsList from './TemplateRequirementsList.vue';
 import TemplatesList from './TemplatesList.vue';
+import { useClipboardStore } from '~/store/clipboard';
+
+const clipboardStore = useClipboardStore();
 
 const props = defineProps({
     open: {
@@ -45,7 +48,7 @@ watch(reqStatus.value, () => {
     readyToCreate.value = (reqStatus.value.documents && reqStatus.value.users && reqStatus.value.vehicles);
 
     // Auto redirect users when the requirements are matched
-    if (readyToCreate && props.autoFill) {
+    if (readyToCreate.value && props.autoFill) {
         clipboardDialog();
     }
 });
@@ -58,25 +61,44 @@ function closeDialog(): void {
     emit('close');
 }
 
-function templateSelected(t: TemplateShort): void {
+async function templateSelected(t: TemplateShort): Promise<void> {
     if (t) {
         template.value = t;
         if (t.getSchema()) {
             reqs.value = t.getSchema()?.getRequirements();
+            let reqDocuments = false;
+            let reqUsers = false;
+            let reqVehicles = false;
+
             if (reqs.value) {
-                reqStatus.value.documents = !reqs.value?.hasDocuments();
-                reqStatus.value.users = !reqs.value?.hasUsers();
-                reqStatus.value.vehicles = !reqs.value?.hasVehicles();
-            } else {
-                reqStatus.value.documents = false;
-                reqStatus.value.users = false;
-                reqStatus.value.vehicles = false;
+                if (reqs.value.hasDocuments()) {
+                    reqDocuments = clipboardStore.checkRequirements(reqs.value.getDocuments()!, 'documents');
+                    if (reqDocuments) {
+                        clipboardStore.promoteToActiveStack('documents');
+                    }
+                }
+                if (reqs.value.hasUsers()) {
+                    reqUsers = clipboardStore.checkRequirements(reqs.value.getUsers()!, 'users');
+                    if (reqUsers) {
+                        clipboardStore.promoteToActiveStack('users');
+                    }
+                }
+                if (reqs.value.hasVehicles()) {
+                    reqVehicles = clipboardStore.checkRequirements(reqs.value.getVehicles()!, 'vehicles');
+                    if (reqVehicles) {
+                        clipboardStore.promoteToActiveStack('vehicles');
+                    }
+                }
             }
+
+            reqStatus.value.documents = reqDocuments;
+            reqStatus.value.users = reqUsers;
+            reqStatus.value.vehicles = reqVehicles;
 
             steps.value.selectTemplate = false;
             steps.value.selectClipboard = true;
         } else {
-            navigateTo({ name: 'documents-create', query: { templateId: template.value?.getId() } });
+            await navigateTo({ name: 'documents-create', query: { templateId: template.value?.getId() } });
         }
     } else {
         reqStatus.value.documents = false;
@@ -135,8 +157,7 @@ async function clipboardDialog(): Promise<void> {
                                                     {{ $t('components.documents.templates.templates_modal.no_template') }}
                                                 </NuxtLink>
                                                 <div class="pt-4">
-                                                    <TemplatesList
-                                                        @selected="(t: TemplateShort) => templateSelected(t)" />
+                                                    <TemplatesList @selected="(t: TemplateShort) => templateSelected(t)" />
                                                 </div>
                                             </div>
                                         </div>
@@ -149,7 +170,7 @@ async function clipboardDialog(): Promise<void> {
                                         </button>
                                     </div>
                                 </div>
-                                <div v-else-if="!autoFill && steps.selectClipboard && template && reqs">
+                                <div v-else-if="template && reqs && !autoFill && steps.selectClipboard">
                                     <div
                                         class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
                                         <PencilIcon class="h-6 w-6 text-indigo-600" aria-hidden="true" />
@@ -159,41 +180,30 @@ async function clipboardDialog(): Promise<void> {
                                             {{ $t('common.template', 1) }}: {{ template.getTitle() }}
                                         </DialogTitle>
                                         <div class="mt-2 text-white">
-                                            <div v-if="reqs.getUsers()">
+                                            <div v-if="reqs.hasUsers()">
                                                 <p>
-                                                    <TemplateRequirementsList name="User"
-                                                        :required="reqs.getUsers()?.getRequired()!"
-                                                        :min="reqs.getUsers()?.getMin()!"
-                                                        :max="reqs.getUsers()?.getMax()!" />
+                                                    <TemplateRequirementsList name="User" :specs="reqs.getUsers()!" />
                                                 </p>
 
                                                 <ClipboardModalUsers :submit.sync="submit" :showSelect="true"
-                                                    :min="reqs.getUsers()?.getMin()" :max="reqs.getUsers()?.getMax()"
-                                                    @statisfied="(v) => reqStatus.users = v" />
+                                                    :specs="reqs.getUsers()!" @statisfied="(v) => reqStatus.users = v" />
                                             </div>
-                                            <div v-if="reqs.getVehicles()">
+                                            <div v-if="reqs.hasVehicles()">
                                                 <p>
-                                                    <TemplateRequirementsList name="Vehicle"
-                                                        :required="reqs.getVehicles()?.getRequired()!"
-                                                        :min="reqs.getVehicles()?.getMin()!"
-                                                        :max="reqs.getVehicles()?.getMax()!" />
+                                                    <TemplateRequirementsList name="Vehicle" :specs="reqs.getVehicles()!" />
                                                 </p>
 
                                                 <ClipboardModalVehicles :submit.sync="submit" :showSelect="true"
-                                                    :min="reqs.getVehicles()?.getMin()" :max="reqs.getVehicles()?.getMax()"
+                                                    :specs="reqs.getVehicles()!"
                                                     @statisfied="(v) => reqStatus.vehicles = v" />
                                             </div>
-                                            <div v-if="reqs.getDocuments()">
+                                            <div v-if="reqs.hasDocuments()">
                                                 <p>
-                                                    <TemplateRequirementsList name="User"
-                                                        :required="reqs.getDocuments()?.getRequired()!"
-                                                        :min="reqs.getDocuments()?.getMin()!"
-                                                        :max="reqs.getDocuments()?.getMax()!" />
+                                                    <TemplateRequirementsList name="User" :specs="reqs.getDocuments()!" />
                                                 </p>
 
                                                 <ClipboardModalDocuments :submit.sync="submit" :showSelect="true"
-                                                    :min="reqs.getDocuments()?.getMin()"
-                                                    :max="reqs.getDocuments()?.getMax()"
+                                                    :specs="reqs.getDocuments()!"
                                                     @statisfied="(v) => reqStatus.documents = v" />
                                             </div>
                                         </div>

@@ -4,13 +4,14 @@ import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { UsersIcon } from '@heroicons/vue/20/solid';
 import { useNotificationsStore } from '~/store/notifications';
+import { ObjectSpecs } from '@fivenet/gen/resources/documents/templates_pb';
 
-const store = useClipboardStore();
+const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
 const { t } = useI18n();
 
-const users = computed(() => store.$state.users);
+const users = computed(() => clipboardStore.$state.users);
 
 const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void,
@@ -27,15 +28,9 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-    min: {
+    specs: {
         required: false,
-        type: Number,
-        default: 0,
-    },
-    max: {
-        required: false,
-        type: Number,
-        default: 0,
+        type: ObjectSpecs,
     },
 });
 
@@ -46,18 +41,20 @@ async function select(item: ClipboardUser): Promise<void> {
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
     } else {
-        if (props.max) {
+        if (props.specs && props.specs.getMax()) {
             selected.value.splice(0, selected.value.length);
         }
         selected.value.push(item);
     }
 
-    if (selected.value.length >= props.min) {
-        emit('statisfied', true);
-    } else if (selected.value.length === props.max) {
-        emit('statisfied', true);
-    } else {
-        emit('statisfied', false);
+    if (props.specs) {
+        if (selected.value.length >= props.specs.getMin()) {
+            emit('statisfied', true);
+        } else if (selected.value.length === props.specs.getMax()) {
+            emit('statisfied', true);
+        } else {
+            emit('statisfied', false);
+        }
     }
 }
 
@@ -67,7 +64,7 @@ async function remove(item: ClipboardUser, notify: boolean): Promise<void> {
         selected.value.splice(idx, 1);
     }
 
-    store.removeUser(item.id!);
+    clipboardStore.removeUser(item.id!);
     if (notify) {
         notifications.dispatchNotification({
             title: t('notifications.clipboard.citizen_removed.title'),
@@ -96,9 +93,9 @@ async function removeAll(): Promise<void> {
 
 watch(props, async (newVal) => {
     if (newVal.submit) {
-        if (store.activeStack) {
-            store.activeStack.users.length = 0;
-            selected.value.forEach((v) => store.activeStack.users.push(v));
+        if (clipboardStore.activeStack) {
+            clipboardStore.activeStack.users.length = 0;
+            selected.value.forEach((v) => clipboardStore.activeStack.users.push(v));
         } else if (users.value && users.value.length === 1) {
             selected.value.unshift(users.value[0]);
         }
@@ -140,7 +137,7 @@ watch(props, async (newVal) => {
         <tbody class="divide-y divide-gray-800">
             <tr v-for="item in users" :key="item.id">
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0" v-if="select">
-                    <div v-if="max === 1">
+                    <div v-if="specs && specs.getMax() === 1">
                         <button @click="select(item)"
                             class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2">
                             <span v-if="!selected.includes(item)">
@@ -161,7 +158,7 @@ watch(props, async (newVal) => {
                     {{ item.firstname }}, {{ item.lastname }}
                 </td>
                 <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-300">
-                    {{ item.jobLabel }} (Rank: {{ item.jobGradeLabel }})
+                    {{ item.jobLabel }}
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <button @click="remove(item, true)">

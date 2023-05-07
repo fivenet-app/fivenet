@@ -7,8 +7,8 @@ import CitizenInfoActivityFeed from './CitizenInfoActivityFeed.vue';
 import VehiclesList from '~/components/vehicles/VehiclesList.vue';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { useClipboardStore } from '~/store/clipboard';
-import { PlusIcon } from '@heroicons/vue/24/solid';
 import { useNotificationsStore } from '~/store/notifications';
+import AddToClipboardButton from '../clipboard/AddToClipboardButton.vue';
 
 const clipboard = useClipboardStore();
 const notifications = useNotificationsStore();

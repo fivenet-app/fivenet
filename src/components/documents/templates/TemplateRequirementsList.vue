@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { ObjectSpecs } from '@fivenet/gen/resources/documents/templates_pb';
+
 defineProps({
     name: {
         type: String,
@@ -8,39 +10,31 @@ defineProps({
         type: String,
         required: false,
     },
-    required: {
-        type: Boolean,
+    specs: {
+        type: ObjectSpecs,
         required: true,
-    },
-    min: {
-        type: Number,
-        required: true,
-    },
-    max: {
-        type: Number,
-        required: true,
-    },
+    }
 });
 </script>
 
 <template>
-    <span v-if="required || (min > 0 && max > 0)">
-        <span v-if="required">
+    <span v-if="specs.getRequired() || (specs.getMin() > 0 && specs.getMax() > 0)">
+        <span v-if="specs.getRequired()">
             {{ $t('common.require', 2) }}{{ ' ' }}
         </span>
-        <span v-if="min > 0">
+        <span v-if="specs.getMin() > 0">
             {{ $t('common.min') }}{{ ' ' }}
         </span>
-        <span v-if="max == min">
-            {{ max }} {{ name }}
+        <span v-if="specs.getMax() == specs.getMin()">
+            {{ specs.getMax() }} {{ name }}
         </span>
         <span v-else>
-            {{ (min === 0 &&
-                required) ?
-                max : min }}
+            {{ (specs.getMin() === 0 &&
+                specs.getRequired()) ?
+                specs.getMax() : specs.getMin() }}
             {{ plural ?? name + "(s)" }}
-            <span v-if="max! > 0">
-                &nbsp;({{ $t('common.max') }}: {{ max }})
+            <span v-if="specs.getMax() > 0">
+                &nbsp;({{ $t('common.max') }}: {{ specs.getMax() }})
             </span>
         </span>
     </span>

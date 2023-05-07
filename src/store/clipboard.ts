@@ -1,9 +1,9 @@
 import { StoreDefinition, defineStore } from 'pinia';
-import { TemplateData } from '@fivenet/gen/resources/documents/templates_pb';
+import { ObjectSpecs, TemplateData } from '@fivenet/gen/resources/documents/templates_pb';
 import { User, UserShort } from '@fivenet/gen/resources/users/users_pb';
 import { Document } from '@fivenet/gen/resources/documents/documents_pb';
 import { Vehicle } from '@fivenet/gen/resources/vehicles/vehicles_pb';
-import { fromString, toDateLocaleString } from '~/utils/time';
+import { fromString } from '~/utils/time';
 import { Timestamp } from '@fivenet/gen/resources/timestamp/timestamp_pb';
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
@@ -17,6 +17,8 @@ export interface ClipboardState extends ClipboardData {
     activeStack: ClipboardData;
 }
 
+export type ListType = 'users' | 'documents' | 'vehicles';
+
 export const useClipboardStore = defineStore('clipboard', {
     state: () =>
         ({
@@ -29,6 +31,7 @@ export const useClipboardStore = defineStore('clipboard', {
                 vehicles: [],
             } as ClipboardData,
         } as ClipboardState),
+    persist: true,
     actions: {
         getTemplateData(): TemplateData {
             const data = new TemplateData();
@@ -130,6 +133,34 @@ export const useClipboardStore = defineStore('clipboard', {
             this.clearUsers();
             this.clearVehicles();
         },
+
+        checkRequirements(reqs: ObjectSpecs, listType: ListType): boolean {
+            const list = this.$state[listType];
+
+            if (reqs.getRequired() && list.length <= 0) {
+                return false;
+            } else if (list.length > reqs.getMax() && list.length < reqs.getMin()) {
+                return false;
+            }
+
+            return true;
+        },
+
+        promoteToActiveStack(listType: ListType): void {
+            const list = this.$state[listType];
+
+            switch (listType) {
+                case 'documents':
+                    this.$state.activeStack.documents = list as ClipboardDocument[];
+                    break;
+                case 'users':
+                    this.$state.activeStack.users = list as ClipboardUser[];
+                    break;
+                case 'vehicles':
+                    this.$state.activeStack.vehicles = list as ClipboardVehicle[];
+                    break;
+            }
+        },
     },
 });
 
@@ -144,6 +175,7 @@ export class ClipboardUser {
     public jobLabel: string | undefined;
     public jobGrade: number | undefined;
     public jobGradeLabel: string | undefined;
+    public dateofbirth: string | undefined;
     public firstname: string | undefined;
     public lastname: string | undefined;
 
@@ -156,6 +188,9 @@ export class ClipboardUser {
         this.jobGradeLabel = u.getJobGradeLabel();
         this.firstname = u.getFirstname();
         this.lastname = u.getLastname();
+        if (u instanceof User) {
+            this.dateofbirth = u.getDateofbirth();
+        }
 
         return this;
     }
@@ -171,6 +206,9 @@ export function getUser(obj: ClipboardUser): User {
     u.setJobGradeLabel(obj['jobGradeLabel']!);
     u.setFirstname(obj['firstname']!);
     u.setLastname(obj['lastname']!);
+    if (obj['dateofbirth'] !== undefined) {
+        u.setDateofbirth(obj['dateofbirth']);
+    }
 
     return u;
 }

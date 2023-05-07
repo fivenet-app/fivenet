@@ -103,6 +103,9 @@ func (s *Server) compareTemplateJobAccess(tx *sql.Tx, current, in []*documents.T
 				if cj.Job != uj.Job {
 					continue
 				}
+				if cj.MinimumGrade != uj.MinimumGrade {
+					continue
+				}
 				found = uj
 				foundIdx = k
 				break

@@ -61,10 +61,14 @@ defineEmits<{
                             <div class="gap-2 mt-5 sm:mt-4 sm:flex">
                                 <button type="button"
                                     class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="$emit('close')" ref="cancelButtonRef">{{ $t('common.close', 1) }}</button>
+                                    @click="$emit('close')" ref="cancelButtonRef">
+                                    {{ $t('common.close', 1) }}
+                                </button>
                                 <button type="button"
                                     class="flex-1 rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="clipboardStore.clear()">{{ $t('components.clipboard.clipboard_modal.clear') }}</button>
+                                    @click="clipboardStore.clear()">
+                                    {{ $t('components.clipboard.clipboard_modal.clear') }}
+                                </button>
                             </div>
                         </DialogPanel>
                     </TransitionChild>
