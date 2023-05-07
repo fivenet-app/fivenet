@@ -25,6 +25,7 @@ message GetTemplateRequest {
 message GetTemplateResponse {
   resources.documents.Template template = 1;
   bool rendered = 2;
+  bool access = 3;
 }
 
 message CreateTemplateRequest {

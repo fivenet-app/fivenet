@@ -205,8 +205,8 @@ async function findCategories(): Promise<void> {
 }
 
 const accessTypes = [
-    { id: 0, name: 'Citizen' },
-    { id: 1, name: 'Jobs' },
+    { id: 0, name: t('common.citizen', 2) },
+    { id: 1, name: t('common.job', 2) },
 ];
 
 function addAccessEntry(): void {
@@ -320,7 +320,6 @@ async function submitForm(): Promise<void> {
 
                 reqAccess.addJobs(job);
             }
-
         });
         req.setAccess(reqAccess);
 

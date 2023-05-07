@@ -96,7 +96,10 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
 	if req.SearchName != "" {
-		condition = condition.AND(jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.SearchName})))
+		condition = condition.AND(jet.BoolExp(
+			jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN BOOLEAN MODE)",
+				jet.RawArgs{"$search": req.SearchName})),
+		)
 	}
 
 	// Get total count of values
@@ -137,6 +140,9 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
+		ORDER_BY(
+			user.Lastname.DESC(),
+		).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {

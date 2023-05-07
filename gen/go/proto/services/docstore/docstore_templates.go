@@ -89,6 +89,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			dTemplates.Description,
 			dTemplates.ContentTitle,
 			dTemplates.Content,
+			dTemplates.Access,
 			dTemplates.Schema,
 			dTemplates.CreatorID,
 			dTemplates.CreatorJob,
@@ -172,7 +173,7 @@ func (s *Server) renderTemplate(docTmpl *documents.Template, data map[string]int
 }
 
 func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest) (*CreateTemplateResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
@@ -212,18 +213,18 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			dTemplates.Description,
 			dTemplates.ContentTitle,
 			dTemplates.Content,
+			dTemplates.Access,
 			dTemplates.Schema,
 			dTemplates.CreatorID,
 			dTemplates.CreatorJob,
 		).
 		VALUES(
-			job,
-			jobGrade,
 			categoryId,
 			req.Template.Title,
 			req.Template.Description,
 			req.Template.ContentTitle,
 			req.Template.Content,
+			req.Template.ContentAccess,
 			req.Template.Schema,
 			userId,
 			job,
@@ -286,6 +287,14 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		}
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	dTemplates := table.FivenetDocumentsTemplates
 	stmt := dTemplates.
 		UPDATE(
@@ -294,6 +303,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 			dTemplates.Description,
 			dTemplates.ContentTitle,
 			dTemplates.Content,
+			dTemplates.Access,
 			dTemplates.Schema,
 		).
 		SET(
@@ -302,16 +312,24 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 			req.Template.Description,
 			req.Template.ContentTitle,
 			req.Template.Content,
+			req.Template.ContentAccess,
 			req.Template.Schema,
 		).
 		WHERE(
-			jet.AND(
-				dTemplates.ID.EQ(jet.Uint64(req.Template.Id)),
-			),
+			dTemplates.ID.EQ(jet.Uint64(req.Template.Id)),
 		)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, err
+	}
+
+	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(req.Template.Id), req.Template.JobAccess); err != nil {
+		return nil, FailedQueryErr
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, FailedQueryErr
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
@@ -343,10 +361,8 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 	stmt := dTemplates.
 		DELETE().
 		WHERE(
-			jet.AND(
-				dTemplates.CreatorJob.EQ(jet.String(job)),
-				dTemplates.ID.EQ(jet.Uint64(req.Id)),
-			),
+			dTemplates.CreatorJob.EQ(jet.String(job)).AND(
+				dTemplates.ID.EQ(jet.Uint64(req.Id))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

@@ -449,6 +449,8 @@ func (m *GetTemplateResponse) validate(all bool) error {
 
 	// no validation rules for Rendered
 
+	// no validation rules for Access
+
 	if len(errors) > 0 {
 		return GetTemplateResponseMultiError(errors)
 	}

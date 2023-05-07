@@ -26,6 +26,7 @@ type fivenetDocumentsTemplatesTable struct {
 	Description  mysql.ColumnString
 	ContentTitle mysql.ColumnString
 	Content      mysql.ColumnString
+	Access       mysql.ColumnString
 	Schema       mysql.ColumnString
 	CreatorID    mysql.ColumnInteger
 	CreatorJob   mysql.ColumnString
@@ -78,11 +79,12 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		DescriptionColumn  = mysql.StringColumn("description")
 		ContentTitleColumn = mysql.StringColumn("content_title")
 		ContentColumn      = mysql.StringColumn("content")
+		AccessColumn       = mysql.StringColumn("access")
 		SchemaColumn       = mysql.StringColumn("schema")
 		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn   = mysql.StringColumn("creator_job")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, SchemaColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, SchemaColumn, CreatorIDColumn, CreatorJobColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AccessColumn, SchemaColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AccessColumn, SchemaColumn, CreatorIDColumn, CreatorJobColumn}
 	)
 
 	return fivenetDocumentsTemplatesTable{
@@ -98,6 +100,7 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		Description:  DescriptionColumn,
 		ContentTitle: ContentTitleColumn,
 		Content:      ContentColumn,
+		Access:       AccessColumn,
 		Schema:       SchemaColumn,
 		CreatorID:    CreatorIDColumn,
 		CreatorJob:   CreatorJobColumn,

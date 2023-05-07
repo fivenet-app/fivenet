@@ -60,6 +60,11 @@ export class Template extends jspb.Message {
   clearJobAccessList(): Template;
   addJobAccess(value?: TemplateJobAccess, index?: number): TemplateJobAccess;
 
+  getContentAccess(): resources_documents_documents_pb.DocumentAccess | undefined;
+  setContentAccess(value?: resources_documents_documents_pb.DocumentAccess): Template;
+  hasContentAccess(): boolean;
+  clearContentAccess(): Template;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Template.AsObject;
   static toObject(includeInstance: boolean, msg: Template): Template.AsObject;
@@ -83,6 +88,7 @@ export namespace Template {
     creator?: resources_users_users_pb.UserShort.AsObject,
     job: string,
     jobAccessList: Array<TemplateJobAccess.AsObject>,
+    contentAccess?: resources_documents_documents_pb.DocumentAccess.AsObject,
   }
 
   export enum CreatedAtCase { 

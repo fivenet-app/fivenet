@@ -4,7 +4,7 @@ import { object, string } from 'yup';
 import { toTypedSchema } from '@vee-validate/yup';
 import { CreateTemplateRequest, GetTemplateRequest, UpdateTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { RpcError } from 'grpc-web';
-import { Template, ObjectSpecs, TemplateRequirements, TemplateSchema } from '@fivenet/gen/resources/documents/templates_pb';
+import { Template, ObjectSpecs, TemplateRequirements, TemplateSchema, TemplateJobAccess } from '@fivenet/gen/resources/documents/templates_pb';
 import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
 import { TemplateSchemaEditorValue, ObjectSpecsValue } from './TemplateSchemaEditor.vue';
 import { useNotificationsStore } from '~/store/notifications';
@@ -17,6 +17,8 @@ import {
     PlusIcon,
 } from '@heroicons/vue/20/solid';
 import { useAuthStore } from '~/store/auth';
+import { DocumentAccess, DocumentJobAccess, DocumentUserAccess } from '@fivenet/gen/resources/documents/documents_pb';
+import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
 
 const { $grpc } = useNuxtApp();
 const { t } = useI18n();
@@ -33,7 +35,7 @@ const props = defineProps({
 
 const activeChar = computed(() => authStore.getActiveChar);
 
-const maxAccessEntries = 5;
+const maxAccessEntries = 10;
 
 const title = ref<string>('');
 const description = ref<string>('');
@@ -61,7 +63,7 @@ const schema = ref<TemplateSchemaEditorValue>({
 const access = ref<Map<number, { id: number, type: number, values: { job?: string, accessrole?: ACCESS_LEVEL, minimumrank?: number } }>>(new Map());
 
 const accessTypes = [
-    { id: 1, name: 'Jobs' },
+    { id: 1, name: t('common.job', 2) },
 ];
 
 function addAccessEntry(): void {
@@ -135,6 +137,84 @@ function updateAccessEntryAccess(event: {
     access.value.set(event.id, accessEntry);
 }
 
+const contentAccess = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: ACCESS_LEVEL, minimumrank?: number } }>>(new Map());
+
+const contentAccessTypes = [
+    { id: 0, name: t('common.citizen', 2) },
+    { id: 1, name: t('common.job', 2) },
+];
+
+function addContentAccessEntry(): void {
+    if (contentAccess.value.size > maxAccessEntries - 1) {
+        notifications.dispatchNotification({
+            title: t('notifications.max_access_entry.title'),
+            content: t('notifications.max_access_entry.content', [maxAccessEntries]),
+            type: 'error'
+        });
+        return;
+    }
+
+    let id = contentAccess.value.size > 0 ? [...contentAccess.value.keys()].pop() as number + 1 : 0;
+    contentAccess.value.set(id, {
+        id,
+        type: 1,
+        values: {}
+    })
+}
+
+function removeContentAccessEntry(event: {
+    id: number
+}): void {
+    contentAccess.value.delete(event.id);
+}
+
+function updateContentAccessEntryType(event: {
+    id: number,
+    type: number
+}): void {
+    const accessEntry = contentAccess.value.get(event.id);
+    if (!accessEntry) return;
+
+    accessEntry.type = event.type;
+    contentAccess.value.set(event.id, accessEntry);
+}
+
+function updateContentAccessEntryName(event: {
+    id: number,
+    job?: Job,
+}): void {
+    const accessEntry = contentAccess.value.get(event.id);
+    if (!accessEntry) return;
+
+    if (event.job) {
+        accessEntry.values.job = event.job.getName();
+
+        contentAccess.value.set(event.id, accessEntry);
+    }
+}
+
+function updateContentAccessEntryRank(event: {
+    id: number,
+    rank: JobGrade
+}): void {
+    const accessEntry = contentAccess.value.get(event.id);
+    if (!accessEntry) return;
+
+    accessEntry.values.minimumrank = event.rank.getGrade();
+    contentAccess.value.set(event.id, accessEntry);
+}
+
+function updateContentAccessEntryAccess(event: {
+    id: number,
+    access: ACCESS_LEVEL
+}): void {
+    const accessEntry = contentAccess.value.get(event.id);
+    if (!accessEntry) return;
+
+    accessEntry.values.accessrole = event.access;
+    contentAccess.value.set(event.id, accessEntry);
+}
+
 const entriesRank = ref<JobGrade[]>([]);
 const filteredRank = ref<JobGrade[]>([]);
 const queryRank = ref('');
@@ -167,10 +247,50 @@ async function createTemplate(): Promise<void> {
 
         const tSchema = new TemplateSchema();
         tSchema.setRequirements(tRequirements);
-
         tpl.setSchema(tSchema);
-
         req.setTemplate(tpl);
+
+        const jobAccesses = new Array<TemplateJobAccess>();
+        access.value.forEach(entry => {
+            if (entry.values.accessrole === undefined) return;
+
+            if (entry.type === 1) {
+                if (!entry.values.job) return;
+
+                const job = new TemplateJobAccess();
+                job.setJob(entry.values.job);
+                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
+                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
+
+                jobAccesses.push(job);
+            }
+        });
+        tpl.setJobAccessList(jobAccesses);
+
+        const reqAccess = new DocumentAccess();
+        contentAccess.value.forEach(entry => {
+            if (entry.values.accessrole === undefined) return;
+
+            if (entry.type === 0) {
+                if (!entry.values.char) return;
+
+                const user = new DocumentUserAccess();
+                user.setUserId(entry.values.char);
+                user.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
+
+                reqAccess.addUsers(user);
+            } else if (entry.type === 1) {
+                if (!entry.values.job) return;
+
+                const job = new DocumentJobAccess();
+                job.setJob(entry.values.job);
+                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
+                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
+
+                reqAccess.addJobs(job);
+            }
+        });
+        tpl.setContentAccess(reqAccess);
 
         try {
             const resp = await $grpc.getDocStoreClient().
@@ -255,6 +375,7 @@ onMounted(async () => {
     if (props.templateId) {
         const req = new GetTemplateRequest();
         req.setTemplateId(props.templateId);
+        req.setRender(false);
 
         try {
             const resp = (await $grpc.getDocStoreClient().getTemplate(req, null)).getTemplate();
@@ -319,6 +440,22 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                     v-model="description" />
                 <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
             </div>
+            <div class="my-3">
+                <h2 class="text-neutral">
+                    {{ $t('common.template') }} {{ $t('common.access') }}
+                </h2>
+                <DocumentAccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry"
+                    :access-types="accessTypes" :access-roles="[ACCESS_LEVEL.VIEW, ACCESS_LEVEL.EDIT]"
+                    @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
+                    @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
+                    @deleteRequest="removeAccessEntry($event)" />
+                <button type="button"
+                    class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                    data-te-toggle="tooltip" :title="$t('components.documents.document_editor.add_permission')"
+                    @click="addAccessEntry()">
+                    <PlusIcon class="w-5 h-5" aria-hidden="true" />
+                </button>
+            </div>
             <label for="contentTitle" class="block font-medium text-sm mt-2">
                 {{ $t('common.content') }} {{ $t('common.title') }}
             </label>
@@ -351,16 +488,18 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 <TemplateSchemaEditor v-model="schema" class="mt-2" />
             </div>
             <div class="my-3">
-                <h2 class="text-neutral">{{ $t('common.access') }}</h2>
-                <DocumentAccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry"
-                    :access-types="accessTypes" :access-roles="[ACCESS_LEVEL.VIEW, ACCESS_LEVEL.EDIT]"
-                    @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
-                    @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
-                    @deleteRequest="removeAccessEntry($event)" />
+                <h2 class="text-neutral">
+                    {{ $t('common.content') }} {{ $t('common.access') }}
+                </h2>
+                <DocumentAccessEntry v-for="entry in contentAccess.values()" :key="entry.id" :init="entry"
+                    :access-types="contentAccessTypes" @typeChange="updateContentAccessEntryType($event)"
+                    @nameChange="updateContentAccessEntryName($event)" @rankChange="updateContentAccessEntryRank($event)"
+                    @accessChange="updateContentAccessEntryAccess($event)"
+                    @deleteRequest="removeContentAccessEntry($event)" />
                 <button type="button"
                     class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                     data-te-toggle="tooltip" :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addAccessEntry()">
+                    @click="addContentAccessEntry()">
                     <PlusIcon class="w-5 h-5" aria-hidden="true" />
                 </button>
             </div>

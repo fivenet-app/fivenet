@@ -103,6 +103,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		).
 		ORDER_BY(
 			docs.CreatedAt.DESC(),
+			docs.UpdatedAt.DESC(),
 		)
 }
 

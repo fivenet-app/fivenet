@@ -239,7 +239,8 @@ proto.resources.documents.Template.toObject = function(includeInstance, msg) {
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f),
     job: jspb.Message.getFieldWithDefault(msg, 12, ""),
     jobAccessList: jspb.Message.toObjectList(msg.getJobAccessList(),
-    proto.resources.documents.TemplateJobAccess.toObject, includeInstance)
+    proto.resources.documents.TemplateJobAccess.toObject, includeInstance),
+    contentAccess: (f = msg.getContentAccess()) && resources_documents_documents_pb.DocumentAccess.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -333,6 +334,11 @@ proto.resources.documents.Template.deserializeBinaryFromReader = function(msg, r
       var value = new proto.resources.documents.TemplateJobAccess;
       reader.readMessage(value,proto.resources.documents.TemplateJobAccess.deserializeBinaryFromReader);
       msg.addJobAccess(value);
+      break;
+    case 14:
+      var value = new resources_documents_documents_pb.DocumentAccess;
+      reader.readMessage(value,resources_documents_documents_pb.DocumentAccess.deserializeBinaryFromReader);
+      msg.setContentAccess(value);
       break;
     default:
       reader.skipField();
@@ -458,6 +464,14 @@ proto.resources.documents.Template.serializeBinaryToWriter = function(message, w
       13,
       f,
       proto.resources.documents.TemplateJobAccess.serializeBinaryToWriter
+    );
+  }
+  f = message.getContentAccess();
+  if (f != null) {
+    writer.writeMessage(
+      14,
+      f,
+      resources_documents_documents_pb.DocumentAccess.serializeBinaryToWriter
     );
   }
 };
@@ -809,6 +823,43 @@ proto.resources.documents.Template.prototype.addJobAccess = function(opt_value, 
  */
 proto.resources.documents.Template.prototype.clearJobAccessList = function() {
   return this.setJobAccessList([]);
+};
+
+
+/**
+ * optional DocumentAccess content_access = 14;
+ * @return {?proto.resources.documents.DocumentAccess}
+ */
+proto.resources.documents.Template.prototype.getContentAccess = function() {
+  return /** @type{?proto.resources.documents.DocumentAccess} */ (
+    jspb.Message.getWrapperField(this, resources_documents_documents_pb.DocumentAccess, 14));
+};
+
+
+/**
+ * @param {?proto.resources.documents.DocumentAccess|undefined} value
+ * @return {!proto.resources.documents.Template} returns this
+*/
+proto.resources.documents.Template.prototype.setContentAccess = function(value) {
+  return jspb.Message.setWrapperField(this, 14, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.resources.documents.Template} returns this
+ */
+proto.resources.documents.Template.prototype.clearContentAccess = function() {
+  return this.setContentAccess(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.resources.documents.Template.prototype.hasContentAccess = function() {
+  return jspb.Message.getField(this, 14) != null;
 };
 
 

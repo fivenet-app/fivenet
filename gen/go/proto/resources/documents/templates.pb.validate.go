@@ -219,6 +219,35 @@ func (m *Template) validate(all bool) error {
 
 	}
 
+	if all {
+		switch v := interface{}(m.GetContentAccess()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TemplateValidationError{
+					field:  "ContentAccess",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TemplateValidationError{
+					field:  "ContentAccess",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetContentAccess()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TemplateValidationError{
+				field:  "ContentAccess",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {

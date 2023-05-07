@@ -47,7 +47,10 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 
 	var condition jet.BoolExpression
 	if req.Search != "" {
-		condition = jet.BoolExp(jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN NATURAL LANGUAGE MODE)", jet.RawArgs{"$search": req.Search}))
+		condition = jet.BoolExp(
+			jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN BOOLEAN MODE)",
+				jet.RawArgs{"$search": req.Search}),
+		)
 	} else {
 		condition = jet.Bool(true)
 	}
@@ -62,6 +65,9 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
 		FROM(user).
 		WHERE(condition).
+		ORDER_BY(
+			user.Lastname.DESC(),
+		).
 		LIMIT(15)
 
 	resp := &CompleteCitizensRespoonse{}
