@@ -22,12 +22,13 @@ var (
 )
 
 type Perm struct {
-	Key         string
-	Name        string
-	Description string
-	Fields      []string
-	PerJob      bool
-	PerJobGrade bool
+	Key          string
+	Name         string
+	Description  string
+	Fields       []string
+	PerJob       bool
+	PerJobGrade  bool
+	PerJobFields []string
 }
 
 func AddPermsToList(perms []*Perm) {
@@ -93,14 +94,21 @@ func (p *Perms) Register() error {
 						return err
 					}
 				}
-			}
-			continue
-		}
 
-		for _, field := range perm.Fields {
-			pJobField := fmt.Sprintf("%s.%s", pName, field)
-			if err := p.createOrUpdatePermission(pJobField, perm.Description); err != nil {
-				return err
+				for _, field := range perm.PerJobFields {
+					pJobField := fmt.Sprintf("%s.%s.%s", pName, field, job)
+					_ = pJobField
+					//if err := p.createOrUpdatePermission(pJobField, perm.Description); err != nil {
+					//	return err
+					//}
+				}
+			}
+		} else {
+			for _, field := range perm.Fields {
+				pJobField := fmt.Sprintf("%s.%s", pName, field)
+				if err := p.createOrUpdatePermission(pJobField, perm.Description); err != nil {
+					return err
+				}
 			}
 		}
 	}

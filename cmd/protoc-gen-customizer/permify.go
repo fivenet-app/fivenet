@@ -124,11 +124,12 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 	comment = strings.TrimPrefix(comment, "@perm")
 
 	perm := &Perm{
-		Name:        method,
-		Description: "",
-		Fields:      []string{},
-		PerJob:      false,
-		PerJobGrade: false,
+		Name:         method,
+		Description:  "",
+		Fields:       []string{},
+		PerJob:       false,
+		PerJobGrade:  false,
+		PerJobFields: []string{},
 	}
 
 	if comment == "" {
@@ -150,6 +151,15 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 		case "name":
 			perm.Name = v
 			continue
+		case "description":
+			if !strings.Contains(v, "\"") {
+				v = "\"" + v + "\""
+			}
+			perm.Description = v
+			continue
+		case "fields":
+			perm.Fields = strings.Split(v, ",")
+			continue
 		case "perjob":
 			bo, err := strconv.ParseBool(v)
 			if err != nil {
@@ -164,15 +174,8 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 			}
 			perm.PerJobGrade = bo
 			continue
-		case "description":
-			if !strings.Contains(v, "\"") {
-				v = "\"" + v + "\""
-			}
-			perm.Description = v
-			continue
-		case "fields":
-			fields := strings.Split(v, ",")
-			perm.Fields = fields
+		case "perjobfields":
+			perm.PerJobFields = strings.Split(v, ",")
 			continue
 		}
 	}
@@ -221,6 +224,8 @@ func init() {
 			Name: "{{ $perm.Name }}",
 			{{- if $perm.PerJob }}
             PerJob: {{ $perm.PerJob }},{{ end }}
+            {{- if $perm.PerJobFields }}
+            PerJobFields: []string{ {{ range $i, $field := $perm.PerJobFields }}"{{ $field }}",{{ end -}} },{{ end }}
             {{- if $perm.PerJobGrade }}
             PerJobGrade: {{ $perm.PerJobGrade }},{{ end }}
 			{{- if $perm.Fields }}
@@ -235,10 +240,11 @@ func init() {
 `
 
 type Perm struct {
-	Key         string
-	Name        string
-	Description string
-	Fields      []string
-	PerJob      bool
-	PerJobGrade bool
+	Key          string
+	Name         string
+	Description  string
+	Fields       []string
+	PerJob       bool
+	PerJobGrade  bool
+	PerJobFields []string
 }

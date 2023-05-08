@@ -1167,13 +1167,13 @@
     hookable "^5.5.3"
     unhead "1.1.26"
 
-"@vee-validate/yup@^4.9.0":
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/@vee-validate/yup/-/yup-4.9.0.tgz#e3553578a7b76c685e696ced161509d67c894581"
-  integrity sha512-SwSxHDyZnq+xFlu+To8K67HqIHYVJc5ygzrsjeuIiWP0S46vasSHSDM0bOqPFS2f+EzaiuVH4u4gP50nunaQXA==
+"@vee-validate/yup@^4.9.1":
+  version "4.9.1"
+  resolved "https://registry.yarnpkg.com/@vee-validate/yup/-/yup-4.9.1.tgz#f8d2bb1f11d0a493766a9369235bce154a1b6107"
+  integrity sha512-i4O/s9gmTpzotxJoAcOUGYQZWsem741WBah2gbJH6WjanSPzbvg/U/hp3ZSbRt3xhIurjlS4mrK+oUJUcHKWZw==
   dependencies:
     type-fest "^3.10.0"
-    vee-validate "^4.9.0"
+    vee-validate "^4.9.1"
     yup "^1.1.1"
 
 "@vercel/nft@^0.22.6":
@@ -6458,12 +6458,13 @@ vary@^1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-vee-validate@^4.9.0:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.9.0.tgz#0d95048083d21b0fa4082a596fabc73a455f16c7"
-  integrity sha512-ewQg+r/TsB0gqmcBwigAKcMX9BQEiTxwefb7srm2FLmZakM0JyssTtMz/LCarffc6ny4/PHZ0WBREQvq6gO28A==
+vee-validate@^4.9.1:
+  version "4.9.1"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.9.1.tgz#d1e609948cbf1912ecbeca8793d9bb49639458a4"
+  integrity sha512-41uOQ0DA0NZnqhr4EnOGyg/5mq85tfymxYp14kbPI0mDTBOq5H1dkXl4NYehIIVXUMZAEPjk4QJGirbFxzOCWA==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
+    type-fest "^3.10.0"
 
 vite-node@^0.30.1:
   version "0.30.1"

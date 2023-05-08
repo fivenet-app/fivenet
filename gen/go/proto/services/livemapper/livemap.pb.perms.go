@@ -13,10 +13,11 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: LivemapperService
 		{
-			Key:         LivemapperServicePermKey,
-			Name:        "Stream",
-			PerJob:      true,
-			Description: "Being able to view the Livemap",
+			Key:          LivemapperServicePermKey,
+			Name:         "Stream",
+			PerJob:       true,
+			PerJobFields: []string{"Dispatches", "Players"},
+			Description:  "Being able to view the Livemap",
 		},
 	})
 }

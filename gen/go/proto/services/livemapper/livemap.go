@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	DispatchMarkerLimit = 40
+	DispatchMarkerLimit = 60
 )
 
 var (

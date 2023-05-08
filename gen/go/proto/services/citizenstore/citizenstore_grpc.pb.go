@@ -22,13 +22,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CitizenStoreServiceClient interface {
-	// @perm: fields=PhoneNumber,Licenses,UserProps.Wanted,UserProps.Job;description="Citizens List and Search"
+	// @perm: Fields=PhoneNumber,Licenses,UserProps.Wanted,UserProps.Job;description="Citizens List and Search"
 	ListCitizens(ctx context.Context, in *ListCitizensRequest, opts ...grpc.CallOption) (*ListCitizensResponse, error)
 	// @perm: PerJob=true;PerJobGrade=true;description="See a user's profile/ up to a certain job rank"
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
-	// @perm: fields=SourceUser;description="Citizen Info Activity Feed"
+	// @perm: Fields=SourceUser;description="Citizen Info Activity Feed"
 	ListUserActivity(ctx context.Context, in *ListUserActivityRequest, opts ...grpc.CallOption) (*ListUserActivityResponse, error)
-	// @perm: fields=Wanted,Job;description="Set Citizen Props (e.g., wanted status)"
+	// @perm: Fields=Wanted,Job;description="Set Citizen Props (e.g., wanted status)"
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 }
 
@@ -80,13 +80,13 @@ func (c *citizenStoreServiceClient) SetUserProps(ctx context.Context, in *SetUse
 // All implementations must embed UnimplementedCitizenStoreServiceServer
 // for forward compatibility
 type CitizenStoreServiceServer interface {
-	// @perm: fields=PhoneNumber,Licenses,UserProps.Wanted,UserProps.Job;description="Citizens List and Search"
+	// @perm: Fields=PhoneNumber,Licenses,UserProps.Wanted,UserProps.Job;description="Citizens List and Search"
 	ListCitizens(context.Context, *ListCitizensRequest) (*ListCitizensResponse, error)
 	// @perm: PerJob=true;PerJobGrade=true;description="See a user's profile/ up to a certain job rank"
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
-	// @perm: fields=SourceUser;description="Citizen Info Activity Feed"
+	// @perm: Fields=SourceUser;description="Citizen Info Activity Feed"
 	ListUserActivity(context.Context, *ListUserActivityRequest) (*ListUserActivityResponse, error)
-	// @perm: fields=Wanted,Job;description="Set Citizen Props (e.g., wanted status)"
+	// @perm: Fields=Wanted,Job;description="Set Citizen Props (e.g., wanted status)"
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	mustEmbedUnimplementedCitizenStoreServiceServer()
 }
