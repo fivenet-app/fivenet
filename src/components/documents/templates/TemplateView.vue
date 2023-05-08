@@ -99,6 +99,17 @@ async function editTemplate(): Promise<void> {
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             disabled :value="template.getContent()" />
                     </div>
+                    <div v-if="template.hasCategory()">
+                        <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
+                            {{ $t('common.category') }}
+                        </label>
+                        <div class="mt-2">
+                            <p class="text-sm font-medium leading-6 text-gray-100">
+                                {{ template.getCategory()?.getName() }} ({{ $t('common.description') }}: {{
+                                    template.getCategory()?.getDescription() }})
+                            </p>
+                        </div>
+                    </div>
                     <div v-if="reqs">
                         <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                             {{ $t('common.schema') }}
