@@ -2,7 +2,6 @@ package perms
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/pkg/dbutils"
@@ -28,8 +27,6 @@ func (p *Perms) GetRoles(prefix string) (collections.Roles, error) {
 			jet.LENGTH(ar.GuardName),
 			ar.GuardName.ASC(),
 		)
-
-	fmt.Println(stmt.DebugSql())
 
 	var dest collections.Roles
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {

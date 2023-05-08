@@ -89,7 +89,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		}
 	}
 	if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps", "Job") {
-		selectors = append(selectors, userProps.Job.AS("jobname"))
+		selectors = append(selectors, userProps.Job)
 	}
 
 	req.SearchName = strings.TrimSpace(req.SearchName)
