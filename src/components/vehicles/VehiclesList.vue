@@ -139,7 +139,7 @@ watch(selectedChar, () => {
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <form @submit.prevent="listVehicles()">
+                    <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">

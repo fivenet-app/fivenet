@@ -35,7 +35,7 @@ const config = defineNuxtConfig({
         '@nuxtjs/robots',
         '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',
-        '@kevinmarrec/nuxt-pwa',
+        '@vite-pwa/nuxt',
     ],
     pinia: {
         autoImports: [
@@ -54,24 +54,22 @@ const config = defineNuxtConfig({
         },
     },
     pwa: {
-        icon: {
-            fileName: './images/logo.png',
-            splash: {
-                backgroundColor: colors.background,
-                devices: [],
-                targetDir: 'splash',
-            },
-        },
         manifest: {
+            icons: [
+                {
+                    src: './images/logo.png',
+                    sizes: '1400x1400',
+                },
+            ],
             name: project.name,
             short_name: project.shortName,
             description: project.description,
             background_color: colors.background,
             theme_color: colors.themeColor,
+            display: 'browser',
         },
-        meta: {
-            name: project.name,
-            theme_color: colors.themeColor,
+        client: {
+            periodicSyncForUpdates: 2* (60 * 60 * 1000),
         },
     },
     piniaPersistedstate: {

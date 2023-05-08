@@ -28,6 +28,14 @@ const perms = computed(() => authStore.getPermissions);
                         {{ activeChar.getUserId() }}
                     </dd>
                 </div>
+                <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                    <dt class="text-sm font-medium">
+                        {{ $t('common.job') }}
+                    </dt>
+                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                        {{ activeChar.getJob() }} ({{ $t('common.rank') }}: {{ activeChar.getJobGrade() }})
+                    </dd>
+                </div>
                 <div v-if="accessTokenExpiration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.access_token_expiration') }}

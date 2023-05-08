@@ -86,6 +86,7 @@ async function createRole(): Promise<void> {
                 content: t('notifications.rector.role_created.content'),
                 type: 'success'
             });
+
             await navigateTo({ name: 'rector-roles-id', params: { id: role.getRole()?.getId()!, } });
 
             return res();
@@ -147,7 +148,7 @@ onMounted(async () => {
                                 </div>
                                 <div class="flex-initial form-control flex flex-col justify-end"
                                     v-can="'RectorService.CreateRole'">
-                                    <button @click="createRole()"
+                                    <button type="submit"
                                         :disabled="selectedJobGrade && selectedJobGrade.getGrade() <= 0"
                                         class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                         Create

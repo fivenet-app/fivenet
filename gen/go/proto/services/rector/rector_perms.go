@@ -13,6 +13,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
@@ -49,10 +50,13 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 }
 
 func (s *Server) filterPermissions(ctx context.Context, perms collections.Permissions, jobFilter bool) (collections.Permissions, error) {
-	userId := auth.GetUserIDFromContext(ctx)
+	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, "RectorService.GetPermissions")
 	if err != nil {
 		return nil, err
+	}
+	if !utils.InStringSlice(jobs, job) {
+		jobs = append(jobs, job)
 	}
 
 	// Disable job filter when superuser

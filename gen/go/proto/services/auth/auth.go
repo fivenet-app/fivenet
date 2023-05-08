@@ -290,6 +290,14 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		return nil, AccountCreateFailedErr
 	}
 
+	var char *users.User
+	if claims.ActiveCharID > 0 {
+		char, _, err = s.getCharacter(ctx, claims.ActiveCharID)
+		if err != nil {
+			return nil, ChangePasswordErr
+		}
+	}
+
 	pass := string(hashedPassword)
 	acc.Password = &pass
 
@@ -308,7 +316,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		return nil, UpdateAccountErr
 	}
 
-	newToken, newClaims, err := s.createTokenFromAccountAndChar(acc, nil)
+	newToken, newClaims, err := s.createTokenFromAccountAndChar(acc, char)
 	if err != nil {
 		return nil, ChangePasswordErr
 	}

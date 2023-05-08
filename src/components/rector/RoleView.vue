@@ -140,6 +140,9 @@ async function saveAddPermissions(): Promise<void> {
         try {
             await $grpc.getRectorClient().
                 addPermToRole(req, null);
+
+            permsToAdd.value.length = 0;
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -163,6 +166,9 @@ async function saveRemovePermissions(): Promise<void> {
         try {
             await $grpc.getRectorClient().
                 removePermFromRole(req, null);
+
+            permsToRemove.value.length = 0;
+
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -256,7 +262,7 @@ watchDebounced(queryPerm, async () => applyQuery(), { debounce: 750, maxWait: 12
                                         </button>
                                     </div>
                                     <div class="flex-initial form-control flex flex-col justify-end">
-                                        <button @click="saveRolePermissions()"
+                                        <button type="button" @click="saveRolePermissions()"
                                             :disabled="permsToAdd.length === 0 && permsToRemove.length === 0"
                                             class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-success-600 text-neutral hover:bg-success-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-600">
                                             {{ $t('common.save', 1) }}
