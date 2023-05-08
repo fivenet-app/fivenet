@@ -42,6 +42,7 @@ async function getJobs(): Promise<Array<Job>> {
     return new Promise(async (res, rej) => {
         const req = new CompleteJobsRequest();
         req.setSearch(queryJob.value);
+
         try {
             const resp = await $grpc.getCompletorClient().
                 completeJobs(req, null);
@@ -74,6 +75,9 @@ watch(selectedJob, async () => {
 
     try {
         await $grpc.getCitizenStoreClient().setUserProps(req, null);
+
+        props.user.setJob(selectedJob.value?.getName()!);
+        props.user.setJobLabel(selectedJob.value?.getLabel()!);
 
         notifications.dispatchNotification({
             title: t('notifications.action_successfull.title'),

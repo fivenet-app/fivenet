@@ -420,7 +420,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, status.Error(codes.PermissionDenied, "Invalid job set!")
 		}
 
-		updateSets = append(updateSets, userProps.Job.SET(jet.String(resp.Props.Job.Name)))
+		updateSets = append(updateSets, userProps.Job.SET(jet.String(*req.Props.JobName)))
 	} else {
 		req.Props.JobName = props.JobName
 	}
@@ -461,7 +461,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	if req.Props.JobName != props.JobName {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job", *props.JobName, req.Props.Job.Name); err != nil {
+			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job", *props.JobName, *req.Props.JobName); err != nil {
 			return nil, FailedQueryErr
 		}
 	}

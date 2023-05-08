@@ -65,7 +65,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	req.JobProps.LivemapMarkerColor = strings.ReplaceAll(req.JobProps.LivemapMarkerColor, "#", "")
 
 	if !s.validateJobPropsQuickButtons(req.JobProps.QuickButtons) {
-		return nil, status.Error(codes.InvalidArgument, "Invalid component button found!")
+		return nil, status.Error(codes.InvalidArgument, "Invalid quick access button found!")
 	}
 
 	stmt := jobProps.
@@ -97,6 +97,10 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 }
 
 func (s *Server) validateJobPropsQuickButtons(in string) bool {
+	if in == "" {
+		return true
+	}
+
 	for _, comp := range strings.Split(in, ";") {
 		if comp != "PenaltyCalculator" {
 			return false
