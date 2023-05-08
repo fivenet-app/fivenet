@@ -92,11 +92,14 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		selectors = append(selectors, userProps.Job.AS("jobname"))
 	}
 
+	req.SearchName = strings.TrimSpace(req.SearchName)
 	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
+	req.SearchName = strings.ReplaceAll(req.SearchName, " ", "%")
 	if req.SearchName != "" {
-		condition = condition.AND(jet.BoolExp(
-			jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN BOOLEAN MODE)",
-				jet.RawArgs{"$search": req.SearchName})),
+		req.SearchName = "%" + req.SearchName + "%"
+		condition = condition.AND(
+			jet.CONCAT(user.Firstname, jet.String(" "), user.Lastname).
+				LIKE(jet.String(req.SearchName)),
 		)
 	}
 
@@ -139,7 +142,8 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		ORDER_BY(
-			user.Lastname.DESC(),
+			user.Firstname.ASC(),
+			user.Lastname.ASC(),
 		).
 		LIMIT(limit)
 

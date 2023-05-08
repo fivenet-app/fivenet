@@ -43,13 +43,16 @@ func NewServer(db *sql.DB, p perms.Permissions, data *mstlystcdata.Cache) *Serve
 }
 
 func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequest) (*CompleteCitizensRespoonse, error) {
-	req.Search = strings.ToLower(strings.TrimSpace(req.Search))
+	req.Search = strings.TrimSpace(req.Search)
+	req.Search = strings.ReplaceAll(req.Search, "%", "")
+	req.Search = strings.ReplaceAll(req.Search, " ", "%")
 
 	var condition jet.BoolExpression
 	if req.Search != "" {
-		condition = jet.BoolExp(
-			jet.Raw("MATCH(firstname,lastname) AGAINST ($search IN BOOLEAN MODE)",
-				jet.RawArgs{"$search": req.Search}),
+		req.Search = "%" + req.Search + "%"
+		condition = condition.AND(
+			jet.CONCAT(user.Firstname, jet.String(" "), user.Lastname).
+				LIKE(jet.String(req.Search)),
 		)
 	} else {
 		condition = jet.Bool(true)
