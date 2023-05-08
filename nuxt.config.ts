@@ -12,6 +12,17 @@ const version: string = (JSON.parse(packageJson.toString()) as PackageJson).vers
 
 mkcert();
 
+const project = {
+    name: 'FiveNet',
+    shortName: 'FiveNet',
+    description:
+        "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a livemap of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet.",
+};
+const colors = {
+    background: '#16171a',
+    themeColor: '#1f236e',
+};
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 const config = defineNuxtConfig({
     srcDir: 'src/',
@@ -21,8 +32,10 @@ const config = defineNuxtConfig({
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         'nuxt-typed-router',
+        '@nuxtjs/robots',
         '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',
+        '@kevinmarrec/nuxt-pwa',
     ],
     pinia: {
         autoImports: [
@@ -32,6 +45,34 @@ const config = defineNuxtConfig({
             'acceptHMRUpdate', // import { acceptHMRUpdate } from 'pinia'
             'storeToRefs',
         ],
+    },
+    robots: {
+        rules: {
+            UserAgent: '*',
+            Disallow: '/',
+            Allow: ['/$', '/index.html'],
+        },
+    },
+    pwa: {
+        icon: {
+            fileName: './images/logo.png',
+            splash: {
+                backgroundColor: colors.background,
+                devices: [],
+                targetDir: 'splash',
+            },
+        },
+        manifest: {
+            name: project.name,
+            short_name: project.shortName,
+            description: project.description,
+            background_color: colors.background,
+            theme_color: colors.themeColor,
+        },
+        meta: {
+            name: project.name,
+            theme_color: colors.themeColor,
+        },
     },
     piniaPersistedstate: {
         storage: 'localStorage',
