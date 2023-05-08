@@ -8,6 +8,7 @@ definePageMeta({
     title: 'pages.rector.roles.title',
     requiresAuth: true,
     permission: 'RectorService.GetRoles',
+    showQuickButtons: false,
 });
 </script>
 

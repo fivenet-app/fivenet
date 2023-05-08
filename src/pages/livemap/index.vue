@@ -9,9 +9,10 @@ useHead({
 });
 definePageMeta({
     title: 'common.livemap',
+    layout: 'blank',
     requiresAuth: true,
     permission: 'LivemapperService.Stream',
-    layout: 'blank',
+    showQuickButtons: false,
 });
 </script>
 

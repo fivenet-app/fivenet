@@ -4,6 +4,7 @@ declare module '#app' {
         requiresAuth?: boolean;
         permission?: String;
         authOnlyToken?: boolean;
+        showQuickButtons?: boolean;
     }
 }
 

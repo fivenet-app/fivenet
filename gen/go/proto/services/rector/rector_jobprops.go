@@ -64,7 +64,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 
 	req.JobProps.LivemapMarkerColor = strings.ReplaceAll(req.JobProps.LivemapMarkerColor, "#", "")
 
-	if !s.validateJobPropsComponentButtons(req.JobProps.ComponentButtons) {
+	if !s.validateJobPropsQuickButtons(req.JobProps.QuickButtons) {
 		return nil, status.Error(codes.InvalidArgument, "Invalid component button found!")
 	}
 
@@ -73,18 +73,18 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			jobProps.Job,
 			jobProps.Theme,
 			jobProps.LivemapMarkerColor,
-			jobProps.ComponentButtons,
+			jobProps.QuickButtons,
 		).
 		VALUES(
 			req.JobProps.Job,
 			req.JobProps.Theme,
 			req.JobProps.LivemapMarkerColor,
-			req.JobProps.ComponentButtons,
+			req.JobProps.QuickButtons,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			jobProps.Theme.SET(jet.String(req.JobProps.Theme)),
 			jobProps.LivemapMarkerColor.SET(jet.String(req.JobProps.LivemapMarkerColor)),
-			jobProps.ComponentButtons.SET(jet.String(req.JobProps.ComponentButtons)),
+			jobProps.QuickButtons.SET(jet.String(req.JobProps.QuickButtons)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -96,7 +96,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	return &SetJobPropsResponse{}, nil
 }
 
-func (s *Server) validateJobPropsComponentButtons(in string) bool {
+func (s *Server) validateJobPropsQuickButtons(in string) bool {
 	for _, comp := range strings.Split(in, ";") {
 		if comp != "PenaltyCalculator" {
 			return false

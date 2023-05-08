@@ -4,7 +4,7 @@ import { StoreDefinition } from 'pinia';
 import { defineStore } from 'pinia';
 
 export type JobPropsState = {
-    componentButtons: Array<String>;
+    quickButtons: Array<String>;
 };
 
 export interface AuthState {
@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', {
         loginError: null as null | string,
         permissions: [] as Array<String>,
         jobProps: {
-            componentButtons: [],
+            quickButtons: [],
         } as null | JobPropsState,
     }),
     persist: {
@@ -61,8 +61,8 @@ export const useAuthStore = defineStore('auth', {
                 this.jobProps = null;
             } else {
                 this.jobProps = {
-                    componentButtons: jobProps
-                        .getComponentButtons()
+                    quickButtons: jobProps
+                        .getQuickButtons()
                         .split(';')
                         .filter((v) => v !== ''),
                 };

@@ -9,6 +9,7 @@ definePageMeta({
     title: 'pages.rector.roles.id.title',
     requiresAuth: true,
     permission: 'RectorService.GetRoles',
+    showQuickButtons: false,
     validate: async (route) => {
         route = route as TypedRouteFromName<'rector-roles-id'>;
         // Check if the id is made up of digits

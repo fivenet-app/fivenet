@@ -9,6 +9,7 @@ definePageMeta({
     title: 'pages.auth.account_info.title',
     requiresAuth: true,
     authOnlyToken: true,
+    showQuickButtons: false,
 });
 </script>
 

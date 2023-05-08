@@ -16,5 +16,5 @@ type FivenetJobProps struct {
 	UpdatedAt          *time.Time `json:"updated_at"`
 	Theme              *string    `json:"theme"`
 	LivemapMarkerColor *string    `json:"livemap_marker_color"`
-	ComponentButtons   *string    `json:"component_buttons"`
+	QuickButtons       *string    `json:"quick_buttons"`
 }

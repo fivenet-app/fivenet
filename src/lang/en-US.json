@@ -275,7 +275,7 @@
                 "job_properties": "Job Properties",
                 "your_job_properties": "Your job's FiveNet properties.",
                 "livemap_marker_color": "Livemap Marker Color",
-                "component_buttons": "Quick Access Buttons"
+                "quick_buttons": "Quick Access Buttons"
             },
             "role_view": {
                 "add_permission": "Add Permission"

@@ -446,7 +446,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			js.Label.AS("user.job_label"),
 			jobGrades.Label.AS("user.job_grade_label"),
 			jobProps.Theme,
-			jobProps.ComponentButtons,
+			jobProps.QuickButtons,
 		).
 		FROM(
 			user.

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
-import ComponentButton, { ButtonComponents } from './ComponentButton.vue';
+import QuickButton, { ButtonComponents as QuickButtonTypes } from './QuickButton.vue';
 
 const authStore = useAuthStore();
 
@@ -8,5 +8,5 @@ const jobProps = computed(() => authStore.getJobProps);
 </script>
 
 <template>
-    <ComponentButton v-for="prop in jobProps?.componentButtons" :comp="(prop as ButtonComponents)" />
+    <QuickButton v-for="prop in jobProps?.quickButtons" :comp="(prop as QuickButtonTypes)" />
 </template>

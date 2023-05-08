@@ -29,7 +29,7 @@ import {
 import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
 import SidebarJobSwitcher from '~/components/partials/SidebarJobSwitcher.vue';
 import SidebarLanguageSwitcher from '~/components/partials/SidebarLanguageSwitcher.vue';
-import ComponentButtons from './ComponentButtons.vue';
+import QuickButtons from './QuickButtons.vue';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
@@ -409,7 +409,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
             <main class="h-full overflow-y-auto">
                 <section aria-labelledby="primary-heading" class="h-full min-w-0 lg:order-last">
                     <slot></slot>
-                    <ComponentButtons v-if="activeChar" />
+                    <QuickButtons v-if="activeChar && ($route.meta.showQuickButtons === undefined || $route.meta.showQuickButtons)" />
                 </section>
             </main>
         </div>

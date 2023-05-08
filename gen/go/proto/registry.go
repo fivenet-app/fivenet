@@ -159,7 +159,7 @@ func InterceptorLogger(l *zap.Logger) logging.Logger {
 			k, v := iter.At()
 			f = append(f, zap.Any(k, v))
 		}
-		l = l.WithOptions(zap.AddCallerSkip(2)).With(f...)
+		l = l.WithOptions(zap.AddCallerSkip(1)).With(f...)
 
 		switch lvl {
 		case logging.LevelDebug:

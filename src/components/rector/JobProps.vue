@@ -16,13 +16,13 @@ const { t } = useI18n();
 const properties = ref<{
     theme: string;
     livemapMarkerColor: string;
-    componentButtons: {
+    quickButtons: {
         'PenaltyCalculator': boolean,
     };
 }>({
     theme: 'default',
     livemapMarkerColor: '#5C7AFF',
-    componentButtons: {
+    quickButtons: {
         PenaltyCalculator: false
     },
 });
@@ -38,11 +38,11 @@ async function getJobProps(): Promise<JobProps> {
             if (resp.hasJobProps()) {
                 properties.value.livemapMarkerColor = '#' + resp.getJobProps()?.getLivemapMarkerColor();
 
-                const components = resp.getJobProps()!.getComponentButtons().split(';').filter(v => v !== '');
+                const components = resp.getJobProps()!.getQuickButtons().split(';').filter(v => v !== '');
                 components.forEach((v) => {
                     switch (v) {
                         case 'PenaltyCalculator':
-                            properties.value.componentButtons.PenaltyCalculator = true;
+                            properties.value.quickButtons.PenaltyCalculator = true;
                             break;
                         default:
                             break;
@@ -69,11 +69,11 @@ async function saveJobProps(): Promise<void> {
         jProps.setLivemapMarkerColor(properties.value.livemapMarkerColor.substring(1));
 
         // How scuffed do you want this code to be: "Yes"
-        let componentButtons = '';
-        if (properties.value.componentButtons.PenaltyCalculator) {
-            componentButtons += 'PenaltyCalculator;';
+        let quickButtons = '';
+        if (properties.value.quickButtons.PenaltyCalculator) {
+            quickButtons += 'PenaltyCalculator;';
         }
-        jProps.setComponentButtons(componentButtons.replace(/;$/, ''));
+        jProps.setQuickButtons(quickButtons.replace(/;$/, ''));
 
         req.setJobProps(jProps);
 
@@ -138,7 +138,7 @@ async function saveJobProps(): Promise<void> {
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                             <dt class="text-sm font-medium">
-                                {{ $t('components.rector.job_props.component_buttons') }}
+                                {{ $t('components.rector.job_props.quick_buttons') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <fieldset>
@@ -146,7 +146,7 @@ async function saveJobProps(): Promise<void> {
                                         <div class="relative flex items-start">
                                             <div class="flex h-6 items-center">
                                                 <input id="comments" aria-describedby="comments-description" name="comments"
-                                                    type="checkbox" v-model="properties.componentButtons.PenaltyCalculator"
+                                                    type="checkbox" v-model="properties.quickButtons.PenaltyCalculator"
                                                     class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600" />
                                             </div>
                                             <div class="ml-3 text-sm leading-6">

@@ -21,5 +21,5 @@ message JobProps {
   string job = 1 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   string theme = 2 [(validate.rules).string.max_len = 20]; // @gotags: alias:"theme"
   string livemap_marker_color = 3 [(validate.rules).string.max_len = 20]; // @gotags: alias:"livemap_marker_color"
-  string component_buttons = 4; // @gotags: alias:"component_buttons"
+  string quick_buttons = 4; // @gotags: alias:"quick_buttons"
 }

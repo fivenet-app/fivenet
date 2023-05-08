@@ -9,6 +9,7 @@ definePageMeta({
     title: 'pages.auth.character_selector.title',
     requiresAuth: true,
     authOnlyToken: true,
+    showQuickButtons: false,
 });
 </script>
 
