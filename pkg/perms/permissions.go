@@ -30,7 +30,7 @@ func (p *Perms) CreatePermission(name string, description string) error {
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
 
-	if !dbutils.IsDuplicateError(err) {
+	if err != nil && !dbutils.IsDuplicateError(err) {
 		return err
 	}
 

@@ -137,7 +137,7 @@ func (p *Perms) CreateRoleWithGuard(name string, guard string, description strin
 		VALUES(name, guard, description)
 
 	res, err := stmt.ExecContext(p.ctx, p.db)
-	if !dbutils.IsDuplicateError(err) {
+	if err != nil && !dbutils.IsDuplicateError(err) {
 		return nil, err
 	}
 
@@ -204,7 +204,7 @@ func (p *Perms) AddPermissionsToRole(id uint64, perms []uint64) error {
 		MODELS(rolePerms).
 		ExecContext(p.ctx, p.db)
 
-	if !dbutils.IsDuplicateError(err) {
+	if err != nil && !dbutils.IsDuplicateError(err) {
 		return err
 	}
 

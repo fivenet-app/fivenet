@@ -65,7 +65,7 @@ func (p *Perms) AddUserRoles(userId int32, roles ...string) error {
 		)
 
 	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
-		if !dbutils.IsDuplicateError(err) {
+		if err != nil && !dbutils.IsDuplicateError(err) {
 			return err
 		}
 	}

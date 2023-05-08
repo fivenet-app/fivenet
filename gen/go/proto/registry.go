@@ -73,6 +73,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 	})
 	grpcPanicRecoveryHandler := func(p any) (err error) {
 		panicsTotal.Inc()
+
 		logger.Error("recovered from panic", zap.Any("err", p), zap.Stack("stacktrace"))
 		if e, ok := p.(error); ok {
 			sentry.CaptureException(e)
@@ -158,7 +159,7 @@ func InterceptorLogger(l *zap.Logger) logging.Logger {
 			k, v := iter.At()
 			f = append(f, zap.Any(k, v))
 		}
-		l = l.WithOptions(zap.AddCallerSkip(1)).With(f...)
+		l = l.WithOptions(zap.AddCallerSkip(2)).With(f...)
 
 		switch lvl {
 		case logging.LevelDebug:
