@@ -109,6 +109,20 @@ onMounted(async () => {
             doc.value.title = template?.getContentTitle()!;
             doc.value.content = template?.getContent()!;
             selectedCategory.value = entriesCategory.find(e => e.getId() === template?.getCategory()?.getId());
+
+            if (template?.hasContentAccess()) {
+                const docAccess = template?.getContentAccess()!;
+                let accessId = 0;
+                docAccess.getUsersList().forEach(user => {
+                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } });
+                    accessId++;
+                });
+
+                docAccess.getJobsList().forEach(job => {
+                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                    accessId++;
+                });
+            }
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
         }
