@@ -69,7 +69,7 @@ const config = defineNuxtConfig({
             display: 'browser',
         },
         client: {
-            periodicSyncForUpdates: 2* (60 * 60 * 1000),
+            periodicSyncForUpdates: 2 * 3600, // Two hours
         },
     },
     piniaPersistedstate: {

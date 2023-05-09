@@ -31,13 +31,8 @@ func init() {
 }
 
 func (m *DBManager) Setup() {
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("Current working directory:", dir)
-
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
+	var err error
 	m.pool, err = dockertest.NewPool("")
 	if err != nil {
 		log.Fatalf("Could not construct pool: %q", err)

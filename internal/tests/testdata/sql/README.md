@@ -4,7 +4,7 @@ This folder contains base data for tests related to querying, creating, updating
 
 ## Dump Commands
 
-**This assumes you are connecting against the local test database run through `docker` and you are in the `testdata/` folder.**
+**This assumes you are connecting against the local test database run through `docker` and you are in the [`internal/tests/testdata/sql/`](/internal/tests/testdata/sql/) folder.**
 
 ### Documents
 
