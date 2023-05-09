@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/galexrt/fivenet/internal/tests"
 	"github.com/galexrt/fivenet/query"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ory/dockertest/v3"
@@ -30,17 +31,22 @@ func init() {
 }
 
 func (m *DBManager) Setup() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Current working directory:", dir)
+
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
-	var err error
 	m.pool, err = dockertest.NewPool("")
 	if err != nil {
-		log.Fatalf("Could not construct pool: %s", err)
+		log.Fatalf("Could not construct pool: %q", err)
 	}
 
 	// uses pool to try to connect to Docker
 	err = m.pool.Client.Ping()
 	if err != nil {
-		log.Fatalf("Could not connect to Docker: %s", err)
+		log.Fatalf("Could not connect to Docker: %q", err)
 	}
 
 	// pulls an image, creates a container based on it and runs it
@@ -69,7 +75,7 @@ func (m *DBManager) Setup() {
 		},
 	)
 	if err != nil {
-		log.Fatalf("Could not start resource: %s", err)
+		log.Fatalf("Could not start resource: %q", err)
 	}
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
@@ -81,7 +87,7 @@ func (m *DBManager) Setup() {
 		}
 		return m.db.Ping()
 	}); err != nil {
-		log.Fatalf("Could not connect to database: %s", err)
+		log.Fatalf("Could not connect to database: %q", err)
 	}
 
 	m.prepareDBForFirstUse()
@@ -103,11 +109,11 @@ func (m *DBManager) getDSN() string {
 
 func (m *DBManager) prepareDBForFirstUse() {
 	// Load and apply premigrate.sql file
-	m.loadSQLFile(filepath.Join("../../../", "tests", "testdata", "initial_esx.sql"))
+	m.loadSQLFile(filepath.Join(tests.TestDataSQLPath, "initial_esx.sql"))
 
 	// Use DB migrations to handle the rest
 	if err := query.MigrateDB(zap.NewNop(), m.getDSN()); err != nil {
-		log.Fatalf("Failed to migrate test database: %s", err)
+		log.Fatalf("Failed to migrate test database: %q", err)
 	}
 }
 
@@ -115,7 +121,7 @@ func (m *DBManager) getMultiStatementDB() *sql.DB {
 	// Open db connection with multiStatements param so we can apply sql files
 	initDB, err := sql.Open("mysql", m.getDSN()+"&multiStatements=true")
 	if err != nil {
-		log.Fatalf("Failed to open test database connection for multi statement exec: %s", err)
+		log.Fatalf("Failed to open test database connection for multi statement exec: %q", err)
 	}
 	return initDB
 }
@@ -134,7 +140,7 @@ func (m *DBManager) loadSQLFile(file string) {
 }
 
 func (m *DBManager) LoadBaseData() {
-	path := filepath.Join("../../../", "tests", "testdata", "base_*.sql")
+	path := filepath.Join(tests.TestDataSQLPath, "base_*.sql")
 	files, err := filepath.Glob(path)
 	if err != nil {
 		log.Fatalf("failed to find base data sql files (%s): %s", path, err)
@@ -156,7 +162,7 @@ func (m *DBManager) Stop() {
 
 	// You can't defer this because os.Exit doesn't care for defer
 	if err := m.pool.Purge(m.resource); err != nil {
-		log.Fatalf("Could not purge container resource: %s", err)
+		log.Fatalf("Could not purge container resource: %q", err)
 	}
 }
 
@@ -166,13 +172,13 @@ func (m *DBManager) Reset() {
 
 	rows, err := initDB.Query("SHOW TABLES LIKE 'fivenet_%';")
 	if err != nil {
-		log.Fatalf("Failed to list fivenet tables in test database: %s", err)
+		log.Fatalf("Failed to list fivenet tables in test database: %q", err)
 	}
 
 	for rows.Next() {
 		var tableName string
 		if err := rows.Scan(&tableName); err != nil {
-			log.Fatalf("Failed to scan table name to string: %s", err)
+			log.Fatalf("Failed to scan table name to string: %q", err)
 		}
 
 		// Placeholders aren't supported for table names, see
