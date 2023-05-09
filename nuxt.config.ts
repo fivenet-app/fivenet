@@ -60,6 +60,10 @@ const config = defineNuxtConfig({
                     src: './images/logo.png',
                     sizes: '1400x1400',
                 },
+                {
+                    src: './images/logo-512x512.png',
+                    sizes: '512x512',
+                },
             ],
             name: project.name,
             short_name: project.shortName,

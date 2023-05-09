@@ -127,11 +127,11 @@ export const useClipboardStore = defineStore('clipboard', {
             this.vehicles.splice(0, this.vehicles.length);
         },
 
-        clear() {
-            this.clearActiveStack();
+        clear(): void {
             this.clearDocuments();
             this.clearUsers();
             this.clearVehicles();
+            this.clearActiveStack();
         },
 
         checkRequirements(reqs: ObjectSpecs, listType: ListType): boolean {
