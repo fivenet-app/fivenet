@@ -9,16 +9,16 @@ import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
 import { TemplateSchemaEditorValue, ObjectSpecsValue } from './TemplateSchemaEditor.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CompleteDocumentCategoriesRequest, CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/core';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import { ACCESS_LEVEL } from '@fivenet/gen/resources/documents/access_pb';
-import {
-    PlusIcon,
-} from '@heroicons/vue/20/solid';
+import { CheckIcon, PlusIcon } from '@heroicons/vue/20/solid';
 import { useAuthStore } from '~/store/auth';
 import { DocumentAccess, DocumentJobAccess, DocumentUserAccess } from '@fivenet/gen/resources/documents/documents_pb';
 import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
+import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 
 const { $grpc } = useNuxtApp();
 const { t } = useI18n();
@@ -239,6 +239,9 @@ async function createTemplate(): Promise<void> {
         tpl.setDescription(description.value);
         tpl.setContentTitle(contentTitle.value);
         tpl.setContent(content.value);
+        if (selectedCategory.value) {
+            tpl.setCategory(selectedCategory.value);
+        }
 
         const tRequirements = new TemplateRequirements();
         tRequirements.setUsers(createObjectSpec(schema.value.users));
@@ -321,6 +324,9 @@ async function updateTemplate(): Promise<void> {
         tpl.setDescription(description.value);
         tpl.setContentTitle(contentTitle.value);
         tpl.setContent(content.value);
+        if (selectedCategory.value) {
+            tpl.setCategory(selectedCategory.value);
+        }
 
         const tRequirements = new TemplateRequirements();
         tRequirements.setUsers(createObjectSpec(schema.value.users));
@@ -414,7 +420,32 @@ const onSubmit = handleSubmit(async (): Promise<void> => {
     }
 });
 
+let entriesCategory = [] as DocumentCategory[];
+const queryCategory = ref('');
+const selectedCategory = ref<DocumentCategory | undefined>(undefined);
+
+watchDebounced(queryCategory, () => findCategories(), { debounce: 600, maxWait: 1400 });
+
+async function findCategories(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const req = new CompleteDocumentCategoriesRequest();
+            req.setSearch(queryCategory.value);
+
+            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req, null)
+            entriesCategory = resp.getCategoriesList();
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
 onMounted(async () => {
+    await findCategories();
+
     if (props.templateId) {
         const req = new GetTemplateRequest();
         req.setTemplateId(props.templateId);
@@ -431,6 +462,9 @@ onMounted(async () => {
             description.value = tpl.getDescription();
             contentTitle.value = tpl.getContentTitle();
             content.value = tpl.getContent();
+            if (tpl.hasCategory()) {
+                selectedCategory.value = tpl.getCategory();
+            }
 
             const tplAccess = tpl.getJobAccessList();
             if (tplAccess) {
@@ -540,6 +574,39 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                         Golang {{ $t('common.template') }}
                     </NuxtLink>
                 </p>
+            </div>
+            <label for="contentCategory" class="block font-medium text-sm mt-2">
+                {{ $t('common.category') }}
+            </label>
+            <div>
+                <Combobox as="div" v-model="selectedCategory" nullable>
+                    <div class="relative">
+                        <ComboboxButton as="div">
+                            <ComboboxInput
+                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                @change="queryCategory = $event.target.value"
+                                :display-value="(category: any) => category?.getName()" />
+                        </ComboboxButton>
+
+                        <ComboboxOptions v-if="entriesCategory.length > 0"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
+                            <ComboboxOption v-for="category in entriesCategory" :key="category.getId()" :value="category"
+                                as="category" v-slot="{ active, selected }">
+                                <li
+                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                        {{ category.getName() }}
+                                    </span>
+
+                                    <span v-if="selected"
+                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                    </span>
+                                </li>
+                            </ComboboxOption>
+                        </ComboboxOptions>
+                    </div>
+                </Combobox>
             </div>
             <label for="content" class="block font-medium text-sm mt-2">
                 {{ $t('common.content') }} {{ $t('common.template') }}

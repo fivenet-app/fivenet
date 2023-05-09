@@ -211,11 +211,20 @@ watchDebounced(doc.value, () => saveToStore(), { debounce: 1250, maxWait: 3500 }
 watchDebounced(queryCategory, () => findCategories(), { debounce: 600, maxWait: 1400 });
 
 async function findCategories(): Promise<void> {
-    const req = new CompleteDocumentCategoriesRequest();
-    req.setSearch(queryCategory.value);
+    return new Promise(async (res, rej) => {
+        try {
+            const req = new CompleteDocumentCategoriesRequest();
+            req.setSearch(queryCategory.value);
 
-    const resp = await $grpc.getCompletorClient().completeDocumentCategories(req, null)
-    entriesCategory = resp.getCategoriesList();
+            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req, null)
+            entriesCategory = resp.getCategoriesList();
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 const accessTypes = [
