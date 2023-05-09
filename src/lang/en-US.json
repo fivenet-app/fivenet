@@ -287,8 +287,8 @@
             "perms": "Current Permissions",
             "active_char_id": "Active Character ID",
             "access_token_expiration": "Access Token Expiration",
-            "debug_functions": "Debug Functions",
             "reset_clipboard": "Reset Clipboard",
+            "debug_functions": "Debug Functions",
             "reset_local_storage": "Reset Local Storage"
         },
         "penaltycalculator": {
