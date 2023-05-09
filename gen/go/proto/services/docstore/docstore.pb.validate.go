@@ -301,10 +301,10 @@ func (m *GetTemplateRequest) validate(all bool) error {
 
 	// no validation rules for TemplateId
 
-	if len(m.GetData()) > 1024 {
+	if len(m.GetData()) > 10240 {
 		err := GetTemplateRequestValidationError{
 			field:  "Data",
-			reason: "value length must be at most 1024 bytes",
+			reason: "value length must be at most 10240 bytes",
 		}
 		if !all {
 			return err

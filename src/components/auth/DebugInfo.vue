@@ -11,7 +11,10 @@ const activeChar = computed(() => authStore.getActiveChar);
 const perms = computed(() => authStore.getPermissions);
 
 async function resetLocalStorage(): Promise<void> {
+    authStore.clear();
+
     window.localStorage.clear();
+
     await navigateTo({ name: 'index' });
 }
 </script>

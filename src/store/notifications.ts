@@ -7,7 +7,7 @@ export interface NotificationsState {
     notifications: Notification[];
 }
 
-export const useNotificationsStore = defineStore('notificator', {
+export const useNotificationsStore = defineStore('notifications', {
     state: () =>
         ({
             notifications: [],

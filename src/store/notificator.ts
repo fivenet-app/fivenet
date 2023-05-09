@@ -1,4 +1,3 @@
-import { StatusCode } from 'grpc-web';
 import { StoreDefinition, defineStore } from 'pinia';
 
 export interface NotificatorState {
