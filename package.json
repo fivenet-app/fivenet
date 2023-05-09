@@ -14,7 +14,7 @@
         "@fivenet/gen": "file:./gen/js",
         "@fontsource/inter": "^4.5.15",
         "@headlessui/vue": "^1.7.13",
-        "@heroicons/vue": "^2.0.17",
+        "@heroicons/vue": "^2.0.18",
         "@nuxtjs/robots": "^3.0.0",
         "@originjs/vite-plugin-commonjs": "^1.0.3",
         "@pinia/nuxt": "^0.4.10",
@@ -39,7 +39,7 @@
     },
     "devDependencies": {
         "@nuxtjs/i18n": "8.0.0-beta.10",
-        "@nuxtjs/tailwindcss": "^6.6.7",
+        "@nuxtjs/tailwindcss": "^6.6.8",
         "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/typography": "^0.5.9",
