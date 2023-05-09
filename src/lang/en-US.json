@@ -286,7 +286,10 @@
             "subtitle": "Information imporant when reporting issues with FiveNet.",
             "perms": "Current Permissions",
             "active_char_id": "Active Character ID",
-            "access_token_expiration": "Access Token Expiration"
+            "access_token_expiration": "Access Token Expiration",
+            "debug_functions": "Debug Functions",
+            "reset_clipboard": "Reset Clipboard",
+            "reset_local_storage": "Reset Local Storage"
         },
         "penaltycalculator": {
             "title": "Penalty Calculator",

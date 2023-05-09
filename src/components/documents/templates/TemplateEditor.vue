@@ -405,7 +405,7 @@ const { handleSubmit } = useForm({
         object({
             title: string().required().min(3).max(255),
             description: string().required().max(512),
-            contentTitle: string().required().min(3).max(1024),
+            contentTitle: string().required().min(3).max(1536),
             content: string().required().min(6).max(15360),
             schema: object().optional(),
         }),

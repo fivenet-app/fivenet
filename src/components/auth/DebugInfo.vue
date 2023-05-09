@@ -1,12 +1,19 @@
 <script lang="ts" setup>
 import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useAuthStore } from '~/store/auth';
+import { useClipboardStore } from '~/store/clipboard';
 
 const authStore = useAuthStore();
+const clipboardStore = useClipboardStore();
 
 const accessTokenExpiration = computed(() => authStore.getAccessTokenExpiration);
 const activeChar = computed(() => authStore.getActiveChar);
 const perms = computed(() => authStore.getPermissions);
+
+async function resetLocalStorage(): Promise<void> {
+    window.localStorage.clear();
+    await navigateTo({ name: 'index' });
+}
 </script>
 
 <template>
@@ -44,6 +51,21 @@ const perms = computed(() => authStore.getPermissions);
                         <time :datetime="accessTokenExpiration.toDateString()">
                             {{ useLocaleTimeAgo(accessTokenExpiration).value }} ({{ $d(accessTokenExpiration, 'long') }})
                         </time>
+                    </dd>
+                </div>
+                <div v-if="clipboardStore" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                    <dt class="text-sm font-medium">
+                        {{ $t('components.debug_info.reset_clipboard') }}
+                    </dt>
+                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                        <button type="button" @click="clipboardStore.clear()"
+                            class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
+                            {{ $t('components.debug_info.reset_clipboard') }}
+                        </button>
+                        <button type="button" @click="resetLocalStorage()"
+                            class="rounded-md bg-base-500 py-2.5 px-3.5 ml-2 text-sm font-semibold text-neutral hover:bg-base-400">
+                            {{ $t('components.debug_info.reset_local_storage') }}
+                        </button>
                     </dd>
                 </div>
                 <div v-if="perms.length > 0" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
