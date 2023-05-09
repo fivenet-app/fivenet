@@ -22,7 +22,7 @@ defineEmits<{
 
 <template>
     <div
-        :class="`overflow-hidden divide-y-4 rounded-lg bg-base-900 shadow-float sm:grid sm:gap-1 sm:mx-auto divide-base-900 sm:divide-y-0` + + (items.length == 1 ? '' : ' sm:grid-cols-2 sm:max-w-6xl')">
+        :class="[items.length == 1 ? '' : 'sm:grid-cols-2 sm:max-w-6xl', `overflow-hidden divide-y-4 rounded-lg bg-base-900 shadow-float sm:grid sm:gap-1 sm:mx-auto divide-base-900 sm:divide-y-0`]">
         <div v-for="(item, itemIdx) in items" v-can="item.permission ?? ''" :key="item.title" :class="[
             itemIdx === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
             itemIdx === 1 ? 'sm:rounded-tr-lg' : '',
