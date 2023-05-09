@@ -422,8 +422,8 @@ const penalties: Penalties = [
                 fine: 0,
                 detentionTime: 25,
                 stvoPoints: 0
-            }
-        ]
+            },
+        ],
     },
     {
         name: 'WaffG',
@@ -453,8 +453,8 @@ const penalties: Penalties = [
                 fine: 0,
                 detentionTime: 20,
                 stvoPoints: 0
-            }
-        ]
+            },
+        ],
     },
     {
         name: 'LuftVO',
@@ -493,8 +493,8 @@ const penalties: Penalties = [
                 fine: 20000,
                 detentionTime: 0,
                 stvoPoints: 0
-            }
-        ]
+            },
+        ],
     },
     {
         name: 'StVO',
@@ -666,8 +666,8 @@ const penalties: Penalties = [
                 fine: 2000,
                 detentionTime: 0,
                 stvoPoints: 1
-            }
-        ]
+            },
+        ],
     },
     {
         name: 'GewO',
@@ -678,8 +678,8 @@ const penalties: Penalties = [
                 fine: 30000,
                 detentionTime: 0,
                 stvoPoints: 0
-            }
-        ]
+            },
+        ],
     },
     {
         name: 'WirtG',
@@ -767,8 +767,8 @@ const penalties: Penalties = [
                 fine: 0,
                 detentionTime: 20,
                 stvoPoints: 0
-            }
-        ]
+            },
+        ],
     },
 ];
 

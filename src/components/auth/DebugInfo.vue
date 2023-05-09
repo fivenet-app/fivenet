@@ -58,7 +58,7 @@ async function resetLocalStorage(): Promise<void> {
                 </div>
                 <div v-if="clipboardStore" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                     <dt class="text-sm font-medium">
-                        {{ $t('components.debug_info.reset_clipboard') }}
+                        {{ $t('components.debug_info.debug_functions') }}
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                         <button type="button" @click="clipboardStore.clear()"
