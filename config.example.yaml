@@ -21,6 +21,10 @@ database:
   # For the local test database using `docker-compose`
   #dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local"
   dbName: fivenet
+  maxOpenConns: 32
+  maxIdleConns: 5
+  connMaxIdleTime: 15m
+  connMaxLifetime: 60m
 jwt:
   secret: "your_generated_jwt_secret"
 oauth2:
