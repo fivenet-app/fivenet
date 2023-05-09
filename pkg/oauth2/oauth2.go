@@ -36,15 +36,15 @@ type OAuth2 struct {
 	oauthConfigs map[string]providers.IProvider
 }
 
-func New(logger *zap.Logger, db *sql.DB, tm *auth.TokenMgr) *OAuth2 {
+func New(logger *zap.Logger, db *sql.DB, tm *auth.TokenMgr, oAuth2Providers []*config.OAuth2Provider) *OAuth2 {
 	o := &OAuth2{
 		logger:       logger,
 		db:           db,
 		tm:           tm,
-		oauthConfigs: make(map[string]providers.IProvider, len(config.C.OAuth2.Providers)),
+		oauthConfigs: make(map[string]providers.IProvider, len(oAuth2Providers)),
 	}
 
-	for _, p := range config.C.OAuth2.Providers {
+	for _, p := range oAuth2Providers {
 		cfg := &oauth2.Config{
 			RedirectURL:  p.RedirectURL,
 			ClientID:     p.ClientID,

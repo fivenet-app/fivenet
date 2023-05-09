@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 
+	"github.com/galexrt/fivenet/pkg/api"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/oauth2"
 	"github.com/gin-gonic/gin"
@@ -12,14 +13,14 @@ import (
 type Routes struct {
 	logger *zap.Logger
 
-	clientCfg *ClientConfig
+	clientCfg *api.ClientConfig
 }
 
 func New(logger *zap.Logger) *Routes {
-	providers := make([]*ProviderConfig, len(config.C.OAuth2.Providers))
+	providers := make([]*api.ProviderConfig, len(config.C.OAuth2.Providers))
 
 	for k, p := range config.C.OAuth2.Providers {
-		providers[k] = &ProviderConfig{
+		providers[k] = &api.ProviderConfig{
 			Name:  p.Name,
 			Label: p.Label,
 		}
@@ -28,10 +29,10 @@ func New(logger *zap.Logger) *Routes {
 	return &Routes{
 		logger: logger,
 
-		clientCfg: &ClientConfig{
+		clientCfg: &api.ClientConfig{
 			SentryDSN:   config.C.Sentry.ClientDSN,
 			APIProtoURL: config.C.GRPC.ClientURL,
-			Login: LoginConfig{
+			Login: api.LoginConfig{
 				Providers: providers,
 			},
 		},
@@ -39,11 +40,18 @@ func New(logger *zap.Logger) *Routes {
 }
 
 func (r *Routes) Register(e *gin.Engine, oa2 *oauth2.OAuth2) {
+	// API Base
 	g := e.Group("/api")
 	{
-		g.GET("/ping", r.PingGET)
-		g.POST("/config", r.ConfigPOST)
+		g.GET("/ping", func(c *gin.Context) {
+			c.JSON(http.StatusOK, api.PingResponse)
+		})
+		g.POST("/config", func(c *gin.Context) {
+			c.JSON(http.StatusOK, r.clientCfg)
+		})
 	}
+
+	// OAuth2
 	oauth := g.Group("/oauth2")
 	{
 		oauth.GET("/login/:provider", oa2.Login)
@@ -51,27 +59,4 @@ func (r *Routes) Register(e *gin.Engine, oa2 *oauth2.OAuth2) {
 		oauth.GET("/callback/:provider", oa2.Callback)
 		oauth.POST("/callback/:provider", oa2.Callback)
 	}
-}
-
-func (r *Routes) PingGET(c *gin.Context) {
-	c.JSON(http.StatusOK, "Pong")
-}
-
-type ClientConfig struct {
-	SentryDSN   string      `json:"sentryDSN"`
-	APIProtoURL string      `json:"apiProtoURL"`
-	Login       LoginConfig `json:"login"`
-}
-
-type LoginConfig struct {
-	Providers []*ProviderConfig `json:"providers"`
-}
-
-type ProviderConfig struct {
-	Name  string `json:"name"`
-	Label string `json:"label"`
-}
-
-func (r *Routes) ConfigPOST(c *gin.Context) {
-	c.JSON(http.StatusOK, r.clientCfg)
 }

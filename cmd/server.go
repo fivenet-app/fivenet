@@ -182,7 +182,7 @@ func (s *server) setupHTTPServer() *gin.Engine {
 	// Prometheus Metrics endpoint
 	e.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
-	oauth := oauth2.New(logger.Named("oauth"), s.db, s.tm)
+	oauth := oauth2.New(logger.Named("oauth"), s.db, s.tm, config.C.OAuth2.Providers)
 
 	// Register app routes
 	rs := routes.New(logger)

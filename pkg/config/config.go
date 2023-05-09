@@ -94,7 +94,7 @@ type UnemployedJob struct {
 }
 
 type OAuth2 struct {
-	Providers []OAuth2Provider
+	Providers []*OAuth2Provider
 }
 
 type OAuth2ProviderType string

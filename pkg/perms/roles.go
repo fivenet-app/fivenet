@@ -4,9 +4,9 @@ import (
 	"errors"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
-	"github.com/galexrt/fivenet/pkg/dbutils"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
