@@ -3,6 +3,16 @@ entries:
   fivenet:
   - apiVersion: v2
     appVersion: v0.2.0
+    created: "2023-05-09T20:21:34.587930053Z"
+    description: A Helm chart for FiveNet
+    digest: 093856d17ec07ca77a80acf7cd597118b11c4c5924a9e2f6890af01025e5aa9a
+    name: fivenet
+    type: application
+    urls:
+    - https://github.com/galexrt/fivenet/releases/download/fivenet-0.1.11/fivenet-0.1.11.tgz
+    version: 0.1.11
+  - apiVersion: v2
+    appVersion: v0.2.0
     created: "2023-05-03T21:36:52.872591499Z"
     description: A Helm chart for FiveNet
     digest: 1b80cf68527dfa8dba4a20390d25d8a49e82ba1931feb09f34eb6277cc44672f
@@ -71,4 +81,4 @@ entries:
     urls:
     - https://github.com/galexrt/fivenet/releases/download/fivenet-0.1.4/fivenet-0.1.4.tgz
     version: 0.1.4
-generated: "2023-05-03T21:36:52.8726284Z"
+generated: "2023-05-09T20:21:34.587955352Z"
