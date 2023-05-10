@@ -10,7 +10,7 @@ WORKDIR /go/src/github.com/galexrt/fivenet/
 COPY . ./
 RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o fivenet .
 
-FROM docker.io/library/alpine:3.17.3
+FROM docker.io/library/alpine:3.18.0
 WORKDIR /app
 RUN apk --no-cache add ca-certificates tzdata && \
     mkdir -p ./.output/public
