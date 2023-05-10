@@ -7933,9 +7933,9 @@ vary@^1.1.2:
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
 vee-validate@^4.9.1:
-  version "4.9.1"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.9.1.tgz#d1e609948cbf1912ecbeca8793d9bb49639458a4"
-  integrity sha512-41uOQ0DA0NZnqhr4EnOGyg/5mq85tfymxYp14kbPI0mDTBOq5H1dkXl4NYehIIVXUMZAEPjk4QJGirbFxzOCWA==
+  version "4.9.2"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.9.2.tgz#7a4fe2d4a8ce913458616ec0720c72dcf523e0f0"
+  integrity sha512-R0/eelZlCqSedwrm4+wzokMsDnIT2SNxPBe0XqfaxmrI3AFs39U9xOmGOfjna6dqRLDzH5bJfHTO/VrZQRSvjg==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
     type-fest "^3.10.0"
