@@ -17,6 +17,7 @@ cd ../../ || { echo "Failed to cd to root of repo."; exit 1; }
 
 echo "v${VERSION}" > VERSION
 
+# package.json
 sed \
     --in-place \
     --regexp-extended \
@@ -24,10 +25,27 @@ sed \
         ./package.json \
         ./gen/js/package.json
 
+make yarn-upgrade-gen-js
+
+# Helm Chart
 sed \
     --in-place \
     --regexp-extended \
     --expression 's~appVersion: "v[0-9\.]+"~appVersion: "v'"${VERSION}"'"~' \
         ./charts/fivenet/Chart.yaml
 
-make yarn-upgrade-gen-js
+HELM_CHART_VERSION=$(grep \
+    -oP \
+    'version: ([0-9\.]+)' \
+        ./charts/fivenet/Chart.yaml)
+
+version_rest=$(echo "${HELM_CHART_VERSION}" | cut -d':' -f 2 | cut -d'.' -f 1-2)
+version_rest="${version_rest// /}"
+version_patch=$(echo "${HELM_CHART_VERSION}" | rev | cut -d'.' -f 1 | rev)
+version_patch_new=$(( version_patch + 1 ))
+
+sed \
+    --in-place \
+    --regexp-extended \
+    --expression 's~version: [0-9\.]+~version: '"${version_rest}.${version_patch_new}"'~' \
+        ./charts/fivenet/Chart.yaml
