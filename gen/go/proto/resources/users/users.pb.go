@@ -473,15 +473,15 @@ type UserActivity struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                             // @gotags: alias:"id"
-	Type       USER_ACTIVITY_TYPE   `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.USER_ACTIVITY_TYPE" json:"type,omitempty" alias:"type"` // @gotags: alias:"type"
-	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`               // @gotags: alias:"created_at"
+	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"fivenet_user_activity.id"`                                             // @gotags: alias:"fivenet_user_activity.id"
+	Type       USER_ACTIVITY_TYPE   `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.USER_ACTIVITY_TYPE" json:"type,omitempty" alias:"fivenet_user_activity.type"` // @gotags: alias:"fivenet_user_activity.type"
+	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"fivenet_user_activity.created_at"`               // @gotags: alias:"fivenet_user_activity.created_at"
 	SourceUser *UserShort           `protobuf:"bytes,4,opt,name=source_user,json=sourceUser,proto3" json:"source_user,omitempty" alias:"source_user"`            // @gotags: alias:"source_user"
 	TargetUser *UserShort           `protobuf:"bytes,5,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty" alias:"target_user"`            // @gotags: alias:"target_user"
-	Key        string               `protobuf:"bytes,6,opt,name=key,proto3" json:"key,omitempty" alias:"key"`                                            // @gotags: alias:"key"
-	OldValue   string               `protobuf:"bytes,7,opt,name=old_value,json=oldValue,proto3" json:"old_value,omitempty" alias:"old_value"`                  // @gotags: alias:"old_value"
-	NewValue   string               `protobuf:"bytes,8,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty" alias:"new_value"`                  // @gotags: alias:"new_value"
-	Reason     string               `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty" alias:"reason"`                                      // @gotags: alias:"reason"
+	Key        string               `protobuf:"bytes,6,opt,name=key,proto3" json:"key,omitempty" alias:"fivenet_user_activity.key"`                                            // @gotags: alias:"fivenet_user_activity.key"
+	OldValue   string               `protobuf:"bytes,7,opt,name=old_value,json=oldValue,proto3" json:"old_value,omitempty" alias:"fivenet_user_activity.old_value"`                  // @gotags: alias:"fivenet_user_activity.old_value"
+	NewValue   string               `protobuf:"bytes,8,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty" alias:"fivenet_user_activity.new_value"`                  // @gotags: alias:"fivenet_user_activity.new_value"
+	Reason     string               `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty" alias:"fivenet_user_activity.reason"`                                      // @gotags: alias:"fivenet_user_activity.reason"
 }
 
 func (x *UserActivity) Reset() {

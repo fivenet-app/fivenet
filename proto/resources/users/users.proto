@@ -57,13 +57,13 @@ enum USER_ACTIVITY_TYPE {
 }
 
 message UserActivity {
-  uint64 id = 1; // @gotags: alias:"id"
-  USER_ACTIVITY_TYPE type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"type"
-  resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"created_at"
+  uint64 id = 1; // @gotags: alias:"fivenet_user_activity.id"
+  USER_ACTIVITY_TYPE type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"fivenet_user_activity.type"
+  resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"fivenet_user_activity.created_at"
   UserShort source_user = 4; // @gotags: alias:"source_user"
   UserShort target_user = 5; // @gotags: alias:"target_user"
-  string key = 6 [(validate.rules).string = {min_len: 1, max_len: 64}]; // @gotags: alias:"key"
-  string old_value = 7 [(validate.rules).string.max_len = 256]; // @gotags: alias:"old_value"
-  string new_value = 8 [(validate.rules).string.max_len = 256]; // @gotags: alias:"new_value"
-  string reason = 9; // @gotags: alias:"reason"
+  string key = 6 [(validate.rules).string = {min_len: 1, max_len: 64}]; // @gotags: alias:"fivenet_user_activity.key"
+  string old_value = 7 [(validate.rules).string.max_len = 256]; // @gotags: alias:"fivenet_user_activity.old_value"
+  string new_value = 8 [(validate.rules).string.max_len = 256]; // @gotags: alias:"fivenet_user_activity.new_value"
+  string reason = 9; // @gotags: alias:"fivenet_user_activity.reason"
 }

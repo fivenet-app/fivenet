@@ -408,7 +408,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 		updateSets = append(updateSets, userProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
 	} else {
-		req.Props.Wanted = props.Wanted
+		var current bool
+		if props.Wanted != nil {
+			current = !*props.Wanted
+		}
+		req.Props.Wanted = &current
 	}
 	if req.Props.JobName != nil {
 		if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Job") {
@@ -459,7 +463,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Create user activity
 	if req.Props.Wanted != props.Wanted {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted", strconv.FormatBool(!*props.Wanted), strconv.FormatBool(*req.Props.Wanted), req.Reason); err != nil {
+			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted", strconv.FormatBool(*props.Wanted), strconv.FormatBool(*req.Props.Wanted), req.Reason); err != nil {
 			return nil, FailedQueryErr
 		}
 	}

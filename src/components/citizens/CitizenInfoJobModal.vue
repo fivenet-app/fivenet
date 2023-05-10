@@ -154,11 +154,15 @@ async function setJobProp(): Promise<void> {
                             </div>
                             <div class="absolute bottom-0 w-full left-0 sm:flex">
                                 <button type="button"
-                                    class="flex-1 rounded-bd bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="$emit('close')">{{ $t('common.close', 1) }}</button>
+                                    class="flex-1 rounded-bd bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    @click="$emit('close')">
+                                    {{ $t('common.close', 1) }}
+                                </button>
                                 <button type="button"
-                                    class="flex-1 rounded-bd bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="setJobProp(); $emit('close')">{{ $t('common.save') }}</button>
+                                    class="flex-1 rounded-bd bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    @click="setJobProp(); $emit('close')">
+                                    {{ $t('common.save') }}
+                                </button>
                             </div>
                         </DialogPanel>
                     </TransitionChild>
