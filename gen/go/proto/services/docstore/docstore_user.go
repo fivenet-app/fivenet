@@ -183,6 +183,6 @@ func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, 
 			reason,
 		)
 
-	_, err := stmt.ExecContext(ctx, s.db)
+	_, err := stmt.ExecContext(ctx, tx)
 	return err
 }
