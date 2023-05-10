@@ -171,6 +171,7 @@ func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, 
 			userAct.Key,
 			userAct.OldValue,
 			userAct.NewValue,
+			userAct.Reason,
 		).
 		VALUES(
 			userId,
