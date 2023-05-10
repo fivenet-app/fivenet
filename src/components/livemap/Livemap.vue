@@ -77,15 +77,15 @@ watch(centerSelectedMarker, () => {
 });
 
 const playerQuery = ref<string>('');
-const playerMarkers = ref<UserMarker[]>([]);
+let playerMarkers: UserMarker[] = [];
 const playerMarkersFiltered = ref<UserMarker[]>([]);
 
 const dispatchQuery = ref<string>('');
-const dispatchMarkers = ref<DispatchMarker[]>([]);
+let dispatchMarkers: DispatchMarker[] = [];
 const dispatchMarkersFiltered = ref<DispatchMarker[]>([]);
 
-async function applyPlayerQuery(): Promise<void> { playerMarkersFiltered.value = playerMarkers.value.filter(m => (m.getUser()?.getFirstname() + ' ' + m.getUser()?.getLastname()).includes(playerQuery.value)) }
-async function applyDispatchQuery(): Promise<void> { dispatchMarkersFiltered.value = dispatchMarkers.value.filter(m => m.getPopup().includes(dispatchQuery.value) || m.getName().includes(dispatchQuery.value)) }
+async function applyPlayerQuery(): Promise<void> { playerMarkersFiltered.value = playerMarkers.filter(m => (m.getUser()?.getFirstname() + ' ' + m.getUser()?.getLastname()).includes(playerQuery.value)) }
+async function applyDispatchQuery(): Promise<void> { dispatchMarkersFiltered.value = dispatchMarkers.filter(m => m.getPopup().includes(dispatchQuery.value) || m.getName().includes(dispatchQuery.value)) }
 
 watchDebounced(playerQuery, async () => { applyPlayerQuery() }, { debounce: 600, maxWait: 1750 });
 watchDebounced(dispatchQuery, async () => { applyDispatchQuery() }, { debounce: 600, maxWait: 1750 });
@@ -196,8 +196,8 @@ async function startDataStream(): Promise<void> {
 
             markerJobs.value = resp.getJobsList();
 
-            playerMarkers.value = resp.getUsersList();
-            dispatchMarkers.value = resp.getDispatchesList();
+            playerMarkers = resp.getUsersList();
+            dispatchMarkers = resp.getDispatchesList();
 
             await applyPlayerQuery();
             await applyDispatchQuery();
@@ -220,7 +220,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
     if (!centerSelectedMarker.value) return;
     if (selectedMarker.value === undefined) return;
 
-    const marker = playerMarkers.value.find(m => m.getId() === selectedMarker.value) || playerMarkers.value.find(m => m.getId() === selectedMarker.value);
+    const marker = playerMarkers.find(m => m.getId() === selectedMarker.value) || playerMarkers.find(m => m.getId() === selectedMarker.value);
     if (!marker) { selectedMarker.value = undefined; return; };
 
     map?.panTo([marker.getY(), marker.getX()], {
