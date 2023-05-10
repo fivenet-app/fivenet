@@ -2,6 +2,7 @@
 import { UserActivity } from '@fivenet/gen/resources/users/users_pb';
 import { QuestionMarkCircleIcon, BellAlertIcon, BellSnoozeIcon, AtSymbolIcon } from '@heroicons/vue/24/outline'
 import { FunctionalComponent } from 'vue';
+import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
 const props = defineProps<{
     activity: UserActivity;
@@ -12,20 +13,22 @@ const { t } = useI18n();
 const icon = ref<FunctionalComponent>(QuestionMarkCircleIcon);
 const iconColor = ref<string>('text-neutral');
 const actionText = ref<string>(props.activity.getKey());
-const actionValue = ref<string>(`${props.activity.getOldvalue()} -> ${props.activity.getNewvalue()}`);
+const actionValue = ref<string>(`${props.activity.getOldValue()} -> ${props.activity.getNewValue()}`);
+const actionLink = ref<undefined | RoutesNamedLocations>();
+const actionLinkText = ref<string>();
 
 switch (props.activity.getKey()) {
     case 'UserProps.Wanted': {
         actionText.value = t('components.citizens.citizen_info_activity_feed_entry.set_citizen_as');
 
-        if (props.activity.getNewvalue() === 'true') {
+        if (props.activity.getNewValue() === 'true') {
             icon.value = BellAlertIcon;
             iconColor.value = 'text-error-400';
-            actionValue.value = props.activity.getNewvalue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
+            actionValue.value = props.activity.getNewValue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
         } else {
             icon.value = BellSnoozeIcon;
             iconColor.value = 'text-success-400';
-            actionValue.value = props.activity.getNewvalue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
+            actionValue.value = props.activity.getNewValue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
         }
 
         break;
@@ -33,13 +36,16 @@ switch (props.activity.getKey()) {
     case 'DocStore.Relation': {
         actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation');
         icon.value = AtSymbolIcon;
+        actionLink.value = { name: 'documents-id', params: { id: 0 } };
+        actionLinkText.value = t('common.document', 1);
 
-        if (props.activity.getNewvalue() !== '') {
+        if (props.activity.getNewValue() !== '') {
             iconColor.value = 'text-info-600';
-            actionValue.value = props.activity.getNewvalue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
-        } else if (props.activity.getOldvalue() !== '') {
+            actionLink.value.params.id = props.activity.getNewValue();
+        } else if (props.activity.getOldValue() !== '') {
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation_removed');
             iconColor.value = 'text-base-600';
-            actionValue.value = props.activity.getNewvalue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
+            actionLink.value.params.id = props.activity.getOldValue();
         }
 
         break;
@@ -61,7 +67,11 @@ switch (props.activity.getKey()) {
                     {{ useLocaleTimeAgo(toDate(activity.getCreatedAt())!).value }}
                 </p>
             </div>
-            <p class="text-sm text-gray-300">{{ actionText }} <span class="font-bold">{{ actionValue }}</span></p>
+            <p class="text-sm text-gray-300">{{ actionText }} <span class="font-bold">
+                    <NuxtLink v-if="actionLink" :to="actionLink">{{ actionLinkText }}</NuxtLink>
+                    <span v-else v-html="actionValue"></span>
+                </span>
+            </p>
         </div>
     </div>
 </template>

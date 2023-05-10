@@ -10,6 +10,7 @@ import CitizenInfoJobModal from '~/components/citizens/CitizenInfoJobModal.vue'
 import { useClipboardStore } from '~/store/clipboard';
 import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
+import CitizenInfoReasonModal from './CitizenInfoReasonModal.vue';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -28,6 +29,7 @@ const props = defineProps({
 });
 
 const wantedState = ref(props.user.getProps() ? props.user.getProps()?.getWanted() : false);
+const reason = ref<string>('');
 const jobModal = ref<boolean>(false);
 
 async function toggleWantedStatus(): Promise<void> {
@@ -49,6 +51,7 @@ async function toggleWantedStatus(): Promise<void> {
 
         userProps?.setWanted(wantedState.value);
         req.setProps(userProps);
+        req.setReason(reason.value);
 
         try {
             await $grpc.getCitizenStoreClient().
@@ -60,6 +63,7 @@ async function toggleWantedStatus(): Promise<void> {
                 type: 'success'
             });
 
+            reason.value = '';
             return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
@@ -70,6 +74,8 @@ async function toggleWantedStatus(): Promise<void> {
 
 const templatesOpen = ref(false);
 
+const reasonOpen = ref(false);
+
 function openTemplates(): void {
     clipboardStore.addUser(props.user);
 
@@ -79,7 +85,9 @@ function openTemplates(): void {
 
 <template>
     <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" :auto-fill="true" />
-    <CitizenInfoJobModal :open="jobModal" @close="jobModal = false" :user="user" />
+    <CitizenInfoReasonModal :open="reasonOpen" @close="reasonOpen = false" @submit="toggleWantedStatus(); jobModal = false"
+        v-model:reason="reason" />
+    <CitizenInfoJobModal :open="jobModal" @close="jobModal = false" :user="user" @submit="jobModal = false" />
     <div class="w-full mx-auto max-w-7xl grow lg:flex xl:px-2">
         <div class="flex-1 xl:flex">
             <div class="px-2 py-3 xl:flex-1">
@@ -151,13 +159,13 @@ function openTemplates(): void {
                 <button v-can="'CitizenStoreService.SetUserProps.Job'" type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="jobModal = true">
-                    Set Person's Job
+                    {{ $t('components.citizens.citizen_info_profile.set_job') }}
                 </button>
             </div>
             <div class="flex-initial" v-can="'CitizenStoreService.SetUserProps.Wanted'">
                 <button type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
-                    @click="toggleWantedStatus()">{{ wantedState ?
+                    @click="reasonOpen = true">{{ wantedState ?
                         $t('components.citizens.citizen_info_profile.revoke_wanted') :
                         $t('components.citizens.citizen_info_profile.set_wanted') }}
                 </button>

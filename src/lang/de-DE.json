@@ -187,11 +187,13 @@
                 "create_new_document": "Neues Dokument erstellen",
                 "copy_profile_link": "Profil-Link kopieren",
                 "revoke_wanted": "Fahndungsstatus aufheben",
-                "set_wanted": "Person zur Fahndung ausschreiben"
+                "set_wanted": "Person zur Fahndung ausschreiben",
+                "set_job": "Job der Person setzen"
             },
             "citizen_info_activity_feed_entry": {
                 "set_citizen_as": "Setze den Bürger als",
-                "document_relation": "Bürger zugehörig zu"
+                "document_relation": "Bürger zugehörig zu",
+                "document_relation_removed": "Bürger nicht mehr zugehörig zu"
             }
         },
         "partials": {
@@ -432,7 +434,8 @@
         "total_count": "Gesamtanzahl",
         "none_selected": "Keine {0} ausgewählt",
         "no_licenses": "Keine Lizenzen.",
-        "available": "verfügbar"
+        "available": "verfügbar",
+        "reason": "Grund | Gründe"
     },
     "notifications": {
         "clipboard": {

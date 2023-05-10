@@ -917,6 +917,21 @@ func (m *SetUserPropsRequest) validate(all bool) error {
 		}
 	}
 
+	if m.GetReason() != "" {
+
+		if l := utf8.RuneCountInString(m.GetReason()); l < 3 || l > 255 {
+			err := SetUserPropsRequestValidationError{
+				field:  "Reason",
+				reason: "value length must be between 3 and 255 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return SetUserPropsRequestMultiError(errors)
 	}

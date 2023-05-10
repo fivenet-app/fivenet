@@ -1618,8 +1618,9 @@ proto.resources.users.UserActivity.toObject = function(includeInstance, msg) {
     sourceUser: (f = msg.getSourceUser()) && proto.resources.users.UserShort.toObject(includeInstance, f),
     targetUser: (f = msg.getTargetUser()) && proto.resources.users.UserShort.toObject(includeInstance, f),
     key: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    oldvalue: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    newvalue: jspb.Message.getFieldWithDefault(msg, 8, "")
+    oldValue: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    newValue: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    reason: jspb.Message.getFieldWithDefault(msg, 9, "")
   };
 
   if (includeInstance) {
@@ -1685,11 +1686,15 @@ proto.resources.users.UserActivity.deserializeBinaryFromReader = function(msg, r
       break;
     case 7:
       var value = /** @type {string} */ (reader.readString());
-      msg.setOldvalue(value);
+      msg.setOldValue(value);
       break;
     case 8:
       var value = /** @type {string} */ (reader.readString());
-      msg.setNewvalue(value);
+      msg.setNewValue(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setReason(value);
       break;
     default:
       reader.skipField();
@@ -1765,17 +1770,24 @@ proto.resources.users.UserActivity.serializeBinaryToWriter = function(message, w
       f
     );
   }
-  f = message.getOldvalue();
+  f = message.getOldValue();
   if (f.length > 0) {
     writer.writeString(
       7,
       f
     );
   }
-  f = message.getNewvalue();
+  f = message.getNewValue();
   if (f.length > 0) {
     writer.writeString(
       8,
+      f
+    );
+  }
+  f = message.getReason();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
       f
     );
   }
@@ -1948,10 +1960,10 @@ proto.resources.users.UserActivity.prototype.setKey = function(value) {
 
 
 /**
- * optional string oldValue = 7;
+ * optional string old_value = 7;
  * @return {string}
  */
-proto.resources.users.UserActivity.prototype.getOldvalue = function() {
+proto.resources.users.UserActivity.prototype.getOldValue = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
@@ -1960,16 +1972,16 @@ proto.resources.users.UserActivity.prototype.getOldvalue = function() {
  * @param {string} value
  * @return {!proto.resources.users.UserActivity} returns this
  */
-proto.resources.users.UserActivity.prototype.setOldvalue = function(value) {
+proto.resources.users.UserActivity.prototype.setOldValue = function(value) {
   return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
 /**
- * optional string newValue = 8;
+ * optional string new_value = 8;
  * @return {string}
  */
-proto.resources.users.UserActivity.prototype.getNewvalue = function() {
+proto.resources.users.UserActivity.prototype.getNewValue = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
@@ -1978,8 +1990,26 @@ proto.resources.users.UserActivity.prototype.getNewvalue = function() {
  * @param {string} value
  * @return {!proto.resources.users.UserActivity} returns this
  */
-proto.resources.users.UserActivity.prototype.setNewvalue = function(value) {
+proto.resources.users.UserActivity.prototype.setNewValue = function(value) {
   return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional string reason = 9;
+ * @return {string}
+ */
+proto.resources.users.UserActivity.prototype.getReason = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.users.UserActivity} returns this
+ */
+proto.resources.users.UserActivity.prototype.setReason = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 

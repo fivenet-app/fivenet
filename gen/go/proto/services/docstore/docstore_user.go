@@ -4,11 +4,11 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
+	"strconv"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -157,7 +157,12 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	return resp, nil
 }
 
-func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string) error {
+func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string, relation int16) error {
+	reason := jet.NULL
+	if relation > -1 {
+		reason = jet.String(strconv.Itoa(int(relation)))
+	}
+
 	stmt := userAct.
 		INSERT(
 			userAct.SourceUserID,
@@ -167,14 +172,15 @@ func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, 
 			userAct.OldValue,
 			userAct.NewValue,
 		).
-		MODEL(&model.FivenetUserActivity{
-			SourceUserID: userId,
-			TargetUserID: targetUserId,
-			Type:         int16(activityType),
-			Key:          key,
-			OldValue:     &oldValue,
-			NewValue:     &newValue,
-		})
+		VALUES(
+			userId,
+			targetUserId,
+			int16(activityType),
+			key,
+			&oldValue,
+			&newValue,
+			reason,
+		)
 
 	_, err := stmt.ExecContext(ctx, s.db)
 	return err

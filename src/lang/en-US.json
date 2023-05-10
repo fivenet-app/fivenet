@@ -187,11 +187,13 @@
                 "create_new_document": "Create New Document",
                 "copy_profile_link": "Copy Profile Link",
                 "revoke_wanted": "Revoke Wanted Status",
-                "set_wanted": "Set Person Wanted"
+                "set_wanted": "Set Person Wanted",
+                "set_job": "Set Person's Job"
             },
             "citizen_info_activity_feed_entry": {
                 "set_citizen_as": "Set the citizen as",
-                "document_relation": "Related the cititzen in"
+                "document_relation": "Related the citizen in a",
+                "document_relation_removed": "Removed citizen document relation in"
             }
         },
         "partials": {
@@ -432,7 +434,8 @@
         "total_count": "Total count",
         "none_selected": "No {0} selected",
         "no_licenses": "No Licenses.",
-        "available": "available"
+        "available": "available",
+        "reason": "Reason | Reasons"
     },
     "notifications": {
         "clipboard": {
