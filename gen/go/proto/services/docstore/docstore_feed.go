@@ -387,9 +387,8 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		return nil, err
 	}
 
-	lastIdVal := strconv.Itoa(int(lastId))
-	if err := s.addUserAcitvity(ctx, tx,
-		userId, req.Relation.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "", lastIdVal); err != nil {
+	if err := s.addUserActivity(ctx, tx,
+		userId, req.Relation.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "", strconv.Itoa(int(lastId)), -1); err != nil {
 		return nil, FailedQueryErr
 	}
 
@@ -467,9 +466,8 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		return nil, err
 	}
 
-	idVal := strconv.Itoa(int(docID.ID))
-	if err := s.addUserAcitvity(ctx, tx,
-		userId, int32(docID.ID), users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", idVal, ""); err != nil {
+	if err := s.addUserActivity(ctx, tx,
+		userId, int32(docID.ID), users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", strconv.Itoa(int(docID.ID)), "", -1); err != nil {
 		return nil, FailedQueryErr
 	}
 

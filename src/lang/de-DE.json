@@ -192,7 +192,8 @@
             },
             "citizen_info_activity_feed_entry": {
                 "set_citizen_as": "Setze den Bürger als",
-                "document_relation": "Bürger zugehörig zu"
+                "document_relation": "Bürger zugehörig zu",
+                "document_relation_removed": "Bürger nicht mehr zugehörig zu"
             }
         },
         "partials": {
@@ -434,7 +435,7 @@
         "none_selected": "Keine {0} ausgewählt",
         "no_licenses": "Keine Lizenzen.",
         "available": "verfügbar",
-        "reason": "Grund"
+        "reason": "Grund | Gründe"
     },
     "notifications": {
         "clipboard": {

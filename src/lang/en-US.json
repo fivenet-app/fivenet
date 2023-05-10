@@ -192,7 +192,8 @@
             },
             "citizen_info_activity_feed_entry": {
                 "set_citizen_as": "Set the citizen as",
-                "document_relation": "Related the cititzen in"
+                "document_relation": "Related the citizen in a",
+                "document_relation_removed": "Removed citizen document relation in"
             }
         },
         "partials": {
@@ -434,7 +435,7 @@
         "none_selected": "No {0} selected",
         "no_licenses": "No Licenses.",
         "available": "available",
-        "reason": "Reason"
+        "reason": "Reason | Reasons"
     },
     "notifications": {
         "clipboard": {
