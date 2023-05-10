@@ -1139,7 +1139,7 @@
   integrity sha512-qU25Ma1I3NqTSHJUOKi9sAH1/Mzuvlke0ioMJRthLXKm7JiSKVwFghlGbDLOO2sARECGhja4xYfRAZNPAkooYg==
 
 "@fivenet/gen@file:./gen/js":
-  version "0.2.0"
+  version "0.3.0"
 
 "@fontsource/inter@^4.5.15":
   version "4.5.15"
