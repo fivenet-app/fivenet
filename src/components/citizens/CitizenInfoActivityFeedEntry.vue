@@ -43,6 +43,7 @@ switch (props.activity.getKey()) {
             iconColor.value = 'text-info-600';
             actionLink.value.params.id = props.activity.getNewValue();
         } else if (props.activity.getOldValue() !== '') {
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation_removed');
             iconColor.value = 'text-base-600';
             actionLink.value.params.id = props.activity.getOldValue();
         }
