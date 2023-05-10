@@ -20,11 +20,12 @@ import { CompleteCitizensRequest, CompleteJobsRequest } from '@fivenet/gen/servi
 import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { UserShort } from '@fivenet/gen/resources/users/users_pb';
 import { ACCESS_LEVEL } from '@fivenet/gen/resources/documents/access_pb';
-import { toTitleCase } from '~/utils/strings';
 import { ArrayElement } from '~/utils/types';
 import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
 
 const { $grpc } = useNuxtApp();
+
+const { t } = useI18n();
 
 const props = defineProps<{
     init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: ACCESS_LEVEL, minimumrank?: number } },
@@ -54,12 +55,22 @@ let entriesMinimumRank = [] as JobGrade[];
 const queryMinimumRank = ref('');
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
-let entriesAccessRoles = new Array<{ id: ACCESS_LEVEL; value: string }>();
+let entriesAccessRoles = new Array<{ id: ACCESS_LEVEL; label: string; value: string }>();
 if (!props.accessRoles || props.accessRoles.length == 0) {
-    entriesAccessRoles = Object.keys(ACCESS_LEVEL).map(e => { return { id: ACCESS_LEVEL_Util.fromString(e), value: e } });
+    entriesAccessRoles = Object.keys(ACCESS_LEVEL).map(e => {
+        return {
+            id: ACCESS_LEVEL_Util.fromString(e),
+            label: t(`enums.docstore.ACCESS_LEVEL.${e}`),
+            value: e,
+        };
+    });
 } else {
     props.accessRoles.forEach((v) => {
-        entriesAccessRoles.push({ id: v, value: ACCESS_LEVEL_Util.toEnumKey(v)! });
+        entriesAccessRoles.push({
+            id: v,
+            label: t(`enums.docstore.ACCESS_LEVEL.${v}`),
+            value: ACCESS_LEVEL_Util.toEnumKey(v)!,
+        });
     });
 }
 const queryAccessRole = ref('');
@@ -281,7 +292,7 @@ watch(selectedAccessRole, () => {
                         <ComboboxInput
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @change="queryAccessRole = $event.target.value"
-                            :display-value="(role: any) => toTitleCase(role.value?.toLowerCase())" />
+                            :display-value="(role: any) => role.label" />
                     </ComboboxButton>
 
                     <ComboboxOptions v-if="entriesAccessRoles.length > 0"
@@ -291,7 +302,7 @@ watch(selectedAccessRole, () => {
                             <li
                                 :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                 <span :class="['block truncate', selected && 'font-semibold']">
-                                    {{ toTitleCase(role.value.toLowerCase()) }}
+                                    {{ role.label }}
                                 </span>
 
                                 <span v-if="selected"

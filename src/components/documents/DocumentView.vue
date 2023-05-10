@@ -189,9 +189,10 @@ function addToClipboard(): void {
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-info-100 whitespace-nowrap snap-start">
                                 <span class="w-2 h-2 rounded-full bg-info-500" aria-hidden="true" />
                                 <span class="text-sm font-medium text-info-800">{{ entry.getJobLabel() }}<span
-                                        v-if="entry.getMinimumgrade() > 0"> (Rank: {{ entry.getMinimumgrade() }})</span> -
-                                    {{
-                                        toTitleCase(ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!.toLowerCase()) }}</span>
+                                        :title="entry.getJobGradeLabel()" v-if="entry.getMinimumgrade() > 0"> ({{
+                                            $t('common.rank') }}: {{ entry.getMinimumgrade() }})</span> - {{
+        $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!}`) }}
+                                </span>
                             </div>
                             <div v-for="entry in access?.getUsersList()" :key="entry.getId()"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap snap-start">
@@ -199,7 +200,8 @@ function addToClipboard(): void {
                                 <span class="text-sm font-medium text-secondary-700">
                                     {{ entry.getUser()?.getFirstname() }}
                                     {{ entry.getUser()?.getLastname() }} - {{
-                                        toTitleCase(ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!.toLowerCase()) }}</span>
+        $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!}`) }}
+                                </span>
                             </div>
                         </div>
                         <div>

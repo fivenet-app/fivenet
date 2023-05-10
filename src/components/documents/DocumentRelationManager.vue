@@ -189,8 +189,9 @@ function removeRelation(id: number): void {
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
-                                                                            toTitleCase(DOC_RELATION_Util.toEnumKey(rel.getRelation())!.toLowerCase())
-                                                                            ?? rel.getRelation() }}</td>
+                                                                            $t(`enums.docstore.DOC_RELATION.${DOC_RELATION_Util.toEnumKey(rel.getRelation())!}`)
+                                                                        }}
+                                                                    </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">

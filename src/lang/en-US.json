@@ -587,5 +587,27 @@
             "title": "Penalty Calculator: Copied to clipboard",
             "content": "Summary copied to clipboard."
         }
+    },
+    "enums": {
+        "docstore": {
+            "ACCESS_LEVEL": {
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "COMMENT": "Comment",
+                "ACCESS": "Access",
+                "EDIT": "Edit"
+            },
+            "DOC_REFERENCE": {
+                "LINKED": "links",
+                "SOLVES": "solves",
+                "CLOSES": "closes",
+                "DEPRECATES": "deprecates"
+            },
+            "DOC_RELATION": {
+                "MENTIONED": "mentioned",
+                "TARGETS": "targets",
+                "CAUSED": "caused"
+            }
+        }
     }
 }

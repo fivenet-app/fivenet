@@ -72,12 +72,16 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                                 relation.getTargetUser()?.getLastname() }}
                                         </NuxtLink>
                                     </span>
-                                    <span class="font-medium ">{{
-                                        DOC_RELATION_Util.toEnumKey(relation.getRelation()) }}</span>
+                                    <span class="font-medium">
+                                        {{
+                                            $t(`enums.docstore.DOC_RELATION.${DOC_RELATION_Util.toEnumKey(relation.getRelation())!}`)
+                                        }}
+                                    </span>
                                     <span v-if="showSource" class="truncate">{{ relation.getSourceUser()?.getFirstname() +
                                         ", " +
                                         relation.getSourceUser()?.getLastname() }}</span>
-                                    <time datetime="">{{ $d(relation.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}</time>
+                                    <time datetime="">{{ $d(relation.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')
+                                    }}</time>
                                 </span>
                             </span>
                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
@@ -115,7 +119,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                             </thead>
                             <tbody class="divide-y divide-gray-600 bg-base-800 text-neutral">
                                 <tr v-for="relation in relations" :key="relation.getId()">
-                                    <td v-if="showDocument" class="px-6 py-4 text-sm ">
+                                    <td v-if="showDocument" class="px-6 py-4 text-sm">
                                         <NuxtLink :to="{ name: 'documents-id', params: { id: relation.getDocumentId() } }">
                                             {{ relation.getDocument()?.getTitle() }}<span
                                                 v-if="relation.getDocument()?.getCategory()"> ({{ $t('common.category', 1)
@@ -123,7 +127,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
     relation.getDocument()?.getCategory()?.getName() }})</span>
                                         </NuxtLink>
                                     </td>
-                                    <td class="px-6 py-4 text-sm ">
+                                    <td class="px-6 py-4 text-sm">
                                         <div class="flex">
                                             <NuxtLink
                                                 :to="{ name: 'citizens-id', params: { id: relation.getTargetUserId() } }"
@@ -133,9 +137,12 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                             </NuxtLink>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
-                                        <span class="font-medium ">{{
-                                            DOC_RELATION_Util.toEnumKey(relation.getRelation()) }}</span>
+                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                        <span class="font-medium">
+                                            {{
+                                                $t(`enums.docstore.DOC_RELATION.${DOC_RELATION_Util.toEnumKey(relation.getRelation())!}`)
+                                            }}
+                                        </span>
                                     </td>
                                     <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
                                         <div class="flex">
@@ -147,8 +154,9 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                             </NuxtLink>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
-                                        <time datetime="">{{ $d(relation.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}</time>
+                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                        <time datetime="">{{ $d(relation.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')
+                                        }}</time>
                                     </td>
                                 </tr>
                             </tbody>

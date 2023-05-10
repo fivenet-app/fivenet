@@ -49,7 +49,7 @@ function addToClipboard(): void {
                 {{ user?.getFirstname() }}, {{ user?.getLastname() }}
             </p>
             <span class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">
-                {{ user.getJobLabel() }} (Rank: {{ user.getJobGradeLabel() }})
+                {{ user.getJobLabel() }} ({{ $t('common.rank') }}: {{ user.getJobGradeLabel() }})
             </span>
             <span v-if="user.getProps()?.getWanted()"
                 class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700">

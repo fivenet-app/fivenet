@@ -60,8 +60,9 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                                 $t('common.category', 1) }}: {{
         reference.getTargetDocument()?.getCategory()?.getName() }})</span>
                                     </span>
-                                    <span class="font-medium ">{{
-                                        DOC_REFERENCE_Util.toEnumKey(reference.getReference()) }}</span>
+                                    <span class="font-medium">
+                                        {{ DOC_REFERENCE_Util.toEnumKey(reference.getReference()) }}
+                                    </span>
                                     <span v-if="showSource" class="truncate">
                                         {{ reference.getSourceDocument()?.getTitle() }}<span
                                             v-if="reference.getSourceDocument()?.getCategory()"> ({{ $t('common.category',
@@ -74,7 +75,8 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                                 reference.getCreator()?.getLastname() }}
                                         </NuxtLink>
                                     </span>
-                                    <time datetime="">{{ $d(reference.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}</time>
+                                    <time datetime="">{{ $d(reference.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')
+                                    }}</time>
                                 </span>
                             </span>
                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
@@ -112,7 +114,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                             </thead>
                             <tbody class="divide-y divide-base-600 bg-base-800 text-neutral">
                                 <tr v-for="reference in references" :key="reference.getId()">
-                                    <td class="px-6 py-4 text-sm ">
+                                    <td class="px-6 py-4 text-sm">
                                         <div class="flex">
                                             <NuxtLink
                                                 :to="{ name: 'documents-id', params: { id: reference.getTargetDocumentId() } }"
@@ -124,9 +126,12 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                             </NuxtLink>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
-                                        <span class="font-medium ">{{
-                                            DOC_REFERENCE_Util.toEnumKey(reference.getReference()) }}</span>
+                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                        <span class="font-medium">
+                                            {{
+                                                $t(`enums.docstore.DOC_REFERENCE.${DOC_REFERENCE_Util.toEnumKey(reference.getReference())!}`)
+                                            }}
+                                        </span>
                                     </td>
                                     <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
                                         <div class="flex">
@@ -140,7 +145,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                             </NuxtLink>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
+                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                         <div class="flex">
                                             <NuxtLink
                                                 :to="{ name: 'citizens-id', params: { id: reference.getCreatorId() } }">
@@ -149,8 +154,9 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                             </NuxtLink>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap ">
-                                        <time datetime="">{{ $d(reference.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}</time>
+                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                        <time datetime="">{{ $d(reference.getCreatedAt()?.getTimestamp()?.toDate()!,
+                                            'short') }}</time>
                                     </td>
                                 </tr>
                             </tbody>

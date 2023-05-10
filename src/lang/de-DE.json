@@ -587,5 +587,27 @@
             "title": "Strafenrechner: Kopiert",
             "content": "Zusammenfassung in die Zwischenablage kopiert."
         }
+    },
+    "enums": {
+        "docstore": {
+            "ACCESS_LEVEL": {
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "COMMENT": "Kommentieren",
+                "ACCESS": "Zugriffsmanagement",
+                "EDIT": "Editieren"
+            },
+            "DOC_REFERENCE": {
+                "LINKED": "verlinkt",
+                "SOLVES": "löst",
+                "CLOSES": "schließt",
+                "DEPRECATES": "veraltet"
+            },
+            "DOC_RELATION": {
+                "MENTIONED": "erwähnt",
+                "TARGETS": "zielt auf",
+                "CAUSED": "verursacht"
+            }
+        }
     }
 }
