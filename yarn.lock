@@ -1357,7 +1357,7 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
   integrity sha512-YBI/6o2EBz02tdEJRBK8xkt3zvOFOWlLBf7WKYGBsSYSRtjjgrqPe2skp6VLLmKx5WbHHDNcW+6oACaurxGzeA==
 
-"@nuxt/kit@3.4.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.2", "@nuxt/kit@^3.2.0", "@nuxt/kit@^3.2.3", "@nuxt/kit@^3.3.3", "@nuxt/kit@^3.4.2", "@nuxt/kit@^3.4.3":
+"@nuxt/kit@3.4.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.2", "@nuxt/kit@^3.2.0", "@nuxt/kit@^3.2.3", "@nuxt/kit@^3.3.3", "@nuxt/kit@^3.4.3":
   version "3.4.3"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.4.3.tgz#2ab6efb0a4db7b4e5f4d8d7d7e696fa30a6e8771"
   integrity sha512-aQyzplYFCL292UsVZzlOZOC51ZKYFL0PBihbcPzxTzXQvAfMF8/DQ539kqzqXzxTCcmnUB9ROhIaNUrAeUkFYA==
@@ -3508,9 +3508,9 @@ ejs@^3.1.6:
     jake "^10.8.5"
 
 electron-to-chromium@^1.4.284:
-  version "1.4.388"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.388.tgz#ec0d1be823d5b14da56d91ec5c57e84b4624ea45"
-  integrity sha512-xZ0y4zjWZgp65okzwwt00f2rYibkFPHUv9qBz+Vzn8cB9UXIo9Zc6Dw81LJYhhNt0G/vR1OJEfStZ49NKl0YxQ==
+  version "1.4.390"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.390.tgz#84fa525ef2779a5bdb5ade59866eef4da87c1009"
+  integrity sha512-9h6KDGTynRfpM16U40uLSCxRO3diIKcXXI0mPChKls7sfkxOlCH1sgSJ14Rb00BFomQNHY/p67gaZSu5Mu8j6w==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -5854,11 +5854,11 @@ nuxi@3.4.3:
     fsevents "~2.3.2"
 
 nuxt-typed-router@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.2.0.tgz#96d04bbcb58969eff635fe1a622c1f7aeeaa1209"
-  integrity sha512-f8CSfiAsm6mImeRDaWVVOvd22NlBbVeNRKCOWrU/HbGR4QemRVTj/SGJ/pjc7EPQrJRFMqpfqTKOUkiUwRdkAQ==
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.2.2.tgz#98d1e78f9e4f5bec9f7e0c6c0dc85cf2067fe84e"
+  integrity sha512-DjPG/9gI68jWyTPBOWXUzMFcxcK7oBFp06NKjL8A7ExiWlgSzUQMV2TI/opupMwADZQ/hVbYxY+wzAelJksQbQ==
   dependencies:
-    "@nuxt/kit" "^3.4.2"
+    "@nuxt/kit" "^3.4.3"
     chalk "^5.2.0"
     defu "^6.1.2"
     lodash-es "^4.17.21"
