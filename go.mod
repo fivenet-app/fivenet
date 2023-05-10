@@ -3,7 +3,7 @@ module github.com/galexrt/fivenet
 go 1.20
 
 require (
-	github.com/Code-Hex/go-generics-cache v1.3.0
+	github.com/Code-Hex/go-generics-cache v1.3.1
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/blevesearch/bleve/v2 v2.3.8
 	github.com/creasty/defaults v1.7.0
