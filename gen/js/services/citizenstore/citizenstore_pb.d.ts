@@ -144,6 +144,9 @@ export class SetUserPropsRequest extends jspb.Message {
   hasProps(): boolean;
   clearProps(): SetUserPropsRequest;
 
+  getReason(): string;
+  setReason(value: string): SetUserPropsRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SetUserPropsRequest.AsObject;
   static toObject(includeInstance: boolean, msg: SetUserPropsRequest): SetUserPropsRequest.AsObject;
@@ -155,6 +158,7 @@ export class SetUserPropsRequest extends jspb.Message {
 export namespace SetUserPropsRequest {
   export type AsObject = {
     props?: resources_users_users_pb.UserProps.AsObject,
+    reason: string,
   }
 }
 

@@ -244,11 +244,14 @@ export class UserActivity extends jspb.Message {
   getKey(): string;
   setKey(value: string): UserActivity;
 
-  getOldvalue(): string;
-  setOldvalue(value: string): UserActivity;
+  getOldValue(): string;
+  setOldValue(value: string): UserActivity;
 
-  getNewvalue(): string;
-  setNewvalue(value: string): UserActivity;
+  getNewValue(): string;
+  setNewValue(value: string): UserActivity;
+
+  getReason(): string;
+  setReason(value: string): UserActivity;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UserActivity.AsObject;
@@ -266,8 +269,9 @@ export namespace UserActivity {
     sourceUser?: UserShort.AsObject,
     targetUser?: UserShort.AsObject,
     key: string,
-    oldvalue: string,
-    newvalue: string,
+    oldValue: string,
+    newValue: string,
+    reason: string,
   }
 }
 

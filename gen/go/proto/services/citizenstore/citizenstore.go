@@ -382,6 +382,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		Props: &users.UserProps{},
 	}
 
+	if req.Reason == "" {
+		return nil, status.Error(codes.InvalidArgument, "Must give a reason!")
+	}
+
 	// Use getUserProps
 	props, err := s.getUserProps(ctx, userId)
 	if err != nil {
@@ -455,13 +459,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Create user activity
 	if req.Props.Wanted != props.Wanted {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted", strconv.FormatBool(!*props.Wanted), strconv.FormatBool(*req.Props.Wanted)); err != nil {
+			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted", strconv.FormatBool(!*props.Wanted), strconv.FormatBool(*req.Props.Wanted), req.Reason); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
 	if req.Props.JobName != props.JobName {
 		if err := s.addUserAcitvity(ctx, tx,
-			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job", *props.JobName, *req.Props.JobName); err != nil {
+			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job", *props.JobName, *req.Props.JobName, req.Reason); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
@@ -500,7 +504,7 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 	return &dest, nil
 }
 
-func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string) error {
+func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string, reason string) error {
 	stmt := userAct.
 		INSERT(
 			userAct.SourceUserID,
@@ -517,6 +521,7 @@ func (s *Server) addUserAcitvity(ctx context.Context, tx *sql.Tx, userId int32, 
 			Key:          key,
 			OldValue:     &oldValue,
 			NewValue:     &newValue,
+			Reason:       &reason,
 		})
 
 	_, err := stmt.ExecContext(ctx, s.db)

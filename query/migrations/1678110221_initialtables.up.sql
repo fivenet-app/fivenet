@@ -180,6 +180,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_activity` (
   `key` varchar(64) NOT NULL,
   `old_value` varchar(255) DEFAULT NULL,
   `new_value` varchar(255) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_user_activity_source_user_id` (`source_user_id`),
   KEY `idx_fivenet_user_activity_target_user_id` (`target_user_id`),

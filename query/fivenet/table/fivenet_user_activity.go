@@ -25,6 +25,7 @@ type fivenetUserActivityTable struct {
 	Key          mysql.ColumnString
 	OldValue     mysql.ColumnString
 	NewValue     mysql.ColumnString
+	Reason       mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -73,8 +74,9 @@ func newFivenetUserActivityTableImpl(schemaName, tableName, alias string) fivene
 		KeyColumn          = mysql.StringColumn("key")
 		OldValueColumn     = mysql.StringColumn("old_value")
 		NewValueColumn     = mysql.StringColumn("new_value")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn}
+		ReasonColumn       = mysql.StringColumn("reason")
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn, ReasonColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn, ReasonColumn}
 	)
 
 	return fivenetUserActivityTable{
@@ -89,6 +91,7 @@ func newFivenetUserActivityTableImpl(schemaName, tableName, alias string) fivene
 		Key:          KeyColumn,
 		OldValue:     OldValueColumn,
 		NewValue:     NewValueColumn,
+		Reason:       ReasonColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

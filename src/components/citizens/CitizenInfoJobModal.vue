@@ -36,6 +36,8 @@ defineEmits<{
 const queryJob = ref<string>('');
 const selectedJob = ref<undefined | Job>();
 
+const reason = ref<string>('');
+
 const { data: jobs } = useLazyAsyncData('jobs', () => getJobs());
 
 async function getJobs(): Promise<Array<Job>> {
@@ -63,31 +65,40 @@ watch(jobs, () => {
 
 watchDebounced(queryJob, async () => await getJobs(), { debounce: 600, maxWait: 1750 });
 
-watch(selectedJob, async () => {
-    if (!selectedJob.value || selectedJob.value.getName() === props.user.getJob()) return;
+async function setJobProp(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        if (!selectedJob.value || selectedJob.value.getName() === props.user.getJob()) return res();
 
-    const userProps = new UserProps();
-    userProps.setUserId(props.user.getUserId());
-    userProps.setJobName(selectedJob.value.getName());
+        if (reason.value.length < 3) return res();
 
-    const req = new SetUserPropsRequest();
-    req.setProps(userProps);
+        const userProps = new UserProps();
+        userProps.setUserId(props.user.getUserId());
+        userProps.setJobName(selectedJob.value.getName());
 
-    try {
-        await $grpc.getCitizenStoreClient().setUserProps(req, null);
+        const req = new SetUserPropsRequest();
+        req.setProps(userProps);
+        req.setReason(reason.value);
 
-        props.user.setJob(selectedJob.value?.getName()!);
-        props.user.setJobLabel(selectedJob.value?.getLabel()!);
+        try {
+            await $grpc.getCitizenStoreClient().setUserProps(req, null);
 
-        notifications.dispatchNotification({
-            title: t('notifications.action_successfull.title'),
-            content: t('notifications.action_successfull.content'),
-            type: 'success'
-        });
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-    }
-});
+            props.user.setJob(selectedJob.value?.getName()!);
+            props.user.setJobLabel(selectedJob.value?.getLabel()!);
+
+            notifications.dispatchNotification({
+                title: t('notifications.action_successfull.title'),
+                content: t('notifications.action_successfull.content'),
+                type: 'success'
+            });
+
+            reason.value = '';
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
 </script>
 
 <template>
@@ -107,7 +118,7 @@ watch(selectedJob, async () => {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                         <DialogPanel
                             class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 h-96">
-                            <div>
+                            <div class="my-2 space-y-24">
                                 <Combobox as="div" v-model="selectedJob" nullable>
                                     <div class="relative">
                                         <ComboboxButton as="div">
@@ -136,11 +147,18 @@ watch(selectedJob, async () => {
                                         </ComboboxOptions>
                                     </div>
                                 </Combobox>
+
+                                <input type="text" name="reason" id="reason"
+                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    :placeholder="$t('common.reason')" v-model="reason" />
                             </div>
                             <div class="absolute bottom-0 w-full left-0 sm:flex">
                                 <button type="button"
                                     class="flex-1 rounded-bd bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                     @click="$emit('close')">{{ $t('common.close', 1) }}</button>
+                                <button type="button"
+                                    class="flex-1 rounded-bd bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    @click="setJobProp(); $emit('close')">{{ $t('common.save') }}</button>
                             </div>
                         </DialogPanel>
                     </TransitionChild>
