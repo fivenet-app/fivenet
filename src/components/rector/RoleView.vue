@@ -63,6 +63,7 @@ interface Perm {
     id: number;
     name: string;
     category: string;
+    description: string;
     perm: Permission;
 }
 
@@ -81,6 +82,7 @@ async function getPermissions(): Promise<void> {
                 id: perm.getId(),
                 category: splitName.shift()!,
                 name: splitName.join('.'),
+                description: perm.getDescription(),
                 perm
             }
 
@@ -199,10 +201,15 @@ onMounted(async () => {
                             <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
                                 <div v-for="(perm, idx) in permList.filter(p => p.category === category)" :key="perm.id">
                                     <div class="flex flex-row gap-4">
-                                        <span class="flex-1 truncate my-auto">
-                                            {{ perm.name }}
-                                        </span>
-                                        <div class="flex flex-row">
+                                        <div class="flex flex-1 flex-col my-auto">
+                                            <span class="truncate lg:max-w-full max-w-xs">
+                                                {{ perm.name }}
+                                            </span>
+                                            <span class="text-base-500 truncate lg:max-w-full max-w-xs">
+                                                {{ perm.description }}
+                                            </span>
+                                        </div>
+                                        <div class="flex flex-initial flex-row max-h-8 my-auto">
                                             <button :data-active="permStates.has(perm.id) ? permStates.get(perm.id) : false"
                                                 @click="updatePermissionState(perm.id, true)"
                                                 class="transition-colors rounded-l-lg p-1 bg-success-600/50 data-[active=true]:bg-success-600 text-base-300 data-[active=true]:text-neutral hover:bg-success-600/70">
