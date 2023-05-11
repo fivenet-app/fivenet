@@ -10,3 +10,4 @@ which is licensed under [MIT license](https://github.com/Permify/go-role/blob/fe
 - [ ] Permissions can be `True`/`"Unset"`/`False`
   - [ ] `"Unset"` means that it be inherited from the next lower role
 - [ ] "Default" access group for any job that doesn't have
+- [ ] Per Role/ Rank "Props"

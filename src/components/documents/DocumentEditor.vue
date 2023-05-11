@@ -108,8 +108,6 @@ onMounted(async () => {
             const template = resp.getTemplate();
             doc.value.title = template?.getContentTitle()!;
             doc.value.content = template?.getContent()!;
-            console.log("GET TEMPLATE");
-            console.log(template?.getContent());
             selectedCategory.value = entriesCategory.find(e => e.getId() === template?.getCategory()?.getId());
 
             if (template?.hasContentAccess()) {
@@ -139,8 +137,6 @@ onMounted(async () => {
             if (document) {
                 doc.value.title = document.getTitle();
                 doc.value.content = document.getContent();
-                console.log("GET DOC");
-                console.log(document?.getContent());
                 doc.value.closed = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
                 doc.value.state = document.getState();
                 selectedCategory.value = entriesCategory.find(e => e.getId() === document.getCategory()?.getId());
@@ -318,8 +314,6 @@ async function submitForm(): Promise<void> {
         const req = new CreateDocumentRequest();
         req.setTitle(doc.value.title);
         req.setContent(doc.value.content);
-        console.log("SUBMIT");
-        console.log(doc.value.content);
         req.setContentType(DOC_CONTENT_TYPE.HTML);
         req.setClosed(doc.value.closed.closed);
         req.setState(doc.value.state);
@@ -399,8 +393,6 @@ async function editForm(): Promise<void> {
         req.setDocumentId(props.id!);
         req.setTitle(doc.value.title);
         req.setContent(doc.value.content);
-        console.log("SUBMIT");
-        console.log(doc.value.content);
         req.setContentType(DOC_CONTENT_TYPE.HTML);
         req.setClosed(doc.value.closed.closed);
         req.setState(doc.value.state);
