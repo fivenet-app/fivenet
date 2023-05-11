@@ -6968,57 +6968,57 @@ proto.services.docstore.UpdateDocumentRequest.serializeBinaryToWriter = function
       f
     );
   }
-  f = /** @type {number} */ (jspb.Message.getField(message, 2));
-  if (f != null) {
+  f = message.getCategoryId();
+  if (f !== 0) {
     writer.writeUint64(
       2,
       f
     );
   }
-  f = /** @type {string} */ (jspb.Message.getField(message, 3));
-  if (f != null) {
+  f = message.getTitle();
+  if (f.length > 0) {
     writer.writeString(
       3,
       f
     );
   }
-  f = /** @type {string} */ (jspb.Message.getField(message, 4));
-  if (f != null) {
+  f = message.getContent();
+  if (f.length > 0) {
     writer.writeString(
       4,
       f
     );
   }
-  f = /** @type {!proto.resources.documents.DOC_CONTENT_TYPE} */ (jspb.Message.getField(message, 5));
-  if (f != null) {
+  f = message.getContentType();
+  if (f !== 0.0) {
     writer.writeEnum(
       5,
       f
     );
   }
-  f = /** @type {string} */ (jspb.Message.getField(message, 6));
-  if (f != null) {
+  f = message.getData();
+  if (f.length > 0) {
     writer.writeString(
       6,
       f
     );
   }
-  f = /** @type {string} */ (jspb.Message.getField(message, 7));
-  if (f != null) {
+  f = message.getState();
+  if (f.length > 0) {
     writer.writeString(
       7,
       f
     );
   }
-  f = /** @type {boolean} */ (jspb.Message.getField(message, 8));
-  if (f != null) {
+  f = message.getClosed();
+  if (f) {
     writer.writeBool(
       8,
       f
     );
   }
-  f = /** @type {boolean} */ (jspb.Message.getField(message, 9));
-  if (f != null) {
+  f = message.getPublic();
+  if (f) {
     writer.writeBool(
       9,
       f
@@ -7067,25 +7067,7 @@ proto.services.docstore.UpdateDocumentRequest.prototype.getCategoryId = function
  * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
  */
 proto.services.docstore.UpdateDocumentRequest.prototype.setCategoryId = function(value) {
-  return jspb.Message.setField(this, 2, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.clearCategoryId = function() {
-  return jspb.Message.setField(this, 2, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.hasCategoryId = function() {
-  return jspb.Message.getField(this, 2) != null;
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -7103,25 +7085,7 @@ proto.services.docstore.UpdateDocumentRequest.prototype.getTitle = function() {
  * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
  */
 proto.services.docstore.UpdateDocumentRequest.prototype.setTitle = function(value) {
-  return jspb.Message.setField(this, 3, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.clearTitle = function() {
-  return jspb.Message.setField(this, 3, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.hasTitle = function() {
-  return jspb.Message.getField(this, 3) != null;
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
@@ -7139,25 +7103,7 @@ proto.services.docstore.UpdateDocumentRequest.prototype.getContent = function() 
  * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
  */
 proto.services.docstore.UpdateDocumentRequest.prototype.setContent = function(value) {
-  return jspb.Message.setField(this, 4, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.clearContent = function() {
-  return jspb.Message.setField(this, 4, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.hasContent = function() {
-  return jspb.Message.getField(this, 4) != null;
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -7175,25 +7121,7 @@ proto.services.docstore.UpdateDocumentRequest.prototype.getContentType = functio
  * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
  */
 proto.services.docstore.UpdateDocumentRequest.prototype.setContentType = function(value) {
-  return jspb.Message.setField(this, 5, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.clearContentType = function() {
-  return jspb.Message.setField(this, 5, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.hasContentType = function() {
-  return jspb.Message.getField(this, 5) != null;
+  return jspb.Message.setProto3EnumField(this, 5, value);
 };
 
 
@@ -7211,25 +7139,7 @@ proto.services.docstore.UpdateDocumentRequest.prototype.getData = function() {
  * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
  */
 proto.services.docstore.UpdateDocumentRequest.prototype.setData = function(value) {
-  return jspb.Message.setField(this, 6, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.clearData = function() {
-  return jspb.Message.setField(this, 6, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.hasData = function() {
-  return jspb.Message.getField(this, 6) != null;
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
@@ -7247,25 +7157,7 @@ proto.services.docstore.UpdateDocumentRequest.prototype.getState = function() {
  * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
  */
 proto.services.docstore.UpdateDocumentRequest.prototype.setState = function(value) {
-  return jspb.Message.setField(this, 7, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.clearState = function() {
-  return jspb.Message.setField(this, 7, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.hasState = function() {
-  return jspb.Message.getField(this, 7) != null;
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
@@ -7283,25 +7175,7 @@ proto.services.docstore.UpdateDocumentRequest.prototype.getClosed = function() {
  * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
  */
 proto.services.docstore.UpdateDocumentRequest.prototype.setClosed = function(value) {
-  return jspb.Message.setField(this, 8, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.clearClosed = function() {
-  return jspb.Message.setField(this, 8, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.hasClosed = function() {
-  return jspb.Message.getField(this, 8) != null;
+  return jspb.Message.setProto3BooleanField(this, 8, value);
 };
 
 
@@ -7319,25 +7193,7 @@ proto.services.docstore.UpdateDocumentRequest.prototype.getPublic = function() {
  * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
  */
 proto.services.docstore.UpdateDocumentRequest.prototype.setPublic = function(value) {
-  return jspb.Message.setField(this, 9, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.services.docstore.UpdateDocumentRequest} returns this
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.clearPublic = function() {
-  return jspb.Message.setField(this, 9, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.services.docstore.UpdateDocumentRequest.prototype.hasPublic = function() {
-  return jspb.Message.getField(this, 9) != null;
+  return jspb.Message.setProto3BooleanField(this, 9, value);
 };
 
 

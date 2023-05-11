@@ -2,6 +2,7 @@ package htmlsanitizer
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/microcosm-cc/bluemonday"
 )
@@ -13,6 +14,17 @@ var (
 
 func init() {
 	p = bluemonday.UGCPolicy()
+
+	// "img" is permitted
+	p.AllowAttrs("align").Matching(bluemonday.ImageAlign).OnElements("img")
+	p.AllowAttrs("alt").Matching(bluemonday.Paragraph).OnElements("img")
+	p.AllowAttrs("height", "width").Matching(bluemonday.NumberOrPercent).OnElements("img")
+
+	// Standard URLs enabled
+	p.AllowAttrs("src").OnElements("img")
+
+	// Allow in-line images (for now)
+	p.AllowDataURIImages()
 
 	// Style
 	p.AllowAttrs("style").OnElements("span", "p")
@@ -32,7 +44,8 @@ func init() {
 }
 
 func Sanitize(in string) string {
-	return p.Sanitize(in)
+	out := p.Sanitize(in)
+	return strings.TrimSuffix(out, "<p><br></p>")
 }
 
 func StripTags(in string) string {

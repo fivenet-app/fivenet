@@ -4558,81 +4558,57 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
-	if m.CategoryId != nil {
-		// no validation rules for CategoryId
-	}
+	// no validation rules for CategoryId
 
-	if m.Title != nil {
-
-		if utf8.RuneCountInString(m.GetTitle()) < 3 {
-			err := UpdateDocumentRequestValidationError{
-				field:  "Title",
-				reason: "value length must be at least 3 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
+	if utf8.RuneCountInString(m.GetTitle()) < 3 {
+		err := UpdateDocumentRequestValidationError{
+			field:  "Title",
+			reason: "value length must be at least 3 runes",
 		}
-
-	}
-
-	if m.Content != nil {
-
-		if utf8.RuneCountInString(m.GetContent()) < 30 {
-			err := UpdateDocumentRequestValidationError{
-				field:  "Content",
-				reason: "value length must be at least 30 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
+		if !all {
+			return err
 		}
-
+		errors = append(errors, err)
 	}
 
-	if m.ContentType != nil {
-
-		if _, ok := documents.DOC_CONTENT_TYPE_name[int32(m.GetContentType())]; !ok {
-			err := UpdateDocumentRequestValidationError{
-				field:  "ContentType",
-				reason: "value must be one of the defined enum values",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
+	if utf8.RuneCountInString(m.GetContent()) < 30 {
+		err := UpdateDocumentRequestValidationError{
+			field:  "Content",
+			reason: "value length must be at least 30 runes",
 		}
-
-	}
-
-	if m.Data != nil {
-		// no validation rules for Data
-	}
-
-	if m.State != nil {
-
-		if utf8.RuneCountInString(m.GetState()) > 24 {
-			err := UpdateDocumentRequestValidationError{
-				field:  "State",
-				reason: "value length must be at most 24 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
+		if !all {
+			return err
 		}
-
+		errors = append(errors, err)
 	}
 
-	if m.Closed != nil {
-		// no validation rules for Closed
+	if _, ok := documents.DOC_CONTENT_TYPE_name[int32(m.GetContentType())]; !ok {
+		err := UpdateDocumentRequestValidationError{
+			field:  "ContentType",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
-	if m.Public != nil {
-		// no validation rules for Public
+	// no validation rules for Data
+
+	if utf8.RuneCountInString(m.GetState()) > 24 {
+		err := UpdateDocumentRequestValidationError{
+			field:  "State",
+			reason: "value length must be at most 24 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
+
+	// no validation rules for Closed
+
+	// no validation rules for Public
 
 	if m.Access != nil {
 

@@ -30,6 +30,7 @@ import { useNotificationsStore } from '~/store/notifications';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import AddToClipboardButton from '../clipboard/AddToClipboardButton.vue';
+import { QuillEditor } from '@vueup/vue-quill';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -110,6 +111,12 @@ function addToClipboard(): void {
     });
 }
 </script>
+
+<style>
+#editor .ql-toolbar {
+    display: none;
+}
+</style>
 
 <template>
     <div class="mt-2">
@@ -201,7 +208,7 @@ function addToClipboard(): void {
                                 <span class="text-sm font-medium text-secondary-700">
                                     {{ entry.getUser()?.getFirstname() }}
                                     {{ entry.getUser()?.getLastname() }} - {{
-        $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!}`) }}
+                                        $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!}`) }}
                                 </span>
                             </div>
                         </div>
@@ -210,7 +217,10 @@ function addToClipboard(): void {
                                 {{ $t('common.content') }}
                             </h2>
                             <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
-                                <p v-html="document?.getContent()"></p>
+                                <div id="editor">
+                                    <QuillEditor content-type="html" :content="document?.getContent()" :toolbar="[]"
+                                    theme="snow" :read-only="true" />
+                                </div>
                             </div>
                         </div>
                         <div>

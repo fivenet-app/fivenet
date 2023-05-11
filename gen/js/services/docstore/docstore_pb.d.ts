@@ -776,43 +776,27 @@ export class UpdateDocumentRequest extends jspb.Message {
 
   getCategoryId(): number;
   setCategoryId(value: number): UpdateDocumentRequest;
-  hasCategoryId(): boolean;
-  clearCategoryId(): UpdateDocumentRequest;
 
   getTitle(): string;
   setTitle(value: string): UpdateDocumentRequest;
-  hasTitle(): boolean;
-  clearTitle(): UpdateDocumentRequest;
 
   getContent(): string;
   setContent(value: string): UpdateDocumentRequest;
-  hasContent(): boolean;
-  clearContent(): UpdateDocumentRequest;
 
   getContentType(): resources_documents_documents_pb.DOC_CONTENT_TYPE;
   setContentType(value: resources_documents_documents_pb.DOC_CONTENT_TYPE): UpdateDocumentRequest;
-  hasContentType(): boolean;
-  clearContentType(): UpdateDocumentRequest;
 
   getData(): string;
   setData(value: string): UpdateDocumentRequest;
-  hasData(): boolean;
-  clearData(): UpdateDocumentRequest;
 
   getState(): string;
   setState(value: string): UpdateDocumentRequest;
-  hasState(): boolean;
-  clearState(): UpdateDocumentRequest;
 
   getClosed(): boolean;
   setClosed(value: boolean): UpdateDocumentRequest;
-  hasClosed(): boolean;
-  clearClosed(): UpdateDocumentRequest;
 
   getPublic(): boolean;
   setPublic(value: boolean): UpdateDocumentRequest;
-  hasPublic(): boolean;
-  clearPublic(): UpdateDocumentRequest;
 
   getAccess(): resources_documents_documents_pb.DocumentAccess | undefined;
   setAccess(value?: resources_documents_documents_pb.DocumentAccess): UpdateDocumentRequest;
@@ -830,55 +814,15 @@ export class UpdateDocumentRequest extends jspb.Message {
 export namespace UpdateDocumentRequest {
   export type AsObject = {
     documentId: number,
-    categoryId?: number,
-    title?: string,
-    content?: string,
-    contentType?: resources_documents_documents_pb.DOC_CONTENT_TYPE,
-    data?: string,
-    state?: string,
-    closed?: boolean,
-    pb_public?: boolean,
+    categoryId: number,
+    title: string,
+    content: string,
+    contentType: resources_documents_documents_pb.DOC_CONTENT_TYPE,
+    data: string,
+    state: string,
+    closed: boolean,
+    pb_public: boolean,
     access?: resources_documents_documents_pb.DocumentAccess.AsObject,
-  }
-
-  export enum CategoryIdCase { 
-    _CATEGORY_ID_NOT_SET = 0,
-    CATEGORY_ID = 2,
-  }
-
-  export enum TitleCase { 
-    _TITLE_NOT_SET = 0,
-    TITLE = 3,
-  }
-
-  export enum ContentCase { 
-    _CONTENT_NOT_SET = 0,
-    CONTENT = 4,
-  }
-
-  export enum ContentTypeCase { 
-    _CONTENT_TYPE_NOT_SET = 0,
-    CONTENT_TYPE = 5,
-  }
-
-  export enum DataCase { 
-    _DATA_NOT_SET = 0,
-    DATA = 6,
-  }
-
-  export enum StateCase { 
-    _STATE_NOT_SET = 0,
-    STATE = 7,
-  }
-
-  export enum ClosedCase { 
-    _CLOSED_NOT_SET = 0,
-    CLOSED = 8,
-  }
-
-  export enum PublicCase { 
-    _PUBLIC_NOT_SET = 0,
-    PUBLIC = 9,
   }
 
   export enum AccessCase { 
