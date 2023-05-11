@@ -93,6 +93,9 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-customizerweb
 	# Remove validate_pb imports from JS files
 	find ./gen -type f \( -iname '*.js' -o -iname '*.ts' \) -exec sed -i '/validate_pb/d' {} +
 
+	$(MAKE) yarn-upgrade-gen-js
+
+yarn-upgrade-gen-js:
 	# Update local yarn package
 	yarn upgrade '@fivenet/gen@file:./gen/js'
 

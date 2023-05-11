@@ -582,7 +582,7 @@ async function editForm(): Promise<void> {
         </div>
     </div>
     <div class="bg-neutral min-h-[32rem]">
-        <QuillEditor v-model:content="doc.content" contentType="html" toolbar="full" theme="snow" :modules="modules" />
+        <QuillEditor v-model:content="doc.content" content-type="html" toolbar="full" theme="snow" :modules="modules" />
     </div>
     <div class="flex flex-row">
         <div class="flex-1">
