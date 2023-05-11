@@ -4,12 +4,13 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS `fivenet_permissions` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `category` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `guard_name` varchar(255) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_fivenet_permissions_guard_name` (`guard_name`)
+  UNIQUE KEY `idx_fivenet_permissions_guard_name` (`guard_name`),
+  UNIQUE KEY `idx_fivenet_permissions_category` (`category`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: fivenet_roles

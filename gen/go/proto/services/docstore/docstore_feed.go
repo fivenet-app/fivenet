@@ -388,7 +388,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	}
 
 	if err := s.addUserActivity(ctx, tx,
-		userId, req.Relation.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "", strconv.Itoa(int(lastId)), -1); err != nil {
+		userId, req.Relation.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "", strconv.Itoa(int(lastId)), req.Relation.Relation.String()); err != nil {
 		return nil, FailedQueryErr
 	}
 
@@ -463,11 +463,16 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, FailedQueryErr
+	}
+
+	rel, err := s.getDocumentRelation(ctx, req.Id)
+	if err != nil {
+		return nil, FailedQueryErr
 	}
 
 	if err := s.addUserActivity(ctx, tx,
-		userId, int32(docID.ID), users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", strconv.Itoa(int(docID.ID)), "", -1); err != nil {
+		userId, rel.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", strconv.Itoa(int(docID.ID)), "", rel.Relation.String()); err != nil {
 		return nil, FailedQueryErr
 	}
 
@@ -479,6 +484,34 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
 	return &RemoveDocumentRelationResponse{}, nil
+}
+
+func (s *Server) getDocumentRelation(ctx context.Context, id uint64) (*documents.DocumentRelation, error) {
+	stmt := docRel.
+		SELECT(
+			docRel.ID,
+			docRel.CreatedAt,
+			docRel.DocumentID,
+			docRel.SourceUserID,
+			docRel.Relation,
+			docRel.TargetUserID,
+		).
+		FROM(
+			docRel,
+		).
+		WHERE(
+			docRel.ID.EQ(jet.Uint64(id)),
+		).
+		LIMIT(1)
+
+	var dest documents.DocumentRelation
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	return &dest, nil
 }
 
 func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([]*documents.DocumentRelation, error) {

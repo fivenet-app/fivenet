@@ -4,7 +4,6 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
-	"strconv"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -157,10 +156,10 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	return resp, nil
 }
 
-func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string, relation int16) error {
-	reason := jet.NULL
-	if relation > -1 {
-		reason = jet.String(strconv.Itoa(int(relation)))
+func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string, reason string) error {
+	reasonField := jet.NULL
+	if reason != "" {
+		reasonField = jet.String(reason)
 	}
 
 	stmt := userAct.
@@ -180,7 +179,7 @@ func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, 
 			key,
 			&oldValue,
 			&newValue,
-			reason,
+			reasonField,
 		)
 
 	_, err := stmt.ExecContext(ctx, tx)
