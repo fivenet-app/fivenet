@@ -794,7 +794,7 @@ async function applyQuery(): Promise<void> {
 
     newPenalties = newPenalties.map(ps => {
         const penalties = ps.penalties.map(p => {
-            const show = p.name.includes(queryPenalities.value) || p.description.includes(queryPenalities.value) ? true : false;
+            const show = p.name.toLowerCase().includes(queryPenalities.value.toLowerCase()) || p.description.toLowerCase().includes(queryPenalities.value.toLowerCase()) ? true : false;
             return {
                 ...p,
                 show
