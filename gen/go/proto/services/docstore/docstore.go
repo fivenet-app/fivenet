@@ -64,14 +64,12 @@ func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud au
 func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (*ListDocumentsResponse, error) {
 	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
-	var condition jet.BoolExpression
+	condition := jet.Bool(true)
 	if req.Search != "" {
 		condition = jet.BoolExp(
 			jet.Raw("MATCH(title) AGAINST ($search IN BOOLEAN MODE)",
 				jet.RawArgs{"$search": req.Search}),
 		)
-	} else {
-		condition = jet.Bool(true)
 	}
 
 	countStmt := s.getDocumentsQuery(
