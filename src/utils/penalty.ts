@@ -5,9 +5,10 @@ export type Penalty = {
     fine?: number;
     detentionTime?: number;
     stvoPoints?: number;
+    show?: boolean;
 };
 
-export type PenaltyCategory = { name: string; penalties: Array<Penalty> };
+export type PenaltyCategory = { name: string; penalties: Array<Penalty>, show?: boolean };
 
 export type Penalties = Array<PenaltyCategory>;
 

@@ -778,6 +778,8 @@ penalties.forEach((ps) => {
     });
 });
 
+const queryPenalities = ref<string>('');
+const filteredPenalities = ref<typeof penalties>([]);
 const selectedPenalties = ref<Array<SelectedPenalty>>([]);
 
 const summary = ref<PenaltiesSummary>({
@@ -786,6 +788,32 @@ const summary = ref<PenaltiesSummary>({
     stvoPoints: 0,
     count: 0,
 });
+
+async function applyQuery(): Promise<void> {
+    let newPenalties = structuredClone(penalties);
+
+    newPenalties = newPenalties.map(ps => {
+        const penalties = ps.penalties.map(p => {
+            const show = p.name.includes(queryPenalities.value) || p.description.includes(queryPenalities.value) ? true : false;
+            return {
+                ...p,
+                show
+            }
+        });
+
+        const show = penalties.some(p => p.show === true);
+
+        return {
+            ...ps,
+            penalties,
+            show
+        }
+    });
+
+    filteredPenalities.value = newPenalties;
+}
+
+watch(queryPenalities, async () => applyQuery());
 
 function calculate(e: SelectedPenalty): void {
     const idx = selectedPenalties.value.findIndex((v) => v.penalty.category == e.penalty.category && v.penalty.name == e.penalty.name);
@@ -840,6 +868,10 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
 
     return clipboard.copy(text);
 }
+
+onMounted(async () => {
+    applyQuery();
+})
 </script>
 
 <template>
@@ -853,8 +885,14 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
             <div class="sm:flex sm:items-center pb-4">
                 <div class="sm:flex-auto">
                     <div class="divide-y divide-white/10">
-                        <dl class="mt-1 space-y-2 divide-y divide-white/10">
-                            <Disclosure as="div" v-for="ps in penalties" :key="ps.name" class="pt-3" v-slot="{ open }">
+                        <div class="mt-5">
+                            <input v-model="queryPenalities" type="text" name="search" id="search"
+                                :placeholder="$t('common.filter')"
+                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                        </div>
+                        <dl class="mt-5 space-y-2 divide-y divide-white/10">
+                            <Disclosure as="div" v-for="ps in filteredPenalities" :key="ps.name" class="pt-3"
+                                v-slot="{ open }" v-show="ps.show">
                                 <dt>
                                     <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
                                         <span class="text-base font-semibold leading-7">{{ ps.name }}</span>
@@ -899,7 +937,8 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
                                                     </thead>
                                                     <tbody class="divide-y divide-base-800">
                                                         <ListEntry v-for="penalty, idx in ps.penalties" :key="idx"
-                                                            :penalty="penalty" @selected="calculate($event)" />
+                                                            :penalty="penalty" @selected="calculate($event)"
+                                                            v-show="penalty.show" />
                                                     </tbody>
                                                 </table>
                                             </div>
