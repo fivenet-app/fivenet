@@ -435,7 +435,8 @@
         "none_selected": "No {0} selected",
         "no_licenses": "No Licenses.",
         "available": "available",
-        "reason": "Reason | Reasons"
+        "reason": "Reason | Reasons",
+        "preview": "Preview"
     },
     "notifications": {
         "clipboard": {

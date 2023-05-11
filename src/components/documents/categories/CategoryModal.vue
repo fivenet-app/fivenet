@@ -128,7 +128,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                                             <div class="flex-1 form-control">
                                                                 <label for="name"
                                                                     class="block text-sm font-medium leading-6 text-neutral">{{
-                                                                        $t('common.category', 1) }}</label>
+                                                                        $t('common.category', 1) }}
+                                                                </label>
                                                                 <div class="relative flex items-center mt-2">
                                                                     <Field type="text" name="name" id="name"
                                                                         :placeholder="$t('common.category', 1)"
@@ -141,7 +142,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                                             <div class="flex-1 form-control">
                                                                 <label for="description"
                                                                     class="block text-sm font-medium leading-6 text-neutral">{{
-                                                                        $t('common.description') }}</label>
+                                                                        $t('common.description') }}
+                                                                </label>
                                                                 <div class="relative flex items-center mt-2">
                                                                     <Field type="text" name="description" id="description"
                                                                         :placeholder="$t('common.description')"

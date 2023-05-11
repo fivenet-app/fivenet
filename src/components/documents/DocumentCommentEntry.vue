@@ -90,7 +90,9 @@ async function deleteComment(): Promise<void> {
                         </button>
                     </div>
                 </div>
-                <p class="text-sm break-words">{{ comment.getComment() }}</p>
+                <p class="text-sm break-words">
+                    {{ comment.getComment() }}
+                </p>
             </div>
         </div>
         <div v-else v-can="'DocStoreService.PostDocumentComment'" class="flex items-start space-x-4">
@@ -98,8 +100,9 @@ async function deleteComment(): Promise<void> {
                 <form @submit.prevent="editComment" class="relative">
                     <div
                         class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
-                        <label for="comment" class="sr-only">{{
-                            $t('components.documents.document_comment_entry.edit_comment') }}</label>
+                        <label for="comment" class="sr-only">
+                            {{ $t('components.documents.document_comment_entry.edit_comment') }}
+                        </label>
                         <textarea rows="3" name="comment" id="comment"
                             class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
                             v-model="message"

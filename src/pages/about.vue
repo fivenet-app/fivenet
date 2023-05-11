@@ -43,7 +43,9 @@ const faqs = [
         <div>
             <div class="bg-gray-900 px-6 py-24 sm:py-32 lg:px-8">
                 <div class="mx-auto max-w-2xl text-center">
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">{{ $t('common.about') }}</h2>
+                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+                        {{ $t('common.about') }}
+                    </h2>
                     <p class="mt-6 text-lg leading-8 text-gray-300">
                         {{ $t('pages.about.sub_title') }}
                     </p>
@@ -143,9 +145,11 @@ const faqs = [
                 <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-20">
                     <div class="mx-auto max-w-4xl">
                         <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">{{
-                            $t('pages.about.questions_or_issues.title') }}</p>
-                        <p class="mt-6 text-base leading-7 text-gray-300">{{ $t('pages.about.questions_or_issues.content')
-                        }}</p>
+                            $t('pages.about.questions_or_issues.title') }}
+                        </p>
+                        <p class="mt-6 text-base leading-7 text-gray-300">
+                            {{ $t('pages.about.questions_or_issues.content') }}
+                        </p>
                         <div class="mt-8">
                             <a :href="discordLink"
                                 class="inline-flex items-center gap-x-2 rounded-md bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600">

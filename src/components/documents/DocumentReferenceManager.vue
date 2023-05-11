@@ -128,7 +128,9 @@ function removeReference(id: number): void {
                                 <button type="button"
                                     class="transition-colors rounded-md hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                     @click="emit('close')">
-                                    <span class="sr-only">{{ $t('common.close', 1) }}</span>
+                                    <span class="sr-only">
+                                        {{ $t('common.close', 1) }}
+                                    </span>
                                     <XMarkIcon class="w-6 h-6" aria-hidden="true" />
                                 </button>
                             </div>
@@ -426,7 +428,9 @@ function removeReference(id: number): void {
                             <div class="gap-2 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                                 <button type="button"
                                     class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="emit('close')">{{ $t('common.close', 1) }}</button>
+                                    @click="emit('close')">
+                                    {{ $t('common.close', 1) }}
+                                </button>
                             </div>
                         </DialogPanel>
                     </TransitionChild>

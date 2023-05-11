@@ -130,7 +130,9 @@ function addToClipboard(): void {
                     <div>
                         <div class="pb-2 md:flex md:items-center md:justify-between md:space-x-4">
                             <div>
-                                <h1 class="text-2xl font-bold text-neutral">{{ document?.getTitle() }}</h1>
+                                <h1 class="text-2xl font-bold text-neutral">
+                                    {{ document?.getTitle() }}
+                                </h1>
                                 <p class="text-sm text-base-300">
                                     {{ $t('common.created_by') }}
                                     {{ ' ' }}
@@ -205,7 +207,9 @@ function addToClipboard(): void {
                             </div>
                         </div>
                         <div>
-                            <h2 class="sr-only">{{ $t('common.content') }}</h2>
+                            <h2 class="sr-only">
+                                {{ $t('common.content') }}
+                            </h2>
                             <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
                                 <p v-html="document?.getContent()"></p>
                             </div>
@@ -236,7 +240,9 @@ function addToClipboard(): void {
                             </TabGroup>
                         </div>
                         <div class="mt-4" v-can="'DocStoreService.GetDocumentComments'">
-                            <h2 class="text-lg font-semibold text-neutral">{{ $t('common.comment', 2) }}</h2>
+                            <h2 class="text-lg font-semibold text-neutral">
+                                {{ $t('common.comment', 2) }}
+                            </h2>
                             <DocumentComments :document-id="documentId" :closed="document?.getClosed()"
                                 @counted="commentCount = $event" />
                         </div>

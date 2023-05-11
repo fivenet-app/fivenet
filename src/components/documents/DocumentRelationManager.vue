@@ -392,7 +392,9 @@ function removeRelation(id: number): void {
                             <div class="gap-2 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                                 <button type="button"
                                     class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="emit('close')">{{ $t('common.close') }}</button>
+                                    @click="emit('close')">
+                                    {{ $t('common.close') }}
+                                </button>
                             </div>
                         </DialogPanel>
                     </TransitionChild>

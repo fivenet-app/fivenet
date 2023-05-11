@@ -51,7 +51,9 @@ defineEmits<{
                         {{ item.title }}
                     </span>
                 </h3>
-                <p class="mt-2 text-sm text-base-200">{{ item.description }}</p>
+                <p class="mt-2 text-sm text-base-200">
+                    {{ item.description }}
+                </p>
             </div>
             <span v-if="showIcon" class="absolute pointer-events-none top-6 right-6 text-base-300 group-hover:text-base-200"
                 aria-hidden="true">

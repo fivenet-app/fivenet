@@ -500,14 +500,18 @@ async function editForm(): Promise<void> {
         @close="referenceManagerShow = false" />
     <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
         <div>
-            <label for="name" class="block font-medium text-base">{{ $t('common.title') }}</label>
+            <label for="name" class="block font-medium text-base">
+                {{ $t('common.title') }}
+            </label>
             <input v-model="doc.title" type="text" name="name"
                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                 :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`" :disabled="!canEdit" />
         </div>
         <div class="flex flex-row gap-2">
             <div class="flex-1">
-                <label for="category" class="block font-medium text-sm">{{ $t('common.category') }}</label>
+                <label for="category" class="block font-medium text-sm">
+                    {{ $t('common.category') }}
+                </label>
                 <Combobox as="div" v-model="selectedCategory" :disabled="!canEdit" nullable>
                     <div class="relative">
                         <ComboboxButton as="div">
@@ -538,13 +542,17 @@ async function editForm(): Promise<void> {
                 </Combobox>
             </div>
             <div class="flex-1">
-                <label for="name" class="block font-medium text-sm">{{ $t('common.state') }}</label>
+                <label for="name" class="block font-medium text-sm">
+                    {{ $t('common.state') }}
+                </label>
                 <input v-model="doc.state" type="text" name="state"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`" :disabled="!canEdit" />
             </div>
             <div class="flex-1">
-                <label for="closed" class="block font-medium text-sm">{{ $t('common.close', 2) }}?</label>
+                <label for="closed" class="block font-medium text-sm">
+                    {{ $t('common.close', 2) }}?
+                </label>
                 <Listbox as="div" v-model="doc.closed">
                     <div class="relative">
                         <ListboxButton :disabled="!canEdit"
@@ -588,16 +596,22 @@ async function editForm(): Promise<void> {
         <div class="flex-1">
             <button type="button" :disabled="!canEdit"
                 class="rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="referenceManagerShow = true">{{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}</button>
+                @click="referenceManagerShow = true">
+                {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
+            </button>
         </div>
         <div class="flex-1">
             <button type="button" :disabled="!canEdit"
                 class="rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="relationManagerShow = true">{{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}</button>
+                @click="relationManagerShow = true">
+                {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
+            </button>
         </div>
     </div>
     <div class="my-3">
-        <h2 class="text-neutral">{{ $t('common.access') }}</h2>
+        <h2 class="text-neutral">
+            {{ $t('common.access') }}
+        </h2>
         <DocumentAccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry" :access-types="accessTypes"
             @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
             @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
@@ -611,11 +625,13 @@ async function editForm(): Promise<void> {
     </div>
     <div class="sm:flex sm:flex-row-reverse">
         <button v-if="!props.id" @click="submitForm()" :disabled="!canEdit"
-            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">{{
-                $t('common.submit') }}</button>
+            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">
+            {{ t('common.submit') }}
+        </button>
         <button v-if="props.id" @click="editForm()" :disabled="!canEdit"
-            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">{{
-                $t('common.edit') }}</button>
+            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">
+            {{ $t('common.edit') }}
+        </button>
         <div v-if="saving" class="text-gray-400 mr-4 flex flex-items">
             <ArrowPathIcon class="w-6 h-auto ml-auto mr-2.5 animate-spin" />
             <span class="mt-2">{{ $t('common.save', 2) }}...</span>

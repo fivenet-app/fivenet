@@ -29,7 +29,9 @@ defineProps({
                 <XCircleIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
             </div>
             <div class="ml-3">
-                <h3 class="text-sm font-medium text-error-800">{{ title ?? $t('components.partials.data_error_block.default_title') }}</h3>
+                <h3 class="text-sm font-medium text-error-800">
+                    {{ title ?? $t('components.partials.data_error_block.default_title') }}
+                </h3>
                 <div class="mt-2 text-sm text-error-700">
                     <p>
                         {{ message ?? $t('components.partials.data_error_block.default_message') }}

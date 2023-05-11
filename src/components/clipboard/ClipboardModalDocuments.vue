@@ -122,7 +122,8 @@ watch(props, async (newVal) => {
                     {{ $t('common.select', 1) }}
                 </th>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
-                    {{ $t('common.title') }}</th>
+                    {{ $t('common.title') }}
+                </th>
                 <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-white">
                     {{ $t('common.creator') }}
                 </th>

@@ -60,8 +60,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
-                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">{{
-                                    $t('common.search') }} {{ $t('common.citizen', 1) }}</label>
+                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.search') }} {{ $t('common.citizen', 1) }}
+                                </label>
                                 <div class="relative flex items-center mt-2">
                                     <input v-model="query.name" ref="searchNameInput" type="text" name="searchName"
                                         id="searchName" :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
@@ -69,8 +70,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </div>
                             </div>
                             <div class="flex-1 form-control" v-can="'CitizenStoreService.ListCitizens.PhoneNumber'">
-                                <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">{{
-                                    $t('common.search') }} {{ $t('common.phone') }}</label>
+                                <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.search') }} {{ $t('common.phone') }}
+                                </label>
                                 <div class="relative flex items-center mt-2">
                                     <input v-model="query.phone" type="tel" name="searchPhone" id="searchPhone"
                                         :placeholder="`${$t('common.phone')} ${$t('common.number')}`"
@@ -178,4 +180,5 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                 </div>
             </div>
         </div>
-    </div></template>
+    </div>
+</template>

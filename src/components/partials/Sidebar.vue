@@ -357,8 +357,9 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                                 aria-hidden="true" />
                                             <NuxtLink :to="{ path: page.href }"
                                                 :class="[page.current ? 'font-bold text-base-200' : 'font-medium text-base-400', 'ml-4 text-sm hover:text-neutral hover:transition-colors']"
-                                                :aria-current="page.current ? 'page' : undefined">{{ page.name
-                                                }}</NuxtLink>
+                                                :aria-current="page.current ? 'page' : undefined">
+                                                {{ page.name }}
+                                            </NuxtLink>
                                         </div>
                                     </li>
                                 </ol>
@@ -378,7 +379,9 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                 <div>
                                     <MenuButton
                                         class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                                        <span class="sr-only">{{ $t('components.partials.sidebar.open_usermenu') }}</span>
+                                        <span class="sr-only">
+                                            {{ $t('components.partials.sidebar.open_usermenu') }}
+                                        </span>
                                         <UserIcon
                                             class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100" />
                                     </MenuButton>

@@ -58,7 +58,8 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
             <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
                 <div class="px-4 py-5 sm:px-6">
                     <h3 class="text-base font-semibold leading-6">
-                        {{ $t('components.auth.account_info.title') }}</h3>
+                        {{ $t('components.auth.account_info.title') }}
+                    </h3>
                     <p class="mt-1 max-w-2xl text-sm">
                         {{ $t('components.auth.account_info.subtitle') }}
                     </p>

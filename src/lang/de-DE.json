@@ -435,7 +435,8 @@
         "none_selected": "Keine {0} ausgewählt",
         "no_licenses": "Keine Lizenzen.",
         "available": "verfügbar",
-        "reason": "Grund | Gründe"
+        "reason": "Grund | Gründe",
+        "preview": "Vorschau"
     },
     "notifications": {
         "clipboard": {

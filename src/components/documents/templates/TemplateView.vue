@@ -4,6 +4,7 @@ import { DeleteTemplateRequest, GetTemplateRequest } from '@fivenet/gen/services
 import { RpcError } from 'grpc-web';
 import TemplateRequirementsList from './TemplateRequirementsList.vue';
 import { useNotificationsStore } from '~/store/notifications';
+import TemplatePreviewModal from './TemplatePreviewModal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -68,16 +69,23 @@ async function deleteTemplate(): Promise<void> {
 async function editTemplate(): Promise<void> {
     await navigateTo({ name: 'documents-templates-edit-id', params: { id: props.templateId } });
 }
+
+const openPreview = ref(false);
 </script>
 
 <template>
+    <TemplatePreviewModal :id="templateId" :open="openPreview" @close="openPreview = false" v-if="openPreview" />
     <div v-if="template" class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
+                <div class="sm:flex-auto inline-flex">
                     <button type="submit" v-can="'DocStoreService.CreateTemplate'" @click="editTemplate()"
                         class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
                         {{ $t('common.edit') }}
+                    </button>
+                    <button type="button" v-can="'DocStoreService.CreateTemplate'" @click="openPreview = true"
+                        class="flex justify-center w-full px-3 py-2 ml-4 text-sm font-semibold transition-colors rounded-md bg-accent-600 text-neutral hover:bg-accent-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+                        {{ $t('common.preview') }}
                     </button>
                 </div>
             </div>

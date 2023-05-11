@@ -56,11 +56,13 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
                 {{ $t('components.auth.oauth2_connections.subtitle') }}
             </p>
         </div>
-        <div class="border-t border-base-400 px-4 py-5 sm:p-0">
+        <div v-if="providers && providers.length > 0" class="border-t border-base-400 px-4 py-5 sm:p-0">
             <dl class="sm:divide-y sm:divide-base-400">
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5" v-for="prov in providers">
                     <dt class="text-sm font-medium">
-                        <a :href="prov.getHomepage()" target="_blank">{{ prov.getLabel() }}</a>
+                        <NuxtLink :external="true" :to="prov.getHomepage()" target="_blank">
+                            {{ prov.getLabel() }}
+                        </NuxtLink>
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                         <div v-if="getProviderConnection(prov.getName()) !== undefined"

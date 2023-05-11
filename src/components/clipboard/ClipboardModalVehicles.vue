@@ -121,7 +121,8 @@ watch(props, (newVal) => {
                     {{ $t('common.select') }}
                 </th>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
-                    {{ $t('common.plate') }}</th>
+                    {{ $t('common.plate') }}
+                </th>
                 <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-white">
                     {{ $t('common.model') }}
                 </th>

@@ -186,7 +186,8 @@ async function clipboardDialog(): Promise<void> {
                                                 </p>
 
                                                 <ClipboardModalUsers :submit.sync="submit" :showSelect="true"
-                                                    :specs="reqs.getUsers()!" @statisfied="(v) => reqStatus.users = v" />
+                                                    :specs="reqs.getUsers()!"
+                                                    @statisfied="(v: boolean) => reqStatus.users = v" />
                                             </div>
                                             <div v-if="reqs.hasVehicles()">
                                                 <p>
@@ -195,7 +196,7 @@ async function clipboardDialog(): Promise<void> {
 
                                                 <ClipboardModalVehicles :submit.sync="submit" :showSelect="true"
                                                     :specs="reqs.getVehicles()!"
-                                                    @statisfied="(v) => reqStatus.vehicles = v" />
+                                                    @statisfied="(v: boolean) => reqStatus.vehicles = v" />
                                             </div>
                                             <div v-if="reqs.hasDocuments()">
                                                 <p>
@@ -204,7 +205,7 @@ async function clipboardDialog(): Promise<void> {
 
                                                 <ClipboardModalDocuments :submit.sync="submit" :showSelect="true"
                                                     :specs="reqs.getDocuments()!"
-                                                    @statisfied="(v) => reqStatus.documents = v" />
+                                                    @statisfied="(v: boolean) => reqStatus.documents = v" />
                                             </div>
                                         </div>
                                     </div>

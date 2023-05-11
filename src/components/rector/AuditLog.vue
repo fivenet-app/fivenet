@@ -107,7 +107,8 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">{{
                                     $t('common.time_range') }}:
-                                    {{ $t('common.from') }}</label>
+                                    {{ $t('common.from') }}
+                                </label>
                                 <div class="relative flex items-center mt-2">
                                     <input v-model="query.from" ref="searchInput" type="datetime-local" name="search"
                                         id="search" :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
@@ -117,7 +118,8 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">{{
                                     $t('common.time_range') }}:
-                                    {{ $t('common.to') }}</label>
+                                    {{ $t('common.to') }}
+                                </label>
                                 <div class="relative flex items-center mt-2">
                                     <input v-model="query.from" ref="searchInput" type="datetime-local" name="search"
                                         id="search" :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
@@ -125,8 +127,9 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                                 </div>
                             </div>
                             <div class="flex-1 form-control">
-                                <label for="users" class="block text-sm font-medium leading-6 text-neutral">{{
-                                    $t('common.user', 2) }}</label>
+                                <label for="users" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.user', 2) }}
+                                </label>
                                 <div class="relative items-center mt-2">
                                     <Combobox as="div" v-model="selectedChars" multiple nullable>
                                         <div class="relative">

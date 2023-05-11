@@ -53,7 +53,8 @@ function addToClipboard(): void {
             </span>
             <span v-if="user.getProps()?.getWanted()"
                 class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700">
-                {{ $t('common.wanted').toUpperCase() }}</span>
+                {{ $t('common.wanted').toUpperCase() }}
+            </span>
         </div>
         <TabGroup>
             <TabList class="border-b border-base-200 flex flex-row">
@@ -64,7 +65,9 @@ function addToClipboard(): void {
                         <component :is="tab.icon"
                             :class="[selected ? 'text-primary-400' : 'text-base-500 group-hover:text-base-300', '-ml-0.5 mr-2 h-5 w-5']"
                             aria-hidden="true" />
-                        <span>{{ tab.name }}</span>
+                        <span>
+                            {{ tab.name }}
+                        </span>
                     </button>
                 </Tab>
             </TabList>

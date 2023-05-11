@@ -68,7 +68,9 @@ switch (props.activity.getKey()) {
                 </p>
             </div>
             <p class="text-sm text-gray-300">{{ actionText }} <span class="font-bold">
-                    <NuxtLink v-if="actionLink" :to="actionLink">{{ actionLinkText }}</NuxtLink>
+                    <NuxtLink v-if="actionLink" :to="actionLink">
+                        {{ actionLinkText }}
+                    </NuxtLink>
                     <span v-else v-html="actionValue"></span>
                 </span>
             </p>
