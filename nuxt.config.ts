@@ -2,6 +2,7 @@ import { defineNuxtConfig } from 'nuxt/config';
 import mkcert from 'vite-plugin-mkcert';
 import fs from 'fs';
 import path from 'path';
+import { STRATEGIES } from 'vue-i18n-routing';
 
 type PackageJson = {
     version: string;
@@ -17,10 +18,10 @@ const project = {
     shortName: 'FiveNet',
     description:
         "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a livemap of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet.",
-};
-const colors = {
-    background: '#16171a',
-    themeColor: '#1f236e',
+    colors: {
+        background: '#16171a',
+        themeColor: '#1f236e',
+    },
 };
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -35,7 +36,6 @@ const config = defineNuxtConfig({
         '@nuxtjs/robots',
         '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',
-        '@vite-pwa/nuxt',
     ],
     pinia: {
         autoImports: [
@@ -53,36 +53,13 @@ const config = defineNuxtConfig({
             Allow: ['/$', '/index.html'],
         },
     },
-    pwa: {
-        manifest: {
-            icons: [
-                {
-                    src: './images/logo.png',
-                    sizes: '1400x1400',
-                },
-                {
-                    src: './images/logo-512x512.png',
-                    sizes: '512x512',
-                },
-            ],
-            name: project.name,
-            short_name: project.shortName,
-            description: project.description,
-            background_color: colors.background,
-            theme_color: colors.themeColor,
-            display: 'browser',
-        },
-        client: {
-            periodicSyncForUpdates: 2 * 3600, // Two hours
-        },
-    },
     piniaPersistedstate: {
         storage: 'localStorage',
         debug: true,
     },
     i18n: {
         vueI18n: './i18n.config.ts',
-        strategy: 'no_prefix',
+        strategy: STRATEGIES.NO_PREFIX,
         detectBrowserLanguage: {
             useCookie: false,
         },
@@ -103,6 +80,11 @@ const config = defineNuxtConfig({
         lazy: false,
         langDir: './lang',
         defaultLocale: 'en',
+        defaultLocaleRouteNameSuffix: '',
+        defaultDirection: 'ltr',
+        baseUrl: '',
+        routesNameSeparator: '___',
+        trailingSlash: false,
     },
     vite: {
         define: {

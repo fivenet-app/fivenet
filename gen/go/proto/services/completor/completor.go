@@ -47,15 +47,11 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 	req.Search = strings.ReplaceAll(req.Search, "%", "")
 	req.Search = strings.ReplaceAll(req.Search, " ", "%")
 
-	var condition jet.BoolExpression
+	condition := jet.Bool(true)
 	if req.Search != "" {
 		req.Search = "%" + req.Search + "%"
-		condition = condition.AND(
-			jet.CONCAT(user.Firstname, jet.String(" "), user.Lastname).
-				LIKE(jet.String(req.Search)),
-		)
-	} else {
-		condition = jet.Bool(true)
+		condition = jet.CONCAT(user.Firstname, jet.String(" "), user.Lastname).
+			LIKE(jet.String(req.Search))
 	}
 
 	stmt := user.
