@@ -33,7 +33,6 @@ import { RpcError } from 'grpc-web';
 import { FunctionalComponent } from 'vue';
 import { useClipboardStore, getUser } from '~/store/clipboard';
 import { useAuthStore } from '~/store/auth';
-import { toTitleCase } from '~/utils/strings';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();

@@ -24,7 +24,6 @@ import {
 import DocumentRelations from './DocumentRelations.vue';
 import DocumentReferences from './DocumentReferences.vue';
 import DocumentComments from './DocumentComments.vue';
-import { toTitleCase } from '~/utils/strings';
 import { useClipboardStore } from '~/store/clipboard';
 import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
@@ -41,8 +40,8 @@ const { t } = useI18n();
 const access = ref<undefined | DocumentAccess>(undefined);
 const commentCount = ref(-1);
 const tabs = ref<{ name: string, icon: typeof LockOpenIcon }[]>([
-    { name: t('common.reference', 2), icon: DocumentMagnifyingGlassIcon },
     { name: t('common.relation', 2), icon: UserIcon },
+    { name: t('common.reference', 2), icon: DocumentMagnifyingGlassIcon },
 ]);
 
 const props = defineProps({
@@ -231,10 +230,10 @@ function addToClipboard(): void {
                                 </TabList>
                                 <TabPanels>
                                     <TabPanel>
-                                        <DocumentReferences :document-id="documentId" :show-source="false" />
+                                        <DocumentRelations :document-id="documentId" :show-document="false" />
                                     </TabPanel>
                                     <TabPanel>
-                                        <DocumentRelations :document-id="documentId" :show-document="false" />
+                                        <DocumentReferences :document-id="documentId" :show-source="false" />
                                     </TabPanel>
                                 </TabPanels>
                             </TabGroup>
