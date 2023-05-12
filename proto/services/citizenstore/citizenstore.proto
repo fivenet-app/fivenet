@@ -46,12 +46,12 @@ message SetUserPropsResponse {
 }
 
 service CitizenStoreService {
-  // @perm: Fields=PhoneNumber,Licenses,UserProps.Wanted,UserProps.Job;description="Citizens List and Search"
+  // @perm: Attrs=Fields/StringList:PhoneNumber|Licenses|UserProps.Wanted|UserProps.Job
   rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse);
-  // @perm: PerJob=true;PerJobGrade=true;description="See a user's profile/ up to a certain job rank"
+  // @perm: Attrs=Jobs/JobRankList
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  // @perm: Fields=SourceUser;description="Citizen Info Activity Feed"
+  // @perm: Attrs=Fields/StringList:SourceUser
   rpc ListUserActivity(ListUserActivityRequest) returns (ListUserActivityResponse);
-  // @perm: Fields=Wanted,Job;description="Set Citizen Props (e.g., wanted status)"
+  // @perm: Attrs=Fields/StringList:Wanted|Job
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 }

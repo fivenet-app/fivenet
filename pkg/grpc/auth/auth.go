@@ -55,7 +55,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 
 	ctx = logging.InjectFields(ctx, logging.Fields{
 		AuthSubCtxTag, tInfo.Subject,
-		AuthAccIDCtxTag, tInfo.ActiveCharID,
+		AuthAccIDCtxTag, tInfo.CharID,
 	})
 
 	return context.WithValue(ctx, AuthInfoKey, tInfo), nil
@@ -91,7 +91,11 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 				}
 			}
 
-			if g.p.Can(claims.ActiveCharID, perm) {
+			permSplit := strings.Split(perm, "/")
+			category := perms.Category(permSplit[0])
+			name := perms.Name(permSplit[1])
+
+			if g.p.Can(claims.CharID, claims.CharJob, claims.CharJobGrade, category, name) {
 				return ctx, nil
 			}
 		}
@@ -115,7 +119,11 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}
 				}
 			}
 
-			if g.p.Can(claims.ActiveCharID, perm) {
+			permSplit := strings.Split(perm, "/")
+			category := perms.Category(permSplit[0])
+			name := perms.Name(permSplit[1])
+
+			if g.p.Can(claims.CharID, claims.CharJob, claims.CharJobGrade, category, name) {
 				return ctx, nil
 			}
 		}
@@ -133,7 +141,7 @@ func GetUserIDFromContext(ctx context.Context) int32 {
 	if !ok {
 		return -1
 	}
-	return claims.ActiveCharID
+	return claims.CharID
 }
 
 func GetUserInfoFromContext(ctx context.Context) (int32, string, int32) {
@@ -141,5 +149,5 @@ func GetUserInfoFromContext(ctx context.Context) (int32, string, int32) {
 	if !ok {
 		return -1, "N/A", 1
 	}
-	return claims.ActiveCharID, claims.ActiveCharJob, claims.ActiveCharJobGrade
+	return claims.CharID, claims.CharJob, claims.CharJobGrade
 }

@@ -101,37 +101,59 @@ func (s *Server) Start() {
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
-	userId, job, _ := auth.GetUserInfoFromContext(srv.Context())
+	userId, job, jobGrade := auth.GetUserInfoFromContext(srv.Context())
 
-	js, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, "LivemapperService.Stream")
+	dispatchesAttr, err := s.p.Attr(userId, job, jobGrade, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
 	if err != nil {
 		return FailedErr
 	}
+	var dispatchesJobs perms.JobList
+	if dispatchesAttr != nil {
+		dispatchesJobs = dispatchesAttr.(perms.JobList)
+	}
 
-	if len(js) == 0 {
+	playersAttr, err := s.p.Attr(userId, job, jobGrade, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
+	if err != nil {
+		return FailedErr
+	}
+	var playersJobs perms.JobList
+	if playersAttr != nil {
+		playersJobs = playersAttr.(perms.JobList)
+	}
+
+	if len(dispatchesJobs) == 0 && len(playersJobs) == 0 {
 		return nil
 	}
 
 	resp := &StreamResponse{}
-	resp.Jobs = make([]*jobs.Job, len(js))
-	for i := 0; i < len(resp.Jobs); i++ {
-		resp.Jobs[i] = &jobs.Job{
-			Name: js[i],
-		}
-		s.c.EnrichJobName(resp.Jobs[i])
+
+	// Add jobs to list visible jobs list
+	resp.JobsDispatches = make([]*jobs.Job, len(dispatchesJobs))
+	for i := 0; i < len(dispatchesJobs); i++ {
+		resp.JobsDispatches = append(resp.JobsDispatches, &jobs.Job{
+			Name: dispatchesJobs[i],
+		})
+		s.c.EnrichJobName(resp.JobsDispatches[i])
+	}
+	resp.JobsUsers = make([]*jobs.Job, len(playersJobs))
+	for i := 0; i < len(playersJobs); i++ {
+		resp.JobsUsers = append(resp.JobsUsers, &jobs.Job{
+			Name: playersJobs[i],
+		})
+		s.c.EnrichJobName(resp.JobsUsers[i])
 	}
 
 	signalCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(signalCh)
 
 	for {
-		dispatchMarkers, err := s.getUserDispatches(js)
+		dispatchMarkers, err := s.getUserDispatches(dispatchesJobs)
 		if err != nil {
 			return FailedErr
 		}
 		resp.Dispatches = dispatchMarkers
 
-		userMarkers, err := s.getUserLocations(js, userId, job)
+		userMarkers, err := s.getUserLocations(playersJobs, userId, job)
 		if err != nil {
 			return FailedErr
 		}

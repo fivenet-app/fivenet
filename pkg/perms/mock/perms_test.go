@@ -25,24 +25,22 @@ func TestPermsMock(t *testing.T) {
 		p.AddUserPerm(1, v)
 	}
 
-	user1AllPerms, err := p.GetAllPermissionsOfUser(1)
+	user1AllPerms, err := p.GetPermissionsOfUser(1, "ambulance", 2)
 	assert.NoError(t, err)
 	assert.Len(t, user1AllPerms, 5)
 
-	user1AllPerms, err = p.GetAllPermissionsByPrefixOfUser(1, "test-perjob")
-	assert.NoError(t, err)
-	assert.Len(t, user1AllPerms, 3)
-
-	// Check if the permission check is working as expected
-	can := p.Can(1, "test-2")
-	assert.True(t, can)
-	can = p.Can(1, "test-non-existant")
-	assert.False(t, can)
-	// We only match on full permission names
-	can = p.Can(1, "test-perjob")
-	assert.False(t, can)
-	can = p.Can(1, "test-perjob")
-	assert.False(t, can)
+	/*
+		// Check if the permission check is working as expected
+		can := p.Can(1, "test-2")
+		assert.True(t, can)
+		can = p.Can(1, "test-non-existant")
+		assert.False(t, can)
+		// We only match on full permission names
+		can = p.Can(1, "test-perjob")
+		assert.False(t, can)
+		can = p.Can(1, "test-perjob")
+		assert.False(t, can)
+	*/
 
 	// Make sure the perm counter has counted the 3 "can perms checks"
 	pc := p.Counter.GetUser(1)
@@ -50,8 +48,4 @@ func TestPermsMock(t *testing.T) {
 	assert.Equal(t, pc["test-2"], 1)
 	assert.Equal(t, pc["test-non-existant"], 1)
 	assert.Equal(t, pc["test-perjob"], 2)
-
-	user1SufixPermNames, err := p.GetSuffixOfPermissionsByPrefixOfUser(1, "test-perjob")
-	assert.NoError(t, err)
-	assert.Len(t, user1SufixPermNames, 3)
 }

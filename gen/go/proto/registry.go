@@ -28,6 +28,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	// GRPC Services
+	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	pbauth "github.com/galexrt/fivenet/gen/go/proto/services/auth"
 	pbcitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
 	pbcompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor"
@@ -41,7 +42,10 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
-		{Key: "Superuser", Name: "AnyAccess", Description: "Super User any access to view, edit and delete."},
+		{
+			Category: common.SuperuserCategoryPerm,
+			Name:     common.SuperuserAnyAccessName,
+		},
 	})
 }
 
@@ -138,7 +142,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p))
 	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher, aud))
-	pbrector.RegisterRectorServiceServer(grpcServer, pbrector.NewServer(logger, db, p, aud))
+	pbrector.RegisterRectorServiceServer(grpcServer, pbrector.NewServer(logger, db, p, aud, enricher))
 
 	// Only run the livemapper random user marker generator in debug mode
 	if config.C.Mode == gin.DebugMode {

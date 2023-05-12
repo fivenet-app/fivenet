@@ -1427,22 +1427,22 @@ var _ interface {
 	ErrorName() string
 } = DeleteRoleResponseValidationError{}
 
-// Validate checks the field values on AddPermToRoleRequest with the rules
+// Validate checks the field values on UpdateRolePermsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *AddPermToRoleRequest) Validate() error {
+func (m *UpdateRolePermsRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on AddPermToRoleRequest with the rules
+// ValidateAll checks the field values on UpdateRolePermsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// AddPermToRoleRequestMultiError, or nil if none found.
-func (m *AddPermToRoleRequest) ValidateAll() error {
+// UpdateRolePermsRequestMultiError, or nil if none found.
+func (m *UpdateRolePermsRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *AddPermToRoleRequest) validate(all bool) error {
+func (m *UpdateRolePermsRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1451,31 +1451,20 @@ func (m *AddPermToRoleRequest) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if len(m.GetPermissions()) < 1 {
-		err := AddPermToRoleRequestValidationError{
-			field:  "Permissions",
-			reason: "value must contain at least 1 item(s)",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if len(errors) > 0 {
-		return AddPermToRoleRequestMultiError(errors)
+		return UpdateRolePermsRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// AddPermToRoleRequestMultiError is an error wrapping multiple validation
-// errors returned by AddPermToRoleRequest.ValidateAll() if the designated
+// UpdateRolePermsRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateRolePermsRequest.ValidateAll() if the designated
 // constraints aren't met.
-type AddPermToRoleRequestMultiError []error
+type UpdateRolePermsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m AddPermToRoleRequestMultiError) Error() string {
+func (m UpdateRolePermsRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1484,11 +1473,11 @@ func (m AddPermToRoleRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m AddPermToRoleRequestMultiError) AllErrors() []error { return m }
+func (m UpdateRolePermsRequestMultiError) AllErrors() []error { return m }
 
-// AddPermToRoleRequestValidationError is the validation error returned by
-// AddPermToRoleRequest.Validate if the designated constraints aren't met.
-type AddPermToRoleRequestValidationError struct {
+// UpdateRolePermsRequestValidationError is the validation error returned by
+// UpdateRolePermsRequest.Validate if the designated constraints aren't met.
+type UpdateRolePermsRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1496,24 +1485,24 @@ type AddPermToRoleRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e AddPermToRoleRequestValidationError) Field() string { return e.field }
+func (e UpdateRolePermsRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e AddPermToRoleRequestValidationError) Reason() string { return e.reason }
+func (e UpdateRolePermsRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e AddPermToRoleRequestValidationError) Cause() error { return e.cause }
+func (e UpdateRolePermsRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e AddPermToRoleRequestValidationError) Key() bool { return e.key }
+func (e UpdateRolePermsRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e AddPermToRoleRequestValidationError) ErrorName() string {
-	return "AddPermToRoleRequestValidationError"
+func (e UpdateRolePermsRequestValidationError) ErrorName() string {
+	return "UpdateRolePermsRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e AddPermToRoleRequestValidationError) Error() string {
+func (e UpdateRolePermsRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1525,14 +1514,14 @@ func (e AddPermToRoleRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sAddPermToRoleRequest.%s: %s%s",
+		"invalid %sUpdateRolePermsRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = AddPermToRoleRequestValidationError{}
+var _ error = UpdateRolePermsRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1540,24 +1529,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = AddPermToRoleRequestValidationError{}
+} = UpdateRolePermsRequestValidationError{}
 
-// Validate checks the field values on AddPermToRoleResponse with the rules
+// Validate checks the field values on UpdateRolePermsResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *AddPermToRoleResponse) Validate() error {
+func (m *UpdateRolePermsResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on AddPermToRoleResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on UpdateRolePermsResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// AddPermToRoleResponseMultiError, or nil if none found.
-func (m *AddPermToRoleResponse) ValidateAll() error {
+// UpdateRolePermsResponseMultiError, or nil if none found.
+func (m *UpdateRolePermsResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *AddPermToRoleResponse) validate(all bool) error {
+func (m *UpdateRolePermsResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1565,19 +1554,19 @@ func (m *AddPermToRoleResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return AddPermToRoleResponseMultiError(errors)
+		return UpdateRolePermsResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// AddPermToRoleResponseMultiError is an error wrapping multiple validation
-// errors returned by AddPermToRoleResponse.ValidateAll() if the designated
+// UpdateRolePermsResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateRolePermsResponse.ValidateAll() if the designated
 // constraints aren't met.
-type AddPermToRoleResponseMultiError []error
+type UpdateRolePermsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m AddPermToRoleResponseMultiError) Error() string {
+func (m UpdateRolePermsResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1586,11 +1575,11 @@ func (m AddPermToRoleResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m AddPermToRoleResponseMultiError) AllErrors() []error { return m }
+func (m UpdateRolePermsResponseMultiError) AllErrors() []error { return m }
 
-// AddPermToRoleResponseValidationError is the validation error returned by
-// AddPermToRoleResponse.Validate if the designated constraints aren't met.
-type AddPermToRoleResponseValidationError struct {
+// UpdateRolePermsResponseValidationError is the validation error returned by
+// UpdateRolePermsResponse.Validate if the designated constraints aren't met.
+type UpdateRolePermsResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1598,24 +1587,24 @@ type AddPermToRoleResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e AddPermToRoleResponseValidationError) Field() string { return e.field }
+func (e UpdateRolePermsResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e AddPermToRoleResponseValidationError) Reason() string { return e.reason }
+func (e UpdateRolePermsResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e AddPermToRoleResponseValidationError) Cause() error { return e.cause }
+func (e UpdateRolePermsResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e AddPermToRoleResponseValidationError) Key() bool { return e.key }
+func (e UpdateRolePermsResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e AddPermToRoleResponseValidationError) ErrorName() string {
-	return "AddPermToRoleResponseValidationError"
+func (e UpdateRolePermsResponseValidationError) ErrorName() string {
+	return "UpdateRolePermsResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e AddPermToRoleResponseValidationError) Error() string {
+func (e UpdateRolePermsResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1627,14 +1616,14 @@ func (e AddPermToRoleResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sAddPermToRoleResponse.%s: %s%s",
+		"invalid %sUpdateRolePermsResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = AddPermToRoleResponseValidationError{}
+var _ error = UpdateRolePermsResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1642,224 +1631,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = AddPermToRoleResponseValidationError{}
-
-// Validate checks the field values on RemovePermFromRoleRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RemovePermFromRoleRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on RemovePermFromRoleRequest with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// RemovePermFromRoleRequestMultiError, or nil if none found.
-func (m *RemovePermFromRoleRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *RemovePermFromRoleRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	if len(m.GetPermissions()) < 1 {
-		err := RemovePermFromRoleRequestValidationError{
-			field:  "Permissions",
-			reason: "value must contain at least 1 item(s)",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(errors) > 0 {
-		return RemovePermFromRoleRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// RemovePermFromRoleRequestMultiError is an error wrapping multiple validation
-// errors returned by RemovePermFromRoleRequest.ValidateAll() if the
-// designated constraints aren't met.
-type RemovePermFromRoleRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m RemovePermFromRoleRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m RemovePermFromRoleRequestMultiError) AllErrors() []error { return m }
-
-// RemovePermFromRoleRequestValidationError is the validation error returned by
-// RemovePermFromRoleRequest.Validate if the designated constraints aren't met.
-type RemovePermFromRoleRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e RemovePermFromRoleRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e RemovePermFromRoleRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e RemovePermFromRoleRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e RemovePermFromRoleRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e RemovePermFromRoleRequestValidationError) ErrorName() string {
-	return "RemovePermFromRoleRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e RemovePermFromRoleRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sRemovePermFromRoleRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = RemovePermFromRoleRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = RemovePermFromRoleRequestValidationError{}
-
-// Validate checks the field values on RemovePermFromRoleResponse with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RemovePermFromRoleResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on RemovePermFromRoleResponse with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// RemovePermFromRoleResponseMultiError, or nil if none found.
-func (m *RemovePermFromRoleResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *RemovePermFromRoleResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return RemovePermFromRoleResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// RemovePermFromRoleResponseMultiError is an error wrapping multiple
-// validation errors returned by RemovePermFromRoleResponse.ValidateAll() if
-// the designated constraints aren't met.
-type RemovePermFromRoleResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m RemovePermFromRoleResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m RemovePermFromRoleResponseMultiError) AllErrors() []error { return m }
-
-// RemovePermFromRoleResponseValidationError is the validation error returned
-// by RemovePermFromRoleResponse.Validate if the designated constraints aren't met.
-type RemovePermFromRoleResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e RemovePermFromRoleResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e RemovePermFromRoleResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e RemovePermFromRoleResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e RemovePermFromRoleResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e RemovePermFromRoleResponseValidationError) ErrorName() string {
-	return "RemovePermFromRoleResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e RemovePermFromRoleResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sRemovePermFromRoleResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = RemovePermFromRoleResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = RemovePermFromRoleResponseValidationError{}
+} = UpdateRolePermsResponseValidationError{}
 
 // Validate checks the field values on GetPermissionsRequest with the rules
 // defined in the proto definition for this message. If any rules are

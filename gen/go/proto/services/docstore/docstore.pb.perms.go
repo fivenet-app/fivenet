@@ -22,106 +22,126 @@ func (s *Server) GetPermsRemap() map[string]string {
 }
 
 const (
-	DocStoreServicePermKey = "DocStoreService"
+	DocStoreServicePerm perms.Category = "DocStoreService"
+
+	DocStoreServiceAddDocumentReferencePerm   perms.Name = "AddDocumentReference"
+	DocStoreServiceAddDocumentRelationPerm    perms.Name = "AddDocumentRelation"
+	DocStoreServiceCreateDocumentPerm         perms.Name = "CreateDocument"
+	DocStoreServiceCreateDocumentCategoryPerm perms.Name = "CreateDocumentCategory"
+	DocStoreServiceCreateTemplatePerm         perms.Name = "CreateTemplate"
+	DocStoreServiceDeleteDocumentPerm         perms.Name = "DeleteDocument"
+	DocStoreServiceDeleteDocumentCategoryPerm perms.Name = "DeleteDocumentCategory"
+	DocStoreServiceDeleteDocumentCommentPerm  perms.Name = "DeleteDocumentComment"
+	DocStoreServiceDeleteTemplatePerm         perms.Name = "DeleteTemplate"
+	DocStoreServiceGetDocumentPerm            perms.Name = "GetDocument"
+	DocStoreServiceGetDocumentAccessPerm      perms.Name = "GetDocumentAccess"
+	DocStoreServiceGetDocumentCommentsPerm    perms.Name = "GetDocumentComments"
+	DocStoreServiceListDocumentCategoriesPerm perms.Name = "ListDocumentCategories"
+	DocStoreServiceListDocumentsPerm          perms.Name = "ListDocuments"
+	DocStoreServiceListTemplatesPerm          perms.Name = "ListTemplates"
+	DocStoreServiceListUserDocumentsPerm      perms.Name = "ListUserDocuments"
+	DocStoreServicePostDocumentCommentPerm    perms.Name = "PostDocumentComment"
+	DocStoreServiceSetDocumentAccessPerm      perms.Name = "SetDocumentAccess"
+	DocStoreServiceUpdateDocumentPerm         perms.Name = "UpdateDocument"
 )
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: DocStoreService
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "AddDocumentReference",
-			Description: "Add/ Remove document references",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceAddDocumentReferencePerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "AddDocumentRelation",
-			Description: "Add/ Remove document citizen relations",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceAddDocumentRelationPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "CreateDocument",
-			Description: "Create a new document",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceCreateDocumentPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "CreateDocumentCategory",
-			Description: "Create/ Update document categories",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceCreateDocumentCategoryPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "CreateTemplate",
-			Description: "Create document templates",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceCreateTemplatePerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "DeleteDocument",
-			Description: "Delete a document",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceDeleteDocumentPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "DeleteDocumentCategory",
-			Description: "Delete document categories",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceDeleteDocumentCategoryPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "DeleteDocumentComment",
-			Description: "Delete own document comment",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceDeleteDocumentCommentPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "DeleteTemplate",
-			Description: "Delete document templates",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceDeleteTemplatePerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "GetDocument",
-			Description: "View a document",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceGetDocumentPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "GetDocumentAccess",
-			Description: "View a document's access",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceGetDocumentAccessPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "GetDocumentComments",
-			Description: "View document comments",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceGetDocumentCommentsPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "ListDocumentCategories",
-			Description: "List document categories",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceListDocumentCategoriesPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "ListDocuments",
-			Description: "List/ Find documents",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceListDocumentsPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "ListTemplates",
-			Description: "List available templates",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceListTemplatesPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "ListUserDocuments",
-			Description: "View the documents linked to a citizen",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceListUserDocumentsPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "PostDocumentComment",
-			Description: "Post document comments",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServicePostDocumentCommentPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "SetDocumentAccess",
-			Description: "Set a document's access",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceSetDocumentAccessPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         DocStoreServicePermKey,
-			Name:        "UpdateDocument",
-			Description: "Edit/ Update an existing document",
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceUpdateDocumentPerm,
+			Attrs:    []perms.Attr{},
 		},
 	})
 }

@@ -4272,10 +4272,32 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetContent()) < 30 {
+	if len(m.GetTitle()) > 21845 {
+		err := CreateDocumentRequestValidationError{
+			field:  "Title",
+			reason: "value length must be at most 21845 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetContent()) < 20 {
 		err := CreateDocumentRequestValidationError{
 			field:  "Content",
-			reason: "value length must be at least 30 runes",
+			reason: "value length must be at least 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetContent()) > 65535 {
+		err := CreateDocumentRequestValidationError{
+			field:  "Content",
+			reason: "value length must be at most 65535 bytes",
 		}
 		if !all {
 			return err
@@ -4571,10 +4593,32 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetContent()) < 30 {
+	if len(m.GetTitle()) > 21845 {
+		err := UpdateDocumentRequestValidationError{
+			field:  "Title",
+			reason: "value length must be at most 21845 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetContent()) < 20 {
 		err := UpdateDocumentRequestValidationError{
 			field:  "Content",
-			reason: "value length must be at least 30 runes",
+			reason: "value length must be at least 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetContent()) > 65535 {
+		err := UpdateDocumentRequestValidationError{
+			field:  "Content",
+			reason: "value length must be at most 65535 bytes",
 		}
 		if !all {
 			return err

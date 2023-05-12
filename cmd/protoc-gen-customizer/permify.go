@@ -1,7 +1,6 @@
 package main
 
 import (
-	"strconv"
 	"strings"
 	"text/template"
 
@@ -53,6 +52,7 @@ func (p *PermifyModule) generate(f pgs.File) {
 		PermissionServiceKeys []string
 		Permissions           map[string]map[string]*Perm
 		PermissionRemap       map[string]map[string]string
+		Attributes            map[string]map[string]*Attr
 	}{
 		F:                     f,
 		PermissionServiceKeys: []string{},
@@ -124,12 +124,7 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 	comment = strings.TrimPrefix(comment, "@perm")
 
 	perm := &Perm{
-		Name:         method,
-		Description:  "",
-		Fields:       []string{},
-		PerJob:       false,
-		PerJobGrade:  false,
-		PerJobFields: []string{},
+		Name: method,
 	}
 
 	if comment == "" {
@@ -145,37 +140,30 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 		}
 
 		switch strings.ToLower(k) {
-		case "key":
-			perm.Key = v
-			continue
 		case "name":
 			perm.Name = v
 			continue
-		case "description":
-			if !strings.Contains(v, "\"") {
-				v = "\"" + v + "\""
+		case "attrs":
+			for _, v := range strings.Split(v, ",") {
+				attrSplit := strings.Split(v, "/")
+				if len(attrSplit) <= 1 {
+					p.Fail("Invalid attrs value found: ", v)
+				}
+
+				attrType := attrSplit[1]
+				validValue := ""
+				validList := strings.Split(attrSplit[1], ":")
+				if len(validList) > 1 {
+					attrType = validList[0]
+					validValue = strings.ReplaceAll(validList[1], "|", ";")
+				}
+
+				perm.Attrs = append(perm.Attrs, Attr{
+					Key:   attrSplit[0],
+					Type:  attrType,
+					Valid: validValue,
+				})
 			}
-			perm.Description = v
-			continue
-		case "fields":
-			perm.Fields = strings.Split(v, ",")
-			continue
-		case "perjob":
-			bo, err := strconv.ParseBool(v)
-			if err != nil {
-				return nil, err
-			}
-			perm.PerJob = bo
-			continue
-		case "perjobgrade":
-			bo, err := strconv.ParseBool(v)
-			if err != nil {
-				return nil, err
-			}
-			perm.PerJobGrade = bo
-			continue
-		case "perjobfields":
-			perm.PerJobFields = strings.Split(v, ",")
 			continue
 		}
 	}
@@ -209,7 +197,15 @@ func (s *Server) GetPermsRemap() map[string]string {
 {{ with .PermissionServiceKeys }}
 const (
 {{ range $key, $sName := . -}}
-    {{ $sName }}PermKey = "{{ $sName }}"
+    {{ $sName }}Perm perms.Category = "{{ $sName }}"
+    {{ range $sName, $service := $.Permissions -}}
+	    {{- range $perm := $service }}
+	{{ $sName }}{{ $perm.Name }}Perm perms.Name = "{{ $perm.Name }}"
+            {{- range $attr := $perm.Attrs }}
+    {{ $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField perms.Key = "{{ $attr.Key }}"
+            {{- end }}
+		{{- end }}
+	{{- end }}
 {{ end }}
 )
 {{ end }}
@@ -220,18 +216,17 @@ func init() {
 		// Service: {{ $sName }}
 		{{- range $perm := $service }}
 		{
-			Key: {{ if $perm.Key }}"{{ $perm.Key }}"{{ else }}{{ $sName }}PermKey{{- end -}},
-			Name: "{{ $perm.Name }}",
-			{{- if $perm.PerJob }}
-            PerJob: {{ $perm.PerJob }},{{ end }}
-            {{- if $perm.PerJobFields }}
-            PerJobFields: []string{ {{ range $i, $field := $perm.PerJobFields }}"{{ $field }}",{{ end -}} },{{ end }}
-            {{- if $perm.PerJobGrade }}
-            PerJobGrade: {{ $perm.PerJobGrade }},{{ end }}
-			{{- if $perm.Fields }}
-            Fields: []string{ {{ range $i, $field := $perm.Fields }}"{{ $field }}",{{ end -}} },{{ end }}
-			{{- with $perm.Description }}
-            Description: {{ . }},{{ end }}
+			Category: {{ $sName }}Perm,
+			Name: {{ $sName }}{{ $perm.Name }}Perm,
+            Attrs: []perms.Attr{
+            {{- range $attr := $perm.Attrs }}
+                {
+                    Key: {{ $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
+                    Type: perms.{{ $attr.Type }}AttributeType,
+                    ValidValues: "{{ $attr.Valid }}",
+                },
+            {{- end }}
+            },
 		},
 		{{- end }}
 	{{- end }}
@@ -240,11 +235,12 @@ func init() {
 `
 
 type Perm struct {
-	Key          string
-	Name         string
-	Description  string
-	Fields       []string
-	PerJob       bool
-	PerJobGrade  bool
-	PerJobFields []string
+	Name  string
+	Attrs []Attr
+}
+
+type Attr struct {
+	Key   string
+	Type  string
+	Valid string
 }

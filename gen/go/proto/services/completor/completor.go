@@ -100,11 +100,15 @@ func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*C
 }
 
 func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDocumentCategoriesRequest) (*CompleteDocumentCategoriesResponse, error) {
-	userId := auth.GetUserIDFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
-	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, CompletorServicePermKey+"-CompleteDocumentCategories")
+	jobsAttr, err := s.p.Attr(userId, job, jobGrade, CompletorServicePerm, CompletorServiceCompleteDocumentCategoriesPerm, CompletorServiceCompleteDocumentCategoriesJobsPermField)
 	if err != nil {
 		return nil, FailedSearchErr
+	}
+	var jobs perms.StringList
+	if jobsAttr != nil {
+		jobs = jobsAttr.(perms.StringList)
 	}
 
 	resp := &CompleteDocumentCategoriesResponse{}

@@ -15,21 +15,24 @@ func (s *Server) GetPermsRemap() map[string]string {
 }
 
 const (
-	AuthServicePermKey = "AuthService"
+	AuthServicePerm perms.Category = "AuthService"
+
+	AuthServiceGetCharactersPerm perms.Name = "GetCharacters"
+	AuthServiceSetJobPerm        perms.Name = "SetJob"
 )
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: AuthService
 		{
-			Key:         AuthServicePermKey,
-			Name:        "GetCharacters",
-			Description: "Permission to choose character, basically allow or disallow access to FiveNet.",
+			Category: AuthServicePerm,
+			Name:     AuthServiceGetCharactersPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         AuthServicePermKey,
-			Name:        "SetJob",
-			Description: "Superuser: Allow to override their own job on the go.",
+			Category: AuthServicePerm,
+			Name:     AuthServiceSetJobPerm,
+			Attrs:    []perms.Attr{},
 		},
 	})
 }

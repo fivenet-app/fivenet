@@ -264,7 +264,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, FailedQueryErr
 	}
 	if !check {
-		if !s.p.Can(userId, common.SuperuserAnyAccess) {
+		if !s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
 			return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
 		}
 	}
@@ -342,7 +342,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
-	if !check && !s.p.Can(userId, common.SuperuserAnyAccess) {
+	if !check && !s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
 	}
 

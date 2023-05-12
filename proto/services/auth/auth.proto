@@ -127,13 +127,13 @@ service AuthService {
   rpc ForgotPassword(ForgotPasswordRequest) returns (ForgotPasswordResponse);
 
   rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse);
-  // @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
+  // @perm: Name=GetCharacters
   rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);
 
   rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
 
   rpc DeleteOAuth2Connection(DeleteOAuth2ConnectionRequest) returns (DeleteOAuth2ConnectionResponse);
 
-  // @perm: description="Superuser: Allow to override their own job on the go."
+  // @perm
   rpc SetJob(SetJobRequest) returns (SetJobResponse);
 }

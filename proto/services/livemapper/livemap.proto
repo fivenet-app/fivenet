@@ -9,12 +9,13 @@ import "resources/livemap/livemap.proto";
 message StreamRequest {}
 
 message StreamResponse {
-  repeated resources.jobs.Job jobs = 1;
-  repeated resources.livemap.DispatchMarker dispatches = 2;
-  repeated resources.livemap.UserMarker users = 3;
+  repeated resources.jobs.Job jobs_dispatches = 1;
+  repeated resources.jobs.Job jobs_users = 2;
+  repeated resources.livemap.DispatchMarker dispatches = 3;
+  repeated resources.livemap.UserMarker users = 4;
 }
 
 service LivemapperService {
-  // @perm: PerJobFields=Dispatches,Players;PerJob=true;description="Being able to view the Livemap"
+  // @perm: Attrs=Dispatches/JobList,Players/JobRankList
   rpc Stream(StreamRequest) returns (stream StreamResponse);
 }

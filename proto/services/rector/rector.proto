@@ -51,19 +51,13 @@ message DeleteRoleRequest {
 
 message DeleteRoleResponse {}
 
-message AddPermToRoleRequest {
+message UpdateRolePermsRequest {
   uint64 id = 1;
-  repeated uint64 permissions = 2 [(validate.rules).repeated.min_items = 1];
+  repeated uint64 to_add = 2;
+  repeated uint64 to_remove = 3;
 }
 
-message AddPermToRoleResponse {}
-
-message RemovePermFromRoleRequest {
-  uint64 id = 1;
-  repeated uint64 permissions = 2 [(validate.rules).repeated.min_items = 1];
-}
-
-message RemovePermFromRoleResponse {}
+message UpdateRolePermsResponse {}
 
 message GetPermissionsRequest {
   string search = 1 [(validate.rules).string.max_len = 32];
@@ -86,28 +80,26 @@ message ViewAuditLogResponse {
 }
 
 service RectorService {
-  // @perm: description="View your job's properties"
+  // @perm
   rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse);
-  // @perm: description="Set your job's properties"
+  // @perm
   rpc SetJobProps(SetJobPropsRequest) returns (SetJobPropsResponse);
 
-  // @perm: description="Get/List FiveNet job roles"
+  // @perm
   rpc GetRoles(GetRolesRequest) returns (GetRolesResponse);
-  // @perm: name=GetRoles
+  // @perm: Name=GetRoles
   rpc GetRole(GetRoleRequest) returns (GetRoleResponse);
-  // @perm: description="Create rank-specific FiveNet job roles"
+  // @perm
   rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
-  // @perm: description="Delete FiveNet job roles"
+  // @perm
   rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
 
-  // @perm: description="Add/ Delete permissions to FiveNet job roles"
-  rpc AddPermToRole(AddPermToRoleRequest) returns (AddPermToRoleResponse);
-  // @perm: name=AddPermToRole
-  rpc RemovePermFromRole(RemovePermFromRoleRequest) returns (RemovePermFromRoleResponse);
+  // @perm
+  rpc UpdateRolePerms(UpdateRolePermsRequest) returns (UpdateRolePermsResponse);
 
-  // @perm: PerJob=true;description="Get list of available FiveNet job roles permissions"
+  // @perm: Attrs=Jobs/JobList
   rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
 
-  // @perm: description="View audit log"
+  // @perm
   rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse);
 }

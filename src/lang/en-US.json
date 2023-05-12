@@ -610,5 +610,181 @@
                 "CAUSED": "caused"
             }
         }
-    }
+    },
+    "perms": {
+        "AuthService": {
+            "category": "Authentication",
+            "GetCharacters": {
+                "key": "List Character",
+                "description": "Permission to choose character, basically allow or disallow access to FiveNet."
+            },
+            "SetJob": {
+                "key": "Override own Job",
+                "description": "Superuser: Allow to override their own job on the go."
+            }
+        },
+        "CitizenStoreService": {
+            "category": "Citizens",
+            "ListCitizens": {
+                "key": "ListCitizens",
+                "description": "List and search through citizens"
+            },
+            "ListUserActivity": {
+                "key": "ListUserActivity",
+                "description": "Citizen Info Activity Feed"
+            },
+            "SetUserProps": {
+                "key": "SetUserProps",
+                "description": "Set Citizen Props (e.g., wanted status)"
+            },
+            "GetUser": {
+                "key": "GetUser",
+                "description": "View a citizen's."
+            }
+        },
+        "CompletorService": {
+            "category": "Auto Complete",
+            "CompleteCitizens": {
+                "key": "Citizen Names",
+                "description": "Complete citizen names."
+            },
+            "CompleteJobs": {
+                "key": "Complete job names and ranks",
+                "description": "Complete job names and ranks."
+            },
+            "CompleteDocumentCategories": {
+                "key": "List document categories",
+                "description": "Complete a document categories."
+            }
+        },
+        "DMVService": {
+            "category": "Vehicles",
+            "ListVehicles": {
+                "key": "Search Vehicles",
+                "description": "Search and find citizen's vehicles."
+            }
+        },
+        "DocStoreService": {
+            "category": "Documents",
+            "AddDocumentReference": {
+                "key": "AddDocumentReference",
+                "description": "Add/ Remove document references"
+            },
+            "AddDocumentRelation": {
+                "key": "AddDocumentRelation",
+                "description": "Add/ Remove citizen relation"
+            },
+            "CreateDocument": {
+                "key": "CreateDocument",
+                "description": "Create a new document"
+            },
+            "DeleteDocumentComment": {
+                "key": "DeleteDocumentComment",
+                "description": "Delete own document comment"
+            },
+            "ListDocuments": {
+                "key": "ListDocuments",
+                "description": "List/ Search documents"
+            },
+            "GetDocument": {
+                "key": "GetDocument",
+                "description": "View a document"
+            },
+            "GetDocumentAccess": {
+                "key": "GetDocumentAccess",
+                "description": "View a document's access"
+            },
+            "GetDocumentComments": {
+                "key": "GetDocumentComments",
+                "description": "View document comments"
+            },
+            "ListUserDocuments": {
+                "key": "ListUserDocuments",
+                "description": "View the documents linked to a citizen"
+            },
+            "ListTemplates": {
+                "key": "List Templates",
+                "description": "List available templates"
+            },
+            "PostDocumentComment": {
+                "key": "PostDocumentComment",
+                "description": "Post document comments"
+            },
+            "SetDocumentAccess": {
+                "key": "SetDocumentAccess",
+                "description": "Add/ edit document's access"
+            },
+            "UpdateDocument": {
+                "key": "UpdateDocument",
+                "description": "Edit/ Update an existing document"
+            },
+            "CreateDocumentCategory": {
+                "key": "CreateDocumentCategory",
+                "description": "Create/ Update document categories"
+            },
+            "DeleteDocumentCategory": {
+                "key": "DeleteDocumentCategory",
+                "description": "Delete document categories"
+            },
+            "ListDocumentCategories": {
+                "key": "ListDocumentCategories",
+                "description": "List document categories"
+            },
+            "CreateTemplate": {
+                "key": "Create Template",
+                "description": "Create document templates"
+            },
+            "DeleteTemplate": {
+                "key": "DeleteTemplate",
+                "description": "Delete document templates"
+            },
+            "DeleteDocument": {
+                "key": "DeleteDocument",
+                "description": "Delete a document"
+            }
+        },
+        "LivemapperService": {
+            "category": "Livemap",
+            "Stream": {
+                "key": "View",
+                "description": "Being able to view the Livemap."
+            }
+        },
+        "RectorService": {
+            "category": "Control Panel",
+            "GetJobProps": {
+                "key": "View Job Properties",
+                "description": "View your job's properties"
+            },
+            "SetJobProps": {
+                "key": "Set Job Properties",
+                "description": "Set your job's properties"
+            },
+            "GetRoles": {
+                "key": "View Roles",
+                "description": "Get/List FiveNet job roles"
+            },
+            "CreateRole": {
+                "key": "Create Role",
+                "description": "Create FiveNet job roles"
+            },
+            "DeleteRole": {
+                "key": "Delete Role",
+                "description": "Delete FiveNet job roles"
+            },
+            "UpdateRolePerms": {
+                "key": "Manage Role Permissions",
+                "description": "Add/ Delete permissions to FiveNet job roles"
+            },
+            "GetPermissions": {
+                "key": "GetPermissions",
+                "description": "Get list of available FiveNet permissions"
+            },
+            "ViewAuditLog": {
+                "key": "Audit Log",
+                "description": "View audit log"
+            }
+        }
+    },
+    "attrs": {}
 }

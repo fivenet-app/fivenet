@@ -3,7 +3,9 @@ package common
 import "github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 
 const (
-	SuperuserAnyAccess      = "Superuser.AnyAccess"
+	SuperuserCategoryPerm   = "Superuser"
+	SuperuserAnyAccessName  = "AnyAccess"
+	SuperuserAnyAccess      = SuperuserCategoryPerm + SuperuserAnyAccessName
 	SuperuserAnyAccessGuard = "superuser-anyaccess"
 )
 

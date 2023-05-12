@@ -11,9 +11,10 @@ import (
 	"time"
 )
 
-type FivenetRoles struct {
-	ID        uint64     `sql:"primary_key" json:"id"`
+type FivenetRoleAttrs struct {
+	RoleID    uint64     `sql:"primary_key" json:"role_id"`
 	CreatedAt *time.Time `json:"created_at"`
-	Job       string     `json:"job"`
-	Grade     int32      `json:"grade"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	AttrID    uint64     `sql:"primary_key" json:"attr_id"`
+	Value     string     `json:"value"`
 }

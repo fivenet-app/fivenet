@@ -3,7 +3,6 @@ package rector
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
@@ -12,8 +11,8 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
@@ -34,7 +33,7 @@ var (
 )
 
 func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*model.FivenetRoles, bool, error) {
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	role, err := s.p.GetRole(roleId)
 	if err != nil {
@@ -42,32 +41,38 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 	}
 
 	// Make sure the user is from the job
-	if !strings.HasPrefix(role.GuardName, "job-"+job+"-") {
+	if role.Job != job {
+		return nil, false, InvalidRequestErr
+	}
+
+	if role.Grade > jobGrade {
 		return nil, false, InvalidRequestErr
 	}
 
 	return role, true, nil
 }
 
-func (s *Server) filterPermissions(ctx context.Context, perms collections.Permissions, jobFilter bool) (collections.Permissions, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
-	jobs, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, "RectorService.GetPermissions")
+func (s *Server) filterPermissions(ctx context.Context, ps collections.Permissions, jobFilter bool) (collections.Permissions, error) {
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+
+	jobsAttr, err := s.p.Attr(userId, job, jobGrade, RectorServicePerm, RectorServiceGetPermissionsPerm, perms.Key("Jobs"))
 	if err != nil {
 		return nil, err
 	}
-	if !utils.InStringSlice(jobs, job) {
-		jobs = append(jobs, job)
+	var jobs perms.StringList
+	if jobsAttr != nil {
+		jobs = jobsAttr.(perms.StringList)
 	}
 
 	// Disable job filter when superuser
-	if s.p.Can(userId, common.SuperuserAnyAccess) {
+	if s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
 		jobFilter = false
 	}
 
 	filtered := collections.Permissions{}
 
 outer:
-	for _, p := range perms {
+	for _, p := range ps {
 		for i := 0; i < len(ignoredGuardPermissions); i++ {
 			if p.GuardName == ignoredGuardPermissions[i] {
 				continue outer
@@ -109,31 +114,26 @@ func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64, jobFilte
 }
 
 func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesResponse, error) {
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
-	rolePrefix := "job-" + job + "-"
-
-	roles, err := s.p.GetRoles(rolePrefix)
+	roles, err := s.p.GetJobRolesUpTo(job, jobGrade)
 	if err != nil {
 		return nil, err
 	}
 
 	resp := &GetRolesResponse{}
 	for _, r := range roles {
-		var updatedAt *timestamp.Timestamp
-		if r.UpdatedAt != nil {
-			updatedAt = timestamp.New(*r.UpdatedAt)
-		}
-
-		resp.Roles = append(resp.Roles, &permissions.Role{
+		role := &permissions.Role{
 			Id:          r.ID,
 			CreatedAt:   timestamp.New(*r.CreatedAt),
-			UpdatedAt:   updatedAt,
-			Name:        r.Name,
-			GuardName:   r.GuardName,
-			Description: r.Description,
+			Job:         r.Job,
+			Grade:       r.Grade,
 			Permissions: []*permissions.Permission{},
-		})
+		}
+
+		s.c.EnrichJobInfo(role)
+
+		resp.Roles = append(resp.Roles, role)
 	}
 
 	return resp, nil
@@ -154,19 +154,14 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 	}
 
 	resp := &GetRoleResponse{}
-	var updatedAt *timestamp.Timestamp
-	if role.UpdatedAt != nil {
-		updatedAt = timestamp.New(*role.UpdatedAt)
-	}
 
 	resp.Role = &permissions.Role{
-		Id:          role.ID,
-		CreatedAt:   timestamp.New(*role.CreatedAt),
-		UpdatedAt:   updatedAt,
-		Name:        role.Name,
-		GuardName:   role.GuardName,
-		Description: role.Description,
+		Id:        role.ID,
+		CreatedAt: timestamp.New(*role.CreatedAt),
+		Job:       role.Job,
+		Grade:     role.Grade,
 	}
+	s.c.EnrichJobInfo(resp.Role)
 
 	fPerms, err := s.filterPermissions(ctx, perms, false)
 	if err != nil {
@@ -176,6 +171,12 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 	resp.Role.Permissions = make([]*permissions.Permission, len(fPerms))
 	for k := 0; k < len(fPerms); k++ {
 		resp.Role.Permissions[k] = permissions.ConvertFromPerm(fPerms[k])
+	}
+
+	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	resp.Role.Attributes, err = s.p.GetRoleAttributes(job, jobGrade)
+	if err != nil {
+		return nil, InvalidRequestErr
 	}
 
 	return resp, nil
@@ -193,9 +194,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	name := fmt.Sprintf("%s - Rank: %d", strings.ToTitle(job), req.Grade)
-
-	role, err := s.p.GetRoleByGuardName(name)
+	role, err := s.p.GetRoleByJobAndGrade(job, req.Grade)
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
@@ -205,10 +204,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		return nil, RoleAlreadyExistsErr
 	}
 
-	guard := fmt.Sprintf("job-%s-%d", job, req.Grade)
-	description := fmt.Sprintf("Role for %s (Rank: %d)", job, req.Grade)
-
-	cr, err := s.p.CreateRoleWithGuard(name, guard, description)
+	cr, err := s.p.CreateRole(job, req.Grade)
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +220,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 }
 
 func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*DeleteRoleResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: RectorService_ServiceDesc.ServiceName,
@@ -243,14 +239,18 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, NoPermissionErr
 	}
 
-	jobRoleKey := fmt.Sprintf("job-%s-", job)
-	roleCount, err := s.p.CountRoles(jobRoleKey)
+	roleCount, err := s.p.CountRolesForJob(job)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
 
 	// Don't allow deleting the "last" role, one role should always remain
 	if roleCount <= 1 {
+		return nil, InvalidRequestErr
+	}
+
+	// Don't allow deleting the own or higher role
+	if role.Grade >= jobGrade {
 		return nil, InvalidRequestErr
 	}
 
@@ -263,12 +263,12 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 	return &DeleteRoleResponse{}, nil
 }
 
-func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (*AddPermToRoleResponse, error) {
+func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsRequest) (*UpdateRolePermsResponse, error) {
 	userId, job, _ := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: RectorService_ServiceDesc.ServiceName,
-		Method:  "AddPermToRole",
+		Method:  "UpdateRolePerms",
 		UserID:  userId,
 		UserJob: job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
@@ -283,60 +283,29 @@ func (s *Server) AddPermToRole(ctx context.Context, req *AddPermToRoleRequest) (
 		return nil, NoPermissionErr
 	}
 
-	perms, err := s.filterPermissionIDs(ctx, req.Permissions, true)
+	toAdd, err := s.filterPermissionIDs(ctx, req.ToAdd, true)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
 
-	resp := &AddPermToRoleResponse{}
-	if len(perms) == 0 {
-		return resp, nil
-	}
-
-	if err := s.p.AddPermissionsToRole(role.ID, perms); err != nil {
-		return nil, err
-	}
-
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
-
-	return resp, nil
-}
-
-func (s *Server) RemovePermFromRole(ctx context.Context, req *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
-
-	auditEntry := &model.FivenetAuditLog{
-		Service: RectorService_ServiceDesc.ServiceName,
-		Method:  "RemovePermFromRole",
-		UserID:  userId,
-		UserJob: job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
-	}
-	defer s.a.AddEntryWithData(auditEntry, req)
-
-	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
-	if err != nil {
-		return nil, InvalidRequestErr
-	}
-	if !check {
-		return nil, NoPermissionErr
-	}
-
-	perms, err := s.filterPermissionIDs(ctx, req.Permissions, true)
+	toDelete, err := s.filterPermissionIDs(ctx, req.ToRemove, true)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
 
-	resp := &RemovePermFromRoleResponse{}
-	if len(perms) == 0 {
-		return resp, nil
+	resp := &UpdateRolePermsResponse{}
+	if len(toAdd) > 0 {
+		if err := s.p.AddPermissionsToRole(role.ID, toAdd...); err != nil {
+			return nil, err
+		}
+	}
+	if len(toDelete) > 0 {
+		if err := s.p.RemovePermissionsFromRole(role.ID, toDelete...); err != nil {
+			return nil, err
+		}
 	}
 
-	if err := s.p.RemovePermissionsFromRole(role.ID, perms); err != nil {
-		return nil, err
-	}
-
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return resp, nil
 }

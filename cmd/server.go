@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -66,7 +67,9 @@ var serverCmd = &cobra.Command{
 
 		// Setup permissions system
 		p := perms.New(ctx, db)
-		p.Register()
+		if err := p.Register(); err != nil {
+			return fmt.Errorf("failed to register permissions. %w", err)
+		}
 
 		// Audit Storer
 		aud := audit.New(logger.Named("audit"), db)

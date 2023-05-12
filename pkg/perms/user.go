@@ -1,48 +1,44 @@
 package perms
 
 import (
-	"strconv"
-	"strings"
-
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
-	"github.com/galexrt/fivenet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func (p *Perms) GetAllPermissionsOfUser(userId int32) (collections.Permissions, error) {
-	if cached, ok := p.permsCache.Get(userId); ok {
-		return cached, nil
-	}
+var tUserPerms = table.FivenetUserPermissions
 
-	stmt := ap.
+func (p *Perms) GetPermissionsOfUser(userId int32, job string, grade int32) (collections.Permissions, error) {
+	stmt := tPerms.
 		SELECT(
-			ap.AllColumns,
+			tPerms.AllColumns,
 		).
-		FROM(ap).
+		FROM(tPerms).
 		WHERE(
-			ap.ID.IN(
-				aup.
+			tPerms.ID.IN(
+				tUserPerms.
 					SELECT(
-						aup.PermissionID,
+						tUserPerms.PermissionID,
 					).
 					FROM(
-						aup,
+						tUserPerms,
 					).
 					WHERE(
-						aup.UserID.EQ(jet.Int32(userId)),
+						tUserPerms.UserID.EQ(jet.Int32(userId)),
 					).
 					UNION(
-						aur.
-							SELECT(arp.PermissionID).
-							FROM(aur.
-								INNER_JOIN(arp,
-									arp.RoleID.EQ(aur.RoleID)),
+						tRoles.
+							SELECT(tRolePerms.PermissionID).
+							FROM(tRoles.
+								INNER_JOIN(tRolePerms,
+									tRolePerms.RoleID.EQ(tRoles.ID)),
 							).
-							WHERE(
-								aur.UserID.EQ(jet.Int32(userId)),
-							),
+							WHERE(jet.AND(
+								tRoles.Job.EQ(jet.String(job)),
+								tRoles.Grade.EQ(jet.Int32(grade)),
+							)),
 					),
 			),
 		)
@@ -52,145 +48,123 @@ func (p *Perms) GetAllPermissionsOfUser(userId int32) (collections.Permissions, 
 		return nil, err
 	}
 
-	p.permsCache.Set(userId, perms, cache.WithExpiration(p.permsCacheTTL))
-
 	return perms, nil
 }
 
-func (p *Perms) GetAllPermissionsByPrefixOfUser(userId int32, prefix string) (collections.Permissions, error) {
-	prefix = helpers.Guard(prefix)
-
-	return p.getAllPermissionsByPrefixOfUser(userId, prefix)
-}
-
-func (p *Perms) getAllPermissionsByPrefixOfUser(userId int32, prefix string) (collections.Permissions, error) {
-	if cached, ok := p.permsCache.Get(userId); ok {
-		return cached.HasPrefix(prefix), nil
+func (p *Perms) Can(userId int32, job string, grade int32, category Category, name Name) bool {
+	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
+	if !ok {
+		return false
 	}
 
-	stmt := ap.
-		SELECT(
-			ap.AllColumns,
-		).
-		FROM(ap).
-		WHERE(
-			jet.AND(
-				ap.GuardName.LIKE(jet.String(prefix+"%")),
-				ap.ID.IN(
-					aup.
-						SELECT(
-							aup.PermissionID,
-						).
-						FROM(
-							aup,
-						).
-						WHERE(
-							aup.UserID.EQ(jet.Int32(userId)),
-						).
-						UNION(
-							aur.
-								SELECT(arp.PermissionID).
-								FROM(aur.
-									INNER_JOIN(arp,
-										arp.RoleID.EQ(aur.RoleID)),
-								).
-								WHERE(
-									aur.UserID.EQ(jet.Int32(userId)),
-								),
-						),
-				),
-			),
-		)
-
-	var perms collections.Permissions
-	if err := stmt.QueryContext(p.ctx, p.db, &perms); err != nil {
-		return nil, err
+	cached, ok := p.userCanCache.Get(userId)
+	if ok {
+		if result, found := cached[permId]; found {
+			return result
+		}
 	}
 
-	return perms, nil
-}
-
-func (p *Perms) GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix string) ([]string, error) {
-	prefix = helpers.Guard(prefix) + "-"
-
-	perms, err := p.getAllPermissionsByPrefixOfUser(userId, prefix)
-	if err != nil {
-		return nil, err
-	}
-
-	suffixes := []string{}
-	for _, perm := range perms {
-		suffixes = append(suffixes, strings.TrimPrefix(perm.GuardName, prefix))
-	}
-
-	return suffixes, nil
-}
-
-func (p *Perms) Can(userId int32, perm ...string) bool {
-	result := p.can(userId, helpers.Guard(strings.Join(perm, ".")))
+	result := p.checkIfCan(permId, userId, job, grade, category, name)
 
 	if !result {
-		return p.can(userId, common.SuperuserAnyAccessGuard)
+		result = p.checkIfCan(permId, userId, job, grade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName)
 	}
+
+	if cached == nil {
+		cached = map[uint64]bool{}
+	}
+	cached[permId] = result
+
+	p.userCanCache.Set(userId, cached,
+		cache.WithExpiration(p.userCanCacheTTL))
 
 	return result
 }
 
-func (p *Perms) can(userId int32, guard string) (result bool) {
-	cacheKey := buildCanCacheKey(userId, guard)
-	if cached, ok := p.canCache.Get(cacheKey); ok {
-		return cached
+func (p *Perms) checkIfCan(permId uint64, userId int32, job string, grade int32, category Category, name Name) (result bool) {
+	if p.checkRoleJob(job, grade, permId) {
+		return true
 	}
 
-	stmt := ap.
-		SELECT(
-			ap.ID.AS("id"),
-		).
-		FROM(
-			ap.
-				LEFT_JOIN(aur,
-					aur.UserID.EQ(jet.Int32(userId)),
-				).
-				INNER_JOIN(arp,
-					arp.PermissionID.EQ(ap.ID).
-						AND(
-							arp.RoleID.EQ(aur.RoleID),
-						),
-				),
-		).
-		WHERE(
-			ap.GuardName.EQ(jet.String(guard)),
-		).
-		LIMIT(1).
-		UNION(
-			ap.
-				SELECT(
-					ap.ID.AS("id"),
-				).
-				FROM(ap.
-					INNER_JOIN(aup,
-						aup.PermissionID.EQ(ap.ID),
-					),
-				).
-				WHERE(
-					ap.GuardName.EQ(jet.String(guard)),
-				).
-				LIMIT(1),
-		)
+	return p.checkIfUserCan(userId, permId)
+}
+
+func (p *Perms) checkIfUserCan(userId int32, permId uint64) bool {
+	stmt :=
+		tUserPerms.
+			SELECT(
+				tUserPerms.PermissionID.AS("id"),
+			).
+			FROM(tUserPerms).
+			WHERE(jet.AND(
+				tUserPerms.UserID.EQ(jet.Int32(userId)),
+				tUserPerms.PermissionID.EQ(jet.Uint64(permId)),
+			)).
+			LIMIT(1)
 
 	var dest struct {
 		ID int32
 	}
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
-		return result
+		return false
 	}
 
-	result = dest.ID > 0
-	p.canCache.Set(cacheKey, result, cache.WithExpiration(p.canCacheTTL))
-
-	return result
+	return dest.ID > 0
 }
 
-func buildCanCacheKey(userId int32, guard string) string {
-	return strconv.Itoa(int(userId)) + guard
+func (p *Perms) lookupPermIDByGuard(guard string) (uint64, bool) {
+	return p.guardToPermIDMap.Load(guard)
+}
+
+func (p *Perms) getRoleIDForJobAndGrade(job string, grade int32) (uint64, bool) {
+	grades, ok := p.jobsToRoleIDMap.Load(job)
+	if !ok {
+		return 0, false
+	}
+	roleId, ok := grades[grade]
+	if !ok {
+		return 0, false
+	}
+
+	return roleId, true
+}
+
+func (p *Perms) getRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64, bool) {
+	grades, ok := p.jobsToRoleIDMap.Load(job)
+	if !ok {
+		return nil, false
+	}
+
+	gradeList := []uint64{}
+	for g, value := range grades {
+		if g > grade {
+			continue
+		}
+		gradeList = append(gradeList, value)
+	}
+
+	return gradeList, true
+}
+
+func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) bool {
+	roleIds, ok := p.getRoleIDsForJobUpToGrade(job, grade)
+	if !ok {
+		return false
+	}
+
+	for i := len(roleIds) - 1; i >= 0; i-- {
+		ps, ok := p.rolePermsMap.Load(roleIds[i])
+		if !ok {
+			continue
+		}
+		val, ok := ps[permId]
+		if !ok {
+			continue
+		}
+		if val == 1 {
+			return true
+		}
+	}
+
+	return false
 }

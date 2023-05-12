@@ -11,6 +11,7 @@ package table
 // this method only once at the beginning of the program.
 func UseSchema(schema string) {
 	FivenetAccounts = FivenetAccounts.FromSchema(schema)
+	FivenetAttrs = FivenetAttrs.FromSchema(schema)
 	FivenetAuditLog = FivenetAuditLog.FromSchema(schema)
 	FivenetDocuments = FivenetDocuments.FromSchema(schema)
 	FivenetDocumentsCategories = FivenetDocumentsCategories.FromSchema(schema)
@@ -26,12 +27,12 @@ func UseSchema(schema string) {
 	FivenetOauth2Accounts = FivenetOauth2Accounts.FromSchema(schema)
 	FivenetPermissions = FivenetPermissions.FromSchema(schema)
 	FivenetRoles = FivenetRoles.FromSchema(schema)
+	FivenetRoleAttrs = FivenetRoleAttrs.FromSchema(schema)
 	FivenetRolePermissions = FivenetRolePermissions.FromSchema(schema)
 	FivenetUserActivity = FivenetUserActivity.FromSchema(schema)
 	FivenetUserLocations = FivenetUserLocations.FromSchema(schema)
 	FivenetUserPermissions = FivenetUserPermissions.FromSchema(schema)
 	FivenetUserProps = FivenetUserProps.FromSchema(schema)
-	FivenetUserRoles = FivenetUserRoles.FromSchema(schema)
 	GksphoneJobMessage = GksphoneJobMessage.FromSchema(schema)
 	Jobs = Jobs.FromSchema(schema)
 	JobGrades = JobGrades.FromSchema(schema)

@@ -149,8 +149,8 @@ message DeleteDocumentCommentResponse {}
 
 message CreateDocumentRequest {
   optional uint64 category_id = 1; // @gotags: alias:"category_id"
-  string title = 2 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-  string content = 3 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
+  string title = 2 [(validate.rules).string = {min_len: 3, max_bytes: 21845}]; // @gotags: alias:"title"
+  string content = 3 [(validate.rules).string = {min_len: 20, max_bytes: 65535}]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 5; // @gotags: alias:"data"
   string state = 6 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
@@ -167,8 +167,8 @@ message CreateDocumentResponse {
 message UpdateDocumentRequest {
   uint64 document_id = 1; // @gotags: alias:"id"
   uint64 category_id = 2; // @gotags: alias:"category_id"
-  string title = 3 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-  string content = 4 [(validate.rules).string.min_len = 30]; // @gotags: alias:"content"
+  string title = 3 [(validate.rules).string = {min_len: 3, max_bytes: 21845}]; // @gotags: alias:"title"
+  string content = 4 [(validate.rules).string = {min_len: 20, max_bytes: 65535}]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   string data = 6; // @gotags: alias:"data"
   string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
@@ -250,64 +250,64 @@ message DeleteDocumentCategoryRequest {
 message DeleteDocumentCategoryResponse {}
 
 service DocStoreService {
-  // @perm: description="List available templates"
+  // @perm
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
-  // @perm: name=ListTemplates
+  // @perm: Name=ListTemplates
   rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
-  // @perm: description="Create document templates"
+  // @perm
   rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse);
-  // @perm: name=CreateTemplate
+  // @perm: Name=CreateTemplate
   rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse);
-  // @perm: description="Delete document templates"
+  // @perm
   rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse);
 
-  // @perm: description="List/ Find documents"
+  // @perm
   rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse);
-  // @perm: description="View a document"
+  // @perm
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
-  // @perm: description="Create a new document"
+  // @perm
   rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
-  // @perm: description="Edit/ Update an existing document"
+  // @perm
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
-  // @perm: description="Delete a document"
+  // @perm
   rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
 
-  // @perm: name=GetDocument
+  // @perm: Name=GetDocument
   rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse);
-  // @perm: name=GetDocument
+  // @perm: Name=GetDocument
   rpc GetDocumentRelations(GetDocumentRelationsRequest) returns (GetDocumentRelationsResponse);
-  // @perm: description="Add/ Remove document references"
+  // @perm
   rpc AddDocumentReference(AddDocumentReferenceRequest) returns (AddDocumentReferenceResponse);
-  // @perm: name=AddDocumentReference
+  // @perm: Name=AddDocumentReference
   rpc RemoveDocumentReference(RemoveDocumentReferenceRequest) returns (RemoveDocumentReferenceResponse);
-  // @perm: description="Add/ Remove document citizen relations"
+  // @perm
   rpc AddDocumentRelation(AddDocumentRelationRequest) returns (AddDocumentRelationResponse);
-  // @perm: name=AddDocumentRelation
+  // @perm: Name=AddDocumentRelation
   rpc RemoveDocumentRelation(RemoveDocumentRelationRequest) returns (RemoveDocumentRelationResponse);
 
-  // @perm: description="View document comments"
+  // @perm
   rpc GetDocumentComments(GetDocumentCommentsRequest) returns (GetDocumentCommentsResponse);
-  // @perm: description="Post document comments"
+  // @perm
   rpc PostDocumentComment(PostDocumentCommentRequest) returns (PostDocumentCommentResponse);
-  // @perm: name=PostDocumentComment
+  // @perm: Name=PostDocumentComment
   rpc EditDocumentComment(EditDocumentCommentRequest) returns (EditDocumentCommentResponse);
-  // @perm: description="Delete own document comment"
+  // @perm
   rpc DeleteDocumentComment(DeleteDocumentCommentRequest) returns (DeleteDocumentCommentResponse);
 
-  // @perm: description="View a document's access"
+  // @perm
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
-  // @perm: description="Set a document's access"
+  // @perm
   rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
 
-  // @perm: description="View the documents linked to a citizen"
+  // @perm
   rpc ListUserDocuments(ListUserDocumentsRequest) returns (ListUserDocumentsResponse);
 
-  // @perm: description="List document categories"
+  // @perm
   rpc ListDocumentCategories(ListDocumentCategoriesRequest) returns (ListDocumentCategoriesResponse);
-  // @perm: description="Create/ Update document categories"
+  // @perm
   rpc CreateDocumentCategory(CreateDocumentCategoryRequest) returns (CreateDocumentCategoryResponse);
-  // @perm: name=CreateDocumentCategory
+  // @perm: Name=CreateDocumentCategory
   rpc UpdateDocumentCategory(UpdateDocumentCategoryRequest) returns (UpdateDocumentCategoryResponse);
-  // @perm: description="Delete document categories"
+  // @perm
   rpc DeleteDocumentCategory(DeleteDocumentCategoryRequest) returns (DeleteDocumentCategoryResponse);
 }

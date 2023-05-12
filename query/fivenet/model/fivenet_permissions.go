@@ -12,10 +12,9 @@ import (
 )
 
 type FivenetPermissions struct {
-	ID          uint64     `sql:"primary_key" json:"id"`
-	CreatedAt   *time.Time `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	Name        string     `json:"name"`
-	GuardName   string     `json:"guard_name"`
-	Description *string    `json:"description"`
+	ID        uint64     `sql:"primary_key" json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
+	Category  string     `json:"category"`
+	Name      string     `json:"name"`
+	GuardName string     `json:"guard_name"`
 }

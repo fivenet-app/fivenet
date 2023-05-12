@@ -10,12 +10,12 @@ import (
 const jwtTokenTestSecret = "secret-jwt-token-secret-for-testing"
 
 var basicCitizenInfoClaim = &CitizenInfoClaims{
-	AccountID:          123456,
-	Username:           "example-username",
-	ActiveCharID:       987654,
-	ActiveCharJob:      "ambulance",
-	ActiveCharJobGrade: 3,
-	RenewedCount:       0,
+	AccountID:    123456,
+	Username:     "example-username",
+	CharID:       987654,
+	CharJob:      "ambulance",
+	CharJobGrade: 3,
+	RenewedCount: 0,
 	RegisteredClaims: jwt.RegisteredClaims{
 		Subject: "example-subject",
 	},
@@ -37,9 +37,9 @@ func TestToken(t *testing.T) {
 	// Custom Claim struct
 	assert.Equal(t, claims.AccountID, parsedClaims.AccountID)
 	assert.Equal(t, claims.Username, parsedClaims.Username)
-	assert.Equal(t, claims.ActiveCharID, parsedClaims.ActiveCharID)
-	assert.Equal(t, claims.ActiveCharJob, parsedClaims.ActiveCharJob)
-	assert.Equal(t, claims.ActiveCharJobGrade, parsedClaims.ActiveCharJobGrade)
+	assert.Equal(t, claims.CharID, parsedClaims.CharID)
+	assert.Equal(t, claims.CharJob, parsedClaims.CharJob)
+	assert.Equal(t, claims.CharJobGrade, parsedClaims.CharJobGrade)
 	// RegisteredClaims
 	assert.Equal(t, claims.Subject, parsedClaims.Subject)
 

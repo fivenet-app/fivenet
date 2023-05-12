@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Permission, Role } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { RpcError } from 'grpc-web';
-import { AddPermToRoleRequest, DeleteRoleRequest, GetPermissionsRequest, GetRoleRequest, RemovePermFromRoleRequest } from '@fivenet/gen/services/rector/rector_pb';
+import { UpdateRolePermsRequest, DeleteRoleRequest, GetPermissionsRequest, GetRoleRequest } from '@fivenet/gen/services/rector/rector_pb';
 import { ChevronDownIcon, CheckIcon, XMarkIcon, MinusIcon } from '@heroicons/vue/24/solid';
 import { TrashIcon } from '@heroicons/vue/20/solid';
 import Divider from '~/components/partials/Divider.vue';
@@ -63,7 +63,6 @@ interface Perm {
     id: number;
     name: string;
     category: string;
-    description: string;
     perm: Permission;
 }
 
@@ -77,13 +76,11 @@ async function getPermissions(): Promise<void> {
     try {
         const resp = await $grpc.getRectorClient().getPermissions(req, null);
         permList.value = resp.getPermissionsList().map(perm => {
-            const splitName = perm.getName().split('.');
             const permEntry: Perm = {
                 id: perm.getId(),
-                category: splitName.shift()!,
-                name: splitName.join('.'),
-                description: perm.getDescription(),
-                perm
+                category: perm.getCategory(),
+                name: perm.getName(),
+                perm,
             }
 
             return permEntry
@@ -116,39 +113,30 @@ async function updatePermissionState(perm: number, state?: boolean): Promise<voi
     }
 }
 
-async function savePermissions(): Promise<void> {
+async function updatePermissions(): Promise<void> {
     const currentPermissions = role.value?.getPermissionsList().map(p => p.getId()) ?? [];
 
     const permsToAdd: number[] = [];
     const permsToRemove: number[] = [];
-
     permStates.value.forEach((state, perm) => {
         if (state && !currentPermissions.includes(perm)) permsToAdd.push(perm);
         if (!state && currentPermissions.includes(perm)) permsToRemove.push(perm);
     });
 
-    if (permsToAdd.length > 0) {
-        const req = new AddPermToRoleRequest();
-        req.setId(props.roleId);
-        req.setPermissionsList(permsToAdd);
-
-        try {
-            await $grpc.getRectorClient().addPermToRole(req, null);
-        } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
-        }
+    if (permsToAdd.length == 0 && permsToRemove.length == 0) {
+        return;
     }
 
-    if (permsToRemove.length > 0) {
-        const req = new RemovePermFromRoleRequest();
-        req.setId(props.roleId);
-        req.setPermissionsList(permsToRemove);
+    const req = new UpdateRolePermsRequest();
+    req.setId(props.roleId);
 
-        try {
-            await $grpc.getRectorClient().removePermFromRole(req, null);
-        } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
-        }
+    req.setToAddList(permsToAdd);
+    req.setToRemoveList(permsToRemove);
+
+    try {
+        await $grpc.getRectorClient().updateRolePerms(req, null);
+    } catch (e) {
+        $grpc.handleRPCError(e as RpcError);
     }
 
     notifications.dispatchNotification({
@@ -176,21 +164,20 @@ onMounted(async () => {
         <div class="px-2 sm:px-6 lg:px-8">
             <div v-if="role">
                 <h2 class="text-3xl text-white">
-                    {{ toTitleCase(role?.getName()!) }}
+                    {{ role?.getJobLabel()! }} - {{ role?.getJobGradeLabel() }}
                     <button v-can="'RectorService.DeleteRole'" @click="deleteRole()">
                         <TrashIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </h2>
-                <p class="text-gray-400 text-sm">
-                    {{ role.getDescription() }}
-                </p>
                 <Divider label="Permissions" />
                 <div class="py-2 flex flex-col gap-4">
                     <Disclosure as="div" class="text-neutral hover:border-neutral/70 border-neutral/20"
                         v-for="category in permCategories" :key="category" v-slot="{ open }">
                         <DisclosureButton
                             :class="[open ? 'rounded-t-lg border-b-0' : 'rounded-lg', 'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors']">
-                            <span class="text-base font-semibold leading-7">{{ category }}</span>
+                            <span class="text-base font-semibold leading-7">
+                                {{ $t(`perms.${category}.category`) }}
+                            </span>
                             <span class="ml-6 flex h-7 items-center">
                                 <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                     aria-hidden="true" />
@@ -203,10 +190,10 @@ onMounted(async () => {
                                     <div class="flex flex-row gap-4">
                                         <div class="flex flex-1 flex-col my-auto">
                                             <span class="truncate lg:max-w-full max-w-xs">
-                                                {{ perm.name }}
+                                                {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </span>
                                             <span class="text-base-500 truncate lg:max-w-full max-w-xs">
-                                                {{ perm.description }}
+                                                {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
                                             </span>
                                         </div>
                                         <div class="flex flex-initial flex-row max-h-8 my-auto">
@@ -234,7 +221,7 @@ onMounted(async () => {
                             </div>
                         </DisclosurePanel>
                     </Disclosure>
-                    <button type="button" @click="savePermissions()"
+                    <button type="button" @click="updatePermissions()"
                         class="inline-flex px-3 py-2 text-center justify-center transition-colors font-semibold rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-600">
                         {{ $t('common.save', 1) }}
                     </button>

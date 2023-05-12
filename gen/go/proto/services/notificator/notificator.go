@@ -13,6 +13,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -33,6 +34,11 @@ func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions) *Server {
 		db:     db,
 		p:      p,
 	}
+}
+
+func (s *Server) PermissionStreamFuncOverride(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
+	// Skip permission check for the notificator services
+	return ctx, nil
 }
 
 func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequest) (*GetNotificationsResponse, error) {

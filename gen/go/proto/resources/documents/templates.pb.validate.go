@@ -121,10 +121,10 @@ func (m *Template) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetContent()) < 12 {
+	if len(m.GetContentTitle()) > 21845 {
 		err := TemplateValidationError{
-			field:  "Content",
-			reason: "value length must be at least 12 runes",
+			field:  "ContentTitle",
+			reason: "value length must be at most 21845 bytes",
 		}
 		if !all {
 			return err
@@ -132,10 +132,21 @@ func (m *Template) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if len(m.GetContent()) > 12288 {
+	if utf8.RuneCountInString(m.GetContent()) < 0 {
 		err := TemplateValidationError{
 			field:  "Content",
-			reason: "value length must be at most 12288 bytes",
+			reason: "value length must be at least 0 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetContent()) > 65535 {
+		err := TemplateValidationError{
+			field:  "Content",
+			reason: "value length must be at most 65535 bytes",
 		}
 		if !all {
 			return err

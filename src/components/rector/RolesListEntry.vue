@@ -13,10 +13,7 @@ defineProps({
 <template>
     <tr :key="role.getId()">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ role.getDescription() }}
-        </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ $d(role.hasUpdatedAt() ? role.getUpdatedAt()?.getTimestamp()?.toDate()! : role.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}
+            {{ role.getJobLabel() }} - {{ role.getJobGradeLabel() }}
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <div class="flex flex-row justify-end">

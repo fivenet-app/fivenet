@@ -1,8 +1,6 @@
 package mock
 
 import (
-	"strings"
-
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
@@ -104,14 +102,14 @@ func (p *PermsMock) GetPermissionsByIDs(ids ...uint64) (collections.Permissions,
 	return nil, nil
 }
 
-func (p *PermsMock) CreatePermission(name string, description string) error {
+func (p *PermsMock) CreatePermission(category perms.Category, name perms.Name) (uint64, error) {
 
 	// TODO
 
-	return nil
+	return 0, nil
 }
 
-func (p *PermsMock) GetAllPermissionsOfUser(userId int32) (collections.Permissions, error) {
+func (p *PermsMock) GetPermissionsOfUser(userId int32, job string, grade int32) (collections.Permissions, error) {
 	ps := collections.Permissions{}
 
 	if _, ok := p.UserPerms[userId]; !ok {
@@ -135,27 +133,6 @@ func (p *PermsMock) GetAllPermissionsOfUser(userId int32) (collections.Permissio
 	return ps, nil
 }
 
-func (p *PermsMock) GetAllPermissionsByPrefixOfUser(userId int32, prefix string) (collections.Permissions, error) {
-	ps, nil := p.GetAllPermissionsOfUser(userId)
-
-	name := helpers.Guard(prefix) + "-"
-
-	return ps.HasPrefix(name), nil
-}
-
-func (p *PermsMock) GetSuffixOfPermissionsByPrefixOfUser(userId int32, prefix string) ([]string, error) {
-	ps, _ := p.GetAllPermissionsByPrefixOfUser(userId, prefix)
-
-	prefix = helpers.Guard(prefix) + "-"
-
-	list := make([]string, len(ps))
-	for i := 0; i < len(ps); i++ {
-		list[i] = strings.TrimPrefix(ps[i].GuardName, prefix)
-	}
-
-	return list, nil
-}
-
 func (p *PermsMock) GetRoles(prefix string) (collections.Roles, error) {
 	r := collections.Roles{}
 
@@ -165,9 +142,9 @@ func (p *PermsMock) GetRoles(prefix string) (collections.Roles, error) {
 		for k := range v {
 			if _, ok := track[k]; !ok {
 				r = append(r, &model.FivenetRoles{
-					ID:        uint64(i),
-					Name:      k,
-					GuardName: k,
+					ID:    uint64(i),
+					Job:   "ambulance",
+					Grade: 0,
 				})
 				i++
 				track[k] = nil
@@ -178,7 +155,7 @@ func (p *PermsMock) GetRoles(prefix string) (collections.Roles, error) {
 	return r, nil
 }
 
-func (p *PermsMock) CountRoles(prefix string) (int64, error) {
+func (p *PermsMock) CountRolesForJob(prefix string) (int64, error) {
 
 	// TODO
 
@@ -192,7 +169,7 @@ func (p *PermsMock) GetRole(id uint64) (*model.FivenetRoles, error) {
 	return nil, nil
 }
 
-func (p *PermsMock) GetRoleByGuardName(name string) (*model.FivenetRoles, error) {
+func (p *PermsMock) GetRoleByJobAndGrade(job string, grade int32) (*model.FivenetRoles, error) {
 
 	// TODO
 
@@ -206,14 +183,7 @@ func (p *PermsMock) GetRolePermissions(id uint64) (collections.Permissions, erro
 	return nil, nil
 }
 
-func (p *PermsMock) CreateRole(name string, description string) (*model.FivenetRoles, error) {
-
-	// TODO
-
-	return nil, nil
-}
-
-func (p *PermsMock) CreateRoleWithGuard(name string, guard string, description string) (*model.FivenetRoles, error) {
+func (p *PermsMock) CreateRole(job string, grade int32) (*model.FivenetRoles, error) {
 
 	// TODO
 
@@ -227,14 +197,14 @@ func (p *PermsMock) DeleteRole(id uint64) error {
 	return nil
 }
 
-func (p *PermsMock) AddPermissionsToRole(id uint64, perms []uint64) error {
+func (p *PermsMock) AddPermissionsToRole(id uint64, perms ...uint64) error {
 
 	// TODO
 
 	return nil
 }
 
-func (p *PermsMock) RemovePermissionsFromRole(id uint64, perms []uint64) error {
+func (p *PermsMock) RemovePermissionsFromRole(id uint64, perms ...uint64) error {
 
 	// TODO
 
@@ -250,11 +220,11 @@ func (p *PermsMock) GetUserRoles(userId int32) (collections.Roles, error) {
 	}
 
 	i := 0
-	for k := range uRoles {
+	for range uRoles {
 		r = append(r, &model.FivenetRoles{
-			ID:        uint64(i),
-			Name:      k,
-			GuardName: k,
+			ID:    uint64(i),
+			Job:   "ambulance",
+			Grade: 0,
 		})
 		i++
 	}
@@ -262,7 +232,7 @@ func (p *PermsMock) GetUserRoles(userId int32) (collections.Roles, error) {
 	return nil, nil
 }
 
-func (p *PermsMock) AddUserRoles(userId int32, roles ...string) error {
+func (p *PermsMock) AddUserToRoles(userId int32, roles ...string) error {
 	if _, ok := p.UserRoles[userId]; !ok {
 		p.UserRoles[userId] = map[string]interface{}{}
 	}
@@ -274,7 +244,7 @@ func (p *PermsMock) AddUserRoles(userId int32, roles ...string) error {
 	return nil
 }
 
-func (p *PermsMock) RemoveUserRoles(userId int32, roles ...string) error {
+func (p *PermsMock) RemoveUserFromRoles(userId int32, roles ...string) error {
 	if _, ok := p.UserRoles[userId]; !ok {
 		return nil
 	}
@@ -286,8 +256,8 @@ func (p *PermsMock) RemoveUserRoles(userId int32, roles ...string) error {
 	return nil
 }
 
-func (p *PermsMock) Can(userId int32, perm ...string) bool {
-	guard := helpers.Guard(strings.Join(perm, "."))
+func (p *PermsMock) Can(userId int32, job string, jobGrade int32, category perms.Category, name perms.Name) bool {
+	guard := helpers.Guard(perms.BuildGuard(category, name))
 	p.Counter.IncUser(userId, guard)
 
 	if _, ok := p.UserPerms[userId]; !ok {

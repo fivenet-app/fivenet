@@ -17,12 +17,11 @@ type fivenetPermissionsTable struct {
 	mysql.Table
 
 	// Columns
-	ID          mysql.ColumnInteger
-	CreatedAt   mysql.ColumnTimestamp
-	UpdatedAt   mysql.ColumnTimestamp
-	Name        mysql.ColumnString
-	GuardName   mysql.ColumnString
-	Description mysql.ColumnString
+	ID        mysql.ColumnInteger
+	CreatedAt mysql.ColumnTimestamp
+	Category  mysql.ColumnString
+	Name      mysql.ColumnString
+	GuardName mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -63,26 +62,24 @@ func newFivenetPermissionsTable(schemaName, tableName, alias string) *FivenetPer
 
 func newFivenetPermissionsTableImpl(schemaName, tableName, alias string) fivenetPermissionsTable {
 	var (
-		IDColumn          = mysql.IntegerColumn("id")
-		CreatedAtColumn   = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
-		NameColumn        = mysql.StringColumn("name")
-		GuardNameColumn   = mysql.StringColumn("guard_name")
-		DescriptionColumn = mysql.StringColumn("description")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, NameColumn, GuardNameColumn, DescriptionColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, NameColumn, GuardNameColumn, DescriptionColumn}
+		IDColumn        = mysql.IntegerColumn("id")
+		CreatedAtColumn = mysql.TimestampColumn("created_at")
+		CategoryColumn  = mysql.StringColumn("category")
+		NameColumn      = mysql.StringColumn("name")
+		GuardNameColumn = mysql.StringColumn("guard_name")
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn}
 	)
 
 	return fivenetPermissionsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:          IDColumn,
-		CreatedAt:   CreatedAtColumn,
-		UpdatedAt:   UpdatedAtColumn,
-		Name:        NameColumn,
-		GuardName:   GuardNameColumn,
-		Description: DescriptionColumn,
+		ID:        IDColumn,
+		CreatedAt: CreatedAtColumn,
+		Category:  CategoryColumn,
+		Name:      NameColumn,
+		GuardName: GuardNameColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

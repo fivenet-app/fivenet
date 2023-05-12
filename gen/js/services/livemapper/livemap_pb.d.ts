@@ -19,10 +19,15 @@ export namespace StreamRequest {
 }
 
 export class StreamResponse extends jspb.Message {
-  getJobsList(): Array<resources_jobs_jobs_pb.Job>;
-  setJobsList(value: Array<resources_jobs_jobs_pb.Job>): StreamResponse;
-  clearJobsList(): StreamResponse;
-  addJobs(value?: resources_jobs_jobs_pb.Job, index?: number): resources_jobs_jobs_pb.Job;
+  getJobsDispatchesList(): Array<resources_jobs_jobs_pb.Job>;
+  setJobsDispatchesList(value: Array<resources_jobs_jobs_pb.Job>): StreamResponse;
+  clearJobsDispatchesList(): StreamResponse;
+  addJobsDispatches(value?: resources_jobs_jobs_pb.Job, index?: number): resources_jobs_jobs_pb.Job;
+
+  getJobsUsersList(): Array<resources_jobs_jobs_pb.Job>;
+  setJobsUsersList(value: Array<resources_jobs_jobs_pb.Job>): StreamResponse;
+  clearJobsUsersList(): StreamResponse;
+  addJobsUsers(value?: resources_jobs_jobs_pb.Job, index?: number): resources_jobs_jobs_pb.Job;
 
   getDispatchesList(): Array<resources_livemap_livemap_pb.DispatchMarker>;
   setDispatchesList(value: Array<resources_livemap_livemap_pb.DispatchMarker>): StreamResponse;
@@ -44,7 +49,8 @@ export class StreamResponse extends jspb.Message {
 
 export namespace StreamResponse {
   export type AsObject = {
-    jobsList: Array<resources_jobs_jobs_pb.Job.AsObject>,
+    jobsDispatchesList: Array<resources_jobs_jobs_pb.Job.AsObject>,
+    jobsUsersList: Array<resources_jobs_jobs_pb.Job.AsObject>,
     dispatchesList: Array<resources_livemap_livemap_pb.DispatchMarker.AsObject>,
     usersList: Array<resources_livemap_livemap_pb.UserMarker.AsObject>,
   }

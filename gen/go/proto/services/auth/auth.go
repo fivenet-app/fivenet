@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -22,7 +20,6 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"golang.org/x/crypto/bcrypt"
-	"golang.org/x/exp/slices"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -172,14 +169,9 @@ func (s *Server) CheckToken(ctx context.Context, req *CheckTokenRequest) (*Check
 		Permissions: []string{},
 	}
 
-	// If the user is logged into a character, get permissions
-	if claims.ActiveCharID > 0 {
-		if err := s.ensureUserHasRole(claims.ActiveCharID, claims.ActiveCharJob, claims.ActiveCharJobGrade); err != nil {
-			return nil, GenericLoginErr
-		}
-
-		// Load permissions of user
-		perms, err := s.p.GetAllPermissionsOfUser(claims.ActiveCharID)
+	// If the user is logged into a character, load permissions of user
+	if claims.CharID > 0 {
+		perms, err := s.p.GetPermissionsOfUser(claims.CharID, claims.CharJob, claims.CharJobGrade)
 		if err != nil {
 			return nil, auth.CheckTokenErr
 		}
@@ -291,8 +283,8 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 	}
 
 	var char *users.User
-	if claims.ActiveCharID > 0 {
-		char, _, err = s.getCharacter(ctx, claims.ActiveCharID)
+	if claims.CharID > 0 {
+		char, _, err = s.getCharacter(ctx, claims.CharID)
 		if err != nil {
 			return nil, ChangePasswordErr
 		}
@@ -522,12 +514,8 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, GenericLoginErr
 	}
 
-	if err := s.ensureUserHasRole(char.UserId, char.Job, char.JobGrade); err != nil {
-		return nil, GenericLoginErr
-	}
-
 	// Load permissions of user
-	perms, err := s.p.GetAllPermissionsOfUser(char.UserId)
+	perms, err := s.p.GetPermissionsOfUser(char.UserId, char.Job, char.JobGrade)
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -552,78 +540,6 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}, nil
 }
 
-// Make sure the user is only in their current job role
-func (s *Server) ensureUserHasRole(userId int32, job string, jobGrade int32) error {
-	jobRoleKey := fmt.Sprintf("job-%s-", job)
-	jobRolesModels, err := s.p.GetRoles(jobRoleKey)
-	if err != nil {
-		return err
-	}
-
-	if len(jobRolesModels) == 0 {
-		return nil
-	}
-
-	jobRoles := jobRolesModels.GuardNames()
-
-	var jobRole string
-	// Try to see if there is an exact role match for the job and grade of the user
-	index := slices.Index(jobRoles, perms.GetRoleName(job, jobGrade))
-	if index < 0 {
-		for i := len(jobRoles) - 1; i >= 0; i-- {
-			_, gradeString, _ := strings.Cut(jobRoles[i], jobRoleKey)
-			grade, err := strconv.Atoi(gradeString)
-			if err != nil {
-				continue
-			}
-
-			// Never upgrade an user's role
-			if grade > int(jobGrade) {
-				continue
-			}
-
-			index = i
-
-			if grade <= int(jobGrade) {
-				break
-			}
-		}
-	}
-
-	if index < 0 {
-		return nil
-	}
-
-	jobRole = jobRoles[index]
-
-	ps, err := s.p.GetUserRoles(userId)
-	if err != nil {
-		return err
-	}
-
-	rolesToRemove := []string{}
-	for _, name := range ps.GuardNames() {
-		// Ignore roles that don't start with the `job-` prefix
-		if !strings.HasPrefix(name, "job-") {
-			continue
-		}
-
-		if name != jobRole {
-			rolesToRemove = append(rolesToRemove, name)
-		}
-	}
-
-	if err := s.p.RemoveUserRoles(userId, rolesToRemove...); err != nil {
-		return err
-	}
-
-	if err := s.p.AddUserRoles(userId, jobRole); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
@@ -635,7 +551,7 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		return nil, err
 	}
 
-	char, _, err := s.getCharacter(ctx, claims.ActiveCharID)
+	char, _, err := s.getCharacter(ctx, claims.CharID)
 	if err != nil {
 		return nil, err
 	}

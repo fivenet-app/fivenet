@@ -3,137 +3,110 @@ package perms
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"sync"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
-	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"golang.org/x/exp/slices"
 )
 
 var (
-	list = []*Perm{}
-
-	mu sync.Mutex
+	muPerms   sync.Mutex
+	permsList = []*Perm{}
 )
 
+type Category string
+type Name string
+
 type Perm struct {
-	Key          string
-	Name         string
-	Description  string
-	Fields       []string
-	PerJob       bool
-	PerJobGrade  bool
-	PerJobFields []string
+	Category Category
+	Name     Name
+	Attrs    []Attr
+}
+
+type Attr struct {
+	ID          uint64
+	Key         Key
+	Type        AttributeTypes
+	ValidValues string
 }
 
 func AddPermsToList(perms []*Perm) {
-	mu.Lock()
-	defer mu.Unlock()
+	muPerms.Lock()
+	defer muPerms.Unlock()
 
-	list = append(list, perms...)
+	permsList = append(permsList, perms...)
+}
+
+func BuildGuard(category Category, name Name) string {
+	return helpers.Guard(fmt.Sprintf("%s.%s", category, name))
+}
+
+func BuildGuardWithKey(category Category, name Name, key Key) string {
+	return helpers.Guard(fmt.Sprintf("%s.%s.%s", category, name, key))
 }
 
 func (p *Perms) Register() error {
-	for _, perm := range list {
-		// Create "base" permission
-		pName := fmt.Sprintf("%s.%s", perm.Key, perm.Name)
-		if err := p.createOrUpdatePermission(pName, perm.Description); err != nil {
+	for _, perm := range permsList {
+		permId, err := p.createOrUpdatePermission(perm.Category, perm.Name)
+		if err != nil {
 			return err
 		}
+		p.guardToPermIDMap.Store(BuildGuard(perm.Category, perm.Name), permId)
 
-		if perm.PerJob {
-			for _, job := range config.C.Game.PermissionRoleJobs {
-				pJobName := fmt.Sprintf("%s.%s", pName, job)
-				if perm.PerJobGrade {
-					existingGrades, err := p.getPermissionsByGuardPrefix(pJobName)
-					if err != nil {
-						return err
-					}
-
-					jGrades := table.JobGrades
-					stmt := jGrades.
-						SELECT(
-							jGrades.Grade,
-						).
-						FROM(jGrades).
-						WHERE(jGrades.JobName.EQ(jet.String(job)))
-
-					var grades []*model.JobGrades
-					if err = stmt.QueryContext(p.ctx, p.db, &grades); err != nil {
-						return err
-					}
-
-					toRemove := []uint64{}
-				gradesLoop:
-					for _, v := range existingGrades {
-						for _, g := range grades {
-							if v.Name == fmt.Sprintf("%s.%d", pJobName, g.Grade) {
-								continue gradesLoop
-							}
-						}
-						toRemove = append(toRemove, v.ID)
-					}
-
-					if len(toRemove) > 0 {
-						p.RemovePermissionsByIDs(toRemove...)
-					}
-
-					for _, grade := range grades {
-						pJobName := fmt.Sprintf("%s.%d", pJobName, grade.Grade)
-						if err := p.createOrUpdatePermission(pJobName, perm.Description); err != nil {
-							return err
-						}
-					}
-				} else {
-					if err := p.createOrUpdatePermission(pJobName, perm.Description); err != nil {
-						return err
-					}
-				}
-
-				for _, field := range perm.PerJobFields {
-					pJobField := fmt.Sprintf("%s.%s.%s", pName, field, job)
-					_ = pJobField
-					//if err := p.createOrUpdatePermission(pJobField, perm.Description); err != nil {
-					//	return err
-					//}
-				}
+		for _, attr := range perm.Attrs {
+			attrId, err := p.createOrUpdateAttribute(permId, attr.Key, attr.Type, attr.ValidValues)
+			if err != nil {
+				return err
 			}
-		} else {
-			for _, field := range perm.Fields {
-				pJobField := fmt.Sprintf("%s.%s", pName, field)
-				if err := p.createOrUpdatePermission(pJobField, perm.Description); err != nil {
-					return err
-				}
-			}
+			attr.ID = attrId
+			p.permIdToAttrsMap.LoadOrStore(permId, map[Key]Attr{attr.Key: attr})
 		}
 	}
 
-	return p.setupRoles()
+	// TODO create "empty" roles for each job
+
+	return p.cleanupRoles()
 }
 
-func (p *Perms) createOrUpdatePermission(name string, description string) error {
-	perm, err := p.GetPermissionByGuard(name)
+func (p *Perms) createOrUpdatePermission(category Category, name Name) (uint64, error) {
+	perm, err := p.getPermissionByGuard(BuildGuard(category, name))
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return err
+			return 0, err
 		}
 	}
 
 	if perm != nil {
-		if perm.Name != name || (perm.Description != nil && *perm.Description != description) {
-			return p.UpdatePermission(perm.ID, name, description)
+		if Category(perm.Category) != category || Name(perm.Name) != name {
+			return perm.ID, p.UpdatePermission(perm.ID, category, name)
 		}
 	}
 
-	return p.CreatePermission(name, description)
+	return p.CreatePermission(category, name)
 }
 
-func (p *Perms) setupRoles() error {
+func (p *Perms) createOrUpdateAttribute(permId uint64, key Key, aType AttributeTypes, validValues string) (uint64, error) {
+	attr, err := p.GetAttribute(permId, key)
+	if err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return 0, err
+		}
+	}
+
+	if attr != nil {
+		if attr.PermissionID != permId || Key(attr.Key) != key ||
+			((attr.ValidValues == nil && validValues != "") || (attr.ValidValues != nil && attr.ValidValues != &validValues)) {
+			return attr.ID, p.UpdateAttribute(attr.ID, permId, key, aType, validValues)
+		}
+	}
+
+	return p.CreateAttribute(permId, key, aType, validValues)
+}
+
+func (p *Perms) cleanupRoles() error {
 	j := table.Jobs.AS("job")
 	jg := table.JobGrades.AS("jobgrade")
 	stmt := j.
@@ -155,18 +128,16 @@ func (p *Perms) setupRoles() error {
 		return err
 	}
 
-	existingRolesList, err := p.GetRoles("job-")
+	allRoles, err := p.getRoles()
 	if err != nil {
 		return err
 	}
-	existingRoles := existingRolesList.IDs()
+	existingRoles := allRoles.IDs()
 
 	// Iterate over current job and job grades to find any non-existant roles in our database
 	for i := 0; i < len(dest); i++ {
 		for _, grade := range dest[i].Grades {
-			roleName := strings.ToLower(GetRoleName(dest[i].Name, grade.Grade))
-
-			role, err := p.GetRoleByGuardName(roleName)
+			role, err := p.GetRoleByJobAndGrade(dest[i].Name, grade.Grade)
 			if err != nil {
 				return err
 			}
@@ -189,8 +160,4 @@ func (p *Perms) setupRoles() error {
 	}
 
 	return nil
-}
-
-func GetRoleName(job string, grade int32) string {
-	return fmt.Sprintf("job-%s-%d", job, grade)
 }

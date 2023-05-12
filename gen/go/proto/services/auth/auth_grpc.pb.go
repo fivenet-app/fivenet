@@ -29,11 +29,11 @@ type AuthServiceClient interface {
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*ForgotPasswordResponse, error)
 	GetCharacters(ctx context.Context, in *GetCharactersRequest, opts ...grpc.CallOption) (*GetCharactersResponse, error)
-	// @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
+	// @perm: Name=GetCharacters
 	ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error)
 	GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountInfoResponse, error)
 	DeleteOAuth2Connection(ctx context.Context, in *DeleteOAuth2ConnectionRequest, opts ...grpc.CallOption) (*DeleteOAuth2ConnectionResponse, error)
-	// @perm: description="Superuser: Allow to override their own job on the go."
+	// @perm
 	SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error)
 }
 
@@ -155,11 +155,11 @@ type AuthServiceServer interface {
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
 	ForgotPassword(context.Context, *ForgotPasswordRequest) (*ForgotPasswordResponse, error)
 	GetCharacters(context.Context, *GetCharactersRequest) (*GetCharactersResponse, error)
-	// @perm: name=GetCharacters;description="Permission to choose character, basically allow or disallow access to FiveNet."
+	// @perm: Name=GetCharacters
 	ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error)
 	GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error)
 	DeleteOAuth2Connection(context.Context, *DeleteOAuth2ConnectionRequest) (*DeleteOAuth2ConnectionResponse, error)
-	// @perm: description="Superuser: Allow to override their own job on the go."
+	// @perm
 	SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }

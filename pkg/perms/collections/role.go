@@ -27,21 +27,3 @@ func (u Roles) IDs() (IDs []uint64) {
 	}
 	return IDs
 }
-
-// Names returns an array of the role array's names.
-// @return []string
-func (u Roles) Names() (names []string) {
-	for _, role := range u {
-		names = append(names, role.Name)
-	}
-	return names
-}
-
-// GuardNames returns an array of the permission array's guard names.
-// @return []string
-func (u Roles) GuardNames() (guards []string) {
-	for _, role := range u {
-		guards = append(guards, role.GuardName)
-	}
-	return guards
-}

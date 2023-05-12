@@ -59,6 +59,17 @@ func (m *Permission) validate(all bool) error {
 
 	// no validation rules for Id
 
+	if utf8.RuneCountInString(m.GetCategory()) > 128 {
+		err := PermissionValidationError{
+			field:  "Category",
+			reason: "value length must be at most 128 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if utf8.RuneCountInString(m.GetName()) > 255 {
 		err := PermissionValidationError{
 			field:  "Name",
@@ -74,6 +85,17 @@ func (m *Permission) validate(all bool) error {
 		err := PermissionValidationError{
 			field:  "GuardName",
 			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if val := m.GetVal(); val < -1 || val > 1 {
+		err := PermissionValidationError{
+			field:  "Val",
+			reason: "value must be inside range [-1, 1]",
 		}
 		if !all {
 			return err
@@ -110,54 +132,6 @@ func (m *Permission) validate(all bool) error {
 					cause:  err,
 				}
 			}
-		}
-
-	}
-
-	if m.UpdatedAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetUpdatedAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, PermissionValidationError{
-						field:  "UpdatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, PermissionValidationError{
-						field:  "UpdatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return PermissionValidationError{
-					field:  "UpdatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.Description != nil {
-
-		if utf8.RuneCountInString(m.GetDescription()) > 255 {
-			err := PermissionValidationError{
-				field:  "Description",
-				reason: "value length must be at most 255 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
 		}
 
 	}
@@ -262,9 +236,9 @@ func (m *Role) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if utf8.RuneCountInString(m.GetName()) > 255 {
+	if utf8.RuneCountInString(m.GetJob()) > 255 {
 		err := RoleValidationError{
-			field:  "Name",
+			field:  "Job",
 			reason: "value length must be at most 255 runes",
 		}
 		if !all {
@@ -273,10 +247,32 @@ func (m *Role) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetGuardName()) > 255 {
+	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
 		err := RoleValidationError{
-			field:  "GuardName",
-			reason: "value length must be at most 255 runes",
+			field:  "JobLabel",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetGrade() <= 0 {
+		err := RoleValidationError{
+			field:  "Grade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
+		err := RoleValidationError{
+			field:  "JobGradeLabel",
+			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -318,6 +314,40 @@ func (m *Role) validate(all bool) error {
 
 	}
 
+	for idx, item := range m.GetAttributes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RoleValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RoleValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RoleValidationError{
+					field:  fmt.Sprintf("Attributes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {
@@ -347,54 +377,6 @@ func (m *Role) validate(all bool) error {
 					cause:  err,
 				}
 			}
-		}
-
-	}
-
-	if m.UpdatedAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetUpdatedAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RoleValidationError{
-						field:  "UpdatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, RoleValidationError{
-						field:  "UpdatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return RoleValidationError{
-					field:  "UpdatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.Description != nil {
-
-		if utf8.RuneCountInString(m.GetDescription()) > 255 {
-			err := RoleValidationError{
-				field:  "Description",
-				reason: "value length must be at most 255 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
 		}
 
 	}
@@ -475,3 +457,377 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RoleValidationError{}
+
+// Validate checks the field values on Attribute with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Attribute) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Attribute with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in AttributeMultiError, or nil
+// if none found.
+func (m *Attribute) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Attribute) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for PermissionId
+
+	if utf8.RuneCountInString(m.GetKey()) > 255 {
+		err := AttributeValidationError{
+			field:  "Key",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetType()) > 255 {
+		err := AttributeValidationError{
+			field:  "Type",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetValue()) > 65535 {
+		err := AttributeValidationError{
+			field:  "Value",
+			reason: "value length must be at most 65535 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AttributeValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AttributeValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AttributeValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return AttributeMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeMultiError is an error wrapping multiple validation errors returned
+// by Attribute.ValidateAll() if the designated constraints aren't met.
+type AttributeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeMultiError) AllErrors() []error { return m }
+
+// AttributeValidationError is the validation error returned by
+// Attribute.Validate if the designated constraints aren't met.
+type AttributeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValidationError) ErrorName() string { return "AttributeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AttributeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttribute.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValidationError{}
+
+// Validate checks the field values on RoleAttribute with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *RoleAttribute) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RoleAttribute with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RoleAttributeMultiError, or
+// nil if none found.
+func (m *RoleAttribute) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RoleAttribute) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RoleId
+
+	// no validation rules for AttrId
+
+	// no validation rules for PermissionId
+
+	if utf8.RuneCountInString(m.GetCategory()) > 128 {
+		err := RoleAttributeValidationError{
+			field:  "Category",
+			reason: "value length must be at most 128 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetName()) > 255 {
+		err := RoleAttributeValidationError{
+			field:  "Name",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetKey()) > 255 {
+		err := RoleAttributeValidationError{
+			field:  "Key",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetType()) > 255 {
+		err := RoleAttributeValidationError{
+			field:  "Type",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetValue()) > 65535 {
+		err := RoleAttributeValidationError{
+			field:  "Value",
+			reason: "value length must be at most 65535 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetValidValues()) > 65535 {
+		err := RoleAttributeValidationError{
+			field:  "ValidValues",
+			reason: "value length must be at most 65535 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RoleAttributeValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RoleAttributeValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RoleAttributeValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RoleAttributeMultiError(errors)
+	}
+
+	return nil
+}
+
+// RoleAttributeMultiError is an error wrapping multiple validation errors
+// returned by RoleAttribute.ValidateAll() if the designated constraints
+// aren't met.
+type RoleAttributeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RoleAttributeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RoleAttributeMultiError) AllErrors() []error { return m }
+
+// RoleAttributeValidationError is the validation error returned by
+// RoleAttribute.Validate if the designated constraints aren't met.
+type RoleAttributeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RoleAttributeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RoleAttributeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RoleAttributeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RoleAttributeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RoleAttributeValidationError) ErrorName() string { return "RoleAttributeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RoleAttributeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRoleAttribute.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RoleAttributeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RoleAttributeValidationError{}

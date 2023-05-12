@@ -6,16 +6,18 @@ package dmv
 import "github.com/galexrt/fivenet/pkg/perms"
 
 const (
-	DMVServicePermKey = "DMVService"
+	DMVServicePerm perms.Category = "DMVService"
+
+	DMVServiceListVehiclesPerm perms.Name = "ListVehicles"
 )
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: DMVService
 		{
-			Key:         DMVServicePermKey,
-			Name:        "ListVehicles",
-			Description: "Search and find citizen's vehicles",
+			Category: DMVServicePerm,
+			Name:     DMVServiceListVehiclesPerm,
+			Attrs:    []perms.Attr{},
 		},
 	})
 }

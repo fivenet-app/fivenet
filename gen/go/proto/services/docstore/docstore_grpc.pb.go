@@ -22,59 +22,59 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DocStoreServiceClient interface {
-	// @perm: description="List available templates"
+	// @perm
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
-	// @perm: name=ListTemplates
+	// @perm: Name=ListTemplates
 	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
-	// @perm: description="Create document templates"
+	// @perm
 	CreateTemplate(ctx context.Context, in *CreateTemplateRequest, opts ...grpc.CallOption) (*CreateTemplateResponse, error)
-	// @perm: name=CreateTemplate
+	// @perm: Name=CreateTemplate
 	UpdateTemplate(ctx context.Context, in *UpdateTemplateRequest, opts ...grpc.CallOption) (*UpdateTemplateResponse, error)
-	// @perm: description="Delete document templates"
+	// @perm
 	DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error)
-	// @perm: description="List/ Find documents"
+	// @perm
 	ListDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*ListDocumentsResponse, error)
-	// @perm: description="View a document"
+	// @perm
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
-	// @perm: description="Create a new document"
+	// @perm
 	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
-	// @perm: description="Edit/ Update an existing document"
+	// @perm
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
-	// @perm: description="Delete a document"
+	// @perm
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
-	// @perm: name=GetDocument
+	// @perm: Name=GetDocument
 	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
-	// @perm: name=GetDocument
+	// @perm: Name=GetDocument
 	GetDocumentRelations(ctx context.Context, in *GetDocumentRelationsRequest, opts ...grpc.CallOption) (*GetDocumentRelationsResponse, error)
-	// @perm: description="Add/ Remove document references"
+	// @perm
 	AddDocumentReference(ctx context.Context, in *AddDocumentReferenceRequest, opts ...grpc.CallOption) (*AddDocumentReferenceResponse, error)
-	// @perm: name=AddDocumentReference
+	// @perm: Name=AddDocumentReference
 	RemoveDocumentReference(ctx context.Context, in *RemoveDocumentReferenceRequest, opts ...grpc.CallOption) (*RemoveDocumentReferenceResponse, error)
-	// @perm: description="Add/ Remove document citizen relations"
+	// @perm
 	AddDocumentRelation(ctx context.Context, in *AddDocumentRelationRequest, opts ...grpc.CallOption) (*AddDocumentRelationResponse, error)
-	// @perm: name=AddDocumentRelation
+	// @perm: Name=AddDocumentRelation
 	RemoveDocumentRelation(ctx context.Context, in *RemoveDocumentRelationRequest, opts ...grpc.CallOption) (*RemoveDocumentRelationResponse, error)
-	// @perm: description="View document comments"
+	// @perm
 	GetDocumentComments(ctx context.Context, in *GetDocumentCommentsRequest, opts ...grpc.CallOption) (*GetDocumentCommentsResponse, error)
-	// @perm: description="Post document comments"
+	// @perm
 	PostDocumentComment(ctx context.Context, in *PostDocumentCommentRequest, opts ...grpc.CallOption) (*PostDocumentCommentResponse, error)
-	// @perm: name=PostDocumentComment
+	// @perm: Name=PostDocumentComment
 	EditDocumentComment(ctx context.Context, in *EditDocumentCommentRequest, opts ...grpc.CallOption) (*EditDocumentCommentResponse, error)
-	// @perm: description="Delete own document comment"
+	// @perm
 	DeleteDocumentComment(ctx context.Context, in *DeleteDocumentCommentRequest, opts ...grpc.CallOption) (*DeleteDocumentCommentResponse, error)
-	// @perm: description="View a document's access"
+	// @perm
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
-	// @perm: description="Set a document's access"
+	// @perm
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
-	// @perm: description="View the documents linked to a citizen"
+	// @perm
 	ListUserDocuments(ctx context.Context, in *ListUserDocumentsRequest, opts ...grpc.CallOption) (*ListUserDocumentsResponse, error)
-	// @perm: description="List document categories"
+	// @perm
 	ListDocumentCategories(ctx context.Context, in *ListDocumentCategoriesRequest, opts ...grpc.CallOption) (*ListDocumentCategoriesResponse, error)
-	// @perm: description="Create/ Update document categories"
+	// @perm
 	CreateDocumentCategory(ctx context.Context, in *CreateDocumentCategoryRequest, opts ...grpc.CallOption) (*CreateDocumentCategoryResponse, error)
-	// @perm: name=CreateDocumentCategory
+	// @perm: Name=CreateDocumentCategory
 	UpdateDocumentCategory(ctx context.Context, in *UpdateDocumentCategoryRequest, opts ...grpc.CallOption) (*UpdateDocumentCategoryResponse, error)
-	// @perm: description="Delete document categories"
+	// @perm
 	DeleteDocumentCategory(ctx context.Context, in *DeleteDocumentCategoryRequest, opts ...grpc.CallOption) (*DeleteDocumentCategoryResponse, error)
 }
 
@@ -333,59 +333,59 @@ func (c *docStoreServiceClient) DeleteDocumentCategory(ctx context.Context, in *
 // All implementations must embed UnimplementedDocStoreServiceServer
 // for forward compatibility
 type DocStoreServiceServer interface {
-	// @perm: description="List available templates"
+	// @perm
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
-	// @perm: name=ListTemplates
+	// @perm: Name=ListTemplates
 	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
-	// @perm: description="Create document templates"
+	// @perm
 	CreateTemplate(context.Context, *CreateTemplateRequest) (*CreateTemplateResponse, error)
-	// @perm: name=CreateTemplate
+	// @perm: Name=CreateTemplate
 	UpdateTemplate(context.Context, *UpdateTemplateRequest) (*UpdateTemplateResponse, error)
-	// @perm: description="Delete document templates"
+	// @perm
 	DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error)
-	// @perm: description="List/ Find documents"
+	// @perm
 	ListDocuments(context.Context, *ListDocumentsRequest) (*ListDocumentsResponse, error)
-	// @perm: description="View a document"
+	// @perm
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
-	// @perm: description="Create a new document"
+	// @perm
 	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
-	// @perm: description="Edit/ Update an existing document"
+	// @perm
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
-	// @perm: description="Delete a document"
+	// @perm
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
-	// @perm: name=GetDocument
+	// @perm: Name=GetDocument
 	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
-	// @perm: name=GetDocument
+	// @perm: Name=GetDocument
 	GetDocumentRelations(context.Context, *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error)
-	// @perm: description="Add/ Remove document references"
+	// @perm
 	AddDocumentReference(context.Context, *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error)
-	// @perm: name=AddDocumentReference
+	// @perm: Name=AddDocumentReference
 	RemoveDocumentReference(context.Context, *RemoveDocumentReferenceRequest) (*RemoveDocumentReferenceResponse, error)
-	// @perm: description="Add/ Remove document citizen relations"
+	// @perm
 	AddDocumentRelation(context.Context, *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error)
-	// @perm: name=AddDocumentRelation
+	// @perm: Name=AddDocumentRelation
 	RemoveDocumentRelation(context.Context, *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error)
-	// @perm: description="View document comments"
+	// @perm
 	GetDocumentComments(context.Context, *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error)
-	// @perm: description="Post document comments"
+	// @perm
 	PostDocumentComment(context.Context, *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error)
-	// @perm: name=PostDocumentComment
+	// @perm: Name=PostDocumentComment
 	EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error)
-	// @perm: description="Delete own document comment"
+	// @perm
 	DeleteDocumentComment(context.Context, *DeleteDocumentCommentRequest) (*DeleteDocumentCommentResponse, error)
-	// @perm: description="View a document's access"
+	// @perm
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
-	// @perm: description="Set a document's access"
+	// @perm
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
-	// @perm: description="View the documents linked to a citizen"
+	// @perm
 	ListUserDocuments(context.Context, *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error)
-	// @perm: description="List document categories"
+	// @perm
 	ListDocumentCategories(context.Context, *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error)
-	// @perm: description="Create/ Update document categories"
+	// @perm
 	CreateDocumentCategory(context.Context, *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error)
-	// @perm: name=CreateDocumentCategory
+	// @perm: Name=CreateDocumentCategory
 	UpdateDocumentCategory(context.Context, *UpdateDocumentCategoryRequest) (*UpdateDocumentCategoryResponse, error)
-	// @perm: description="Delete document categories"
+	// @perm
 	DeleteDocumentCategory(context.Context, *DeleteDocumentCategoryRequest) (*DeleteDocumentCategoryResponse, error)
 	mustEmbedUnimplementedDocStoreServiceServer()
 }

@@ -221,78 +221,46 @@ export namespace DeleteRoleResponse {
   }
 }
 
-export class AddPermToRoleRequest extends jspb.Message {
+export class UpdateRolePermsRequest extends jspb.Message {
   getId(): number;
-  setId(value: number): AddPermToRoleRequest;
+  setId(value: number): UpdateRolePermsRequest;
 
-  getPermissionsList(): Array<number>;
-  setPermissionsList(value: Array<number>): AddPermToRoleRequest;
-  clearPermissionsList(): AddPermToRoleRequest;
-  addPermissions(value: number, index?: number): AddPermToRoleRequest;
+  getToAddList(): Array<number>;
+  setToAddList(value: Array<number>): UpdateRolePermsRequest;
+  clearToAddList(): UpdateRolePermsRequest;
+  addToAdd(value: number, index?: number): UpdateRolePermsRequest;
+
+  getToRemoveList(): Array<number>;
+  setToRemoveList(value: Array<number>): UpdateRolePermsRequest;
+  clearToRemoveList(): UpdateRolePermsRequest;
+  addToRemove(value: number, index?: number): UpdateRolePermsRequest;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): AddPermToRoleRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: AddPermToRoleRequest): AddPermToRoleRequest.AsObject;
-  static serializeBinaryToWriter(message: AddPermToRoleRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): AddPermToRoleRequest;
-  static deserializeBinaryFromReader(message: AddPermToRoleRequest, reader: jspb.BinaryReader): AddPermToRoleRequest;
+  toObject(includeInstance?: boolean): UpdateRolePermsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateRolePermsRequest): UpdateRolePermsRequest.AsObject;
+  static serializeBinaryToWriter(message: UpdateRolePermsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateRolePermsRequest;
+  static deserializeBinaryFromReader(message: UpdateRolePermsRequest, reader: jspb.BinaryReader): UpdateRolePermsRequest;
 }
 
-export namespace AddPermToRoleRequest {
+export namespace UpdateRolePermsRequest {
   export type AsObject = {
     id: number,
-    permissionsList: Array<number>,
+    toAddList: Array<number>,
+    toRemoveList: Array<number>,
   }
 }
 
-export class AddPermToRoleResponse extends jspb.Message {
+export class UpdateRolePermsResponse extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): AddPermToRoleResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: AddPermToRoleResponse): AddPermToRoleResponse.AsObject;
-  static serializeBinaryToWriter(message: AddPermToRoleResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): AddPermToRoleResponse;
-  static deserializeBinaryFromReader(message: AddPermToRoleResponse, reader: jspb.BinaryReader): AddPermToRoleResponse;
+  toObject(includeInstance?: boolean): UpdateRolePermsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateRolePermsResponse): UpdateRolePermsResponse.AsObject;
+  static serializeBinaryToWriter(message: UpdateRolePermsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateRolePermsResponse;
+  static deserializeBinaryFromReader(message: UpdateRolePermsResponse, reader: jspb.BinaryReader): UpdateRolePermsResponse;
 }
 
-export namespace AddPermToRoleResponse {
-  export type AsObject = {
-  }
-}
-
-export class RemovePermFromRoleRequest extends jspb.Message {
-  getId(): number;
-  setId(value: number): RemovePermFromRoleRequest;
-
-  getPermissionsList(): Array<number>;
-  setPermissionsList(value: Array<number>): RemovePermFromRoleRequest;
-  clearPermissionsList(): RemovePermFromRoleRequest;
-  addPermissions(value: number, index?: number): RemovePermFromRoleRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RemovePermFromRoleRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: RemovePermFromRoleRequest): RemovePermFromRoleRequest.AsObject;
-  static serializeBinaryToWriter(message: RemovePermFromRoleRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RemovePermFromRoleRequest;
-  static deserializeBinaryFromReader(message: RemovePermFromRoleRequest, reader: jspb.BinaryReader): RemovePermFromRoleRequest;
-}
-
-export namespace RemovePermFromRoleRequest {
-  export type AsObject = {
-    id: number,
-    permissionsList: Array<number>,
-  }
-}
-
-export class RemovePermFromRoleResponse extends jspb.Message {
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RemovePermFromRoleResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: RemovePermFromRoleResponse): RemovePermFromRoleResponse.AsObject;
-  static serializeBinaryToWriter(message: RemovePermFromRoleResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RemovePermFromRoleResponse;
-  static deserializeBinaryFromReader(message: RemovePermFromRoleResponse, reader: jspb.BinaryReader): RemovePermFromRoleResponse;
-}
-
-export namespace RemovePermFromRoleResponse {
+export namespace UpdateRolePermsResponse {
   export type AsObject = {
   }
 }

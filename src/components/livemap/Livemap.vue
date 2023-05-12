@@ -67,7 +67,8 @@ let center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 
 const markerSize = ref<number>(userSettings.getLivemapMarkerSize);
-const markerJobs = ref<Job[]>([]);
+const markerDispatches = ref<Job[]>([]);
+const markerPlayers = ref<Job[]>([]);
 const selectedMarker = ref<number>();
 const centerSelectedMarker = ref<boolean>(userSettings.getLivemapCenterSelectedMarker);
 
@@ -194,7 +195,8 @@ async function startDataStream(): Promise<void> {
         on('data', async (resp) => {
             error.value = null;
 
-            markerJobs.value = resp.getJobsList();
+            markerDispatches.value = resp.getJobsDispatchesList();
+            markerPlayers.value = resp.getJobsUsersList();
 
             playerMarkers = resp.getUsersList();
             dispatchMarkers = resp.getDispatchesList();
@@ -410,7 +412,7 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 
             <LControlLayers />
 
-            <LLayerGroup v-for="job in markerJobs" :key="job.getName()"
+            <LLayerGroup v-for="job in markerPlayers" :key="job.getName()"
                 :name="`${$t('common.employee', 2)} ${job.getLabel()}`" layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.getUser()?.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
@@ -421,7 +423,7 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 </LMarker>
             </LLayerGroup>
 
-            <LLayerGroup v-for="job in markerJobs" :key="job.getName()"
+            <LLayerGroup v-for="job in markerDispatches" :key="job.getName()"
                 :name="`${$t('common.dispatch', 2)} ${job.getLabel()}`" layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in dispatchMarkersFiltered.filter(m => m.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"

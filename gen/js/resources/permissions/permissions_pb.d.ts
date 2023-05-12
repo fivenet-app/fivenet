@@ -12,10 +12,8 @@ export class Permission extends jspb.Message {
   hasCreatedAt(): boolean;
   clearCreatedAt(): Permission;
 
-  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): Permission;
-  hasUpdatedAt(): boolean;
-  clearUpdatedAt(): Permission;
+  getCategory(): string;
+  setCategory(value: string): Permission;
 
   getName(): string;
   setName(value: string): Permission;
@@ -23,10 +21,8 @@ export class Permission extends jspb.Message {
   getGuardName(): string;
   setGuardName(value: string): Permission;
 
-  getDescription(): string;
-  setDescription(value: string): Permission;
-  hasDescription(): boolean;
-  clearDescription(): Permission;
+  getVal(): number;
+  setVal(value: number): Permission;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Permission.AsObject;
@@ -40,25 +36,15 @@ export namespace Permission {
   export type AsObject = {
     id: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    category: string,
     name: string,
     guardName: string,
-    description?: string,
+    val: number,
   }
 
   export enum CreatedAtCase { 
     _CREATED_AT_NOT_SET = 0,
     CREATED_AT = 2,
-  }
-
-  export enum UpdatedAtCase { 
-    _UPDATED_AT_NOT_SET = 0,
-    UPDATED_AT = 3,
-  }
-
-  export enum DescriptionCase { 
-    _DESCRIPTION_NOT_SET = 0,
-    DESCRIPTION = 6,
   }
 }
 
@@ -71,26 +57,27 @@ export class Role extends jspb.Message {
   hasCreatedAt(): boolean;
   clearCreatedAt(): Role;
 
-  getUpdatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): Role;
-  hasUpdatedAt(): boolean;
-  clearUpdatedAt(): Role;
+  getJob(): string;
+  setJob(value: string): Role;
 
-  getName(): string;
-  setName(value: string): Role;
+  getJobLabel(): string;
+  setJobLabel(value: string): Role;
 
-  getGuardName(): string;
-  setGuardName(value: string): Role;
+  getGrade(): number;
+  setGrade(value: number): Role;
 
-  getDescription(): string;
-  setDescription(value: string): Role;
-  hasDescription(): boolean;
-  clearDescription(): Role;
+  getJobGradeLabel(): string;
+  setJobGradeLabel(value: string): Role;
 
   getPermissionsList(): Array<Permission>;
   setPermissionsList(value: Array<Permission>): Role;
   clearPermissionsList(): Role;
   addPermissions(value?: Permission, index?: number): Permission;
+
+  getAttributesList(): Array<RoleAttribute>;
+  setAttributesList(value: Array<RoleAttribute>): Role;
+  clearAttributesList(): Role;
+  addAttributes(value?: RoleAttribute, index?: number): RoleAttribute;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Role.AsObject;
@@ -104,26 +91,129 @@ export namespace Role {
   export type AsObject = {
     id: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    name: string,
-    guardName: string,
-    description?: string,
+    job: string,
+    jobLabel: string,
+    grade: number,
+    jobGradeLabel: string,
     permissionsList: Array<Permission.AsObject>,
+    attributesList: Array<RoleAttribute.AsObject>,
   }
 
   export enum CreatedAtCase { 
     _CREATED_AT_NOT_SET = 0,
     CREATED_AT = 2,
   }
+}
 
-  export enum UpdatedAtCase { 
-    _UPDATED_AT_NOT_SET = 0,
-    UPDATED_AT = 3,
+export class Attribute extends jspb.Message {
+  getId(): number;
+  setId(value: number): Attribute;
+
+  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): Attribute;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): Attribute;
+
+  getPermissionId(): number;
+  setPermissionId(value: number): Attribute;
+
+  getKey(): string;
+  setKey(value: string): Attribute;
+
+  getType(): string;
+  setType(value: string): Attribute;
+
+  getValue(): string;
+  setValue(value: string): Attribute;
+
+  getValidvaluesList(): Array<string>;
+  setValidvaluesList(value: Array<string>): Attribute;
+  clearValidvaluesList(): Attribute;
+  addValidvalues(value: string, index?: number): Attribute;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Attribute.AsObject;
+  static toObject(includeInstance: boolean, msg: Attribute): Attribute.AsObject;
+  static serializeBinaryToWriter(message: Attribute, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Attribute;
+  static deserializeBinaryFromReader(message: Attribute, reader: jspb.BinaryReader): Attribute;
+}
+
+export namespace Attribute {
+  export type AsObject = {
+    id: number,
+    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    permissionId: number,
+    key: string,
+    type: string,
+    value: string,
+    validvaluesList: Array<string>,
   }
 
-  export enum DescriptionCase { 
-    _DESCRIPTION_NOT_SET = 0,
-    DESCRIPTION = 6,
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
+  }
+}
+
+export class RoleAttribute extends jspb.Message {
+  getRoleId(): number;
+  setRoleId(value: number): RoleAttribute;
+
+  getCreatedAt(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): RoleAttribute;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): RoleAttribute;
+
+  getAttrId(): number;
+  setAttrId(value: number): RoleAttribute;
+
+  getPermissionId(): number;
+  setPermissionId(value: number): RoleAttribute;
+
+  getCategory(): string;
+  setCategory(value: string): RoleAttribute;
+
+  getName(): string;
+  setName(value: string): RoleAttribute;
+
+  getKey(): string;
+  setKey(value: string): RoleAttribute;
+
+  getType(): string;
+  setType(value: string): RoleAttribute;
+
+  getValue(): string;
+  setValue(value: string): RoleAttribute;
+
+  getValidValues(): string;
+  setValidValues(value: string): RoleAttribute;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RoleAttribute.AsObject;
+  static toObject(includeInstance: boolean, msg: RoleAttribute): RoleAttribute.AsObject;
+  static serializeBinaryToWriter(message: RoleAttribute, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RoleAttribute;
+  static deserializeBinaryFromReader(message: RoleAttribute, reader: jspb.BinaryReader): RoleAttribute;
+}
+
+export namespace RoleAttribute {
+  export type AsObject = {
+    roleId: number,
+    createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    attrId: number,
+    permissionId: number,
+    category: string,
+    name: string,
+    key: string,
+    type: string,
+    value: string,
+    validValues: string,
+  }
+
+  export enum CreatedAtCase { 
+    _CREATED_AT_NOT_SET = 0,
+    CREATED_AT = 2,
   }
 }
 

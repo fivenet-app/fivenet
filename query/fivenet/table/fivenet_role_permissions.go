@@ -19,6 +19,7 @@ type fivenetRolePermissionsTable struct {
 	// Columns
 	RoleID       mysql.ColumnInteger
 	PermissionID mysql.ColumnInteger
+	Val          mysql.ColumnBool
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -61,8 +62,9 @@ func newFivenetRolePermissionsTableImpl(schemaName, tableName, alias string) fiv
 	var (
 		RoleIDColumn       = mysql.IntegerColumn("role_id")
 		PermissionIDColumn = mysql.IntegerColumn("permission_id")
-		allColumns         = mysql.ColumnList{RoleIDColumn, PermissionIDColumn}
-		mutableColumns     = mysql.ColumnList{}
+		ValColumn          = mysql.BoolColumn("val")
+		allColumns         = mysql.ColumnList{RoleIDColumn, PermissionIDColumn, ValColumn}
+		mutableColumns     = mysql.ColumnList{ValColumn}
 	)
 
 	return fivenetRolePermissionsTable{
@@ -71,6 +73,7 @@ func newFivenetRolePermissionsTableImpl(schemaName, tableName, alias string) fiv
 		//Columns
 		RoleID:       RoleIDColumn,
 		PermissionID: PermissionIDColumn,
+		Val:          ValColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

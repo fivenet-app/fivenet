@@ -19,6 +19,7 @@ type fivenetUserPermissionsTable struct {
 	// Columns
 	UserID       mysql.ColumnInteger
 	PermissionID mysql.ColumnInteger
+	Val          mysql.ColumnBool
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -61,8 +62,9 @@ func newFivenetUserPermissionsTableImpl(schemaName, tableName, alias string) fiv
 	var (
 		UserIDColumn       = mysql.IntegerColumn("user_id")
 		PermissionIDColumn = mysql.IntegerColumn("permission_id")
-		allColumns         = mysql.ColumnList{UserIDColumn, PermissionIDColumn}
-		mutableColumns     = mysql.ColumnList{}
+		ValColumn          = mysql.BoolColumn("val")
+		allColumns         = mysql.ColumnList{UserIDColumn, PermissionIDColumn, ValColumn}
+		mutableColumns     = mysql.ColumnList{ValColumn}
 	)
 
 	return fivenetUserPermissionsTable{
@@ -71,6 +73,7 @@ func newFivenetUserPermissionsTableImpl(schemaName, tableName, alias string) fiv
 		//Columns
 		UserID:       UserIDColumn,
 		PermissionID: PermissionIDColumn,
+		Val:          ValColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

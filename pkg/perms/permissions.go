@@ -1,79 +1,88 @@
 package perms
 
 import (
+	"fmt"
+
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func (p *Perms) CreatePermission(name string, description string) error {
-	var descField jet.Expression
-	if description == "" {
-		descField = jet.NULL
-	} else {
-		descField = jet.String(description)
-	}
+var tPerms = table.FivenetPermissions
 
-	stmt := ap.
+func (p *Perms) CreatePermission(category Category, name Name) (uint64, error) {
+	guard := BuildGuard(category, name)
+	stmt := tPerms.
 		INSERT(
-			ap.Name,
-			ap.GuardName,
-			ap.Description,
+			tPerms.Category,
+			tPerms.Name,
+			tPerms.GuardName,
 		).
 		VALUES(
+			category,
 			name,
-			helpers.Guard(name),
-			descField,
+			guard,
+		)
+
+	res, err := stmt.ExecContext(p.ctx, p.db)
+	if err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return 0, err
+		}
+
+		perm, err := p.getPermissionByGuard(guard)
+		if err != nil {
+			return 0, err
+		}
+
+		return perm.ID, nil
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(lastId), nil
+}
+
+func (p *Perms) UpdatePermission(id uint64, category Category, name Name) error {
+	guard := helpers.Guard(fmt.Sprintf("%s-%s", category, name))
+	stmt := tPerms.
+		UPDATE(
+			tPerms.Name,
+			tPerms.Category,
+			tPerms.GuardName,
+		).
+		SET(
+			tPerms.Category.SET(jet.String(string(category))),
+			tPerms.Name.SET(jet.String(string(name))),
+			tPerms.GuardName.SET(jet.String(guard)),
+		).
+		WHERE(
+			tPerms.ID.EQ(jet.Uint64(id)),
 		)
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
-
-	if err != nil && !dbutils.IsDuplicateError(err) {
+	if err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (p *Perms) UpdatePermission(id uint64, name string, description string) error {
-	var descField jet.StringExpression
-	if description == "" {
-		descField = jet.StringExp(jet.NULL)
-	} else {
-		descField = jet.String(description)
-	}
-
-	stmt := ap.
-		UPDATE(
-			ap.Name,
-			ap.GuardName,
-			ap.Description,
-		).
-		SET(
-			ap.Name.SET(jet.String(name)),
-			ap.GuardName.SET(jet.String(helpers.Guard(name))),
-			ap.Description.SET(descField),
-		).
-		WHERE(
-			ap.ID.EQ(jet.Uint64(id)),
-		)
-
-	_, err := stmt.ExecContext(p.ctx, p.db)
-	return err
-}
-
 func (p *Perms) GetAllPermissions() (collections.Permissions, error) {
-	stmt := ap.
+	stmt := tPerms.
 		SELECT(
-			ap.AllColumns,
+			tPerms.AllColumns,
 		).
-		FROM(ap)
+		FROM(tPerms)
 
 	var dest collections.Permissions
-	err := stmt.QueryContext(p.ctx, p.db, &dest)
-	if err != nil {
+	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
 
@@ -86,10 +95,10 @@ func (p *Perms) RemovePermissionsByIDs(ids ...uint64) error {
 		wIds[i] = jet.Uint64(ids[i])
 	}
 
-	stmt := ap.
+	stmt := tPerms.
 		DELETE().
 		WHERE(
-			ap.ID.IN(wIds...),
+			tPerms.ID.IN(wIds...),
 		)
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
@@ -106,13 +115,13 @@ func (p *Perms) GetPermissionsByIDs(ids ...uint64) (collections.Permissions, err
 		wIds[i] = jet.Uint64(ids[i])
 	}
 
-	stmt := ap.
+	stmt := tPerms.
 		SELECT(
-			ap.AllColumns,
+			tPerms.AllColumns,
 		).
-		FROM(ap).
+		FROM(tPerms).
 		WHERE(
-			ap.ID.IN(wIds...),
+			tPerms.ID.IN(wIds...),
 		)
 
 	var dest collections.Permissions
@@ -124,16 +133,16 @@ func (p *Perms) GetPermissionsByIDs(ids ...uint64) (collections.Permissions, err
 	return dest, nil
 }
 
-func (p *Perms) GetPermissionByGuard(name string) (*model.FivenetPermissions, error) {
+func (p *Perms) getPermissionByGuard(name string) (*model.FivenetPermissions, error) {
 	guard := helpers.Guard(name)
 
-	stmt := ap.
+	stmt := tPerms.
 		SELECT(
-			ap.AllColumns,
+			tPerms.AllColumns,
 		).
-		FROM(ap).
+		FROM(tPerms).
 		WHERE(
-			ap.GuardName.EQ(jet.String(guard)),
+			tPerms.GuardName.EQ(jet.String(guard)),
 		).
 		LIMIT(1)
 
@@ -144,25 +153,4 @@ func (p *Perms) GetPermissionByGuard(name string) (*model.FivenetPermissions, er
 	}
 
 	return &dest, nil
-}
-
-func (p *Perms) getPermissionsByGuardPrefix(name string) (collections.Permissions, error) {
-	guard := helpers.Guard(name)
-
-	stmt := ap.
-		SELECT(
-			ap.AllColumns,
-		).
-		FROM(ap).
-		WHERE(
-			ap.GuardName.LIKE(jet.String(guard + "%")),
-		)
-
-	var dest collections.Permissions
-	err := stmt.QueryContext(p.ctx, p.db, &dest)
-	if err != nil {
-		return nil, err
-	}
-
-	return dest, nil
 }

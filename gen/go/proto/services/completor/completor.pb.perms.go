@@ -6,27 +6,37 @@ package completor
 import "github.com/galexrt/fivenet/pkg/perms"
 
 const (
-	CompletorServicePermKey = "CompletorService"
+	CompletorServicePerm perms.Category = "CompletorService"
+
+	CompletorServiceCompleteCitizensPerm                    perms.Name = "CompleteCitizens"
+	CompletorServiceCompleteDocumentCategoriesPerm          perms.Name = "CompleteDocumentCategories"
+	CompletorServiceCompleteDocumentCategoriesJobsPermField perms.Key  = "Jobs"
+	CompletorServiceCompleteJobsPerm                        perms.Name = "CompleteJobs"
 )
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: CompletorService
 		{
-			Key:         CompletorServicePermKey,
-			Name:        "CompleteCitizens",
-			Description: "Complete Citizen Names",
+			Category: CompletorServicePerm,
+			Name:     CompletorServiceCompleteCitizensPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         CompletorServicePermKey,
-			Name:        "CompleteDocumentCategories",
-			PerJob:      true,
-			Description: "Complete a Jobs Document Categories",
+			Category: CompletorServicePerm,
+			Name:     CompletorServiceCompleteDocumentCategoriesPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         CompletorServiceCompleteDocumentCategoriesJobsPermField,
+					Type:        perms.JobListAttributeType,
+					ValidValues: "",
+				},
+			},
 		},
 		{
-			Key:         CompletorServicePermKey,
-			Name:        "CompleteJobs",
-			Description: "Complete Job Names and Grades/Ranks",
+			Category: CompletorServicePerm,
+			Name:     CompletorServiceCompleteJobsPerm,
+			Attrs:    []perms.Attr{},
 		},
 	})
 }

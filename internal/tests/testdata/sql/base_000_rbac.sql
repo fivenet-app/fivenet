@@ -188,11 +188,10 @@ UNLOCK TABLES;
 LOCK TABLES `fivenet_roles` WRITE;
 /*!40000 ALTER TABLE `fivenet_roles` DISABLE KEYS */;
 INSERT INTO `fivenet_roles` VALUES
-(1,'2023-03-18 14:45:32.988',NULL,'masterofdisaster','masterofdisaster',''),
-(2,'2023-03-18 14:45:33.015',NULL,'job-ambulance-1','job-ambulance-1','Role for ambulance (Rank: 1)'),
-(3,'2023-03-18 14:45:33.185',NULL,'job-doj-1','job-doj-1','Role for doj (Rank: 1)'),
-(4,'2023-03-18 14:45:33.368',NULL,'job-police-1','job-police-1','Role for police (Rank: 1)'),
-(5,'2023-03-18 14:45:33.590',NULL,'job-unemployed-1','job-unemployed-1','Role for unemployed (Rank: 1)');
+(2,'2023-03-18 14:45:33.015',NULL,'ambulance-1','ambulance-1','Role for ambulance (Rank: 1)'),
+(3,'2023-03-18 14:45:33.185',NULL,'doj-1','doj-1','Role for doj (Rank: 1)'),
+(4,'2023-03-18 14:45:33.368',NULL,'police-1','police-1','Role for police (Rank: 1)'),
+(5,'2023-03-18 14:45:33.590',NULL,'unemployed-1','unemployed-1','Role for unemployed (Rank: 1)');
 /*!40000 ALTER TABLE `fivenet_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 

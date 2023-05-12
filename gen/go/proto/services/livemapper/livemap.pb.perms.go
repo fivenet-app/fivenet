@@ -6,18 +6,31 @@ package livemapper
 import "github.com/galexrt/fivenet/pkg/perms"
 
 const (
-	LivemapperServicePermKey = "LivemapperService"
+	LivemapperServicePerm perms.Category = "LivemapperService"
+
+	LivemapperServiceStreamPerm                perms.Name = "Stream"
+	LivemapperServiceStreamDispatchesPermField perms.Key  = "Dispatches"
+	LivemapperServiceStreamPlayersPermField    perms.Key  = "Players"
 )
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: LivemapperService
 		{
-			Key:          LivemapperServicePermKey,
-			Name:         "Stream",
-			PerJob:       true,
-			PerJobFields: []string{"Dispatches", "Players"},
-			Description:  "Being able to view the Livemap",
+			Category: LivemapperServicePerm,
+			Name:     LivemapperServiceStreamPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         LivemapperServiceStreamDispatchesPermField,
+					Type:        perms.JobListAttributeType,
+					ValidValues: "",
+				},
+				{
+					Key:         LivemapperServiceStreamPlayersPermField,
+					Type:        perms.JobRankListAttributeType,
+					ValidValues: "",
+				},
+			},
 		},
 	})
 }

@@ -243,7 +243,7 @@ func (s *Server) getDocumentComment(ctx context.Context, id uint64) (*documents.
 }
 
 func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentCommentRequest) (*DeleteDocumentCommentResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
@@ -259,7 +259,7 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 		return nil, err
 	}
 	// If the requestor is not the creator nor a superuser
-	can := s.p.Can(userId, common.SuperuserAnyAccess)
+	can := s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName)
 	if comment.CreatorId != userId && !can {
 		return nil, status.Error(codes.PermissionDenied, "You can't delete others document comments!")
 	}

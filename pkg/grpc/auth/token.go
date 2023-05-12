@@ -18,12 +18,12 @@ const (
 )
 
 type CitizenInfoClaims struct {
-	AccountID          uint64 `json:"accid"`
-	Username           string `json:"usrnm"`
-	ActiveCharID       int32  `json:"chrid"`
-	ActiveCharJob      string `json:"chrjb"`
-	ActiveCharJobGrade int32  `json:"chrjbg"`
-	RenewedCount       int32  `json:"renwc"`
+	AccountID    uint64 `json:"accid"`
+	Username     string `json:"usrnm"`
+	CharID       int32  `json:"chrid"`
+	CharJob      string `json:"chrjb"`
+	CharJobGrade int32  `json:"chrjbg"`
+	RenewedCount int32  `json:"renwc"`
 
 	jwt.RegisteredClaims
 }
@@ -77,13 +77,13 @@ func BuildTokenClaimsFromAccount(account *model.FivenetAccounts, activeChar *use
 	SetTokenClaimsTimes(claims)
 
 	if activeChar != nil {
-		claims.ActiveCharID = activeChar.UserId
-		claims.ActiveCharJob = activeChar.Job
-		claims.ActiveCharJobGrade = activeChar.JobGrade
+		claims.CharID = activeChar.UserId
+		claims.CharJob = activeChar.Job
+		claims.CharJobGrade = activeChar.JobGrade
 	} else {
-		claims.ActiveCharID = 0
-		claims.ActiveCharJob = ""
-		claims.ActiveCharJobGrade = 0
+		claims.CharID = 0
+		claims.CharJob = ""
+		claims.CharJobGrade = 0
 	}
 
 	return claims

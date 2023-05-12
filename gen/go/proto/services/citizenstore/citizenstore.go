@@ -25,12 +25,12 @@ import (
 )
 
 var (
-	user         = table.Users.AS("user")
-	userLicenses = table.UserLicenses
-	licenses     = table.Licenses
+	tUser         = table.Users.AS("user")
+	tUserLicenses = table.UserLicenses
+	tLicenses     = table.Licenses
 
-	userProps = table.FivenetUserProps
-	userAct   = table.FivenetUserActivity
+	tUserProps    = table.FivenetUserProps
+	tUserActivity = table.FivenetUserActivity
 )
 
 var (
@@ -57,39 +57,49 @@ func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud au
 }
 
 func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*ListCitizensResponse, error) {
-	userId, _, _ := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	selectors := jet.ProjectionList{
-		user.ID,
-		user.Identifier,
-		user.Firstname,
-		user.Lastname,
-		user.Job,
-		user.JobGrade,
-		user.Dateofbirth,
-		user.Sex,
-		user.Height,
-		user.Visum,
-		userProps.UserID,
+		tUser.ID,
+		tUser.Identifier,
+		tUser.Firstname,
+		tUser.Lastname,
+		tUser.Job,
+		tUser.JobGrade,
+		tUser.Dateofbirth,
+		tUser.Sex,
+		tUser.Height,
+		tUser.Visum,
+		tUserProps.UserID,
 	}
 
 	condition := jet.Bool(true)
 	// Field Permission Check
-	if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "PhoneNumber") {
-		selectors = append(selectors, user.PhoneNumber)
-		if req.PhoneNumber != "" {
-			phoneNumber := strings.ReplaceAll(strings.ReplaceAll(req.PhoneNumber, "%", ""), " ", "") + "%"
-			condition = condition.AND(user.PhoneNumber.LIKE(jet.String(phoneNumber)))
-		}
+	fieldsAttr, err := s.p.Attr(userId, job, jobGrade, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceListCitizensFieldsPermField)
+	if err != nil {
+		return nil, FailedQueryErr
 	}
-	if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps", "Wanted") {
-		selectors = append(selectors, userProps.Wanted)
-		if req.Wanted {
-			condition = condition.AND(userProps.Wanted.IS_TRUE())
-		}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.(perms.StringList)
 	}
-	if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps", "Job") {
-		selectors = append(selectors, userProps.Job)
+
+	for _, field := range fields {
+		switch field {
+		case "PhoneNumber":
+			selectors = append(selectors, tUser.PhoneNumber)
+			if req.PhoneNumber != "" {
+				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(req.PhoneNumber, "%", ""), " ", "") + "%"
+				condition = condition.AND(tUser.PhoneNumber.LIKE(jet.String(phoneNumber)))
+			}
+		case "UserProps.Wanted":
+			selectors = append(selectors, tUserProps.Wanted)
+			if req.Wanted {
+				condition = condition.AND(tUserProps.Wanted.IS_TRUE())
+			}
+		case "UserProps.Job":
+			selectors = append(selectors, tUserProps.Job)
+		}
 	}
 
 	req.SearchName = strings.TrimSpace(req.SearchName)
@@ -98,20 +108,20 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	if req.SearchName != "" {
 		req.SearchName = "%" + req.SearchName + "%"
 		condition = condition.AND(
-			jet.CONCAT(user.Firstname, jet.String(" "), user.Lastname).
+			jet.CONCAT(tUser.Firstname, jet.String(" "), tUser.Lastname).
 				LIKE(jet.String(req.SearchName)),
 		)
 	}
 
 	// Get total count of values
-	countStmt := user.
+	countStmt := tUser.
 		SELECT(
-			jet.COUNT(user.ID).AS("datacount.totalcount"),
+			jet.COUNT(tUser.ID).AS("datacount.totalcount"),
 		).
 		FROM(
-			user.
-				LEFT_JOIN(userProps,
-					userProps.UserID.EQ(user.ID),
+			tUser.
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUser.ID),
 				),
 		).
 		WHERE(condition)
@@ -129,21 +139,21 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		return resp, nil
 	}
 
-	stmt := user.
+	stmt := tUser.
 		SELECT(
 			selectors[0], selectors[1:]...,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
-		FROM(user.
-			LEFT_JOIN(userProps,
-				userProps.UserID.EQ(user.ID),
+		FROM(tUser.
+			LEFT_JOIN(tUserProps,
+				tUserProps.UserID.EQ(tUser.ID),
 			),
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		ORDER_BY(
-			user.Firstname.ASC(),
-			user.Lastname.ASC(),
+			tUser.Firstname.ASC(),
+			tUser.Lastname.ASC(),
 		).
 		LIMIT(limit)
 
@@ -153,10 +163,20 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Users))
 
+	jobGradesAttr, err := s.p.Attr(userId, job, jobGrade, CitizenStoreServicePerm, CitizenStoreServiceGetUserPerm, CitizenStoreServiceGetUserJobsPermField)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	var jobGrades perms.JobRankList
+	if jobGradesAttr != nil {
+		jobGrades = jobGradesAttr.(perms.JobRankList)
+	}
+
 	for i := 0; i < len(resp.Users); i++ {
 		if utils.InStringSlice(config.C.Game.PublicJobs, resp.Users[i].Job) {
 			// Make sure user has permission to see that grade, otherwise "hide" the user's job
-			if !s.p.Can(userId, CitizenStoreServicePermKey, "GetUser", resp.Users[i].Job, strconv.Itoa(int(resp.Users[i].JobGrade))) {
+			grade, ok := jobGrades[resp.Users[i].Job]
+			if !ok || grade > resp.Users[i].JobGrade {
 				resp.Users[i].JobGrade = 0
 			}
 		} else {
@@ -176,7 +196,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 }
 
 func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service:      CitizenStoreService_ServiceDesc.ServiceName,
@@ -189,47 +209,54 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	defer s.a.AddEntryWithData(auditEntry, req)
 
 	selectors := jet.ProjectionList{
-		user.ID,
-		user.Identifier,
-		user.Firstname,
-		user.Lastname,
-		user.Job,
-		user.JobGrade,
-		user.Dateofbirth,
-		user.Sex,
-		user.Height,
-		user.Visum,
-		userProps.UserID,
+		tUser.ID,
+		tUser.Identifier,
+		tUser.Firstname,
+		tUser.Lastname,
+		tUser.Job,
+		tUser.JobGrade,
+		tUser.Dateofbirth,
+		tUser.Sex,
+		tUser.Height,
+		tUser.Visum,
+		tUserProps.UserID,
 	}
 
 	// Field Permission Check
-	if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps") {
-		// Field Permission Check
-		if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "PhoneNumber") {
-			selectors = append(selectors, user.PhoneNumber)
-		}
-		if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps", "Wanted") {
-			selectors = append(selectors, userProps.Wanted)
-		}
-		if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "UserProps", "Job") {
-			selectors = append(selectors, userProps.Job.AS("userprops.job_name"))
+	fieldsAttr, err := s.p.Attr(userId, job, jobGrade, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceListCitizensFieldsPermField)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.(perms.StringList)
+	}
+
+	for _, field := range fields {
+		switch field {
+		case "PhoneNumber":
+			selectors = append(selectors, tUser.PhoneNumber)
+		case "UserProps.Wanted":
+			selectors = append(selectors, tUserProps.Wanted)
+		case "UserProps.Job":
+			selectors = append(selectors, tUserProps.Job)
 		}
 	}
 
 	resp := &GetUserResponse{
 		User: &users.User{},
 	}
-	stmt := user.
+	stmt := tUser.
 		SELECT(
 			selectors[0], selectors[1:]...,
 		).
 		FROM(
-			user.
-				LEFT_JOIN(userProps,
-					userProps.UserID.EQ(user.ID),
+			tUser.
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUser.ID),
 				),
 		).
-		WHERE(user.ID.EQ(jet.Int32(req.UserId))).
+		WHERE(tUser.ID.EQ(jet.Int32(req.UserId))).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.User); err != nil {
@@ -239,29 +266,18 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	if resp.User != nil {
 		if utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
 			// Make sure user has permission to see that grade
-			grades, err := s.p.GetSuffixOfPermissionsByPrefixOfUser(userId, CitizenStoreServicePermKey+".GetUser."+resp.User.Job)
+			jobGradesAttr, err := s.p.Attr(userId, job, jobGrade, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceGetUserJobsPermField)
 			if err != nil {
 				return nil, FailedQueryErr
 			}
+			jobGrades := jobGradesAttr.(perms.JobRankList)
 
-			if len(grades) == 0 {
+			if len(jobGrades) == 0 {
 				return nil, JobGradeNoPermissionErr
 			}
 
-			allowed := false
-
-			for _, grade := range grades {
-				i, err := strconv.Atoi(grade)
-				if err != nil {
-					return nil, FailedQueryErr
-				}
-
-				if resp.User.JobGrade <= int32(i) {
-					allowed = true
-				}
-			}
-
-			if !allowed {
+			grade, ok := jobGrades[resp.User.Job]
+			if ok && grade > resp.User.JobGrade {
 				return nil, JobGradeNoPermissionErr
 			}
 		} else {
@@ -278,21 +294,21 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	// Check if user can see licenses and fetch them
-	if s.p.Can(userId, CitizenStoreServicePermKey, "ListCitizens", "Licenses") {
-		stmt := user.
+	if utils.InStringSlice(fields, "Licenses") {
+		stmt := tUser.
 			SELECT(
-				userLicenses.Type.AS("license.type"),
-				licenses.Label.AS("license.label"),
+				tUserLicenses.Type.AS("license.type"),
+				tLicenses.Label.AS("license.label"),
 			).
 			FROM(
-				userLicenses.
-					INNER_JOIN(user,
-						userLicenses.Owner.EQ(user.Identifier),
+				tUserLicenses.
+					INNER_JOIN(tUser,
+						tUserLicenses.Owner.EQ(tUser.Identifier),
 					).
-					LEFT_JOIN(licenses,
-						licenses.Type.EQ(userLicenses.Type)),
+					LEFT_JOIN(tLicenses,
+						tLicenses.Type.EQ(tUserLicenses.Type)),
 			).
-			WHERE(user.ID.EQ(jet.Int32(req.UserId))).
+			WHERE(tUser.ID.EQ(jet.Int32(req.UserId))).
 			LIMIT(15)
 
 		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
@@ -316,11 +332,11 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		return resp, nil
 	}
 
-	uTarget := user.AS("target_user")
-	uSource := user.AS("source_user")
-	stmt := userAct.
+	uTarget := tUser.AS("target_user")
+	uSource := tUser.AS("source_user")
+	stmt := tUserActivity.
 		SELECT(
-			userAct.AllColumns,
+			tUserActivity.AllColumns,
 			uTarget.ID,
 			uTarget.Identifier,
 			uTarget.Job,
@@ -335,19 +351,19 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 			uSource.Lastname,
 		).
 		FROM(
-			userAct.
+			tUserActivity.
 				LEFT_JOIN(uTarget,
-					uTarget.ID.EQ(userAct.TargetUserID),
+					uTarget.ID.EQ(tUserActivity.TargetUserID),
 				).
 				LEFT_JOIN(uSource,
-					uSource.ID.EQ(userAct.SourceUserID),
+					uSource.ID.EQ(tUserActivity.SourceUserID),
 				),
 		).
 		WHERE(
-			userAct.TargetUserID.EQ(jet.Int32(req.UserId)),
+			tUserActivity.TargetUserID.EQ(jet.Int32(req.UserId)),
 		).
 		ORDER_BY(
-			userAct.CreatedAt.DESC(),
+			tUserActivity.CreatedAt.DESC(),
 		).
 		LIMIT(12)
 
@@ -366,7 +382,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 }
 
 func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*SetUserPropsResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service:      CitizenStoreService_ServiceDesc.ServiceName,
@@ -401,12 +417,21 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 	updateSets := []jet.ColumnAssigment{}
 	// Field Permission Check
+	fieldsAttr, err := s.p.Attr(userId, job, jobGrade, CitizenStoreServicePerm, CitizenStoreServiceSetUserPropsPerm, CitizenStoreServiceSetUserPropsFieldsPermField)
+	if err != nil {
+		return nil, FailedQueryErr
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.(perms.StringList)
+	}
+
 	if req.Props.Wanted != nil {
-		if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Wanted") {
+		if !utils.InStringSlice(fields, "Wanted") {
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user wanted status!")
 		}
 
-		updateSets = append(updateSets, userProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
+		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
 	} else {
 		var current bool
 		if props.Wanted != nil {
@@ -415,7 +440,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		req.Props.Wanted = &current
 	}
 	if req.Props.JobName != nil {
-		if !s.p.Can(userId, CitizenStoreServicePermKey, "SetUserProps", "Job") {
+		if !utils.InStringSlice(fields, "Job") {
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user job!")
 		}
 
@@ -428,7 +453,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, status.Error(codes.PermissionDenied, "Invalid job set!")
 		}
 
-		updateSets = append(updateSets, userProps.Job.SET(jet.String(*req.Props.JobName)))
+		updateSets = append(updateSets, tUserProps.Job.SET(jet.String(*req.Props.JobName)))
 	} else {
 		req.Props.JobName = props.JobName
 	}
@@ -441,11 +466,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := userProps.
+	stmt := tUserProps.
 		INSERT(
-			userProps.UserID,
-			userProps.Wanted,
-			userProps.Job,
+			tUserProps.UserID,
+			tUserProps.Wanted,
+			tUserProps.Job,
 		).
 		VALUES(
 			req.Props.UserId,
@@ -485,15 +510,15 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 }
 
 func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserProps, error) {
-	stmt := userProps.
+	stmt := tUserProps.
 		SELECT(
-			userProps.UserID,
-			userProps.Wanted,
-			userProps.Job,
+			tUserProps.UserID,
+			tUserProps.Wanted,
+			tUserProps.Job,
 		).
-		FROM(userProps).
+		FROM(tUserProps).
 		WHERE(
-			userProps.UserID.EQ(jet.Int32(userId)),
+			tUserProps.UserID.EQ(jet.Int32(userId)),
 		).
 		LIMIT(1)
 
@@ -509,14 +534,14 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 }
 
 func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string, reason string) error {
-	stmt := userAct.
+	stmt := tUserActivity.
 		INSERT(
-			userAct.SourceUserID,
-			userAct.TargetUserID,
-			userAct.Type,
-			userAct.Key,
-			userAct.OldValue,
-			userAct.NewValue,
+			tUserActivity.SourceUserID,
+			tUserActivity.TargetUserID,
+			tUserActivity.Type,
+			tUserActivity.Key,
+			tUserActivity.OldValue,
+			tUserActivity.NewValue,
 		).
 		MODEL(&model.FivenetUserActivity{
 			SourceUserID: userId,

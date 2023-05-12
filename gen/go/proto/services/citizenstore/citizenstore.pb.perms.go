@@ -6,36 +6,64 @@ package citizenstore
 import "github.com/galexrt/fivenet/pkg/perms"
 
 const (
-	CitizenStoreServicePermKey = "CitizenStoreService"
+	CitizenStoreServicePerm perms.Category = "CitizenStoreService"
+
+	CitizenStoreServiceGetUserPerm                     perms.Name = "GetUser"
+	CitizenStoreServiceGetUserJobsPermField            perms.Key  = "Jobs"
+	CitizenStoreServiceListCitizensPerm                perms.Name = "ListCitizens"
+	CitizenStoreServiceListCitizensFieldsPermField     perms.Key  = "Fields"
+	CitizenStoreServiceListUserActivityPerm            perms.Name = "ListUserActivity"
+	CitizenStoreServiceListUserActivityFieldsPermField perms.Key  = "Fields"
+	CitizenStoreServiceSetUserPropsPerm                perms.Name = "SetUserProps"
+	CitizenStoreServiceSetUserPropsFieldsPermField     perms.Key  = "Fields"
 )
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: CitizenStoreService
 		{
-			Key:         CitizenStoreServicePermKey,
-			Name:        "GetUser",
-			PerJob:      true,
-			PerJobGrade: true,
-			Description: "See a user's profile/ up to a certain job rank",
+			Category: CitizenStoreServicePerm,
+			Name:     CitizenStoreServiceGetUserPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         CitizenStoreServiceGetUserJobsPermField,
+					Type:        perms.JobRankListAttributeType,
+					ValidValues: "",
+				},
+			},
 		},
 		{
-			Key:         CitizenStoreServicePermKey,
-			Name:        "ListCitizens",
-			Fields:      []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job"},
-			Description: "Citizens List and Search",
+			Category: CitizenStoreServicePerm,
+			Name:     CitizenStoreServiceListCitizensPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         CitizenStoreServiceListCitizensFieldsPermField,
+					Type:        perms.StringListAttributeType,
+					ValidValues: "PhoneNumber;Licenses;UserProps.Wanted;UserProps.Job",
+				},
+			},
 		},
 		{
-			Key:         CitizenStoreServicePermKey,
-			Name:        "ListUserActivity",
-			Fields:      []string{"SourceUser"},
-			Description: "Citizen Info Activity Feed",
+			Category: CitizenStoreServicePerm,
+			Name:     CitizenStoreServiceListUserActivityPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         CitizenStoreServiceListUserActivityFieldsPermField,
+					Type:        perms.StringListAttributeType,
+					ValidValues: "SourceUser",
+				},
+			},
 		},
 		{
-			Key:         CitizenStoreServicePermKey,
-			Name:        "SetUserProps",
-			Fields:      []string{"Wanted", "Job"},
-			Description: "Set Citizen Props (e.g., wanted status)",
+			Category: CitizenStoreServicePerm,
+			Name:     CitizenStoreServiceSetUserPropsPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         CitizenStoreServiceSetUserPropsFieldsPermField,
+					Type:        perms.StringListAttributeType,
+					ValidValues: "Wanted;Job",
+				},
+			},
 		},
 	})
 }

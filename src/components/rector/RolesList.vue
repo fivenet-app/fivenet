@@ -177,9 +177,6 @@ onMounted(async () => {
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.name') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.updated_at') }}
-                                        </th>
                                         <th scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
                                             {{ $t('common.action', 2) }}
@@ -193,9 +190,6 @@ onMounted(async () => {
                                     <tr>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.name') }}
-                                        </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.updated_at') }}
                                         </th>
                                         <th scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">

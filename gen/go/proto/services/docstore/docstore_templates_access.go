@@ -251,7 +251,7 @@ func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userId i
 	}
 
 	// Allow superusers access to any templates
-	if s.p.Can(userId, common.SuperuserAnyAccess) {
+	if s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
 		return templateIds, nil
 	}
 

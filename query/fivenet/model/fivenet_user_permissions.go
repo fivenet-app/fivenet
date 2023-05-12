@@ -10,4 +10,5 @@ package model
 type FivenetUserPermissions struct {
 	UserID       int32  `sql:"primary_key" json:"user_id"`
 	PermissionID uint64 `sql:"primary_key" json:"permission_id"`
+	Val          bool   `json:"val"`
 }

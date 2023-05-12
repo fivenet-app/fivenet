@@ -22,25 +22,23 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RectorServiceClient interface {
-	// @perm: description="View your job's properties"
+	// @perm
 	GetJobProps(ctx context.Context, in *GetJobPropsRequest, opts ...grpc.CallOption) (*GetJobPropsResponse, error)
-	// @perm: description="Set your job's properties"
+	// @perm
 	SetJobProps(ctx context.Context, in *SetJobPropsRequest, opts ...grpc.CallOption) (*SetJobPropsResponse, error)
-	// @perm: description="Get/List FiveNet job roles"
+	// @perm
 	GetRoles(ctx context.Context, in *GetRolesRequest, opts ...grpc.CallOption) (*GetRolesResponse, error)
-	// @perm: name=GetRoles
+	// @perm: Name=GetRoles
 	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error)
-	// @perm: description="Create rank-specific FiveNet job roles"
+	// @perm
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
-	// @perm: description="Delete FiveNet job roles"
+	// @perm
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
-	// @perm: description="Add/ Delete permissions to FiveNet job roles"
-	AddPermToRole(ctx context.Context, in *AddPermToRoleRequest, opts ...grpc.CallOption) (*AddPermToRoleResponse, error)
-	// @perm: name=AddPermToRole
-	RemovePermFromRole(ctx context.Context, in *RemovePermFromRoleRequest, opts ...grpc.CallOption) (*RemovePermFromRoleResponse, error)
-	// @perm: PerJob=true;description="Get list of available FiveNet job roles permissions"
+	// @perm
+	UpdateRolePerms(ctx context.Context, in *UpdateRolePermsRequest, opts ...grpc.CallOption) (*UpdateRolePermsResponse, error)
+	// @perm: Attrs=Jobs/JobList
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error)
-	// @perm: description="View audit log"
+	// @perm
 	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
 }
 
@@ -106,18 +104,9 @@ func (c *rectorServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequ
 	return out, nil
 }
 
-func (c *rectorServiceClient) AddPermToRole(ctx context.Context, in *AddPermToRoleRequest, opts ...grpc.CallOption) (*AddPermToRoleResponse, error) {
-	out := new(AddPermToRoleResponse)
-	err := c.cc.Invoke(ctx, "/services.rector.RectorService/AddPermToRole", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rectorServiceClient) RemovePermFromRole(ctx context.Context, in *RemovePermFromRoleRequest, opts ...grpc.CallOption) (*RemovePermFromRoleResponse, error) {
-	out := new(RemovePermFromRoleResponse)
-	err := c.cc.Invoke(ctx, "/services.rector.RectorService/RemovePermFromRole", in, out, opts...)
+func (c *rectorServiceClient) UpdateRolePerms(ctx context.Context, in *UpdateRolePermsRequest, opts ...grpc.CallOption) (*UpdateRolePermsResponse, error) {
+	out := new(UpdateRolePermsResponse)
+	err := c.cc.Invoke(ctx, "/services.rector.RectorService/UpdateRolePerms", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -146,25 +135,23 @@ func (c *rectorServiceClient) ViewAuditLog(ctx context.Context, in *ViewAuditLog
 // All implementations must embed UnimplementedRectorServiceServer
 // for forward compatibility
 type RectorServiceServer interface {
-	// @perm: description="View your job's properties"
+	// @perm
 	GetJobProps(context.Context, *GetJobPropsRequest) (*GetJobPropsResponse, error)
-	// @perm: description="Set your job's properties"
+	// @perm
 	SetJobProps(context.Context, *SetJobPropsRequest) (*SetJobPropsResponse, error)
-	// @perm: description="Get/List FiveNet job roles"
+	// @perm
 	GetRoles(context.Context, *GetRolesRequest) (*GetRolesResponse, error)
-	// @perm: name=GetRoles
+	// @perm: Name=GetRoles
 	GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error)
-	// @perm: description="Create rank-specific FiveNet job roles"
+	// @perm
 	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
-	// @perm: description="Delete FiveNet job roles"
+	// @perm
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
-	// @perm: description="Add/ Delete permissions to FiveNet job roles"
-	AddPermToRole(context.Context, *AddPermToRoleRequest) (*AddPermToRoleResponse, error)
-	// @perm: name=AddPermToRole
-	RemovePermFromRole(context.Context, *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error)
-	// @perm: PerJob=true;description="Get list of available FiveNet job roles permissions"
+	// @perm
+	UpdateRolePerms(context.Context, *UpdateRolePermsRequest) (*UpdateRolePermsResponse, error)
+	// @perm: Attrs=Jobs/JobList
 	GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error)
-	// @perm: description="View audit log"
+	// @perm
 	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
 }
@@ -191,11 +178,8 @@ func (UnimplementedRectorServiceServer) CreateRole(context.Context, *CreateRoleR
 func (UnimplementedRectorServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
 }
-func (UnimplementedRectorServiceServer) AddPermToRole(context.Context, *AddPermToRoleRequest) (*AddPermToRoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddPermToRole not implemented")
-}
-func (UnimplementedRectorServiceServer) RemovePermFromRole(context.Context, *RemovePermFromRoleRequest) (*RemovePermFromRoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemovePermFromRole not implemented")
+func (UnimplementedRectorServiceServer) UpdateRolePerms(context.Context, *UpdateRolePermsRequest) (*UpdateRolePermsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRolePerms not implemented")
 }
 func (UnimplementedRectorServiceServer) GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPermissions not implemented")
@@ -324,38 +308,20 @@ func _RectorService_DeleteRole_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RectorService_AddPermToRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddPermToRoleRequest)
+func _RectorService_UpdateRolePerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRolePermsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RectorServiceServer).AddPermToRole(ctx, in)
+		return srv.(RectorServiceServer).UpdateRolePerms(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.rector.RectorService/AddPermToRole",
+		FullMethod: "/services.rector.RectorService/UpdateRolePerms",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).AddPermToRole(ctx, req.(*AddPermToRoleRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RectorService_RemovePermFromRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RemovePermFromRoleRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RectorServiceServer).RemovePermFromRole(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.rector.RectorService/RemovePermFromRole",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).RemovePermFromRole(ctx, req.(*RemovePermFromRoleRequest))
+		return srv.(RectorServiceServer).UpdateRolePerms(ctx, req.(*UpdateRolePermsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -428,12 +394,8 @@ var RectorService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RectorService_DeleteRole_Handler,
 		},
 		{
-			MethodName: "AddPermToRole",
-			Handler:    _RectorService_AddPermToRole_Handler,
-		},
-		{
-			MethodName: "RemovePermFromRole",
-			Handler:    _RectorService_RemovePermFromRole_Handler,
+			MethodName: "UpdateRolePerms",
+			Handler:    _RectorService_UpdateRolePerms_Handler,
 		},
 		{
 			MethodName: "GetPermissions",

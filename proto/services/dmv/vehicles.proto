@@ -22,6 +22,6 @@ message ListVehiclesResponse {
 }
 
 service DMVService {
-  // @perm: description="Search and find citizen's vehicles"
+  // @perm
   rpc ListVehicles(ListVehiclesRequest) returns (ListVehiclesResponse);
 }

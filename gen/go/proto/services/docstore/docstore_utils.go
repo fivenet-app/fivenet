@@ -123,7 +123,7 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32,
 	}
 
 	// Allow superusers access to any docs
-	if s.p.Can(userId, common.SuperuserAnyAccess) {
+	if s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
 		return documentIds, nil
 	}
 

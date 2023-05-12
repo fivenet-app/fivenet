@@ -7,8 +7,7 @@ import "github.com/galexrt/fivenet/pkg/perms"
 
 var PermsRemap = map[string]string{
 	// Service: RectorService
-	"RectorService/GetRole":            "RectorService/GetRoles",
-	"RectorService/RemovePermFromRole": "RectorService/AddPermToRole",
+	"RectorService/GetRole": "RectorService/GetRoles",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -16,52 +15,67 @@ func (s *Server) GetPermsRemap() map[string]string {
 }
 
 const (
-	RectorServicePermKey = "RectorService"
+	RectorServicePerm perms.Category = "RectorService"
+
+	RectorServiceCreateRolePerm              perms.Name = "CreateRole"
+	RectorServiceDeleteRolePerm              perms.Name = "DeleteRole"
+	RectorServiceGetJobPropsPerm             perms.Name = "GetJobProps"
+	RectorServiceGetPermissionsPerm          perms.Name = "GetPermissions"
+	RectorServiceGetPermissionsJobsPermField perms.Key  = "Jobs"
+	RectorServiceGetRolesPerm                perms.Name = "GetRoles"
+	RectorServiceSetJobPropsPerm             perms.Name = "SetJobProps"
+	RectorServiceUpdateRolePermsPerm         perms.Name = "UpdateRolePerms"
+	RectorServiceViewAuditLogPerm            perms.Name = "ViewAuditLog"
 )
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: RectorService
 		{
-			Key:         RectorServicePermKey,
-			Name:        "AddPermToRole",
-			Description: "Add/ Delete permissions to FiveNet job roles",
+			Category: RectorServicePerm,
+			Name:     RectorServiceCreateRolePerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         RectorServicePermKey,
-			Name:        "CreateRole",
-			Description: "Create rank-specific FiveNet job roles",
+			Category: RectorServicePerm,
+			Name:     RectorServiceDeleteRolePerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         RectorServicePermKey,
-			Name:        "DeleteRole",
-			Description: "Delete FiveNet job roles",
+			Category: RectorServicePerm,
+			Name:     RectorServiceGetJobPropsPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         RectorServicePermKey,
-			Name:        "GetJobProps",
-			Description: "View your job's properties",
+			Category: RectorServicePerm,
+			Name:     RectorServiceGetPermissionsPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         RectorServiceGetPermissionsJobsPermField,
+					Type:        perms.JobListAttributeType,
+					ValidValues: "",
+				},
+			},
 		},
 		{
-			Key:         RectorServicePermKey,
-			Name:        "GetPermissions",
-			PerJob:      true,
-			Description: "Get list of available FiveNet job roles permissions",
+			Category: RectorServicePerm,
+			Name:     RectorServiceGetRolesPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         RectorServicePermKey,
-			Name:        "GetRoles",
-			Description: "Get/List FiveNet job roles",
+			Category: RectorServicePerm,
+			Name:     RectorServiceSetJobPropsPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         RectorServicePermKey,
-			Name:        "SetJobProps",
-			Description: "Set your job's properties",
+			Category: RectorServicePerm,
+			Name:     RectorServiceUpdateRolePermsPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
-			Key:         RectorServicePermKey,
-			Name:        "ViewAuditLog",
-			Description: "View audit log",
+			Category: RectorServicePerm,
+			Name:     RectorServiceViewAuditLogPerm,
+			Attrs:    []perms.Attr{},
 		},
 	})
 }

@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DMVServiceClient interface {
-	// @perm: description="Search and find citizen's vehicles"
+	// @perm
 	ListVehicles(ctx context.Context, in *ListVehiclesRequest, opts ...grpc.CallOption) (*ListVehiclesResponse, error)
 }
 
@@ -47,7 +47,7 @@ func (c *dMVServiceClient) ListVehicles(ctx context.Context, in *ListVehiclesReq
 // All implementations must embed UnimplementedDMVServiceServer
 // for forward compatibility
 type DMVServiceServer interface {
-	// @perm: description="Search and find citizen's vehicles"
+	// @perm
 	ListVehicles(context.Context, *ListVehiclesRequest) (*ListVehiclesResponse, error)
 	mustEmbedUnimplementedDMVServiceServer()
 }
