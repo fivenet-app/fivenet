@@ -1451,6 +1451,72 @@ func (m *UpdateRolePermsRequest) validate(all bool) error {
 
 	// no validation rules for Id
 
+	if m.Perms != nil {
+
+		if all {
+			switch v := interface{}(m.GetPerms()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateRolePermsRequestValidationError{
+						field:  "Perms",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateRolePermsRequestValidationError{
+						field:  "Perms",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetPerms()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateRolePermsRequestValidationError{
+					field:  "Perms",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Attrs != nil {
+
+		if all {
+			switch v := interface{}(m.GetAttrs()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateRolePermsRequestValidationError{
+						field:  "Attrs",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateRolePermsRequestValidationError{
+						field:  "Attrs",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetAttrs()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateRolePermsRequestValidationError{
+					field:  "Attrs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UpdateRolePermsRequestMultiError(errors)
 	}
@@ -1530,6 +1596,409 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateRolePermsRequestValidationError{}
+
+// Validate checks the field values on PermsUpdate with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PermsUpdate) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PermsUpdate with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PermsUpdateMultiError, or
+// nil if none found.
+func (m *PermsUpdate) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PermsUpdate) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetToUpdate() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PermsUpdateValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PermsUpdateValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PermsUpdateValidationError{
+					field:  fmt.Sprintf("ToUpdate[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PermsUpdateMultiError(errors)
+	}
+
+	return nil
+}
+
+// PermsUpdateMultiError is an error wrapping multiple validation errors
+// returned by PermsUpdate.ValidateAll() if the designated constraints aren't met.
+type PermsUpdateMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PermsUpdateMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PermsUpdateMultiError) AllErrors() []error { return m }
+
+// PermsUpdateValidationError is the validation error returned by
+// PermsUpdate.Validate if the designated constraints aren't met.
+type PermsUpdateValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PermsUpdateValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PermsUpdateValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PermsUpdateValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PermsUpdateValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PermsUpdateValidationError) ErrorName() string { return "PermsUpdateValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PermsUpdateValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPermsUpdate.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PermsUpdateValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PermsUpdateValidationError{}
+
+// Validate checks the field values on PermItem with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PermItem) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PermItem with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PermItemMultiError, or nil
+// if none found.
+func (m *PermItem) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PermItem) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Val
+
+	if len(errors) > 0 {
+		return PermItemMultiError(errors)
+	}
+
+	return nil
+}
+
+// PermItemMultiError is an error wrapping multiple validation errors returned
+// by PermItem.ValidateAll() if the designated constraints aren't met.
+type PermItemMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PermItemMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PermItemMultiError) AllErrors() []error { return m }
+
+// PermItemValidationError is the validation error returned by
+// PermItem.Validate if the designated constraints aren't met.
+type PermItemValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PermItemValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PermItemValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PermItemValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PermItemValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PermItemValidationError) ErrorName() string { return "PermItemValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PermItemValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPermItem.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PermItemValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PermItemValidationError{}
+
+// Validate checks the field values on AttrsUpdate with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttrsUpdate) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AttrsUpdate with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in AttrsUpdateMultiError, or
+// nil if none found.
+func (m *AttrsUpdate) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttrsUpdate) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetToUpdate() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AttrsUpdateValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AttrsUpdateValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AttrsUpdateValidationError{
+					field:  fmt.Sprintf("ToUpdate[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetToRemove() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AttrsUpdateValidationError{
+						field:  fmt.Sprintf("ToRemove[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AttrsUpdateValidationError{
+						field:  fmt.Sprintf("ToRemove[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AttrsUpdateValidationError{
+					field:  fmt.Sprintf("ToRemove[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return AttrsUpdateMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttrsUpdateMultiError is an error wrapping multiple validation errors
+// returned by AttrsUpdate.ValidateAll() if the designated constraints aren't met.
+type AttrsUpdateMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttrsUpdateMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttrsUpdateMultiError) AllErrors() []error { return m }
+
+// AttrsUpdateValidationError is the validation error returned by
+// AttrsUpdate.Validate if the designated constraints aren't met.
+type AttrsUpdateValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttrsUpdateValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttrsUpdateValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttrsUpdateValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttrsUpdateValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttrsUpdateValidationError) ErrorName() string { return "AttrsUpdateValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AttrsUpdateValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttrsUpdate.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttrsUpdateValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttrsUpdateValidationError{}
 
 // Validate checks the field values on UpdateRolePermsResponse with the rules
 // defined in the proto definition for this message. If any rules are

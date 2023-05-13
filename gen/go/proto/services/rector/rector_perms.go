@@ -3,16 +3,13 @@ package rector
 import (
 	"context"
 	"errors"
-	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
@@ -52,44 +49,14 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 	return role, true, nil
 }
 
-func (s *Server) filterPermissions(ctx context.Context, ps collections.Permissions, jobFilter bool) (collections.Permissions, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-
-	jobsAttr, err := s.p.Attr(userId, job, jobGrade, RectorServicePerm, RectorServiceGetPermissionsPerm, perms.Key("Jobs"))
-	if err != nil {
-		return nil, err
-	}
-	var jobs perms.StringList
-	if jobsAttr != nil {
-		jobs = jobsAttr.(perms.StringList)
-	}
-
-	// Disable job filter when superuser
-	if s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
-		jobFilter = false
-	}
-
-	filtered := collections.Permissions{}
+func (s *Server) filterPermissions(ctx context.Context, ps []*permissions.Permission) ([]*permissions.Permission, error) {
+	filtered := []*permissions.Permission{}
 
 outer:
 	for _, p := range ps {
 		for i := 0; i < len(ignoredGuardPermissions); i++ {
 			if p.GuardName == ignoredGuardPermissions[i] {
 				continue outer
-			}
-			if jobFilter {
-				for _, jc := range config.C.Game.PermissionRoleJobs {
-					if strings.HasSuffix(p.GuardName, "-"+jc) {
-						if len(jobs) == 0 {
-							continue outer
-						}
-						for _, j := range jobs {
-							if !strings.HasSuffix(p.GuardName, "-"+j) {
-								continue outer
-							}
-						}
-					}
-				}
 			}
 		}
 
@@ -99,18 +66,60 @@ outer:
 	return filtered, nil
 }
 
-func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64, jobFilter bool) ([]uint64, error) {
+func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64) ([]uint64, error) {
+	if len(ids) == 0 {
+		return ids, nil
+	}
+
 	perms, err := s.p.GetPermissionsByIDs(ids...)
 	if err != nil {
 		return nil, err
 	}
 
-	filtered, err := s.filterPermissions(ctx, perms, jobFilter)
+	filtered, err := s.filterPermissions(ctx, perms)
 	if err != nil {
 		return nil, err
 	}
 
-	return filtered.IDs(), nil
+	permIds := make([]uint64, len(filtered))
+	for i := 0; i < len(filtered); i++ {
+		permIds[i] = filtered[i].Id
+	}
+	return permIds, nil
+}
+
+func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.RoleAttribute) ([]*permissions.RoleAttribute, error) {
+	if len(attrs) == 0 {
+		return attrs, nil
+	}
+
+	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	if s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+		return attrs, nil
+	}
+
+	jobsAttr, err := s.p.Attr(userId, job, jobGrade, RectorServicePerm, RectorServiceGetPermissionsPerm, perms.Key("Jobs"))
+	if err != nil {
+		return nil, err
+	}
+	var jobs perms.StringList
+	if jobsAttr != nil {
+		jobs = jobsAttr.(perms.StringList)
+	}
+	_ = jobs
+
+	for _, a := range attrs {
+		switch perms.AttributeTypes(a.Type) {
+		case perms.StringListAttributeType:
+			//
+		case perms.JobListAttributeType:
+			fallthrough
+		case perms.JobRankListAttributeType:
+			//
+		}
+	}
+
+	return attrs, nil
 }
 
 func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesResponse, error) {
@@ -163,15 +172,13 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 	}
 	s.c.EnrichJobInfo(resp.Role)
 
-	fPerms, err := s.filterPermissions(ctx, perms, false)
+	fPerms, err := s.filterPermissions(ctx, perms)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
 
 	resp.Role.Permissions = make([]*permissions.Permission, len(fPerms))
-	for k := 0; k < len(fPerms); k++ {
-		resp.Role.Permissions[k] = permissions.ConvertFromPerm(fPerms[k])
-	}
+	copy(resp.Role.Permissions, fPerms)
 
 	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	resp.Role.Attributes, err = s.p.GetRoleAttributes(job, jobGrade)
@@ -283,31 +290,86 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsReques
 		return nil, NoPermissionErr
 	}
 
-	toAdd, err := s.filterPermissionIDs(ctx, req.ToAdd, true)
-	if err != nil {
-		return nil, InvalidRequestErr
-	}
-
-	toDelete, err := s.filterPermissionIDs(ctx, req.ToRemove, true)
-	if err != nil {
-		return nil, InvalidRequestErr
-	}
-
-	resp := &UpdateRolePermsResponse{}
-	if len(toAdd) > 0 {
-		if err := s.p.AddPermissionsToRole(role.ID, toAdd...); err != nil {
+	if req.Perms != nil {
+		if err := s.handlPermissionsUpdate(ctx, role, req.Perms); err != nil {
 			return nil, err
 		}
 	}
-	if len(toDelete) > 0 {
-		if err := s.p.RemovePermissionsFromRole(role.ID, toDelete...); err != nil {
+	if req.Attrs != nil {
+		if err := s.handleAttributeUpdate(ctx, role, req.Attrs); err != nil {
 			return nil, err
 		}
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
-	return resp, nil
+	return &UpdateRolePermsResponse{}, nil
+}
+
+func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.FivenetRoles, permsUpdate *PermsUpdate) error {
+	updatePermIds := make([]uint64, len(permsUpdate.ToUpdate))
+	for i := 0; i < len(permsUpdate.ToUpdate); i++ {
+		updatePermIds[i] = permsUpdate.ToUpdate[i].Id
+	}
+	toUpdate, err := s.filterPermissionIDs(ctx, updatePermIds)
+	if err != nil {
+		return InvalidRequestErr
+	}
+
+	toDelete, err := s.filterPermissionIDs(ctx, permsUpdate.ToRemove)
+	if err != nil {
+		return InvalidRequestErr
+	}
+
+	if len(toUpdate) > 0 {
+		toUpdatePerms := make([]perms.AddPerm, len(permsUpdate.ToUpdate))
+		for _, v := range toUpdate {
+			for i := 0; i < len(permsUpdate.ToUpdate); i++ {
+				if v == permsUpdate.ToUpdate[i].Id {
+					toUpdatePerms[i] = perms.AddPerm{
+						Id:  permsUpdate.ToUpdate[i].Id,
+						Val: permsUpdate.ToUpdate[i].Val,
+					}
+					break
+				}
+			}
+		}
+		if err := s.p.UpdateRolePermissions(role.ID, toUpdatePerms...); err != nil {
+			return err
+		}
+	}
+	if len(toDelete) > 0 {
+		if err := s.p.RemovePermissionsFromRole(role.ID, toDelete...); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetRoles, attrUpdates *AttrsUpdate) error {
+	toUpdate, err := s.filterAttributes(ctx, attrUpdates.ToUpdate)
+	if err != nil {
+		return InvalidRequestErr
+	}
+
+	toDelete, err := s.filterAttributes(ctx, attrUpdates.ToRemove)
+	if err != nil {
+		return InvalidRequestErr
+	}
+
+	if len(toUpdate) > 0 {
+		if err := s.p.AddAttributesToRole(role.ID, toUpdate...); err != nil {
+			return err
+		}
+	}
+	if len(toDelete) > 0 {
+		if err := s.p.RemoveAttributesFromRole(role.ID, toDelete...); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest) (*GetPermissionsResponse, error) {
@@ -316,16 +378,14 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 		return nil, err
 	}
 
-	filtered, err := s.filterPermissions(ctx, perms, true)
+	filtered, err := s.filterPermissions(ctx, perms)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
 
 	resp := &GetPermissionsResponse{}
 	resp.Permissions = make([]*permissions.Permission, len(filtered))
-	for k := 0; k < len(filtered); k++ {
-		resp.Permissions[k] = permissions.ConvertFromPerm(filtered[k])
-	}
+	copy(resp.Permissions, filtered)
 
 	return resp, nil
 }

@@ -161,7 +161,7 @@ func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) bool {
 		if !ok {
 			continue
 		}
-		if val == 1 {
+		if val {
 			return true
 		}
 	}

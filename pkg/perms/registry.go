@@ -66,8 +66,6 @@ func (p *Perms) Register() error {
 		}
 	}
 
-	// TODO create "empty" roles for each job
-
 	return p.cleanupRoles()
 }
 

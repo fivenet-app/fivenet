@@ -3,7 +3,7 @@ package perms
 import (
 	"fmt"
 
-	"github.com/galexrt/fivenet/pkg/perms/collections"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -74,14 +74,16 @@ func (p *Perms) UpdatePermission(id uint64, category Category, name Name) error 
 	return nil
 }
 
-func (p *Perms) GetAllPermissions() (collections.Permissions, error) {
+func (p *Perms) GetAllPermissions() ([]*permissions.Permission, error) {
+	tPerms := tPerms.AS("permission")
+
 	stmt := tPerms.
 		SELECT(
 			tPerms.AllColumns,
 		).
 		FROM(tPerms)
 
-	var dest collections.Permissions
+	var dest []*permissions.Permission
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
@@ -109,11 +111,13 @@ func (p *Perms) RemovePermissionsByIDs(ids ...uint64) error {
 	return nil
 }
 
-func (p *Perms) GetPermissionsByIDs(ids ...uint64) (collections.Permissions, error) {
+func (p *Perms) GetPermissionsByIDs(ids ...uint64) ([]*permissions.Permission, error) {
 	wIds := make([]jet.Expression, len(ids))
 	for i := 0; i < len(ids); i++ {
 		wIds[i] = jet.Uint64(ids[i])
 	}
+
+	tPerms := tPerms.AS("permission")
 
 	stmt := tPerms.
 		SELECT(
@@ -124,7 +128,7 @@ func (p *Perms) GetPermissionsByIDs(ids ...uint64) (collections.Permissions, err
 			tPerms.ID.IN(wIds...),
 		)
 
-	var dest collections.Permissions
+	var dest []*permissions.Permission
 	err := stmt.QueryContext(p.ctx, p.db, &dest)
 	if err != nil {
 		return nil, err

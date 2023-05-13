@@ -134,12 +134,10 @@ func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocument
 			req.Category.Description,
 			job,
 		).
-		WHERE(
-			jet.AND(
-				dCategory.ID.EQ(jet.Uint64(req.Category.Id)),
-				dCategory.Job.EQ(jet.String(job)),
-			),
-		)
+		WHERE(jet.AND(
+			dCategory.ID.EQ(jet.Uint64(req.Category.Id)),
+			dCategory.Job.EQ(jet.String(job)),
+		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err

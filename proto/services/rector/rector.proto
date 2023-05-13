@@ -53,8 +53,23 @@ message DeleteRoleResponse {}
 
 message UpdateRolePermsRequest {
   uint64 id = 1;
-  repeated uint64 to_add = 2;
-  repeated uint64 to_remove = 3;
+  optional PermsUpdate perms = 2;
+  optional AttrsUpdate attrs = 3;
+}
+
+message PermsUpdate {
+  repeated PermItem to_update = 1;
+  repeated uint64 to_remove = 2;
+}
+
+message PermItem {
+  uint64 id = 1;
+  bool val = 2;
+}
+
+message AttrsUpdate {
+  repeated resources.permissions.RoleAttribute to_update = 1;
+  repeated resources.permissions.RoleAttribute to_remove = 2;
 }
 
 message UpdateRolePermsResponse {}

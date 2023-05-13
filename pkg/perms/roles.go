@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -171,6 +172,8 @@ func (p *Perms) CreateRole(job string, grade int32) (*model.FivenetRoles, error)
 		}
 	}
 
+	p.rolePermsMap.Store(role.ID, map[uint64]bool{})
+
 	return role, nil
 }
 
@@ -181,7 +184,13 @@ func (p *Perms) DeleteRole(id uint64) error {
 			tRoles.ID.EQ(jet.Uint64(id)),
 		).
 		ExecContext(p.ctx, p.db)
-	return err
+	if err != nil {
+		return err
+	}
+
+	p.rolePermsMap.Delete(id)
+
+	return nil
 }
 
 func (p *Perms) GetRoleByJobAndGrade(job string, grade int32) (*model.FivenetRoles, error) {
@@ -207,10 +216,13 @@ func (p *Perms) GetRoleByJobAndGrade(job string, grade int32) (*model.FivenetRol
 	return &dest, nil
 }
 
-func (p *Perms) GetRolePermissions(id uint64) (collections.Permissions, error) {
+func (p *Perms) GetRolePermissions(id uint64) ([]*permissions.Permission, error) {
+	tRolePerms := tRolePerms
+	tPerms := tPerms.AS("permission")
 	stmt := tRolePerms.
 		SELECT(
 			tPerms.AllColumns,
+			tRolePerms.Val.AS("permission.val"),
 		).
 		FROM(
 			tRolePerms.
@@ -226,7 +238,7 @@ func (p *Perms) GetRolePermissions(id uint64) (collections.Permissions, error) {
 			tPerms.ID.ASC(),
 		)
 
-	var dest collections.Permissions
+	var dest []*permissions.Permission
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
@@ -234,36 +246,50 @@ func (p *Perms) GetRolePermissions(id uint64) (collections.Permissions, error) {
 	return dest, nil
 }
 
-func (p *Perms) AddPermissionsToRole(roleId uint64, perms ...uint64) error {
-	role, err := p.GetRole(roleId)
-	if err != nil {
-		return err
-	}
+type AddPerm struct {
+	Id  uint64
+	Val bool
+}
 
+func (p *Perms) UpdateRolePermissions(roleId uint64, perms ...AddPerm) error {
 	var rolePerms []struct {
-		PermissionID uint64
 		RoleID       uint64
+		PermissionID uint64
+		Val          bool
 	}
-	for _, permId := range perms {
+	for _, perm := range perms {
 		rolePerms = append(rolePerms, struct {
-			PermissionID uint64
 			RoleID       uint64
+			PermissionID uint64
+			Val          bool
 		}{
-			PermissionID: permId,
-			RoleID:       role.ID,
+			RoleID:       roleId,
+			PermissionID: perm.Id,
+			Val:          perm.Val,
 		})
 	}
 
-	_, err = tRolePerms.
+	stmt := tRolePerms.
 		INSERT(
 			tRolePerms.PermissionID,
 			tRolePerms.RoleID,
+			tRolePerms.Val,
 		).
 		MODELS(rolePerms).
-		ExecContext(p.ctx, p.db)
+		ON_DUPLICATE_KEY_UPDATE(
+			tRolePerms.Val.SET(jet.BoolExp(jet.Raw("values(val)"))),
+		)
 
-	if err != nil && !dbutils.IsDuplicateError(err) {
+	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil && !dbutils.IsDuplicateError(err) {
 		return err
+	}
+
+	roleCache, ok := p.rolePermsMap.Load(roleId)
+	if !ok {
+		return nil
+	}
+	for _, v := range rolePerms {
+		roleCache[v.PermissionID] = v.Val
 	}
 
 	return nil
@@ -283,6 +309,17 @@ func (p *Perms) RemovePermissionsFromRole(roleId uint64, perms ...uint64) error 
 		))
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
+	if err != nil {
+		return err
+	}
 
-	return err
+	roleCache, ok := p.rolePermsMap.Load(roleId)
+	if !ok {
+		return nil
+	}
+	for _, v := range perms {
+		delete(roleCache, v)
+	}
+
+	return nil
 }

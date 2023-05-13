@@ -14,8 +14,8 @@ import (
 )
 
 type Permissions interface {
-	GetAllPermissions() (collections.Permissions, error)
-	GetPermissionsByIDs(ids ...uint64) (collections.Permissions, error)
+	GetAllPermissions() ([]*permissions.Permission, error)
+	GetPermissionsByIDs(ids ...uint64) ([]*permissions.Permission, error)
 	CreatePermission(category Category, name Name) (uint64, error)
 	GetPermissionsOfUser(userId int32, job string, grade int32) (collections.Permissions, error)
 
@@ -26,11 +26,11 @@ type Permissions interface {
 
 	GetRole(id uint64) (*model.FivenetRoles, error)
 	GetRoleByJobAndGrade(job string, grade int32) (*model.FivenetRoles, error)
-	GetRolePermissions(id uint64) (collections.Permissions, error)
+	GetRolePermissions(id uint64) ([]*permissions.Permission, error)
 
 	CreateRole(job string, grade int32) (*model.FivenetRoles, error)
 	DeleteRole(id uint64) error
-	AddPermissionsToRole(id uint64, perms ...uint64) error
+	UpdateRolePermissions(id uint64, perms ...AddPerm) error
 	RemovePermissionsFromRole(id uint64, perms ...uint64) error
 
 	Can(userId int32, job string, grade int32, category Category, name Name) bool
@@ -39,6 +39,9 @@ type Permissions interface {
 	CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues string) (uint64, error)
 	UpdateAttribute(attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues string) error
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
+	AddAttributesToRole(roleId uint64, attrs ...*permissions.RoleAttribute) error
+	UpdateRoleAttributes(roleId uint64, attrs ...*permissions.RoleAttribute) error
+	RemoveAttributesFromRole(roleId uint64, attrs ...*permissions.RoleAttribute) error
 
 	Attr(userId int32, job string, grade int32, category Category, name Name, key Key) (any, error)
 }
@@ -51,7 +54,7 @@ type Perms struct {
 	guardToPermIDMap syncx.Map[string, uint64]
 	permIdToAttrsMap syncx.Map[uint64, map[Key]Attr]
 	jobsToRoleIDMap  syncx.Map[string, map[int32]uint64]
-	rolePermsMap     syncx.Map[uint64, map[uint64]int16]
+	rolePermsMap     syncx.Map[uint64, map[uint64]bool]
 
 	userCanCacheTTL time.Duration
 	userCanCache    *cache.Cache[int32, map[uint64]bool]
@@ -72,7 +75,7 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 		guardToPermIDMap: syncx.Map[string, uint64]{},
 		permIdToAttrsMap: syncx.Map[uint64, map[Key]Attr]{},
 		jobsToRoleIDMap:  syncx.Map[string, map[int32]uint64]{},
-		rolePermsMap:     syncx.Map[uint64, map[uint64]int16]{},
+		rolePermsMap:     syncx.Map[uint64, map[uint64]bool]{},
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
@@ -144,14 +147,14 @@ func (p *Perms) loadRolePermissions() error {
 	var dest []struct {
 		RoleID uint64
 		ID     uint64
-		Val    int16
+		Val    bool
 	}
 	if err := stmt.Query(p.db, &dest); err != nil {
 		return err
 	}
 
 	for _, v := range dest {
-		perms, loaded := p.rolePermsMap.LoadOrStore(v.RoleID, map[uint64]int16{
+		perms, loaded := p.rolePermsMap.LoadOrStore(v.RoleID, map[uint64]bool{
 			v.ID: v.Val,
 		})
 		if loaded {

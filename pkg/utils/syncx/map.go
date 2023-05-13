@@ -42,6 +42,11 @@ func (m *Map[K, V]) Store(key K, value V) {
 	m.m.Store(key, value)
 }
 
+func (m *Map[K, V]) Swap(key K, value V) (previous any, loaded bool) {
+	prev, loaded := m.m.Swap(key, value)
+	return prev.(V), loaded
+}
+
 func (m *Map[K, V]) Keys() []K {
 	keys := []K{}
 

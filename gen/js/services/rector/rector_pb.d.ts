@@ -225,15 +225,15 @@ export class UpdateRolePermsRequest extends jspb.Message {
   getId(): number;
   setId(value: number): UpdateRolePermsRequest;
 
-  getToAddList(): Array<number>;
-  setToAddList(value: Array<number>): UpdateRolePermsRequest;
-  clearToAddList(): UpdateRolePermsRequest;
-  addToAdd(value: number, index?: number): UpdateRolePermsRequest;
+  getPerms(): PermsUpdate | undefined;
+  setPerms(value?: PermsUpdate): UpdateRolePermsRequest;
+  hasPerms(): boolean;
+  clearPerms(): UpdateRolePermsRequest;
 
-  getToRemoveList(): Array<number>;
-  setToRemoveList(value: Array<number>): UpdateRolePermsRequest;
-  clearToRemoveList(): UpdateRolePermsRequest;
-  addToRemove(value: number, index?: number): UpdateRolePermsRequest;
+  getAttrs(): AttrsUpdate | undefined;
+  setAttrs(value?: AttrsUpdate): UpdateRolePermsRequest;
+  hasAttrs(): boolean;
+  clearAttrs(): UpdateRolePermsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateRolePermsRequest.AsObject;
@@ -246,8 +246,92 @@ export class UpdateRolePermsRequest extends jspb.Message {
 export namespace UpdateRolePermsRequest {
   export type AsObject = {
     id: number,
-    toAddList: Array<number>,
+    perms?: PermsUpdate.AsObject,
+    attrs?: AttrsUpdate.AsObject,
+  }
+
+  export enum PermsCase { 
+    _PERMS_NOT_SET = 0,
+    PERMS = 2,
+  }
+
+  export enum AttrsCase { 
+    _ATTRS_NOT_SET = 0,
+    ATTRS = 3,
+  }
+}
+
+export class PermsUpdate extends jspb.Message {
+  getToUpdateList(): Array<PermItem>;
+  setToUpdateList(value: Array<PermItem>): PermsUpdate;
+  clearToUpdateList(): PermsUpdate;
+  addToUpdate(value?: PermItem, index?: number): PermItem;
+
+  getToRemoveList(): Array<number>;
+  setToRemoveList(value: Array<number>): PermsUpdate;
+  clearToRemoveList(): PermsUpdate;
+  addToRemove(value: number, index?: number): PermsUpdate;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PermsUpdate.AsObject;
+  static toObject(includeInstance: boolean, msg: PermsUpdate): PermsUpdate.AsObject;
+  static serializeBinaryToWriter(message: PermsUpdate, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PermsUpdate;
+  static deserializeBinaryFromReader(message: PermsUpdate, reader: jspb.BinaryReader): PermsUpdate;
+}
+
+export namespace PermsUpdate {
+  export type AsObject = {
+    toUpdateList: Array<PermItem.AsObject>,
     toRemoveList: Array<number>,
+  }
+}
+
+export class PermItem extends jspb.Message {
+  getId(): number;
+  setId(value: number): PermItem;
+
+  getVal(): boolean;
+  setVal(value: boolean): PermItem;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PermItem.AsObject;
+  static toObject(includeInstance: boolean, msg: PermItem): PermItem.AsObject;
+  static serializeBinaryToWriter(message: PermItem, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PermItem;
+  static deserializeBinaryFromReader(message: PermItem, reader: jspb.BinaryReader): PermItem;
+}
+
+export namespace PermItem {
+  export type AsObject = {
+    id: number,
+    val: boolean,
+  }
+}
+
+export class AttrsUpdate extends jspb.Message {
+  getToUpdateList(): Array<resources_permissions_permissions_pb.RoleAttribute>;
+  setToUpdateList(value: Array<resources_permissions_permissions_pb.RoleAttribute>): AttrsUpdate;
+  clearToUpdateList(): AttrsUpdate;
+  addToUpdate(value?: resources_permissions_permissions_pb.RoleAttribute, index?: number): resources_permissions_permissions_pb.RoleAttribute;
+
+  getToRemoveList(): Array<resources_permissions_permissions_pb.RoleAttribute>;
+  setToRemoveList(value: Array<resources_permissions_permissions_pb.RoleAttribute>): AttrsUpdate;
+  clearToRemoveList(): AttrsUpdate;
+  addToRemove(value?: resources_permissions_permissions_pb.RoleAttribute, index?: number): resources_permissions_permissions_pb.RoleAttribute;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): AttrsUpdate.AsObject;
+  static toObject(includeInstance: boolean, msg: AttrsUpdate): AttrsUpdate.AsObject;
+  static serializeBinaryToWriter(message: AttrsUpdate, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AttrsUpdate;
+  static deserializeBinaryFromReader(message: AttrsUpdate, reader: jspb.BinaryReader): AttrsUpdate;
+}
+
+export namespace AttrsUpdate {
+  export type AsObject = {
+    toUpdateList: Array<resources_permissions_permissions_pb.RoleAttribute.AsObject>,
+    toRemoveList: Array<resources_permissions_permissions_pb.RoleAttribute.AsObject>,
   }
 }
 

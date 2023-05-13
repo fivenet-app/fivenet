@@ -12,7 +12,7 @@ message Permission {
   string category = 3 [(validate.rules).string.max_len = 128]; // @gotags: alias:"category"
   string name = 4 [(validate.rules).string.max_len = 255]; // @gotags: alias:"name"
   string guard_name = 5 [(validate.rules).string.max_len = 255]; // @gotags: alias:"guard_name"
-  int32 val = 6 [(validate.rules).int32 = {gte: -1, lte: 1}]; // @gotags: alias:"val"
+  bool val = 6; // @gotags: alias:"val"
 }
 
 message Role {
@@ -46,5 +46,5 @@ message RoleAttribute {
   string key = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"key"
   string type = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"type"
   string value = 9 [(validate.rules).string.max_len = 65535]; // @gotags: alias:"value"
-  string valid_values = 10 [(validate.rules).string.max_len = 65535]; // @gotags: alias:"valid_values"
+  repeated string valid_values = 10; // @gotags: alias:"valid_values"
 }

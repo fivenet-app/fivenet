@@ -101,7 +101,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.resources.permissions.RoleAttribute = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.resources.permissions.RoleAttribute.repeatedFields_, null);
 };
 goog.inherits(proto.resources.permissions.RoleAttribute, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -148,7 +148,7 @@ proto.resources.permissions.Permission.toObject = function(includeInstance, msg)
     category: jspb.Message.getFieldWithDefault(msg, 3, ""),
     name: jspb.Message.getFieldWithDefault(msg, 4, ""),
     guardName: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    val: jspb.Message.getFieldWithDefault(msg, 6, 0)
+    val: jspb.Message.getBooleanFieldWithDefault(msg, 6, false)
   };
 
   if (includeInstance) {
@@ -207,7 +207,7 @@ proto.resources.permissions.Permission.deserializeBinaryFromReader = function(ms
       msg.setGuardName(value);
       break;
     case 6:
-      var value = /** @type {number} */ (reader.readInt32());
+      var value = /** @type {boolean} */ (reader.readBool());
       msg.setVal(value);
       break;
     default:
@@ -276,8 +276,8 @@ proto.resources.permissions.Permission.serializeBinaryToWriter = function(messag
     );
   }
   f = message.getVal();
-  if (f !== 0) {
-    writer.writeInt32(
+  if (f) {
+    writer.writeBool(
       6,
       f
     );
@@ -395,20 +395,20 @@ proto.resources.permissions.Permission.prototype.setGuardName = function(value) 
 
 
 /**
- * optional int32 val = 6;
- * @return {number}
+ * optional bool val = 6;
+ * @return {boolean}
  */
 proto.resources.permissions.Permission.prototype.getVal = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
 };
 
 
 /**
- * @param {number} value
+ * @param {boolean} value
  * @return {!proto.resources.permissions.Permission} returns this
  */
 proto.resources.permissions.Permission.prototype.setVal = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3BooleanField(this, 6, value);
 };
 
 
@@ -1184,6 +1184,13 @@ proto.resources.permissions.Attribute.prototype.clearValidvaluesList = function(
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.resources.permissions.RoleAttribute.repeatedFields_ = [10];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -1224,7 +1231,7 @@ proto.resources.permissions.RoleAttribute.toObject = function(includeInstance, m
     key: jspb.Message.getFieldWithDefault(msg, 7, ""),
     type: jspb.Message.getFieldWithDefault(msg, 8, ""),
     value: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    validValues: jspb.Message.getFieldWithDefault(msg, 10, "")
+    validValuesList: (f = jspb.Message.getRepeatedField(msg, 10)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -1300,7 +1307,7 @@ proto.resources.permissions.RoleAttribute.deserializeBinaryFromReader = function
       break;
     case 10:
       var value = /** @type {string} */ (reader.readString());
-      msg.setValidValues(value);
+      msg.addValidValues(value);
       break;
     default:
       reader.skipField();
@@ -1395,9 +1402,9 @@ proto.resources.permissions.RoleAttribute.serializeBinaryToWriter = function(mes
       f
     );
   }
-  f = message.getValidValues();
+  f = message.getValidValuesList();
   if (f.length > 0) {
-    writer.writeString(
+    writer.writeRepeatedString(
       10,
       f
     );
@@ -1587,20 +1594,39 @@ proto.resources.permissions.RoleAttribute.prototype.setValue = function(value) {
 
 
 /**
- * optional string valid_values = 10;
- * @return {string}
+ * repeated string valid_values = 10;
+ * @return {!Array<string>}
  */
-proto.resources.permissions.RoleAttribute.prototype.getValidValues = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+proto.resources.permissions.RoleAttribute.prototype.getValidValuesList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 10));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.resources.permissions.RoleAttribute} returns this
+ */
+proto.resources.permissions.RoleAttribute.prototype.setValidValuesList = function(value) {
+  return jspb.Message.setField(this, 10, value || []);
 };
 
 
 /**
  * @param {string} value
+ * @param {number=} opt_index
  * @return {!proto.resources.permissions.RoleAttribute} returns this
  */
-proto.resources.permissions.RoleAttribute.prototype.setValidValues = function(value) {
-  return jspb.Message.setProto3StringField(this, 10, value);
+proto.resources.permissions.RoleAttribute.prototype.addValidValues = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 10, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.resources.permissions.RoleAttribute} returns this
+ */
+proto.resources.permissions.RoleAttribute.prototype.clearValidValuesList = function() {
+  return this.setValidValuesList([]);
 };
 
 

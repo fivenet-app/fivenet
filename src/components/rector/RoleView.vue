@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Permission, Role } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { RpcError } from 'grpc-web';
-import { UpdateRolePermsRequest, DeleteRoleRequest, GetPermissionsRequest, GetRoleRequest } from '@fivenet/gen/services/rector/rector_pb';
+import { UpdateRolePermsRequest, DeleteRoleRequest, GetPermissionsRequest, GetRoleRequest, PermsUpdate, PermItem } from '@fivenet/gen/services/rector/rector_pb';
 import { ChevronDownIcon, CheckIcon, XMarkIcon, MinusIcon } from '@heroicons/vue/24/solid';
 import { TrashIcon } from '@heroicons/vue/20/solid';
 import Divider from '~/components/partials/Divider.vue';
@@ -29,6 +29,7 @@ async function getRole(): Promise<void> {
 
     try {
         const resp = await $grpc.getRectorClient().getRole(req, null);
+        // TODO Take care of attributes
 
         role.value = resp.getRole();
     } catch (e) {
@@ -68,7 +69,7 @@ interface Perm {
 
 const permList = ref<Perm[]>([]);
 const permCategories = ref<Set<string>>(new Set());
-const permStates = ref<Map<number, boolean>>(new Map());
+const permStates = ref<Map<number, boolean | undefined>>(new Map());
 
 async function getPermissions(): Promise<void> {
     const req = new GetPermissionsRequest();
@@ -101,49 +102,54 @@ async function genPermissionCategories(): Promise<void> {
 
 async function propogatePermissionStates(): Promise<void> {
     role.value?.getPermissionsList().forEach(perm => {
-        permStates.value.set(perm.getId(), true);
+        permStates.value.set(perm.getId(), Boolean(perm.getVal()));
     });
 }
 
-async function updatePermissionState(perm: number, state?: boolean): Promise<void> {
-    if (state === undefined) {
-        permStates.value.delete(perm);
-    } else {
-        permStates.value.set(perm, state);
-    }
+async function updatePermissionState(perm: number, state: boolean | undefined): Promise<void> {
+    permStates.value.set(perm, state);
 }
 
 async function updatePermissions(): Promise<void> {
     const currentPermissions = role.value?.getPermissionsList().map(p => p.getId()) ?? [];
 
-    const permsToAdd: number[] = [];
+    const permsToUpdate: PermItem[] = [];
     const permsToRemove: number[] = [];
     permStates.value.forEach((state, perm) => {
-        if (state && !currentPermissions.includes(perm)) permsToAdd.push(perm);
-        if (!state && currentPermissions.includes(perm)) permsToRemove.push(perm);
+        if (state !== undefined) {
+            const p = role.value?.getPermissionsList().find(v => v.getId() == perm);
+
+            if (p?.getVal() != state) {
+                const item = new PermItem();
+                permsToUpdate.push(item.setId(perm).setVal(state));
+            }
+        }
+        if (state === undefined && currentPermissions.includes(perm)) permsToRemove.push(perm);
     });
 
-    if (permsToAdd.length == 0 && permsToRemove.length == 0) {
+    if (permsToUpdate.length == 0 && permsToRemove.length == 0) {
         return;
     }
 
     const req = new UpdateRolePermsRequest();
     req.setId(props.roleId);
 
-    req.setToAddList(permsToAdd);
-    req.setToRemoveList(permsToRemove);
+    const perms = new PermsUpdate();
+    perms.setToUpdateList(permsToUpdate);
+    perms.setToRemoveList(permsToRemove);
+    req.setPerms(perms);
 
     try {
         await $grpc.getRectorClient().updateRolePerms(req, null);
+
+        notifications.dispatchNotification({
+            title: t('notifications.rector.role_updated.title'),
+            content: t('notifications.rector.role_updated.content'),
+            type: 'success'
+        });
     } catch (e) {
         $grpc.handleRPCError(e as RpcError);
     }
-
-    notifications.dispatchNotification({
-        title: t('notifications.rector.role_updated.title'),
-        content: t('notifications.rector.role_updated.content'),
-        type: 'success'
-    });
 }
 
 onMounted(async () => {
@@ -202,13 +208,13 @@ onMounted(async () => {
                                                 class="transition-colors rounded-l-lg p-1 bg-success-600/50 data-[active=true]:bg-success-600 text-base-300 data-[active=true]:text-neutral hover:bg-success-600/70">
                                                 <CheckIcon class="w-6 h-6" />
                                             </button>
-                                            <button :data-active="!permStates.has(perm.id)"
+                                            <button :data-active="!permStates.has(perm.id) || permStates.get(perm.id) === undefined"
                                                 @click="updatePermissionState(perm.id, undefined)"
                                                 class="transition-colors p-1 bg-base-700 data-[active=true]:bg-base-500 text-base-300 data-[active=true]:text-neutral hover:bg-base-600">
                                                 <MinusIcon class="w-6 h-6" />
                                             </button>
                                             <button
-                                                :data-active="permStates.has(perm.id) ? !permStates.get(perm.id) : false"
+                                                :data-active="permStates.has(perm.id) ? (permStates.get(perm.id) !== undefined && !permStates.get(perm.id)) : false"
                                                 @click="updatePermissionState(perm.id, false)"
                                                 class="transition-colors rounded-r-lg p-1 bg-error-600/50 data-[active=true]:bg-error-600 text-base-300 data-[active=true]:text-neutral hover:bg-error-600/70">
                                                 <XMarkIcon class="w-6 h-6" />

@@ -21,8 +21,8 @@ export class Permission extends jspb.Message {
   getGuardName(): string;
   setGuardName(value: string): Permission;
 
-  getVal(): number;
-  setVal(value: number): Permission;
+  getVal(): boolean;
+  setVal(value: boolean): Permission;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Permission.AsObject;
@@ -39,7 +39,7 @@ export namespace Permission {
     category: string,
     name: string,
     guardName: string,
-    val: number,
+    val: boolean,
   }
 
   export enum CreatedAtCase { 
@@ -186,8 +186,10 @@ export class RoleAttribute extends jspb.Message {
   getValue(): string;
   setValue(value: string): RoleAttribute;
 
-  getValidValues(): string;
-  setValidValues(value: string): RoleAttribute;
+  getValidValuesList(): Array<string>;
+  setValidValuesList(value: Array<string>): RoleAttribute;
+  clearValidValuesList(): RoleAttribute;
+  addValidValues(value: string, index?: number): RoleAttribute;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RoleAttribute.AsObject;
@@ -208,7 +210,7 @@ export namespace RoleAttribute {
     key: string,
     type: string,
     value: string,
-    validValues: string,
+    validValuesList: Array<string>,
   }
 
   export enum CreatedAtCase { 

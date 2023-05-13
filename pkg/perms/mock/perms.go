@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
@@ -72,8 +73,8 @@ func (p *PermsMock) RemoveUserPerm(userId int32, perm string) {
 
 // Implementation of perms.Permissions
 
-func (p *PermsMock) GetAllPermissions() (collections.Permissions, error) {
-	ps := collections.Permissions{}
+func (p *PermsMock) GetAllPermissions() ([]*permissions.Permission, error) {
+	ps := []*permissions.Permission{}
 
 	track := map[string]interface{}{}
 	i := 0
@@ -81,8 +82,8 @@ func (p *PermsMock) GetAllPermissions() (collections.Permissions, error) {
 	for _, v := range p.UserPerms {
 		for k := range v {
 			if _, ok := track[k]; !ok {
-				ps = append(ps, &model.FivenetPermissions{
-					ID:        uint64(i),
+				ps = append(ps, &permissions.Permission{
+					Id:        uint64(i),
 					Name:      k,
 					GuardName: k,
 				})
@@ -95,7 +96,7 @@ func (p *PermsMock) GetAllPermissions() (collections.Permissions, error) {
 	return ps, nil
 }
 
-func (p *PermsMock) GetPermissionsByIDs(ids ...uint64) (collections.Permissions, error) {
+func (p *PermsMock) GetPermissionsByIDs(ids ...uint64) ([]*permissions.Permission, error) {
 
 	// TODO
 
@@ -176,7 +177,7 @@ func (p *PermsMock) GetRoleByJobAndGrade(job string, grade int32) (*model.Fivene
 	return nil, nil
 }
 
-func (p *PermsMock) GetRolePermissions(id uint64) (collections.Permissions, error) {
+func (p *PermsMock) GetRolePermissions(id uint64) ([]*permissions.Permission, error) {
 
 	// TODO
 
@@ -197,7 +198,7 @@ func (p *PermsMock) DeleteRole(id uint64) error {
 	return nil
 }
 
-func (p *PermsMock) AddPermissionsToRole(id uint64, perms ...uint64) error {
+func (p *PermsMock) UpdateRolePermissions(id uint64, perms ...perms.AddPerm) error {
 
 	// TODO
 

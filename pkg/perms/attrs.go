@@ -3,8 +3,10 @@ package perms
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -25,8 +27,25 @@ type Key string
 
 type StringList []string
 
-type JobList StringList
+type JobList []string
 type JobRankList map[string]int32
+
+func (l StringList) Validate(validVals string) bool {
+	vals := strings.Split(validVals, ";")
+
+	// If more values than valid values in the list, it can't be valid
+	if len(l) > len(vals) {
+		return false
+	}
+
+	for i := 0; i < len(l); i++ {
+		if !utils.InStringSlice(vals, l[i]) {
+			return false
+		}
+	}
+
+	return true
+}
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
@@ -216,8 +235,6 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 			tRoleAttrs.RoleID.IN(ids...),
 		))
 
-	fmt.Println(stmt.DebugSql())
-
 	var dest []*permissions.RoleAttribute
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
@@ -230,7 +247,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 		attrIds[i] = jet.Uint64(dest[i].AttrId)
 	}
 
-	othersStmt := tAttrs.
+	otherStmt := tAttrs.
 		SELECT(
 			tAttrs.ID.AS("roleattribute.attr_id"),
 			jet.Uint64(0).AS("roleattribute.role_id"),
@@ -255,13 +272,72 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 			tRoleAttrs.AttrID.NOT_IN(attrIds...),
 		))
 
-	fmt.Println(othersStmt.DebugSql())
-
-	if err := othersStmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := otherStmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}
 
 	return dest, nil
+}
+
+func (p *Perms) AddAttributesToRole(roleId uint64, attrs ...*permissions.RoleAttribute) error {
+	stmt := tRoleAttrs.
+		INSERT().
+		MODELS(attrs)
+
+	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
+		if err != nil && !dbutils.IsDuplicateError(err) {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (p *Perms) UpdateRoleAttributes(roleId uint64, attrs ...*permissions.RoleAttribute) error {
+	ids := make([]jet.Expression, len(attrs))
+	for i := 0; i < len(attrs); i++ {
+		ids[i] = jet.Uint64(attrs[i].AttrId)
+	}
+
+	stmt := tRoleAttrs.
+		UPDATE(
+			tRoleAttrs.Value,
+		).
+		SET(
+			tRoleAttrs.Value,
+		).
+		WHERE(jet.AND(
+			tRoleAttrs.RoleID.EQ(jet.Uint64(roleId)),
+			tRoleAttrs.AttrID.IN(ids...),
+		))
+
+	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
+		if err != nil && !dbutils.IsDuplicateError(err) {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (p *Perms) RemoveAttributesFromRole(roleId uint64, attrs ...*permissions.RoleAttribute) error {
+	ids := make([]jet.Expression, len(attrs))
+	for i := 0; i < len(attrs); i++ {
+		ids[i] = jet.Uint64(attrs[i].AttrId)
+	}
+
+	stmt := tRoleAttrs.
+		DELETE().
+		WHERE(jet.AND(
+			tRoleAttrs.RoleID.EQ(jet.Uint64(roleId)),
+			tRoleAttrs.AttrID.IN(ids...),
+		))
+
+	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
+		return err
+	}
+
+	return nil
 }

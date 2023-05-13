@@ -92,16 +92,7 @@ func (m *Permission) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetVal(); val < -1 || val > 1 {
-		err := PermissionValidationError{
-			field:  "Val",
-			reason: "value must be inside range [-1, 1]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Val
 
 	if m.CreatedAt != nil {
 
@@ -702,17 +693,6 @@ func (m *RoleAttribute) validate(all bool) error {
 	if utf8.RuneCountInString(m.GetValue()) > 65535 {
 		err := RoleAttributeValidationError{
 			field:  "Value",
-			reason: "value length must be at most 65535 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetValidValues()) > 65535 {
-		err := RoleAttributeValidationError{
-			field:  "ValidValues",
 			reason: "value length must be at most 65535 runes",
 		}
 		if !all {
