@@ -42,7 +42,9 @@ async function streamNotifications(): Promise<void> {
         }).
         on('end', async () => {
             console.debug('Notificator Stream Ended');
-            toggleStream();
+            setTimeout(async () => {
+                toggleStream();
+            }, 1500);
         });
 
     console.debug('Notificator Stream Started');
