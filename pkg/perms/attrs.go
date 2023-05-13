@@ -199,6 +199,39 @@ func (p *Perms) Attr(userId int32, job string, grade int32, category Category, n
 	return nil, fmt.Errorf("invalid permission attribute type: %q", dest.Type)
 }
 
+func (p *Perms) GetAllAttributes(job string) ([]*permissions.RoleAttribute, error) {
+	stmt := tAttrs.
+		SELECT(
+			tAttrs.ID.AS("roleattribute.attr_id"),
+			tAttrs.PermissionID.AS("roleattribute.permission_id"),
+			tPerms.Category.AS("roleattribute.category"),
+			tPerms.Name.AS("roleattribute.name"),
+			tAttrs.Key.AS("roleattribute.key"),
+			tAttrs.Type.AS("roleattribute.type"),
+			tAttrs.ValidValues.AS("roleattribute.valid_values"),
+		).
+		FROM(tAttrs.
+			LEFT_JOIN(tPerms,
+				tPerms.ID.EQ(tAttrs.PermissionID),
+			).
+			LEFT_JOIN(tRoleAttrs,
+				tRoleAttrs.AttrID.EQ(tAttrs.ID),
+			),
+		).
+		WHERE(jet.OR(
+			tRoleAttrs.RoleID.IS_NULL(),
+		))
+
+	var dest []*permissions.RoleAttribute
+	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	return dest, nil
+}
+
 func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
 	roleIds, ok := p.getRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
@@ -245,37 +278,6 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 	attrIds := make([]jet.Expression, len(dest))
 	for i := 0; i < len(dest); i++ {
 		attrIds[i] = jet.Uint64(dest[i].AttrId)
-	}
-
-	otherStmt := tAttrs.
-		SELECT(
-			tAttrs.ID.AS("roleattribute.attr_id"),
-			jet.Uint64(0).AS("roleattribute.role_id"),
-			tAttrs.PermissionID.AS("roleattribute.permission_id"),
-			tPerms.Category.AS("roleattribute.category"),
-			tPerms.Name.AS("roleattribute.name"),
-			tAttrs.Key.AS("roleattribute.key"),
-			tAttrs.Type.AS("roleattribute.type"),
-			jet.String("").AS("roleattribute.value"),
-			tAttrs.ValidValues.AS("roleattribute.valid_values"),
-		).
-		FROM(tAttrs.
-			LEFT_JOIN(tPerms,
-				tPerms.ID.EQ(tAttrs.PermissionID),
-			).
-			LEFT_JOIN(tRoleAttrs,
-				tRoleAttrs.AttrID.EQ(tAttrs.ID),
-			),
-		).
-		WHERE(jet.OR(
-			tRoleAttrs.RoleID.IS_NULL(),
-			tRoleAttrs.AttrID.NOT_IN(attrIds...),
-		))
-
-	if err := otherStmt.QueryContext(p.ctx, p.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
-		}
 	}
 
 	return dest, nil

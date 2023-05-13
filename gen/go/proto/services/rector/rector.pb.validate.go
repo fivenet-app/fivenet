@@ -2124,17 +2124,6 @@ func (m *GetPermissionsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetSearch()) > 32 {
-		err := GetPermissionsRequestValidationError{
-			field:  "Search",
-			reason: "value length must be at most 32 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if len(errors) > 0 {
 		return GetPermissionsRequestMultiError(errors)
 	}
@@ -2263,6 +2252,40 @@ func (m *GetPermissionsResponse) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return GetPermissionsResponseValidationError{
 					field:  fmt.Sprintf("Permissions[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetAttributes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetPermissionsResponseValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetPermissionsResponseValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetPermissionsResponseValidationError{
+					field:  fmt.Sprintf("Attributes[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

@@ -74,12 +74,11 @@ message AttrsUpdate {
 
 message UpdateRolePermsResponse {}
 
-message GetPermissionsRequest {
-  string search = 1 [(validate.rules).string.max_len = 32];
-}
+message GetPermissionsRequest {}
 
 message GetPermissionsResponse {
   repeated resources.permissions.Permission permissions = 1;
+  repeated resources.permissions.RoleAttribute attributes = 2;
 }
 
 message ViewAuditLogRequest {

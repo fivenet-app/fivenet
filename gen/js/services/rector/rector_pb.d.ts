@@ -350,9 +350,6 @@ export namespace UpdateRolePermsResponse {
 }
 
 export class GetPermissionsRequest extends jspb.Message {
-  getSearch(): string;
-  setSearch(value: string): GetPermissionsRequest;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetPermissionsRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetPermissionsRequest): GetPermissionsRequest.AsObject;
@@ -363,7 +360,6 @@ export class GetPermissionsRequest extends jspb.Message {
 
 export namespace GetPermissionsRequest {
   export type AsObject = {
-    search: string,
   }
 }
 
@@ -372,6 +368,11 @@ export class GetPermissionsResponse extends jspb.Message {
   setPermissionsList(value: Array<resources_permissions_permissions_pb.Permission>): GetPermissionsResponse;
   clearPermissionsList(): GetPermissionsResponse;
   addPermissions(value?: resources_permissions_permissions_pb.Permission, index?: number): resources_permissions_permissions_pb.Permission;
+
+  getAttributesList(): Array<resources_permissions_permissions_pb.RoleAttribute>;
+  setAttributesList(value: Array<resources_permissions_permissions_pb.RoleAttribute>): GetPermissionsResponse;
+  clearAttributesList(): GetPermissionsResponse;
+  addAttributes(value?: resources_permissions_permissions_pb.RoleAttribute, index?: number): resources_permissions_permissions_pb.RoleAttribute;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetPermissionsResponse.AsObject;
@@ -384,6 +385,7 @@ export class GetPermissionsResponse extends jspb.Message {
 export namespace GetPermissionsResponse {
   export type AsObject = {
     permissionsList: Array<resources_permissions_permissions_pb.Permission.AsObject>,
+    attributesList: Array<resources_permissions_permissions_pb.RoleAttribute.AsObject>,
   }
 }
 

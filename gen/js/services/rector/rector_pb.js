@@ -3030,7 +3030,7 @@ proto.services.rector.GetPermissionsRequest.prototype.toObject = function(opt_in
  */
 proto.services.rector.GetPermissionsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    search: jspb.Message.getFieldWithDefault(msg, 1, "")
+
   };
 
   if (includeInstance) {
@@ -3067,10 +3067,6 @@ proto.services.rector.GetPermissionsRequest.deserializeBinaryFromReader = functi
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setSearch(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -3100,31 +3096,6 @@ proto.services.rector.GetPermissionsRequest.prototype.serializeBinary = function
  */
 proto.services.rector.GetPermissionsRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getSearch();
-  if (f.length > 0) {
-    writer.writeString(
-      1,
-      f
-    );
-  }
-};
-
-
-/**
- * optional string search = 1;
- * @return {string}
- */
-proto.services.rector.GetPermissionsRequest.prototype.getSearch = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.services.rector.GetPermissionsRequest} returns this
- */
-proto.services.rector.GetPermissionsRequest.prototype.setSearch = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -3134,7 +3105,7 @@ proto.services.rector.GetPermissionsRequest.prototype.setSearch = function(value
  * @private {!Array<number>}
  * @const
  */
-proto.services.rector.GetPermissionsResponse.repeatedFields_ = [1];
+proto.services.rector.GetPermissionsResponse.repeatedFields_ = [1,2];
 
 
 
@@ -3168,7 +3139,9 @@ proto.services.rector.GetPermissionsResponse.prototype.toObject = function(opt_i
 proto.services.rector.GetPermissionsResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     permissionsList: jspb.Message.toObjectList(msg.getPermissionsList(),
-    resources_permissions_permissions_pb.Permission.toObject, includeInstance)
+    resources_permissions_permissions_pb.Permission.toObject, includeInstance),
+    attributesList: jspb.Message.toObjectList(msg.getAttributesList(),
+    resources_permissions_permissions_pb.RoleAttribute.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -3210,6 +3183,11 @@ proto.services.rector.GetPermissionsResponse.deserializeBinaryFromReader = funct
       reader.readMessage(value,resources_permissions_permissions_pb.Permission.deserializeBinaryFromReader);
       msg.addPermissions(value);
       break;
+    case 2:
+      var value = new resources_permissions_permissions_pb.RoleAttribute;
+      reader.readMessage(value,resources_permissions_permissions_pb.RoleAttribute.deserializeBinaryFromReader);
+      msg.addAttributes(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -3245,6 +3223,14 @@ proto.services.rector.GetPermissionsResponse.serializeBinaryToWriter = function(
       1,
       f,
       resources_permissions_permissions_pb.Permission.serializeBinaryToWriter
+    );
+  }
+  f = message.getAttributesList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      2,
+      f,
+      resources_permissions_permissions_pb.RoleAttribute.serializeBinaryToWriter
     );
   }
 };
@@ -3285,6 +3271,44 @@ proto.services.rector.GetPermissionsResponse.prototype.addPermissions = function
  */
 proto.services.rector.GetPermissionsResponse.prototype.clearPermissionsList = function() {
   return this.setPermissionsList([]);
+};
+
+
+/**
+ * repeated resources.permissions.RoleAttribute attributes = 2;
+ * @return {!Array<!proto.resources.permissions.RoleAttribute>}
+ */
+proto.services.rector.GetPermissionsResponse.prototype.getAttributesList = function() {
+  return /** @type{!Array<!proto.resources.permissions.RoleAttribute>} */ (
+    jspb.Message.getRepeatedWrapperField(this, resources_permissions_permissions_pb.RoleAttribute, 2));
+};
+
+
+/**
+ * @param {!Array<!proto.resources.permissions.RoleAttribute>} value
+ * @return {!proto.services.rector.GetPermissionsResponse} returns this
+*/
+proto.services.rector.GetPermissionsResponse.prototype.setAttributesList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+};
+
+
+/**
+ * @param {!proto.resources.permissions.RoleAttribute=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.resources.permissions.RoleAttribute}
+ */
+proto.services.rector.GetPermissionsResponse.prototype.addAttributes = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.permissions.RoleAttribute, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.rector.GetPermissionsResponse} returns this
+ */
+proto.services.rector.GetPermissionsResponse.prototype.clearAttributesList = function() {
+  return this.setAttributesList([]);
 };
 
 

@@ -373,6 +373,8 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetR
 }
 
 func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest) (*GetPermissionsResponse, error) {
+	_, job, _ := auth.GetUserInfoFromContext(ctx)
+
 	perms, err := s.p.GetAllPermissions()
 	if err != nil {
 		return nil, err
@@ -384,8 +386,13 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 	}
 
 	resp := &GetPermissionsResponse{}
-	resp.Permissions = make([]*permissions.Permission, len(filtered))
-	copy(resp.Permissions, filtered)
+	resp.Permissions = filtered
+
+	attrs, err := s.p.GetAllAttributes(job)
+	if err != nil {
+		return nil, InvalidRequestErr
+	}
+	resp.Attributes = attrs
 
 	return resp, nil
 }
