@@ -220,16 +220,10 @@ func (p *Perms) GetAllAttributes(job string) ([]*permissions.RoleAttribute, erro
 			tAttrs.ValidValues.AS("roleattribute.valid_values"),
 		).
 		FROM(tAttrs.
-			LEFT_JOIN(tPerms,
+			INNER_JOIN(tPerms,
 				tPerms.ID.EQ(tAttrs.PermissionID),
-			).
-			LEFT_JOIN(tRoleAttrs,
-				tRoleAttrs.AttrID.EQ(tAttrs.ID),
 			),
-		).
-		WHERE(jet.OR(
-			tRoleAttrs.RoleID.IS_NULL(),
-		))
+		)
 
 	var dest []*permissions.RoleAttribute
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
