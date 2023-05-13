@@ -150,18 +150,24 @@ func (p *Perms) Attr(userId int32, job string, grade int32, category Category, n
 		return nil, nil
 	}
 
+	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
+	if !ok {
+		return nil, nil
+	}
+
+	// TODO Attributes should be inheritable
+
 	stmt := tRoleAttrs.
 		SELECT(
-			tRoleAttrs.RoleID.AS("roleattribute.role_id"),
-			tAttrs.PermissionID.AS("roleattribute.permission_id"),
-			tAttrs.Key.AS("roleattribute.key"),
-			tAttrs.Type.AS("roleattribute.type"),
-			tRoleAttrs.Value.AS("roleattribute.value"),
+			tAttrs.Key.AS("key"),
+			tAttrs.Type.AS("type"),
+			tRoleAttrs.Value.AS("value"),
 		).
 		FROM(
 			tRoleAttrs.
 				INNER_JOIN(tAttrs,
-					tAttrs.ID.EQ(tRoleAttrs.AttrID),
+					tAttrs.ID.EQ(tRoleAttrs.AttrID).
+						AND(tAttrs.PermissionID.EQ(jet.Uint64(permId))),
 				),
 		).
 		WHERE(jet.AND(
@@ -170,7 +176,10 @@ func (p *Perms) Attr(userId int32, job string, grade int32, category Category, n
 		)).
 		LIMIT(1)
 
-	var dest permissions.RoleAttribute
+	var dest struct {
+		Type  AttributeTypes
+		Value string
+	}
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
