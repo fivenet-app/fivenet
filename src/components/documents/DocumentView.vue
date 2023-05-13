@@ -136,7 +136,7 @@ function addToClipboard(): void {
                     <div>
                         <div class="pb-2 md:flex md:items-center md:justify-between md:space-x-4">
                             <div>
-                                <h1 class="text-2xl font-bold text-neutral">
+                                <h1 class="text-2xl font-bold text-neutral break-all">
                                     {{ document?.getTitle() }}
                                 </h1>
                                 <p class="text-sm text-base-300">
