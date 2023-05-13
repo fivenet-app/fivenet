@@ -14,30 +14,32 @@ const icon = ref<FunctionalComponent>(QuestionMarkCircleIcon);
 const iconColor = ref<string>('text-neutral');
 const actionText = ref<string>(props.activity.getKey());
 const actionValue = ref<string>(`${props.activity.getOldValue()} -> ${props.activity.getNewValue()}`);
-const actionLink = ref<undefined | RoutesNamedLocations>();
-const actionLinkText = ref<string>();
+const actionReason = ref<string>(props.activity.getReason());
+const actionLink = ref<RoutesNamedLocations>();
+const actionLinkText = ref<string>('');
 
 switch (props.activity.getKey()) {
     case 'UserProps.Wanted': {
         actionText.value = t('components.citizens.citizen_info_activity_feed_entry.set_citizen_as');
+        actionValue.value = props.activity.getNewValue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
 
         if (props.activity.getNewValue() === 'true') {
             icon.value = BellAlertIcon;
             iconColor.value = 'text-error-400';
-            actionValue.value = props.activity.getNewValue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
         } else {
             icon.value = BellSnoozeIcon;
             iconColor.value = 'text-success-400';
-            actionValue.value = props.activity.getNewValue() === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
         }
 
         break;
     };
+
     case 'DocStore.Relation': {
         actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation');
         icon.value = AtSymbolIcon;
         actionLink.value = { name: 'documents-id', params: { id: 0 } };
         actionLinkText.value = t('common.document', 1);
+        actionReason.value = t(`enums.docstore.DOC_RELATION.${props.activity.getReason()}`)
 
         if (props.activity.getNewValue() !== '') {
             iconColor.value = 'text-info-600';
@@ -72,6 +74,10 @@ switch (props.activity.getKey()) {
                         {{ actionLinkText }}
                     </NuxtLink>
                     <span v-else v-html="actionValue"></span>
+                </span> <span v-if="actionReason">
+                    {{ $t('components.citizens.citizen_info_activity_feed_entry.with_reason') }} <span class="font-bold">
+                        {{ actionReason }}
+                    </span>
                 </span>
             </p>
         </div>

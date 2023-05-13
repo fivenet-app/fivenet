@@ -7,7 +7,7 @@ import {
 } from '@headlessui/vue';
 
 defineProps<{
-    reason: String,
+    reason: string,
     open: boolean,
 }>();
 

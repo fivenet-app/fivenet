@@ -34,6 +34,7 @@ async function getRole(): Promise<void> {
         role.value = resp.getRole();
     } catch (e) {
         $grpc.handleRPCError(e as RpcError);
+        return;
     }
 }
 
@@ -127,9 +128,7 @@ async function updatePermissions(): Promise<void> {
         if (state === undefined && currentPermissions.includes(perm)) permsToRemove.push(perm);
     });
 
-    if (permsToUpdate.length == 0 && permsToRemove.length == 0) {
-        return;
-    }
+    if (permsToUpdate.length == 0 && permsToRemove.length == 0) return;
 
     const req = new UpdateRolePermsRequest();
     req.setId(props.roleId);
@@ -149,6 +148,7 @@ async function updatePermissions(): Promise<void> {
         });
     } catch (e) {
         $grpc.handleRPCError(e as RpcError);
+        return;
     }
 }
 

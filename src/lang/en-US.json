@@ -191,6 +191,7 @@
                 "set_job": "Set Person's Job"
             },
             "citizen_info_activity_feed_entry": {
+                "with_reason": "with reason",
                 "set_citizen_as": "Set the citizen as",
                 "document_relation": "Related the citizen in a",
                 "document_relation_removed": "Removed citizen document relation in"
