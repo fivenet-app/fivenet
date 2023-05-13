@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { Permission, Role } from '@fivenet/gen/resources/permissions/permissions_pb';
+import { Permission, Role, RoleAttribute } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { RpcError } from 'grpc-web';
 import { UpdateRolePermsRequest, DeleteRoleRequest, GetPermissionsRequest, GetRoleRequest, PermsUpdate, PermItem } from '@fivenet/gen/services/rector/rector_pb';
 import { ChevronDownIcon, CheckIcon, XMarkIcon, MinusIcon } from '@heroicons/vue/24/solid';
 import { TrashIcon } from '@heroicons/vue/20/solid';
 import Divider from '~/components/partials/Divider.vue';
+import RoleViewAttr from '~/components/rector/RoleViewAttr.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 
@@ -61,32 +62,20 @@ async function deleteRole(): Promise<void> {
     });
 }
 
-interface Perm {
-    id: number;
-    name: string;
-    category: string;
-    perm: Permission;
-}
-
-const permList = ref<Perm[]>([]);
+const permList = ref<Permission[]>([]);
 const permCategories = ref<Set<string>>(new Set());
 const permStates = ref<Map<number, boolean | undefined>>(new Map());
+
+const attrList = ref<RoleAttribute[]>([]);
+const attrStates = ref<Map<number, (string | number)[]>>(new Map());
 
 async function getPermissions(): Promise<void> {
     const req = new GetPermissionsRequest();
 
     try {
         const resp = await $grpc.getRectorClient().getPermissions(req, null);
-        permList.value = resp.getPermissionsList().map(perm => {
-            const permEntry: Perm = {
-                id: perm.getId(),
-                category: perm.getCategory(),
-                name: perm.getName(),
-                perm,
-            }
-
-            return permEntry
-        });
+        permList.value = resp.getPermissionsList();
+        attrList.value = resp.getAttributesList();
 
         genPermissionCategories();
     } catch (e) {
@@ -97,7 +86,7 @@ async function getPermissions(): Promise<void> {
 
 async function genPermissionCategories(): Promise<void> {
     permList.value.forEach(perm => {
-        permCategories.value.add(perm.category);
+        permCategories.value.add(perm.getCategory());
     });
 }
 
@@ -192,36 +181,37 @@ onMounted(async () => {
                         <DisclosurePanel
                             class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2">
                             <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
-                                <div v-for="(perm, idx) in permList.filter(p => p.category === category)" :key="perm.id">
+                                <div v-for="(perm, idx) in permList.filter(p => p.getCategory() === category)" :key="perm.getId()">
                                     <div class="flex flex-row gap-4">
                                         <div class="flex flex-1 flex-col my-auto">
                                             <span class="truncate lg:max-w-full max-w-xs">
-                                                {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
+                                                {{ $t(`perms.${perm.getCategory()}.${perm.getName()}.key`) }}
                                             </span>
                                             <span class="text-base-500 truncate lg:max-w-full max-w-xs">
-                                                {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
+                                                {{ $t(`perms.${perm.getCategory()}.${perm.getName()}.description`) }}
                                             </span>
                                         </div>
                                         <div class="flex flex-initial flex-row max-h-8 my-auto">
-                                            <button :data-active="permStates.has(perm.id) ? permStates.get(perm.id) : false"
-                                                @click="updatePermissionState(perm.id, true)"
+                                            <button :data-active="permStates.has(perm.getId()) ? permStates.get(perm.getId()) : false"
+                                                @click="updatePermissionState(perm.getId(), true)"
                                                 class="transition-colors rounded-l-lg p-1 bg-success-600/50 data-[active=true]:bg-success-600 text-base-300 data-[active=true]:text-neutral hover:bg-success-600/70">
                                                 <CheckIcon class="w-6 h-6" />
                                             </button>
-                                            <button :data-active="!permStates.has(perm.id) || permStates.get(perm.id) === undefined"
-                                                @click="updatePermissionState(perm.id, undefined)"
+                                            <button :data-active="!permStates.has(perm.getId()) || permStates.get(perm.getId()) === undefined"
+                                                @click="updatePermissionState(perm.getId(), undefined)"
                                                 class="transition-colors p-1 bg-base-700 data-[active=true]:bg-base-500 text-base-300 data-[active=true]:text-neutral hover:bg-base-600">
                                                 <MinusIcon class="w-6 h-6" />
                                             </button>
                                             <button
-                                                :data-active="permStates.has(perm.id) ? (permStates.get(perm.id) !== undefined && !permStates.get(perm.id)) : false"
-                                                @click="updatePermissionState(perm.id, false)"
+                                                :data-active="permStates.has(perm.getId()) ? (permStates.get(perm.getId()) !== undefined && !permStates.get(perm.getId())) : false"
+                                                @click="updatePermissionState(perm.getId(), false)"
                                                 class="transition-colors rounded-r-lg p-1 bg-error-600/50 data-[active=true]:bg-error-600 text-base-300 data-[active=true]:text-neutral hover:bg-error-600/70">
                                                 <XMarkIcon class="w-6 h-6" />
                                             </button>
                                         </div>
                                     </div>
-                                    <div v-if="idx !== permList.filter(p => p.category === category).length - 1"
+                                    <RoleViewAttr :attribute="attrList.find(a => a.getPermissionId() === perm.getId())" v-model:states="attrStates" :disabled="permStates.get(perm.getId()) !== true" />
+                                    <div v-if="idx !== permList.filter(p => p.getCategory() === category).length - 1"
                                         class="w-full border-t border-neutral/20 mt-2" />
                                 </div>
                             </div>
