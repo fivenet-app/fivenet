@@ -114,7 +114,7 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 			//
 		case perms.JobListAttributeType:
 			fallthrough
-		case perms.JobRankListAttributeType:
+		case perms.JobGradeListAttributeType:
 			//
 		}
 	}
@@ -357,6 +357,8 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetR
 	if err != nil {
 		return InvalidRequestErr
 	}
+
+	// TODO validate each attribute by type
 
 	if len(toUpdate) > 0 {
 		if err := s.p.AddAttributesToRole(role.ID, toUpdate...); err != nil {

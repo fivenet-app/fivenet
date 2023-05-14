@@ -277,7 +277,7 @@ func (p *Perms) UpdateRolePermissions(roleId uint64, perms ...AddPerm) error {
 		).
 		MODELS(rolePerms).
 		ON_DUPLICATE_KEY_UPDATE(
-			tRolePerms.Val.SET(jet.BoolExp(jet.Raw("values(val)"))),
+			tRolePerms.Val.SET(jet.BoolExp(jet.Raw("values(`val`)"))),
 		)
 
 	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil && !dbutils.IsDuplicateError(err) {

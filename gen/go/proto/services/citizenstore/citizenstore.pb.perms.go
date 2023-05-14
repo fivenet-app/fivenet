@@ -27,7 +27,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         CitizenStoreServiceGetUserJobsPermField,
-					Type:        perms.JobRankListAttributeType,
+					Type:        perms.JobGradeListAttributeType,
 					ValidValues: "",
 				},
 			},

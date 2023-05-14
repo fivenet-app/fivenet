@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CitizenStoreServiceClient interface {
 	// @perm: Attrs=Fields/StringList:["PhoneNumber","Licenses","UserProps.Wanted","UserProps.Job"]
 	ListCitizens(ctx context.Context, in *ListCitizensRequest, opts ...grpc.CallOption) (*ListCitizensResponse, error)
-	// @perm: Attrs=Jobs/JobRankList
+	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// @perm: Attrs=Fields/StringList:["SourceUser"]
 	ListUserActivity(ctx context.Context, in *ListUserActivityRequest, opts ...grpc.CallOption) (*ListUserActivityResponse, error)
@@ -82,7 +82,7 @@ func (c *citizenStoreServiceClient) SetUserProps(ctx context.Context, in *SetUse
 type CitizenStoreServiceServer interface {
 	// @perm: Attrs=Fields/StringList:["PhoneNumber","Licenses","UserProps.Wanted","UserProps.Job"]
 	ListCitizens(context.Context, *ListCitizensRequest) (*ListCitizensResponse, error)
-	// @perm: Attrs=Jobs/JobRankList
+	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// @perm: Attrs=Fields/StringList:["SourceUser"]
 	ListUserActivity(context.Context, *ListUserActivityRequest) (*ListUserActivityResponse, error)

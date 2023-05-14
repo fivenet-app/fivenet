@@ -3,7 +3,6 @@ package perms
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/utils"
@@ -18,9 +17,9 @@ import (
 type AttributeTypes string
 
 const (
-	StringListAttributeType  AttributeTypes = "StringList"
-	JobListAttributeType     AttributeTypes = "JobList"
-	JobRankListAttributeType AttributeTypes = "JobRankList"
+	StringListAttributeType   AttributeTypes = "StringList"
+	JobListAttributeType      AttributeTypes = "JobList"
+	JobGradeListAttributeType AttributeTypes = "JobGradeList"
 )
 
 type Key string
@@ -28,18 +27,16 @@ type Key string
 type StringList []string
 
 type JobList []string
-type JobRankList map[string]int32
+type JobGradeList map[string]int32
 
-func (l StringList) Validate(validVals string) bool {
-	vals := strings.Split(validVals, ";")
-
+func (l StringList) Validate(validVals []string) bool {
 	// If more values than valid values in the list, it can't be valid
-	if len(l) > len(vals) {
+	if len(l) > len(validVals) {
 		return false
 	}
 
 	for i := 0; i < len(l); i++ {
-		if !utils.InStringSlice(vals, l[i]) {
+		if !utils.InStringSlice(validVals, l[i]) {
 			return false
 		}
 	}
@@ -151,7 +148,11 @@ func (p *Perms) UpdateAttribute(attributeId uint64, permId uint64, key Key, aTyp
 		)
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
-	return err
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Perms) Attr(userId int32, job string, grade int32, category Category, name Name, key Key) (any, error) {
@@ -165,7 +166,7 @@ func (p *Perms) Attr(userId int32, job string, grade int32, category Category, n
 		return nil, nil
 	}
 
-	// TODO Attributes should be inheritable
+	// TODO Attributes should be inheritable use a cache like for role perms
 
 	stmt := tRoleAttrs.
 		SELECT(
@@ -198,36 +199,109 @@ func (p *Perms) Attr(userId int32, job string, grade int32, category Category, n
 		return nil, nil
 	}
 
-	switch AttributeTypes(dest.Type) {
+	return p.convertAttributeValue(dest.Value, dest.Type)
+}
+
+func (p *Perms) convertAttributeValue(val string, aType AttributeTypes) (any, error) {
+	switch AttributeTypes(aType) {
 	case JobListAttributeType:
 		fallthrough
 	case StringListAttributeType:
 		x := StringList{}
-		if err := json.UnmarshalFromString(dest.Value, &x); err != nil {
+		if err := json.UnmarshalFromString(val, &x); err != nil {
 			return nil, err
 		}
 		return x, nil
-	case JobRankListAttributeType:
-		x := JobRankList{}
-		if err := json.UnmarshalFromString(dest.Value, &x); err != nil {
+	case JobGradeListAttributeType:
+		x := JobGradeList{}
+		if err := json.UnmarshalFromString(val, &x); err != nil {
 			return nil, err
 		}
 		return x, nil
 	}
 
-	return nil, fmt.Errorf("invalid permission attribute type: %q", dest.Type)
+	return nil, fmt.Errorf("invalid permission attribute type: %q", aType)
+}
+
+func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawAttribute) ([]*permissions.RoleAttribute, error) {
+	res := make([]*permissions.RoleAttribute, len(in))
+	for i := 0; i < len(in); i++ {
+		res[i] = &permissions.RoleAttribute{
+			RoleId:       in[i].RoleId,
+			CreatedAt:    in[i].CreatedAt,
+			AttrId:       in[i].AttrId,
+			PermissionId: in[i].PermissionId,
+			Category:     in[i].Category,
+			Name:         in[i].Name,
+			Key:          in[i].Key,
+			Type:         in[i].Type,
+			Value:        &permissions.AttributeValues{},
+			ValidValues:  &permissions.AttributeValues{},
+		}
+
+		if err := p.convertRawValue(res[i].Value, in[i].RawValue, AttributeTypes(res[i].Type)); err != nil {
+			return nil, err
+		}
+
+		if err := p.convertRawValue(res[i].ValidValues, in[i].RawValidValues, AttributeTypes(res[i].Type)); err != nil {
+			return nil, err
+		}
+	}
+
+	return res, nil
+}
+
+func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal string, aType AttributeTypes) error {
+	var val any
+	var err error
+
+	if rawVal != "" {
+		val, err = p.convertAttributeValue(rawVal, AttributeTypes(aType))
+		if err != nil {
+			return err
+		}
+	}
+
+	switch AttributeTypes(aType) {
+	case StringListAttributeType:
+		pVal := &permissions.AttributeValues_StringList{
+			StringList: &permissions.StringList{},
+		}
+		if val != nil {
+			pVal.StringList.Strings = val.(StringList)
+		}
+		targetVal.ValidValues = pVal
+	case JobListAttributeType:
+		pVal := &permissions.AttributeValues_JobList{
+			JobList: &permissions.StringList{},
+		}
+		if val != nil {
+			pVal.JobList.Strings = val.(JobList)
+		}
+		targetVal.ValidValues = pVal
+	case JobGradeListAttributeType:
+		pVal := &permissions.AttributeValues_JobGradeList{
+			JobGradeList: &permissions.JobGradeList{},
+		}
+		if val != nil {
+			pVal.JobGradeList.Jobs = val.(JobGradeList)
+		}
+		targetVal.ValidValues = pVal
+	}
+
+	return nil
 }
 
 func (p *Perms) GetAllAttributes(job string) ([]*permissions.RoleAttribute, error) {
 	stmt := tAttrs.
 		SELECT(
-			tAttrs.ID.AS("roleattribute.attr_id"),
-			tAttrs.PermissionID.AS("roleattribute.permission_id"),
-			tPerms.Category.AS("roleattribute.category"),
-			tPerms.Name.AS("roleattribute.name"),
-			tAttrs.Key.AS("roleattribute.key"),
-			tAttrs.Type.AS("roleattribute.type"),
-			tAttrs.ValidValues.AS("roleattribute.valid_values"),
+			tAttrs.ID.AS("rawattribute.attr_id"),
+			tAttrs.PermissionID.AS("rawattribute.permission_id"),
+			tPerms.Category.AS("rawattribute.category"),
+			tPerms.Name.AS("rawattribute.name"),
+			tAttrs.Key.AS("rawattribute.key"),
+			tAttrs.Type.AS("rawattribute.type"),
+			tAttrs.ValidValues.AS("rawattribute.valid_values"),
 		).
 		FROM(tAttrs.
 			INNER_JOIN(tPerms,
@@ -235,16 +309,14 @@ func (p *Perms) GetAllAttributes(job string) ([]*permissions.RoleAttribute, erro
 			),
 		)
 
-	// TODO fill the valid values for each type
-
-	var dest []*permissions.RoleAttribute
+	var dest []*permissions.RawAttribute
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}
 
-	return dest, nil
+	return p.convertRawToRoleAttributes(dest)
 }
 
 func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
@@ -260,15 +332,15 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 
 	stmt := tRoleAttrs.
 		SELECT(
-			tAttrs.ID.AS("roleattribute.attr_id"),
-			tRoleAttrs.RoleID.AS("roleattribute.role_id"),
-			tAttrs.PermissionID.AS("roleattribute.permission_id"),
-			tPerms.Category.AS("roleattribute.category"),
-			tPerms.Name.AS("roleattribute.name"),
-			tAttrs.Key.AS("roleattribute.key"),
-			tAttrs.Type.AS("roleattribute.type"),
-			tRoleAttrs.Value.AS("roleattribute.value"),
-			tAttrs.ValidValues.AS("roleattribute.valid_values"),
+			tAttrs.ID.AS("rawattribute.attr_id"),
+			tRoleAttrs.RoleID.AS("rawattribute.role_id"),
+			tAttrs.PermissionID.AS("rawattribute.permission_id"),
+			tPerms.Category.AS("rawattribute.category"),
+			tPerms.Name.AS("rawattribute.name"),
+			tAttrs.Key.AS("rawattribute.key"),
+			tAttrs.Type.AS("rawattribute.type"),
+			tRoleAttrs.Value.AS("rawattribute.raw_value"),
+			tAttrs.ValidValues.AS("rawattribute.raw_valid_values"),
 		).
 		FROM(
 			tRoleAttrs.
@@ -283,25 +355,23 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 			tRoleAttrs.RoleID.IN(ids...),
 		))
 
-	var dest []*permissions.RoleAttribute
+	var dest []*permissions.RawAttribute
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}
 
-	attrIds := make([]jet.Expression, len(dest))
-	for i := 0; i < len(dest); i++ {
-		attrIds[i] = jet.Uint64(dest[i].AttrId)
-	}
-
-	return dest, nil
+	return p.convertRawToRoleAttributes(dest)
 }
 
 func (p *Perms) AddAttributesToRole(roleId uint64, attrs ...*permissions.RoleAttribute) error {
 	stmt := tRoleAttrs.
 		INSERT().
-		MODELS(attrs)
+		MODELS(attrs).
+		ON_DUPLICATE_KEY_UPDATE(
+			tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("values(`value`)"))),
+		)
 
 	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
 		if err != nil && !dbutils.IsDuplicateError(err) {

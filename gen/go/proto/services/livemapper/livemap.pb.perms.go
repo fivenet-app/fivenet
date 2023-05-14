@@ -27,7 +27,7 @@ func init() {
 				},
 				{
 					Key:         LivemapperServiceStreamPlayersPermField,
-					Type:        perms.JobRankListAttributeType,
+					Type:        perms.JobGradeListAttributeType,
 					ValidValues: "",
 				},
 			},

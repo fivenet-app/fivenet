@@ -449,34 +449,58 @@ var _ interface {
 	ErrorName() string
 } = RoleValidationError{}
 
-// Validate checks the field values on Attribute with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on RawAttribute with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *Attribute) Validate() error {
+func (m *RawAttribute) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Attribute with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in AttributeMultiError, or nil
-// if none found.
-func (m *Attribute) ValidateAll() error {
+// ValidateAll checks the field values on RawAttribute with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RawAttributeMultiError, or
+// nil if none found.
+func (m *RawAttribute) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Attribute) validate(all bool) error {
+func (m *RawAttribute) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Id
+	// no validation rules for RoleId
+
+	// no validation rules for AttrId
 
 	// no validation rules for PermissionId
 
+	if utf8.RuneCountInString(m.GetCategory()) > 128 {
+		err := RawAttributeValidationError{
+			field:  "Category",
+			reason: "value length must be at most 128 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetName()) > 255 {
+		err := RawAttributeValidationError{
+			field:  "Name",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if utf8.RuneCountInString(m.GetKey()) > 255 {
-		err := AttributeValidationError{
+		err := RawAttributeValidationError{
 			field:  "Key",
 			reason: "value length must be at most 255 runes",
 		}
@@ -487,7 +511,7 @@ func (m *Attribute) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetType()) > 255 {
-		err := AttributeValidationError{
+		err := RawAttributeValidationError{
 			field:  "Type",
 			reason: "value length must be at most 255 runes",
 		}
@@ -497,16 +521,9 @@ func (m *Attribute) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetValue()) > 65535 {
-		err := AttributeValidationError{
-			field:  "Value",
-			reason: "value length must be at most 65535 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for RawValue
+
+	// no validation rules for RawValidValues
 
 	if m.CreatedAt != nil {
 
@@ -514,7 +531,7 @@ func (m *Attribute) validate(all bool) error {
 			switch v := interface{}(m.GetCreatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, AttributeValidationError{
+					errors = append(errors, RawAttributeValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -522,7 +539,7 @@ func (m *Attribute) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, AttributeValidationError{
+					errors = append(errors, RawAttributeValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -531,7 +548,7 @@ func (m *Attribute) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return AttributeValidationError{
+				return RawAttributeValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -542,18 +559,18 @@ func (m *Attribute) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return AttributeMultiError(errors)
+		return RawAttributeMultiError(errors)
 	}
 
 	return nil
 }
 
-// AttributeMultiError is an error wrapping multiple validation errors returned
-// by Attribute.ValidateAll() if the designated constraints aren't met.
-type AttributeMultiError []error
+// RawAttributeMultiError is an error wrapping multiple validation errors
+// returned by RawAttribute.ValidateAll() if the designated constraints aren't met.
+type RawAttributeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m AttributeMultiError) Error() string {
+func (m RawAttributeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -562,11 +579,11 @@ func (m AttributeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m AttributeMultiError) AllErrors() []error { return m }
+func (m RawAttributeMultiError) AllErrors() []error { return m }
 
-// AttributeValidationError is the validation error returned by
-// Attribute.Validate if the designated constraints aren't met.
-type AttributeValidationError struct {
+// RawAttributeValidationError is the validation error returned by
+// RawAttribute.Validate if the designated constraints aren't met.
+type RawAttributeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -574,22 +591,22 @@ type AttributeValidationError struct {
 }
 
 // Field function returns field value.
-func (e AttributeValidationError) Field() string { return e.field }
+func (e RawAttributeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e AttributeValidationError) Reason() string { return e.reason }
+func (e RawAttributeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e AttributeValidationError) Cause() error { return e.cause }
+func (e RawAttributeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e AttributeValidationError) Key() bool { return e.key }
+func (e RawAttributeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e AttributeValidationError) ErrorName() string { return "AttributeValidationError" }
+func (e RawAttributeValidationError) ErrorName() string { return "RawAttributeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e AttributeValidationError) Error() string {
+func (e RawAttributeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -601,14 +618,14 @@ func (e AttributeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sAttribute.%s: %s%s",
+		"invalid %sRawAttribute.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = AttributeValidationError{}
+var _ error = RawAttributeValidationError{}
 
 var _ interface {
 	Field() string
@@ -616,7 +633,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = AttributeValidationError{}
+} = RawAttributeValidationError{}
 
 // Validate checks the field values on RoleAttribute with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -690,18 +707,63 @@ func (m *RoleAttribute) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetValue()) > 65535 {
-		err := RoleAttributeValidationError{
-			field:  "Value",
-			reason: "value length must be at most 65535 runes",
+	if all {
+		switch v := interface{}(m.GetValue()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RoleAttributeValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RoleAttributeValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
 		}
-		if !all {
-			return err
+	} else if v, ok := interface{}(m.GetValue()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RoleAttributeValidationError{
+				field:  "Value",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
 		}
-		errors = append(errors, err)
 	}
 
-	// no validation rules for ValidValues
+	if all {
+		switch v := interface{}(m.GetValidValues()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RoleAttributeValidationError{
+					field:  "ValidValues",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RoleAttributeValidationError{
+					field:  "ValidValues",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetValidValues()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RoleAttributeValidationError{
+				field:  "ValidValues",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if m.CreatedAt != nil {
 
@@ -813,3 +875,431 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RoleAttributeValidationError{}
+
+// Validate checks the field values on AttributeValues with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *AttributeValues) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AttributeValues with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AttributeValuesMultiError, or nil if none found.
+func (m *AttributeValues) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValues) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	switch v := m.ValidValues.(type) {
+	case *AttributeValues_StringList:
+		if v == nil {
+			err := AttributeValuesValidationError{
+				field:  "ValidValues",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetStringList()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AttributeValuesValidationError{
+						field:  "StringList",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AttributeValuesValidationError{
+						field:  "StringList",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetStringList()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AttributeValuesValidationError{
+					field:  "StringList",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *AttributeValues_JobList:
+		if v == nil {
+			err := AttributeValuesValidationError{
+				field:  "ValidValues",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetJobList()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AttributeValuesValidationError{
+						field:  "JobList",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AttributeValuesValidationError{
+						field:  "JobList",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJobList()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AttributeValuesValidationError{
+					field:  "JobList",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *AttributeValues_JobGradeList:
+		if v == nil {
+			err := AttributeValuesValidationError{
+				field:  "ValidValues",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetJobGradeList()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AttributeValuesValidationError{
+						field:  "JobGradeList",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AttributeValuesValidationError{
+						field:  "JobGradeList",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJobGradeList()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AttributeValuesValidationError{
+					field:  "JobGradeList",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+
+	if len(errors) > 0 {
+		return AttributeValuesMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValuesMultiError is an error wrapping multiple validation errors
+// returned by AttributeValues.ValidateAll() if the designated constraints
+// aren't met.
+type AttributeValuesMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValuesMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValuesMultiError) AllErrors() []error { return m }
+
+// AttributeValuesValidationError is the validation error returned by
+// AttributeValues.Validate if the designated constraints aren't met.
+type AttributeValuesValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValuesValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValuesValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeValuesValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValuesValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValuesValidationError) ErrorName() string { return "AttributeValuesValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AttributeValuesValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValues.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValuesValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValuesValidationError{}
+
+// Validate checks the field values on StringList with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *StringList) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on StringList with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in StringListMultiError, or
+// nil if none found.
+func (m *StringList) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *StringList) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return StringListMultiError(errors)
+	}
+
+	return nil
+}
+
+// StringListMultiError is an error wrapping multiple validation errors
+// returned by StringList.ValidateAll() if the designated constraints aren't met.
+type StringListMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m StringListMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m StringListMultiError) AllErrors() []error { return m }
+
+// StringListValidationError is the validation error returned by
+// StringList.Validate if the designated constraints aren't met.
+type StringListValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e StringListValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e StringListValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e StringListValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e StringListValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e StringListValidationError) ErrorName() string { return "StringListValidationError" }
+
+// Error satisfies the builtin error interface
+func (e StringListValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sStringList.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = StringListValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = StringListValidationError{}
+
+// Validate checks the field values on JobGradeList with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *JobGradeList) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JobGradeList with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JobGradeListMultiError, or
+// nil if none found.
+func (m *JobGradeList) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JobGradeList) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Jobs
+
+	if len(errors) > 0 {
+		return JobGradeListMultiError(errors)
+	}
+
+	return nil
+}
+
+// JobGradeListMultiError is an error wrapping multiple validation errors
+// returned by JobGradeList.ValidateAll() if the designated constraints aren't met.
+type JobGradeListMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JobGradeListMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JobGradeListMultiError) AllErrors() []error { return m }
+
+// JobGradeListValidationError is the validation error returned by
+// JobGradeList.Validate if the designated constraints aren't met.
+type JobGradeListValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JobGradeListValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JobGradeListValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JobGradeListValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JobGradeListValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JobGradeListValidationError) ErrorName() string { return "JobGradeListValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JobGradeListValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJobGradeList.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JobGradeListValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JobGradeListValidationError{}

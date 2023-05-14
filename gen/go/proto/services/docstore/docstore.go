@@ -67,7 +67,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 	condition := jet.Bool(true)
 	if req.Search != "" {
 		condition = jet.BoolExp(
-			jet.Raw("MATCH(title) AGAINST ($search IN BOOLEAN MODE)",
+			jet.Raw("MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
 				jet.RawArgs{"$search": req.Search}),
 		)
 	}

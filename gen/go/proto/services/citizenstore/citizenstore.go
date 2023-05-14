@@ -167,9 +167,9 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	if err != nil {
 		return nil, FailedQueryErr
 	}
-	var jobGrades perms.JobRankList
+	var jobGrades perms.JobGradeList
 	if jobGradesAttr != nil {
-		jobGrades = jobGradesAttr.(perms.JobRankList)
+		jobGrades = jobGradesAttr.(perms.JobGradeList)
 	}
 
 	for i := 0; i < len(resp.Users); i++ {
@@ -270,7 +270,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			if err != nil {
 				return nil, FailedQueryErr
 			}
-			jobGrades := jobGradesAttr.(perms.JobRankList)
+			jobGrades := jobGradesAttr.(perms.JobGradeList)
 
 			if len(jobGrades) == 0 {
 				return nil, JobGradeNoPermissionErr

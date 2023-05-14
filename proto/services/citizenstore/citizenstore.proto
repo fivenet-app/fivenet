@@ -48,7 +48,7 @@ message SetUserPropsResponse {
 service CitizenStoreService {
   // @perm: Attrs=Fields/StringList:["PhoneNumber","Licenses","UserProps.Wanted","UserProps.Job"]
   rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse);
-  // @perm: Attrs=Jobs/JobRankList
+  // @perm: Attrs=Jobs/JobGradeList
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // @perm: Attrs=Fields/StringList:["SourceUser"]
   rpc ListUserActivity(ListUserActivityRequest) returns (ListUserActivityResponse);
