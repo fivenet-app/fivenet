@@ -21,6 +21,8 @@ const id = ref<number>(props.attribute.getAttrId());
 const validValues = ref<string[] | undefined>(props.attribute.getValidValues() ? JSON.parse(props.attribute.getValidValues()) as string[] : undefined);
 const type = ref<string | undefined>(props.attribute.getType());
 
+const tmp = ref<{ job: string, grade: number }[]>([]);
+
 function getState(): (string | number)[] {
     if (!states.value.has(id.value)) states.value.set(id.value, []);
 
@@ -39,6 +41,15 @@ async function toggleListValue(value: string | number): Promise<void> {
     states.value.set(id.value, state);
     emit('update:states', states.value);
 }
+
+onMounted(() => {
+    props.jobs.forEach(job => {
+        tmp.value.push({
+            job: job.getName(),
+            grade: 0,
+        })
+    })
+});
 </script>
 
 <style scoped>
@@ -81,8 +92,16 @@ async function toggleListValue(value: string | number): Promise<void> {
                             <span class="ml-1">{{ job.getLabel() }}</span>
                         </div>
                     </div>
-                    <div v-else-if="type === 'JobGradeList'">
-                        JobGradeList
+                    <div v-else-if="type === 'JobRankList'" class="flex flex-col gap-2">
+                        <div v-for="job in props.jobs" :key="job.getName()"
+                            class="flex flex-row flex-initial flex-nowrap gap-2">
+                            <span class="flex-1">{{ job.getLabel() }}</span>
+                            <span class="flex-1">{{ job.getGradesList()[tmp.find(t => t.job === job.getName())!.grade - 1]?.getLabel() ?? '-' }}</span>
+                            <input id="markerSize" name="markerSize" type="range"
+                                class="h-1.5 flex-1 cursor-grab rounded-full my-auto" min="0"
+                                :max="job.getGradesList().length" step="1" :value="tmp.find(t => t.job === job.getName())!.grade"
+                                @change="tmp[tmp.findIndex(t => t.job === job.getName())].grade = ($event.target as any).value" />
+                        </div>
                     </div>
                     <div v-else>{{ type }} {{ validValues }}</div>
                 </div>
