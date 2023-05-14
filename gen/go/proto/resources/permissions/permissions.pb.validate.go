@@ -701,6 +701,8 @@ func (m *RoleAttribute) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for ValidValues
+
 	if m.CreatedAt != nil {
 
 		if all {

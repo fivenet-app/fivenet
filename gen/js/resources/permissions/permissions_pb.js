@@ -101,7 +101,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.resources.permissions.RoleAttribute = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.resources.permissions.RoleAttribute.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.resources.permissions.RoleAttribute, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -1184,13 +1184,6 @@ proto.resources.permissions.Attribute.prototype.clearValidvaluesList = function(
 
 
 
-/**
- * List of repeated fields within this message type.
- * @private {!Array<number>}
- * @const
- */
-proto.resources.permissions.RoleAttribute.repeatedFields_ = [10];
-
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -1231,7 +1224,7 @@ proto.resources.permissions.RoleAttribute.toObject = function(includeInstance, m
     key: jspb.Message.getFieldWithDefault(msg, 7, ""),
     type: jspb.Message.getFieldWithDefault(msg, 8, ""),
     value: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    validValuesList: (f = jspb.Message.getRepeatedField(msg, 10)) == null ? undefined : f
+    validValues: jspb.Message.getFieldWithDefault(msg, 10, "")
   };
 
   if (includeInstance) {
@@ -1307,7 +1300,7 @@ proto.resources.permissions.RoleAttribute.deserializeBinaryFromReader = function
       break;
     case 10:
       var value = /** @type {string} */ (reader.readString());
-      msg.addValidValues(value);
+      msg.setValidValues(value);
       break;
     default:
       reader.skipField();
@@ -1402,9 +1395,9 @@ proto.resources.permissions.RoleAttribute.serializeBinaryToWriter = function(mes
       f
     );
   }
-  f = message.getValidValuesList();
+  f = message.getValidValues();
   if (f.length > 0) {
-    writer.writeRepeatedString(
+    writer.writeString(
       10,
       f
     );
@@ -1594,39 +1587,20 @@ proto.resources.permissions.RoleAttribute.prototype.setValue = function(value) {
 
 
 /**
- * repeated string valid_values = 10;
- * @return {!Array<string>}
+ * optional string valid_values = 10;
+ * @return {string}
  */
-proto.resources.permissions.RoleAttribute.prototype.getValidValuesList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 10));
-};
-
-
-/**
- * @param {!Array<string>} value
- * @return {!proto.resources.permissions.RoleAttribute} returns this
- */
-proto.resources.permissions.RoleAttribute.prototype.setValidValuesList = function(value) {
-  return jspb.Message.setField(this, 10, value || []);
+proto.resources.permissions.RoleAttribute.prototype.getValidValues = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
 };
 
 
 /**
  * @param {string} value
- * @param {number=} opt_index
  * @return {!proto.resources.permissions.RoleAttribute} returns this
  */
-proto.resources.permissions.RoleAttribute.prototype.addValidValues = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 10, value, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.resources.permissions.RoleAttribute} returns this
- */
-proto.resources.permissions.RoleAttribute.prototype.clearValidValuesList = function() {
-  return this.setValidValuesList([]);
+proto.resources.permissions.RoleAttribute.prototype.setValidValues = function(value) {
+  return jspb.Message.setProto3StringField(this, 10, value);
 };
 
 

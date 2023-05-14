@@ -46,5 +46,5 @@ message RoleAttribute {
   string key = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"key"
   string type = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"type"
   string value = 9 [(validate.rules).string.max_len = 65535]; // @gotags: alias:"value"
-  repeated string valid_values = 10; // @gotags: alias:"valid_values"
+  string valid_values = 10; // @gotags: alias:"valid_values"
 }

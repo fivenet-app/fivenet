@@ -186,10 +186,8 @@ export class RoleAttribute extends jspb.Message {
   getValue(): string;
   setValue(value: string): RoleAttribute;
 
-  getValidValuesList(): Array<string>;
-  setValidValuesList(value: Array<string>): RoleAttribute;
-  clearValidValuesList(): RoleAttribute;
-  addValidValues(value: string, index?: number): RoleAttribute;
+  getValidValues(): string;
+  setValidValues(value: string): RoleAttribute;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RoleAttribute.AsObject;
@@ -210,7 +208,7 @@ export namespace RoleAttribute {
     key: string,
     type: string,
     value: string,
-    validValuesList: Array<string>,
+    validValues: string,
   }
 
   export enum CreatedAtCase { 

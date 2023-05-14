@@ -225,6 +225,8 @@ func (p *Perms) GetAllAttributes(job string) ([]*permissions.RoleAttribute, erro
 			),
 		)
 
+	// TODO fill the valid values for each type
+
 	var dest []*permissions.RoleAttribute
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {

@@ -71,6 +71,16 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 				jet.RawArgs{"$search": req.Search}),
 		)
 	}
+	if len(req.CategoryIds) > 0 {
+		categoryIds := make([]jet.Expression, len(req.CategoryIds))
+		for i := 0; i < len(req.CategoryIds); i++ {
+			categoryIds[i] = jet.Uint64(req.CategoryIds[i])
+		}
+
+		condition = condition.AND(
+			docs.CategoryID.IN(categoryIds...),
+		)
+	}
 
 	countStmt := s.getDocumentsQuery(
 		condition,
