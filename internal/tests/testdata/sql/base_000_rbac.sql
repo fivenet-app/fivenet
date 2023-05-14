@@ -2,7 +2,7 @@
 --
 -- Host: 127.0.0.1    Database: fivenet
 -- ------------------------------------------------------
--- Server version	10.11.2-MariaDB-1:10.11.2+maria~ubu2204
+-- Server version	10.11.3-MariaDB-1:10.11.3+maria~ubu2204
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;

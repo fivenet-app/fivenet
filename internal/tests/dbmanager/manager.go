@@ -48,7 +48,7 @@ func (m *DBManager) Setup() {
 	m.resource, err = m.pool.RunWithOptions(
 		&dockertest.RunOptions{
 			Repository: "docker.io/library/mariadb",
-			Tag:        "10.11.2-jammy",
+			Tag:        "10.11.3-jammy",
 			Env: []string{
 				"MYSQL_ROOT_PASSWORD=secret",
 				"MYSQL_USER=fivenet",
