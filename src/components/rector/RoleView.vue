@@ -8,6 +8,8 @@ import Divider from '~/components/partials/Divider.vue';
 import RoleViewAttr from '~/components/rector/RoleViewAttr.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
+import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
 
 const { $grpc } = useNuxtApp();
 
@@ -24,6 +26,15 @@ const props = defineProps({
 
 const role = ref<Role>();
 
+const permList = ref<Permission[]>([]);
+const permCategories = ref<Set<string>>(new Set());
+const permStates = ref<Map<number, boolean | undefined>>(new Map());
+
+const attrList = ref<RoleAttribute[]>([]);
+const attrStates = ref<Map<number, (string | number)[]>>(new Map());
+
+const jobs = ref<Job[]>([]);
+
 async function getRole(): Promise<void> {
     const req = new GetRoleRequest();
     req.setId(props.roleId);
@@ -33,10 +44,21 @@ async function getRole(): Promise<void> {
         // TODO Take care of attributes
 
         role.value = resp.getRole();
+        role.value?.getAttributesList().forEach(attr => {
+            attrStates.value.set(attr.getAttrId(), JSON.parse(attr.getValue()) as (string | number)[])
+        });
     } catch (e) {
         $grpc.handleRPCError(e as RpcError);
         return;
     }
+}
+
+async function prepareAttributeData(): Promise<void> {
+    const req = new CompleteJobsRequest();
+    req.setSearch('')
+
+    const resp = await $grpc.getCompletorClient().completeJobs(req, null);
+    jobs.value = resp.getJobsList();
 }
 
 async function deleteRole(): Promise<void> {
@@ -61,13 +83,6 @@ async function deleteRole(): Promise<void> {
         }
     });
 }
-
-const permList = ref<Permission[]>([]);
-const permCategories = ref<Set<string>>(new Set());
-const permStates = ref<Map<number, boolean | undefined>>(new Map());
-
-const attrList = ref<RoleAttribute[]>([]);
-const attrStates = ref<Map<number, (string | number)[]>>(new Map());
 
 async function getPermissions(): Promise<void> {
     const req = new GetPermissionsRequest();
@@ -143,6 +158,7 @@ async function updatePermissions(): Promise<void> {
 
 onMounted(async () => {
     await getRole();
+    await prepareAttributeData();
     await getPermissions();
     propogatePermissionStates();
 });
@@ -181,7 +197,8 @@ onMounted(async () => {
                         <DisclosurePanel
                             class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2">
                             <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
-                                <div v-for="(perm, idx) in permList.filter(p => p.getCategory() === category)" :key="perm.getId()">
+                                <div v-for="(perm, idx) in permList.filter(p => p.getCategory() === category)"
+                                    :key="perm.getId()">
                                     <div class="flex flex-row gap-4">
                                         <div class="flex flex-1 flex-col my-auto">
                                             <span class="truncate lg:max-w-full max-w-xs">
@@ -192,12 +209,14 @@ onMounted(async () => {
                                             </span>
                                         </div>
                                         <div class="flex flex-initial flex-row max-h-8 my-auto">
-                                            <button :data-active="permStates.has(perm.getId()) ? permStates.get(perm.getId()) : false"
+                                            <button
+                                                :data-active="permStates.has(perm.getId()) ? permStates.get(perm.getId()) : false"
                                                 @click="updatePermissionState(perm.getId(), true)"
                                                 class="transition-colors rounded-l-lg p-1 bg-success-600/50 data-[active=true]:bg-success-600 text-base-300 data-[active=true]:text-neutral hover:bg-success-600/70">
                                                 <CheckIcon class="w-6 h-6" />
                                             </button>
-                                            <button :data-active="!permStates.has(perm.getId()) || permStates.get(perm.getId()) === undefined"
+                                            <button
+                                                :data-active="!permStates.has(perm.getId()) || permStates.get(perm.getId()) === undefined"
                                                 @click="updatePermissionState(perm.getId(), undefined)"
                                                 class="transition-colors p-1 bg-base-700 data-[active=true]:bg-base-500 text-base-300 data-[active=true]:text-neutral hover:bg-base-600">
                                                 <MinusIcon class="w-6 h-6" />
@@ -210,7 +229,10 @@ onMounted(async () => {
                                             </button>
                                         </div>
                                     </div>
-                                    <RoleViewAttr :attribute="attrList.find(a => a.getPermissionId() === perm.getId())" v-model:states="attrStates" :disabled="permStates.get(perm.getId()) !== true" />
+                                    <RoleViewAttr v-if="attrList.find(a => a.getPermissionId() === perm.getId())"
+                                        :attribute="attrList.find(a => a.getPermissionId() === perm.getId())!"
+                                        v-model:states="attrStates" :disabled="permStates.get(perm.getId()) !== true"
+                                        :jobs="jobs" />
                                     <div v-if="idx !== permList.filter(p => p.getCategory() === category).length - 1"
                                         class="w-full border-t border-neutral/20 mt-2" />
                                 </div>
