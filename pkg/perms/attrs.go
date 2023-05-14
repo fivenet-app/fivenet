@@ -75,10 +75,15 @@ func (p *Perms) GetAttribute(permId uint64, key Key) (*model.FivenetAttrs, error
 	return &dest, nil
 }
 
-func (p *Perms) CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues string) (uint64, error) {
+func (p *Perms) CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error) {
 	validV := jet.NULL
-	if validValues != "" {
-		validV = jet.String(validValues)
+	if validValues != nil {
+		out, err := json.MarshalToString(validValues)
+		if err != nil {
+			return 0, err
+		}
+
+		validV = jet.String(out)
 	}
 
 	stmt := tAttrs.
@@ -117,10 +122,15 @@ func (p *Perms) CreateAttribute(permId uint64, key Key, aType AttributeTypes, va
 	return uint64(lastId), nil
 }
 
-func (p *Perms) UpdateAttribute(attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues string) error {
+func (p *Perms) UpdateAttribute(attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error {
 	validV := jet.StringExp(jet.NULL)
-	if validValues != "" {
-		validV = jet.String(validValues)
+	if validValues != nil {
+		out, err := json.MarshalToString(validValues)
+		if err != nil {
+			return err
+		}
+
+		validV = jet.String(out)
 	}
 
 	stmt := tAttrs.

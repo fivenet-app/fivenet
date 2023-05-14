@@ -144,7 +144,7 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 			perm.Name = v
 			continue
 		case "attrs":
-			for _, v := range strings.Split(v, ",") {
+			for _, v := range strings.Split(v, "|") {
 				attrSplit := strings.Split(v, "/")
 				if len(attrSplit) <= 1 {
 					p.Fail("Invalid attrs value found: ", v)
@@ -155,7 +155,9 @@ func (p *PermifyModule) parseComment(service string, method string, comment stri
 				validList := strings.Split(attrSplit[1], ":")
 				if len(validList) > 1 {
 					attrType = validList[0]
-					validValue = strings.ReplaceAll(validList[1], "|", ";")
+					validValue = validList[1]
+					// Escape any quotes
+					validValue = strings.ReplaceAll(validValue, "\"", "\\\"")
 				}
 
 				perm.Attrs = append(perm.Attrs, Attr{

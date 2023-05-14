@@ -1,29 +1,43 @@
 import * as resources_timestamp_timestamp_pb from '@fivenet/gen/resources/timestamp/timestamp_pb';
 
+const seconds_per_minute = 60;
+const seconds_per_hour = seconds_per_minute * 60;
+const seconds_per_day = seconds_per_hour * 24;
+const seconds_per_week = seconds_per_day * 7;
+const seconds_per_year = seconds_per_week * 52;
+
 export function fromSecondsToFormattedDuration(seconds: number): string {
     const { t } = useI18n();
 
-    const w = Math.floor(seconds / (7 * (3600 * 24)));
-    const d = Math.floor(seconds / (3600 * 24));
-    const h = Math.floor((seconds % (3600 * 24)) / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
+    const years = Math.floor(seconds / seconds_per_year);
+    seconds -= years * seconds_per_year;
+    const weeks = Math.floor(seconds / seconds_per_week);
+    seconds -= weeks * seconds_per_week;
+    const days = Math.floor(seconds / seconds_per_day);
+    seconds -= days * seconds_per_day;
+    const hours = Math.floor(seconds / seconds_per_hour);
+    seconds -= hours * seconds_per_hour;
+    const minutes = Math.floor(seconds / seconds_per_minute);
+    seconds -= minutes * seconds_per_minute;
 
     const parts = new Array<string>();
-    if (w > 0) {
-        parts.push(`${w} ${t(`common.time_ago.week`, w)}`);
+    if (years > 0) {
+        parts.push(`${years} ${t(`common.time_ago.year`, years)}`);
     }
-    if (d > 0) {
-        parts.push(`${d} ${t(`common.time_ago.day`, d)}`);
+    if (weeks > 0) {
+        parts.push(`${weeks} ${t(`common.time_ago.week`, weeks)}`);
     }
-    if (h > 0) {
-        parts.push(`${h} ${t(`common.time_ago.hour`, h)}`);
+    if (days > 0) {
+        parts.push(`${days} ${t(`common.time_ago.day`, days)}`);
     }
-    if (m > 0) {
-        parts.push(`${m} ${t(`common.time_ago.minute`, m)}`);
+    if (hours > 0) {
+        parts.push(`${hours} ${t(`common.time_ago.hour`, hours)}`);
     }
-    if (s > 0) {
-        parts.push(`${s} ${t(`common.time_ago.second`, s)}`);
+    if (minutes > 0) {
+        parts.push(`${minutes} ${t(`common.time_ago.minute`, minutes)}`);
+    }
+    if (seconds > 0) {
+        parts.push(`${seconds} ${t(`common.time_ago.second`, seconds)}`);
     }
     return parts.join(', ');
 }
@@ -35,7 +49,10 @@ export function toDate(ts: resources_timestamp_timestamp_pb.Timestamp | undefine
     return ts?.getTimestamp()?.toDate();
 }
 
-export function toDateLocaleString(ts: resources_timestamp_timestamp_pb.Timestamp | undefined, d?: Function): undefined | string {
+export function toDateLocaleString(
+    ts: resources_timestamp_timestamp_pb.Timestamp | undefined,
+    d?: Function
+): undefined | string {
     if (typeof ts === undefined) {
         return '-';
     }

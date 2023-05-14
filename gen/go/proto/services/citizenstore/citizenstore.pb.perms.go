@@ -39,7 +39,7 @@ func init() {
 				{
 					Key:         CitizenStoreServiceListCitizensFieldsPermField,
 					Type:        perms.StringListAttributeType,
-					ValidValues: "PhoneNumber;Licenses;UserProps.Wanted;UserProps.Job",
+					ValidValues: "[\"PhoneNumber\",\"Licenses\",\"UserProps.Wanted\",\"UserProps.Job\"]",
 				},
 			},
 		},
@@ -50,7 +50,7 @@ func init() {
 				{
 					Key:         CitizenStoreServiceListUserActivityFieldsPermField,
 					Type:        perms.StringListAttributeType,
-					ValidValues: "SourceUser",
+					ValidValues: "[\"SourceUser\"]",
 				},
 			},
 		},
@@ -61,7 +61,7 @@ func init() {
 				{
 					Key:         CitizenStoreServiceSetUserPropsFieldsPermField,
 					Type:        perms.StringListAttributeType,
-					ValidValues: "Wanted;Job",
+					ValidValues: "[\"Wanted\",\"Job\"]",
 				},
 			},
 		},

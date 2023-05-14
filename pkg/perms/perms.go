@@ -36,8 +36,8 @@ type Permissions interface {
 	Can(userId int32, job string, grade int32, category Category, name Name) bool
 
 	GetAttribute(permId uint64, key Key) (*model.FivenetAttrs, error)
-	CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues string) (uint64, error)
-	UpdateAttribute(attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues string) error
+	CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error)
+	UpdateAttribute(attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
 	GetAllAttributes(job string) ([]*permissions.RoleAttribute, error)
 	AddAttributesToRole(roleId uint64, attrs ...*permissions.RoleAttribute) error

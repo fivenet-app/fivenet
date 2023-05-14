@@ -81,6 +81,8 @@ func (p *Perms) createOrUpdatePermission(category Category, name Name) (uint64, 
 		if Category(perm.Category) != category || Name(perm.Name) != name {
 			return perm.ID, p.UpdatePermission(perm.ID, category, name)
 		}
+
+		return perm.ID, nil
 	}
 
 	return p.CreatePermission(category, name)
@@ -94,14 +96,23 @@ func (p *Perms) createOrUpdateAttribute(permId uint64, key Key, aType AttributeT
 		}
 	}
 
-	if attr != nil {
-		if attr.PermissionID != permId || Key(attr.Key) != key ||
-			((attr.ValidValues == nil && validValues != "") || (attr.ValidValues != nil && attr.ValidValues != &validValues)) {
-			return attr.ID, p.UpdateAttribute(attr.ID, permId, key, aType, validValues)
+	var validVals interface{}
+	if validValues != "" {
+		if err = json.UnmarshalFromString(validValues, &validVals); err != nil {
+			return 0, err
 		}
 	}
 
-	return p.CreateAttribute(permId, key, aType, validValues)
+	if attr != nil {
+		if Key(attr.Key) != key ||
+			((attr.ValidValues == nil && validValues != "") || (attr.ValidValues != nil && attr.ValidValues != &validValues)) {
+			return attr.ID, p.UpdateAttribute(attr.ID, permId, key, aType, validVals)
+		}
+
+		return attr.ID, nil
+	}
+
+	return p.CreateAttribute(permId, key, aType, validVals)
 }
 
 func (p *Perms) cleanupRoles() error {
