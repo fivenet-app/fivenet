@@ -66,20 +66,19 @@ async function toggleListValue(value: string | number): Promise<void> {
                 <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
                     <div v-if="type === 'StringList' && validValues" class="flex flex-row gap-4 flex-wrap">
                         <div v-for="value in validValues" :key="value" class="flex flex-row flex-initial flex-nowrap">
-                            <input :id="value" :name="value" type="checkbox"
-                                :checked="!!$props.states.get($props.attribute.getAttrId())?.find(v => v === value)"
+                            <input :id="value" :name="value" type="checkbox" :checked="!!getState().find(v => v === value)"
                                 @click="toggleListValue(value)"
                                 class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500" />
                             <span class="ml-1">{{ value }}</span>
                         </div>
                     </div>
-                    <div v-else-if="type === 'JobList'">
-                        <div class="max-w-md mx-auto">
-                            <div v-for="(value, idx) in getState()" :key="value" class="flex flex-col">
-                                <span>{{ jobs.find(j => j.getName() === value)?.getLabel() ?? value }}</span>
-                                <div v-if="idx !== getState().length - 1" class="w-full border-t border-neutral/20 my-2" />
-                            </div>
-
+                    <div v-else-if="type === 'JobList'" class="flex flex-row gap-4 flex-wrap">
+                        <div v-for="job in props.jobs" :key="job.getName()" class="flex flex-row flex-initial flex-nowrap">
+                            <input :id="job.getName()" :name="job.getName()" type="checkbox"
+                                :checked="!!getState().find(v => v === job.getName())"
+                                @click="toggleListValue(job.getName())"
+                                class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500" />
+                            <span class="ml-1">{{ job.getLabel() }}</span>
                         </div>
                     </div>
                     <div v-else-if="type === 'JobGradeList'">
