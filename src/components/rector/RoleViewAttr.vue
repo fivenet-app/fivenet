@@ -115,7 +115,7 @@ onMounted(() => {
                             <span class="ml-1">{{ job.getLabel() }}</span>
                         </div>
                     </div>
-                    <div v-else-if="type === 'JobRankList'" class="flex flex-col gap-2">
+                    <div v-else-if="type === 'JobGradeList'" class="flex flex-col gap-2">
                         <div v-for="job in props.jobs" :key="job.getName()"
                             class="flex flex-row flex-initial flex-nowrap gap-2">
                             <span class="flex-1">{{ job.getLabel() }}</span>
