@@ -175,6 +175,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			if err := s.checkAndUpdateToken(srv.Context(), resp.Token); err != nil {
 				return err
 			}
+			counter = 0
 		}
 
 		if err := srv.Send(resp); err != nil {
@@ -188,7 +189,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		select {
 		case <-srv.Context().Done():
 			return nil
-		case <-time.After(7 * time.Second):
+		case <-time.After(10 * time.Second):
 		}
 	}
 }

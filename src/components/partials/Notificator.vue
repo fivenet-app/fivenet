@@ -45,7 +45,8 @@ async function streamNotifications(): Promise<void> {
             // If the response contains an (updated) token
             if (resp.hasToken()) {
                 const tokenUpdate = resp.getToken()!;
-                if (tokenUpdate.hasExpires()) {
+                if (tokenUpdate.hasNewToken() && tokenUpdate.hasExpires()) {
+                    console.log(tokenUpdate.getNewToken());
                     authStore.setAccessToken(tokenUpdate.getNewToken(), toDate(tokenUpdate.getExpires()) as null | Date);
 
                     notifications.dispatchNotification({
