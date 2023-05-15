@@ -84,8 +84,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 	}
 
 	countStmt := s.getDocumentsQuery(
-		condition,
-		jet.ProjectionList{jet.COUNT(jet.DISTINCT(docs.ID)).AS("datacount.totalcount")},
+		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(docs.ID)).AS("datacount.totalcount")},
 		-1, userInfo)
 
 	var count database.DataCount

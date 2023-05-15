@@ -11,14 +11,14 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, contentLength int, userId int32, job string, jobGrade int32) jet.SelectStatement {
+func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, contentLength int, userInfo *userinfo.UserInfo) jet.SelectStatement {
 	wheres := []jet.BoolExpression{
 		jet.AND(
 			docs.DeletedAt.IS_NULL(),
 			jet.OR(
 				jet.OR(
 					docs.Public.IS_TRUE(),
-					docs.CreatorID.EQ(jet.Int32(userId)),
+					docs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				),
 				jet.OR(
 					jet.AND(
@@ -84,11 +84,11 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			docs.
 				LEFT_JOIN(dUserAccess,
 					dUserAccess.DocumentID.EQ(docs.ID).
-						AND(dUserAccess.UserID.EQ(jet.Int32(userId)))).
+						AND(dUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
 				LEFT_JOIN(dJobAccess,
 					dJobAccess.DocumentID.EQ(docs.ID).
-						AND(dJobAccess.Job.EQ(jet.String(job))).
-						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
+						AND(dJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				).
 				LEFT_JOIN(dCategory,
 					docs.CategoryID.EQ(dCategory.ID),

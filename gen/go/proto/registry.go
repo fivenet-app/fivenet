@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/interceptors/auth"
 	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
@@ -86,7 +87,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 		return GenericInternalServerError
 	}
 
-	ui := auth.NewUIRetriever(ctx, db)
+	ui := userinfo.NewUIRetriever(ctx, db)
 	grpcAuth := auth.NewGRPCAuth(ui, tm)
 	grpcPerm := auth.NewGRPCPerms(p)
 

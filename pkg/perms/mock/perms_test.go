@@ -27,11 +27,11 @@ func TestPermsMock(t *testing.T) {
 	}
 
 	user1AllPerms, err := p.GetPermissionsOfUser(&userinfo.UserInfo{
-		AccountId: 1,
 		UserId:    1,
-		Username:  "test",
 		Job:       "ambulance",
 		JobGrade:  20,
+		Group:     "user",
+		SuperUser: false,
 	})
 	assert.NoError(t, err)
 	assert.Len(t, user1AllPerms, 5)
