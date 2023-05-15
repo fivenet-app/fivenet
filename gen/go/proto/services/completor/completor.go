@@ -108,7 +108,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 	}
 	var jobs perms.StringList
 	if jobsAttr != nil {
-		jobs = jobsAttr.(perms.StringList)
+		jobs = jobsAttr.([]string)
 	}
 
 	resp := &CompleteDocumentCategoriesResponse{}

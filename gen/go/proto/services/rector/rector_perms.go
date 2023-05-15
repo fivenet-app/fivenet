@@ -104,14 +104,14 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 	}
 	var jobs perms.StringList
 	if jobsAttr != nil {
-		jobs = jobsAttr.(perms.StringList)
+		jobs = jobsAttr.([]string)
 	}
 	_ = jobs
 
 	for _, a := range attrs {
 		switch perms.AttributeTypes(a.Type) {
 		case perms.StringListAttributeType:
-			//
+			// TODO
 		case perms.JobListAttributeType:
 			fallthrough
 		case perms.JobGradeListAttributeType:

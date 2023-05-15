@@ -62,7 +62,7 @@ type Perms struct {
 	rolePermsMap syncx.Map[uint64, map[uint64]bool]
 
 	// Role ID to map of Key -> cached attribute
-	roleIDToAttrMap syncx.Map[uint64, map[int32]map[Key]cacheAttr]
+	roleIDToAttrMap syncx.Map[uint64, map[Key]cacheRoleAttr]
 
 	userCanCacheTTL time.Duration
 	userCanCache    *cache.Cache[int32, map[uint64]bool]
@@ -84,7 +84,7 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 		jobsToRoleIDMap:  syncx.Map[string, map[int32]uint64]{},
 		rolePermsMap:     syncx.Map[uint64, map[uint64]bool]{},
 
-		roleIDToAttrMap: syncx.Map[uint64, map[int32]map[Key]cacheAttr]{},
+		roleIDToAttrMap: syncx.Map[uint64, map[Key]cacheRoleAttr]{},
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
@@ -97,8 +97,13 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 
 type cacheAttr struct {
 	ID          uint64
-	Value       *permissions.AttributeValues
+	Type        AttributeTypes
 	ValidValues *permissions.AttributeValues
+}
+
+type cacheRoleAttr struct {
+	Type  AttributeTypes
+	Value *permissions.AttributeValues
 }
 
 func (p *Perms) load() error {
@@ -187,9 +192,6 @@ func (p *Perms) loadRolePermissions() error {
 func (p *Perms) loadRoleAttributes() error {
 	stmt := tRoleAttrs.
 		SELECT(
-			tRoles.Job,
-			tRoles.Grade,
-			tAttrs.ID.AS("ID"),
 			tRoleAttrs.RoleID.AS("role_id"),
 			tAttrs.Key.AS("key"),
 			tAttrs.Type.AS("type"),
@@ -200,16 +202,10 @@ func (p *Perms) loadRoleAttributes() error {
 			tRoleAttrs.
 				INNER_JOIN(tAttrs,
 					tAttrs.ID.EQ(tRoleAttrs.AttrID),
-				).
-				INNER_JOIN(tRoles,
-					tRoles.ID.EQ(tRoleAttrs.RoleID),
 				),
 		)
 
 	var dest []struct {
-		Job         string
-		Grade       int32
-		ID          uint64
 		RoleID      uint64
 		Key         Key
 		Type        AttributeTypes
@@ -224,30 +220,52 @@ func (p *Perms) loadRoleAttributes() error {
 	}
 
 	for _, v := range dest {
-		attrMap, ok := p.roleIDToAttrMap.Load(v.RoleID)
-		if !ok {
-			attrMap = map[int32]map[Key]cacheAttr{}
-		}
-		if _, found := attrMap[v.Grade]; !found {
-			attrMap[v.Grade] = map[Key]cacheAttr{}
-		}
-
-		attrMap[v.Grade][v.Key] = cacheAttr{
-			ID:          v.ID,
-			Value:       &permissions.AttributeValues{},
-			ValidValues: &permissions.AttributeValues{},
-		}
-
-		if err := p.convertRawValue(attrMap[v.Grade][v.Key].Value, v.Value, AttributeTypes(v.Type)); err != nil {
+		if err := p.addOrUpdateRoleAttributeInMap(v.RoleID, v.Key, v.Type, v.Value, v.ValidValues); err != nil {
 			return err
 		}
-
-		if err := p.convertRawValue(attrMap[v.Grade][v.Key].ValidValues, v.ValidValues, AttributeTypes(v.Type)); err != nil {
-			return err
-		}
-
-		p.roleIDToAttrMap.Store(v.RoleID, attrMap)
 	}
 
 	return nil
+}
+
+func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, key Key, aType AttributeTypes, value string, validValues string) error {
+	val := &permissions.AttributeValues{}
+	if err := p.convertRawValue(val, value, aType); err != nil {
+		return err
+	}
+
+	validVals := &permissions.AttributeValues{}
+	if err := p.convertRawValue(validVals, validValues, aType); err != nil {
+		return err
+	}
+
+	p.updateRoleAttributeInMap(roleId, key, aType, val)
+
+	return nil
+}
+
+func (p *Perms) updateRoleAttributeInMap(roleId uint64, key Key, aType AttributeTypes, value *permissions.AttributeValues) {
+	attrMap, ok := p.roleIDToAttrMap.Load(roleId)
+	if !ok || attrMap == nil {
+		attrMap = map[Key]cacheRoleAttr{}
+	}
+
+	attrMap[key] = cacheRoleAttr{
+		Type:  aType,
+		Value: value,
+	}
+
+	p.roleIDToAttrMap.Store(roleId, attrMap)
+}
+
+func (p *Perms) removeRoleAttributeFromMap(roleId uint64, key Key) {
+	attrMap, ok := p.roleIDToAttrMap.Load(roleId)
+	if !ok || attrMap == nil {
+		return
+	}
+
+	if _, ok := attrMap[key]; ok {
+		delete(attrMap, key)
+		p.roleIDToAttrMap.Store(roleId, attrMap)
+	}
 }

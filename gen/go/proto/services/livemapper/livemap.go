@@ -107,18 +107,18 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	if err != nil {
 		return FailedErr
 	}
-	var dispatchesJobs perms.JobList
+	var dispatchesJobs []string
 	if dispatchesAttr != nil {
-		dispatchesJobs = dispatchesAttr.(perms.JobList)
+		dispatchesJobs = dispatchesAttr.([]string)
 	}
 
 	playersAttr, err := s.p.Attr(userId, job, jobGrade, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
 	if err != nil {
 		return FailedErr
 	}
-	var playersJobs perms.JobList
+	var playersJobs []string
 	if playersAttr != nil {
-		playersJobs = playersAttr.(perms.JobList)
+		playersJobs = playersAttr.([]string)
 	}
 
 	if len(dispatchesJobs) == 0 && len(playersJobs) == 0 {
@@ -130,16 +130,16 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	// Add jobs to list visible jobs list
 	resp.JobsDispatches = make([]*jobs.Job, len(dispatchesJobs))
 	for i := 0; i < len(dispatchesJobs); i++ {
-		resp.JobsDispatches = append(resp.JobsDispatches, &jobs.Job{
+		resp.JobsDispatches[i] = &jobs.Job{
 			Name: dispatchesJobs[i],
-		})
+		}
 		s.c.EnrichJobName(resp.JobsDispatches[i])
 	}
 	resp.JobsUsers = make([]*jobs.Job, len(playersJobs))
 	for i := 0; i < len(playersJobs); i++ {
-		resp.JobsUsers = append(resp.JobsUsers, &jobs.Job{
+		resp.JobsUsers[i] = &jobs.Job{
 			Name: playersJobs[i],
-		})
+		}
 		s.c.EnrichJobName(resp.JobsUsers[i])
 	}
 

@@ -116,19 +116,6 @@ func (p *Perms) lookupPermIDByGuard(guard string) (uint64, bool) {
 	return p.guardToPermIDMap.Load(guard)
 }
 
-func (p *Perms) getRoleIDForJobAndGrade(job string, grade int32) (uint64, bool) {
-	grades, ok := p.jobsToRoleIDMap.Load(job)
-	if !ok {
-		return 0, false
-	}
-	roleId, ok := grades[grade]
-	if !ok {
-		return 0, false
-	}
-
-	return roleId, true
-}
-
 func (p *Perms) getRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64, bool) {
 	grades, ok := p.jobsToRoleIDMap.Load(job)
 	if !ok {

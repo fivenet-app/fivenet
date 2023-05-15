@@ -81,7 +81,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
-		fields = fieldsAttr.(perms.StringList)
+		fields = fieldsAttr.([]string)
 	}
 
 	for _, field := range fields {
@@ -169,7 +169,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	}
 	var jobGrades perms.JobGradeList
 	if jobGradesAttr != nil {
-		jobGrades = jobGradesAttr.(perms.JobGradeList)
+		jobGrades = jobGradesAttr.(map[string]int32)
 	}
 
 	for i := 0; i < len(resp.Users); i++ {
@@ -229,7 +229,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
-		fields = fieldsAttr.(perms.StringList)
+		fields = fieldsAttr.([]string)
 	}
 
 	for _, field := range fields {
@@ -270,7 +270,10 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			if err != nil {
 				return nil, FailedQueryErr
 			}
-			jobGrades := jobGradesAttr.(perms.JobGradeList)
+			var jobGrades perms.JobGradeList
+			if jobGradesAttr != nil {
+				jobGrades = jobGradesAttr.(map[string]int32)
+			}
 
 			if len(jobGrades) == 0 {
 				return nil, JobGradeNoPermissionErr
@@ -423,7 +426,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
-		fields = fieldsAttr.(perms.StringList)
+		fields = fieldsAttr.([]string)
 	}
 
 	if req.Props.Wanted != nil {

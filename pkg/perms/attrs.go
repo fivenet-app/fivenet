@@ -155,59 +155,57 @@ func (p *Perms) UpdateAttribute(attrId uint64, permId uint64, key Key, aType Att
 	return nil
 }
 
-func (p *Perms) Attr(userId int32, job string, grade int32, category Category, name Name, key Key) (any, error) {
-	roleId, ok := p.getRoleIDForJobAndGrade(job, grade)
+func (p *Perms) getClosestRoleAttr(job string, grade int32, key Key) *cacheRoleAttr {
+	roleIds, ok := p.getRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
-		return nil, nil
+		return nil
 	}
 
-	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
-	if !ok {
-		return nil, nil
-	}
-
-	// TODO Attributes should be inheritable use a cache like for role perms
-
-	stmt := tRoleAttrs.
-		SELECT(
-			tAttrs.Key.AS("key"),
-			tAttrs.Type.AS("type"),
-			tRoleAttrs.Value.AS("value"),
-		).
-		FROM(
-			tRoleAttrs.
-				INNER_JOIN(tAttrs,
-					tAttrs.ID.EQ(tRoleAttrs.AttrID).
-						AND(tAttrs.PermissionID.EQ(jet.Uint64(permId))),
-				),
-		).
-		WHERE(jet.AND(
-			tRoleAttrs.RoleID.EQ(jet.Uint64(roleId)),
-			tAttrs.Key.EQ(jet.String(string(key))),
-		)).
-		LIMIT(1)
-
-	var dest struct {
-		Type  AttributeTypes
-		Value string
-	}
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
+	for i := len(roleIds) - 1; i >= 0; i-- {
+		as, ok := p.roleIDToAttrMap.Load(roleIds[i])
+		if !ok {
+			continue
+		}
+		val, ok := as[key]
+		if !ok {
+			continue
 		}
 
+		return &val
+	}
+
+	return nil
+}
+
+func (p *Perms) Attr(userId int32, job string, grade int32, category Category, name Name, key Key) (any, error) {
+	cached := p.getClosestRoleAttr(job, grade, key)
+
+	if cached == nil {
 		return nil, nil
 	}
 
-	return p.convertAttributeValue(dest.Value, dest.Type)
+	switch cached.Type {
+	case StringListAttributeType:
+		return cached.Value.GetStringList().Strings, nil
+	case JobListAttributeType:
+		return cached.Value.GetJobList().Strings, nil
+	case JobGradeListAttributeType:
+		return cached.Value.GetJobGradeList().Jobs, nil
+	}
+
+	return nil, fmt.Errorf("unknown role attribute type")
 }
 
 func (p *Perms) convertAttributeValue(val string, aType AttributeTypes) (any, error) {
 	switch AttributeTypes(aType) {
-	case JobListAttributeType:
-		fallthrough
 	case StringListAttributeType:
 		x := StringList{}
+		if err := json.UnmarshalFromString(val, &x); err != nil {
+			return nil, err
+		}
+		return x, nil
+	case JobListAttributeType:
+		x := JobList{}
 		if err := json.UnmarshalFromString(val, &x); err != nil {
 			return nil, err
 		}
@@ -379,6 +377,10 @@ func (p *Perms) AddAttributesToRole(roleId uint64, attrs ...*permissions.RoleAtt
 		}
 	}
 
+	for i := 0; i < len(attrs); i++ {
+		p.updateRoleAttributeInMap(roleId, Key(attrs[i].Key), AttributeTypes(attrs[i].Type), attrs[i].Value)
+	}
+
 	return nil
 }
 
@@ -406,6 +408,10 @@ func (p *Perms) UpdateRoleAttributes(roleId uint64, attrs ...*permissions.RoleAt
 		}
 	}
 
+	for i := 0; i < len(attrs); i++ {
+		p.updateRoleAttributeInMap(roleId, Key(attrs[i].Key), AttributeTypes(attrs[i].Type), attrs[i].Value)
+	}
+
 	return nil
 }
 
@@ -424,6 +430,10 @@ func (p *Perms) RemoveAttributesFromRole(roleId uint64, attrs ...*permissions.Ro
 
 	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
 		return err
+	}
+
+	for i := 0; i < len(attrs); i++ {
+		p.removeRoleAttributeFromMap(roleId, Key(attrs[i].Key))
 	}
 
 	return nil
