@@ -227,7 +227,27 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, key Key) *cacheRoleA
 }
 
 func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error) {
-	cached := p.getClosestRoleAttr(userInfo.Job, userInfo.JobGrade, key)
+	var cached *cacheRoleAttr
+	if !userInfo.SuperUser {
+		cached = p.getClosestRoleAttr(userInfo.Job, userInfo.JobGrade, key)
+	} else {
+		permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
+		if !ok {
+			return nil, nil
+		}
+		attrs, ok := p.permIDToAttrsMap.Load(permId)
+		if !ok {
+			return nil, nil
+		}
+		attr, ok := attrs[key]
+		if !ok {
+			return nil, nil
+		}
+		cached = &cacheRoleAttr{
+			Type:  attr.Type,
+			Value: attr.ValidValues,
+		}
+	}
 
 	if cached == nil {
 		return nil, nil
