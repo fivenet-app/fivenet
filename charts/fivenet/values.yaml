@@ -63,7 +63,7 @@ ingress:
 fivenet:
   replicaCount: 1
   image:
-    repository: k8s01-registry.clster.services/moderngaming/fivenet
+    repository: docker.io/galexrt/fivenet
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -87,6 +87,7 @@ fivenet:
       path: /
       port: http
   additionalEnv: []
+  # -- FiveNet config
   config:
     logLevel: "DEBUG"
     # debug or release
@@ -166,7 +167,7 @@ envoy:
     httpGet:
       path: /ready
       port: admin
-  # Envoy config
+  # -- Envoy config
   config:
     admin:
       access_log_path: /tmp/admin_access.log

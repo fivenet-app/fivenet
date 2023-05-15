@@ -3,6 +3,7 @@ package perms
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	cache "github.com/Code-Hex/go-generics-cache"
@@ -11,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 type Permissions interface {
@@ -52,10 +54,15 @@ type Perms struct {
 
 	ctx context.Context
 
+	// Guard name to permission ID
 	guardToPermIDMap syncx.Map[string, uint64]
-	permIdToAttrsMap syncx.Map[uint64, map[Key]Attr]
-	jobsToRoleIDMap  syncx.Map[string, map[int32]uint64]
-	rolePermsMap     syncx.Map[uint64, map[uint64]bool]
+	// Job name to map of grade numbers to role ID
+	jobsToRoleIDMap syncx.Map[string, map[int32]uint64]
+	// Role ID to map of permissions ID and result
+	rolePermsMap syncx.Map[uint64, map[uint64]bool]
+
+	// Role ID to map of Key -> cached attribute
+	roleIDToAttrMap syncx.Map[uint64, map[int32]map[Key]cacheAttr]
 
 	userCanCacheTTL time.Duration
 	userCanCache    *cache.Cache[int32, map[uint64]bool]
@@ -74,9 +81,10 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 		ctx: ctx,
 
 		guardToPermIDMap: syncx.Map[string, uint64]{},
-		permIdToAttrsMap: syncx.Map[uint64, map[Key]Attr]{},
 		jobsToRoleIDMap:  syncx.Map[string, map[int32]uint64]{},
 		rolePermsMap:     syncx.Map[uint64, map[uint64]bool]{},
+
+		roleIDToAttrMap: syncx.Map[uint64, map[int32]map[Key]cacheAttr]{},
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
@@ -87,12 +95,22 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 	return p
 }
 
+type cacheAttr struct {
+	ID          uint64
+	Value       *permissions.AttributeValues
+	ValidValues *permissions.AttributeValues
+}
+
 func (p *Perms) load() error {
 	if err := p.loadRoleIDs(); err != nil {
 		return err
 	}
 
 	if err := p.loadRolePermissions(); err != nil {
+		return err
+	}
+
+	if err := p.loadRoleAttributes(); err != nil {
 		return err
 	}
 
@@ -161,6 +179,74 @@ func (p *Perms) loadRolePermissions() error {
 		if loaded {
 			perms[v.ID] = v.Val
 		}
+	}
+
+	return nil
+}
+
+func (p *Perms) loadRoleAttributes() error {
+	stmt := tRoleAttrs.
+		SELECT(
+			tRoles.Job,
+			tRoles.Grade,
+			tAttrs.ID.AS("ID"),
+			tRoleAttrs.RoleID.AS("role_id"),
+			tAttrs.Key.AS("key"),
+			tAttrs.Type.AS("type"),
+			tRoleAttrs.Value.AS("value"),
+			tAttrs.ValidValues.AS("valid_values"),
+		).
+		FROM(
+			tRoleAttrs.
+				INNER_JOIN(tAttrs,
+					tAttrs.ID.EQ(tRoleAttrs.AttrID),
+				).
+				INNER_JOIN(tRoles,
+					tRoles.ID.EQ(tRoleAttrs.RoleID),
+				),
+		)
+
+	var dest []struct {
+		Job         string
+		Grade       int32
+		ID          uint64
+		RoleID      uint64
+		Key         Key
+		Type        AttributeTypes
+		Value       string
+		ValidValues string
+	}
+
+	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return err
+		}
+	}
+
+	for _, v := range dest {
+		attrMap, ok := p.roleIDToAttrMap.Load(v.RoleID)
+		if !ok {
+			attrMap = map[int32]map[Key]cacheAttr{}
+		}
+		if _, found := attrMap[v.Grade]; !found {
+			attrMap[v.Grade] = map[Key]cacheAttr{}
+		}
+
+		attrMap[v.Grade][v.Key] = cacheAttr{
+			ID:          v.ID,
+			Value:       &permissions.AttributeValues{},
+			ValidValues: &permissions.AttributeValues{},
+		}
+
+		if err := p.convertRawValue(attrMap[v.Grade][v.Key].Value, v.Value, AttributeTypes(v.Type)); err != nil {
+			return err
+		}
+
+		if err := p.convertRawValue(attrMap[v.Grade][v.Key].ValidValues, v.ValidValues, AttributeTypes(v.Type)); err != nil {
+			return err
+		}
+
+		p.roleIDToAttrMap.Store(v.RoleID, attrMap)
 	}
 
 	return nil

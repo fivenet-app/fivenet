@@ -23,6 +23,7 @@ const (
 
 var (
 	AuthInfoKey     struct{}
+	NoTokenErr      = status.Errorf(codes.Unauthenticated, "authorization string must not be empty")
 	InvalidTokenErr = status.Error(codes.Unauthenticated, "Token invalid/ expired!")
 	CheckTokenErr   = status.Error(codes.Unauthenticated, "Token check failed!")
 )
@@ -44,7 +45,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 	}
 
 	if t == "" {
-		return nil, status.Errorf(codes.Unauthenticated, "authorization string must not be empty")
+		return nil, NoTokenErr
 	}
 
 	// Parse token only returns the token info when the token is still valid

@@ -121,3 +121,20 @@ optimize-tiles:
 tiles:
 	$(MAKE) gen-tiles
 	$(MAKE) optimize-tiles
+
+# ====================================================================================
+# Makefile helper functions for helm-docs: https://github.com/norwoodj/helm-docs
+#
+
+HELM_DOCS_VERSION := v1.11.0
+HELM_DOCS := helm-docs
+HELM_DOCS_REPO := github.com/norwoodj/helm-docs/cmd/helm-docs
+
+$(HELM_DOCS): ## Installs helm-docs
+	@GO111MODULE=on go install $(HELM_DOCS_REPO)@$(HELM_DOCS_VERSION)
+
+helm-docs: $(HELM_DOCS) ## Use helm-docs to generate documentation from helm charts
+	$(HELM_DOCS) -c charts/fivenet \
+		-o README.md \
+		-t README.gotmpl.md \
+		-t _templates.gotmpl

@@ -35,7 +35,7 @@ const props = defineProps({
 
 const activeChar = computed(() => authStore.getActiveChar);
 
-const maxAccessEntries = 10;
+const maxAccessEntries = 8;
 
 const title = ref<string>('');
 const description = ref<string>('');

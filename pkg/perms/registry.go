@@ -49,6 +49,10 @@ func BuildGuardWithKey(category Category, name Name, key Key) string {
 }
 
 func (p *Perms) Register() error {
+	if err := p.cleanupRoles(); err != nil {
+		return err
+	}
+
 	for _, perm := range permsList {
 		permId, err := p.createOrUpdatePermission(perm.Category, perm.Name)
 		if err != nil {
@@ -57,16 +61,14 @@ func (p *Perms) Register() error {
 		p.guardToPermIDMap.Store(BuildGuard(perm.Category, perm.Name), permId)
 
 		for _, attr := range perm.Attrs {
-			attrId, err := p.createOrUpdateAttribute(permId, attr.Key, attr.Type, attr.ValidValues)
+			_, err := p.createOrUpdateAttribute(permId, attr.Key, attr.Type, attr.ValidValues)
 			if err != nil {
 				return err
 			}
-			attr.ID = attrId
-			p.permIdToAttrsMap.LoadOrStore(permId, map[Key]Attr{attr.Key: attr})
 		}
 	}
 
-	return p.cleanupRoles()
+	return nil
 }
 
 func (p *Perms) createOrUpdatePermission(category Category, name Name) (uint64, error) {

@@ -119,7 +119,7 @@ func (p *Perms) CreateAttribute(permId uint64, key Key, aType AttributeTypes, va
 	return uint64(lastId), nil
 }
 
-func (p *Perms) UpdateAttribute(attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error {
+func (p *Perms) UpdateAttribute(attrId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error {
 	validV := jet.StringExp(jet.NULL)
 	if validValues != nil {
 		out, err := json.MarshalToString(validValues)
@@ -144,7 +144,7 @@ func (p *Perms) UpdateAttribute(attributeId uint64, permId uint64, key Key, aTyp
 			tAttrs.ValidValues.SET(validV),
 		).
 		WHERE(
-			tAttrs.ID.EQ(jet.Uint64(attributeId)),
+			tAttrs.ID.EQ(jet.Uint64(attrId)),
 		)
 
 	_, err := stmt.ExecContext(p.ctx, p.db)
