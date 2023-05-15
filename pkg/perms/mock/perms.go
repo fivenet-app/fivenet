@@ -97,16 +97,10 @@ func (p *PermsMock) GetAllPermissions() ([]*permissions.Permission, error) {
 }
 
 func (p *PermsMock) GetPermissionsByIDs(ids ...uint64) ([]*permissions.Permission, error) {
-
-	// TODO
-
 	return nil, nil
 }
 
 func (p *PermsMock) CreatePermission(category perms.Category, name perms.Name) (uint64, error) {
-
-	// TODO
-
 	return 0, nil
 }
 
@@ -157,58 +151,34 @@ func (p *PermsMock) GetRoles(prefix string) (collections.Roles, error) {
 }
 
 func (p *PermsMock) CountRolesForJob(prefix string) (int64, error) {
-
-	// TODO
-
 	return 0, nil
 }
 
 func (p *PermsMock) GetRole(id uint64) (*model.FivenetRoles, error) {
-
-	// TODO
-
 	return nil, nil
 }
 
 func (p *PermsMock) GetRoleByJobAndGrade(job string, grade int32) (*model.FivenetRoles, error) {
-
-	// TODO
-
 	return nil, nil
 }
 
 func (p *PermsMock) GetRolePermissions(id uint64) ([]*permissions.Permission, error) {
-
-	// TODO
-
 	return nil, nil
 }
 
 func (p *PermsMock) CreateRole(job string, grade int32) (*model.FivenetRoles, error) {
-
-	// TODO
-
 	return nil, nil
 }
 
 func (p *PermsMock) DeleteRole(id uint64) error {
-
-	// TODO
-
 	return nil
 }
 
 func (p *PermsMock) UpdateRolePermissions(id uint64, perms ...perms.AddPerm) error {
-
-	// TODO
-
 	return nil
 }
 
 func (p *PermsMock) RemovePermissionsFromRole(id uint64, perms ...uint64) error {
-
-	// TODO
-
 	return nil
 }
 

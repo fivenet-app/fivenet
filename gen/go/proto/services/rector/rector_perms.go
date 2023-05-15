@@ -101,15 +101,24 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 	}
 
 	for _, a := range attrs {
+		attr, err := s.p.GetAttribute(perms.Category(a.Category), perms.Name(a.Name), perms.Key(a.Key))
+		if err != nil {
+			return nil, err
+		}
+
 		switch perms.AttributeTypes(a.Type) {
 		case perms.StringListAttributeType:
-			// TODO
+			if !perms.ValidateStringList(a.Value.GetStringList().Strings, attr.ValidValues.GetStringList().Strings) {
+				return nil, fmt.Errorf("invalid option in list")
+			}
 		case perms.JobListAttributeType:
 			if !perms.ValidateJobList(a.Value.GetJobList().Strings, config.C.Game.PermissionRoleJobs) {
 				return nil, fmt.Errorf("invalid job in job list")
 			}
 		case perms.JobGradeListAttributeType:
-
+			if !perms.ValidateJobGradeList(a.Value.GetJobGradeList().Jobs) {
+				return nil, fmt.Errorf("invalid job/ grade in job grade list")
+			}
 		}
 	}
 

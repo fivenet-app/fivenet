@@ -41,7 +41,6 @@ async function getRole(): Promise<void> {
 
     try {
         const resp = await $grpc.getRectorClient().getRole(req, null);
-        // TODO Take care of attributes
 
         role.value = resp.getRole();
         role.value?.getAttributesList().forEach(attr => {

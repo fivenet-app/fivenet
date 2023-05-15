@@ -56,6 +56,13 @@ func ValidateJobList(in []string, jobs []string) bool {
 	return true
 }
 
+func ValidateJobGradeList(in map[string]int32) bool {
+
+	// TODO validate job grade list, valid vals will contain one rank and that is the "highest" it can have
+
+	return true
+}
+
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (

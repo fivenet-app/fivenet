@@ -30,8 +30,6 @@ var (
 	overrideAuthToken = "override_token"
 )
 
-// TODO(mwitkow): Add auth from metadata client dialer, which requires TLS.
-
 func buildDummyAuthFunction(expectedScheme string, expectedToken string) func(ctx context.Context) (context.Context, error) {
 	return func(ctx context.Context) (context.Context, error) {
 		token, err := auth.AuthFromMD(ctx, expectedScheme)
