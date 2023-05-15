@@ -121,11 +121,15 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		playersJobs = playersAttr.([]string)
 	}
 
+	resp := &StreamResponse{}
+
 	if len(dispatchesJobs) == 0 && len(playersJobs) == 0 {
+		if err := srv.Send(resp); err != nil {
+			return err
+		}
+
 		return nil
 	}
-
-	resp := &StreamResponse{}
 
 	// Add jobs to list visible jobs list
 	resp.JobsDispatches = make([]*jobs.Job, len(dispatchesJobs))

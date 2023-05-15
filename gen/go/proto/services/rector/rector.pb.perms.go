@@ -3,10 +3,7 @@
 
 package rector
 
-import (
-	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/perms"
-)
+import "github.com/galexrt/fivenet/pkg/perms"
 
 var PermsRemap = map[string]string{
 	// Service: RectorService
@@ -56,7 +53,7 @@ func init() {
 				{
 					Key:         RectorServiceGetPermissionsJobsPermField,
 					Type:        perms.JobListAttributeType,
-					ValidValues: config.C.Game.LivemapJobs,
+					ValidValues: "config.C.Game.LivemapJobs",
 				},
 			},
 		},

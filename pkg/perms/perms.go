@@ -64,8 +64,6 @@ type Perms struct {
 
 	// Perm ID to map Key -> cached attribute
 	permIDToAttrsMap syncx.Map[uint64, map[Key]cacheAttr]
-	// Attribute ID to cached attribute
-	attrIDMap syncx.Map[uint64, cacheAttr]
 	// Role ID to map of Key -> cached role attribute
 	roleIDToAttrMap syncx.Map[uint64, map[Key]cacheRoleAttr]
 
@@ -90,7 +88,6 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 		rolePermsMap:     syncx.Map[uint64, map[uint64]bool]{},
 
 		permIDToAttrsMap: syncx.Map[uint64, map[Key]cacheAttr]{},
-		attrIDMap:        syncx.Map[uint64, cacheAttr]{},
 		roleIDToAttrMap:  syncx.Map[uint64, map[Key]cacheRoleAttr]{},
 
 		userCanCacheTTL: 30 * time.Second,
@@ -105,7 +102,7 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 type cacheAttr struct {
 	ID           uint64
 	PermissionID uint64
-	Key          string
+	Key          Key
 	Type         AttributeTypes
 	ValidValues  *permissions.AttributeValues
 }

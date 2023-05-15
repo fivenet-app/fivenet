@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
@@ -61,6 +62,11 @@ func (p *Perms) Register() error {
 		p.guardToPermIDMap.Store(BuildGuard(perm.Category, perm.Name), permId)
 
 		for _, attr := range perm.Attrs {
+			switch attr.ValidValues {
+			case "config.C.Game.LivemapJobs":
+				attr.ValidValues = config.C.Game.LivemapJobs
+			}
+
 			_, err := p.createOrUpdateAttribute(permId, attr.Key, attr.Type, attr.ValidValues)
 			if err != nil {
 				return err
@@ -100,14 +106,20 @@ func (p *Perms) createOrUpdateAttribute(permId uint64, key Key, aType AttributeT
 
 	if attr != nil {
 		var validVal interface{}
-		if attr.ValidValues != nil {
+		if validValues != nil {
 			validVal, err = json.MarshalToString(validValues)
 			if err != nil {
 				return 0, err
 			}
 		}
-		if attr.Type != string(aType) || (validVal != nil || validValues != nil) && validVal != validVal {
+
+		if attr.Type != string(aType) ||
+			((attr.ValidValues == nil && validVal != nil) || (validVal != nil && attr.ValidValues != nil && validVal != *attr.ValidValues)) {
 			return attr.ID, p.UpdateAttribute(attr.ID, permId, key, aType, validValues)
+		}
+
+		if err := p.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validValues); err != nil {
+			return 0, err
 		}
 
 		return attr.ID, nil

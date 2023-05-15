@@ -92,7 +92,7 @@ func (p *Perms) GetAttribute(category Category, name Name, key Key) (*permission
 		PermissionId: attr.PermissionID,
 		Category:     string(category),
 		Name:         string(name),
-		Key:          attr.Key,
+		Key:          string(attr.Key),
 		Type:         string(attr.Type),
 		ValidValues:  attr.ValidValues,
 	}, nil
@@ -127,7 +127,9 @@ func (p *Perms) CreateAttribute(permId uint64, key Key, aType AttributeTypes, va
 			return 0, err
 		}
 
-		validV = jet.String(out)
+		if out != "null" {
+			validV = jet.String(out)
+		}
 	}
 
 	stmt := tAttrs.
@@ -155,6 +157,10 @@ func (p *Perms) CreateAttribute(permId uint64, key Key, aType AttributeTypes, va
 			return 0, err
 		}
 
+		if err := p.addOrUpdateAttributeInMap(permId, uint64(attr.ID), key, aType, validValues); err != nil {
+			return 0, err
+		}
+
 		return attr.ID, nil
 	}
 
@@ -163,7 +169,44 @@ func (p *Perms) CreateAttribute(permId uint64, key Key, aType AttributeTypes, va
 		return 0, err
 	}
 
+	if err := p.addOrUpdateAttributeInMap(permId, uint64(lastId), key, aType, validValues); err != nil {
+		return 0, err
+	}
+
 	return uint64(lastId), nil
+}
+
+func (p *Perms) addOrUpdateAttributeInMap(permId uint64, attrId uint64, key Key, aType AttributeTypes, validValues any) error {
+	out, err := json.MarshalToString(validValues)
+	if err != nil {
+		return err
+	}
+
+	validVals := &permissions.AttributeValues{}
+	if err := p.convertRawValue(validVals, out, aType); err != nil {
+		return err
+	}
+
+	p.updateAttributeInMap(permId, attrId, key, aType, validVals)
+
+	return nil
+}
+
+func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aType AttributeTypes, validValues *permissions.AttributeValues) {
+	attrMap, ok := p.permIDToAttrsMap.Load(permId)
+	if !ok || attrMap == nil {
+		attrMap = map[Key]cacheAttr{}
+	}
+
+	attrMap[key] = cacheAttr{
+		ID:           attrId,
+		PermissionID: permId,
+		Key:          key,
+		Type:         aType,
+		ValidValues:  validValues,
+	}
+
+	p.permIDToAttrsMap.Store(permId, attrMap)
 }
 
 func (p *Perms) UpdateAttribute(attrId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error {
@@ -199,6 +242,10 @@ func (p *Perms) UpdateAttribute(attrId uint64, permId uint64, key Key, aType Att
 	_, err := stmt.ExecContext(p.ctx, p.db)
 	if err != nil {
 		return err
+	}
+
+	if err := p.addOrUpdateAttributeInMap(permId, attrId, key, aType, validValues); err != nil {
+		return nil
 	}
 
 	return nil
