@@ -54,8 +54,9 @@ func init() {
 			Name:     RectorServiceGetPermissionsPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:  RectorServiceGetPermissionsJobsPermField,
-					Type: perms.JobListAttributeType, ValidValues: config.C.Game.LivemapJobs,
+					Key:         RectorServiceGetPermissionsJobsPermField,
+					Type:        perms.JobListAttributeType,
+					ValidValues: config.C.Game.LivemapJobs,
 				},
 			},
 		},

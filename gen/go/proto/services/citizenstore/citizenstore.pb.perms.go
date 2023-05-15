@@ -36,8 +36,9 @@ func init() {
 			Name:     CitizenStoreServiceListCitizensPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:  CitizenStoreServiceListCitizensFieldsPermField,
-					Type: perms.StringListAttributeType, ValidValues: []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job"},
+					Key:         CitizenStoreServiceListCitizensFieldsPermField,
+					Type:        perms.StringListAttributeType,
+					ValidValues: []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job"},
 				},
 			},
 		},
@@ -46,8 +47,9 @@ func init() {
 			Name:     CitizenStoreServiceListUserActivityPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:  CitizenStoreServiceListUserActivityFieldsPermField,
-					Type: perms.StringListAttributeType, ValidValues: []string{"SourceUser"},
+					Key:         CitizenStoreServiceListUserActivityFieldsPermField,
+					Type:        perms.StringListAttributeType,
+					ValidValues: []string{"SourceUser"},
 				},
 			},
 		},
@@ -56,8 +58,9 @@ func init() {
 			Name:     CitizenStoreServiceSetUserPropsPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:  CitizenStoreServiceSetUserPropsFieldsPermField,
-					Type: perms.StringListAttributeType, ValidValues: []string{"Wanted", "Job"},
+					Key:         CitizenStoreServiceSetUserPropsFieldsPermField,
+					Type:        perms.StringListAttributeType,
+					ValidValues: []string{"Wanted", "Job"},
 				},
 			},
 		},

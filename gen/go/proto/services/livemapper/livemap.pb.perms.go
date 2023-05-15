@@ -24,12 +24,14 @@ func init() {
 			Name:     LivemapperServiceStreamPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:  LivemapperServiceStreamDispatchesPermField,
-					Type: perms.JobListAttributeType, ValidValues: config.C.Game.LivemapJobs,
+					Key:         LivemapperServiceStreamDispatchesPermField,
+					Type:        perms.JobListAttributeType,
+					ValidValues: config.C.Game.LivemapJobs,
 				},
 				{
-					Key:  LivemapperServiceStreamPlayersPermField,
-					Type: perms.JobListAttributeType, ValidValues: config.C.Game.LivemapJobs,
+					Key:         LivemapperServiceStreamPlayersPermField,
+					Type:        perms.JobListAttributeType,
+					ValidValues: config.C.Game.LivemapJobs,
 				},
 			},
 		},

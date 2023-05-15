@@ -224,7 +224,7 @@ func init() {
                 {
                     Key: {{ $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
                     Type: perms.{{ $attr.Type }}AttributeType,
-                    {{- with $attr.Valid }}ValidValues: {{ $attr.Valid }},{{ end }}
+                    {{ with $attr.Valid -}}ValidValues: {{ $attr.Valid }},{{ end }}
                 },
             {{- end }}
             },
