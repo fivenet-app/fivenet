@@ -86,6 +86,12 @@ type Game struct {
 	PublicJobs         []string      `yaml:"publicJobs"`
 	PermissionRoleJobs []string      `yaml:"permissionRoleJobs"`
 	LivemapJobs        []string      `yaml:"livemapJobs"`
+	DefaultPermissions []Perm        `yaml:"defaultPermissions"`
+}
+
+type Perm struct {
+	Category string `yaml:"category"`
+	Name     string `yaml:"name"`
 }
 
 type UnemployedJob struct {
