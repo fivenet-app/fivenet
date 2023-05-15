@@ -70,7 +70,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		s.a.AddEntryWithData(&model.FivenetAuditLog{
 			Service: DMVService_ServiceDesc.ServiceName,
 			Method:  "ListVehicles",
-			UserID:  userInfo.CharID,
+			UserID:  userInfo.UserId,
 			UserJob: userInfo.Job,
 			State:   int16(rector.EVENT_TYPE_VIEWED),
 		}, req)

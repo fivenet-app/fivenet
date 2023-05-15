@@ -102,7 +102,7 @@ func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*C
 func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDocumentCategoriesRequest) (*CompleteDocumentCategoriesResponse, error) {
 	userInfo := auth.GetUserInfoFromContext(ctx)
 
-	jobsAttr, err := s.p.Attr(userInfo.CharID, userInfo.Job, userInfo.JobGrade, CompletorServicePerm, CompletorServiceCompleteDocumentCategoriesPerm, CompletorServiceCompleteDocumentCategoriesJobsPermField)
+	jobsAttr, err := s.p.Attr(userInfo, CompletorServicePerm, CompletorServiceCompleteDocumentCategoriesPerm, CompletorServiceCompleteDocumentCategoriesJobsPermField)
 	if err != nil {
 		return nil, FailedSearchErr
 	}

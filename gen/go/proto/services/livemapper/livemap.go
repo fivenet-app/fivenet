@@ -103,7 +103,7 @@ func (s *Server) Start() {
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userInfo := auth.GetUserInfoFromContext(srv.Context())
 
-	dispatchesAttr, err := s.p.Attr(userInfo.CharID, userInfo.Job, userInfo.JobGrade, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
+	dispatchesAttr, err := s.p.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
 	if err != nil {
 		return FailedErr
 	}
@@ -112,7 +112,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		dispatchesJobs = dispatchesAttr.([]string)
 	}
 
-	playersAttr, err := s.p.Attr(userInfo.CharID, userInfo.Job, userInfo.JobGrade, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
+	playersAttr, err := s.p.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
 	if err != nil {
 		return FailedErr
 	}
@@ -153,7 +153,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 		resp.Dispatches = dispatchMarkers
 
-		userMarkers, err := s.getUserLocations(playersJobs, userInfo.CharID, userInfo.Job)
+		userMarkers, err := s.getUserLocations(playersJobs, userInfo.UserId, userInfo.Job)
 		if err != nil {
 			return FailedErr
 		}

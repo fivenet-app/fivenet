@@ -86,7 +86,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 	countStmt := s.getDocumentsQuery(
 		condition,
 		jet.ProjectionList{jet.COUNT(jet.DISTINCT(docs.ID)).AS("datacount.totalcount")},
-		-1, userInfo.UserId, userInfo.Job, userInfo.JobGrade)
+		-1, userInfo)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -102,7 +102,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 	}
 
 	stmt := s.getDocumentsQuery(condition, nil,
-		DocShortContentLength, userInfo.UserId, userInfo.Job, userInfo.JobGrade).
+		DocShortContentLength, userInfo).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(docs.ID).
 		LIMIT(limit)
@@ -168,7 +168,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*documents.Document, error) {
 	var doc documents.Document
 
-	stmt := s.getDocumentsQuery(condition, nil, -1, userInfo.UserId, userInfo.Job, userInfo.JobGrade).
+	stmt := s.getDocumentsQuery(condition, nil, -1, userInfo).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
