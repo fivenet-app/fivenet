@@ -116,3 +116,7 @@ You must use this forked version: [Github jrapoport/grpc-web-devtools](https://g
 ## Credits
 
 Based upon [NelsonMinar's Map Viewer Gist](https://gist.github.com/NelsonMinar/6600524) and VPC's CopNet/ MedicNet livemap code.
+
+## License
+
+Code licensed under Apache 2.0 license, see [LICENSE](/LICENSE).
