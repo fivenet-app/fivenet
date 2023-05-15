@@ -30,7 +30,7 @@ type Attr struct {
 	ID          uint64
 	Key         Key
 	Type        AttributeTypes
-	ValidValues string
+	ValidValues any
 }
 
 func AddPermsToList(perms []*Perm) {
@@ -90,31 +90,30 @@ func (p *Perms) createOrUpdatePermission(category Category, name Name) (uint64, 
 	return p.CreatePermission(category, name)
 }
 
-func (p *Perms) createOrUpdateAttribute(permId uint64, key Key, aType AttributeTypes, validValues string) (uint64, error) {
-	attr, err := p.GetAttribute(permId, key)
+func (p *Perms) createOrUpdateAttribute(permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error) {
+	attr, err := p.getAttributeFromDatabase(permId, key)
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return 0, err
 		}
 	}
 
-	var validVals interface{}
-	if validValues != "" {
-		if err = json.UnmarshalFromString(validValues, &validVals); err != nil {
-			return 0, err
-		}
-	}
-
 	if attr != nil {
-		if Key(attr.Key) != key ||
-			((attr.ValidValues == nil && validValues != "") || (attr.ValidValues != nil && attr.ValidValues != &validValues)) {
-			return attr.ID, p.UpdateAttribute(attr.ID, permId, key, aType, validVals)
+		var validVal interface{}
+		if attr.ValidValues != nil {
+			validVal, err = json.MarshalToString(validValues)
+			if err != nil {
+				return 0, err
+			}
+		}
+		if attr.Type != string(aType) || (validVal != nil || validValues != nil) && validVal != validVal {
+			return attr.ID, p.UpdateAttribute(attr.ID, permId, key, aType, validValues)
 		}
 
 		return attr.ID, nil
 	}
 
-	return p.CreateAttribute(permId, key, aType, validVals)
+	return p.CreateAttribute(permId, key, aType, validValues)
 }
 
 func (p *Perms) cleanupRoles() error {

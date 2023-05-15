@@ -16,6 +16,6 @@ message StreamResponse {
 }
 
 service LivemapperService {
-  // @perm: Attrs=Dispatches/JobList|Players/JobGradeList
+  // @perm: Attrs=Dispatches/JobList:config.C.Game.LivemapJobs|Players/JobList:config.C.Game.LivemapJobs
   rpc Stream(StreamRequest) returns (stream StreamResponse);
 }

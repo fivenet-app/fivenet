@@ -36,7 +36,7 @@ type RectorServiceClient interface {
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
 	// @perm
 	UpdateRolePerms(ctx context.Context, in *UpdateRolePermsRequest, opts ...grpc.CallOption) (*UpdateRolePermsResponse, error)
-	// @perm: Attrs=Jobs/JobList
+	// @perm: Attrs=Jobs/JobList:config.C.Game.LivemapJobs
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error)
 	// @perm
 	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
@@ -149,7 +149,7 @@ type RectorServiceServer interface {
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
 	// @perm
 	UpdateRolePerms(context.Context, *UpdateRolePermsRequest) (*UpdateRolePermsResponse, error)
-	// @perm: Attrs=Jobs/JobList
+	// @perm: Attrs=Jobs/JobList:config.C.Game.LivemapJobs
 	GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error)
 	// @perm
 	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)

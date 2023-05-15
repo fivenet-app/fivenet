@@ -9,3 +9,8 @@ func InStringSlice(in []string, search string) bool {
 
 	return false
 }
+
+func RemoveFromStringSlice(s []string, i int) []string {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
+}

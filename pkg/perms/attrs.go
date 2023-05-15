@@ -3,6 +3,7 @@ package perms
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/utils"
@@ -29,15 +30,26 @@ type StringList []string
 type JobList []string
 type JobGradeList map[string]int32
 
-func (l StringList) Validate(validVals []string) bool {
+func ValidateStringList(in []string, validVals []string) bool {
 	// If more values than valid values in the list, it can't be valid
-	if len(l) > len(validVals) {
+	if len(in) > len(validVals) {
 		return false
 	}
 
-	for i := 0; i < len(l); i++ {
-		if !utils.InStringSlice(validVals, l[i]) {
+	for i := 0; i < len(in); i++ {
+		if !utils.InStringSlice(validVals, in[i]) {
 			return false
+		}
+	}
+
+	return true
+}
+
+func ValidateJobList(in []string, jobs []string) bool {
+	for k, v := range in {
+		if !utils.InStringSlice(jobs, v) {
+			// Remove invalid jobs from list
+			utils.RemoveFromStringSlice(in, k)
 		}
 	}
 
@@ -51,7 +63,34 @@ var (
 	tRoleAttrs = table.FivenetRoleAttrs
 )
 
-func (p *Perms) GetAttribute(permId uint64, key Key) (*model.FivenetAttrs, error) {
+func (p *Perms) GetAttribute(category Category, name Name, key Key) (*permissions.RoleAttribute, error) {
+	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
+	if !ok {
+		return nil, nil
+	}
+
+	attrs, ok := p.permIDToAttrsMap.Load(permId)
+	if !ok {
+		return nil, nil
+	}
+
+	attr, ok := attrs[key]
+	if !ok {
+		return nil, nil
+	}
+
+	return &permissions.RoleAttribute{
+		AttrId:       attr.ID,
+		PermissionId: attr.PermissionID,
+		Category:     string(category),
+		Name:         string(name),
+		Key:          attr.Key,
+		Type:         string(attr.Type),
+		ValidValues:  attr.ValidValues,
+	}, nil
+}
+
+func (p *Perms) getAttributeFromDatabase(permId uint64, key Key) (*model.FivenetAttrs, error) {
 	stmt := tAttrs.
 		SELECT(
 			tAttrs.AllColumns,
@@ -103,7 +142,7 @@ func (p *Perms) CreateAttribute(permId uint64, key Key, aType AttributeTypes, va
 			return 0, err
 		}
 
-		attr, err := p.GetAttribute(permId, key)
+		attr, err := p.getAttributeFromDatabase(permId, key)
 		if err != nil {
 			return 0, err
 		}
@@ -127,7 +166,9 @@ func (p *Perms) UpdateAttribute(attrId uint64, permId uint64, key Key, aType Att
 			return err
 		}
 
-		validV = jet.String(out)
+		if strings.ToLower(out) != "null" {
+			validV = jet.String(out)
+		}
 	}
 
 	stmt := tAttrs.
@@ -363,7 +404,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 	return p.convertRawToRoleAttributes(dest)
 }
 
-func (p *Perms) AddAttributesToRole(roleId uint64, attrs ...*permissions.RoleAttribute) error {
+func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute) error {
 	stmt := tRoleAttrs.
 		INSERT().
 		MODELS(attrs).
@@ -378,38 +419,33 @@ func (p *Perms) AddAttributesToRole(roleId uint64, attrs ...*permissions.RoleAtt
 	}
 
 	for i := 0; i < len(attrs); i++ {
-		p.updateRoleAttributeInMap(roleId, Key(attrs[i].Key), AttributeTypes(attrs[i].Type), attrs[i].Value)
+		p.updateRoleAttributeInMap(attrs[i].RoleId, Key(attrs[i].Key), AttributeTypes(attrs[i].Type), attrs[i].Value)
 	}
 
 	return nil
 }
 
-func (p *Perms) UpdateRoleAttributes(roleId uint64, attrs ...*permissions.RoleAttribute) error {
-	ids := make([]jet.Expression, len(attrs))
+func (p *Perms) UpdateRoleAttributes(attrs ...*permissions.RoleAttribute) error {
 	for i := 0; i < len(attrs); i++ {
-		ids[i] = jet.Uint64(attrs[i].AttrId)
-	}
+		stmt := tRoleAttrs.
+			UPDATE(
+				tRoleAttrs.Value,
+			).
+			SET(
+				tRoleAttrs.Value,
+			).
+			WHERE(jet.AND(
+				tRoleAttrs.RoleID.EQ(jet.Uint64(attrs[i].RoleId)),
+				tRoleAttrs.AttrID.EQ(jet.Uint64(attrs[i].AttrId)),
+			))
 
-	stmt := tRoleAttrs.
-		UPDATE(
-			tRoleAttrs.Value,
-		).
-		SET(
-			tRoleAttrs.Value,
-		).
-		WHERE(jet.AND(
-			tRoleAttrs.RoleID.EQ(jet.Uint64(roleId)),
-			tRoleAttrs.AttrID.IN(ids...),
-		))
-
-	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
-		if err != nil && !dbutils.IsDuplicateError(err) {
-			return err
+		if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
+			if err != nil && !dbutils.IsDuplicateError(err) {
+				return err
+			}
 		}
-	}
 
-	for i := 0; i < len(attrs); i++ {
-		p.updateRoleAttributeInMap(roleId, Key(attrs[i].Key), AttributeTypes(attrs[i].Type), attrs[i].Value)
+		p.updateRoleAttributeInMap(attrs[i].RoleId, Key(attrs[i].Key), AttributeTypes(attrs[i].Type), attrs[i].Value)
 	}
 
 	return nil

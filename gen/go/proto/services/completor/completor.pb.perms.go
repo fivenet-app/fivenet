@@ -27,9 +27,8 @@ func init() {
 			Name:     CompletorServiceCompleteDocumentCategoriesPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         CompletorServiceCompleteDocumentCategoriesJobsPermField,
-					Type:        perms.JobListAttributeType,
-					ValidValues: "",
+					Key:  CompletorServiceCompleteDocumentCategoriesJobsPermField,
+					Type: perms.JobListAttributeType,
 				},
 			},
 		},

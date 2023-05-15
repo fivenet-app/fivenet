@@ -18,9 +18,10 @@ const (
 )
 
 type CitizenInfoClaims struct {
-	AccountID    uint64 `json:"accid"`
-	Username     string `json:"usrnm"`
-	CharID       int32  `json:"chrid"`
+	AccountID uint64 `json:"accid"`
+	Username  string `json:"usrnm"`
+	CharID    int32  `json:"chrid"`
+	// TODO eliminate job and job grade from info claim, use database
 	CharJob      string `json:"chrjb"`
 	CharJobGrade int32  `json:"chrjbg"`
 	RenewedCount int32  `json:"renwc"`

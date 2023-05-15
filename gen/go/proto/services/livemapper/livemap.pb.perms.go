@@ -3,7 +3,10 @@
 
 package livemapper
 
-import "github.com/galexrt/fivenet/pkg/perms"
+import (
+	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/perms"
+)
 
 const (
 	LivemapperServicePerm perms.Category = "LivemapperService"
@@ -21,14 +24,12 @@ func init() {
 			Name:     LivemapperServiceStreamPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         LivemapperServiceStreamDispatchesPermField,
-					Type:        perms.JobListAttributeType,
-					ValidValues: "",
+					Key:  LivemapperServiceStreamDispatchesPermField,
+					Type: perms.JobListAttributeType, ValidValues: config.C.Game.LivemapJobs,
 				},
 				{
-					Key:         LivemapperServiceStreamPlayersPermField,
-					Type:        perms.JobGradeListAttributeType,
-					ValidValues: "",
+					Key:  LivemapperServiceStreamPlayersPermField,
+					Type: perms.JobListAttributeType, ValidValues: config.C.Game.LivemapJobs,
 				},
 			},
 		},

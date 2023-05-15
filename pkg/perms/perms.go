@@ -37,13 +37,13 @@ type Permissions interface {
 
 	Can(userId int32, job string, grade int32, category Category, name Name) bool
 
-	GetAttribute(permId uint64, key Key) (*model.FivenetAttrs, error)
+	GetAttribute(category Category, name Name, key Key) (*permissions.RoleAttribute, error)
 	CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error)
 	UpdateAttribute(attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
 	GetAllAttributes(job string) ([]*permissions.RoleAttribute, error)
-	AddAttributesToRole(roleId uint64, attrs ...*permissions.RoleAttribute) error
-	UpdateRoleAttributes(roleId uint64, attrs ...*permissions.RoleAttribute) error
+	AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute) error
+	UpdateRoleAttributes(attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(roleId uint64, attrs ...*permissions.RoleAttribute) error
 
 	Attr(userId int32, job string, grade int32, category Category, name Name, key Key) (any, error)
@@ -61,7 +61,11 @@ type Perms struct {
 	// Role ID to map of permissions ID and result
 	rolePermsMap syncx.Map[uint64, map[uint64]bool]
 
-	// Role ID to map of Key -> cached attribute
+	// Perm ID to map Key -> cached attribute
+	permIDToAttrsMap syncx.Map[uint64, map[Key]cacheAttr]
+	// Attribute ID to cached attribute
+	attrIDMap syncx.Map[uint64, cacheAttr]
+	// Role ID to map of Key -> cached role attribute
 	roleIDToAttrMap syncx.Map[uint64, map[Key]cacheRoleAttr]
 
 	userCanCacheTTL time.Duration
@@ -84,7 +88,9 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 		jobsToRoleIDMap:  syncx.Map[string, map[int32]uint64]{},
 		rolePermsMap:     syncx.Map[uint64, map[uint64]bool]{},
 
-		roleIDToAttrMap: syncx.Map[uint64, map[Key]cacheRoleAttr]{},
+		permIDToAttrsMap: syncx.Map[uint64, map[Key]cacheAttr]{},
+		attrIDMap:        syncx.Map[uint64, cacheAttr]{},
+		roleIDToAttrMap:  syncx.Map[uint64, map[Key]cacheRoleAttr]{},
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
@@ -96,9 +102,11 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 }
 
 type cacheAttr struct {
-	ID          uint64
-	Type        AttributeTypes
-	ValidValues *permissions.AttributeValues
+	ID           uint64
+	PermissionID uint64
+	Key          string
+	Type         AttributeTypes
+	ValidValues  *permissions.AttributeValues
 }
 
 type cacheRoleAttr struct {

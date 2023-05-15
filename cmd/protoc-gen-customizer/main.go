@@ -15,6 +15,7 @@ func main() {
 		Permify(),
 		Tester(),
 	).RegisterPostProcessor(
+		pgsgo.GoImports(),
 		pgsgo.GoFmt(),
 	).Render()
 }

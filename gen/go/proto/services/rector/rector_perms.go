@@ -3,11 +3,13 @@ package rector
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -98,24 +100,16 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 		return attrs, nil
 	}
 
-	jobsAttr, err := s.p.Attr(userId, job, jobGrade, RectorServicePerm, RectorServiceGetPermissionsPerm, perms.Key("Jobs"))
-	if err != nil {
-		return nil, err
-	}
-	var jobs perms.StringList
-	if jobsAttr != nil {
-		jobs = jobsAttr.([]string)
-	}
-	_ = jobs
-
 	for _, a := range attrs {
 		switch perms.AttributeTypes(a.Type) {
 		case perms.StringListAttributeType:
 			// TODO
 		case perms.JobListAttributeType:
-			fallthrough
+			if !perms.ValidateJobList(a.Value.GetJobList().Strings, config.C.Game.PermissionRoleJobs) {
+				return nil, fmt.Errorf("invalid job in job list")
+			}
 		case perms.JobGradeListAttributeType:
-			//
+
 		}
 	}
 
@@ -361,7 +355,7 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetR
 	// TODO validate each attribute by type
 
 	if len(toUpdate) > 0 {
-		if err := s.p.AddAttributesToRole(role.ID, toUpdate...); err != nil {
+		if err := s.p.AddOrUpdateAttributesToRole(toUpdate...); err != nil {
 			return err
 		}
 	}
