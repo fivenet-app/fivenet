@@ -180,7 +180,7 @@ async function onMapReady($event: any): Promise<void> {
 async function startDataStream(): Promise<void> {
     if (stream.value !== null) return;
 
-    console.debug('Starting Data Stream');
+    console.debug('Livemap: Starting Data Stream');
 
     const request = new StreamRequest();
 
@@ -206,12 +206,12 @@ async function startDataStream(): Promise<void> {
             applySelectedMarkerCentering();
         }).
         on('end', async () => {
-            console.debug('Data Stream Ended');
+            console.debug('Livemap: Data Stream Ended');
         });
 }
 
 async function stopDataStream(): Promise<void> {
-    console.debug('Stopping Data Stream');
+    console.debug('Livemap: Stopping Data Stream');
     if (stream.value !== null) {
         stream.value.cancel();
         stream.value = null;

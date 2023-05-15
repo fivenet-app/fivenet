@@ -82,6 +82,7 @@ export const useAuthStore = defineStore('auth', {
 
             return state.accessTokenExpiration;
         },
+        getLastCharID: (state): number => state.lastCharID,
         getActiveChar: (state): null | User => state.activeChar,
         getPermissions: (state): Array<String> => state.permissions,
         getJobProps: (state): null | JobPropsState => state.jobProps,

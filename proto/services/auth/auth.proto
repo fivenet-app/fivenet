@@ -45,16 +45,6 @@ message ChangePasswordResponse {
   resources.timestamp.Timestamp expires = 2;
 }
 
-message CheckTokenRequest {
-  string token = 1;
-}
-
-message CheckTokenResponse {
-  optional string new_token = 1;
-  resources.timestamp.Timestamp expires = 2;
-  repeated string permissions = 3;
-}
-
 message ForgotPasswordRequest {
   string reg_token = 1 [(validate.rules).string = {
     len: 6,
@@ -88,6 +78,7 @@ message ChooseCharacterResponse {
   resources.timestamp.Timestamp expires = 2;
   repeated string permissions = 3;
   resources.jobs.JobProps job_props = 4;
+  resources.users.User char = 5;
 }
 
 message LogoutRequest {}
@@ -120,7 +111,6 @@ message SetJobResponse {
 service AuthService {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
-  rpc CheckToken(CheckTokenRequest) returns (CheckTokenResponse);
 
   rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);

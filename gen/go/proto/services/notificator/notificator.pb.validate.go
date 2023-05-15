@@ -719,6 +719,41 @@ func (m *StreamResponse) validate(all bool) error {
 
 	}
 
+	// no validation rules for RestartStream
+
+	if m.Token != nil {
+
+		if all {
+			switch v := interface{}(m.GetToken()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Token",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Token",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetToken()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "Token",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return StreamResponseMultiError(errors)
 	}
@@ -796,3 +831,135 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = StreamResponseValidationError{}
+
+// Validate checks the field values on TokenUpdate with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *TokenUpdate) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TokenUpdate with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TokenUpdateMultiError, or
+// nil if none found.
+func (m *TokenUpdate) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TokenUpdate) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetExpires()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TokenUpdateValidationError{
+					field:  "Expires",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TokenUpdateValidationError{
+					field:  "Expires",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExpires()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TokenUpdateValidationError{
+				field:  "Expires",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.NewToken != nil {
+		// no validation rules for NewToken
+	}
+
+	if len(errors) > 0 {
+		return TokenUpdateMultiError(errors)
+	}
+
+	return nil
+}
+
+// TokenUpdateMultiError is an error wrapping multiple validation errors
+// returned by TokenUpdate.ValidateAll() if the designated constraints aren't met.
+type TokenUpdateMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TokenUpdateMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TokenUpdateMultiError) AllErrors() []error { return m }
+
+// TokenUpdateValidationError is the validation error returned by
+// TokenUpdate.Validate if the designated constraints aren't met.
+type TokenUpdateValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TokenUpdateValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TokenUpdateValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TokenUpdateValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TokenUpdateValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TokenUpdateValidationError) ErrorName() string { return "TokenUpdateValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TokenUpdateValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTokenUpdate.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TokenUpdateValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TokenUpdateValidationError{}

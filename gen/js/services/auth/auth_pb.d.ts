@@ -139,61 +139,6 @@ export namespace ChangePasswordResponse {
   }
 }
 
-export class CheckTokenRequest extends jspb.Message {
-  getToken(): string;
-  setToken(value: string): CheckTokenRequest;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CheckTokenRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: CheckTokenRequest): CheckTokenRequest.AsObject;
-  static serializeBinaryToWriter(message: CheckTokenRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CheckTokenRequest;
-  static deserializeBinaryFromReader(message: CheckTokenRequest, reader: jspb.BinaryReader): CheckTokenRequest;
-}
-
-export namespace CheckTokenRequest {
-  export type AsObject = {
-    token: string,
-  }
-}
-
-export class CheckTokenResponse extends jspb.Message {
-  getNewToken(): string;
-  setNewToken(value: string): CheckTokenResponse;
-  hasNewToken(): boolean;
-  clearNewToken(): CheckTokenResponse;
-
-  getExpires(): resources_timestamp_timestamp_pb.Timestamp | undefined;
-  setExpires(value?: resources_timestamp_timestamp_pb.Timestamp): CheckTokenResponse;
-  hasExpires(): boolean;
-  clearExpires(): CheckTokenResponse;
-
-  getPermissionsList(): Array<string>;
-  setPermissionsList(value: Array<string>): CheckTokenResponse;
-  clearPermissionsList(): CheckTokenResponse;
-  addPermissions(value: string, index?: number): CheckTokenResponse;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CheckTokenResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: CheckTokenResponse): CheckTokenResponse.AsObject;
-  static serializeBinaryToWriter(message: CheckTokenResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CheckTokenResponse;
-  static deserializeBinaryFromReader(message: CheckTokenResponse, reader: jspb.BinaryReader): CheckTokenResponse;
-}
-
-export namespace CheckTokenResponse {
-  export type AsObject = {
-    newToken?: string,
-    expires?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
-    permissionsList: Array<string>,
-  }
-
-  export enum NewTokenCase { 
-    _NEW_TOKEN_NOT_SET = 0,
-    NEW_TOKEN = 1,
-  }
-}
-
 export class ForgotPasswordRequest extends jspb.Message {
   getRegToken(): string;
   setRegToken(value: string): ForgotPasswordRequest;
@@ -347,6 +292,11 @@ export class ChooseCharacterResponse extends jspb.Message {
   hasJobProps(): boolean;
   clearJobProps(): ChooseCharacterResponse;
 
+  getChar(): resources_users_users_pb.User | undefined;
+  setChar(value?: resources_users_users_pb.User): ChooseCharacterResponse;
+  hasChar(): boolean;
+  clearChar(): ChooseCharacterResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ChooseCharacterResponse.AsObject;
   static toObject(includeInstance: boolean, msg: ChooseCharacterResponse): ChooseCharacterResponse.AsObject;
@@ -361,6 +311,7 @@ export namespace ChooseCharacterResponse {
     expires?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     permissionsList: Array<string>,
     jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
+    pb_char?: resources_users_users_pb.User.AsObject,
   }
 }
 

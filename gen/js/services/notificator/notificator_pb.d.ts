@@ -2,6 +2,7 @@ import * as jspb from 'google-protobuf'
 
 import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
 import * as resources_notifications_notifications_pb from '../../resources/notifications/notifications_pb';
+import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
 
 
 export class GetNotificationsRequest extends jspb.Message {
@@ -115,6 +116,14 @@ export class StreamResponse extends jspb.Message {
   clearNotificationsList(): StreamResponse;
   addNotifications(value?: resources_notifications_notifications_pb.Notification, index?: number): resources_notifications_notifications_pb.Notification;
 
+  getToken(): TokenUpdate | undefined;
+  setToken(value?: TokenUpdate): StreamResponse;
+  hasToken(): boolean;
+  clearToken(): StreamResponse;
+
+  getRestartStream(): boolean;
+  setRestartStream(value: boolean): StreamResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): StreamResponse.AsObject;
   static toObject(includeInstance: boolean, msg: StreamResponse): StreamResponse.AsObject;
@@ -127,6 +136,50 @@ export namespace StreamResponse {
   export type AsObject = {
     lastId: number,
     notificationsList: Array<resources_notifications_notifications_pb.Notification.AsObject>,
+    token?: TokenUpdate.AsObject,
+    restartStream: boolean,
+  }
+
+  export enum TokenCase { 
+    _TOKEN_NOT_SET = 0,
+    TOKEN = 3,
+  }
+}
+
+export class TokenUpdate extends jspb.Message {
+  getNewToken(): string;
+  setNewToken(value: string): TokenUpdate;
+  hasNewToken(): boolean;
+  clearNewToken(): TokenUpdate;
+
+  getExpires(): resources_timestamp_timestamp_pb.Timestamp | undefined;
+  setExpires(value?: resources_timestamp_timestamp_pb.Timestamp): TokenUpdate;
+  hasExpires(): boolean;
+  clearExpires(): TokenUpdate;
+
+  getPermissionsList(): Array<string>;
+  setPermissionsList(value: Array<string>): TokenUpdate;
+  clearPermissionsList(): TokenUpdate;
+  addPermissions(value: string, index?: number): TokenUpdate;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): TokenUpdate.AsObject;
+  static toObject(includeInstance: boolean, msg: TokenUpdate): TokenUpdate.AsObject;
+  static serializeBinaryToWriter(message: TokenUpdate, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): TokenUpdate;
+  static deserializeBinaryFromReader(message: TokenUpdate, reader: jspb.BinaryReader): TokenUpdate;
+}
+
+export namespace TokenUpdate {
+  export type AsObject = {
+    newToken?: string,
+    expires?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    permissionsList: Array<string>,
+  }
+
+  export enum NewTokenCase { 
+    _NEW_TOKEN_NOT_SET = 0,
+    NEW_TOKEN = 1,
   }
 }
 

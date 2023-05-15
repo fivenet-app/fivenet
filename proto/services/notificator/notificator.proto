@@ -5,6 +5,7 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/notificato
 
 import "resources/common/database/database.proto";
 import "resources/notifications/notifications.proto";
+import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 message GetNotificationsRequest {
@@ -30,6 +31,14 @@ message StreamRequest {
 message StreamResponse {
   uint64 last_id = 1;
   repeated resources.notifications.Notification notifications = 2;
+  optional TokenUpdate token = 3;
+  bool restart_stream = 4;
+}
+
+message TokenUpdate {
+  optional string new_token = 1;
+  resources.timestamp.Timestamp expires = 2;
+  repeated string permissions = 3;
 }
 
 service NotificatorService {

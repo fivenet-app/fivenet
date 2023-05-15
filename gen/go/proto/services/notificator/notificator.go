@@ -6,8 +6,11 @@ import (
 	"errors"
 	"time"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
+	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -26,13 +29,15 @@ type Server struct {
 	logger *zap.Logger
 	db     *sql.DB
 	p      perms.Permissions
+	tm     *auth.TokenMgr
 }
 
-func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions) *Server {
+func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions, tm *auth.TokenMgr) *Server {
 	return &Server{
 		logger: logger,
 		db:     db,
 		p:      p,
+		tm:     tm,
 	}
 }
 
@@ -139,10 +144,14 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		ORDER_BY(nots.ID.DESC()).
 		LIMIT(10)
 
-	resp := &StreamResponse{
-		LastId: req.LastId,
-	}
+	counter := 0
+
 	for {
+		resp := &StreamResponse{
+			LastId: req.LastId,
+			Token:  &TokenUpdate{},
+		}
+
 		q := stmt.
 			WHERE(
 				jet.AND(
@@ -155,21 +164,90 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			return err
 		}
 
-		// Update last id for user
+		// Update last notification id of user
 		if len(resp.Notifications) > 0 {
 			req.LastId = resp.Notifications[0].Id
 			resp.LastId = resp.Notifications[0].Id
 		}
 
+		// TODO Update token only every n-time or when the token is about to expire (range 4-10 hours)
+		if counter != 0 && counter%12 >= 0 {
+			if err := s.checkAndUpdateToken(srv.Context(), resp.Token); err != nil {
+				return err
+			}
+		}
+
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
+
+		counter++
+
 		resp.Notifications = nil
 
 		select {
 		case <-srv.Context().Done():
 			return nil
-		case <-time.After(30 * time.Second):
+		case <-time.After(7 * time.Second):
 		}
 	}
+}
+
+func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) error {
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return auth.InvalidTokenErr
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
+	if err != nil {
+		return auth.InvalidTokenErr
+	}
+
+	userInfo, ok := auth.GetUserInfoFromContext(ctx)
+	if !ok {
+		return auth.InvalidTokenErr
+	}
+
+	// If the user is logged into a character, load permissions of user
+	if claims.CharID > 0 {
+		perms, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
+			UserId:   userInfo.UserId,
+			Job:      userInfo.Job,
+			JobGrade: userInfo.JobGrade,
+		})
+		if err != nil {
+			return auth.CheckTokenErr
+		}
+
+		if len(perms) == 0 {
+			return auth.CheckTokenErr
+		}
+
+		tu.Permissions = perms.GuardNames()
+		if userInfo.SuperUser {
+			tu.Permissions = append(tu.Permissions, common.SuperuserPermission)
+		}
+	}
+
+	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
+		if claims.RenewedCount >= auth.TokenMaxRenews {
+			return auth.InvalidTokenErr
+		}
+
+		// Increase re-newed count
+		claims.RenewedCount++
+
+		auth.SetTokenClaimsTimes(claims)
+		newToken, err := s.tm.NewWithClaims(claims)
+		if err != nil {
+			return auth.CheckTokenErr
+		}
+
+		tu.NewToken = &newToken
+	}
+
+	tu.Expires = timestamp.New(claims.ExpiresAt.Time)
+
+	return nil
 }

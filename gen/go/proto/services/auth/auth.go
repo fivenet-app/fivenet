@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
-	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
@@ -158,69 +157,6 @@ func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutRespons
 	return &LogoutResponse{
 		Success: true,
 	}, nil
-}
-
-func (s *Server) CheckToken(ctx context.Context, req *CheckTokenRequest) (*CheckTokenResponse, error) {
-	token, err := auth.GetTokenFromGRPCContext(ctx)
-	if err != nil {
-		return nil, auth.InvalidTokenErr
-	}
-
-	claims, err := s.tm.ParseWithClaims(token)
-	if err != nil {
-		return nil, auth.InvalidTokenErr
-	}
-
-	userInfo, ok := auth.GetUserInfoFromContext(ctx)
-	if !ok {
-		return nil, auth.InvalidTokenErr
-	}
-
-	resp := &CheckTokenResponse{
-		Permissions: []string{},
-	}
-
-	// If the user is logged into a character, load permissions of user
-	if claims.CharID > 0 {
-		perms, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
-			UserId:   userInfo.UserId,
-			Job:      userInfo.Job,
-			JobGrade: userInfo.JobGrade,
-		})
-		if err != nil {
-			return nil, auth.CheckTokenErr
-		}
-
-		if len(perms) == 0 {
-			return nil, auth.CheckTokenErr
-		}
-
-		resp.Permissions = perms.GuardNames()
-		if userInfo.SuperUser {
-			resp.Permissions = append(resp.Permissions, common.SuperuserPermission)
-		}
-	}
-
-	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
-		if claims.RenewedCount >= auth.TokenMaxRenews {
-			return nil, auth.InvalidTokenErr
-		}
-
-		// Increase re-newed count
-		claims.RenewedCount++
-
-		auth.SetTokenClaimsTimes(claims)
-		newToken, err := s.tm.NewWithClaims(claims)
-		if err != nil {
-			return nil, auth.CheckTokenErr
-		}
-
-		resp.NewToken = &newToken
-	}
-
-	resp.Expires = timestamp.New(claims.ExpiresAt.Time)
-
-	return resp, nil
 }
 
 func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {
@@ -567,6 +503,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
 		Permissions: ps,
 		JobProps:    jProps,
+		Char:        char,
 	}, nil
 }
 

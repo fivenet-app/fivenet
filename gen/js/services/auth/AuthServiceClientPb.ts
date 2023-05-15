@@ -125,49 +125,6 @@ export class AuthServiceClient {
     this.methodDescriptorLogout);
   }
 
-  methodDescriptorCheckToken = new grpcWeb.MethodDescriptor(
-    '/services.auth.AuthService/CheckToken',
-    grpcWeb.MethodType.UNARY,
-    services_auth_auth_pb.CheckTokenRequest,
-    services_auth_auth_pb.CheckTokenResponse,
-    (request: services_auth_auth_pb.CheckTokenRequest) => {
-      return request.serializeBinary();
-    },
-    services_auth_auth_pb.CheckTokenResponse.deserializeBinary
-  );
-
-  checkToken(
-    request: services_auth_auth_pb.CheckTokenRequest,
-    metadata: grpcWeb.Metadata | null): Promise<services_auth_auth_pb.CheckTokenResponse>;
-
-  checkToken(
-    request: services_auth_auth_pb.CheckTokenRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback: (err: grpcWeb.RpcError,
-               response: services_auth_auth_pb.CheckTokenResponse) => void): grpcWeb.ClientReadableStream<services_auth_auth_pb.CheckTokenResponse>;
-
-  checkToken(
-    request: services_auth_auth_pb.CheckTokenRequest,
-    metadata: grpcWeb.Metadata | null,
-    callback?: (err: grpcWeb.RpcError,
-               response: services_auth_auth_pb.CheckTokenResponse) => void) {
-    if (callback !== undefined) {
-      return this.client_.rpcCall(
-        this.hostname_ +
-          '/services.auth.AuthService/CheckToken',
-        request,
-        metadata || {},
-        this.methodDescriptorCheckToken,
-        callback);
-    }
-    return this.client_.unaryCall(
-    this.hostname_ +
-      '/services.auth.AuthService/CheckToken',
-    request,
-    metadata || {},
-    this.methodDescriptorCheckToken);
-  }
-
   methodDescriptorCreateAccount = new grpcWeb.MethodDescriptor(
     '/services.auth.AuthService/CreateAccount',
     grpcWeb.MethodType.UNARY,
