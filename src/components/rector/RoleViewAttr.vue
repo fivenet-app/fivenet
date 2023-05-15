@@ -2,7 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Listbox, ListboxButton, ListboxOption, ListboxOptions, } from '@headlessui/vue'
 import { AttributeValues, JobGradeList, RoleAttribute, StringList } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid';
-import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
 
 const props = defineProps<{
     attribute: RoleAttribute,
@@ -21,7 +21,7 @@ const id = ref<number>(props.attribute.getAttrId());
 const validValues = ref<AttributeValues | undefined>(props.attribute.getValidValues());
 const type = ref<string | undefined>(props.attribute.getType());
 
-const selectedJob = ref<Job>(props.jobs[0]);
+const jobGrades = ref<Map<string, JobGrade>>(new Map());
 
 function getState(): AttributeValues {
     if (!states.value.has(id.value)) states.value.set(id.value, new AttributeValues());
@@ -46,21 +46,48 @@ async function toggleListValue(value: string): Promise<void> {
     emit('update:states', states.value);
 }
 
-async function updateJobGradeValue(job: string, grade: number): Promise<void> {
+async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
     const state = getState();
     const list = state.getJobGradeList() ?? new JobGradeList();
     const map = list.getJobsMap();
 
-    if (grade === 0) {
-        map.del(job);
+    if (checked && !map.has(job.getName())) {
+        map.set(job.getName(), 1);
+        jobGrades.value.set(job.getName(), job.getGradesList()[0]);
+    } else if (!checked && map.has(job.getName())) {
+        map.del(job.getName());
+        jobGrades.value.set(job.getName(), job.getGradesList()[0]);
     } else {
-        map.set(job, grade - 1);
+        return;
     }
 
     state.setJobGradeList(list);
     states.value.set(id.value, state);
     emit('update:states', states.value);
 }
+
+async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
+    const state = getState();
+    const list = state.getJobGradeList() ?? new JobGradeList();
+    const map = list.getJobsMap();
+
+    map.set(job.getName(), grade.getGrade());
+    jobGrades.value.set(job.getName(), job.getGradesList()[grade.getGrade() - 1]);
+
+    console.log(map)
+
+    state.setJobGradeList(list);
+    states.value.set(id.value, state);
+    emit('update:states', states.value);
+}
+
+onMounted(() => {
+    if (type.value === 'JobGradeList') {
+        props.jobs.forEach(job => {
+            jobGrades.value.set(job.getName(), job.getGradesList()[(getState().getJobGradeList()?.getJobsMap().get(job.getName()) ?? 0)]);
+        });
+    }
+});
 </script>
 
 <style scoped>
@@ -106,12 +133,20 @@ async function updateJobGradeValue(job: string, grade: number): Promise<void> {
                         </div>
                     </div>
                     <div v-else-if="type === 'JobGradeList'" class="flex flex-col gap-2">
-                        <div class="flex flex-row flex-initial flex-nowrap gap-2">
-                            <Listbox as="div" v-model="selectedJob" class="flex-1">
+                        <div v-for="job in props.jobs" :key="job.getName()"
+                            class="flex flex-row flex-initial flex-nowrap gap-2">
+                            <input :id="job.getName()" :name="job.getName()" type="checkbox"
+                                :checked="!!getState().getJobGradeList()?.getJobsMap().has(job.getName())"
+                                @change="toggleJobGradeValue(job, ($event.target as any).checked)"
+                                class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500" />
+                            <span class="flex-1 my-auto">{{ job.getLabel() }}</span>
+                            <Listbox as="div" class="flex-1" :model-value="jobGrades.get(job.getName())"
+                                @update:model-value="updateJobGradeValue(job, $event)"
+                                :disabled="!getState().getJobGradeList()?.getJobsMap().has(job.getName())">
                                 <div class="relative">
                                     <ListboxButton
-                                        class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
-                                        <span class="block truncate">{{ selectedJob.getLabel() }}</span>
+                                        class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 disabled:bg-base-800 disabled:text-neutral/50 disabled:cursor-not-allowed focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
+                                        <span class="block truncate">{{ jobGrades.get(job.getName())?.getLabel() }}</span>
                                         <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                             <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
                                         </span>
@@ -121,13 +156,13 @@ async function updateJobGradeValue(job: string, grade: number): Promise<void> {
                                         leave-from-class="opacity-100" leave-to-class="opacity-0">
                                         <ListboxOptions
                                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                            <ListboxOption as="template" v-for="job in $props.jobs" :key="job.getName()"
-                                                :value="job" v-slot="{ active, selected }">
+                                            <ListboxOption as="template" v-for="grade in job.getGradesList()"
+                                                :key="grade.getGrade()" :value="grade" v-slot="{ active, selected }">
                                                 <li
                                                     :class="[active ? 'bg-primary-500' : '', 'text-neutral relative cursor-default select-none py-2 pl-8 pr-4']">
                                                     <span
                                                         :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                                                            job.getLabel()
+                                                            grade.getLabel()
                                                         }}</span>
 
                                                     <span v-if="selected"
@@ -140,16 +175,6 @@ async function updateJobGradeValue(job: string, grade: number): Promise<void> {
                                     </transition>
                                 </div>
                             </Listbox>
-                            <span class="flex-1 my-auto">{{
-                                selectedJob.getGradesList()[
-                                    getState().getJobGradeList()?.getJobsMap().get(selectedJob.getName()) ?? -1
-                                ]?.getLabel() ?? '-'
-                            }}</span>
-                            <input id="markerSize" name="markerSize" type="range"
-                                class="h-1.5 flex-1 cursor-grab rounded-full my-auto accent-primary-500" min="0"
-                                :max="selectedJob.getGradesList().length" step="1"
-                                :value="(getState().getJobGradeList()?.getJobsMap().get(selectedJob.getName()) ?? -1) + 1"
-                                @change="updateJobGradeValue(selectedJob.getName(), ($event.target as any).value)" />
                         </div>
                     </div>
                     <div v-else>{{ type }} {{ validValues }}</div>
