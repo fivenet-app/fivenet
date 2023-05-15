@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { Permission, Role, RoleAttribute } from '@fivenet/gen/resources/permissions/permissions_pb';
+import { Permission, Role, RoleAttribute, AttributeValues } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { RpcError } from 'grpc-web';
-import { UpdateRolePermsRequest, DeleteRoleRequest, GetPermissionsRequest, GetRoleRequest, PermsUpdate, PermItem } from '@fivenet/gen/services/rector/rector_pb';
+import { UpdateRolePermsRequest, DeleteRoleRequest, GetPermissionsRequest, GetRoleRequest, PermsUpdate, PermItem, AttrsUpdate } from '@fivenet/gen/services/rector/rector_pb';
 import { ChevronDownIcon, CheckIcon, XMarkIcon, MinusIcon } from '@heroicons/vue/24/solid';
 import { TrashIcon } from '@heroicons/vue/20/solid';
 import Divider from '~/components/partials/Divider.vue';
@@ -31,7 +31,7 @@ const permCategories = ref<Set<string>>(new Set());
 const permStates = ref<Map<number, boolean | undefined>>(new Map());
 
 const attrList = ref<RoleAttribute[]>([]);
-const attrStates = ref<Map<number, (string | number)[]>>(new Map());
+const attrStates = ref<Map<number, AttributeValues | undefined>>(new Map());
 
 const jobs = ref<Job[]>([]);
 
@@ -45,7 +45,7 @@ async function getRole(): Promise<void> {
 
         role.value = resp.getRole();
         role.value?.getAttributesList().forEach(attr => {
-            attrStates.value.set(attr.getAttrId(), JSON.parse(attr.getValue()) as (string | number)[])
+            attrStates.value.set(attr.getAttrId(), attr.getValue())
         });
     } catch (e) {
         $grpc.handleRPCError(e as RpcError);
@@ -118,29 +118,47 @@ async function updatePermissionState(perm: number, state: boolean | undefined): 
 async function updatePermissions(): Promise<void> {
     const currentPermissions = role.value?.getPermissionsList().map(p => p.getId()) ?? [];
 
-    const permsToUpdate: PermItem[] = [];
-    const permsToRemove: number[] = [];
+    const perms = new PermsUpdate();
     permStates.value.forEach((state, perm) => {
         if (state !== undefined) {
-            const p = role.value?.getPermissionsList().find(v => v.getId() == perm);
+            const p = role.value?.getPermissionsList().find(v => v.getId() === perm);
 
-            if (p?.getVal() != state) {
+            if (p?.getVal() !== state) {
                 const item = new PermItem();
-                permsToUpdate.push(item.setId(perm).setVal(state));
+                item.setId(perm);
+                item.setVal(state);
+
+                perms.addToUpdate(item);
             }
-        }
-        if (state === undefined && currentPermissions.includes(perm)) permsToRemove.push(perm);
+        } else if (state === undefined && currentPermissions.includes(perm)) {
+            perms.addToRemove(perm)
+        };
     });
 
-    if (permsToUpdate.length == 0 && permsToRemove.length == 0) return;
+    if (perms.getToUpdateList().length == 0 && perms.getToRemoveList().length == 0) return;
+
+    const attrs = new AttrsUpdate();
+    attrStates.value.forEach((state, attr) => {
+        if (state !== undefined) {
+            const item = new RoleAttribute();
+            item.setRoleId(role.value!.getId());
+            item.setAttrId(attr);
+            item.setValue(state);
+
+            attrs.addToUpdate(item);
+        } else if (state === undefined) {
+            const item = new RoleAttribute();
+            item.setRoleId(role.value!.getId());
+            item.setAttrId(attr);
+
+            attrs.addToRemove(item);
+        }
+    });
 
     const req = new UpdateRolePermsRequest();
     req.setId(props.roleId);
-
-    const perms = new PermsUpdate();
-    perms.setToUpdateList(permsToUpdate);
-    perms.setToRemoveList(permsToRemove);
     req.setPerms(perms);
+    req.setAttrs(attrs);
 
     try {
         await $grpc.getRectorClient().updateRolePerms(req, null);
