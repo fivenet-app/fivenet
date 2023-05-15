@@ -50,15 +50,14 @@ async function toggleListValue(value: string): Promise<void> {
 async function updateJobGradeValue(job: string, grade: number): Promise<void> {
     const state = getState();
     const list = state.getJobGradeList() ?? new JobGradeList();
-    const map = list.getJobsMap() ?? new protobufMap<string, number>([]);
+    const map = list.getJobsMap();
 
     if (grade === 0) {
         map.del(job);
     } else {
-        map.set(job, grade - 1);
+        map.set(job, grade -1);
     }
 
-    list.setJobsMap(map);
     state.setJobGradeList(list);
     states.value.set(id.value, state);
     emit('update:states', states.value);
