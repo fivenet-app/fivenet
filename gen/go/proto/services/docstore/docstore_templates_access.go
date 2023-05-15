@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -252,7 +251,7 @@ func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo
 	}
 
 	// Allow superusers access to any templates
-	if s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+	if userInfo.SuperUser {
 		return templateIds, nil
 	}
 

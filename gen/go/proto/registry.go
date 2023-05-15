@@ -29,7 +29,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	// GRPC Services
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	pbauth "github.com/galexrt/fivenet/gen/go/proto/services/auth"
 	pbcitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
 	pbcompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor"
@@ -40,15 +39,6 @@ import (
 	pbnotificator "github.com/galexrt/fivenet/gen/go/proto/services/notificator"
 	pbrector "github.com/galexrt/fivenet/gen/go/proto/services/rector"
 )
-
-func init() {
-	perms.AddPermsToList([]*perms.Perm{
-		{
-			Category: common.SuperuserCategoryPerm,
-			Name:     common.SuperuserAnyAccessName,
-		},
-	})
-}
 
 var (
 	GenericInternalServerError = status.Error(codes.Internal, "Internal server error")

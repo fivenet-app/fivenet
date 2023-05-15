@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
@@ -273,7 +272,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, FailedQueryErr
 	}
 	if !check {
-		if !s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+		if !userInfo.SuperUser {
 			return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
 		}
 	}
@@ -351,7 +350,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
-	if !check && !s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
 	}
 

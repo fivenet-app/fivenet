@@ -96,7 +96,7 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 	}
 
 	userInfo := auth.GetUserInfoFromContext(ctx)
-	if s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+	if userInfo.SuperUser {
 		return attrs, nil
 	}
 

@@ -3,7 +3,6 @@ package rector
 import (
 	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -21,7 +20,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	condition := jet.Bool(true)
-	if !s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+	if !userInfo.SuperUser {
 		condition = auditLog.UserJob.EQ(jet.String(userInfo.Job))
 	}
 

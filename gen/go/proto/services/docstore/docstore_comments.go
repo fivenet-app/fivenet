@@ -3,7 +3,6 @@ package docstore
 import (
 	context "context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
@@ -259,8 +258,7 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 		return nil, err
 	}
 	// If the requestor is not the creator nor a superuser
-	can := s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName)
-	if comment.CreatorId != userInfo.UserId && !can {
+	if comment.CreatorId != userInfo.UserId && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You can't delete others document comments!")
 	}
 

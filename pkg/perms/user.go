@@ -2,14 +2,10 @@ package perms
 
 import (
 	cache "github.com/Code-Hex/go-generics-cache"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
-	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
-
-var tUserPerms = table.FivenetUserPermissions
 
 func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {
 	stmt := tPerms.
@@ -19,28 +15,16 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 		FROM(tPerms).
 		WHERE(
 			tPerms.ID.IN(
-				tUserPerms.
-					SELECT(
-						tUserPerms.PermissionID,
+				tRoles.
+					SELECT(tRolePerms.PermissionID).
+					FROM(tRoles.
+						INNER_JOIN(tRolePerms,
+							tRolePerms.RoleID.EQ(tRoles.ID)),
 					).
-					FROM(
-						tUserPerms,
-					).
-					WHERE(
-						tUserPerms.UserID.EQ(jet.Int32(userInfo.UserId)),
-					).
-					UNION(
-						tRoles.
-							SELECT(tRolePerms.PermissionID).
-							FROM(tRoles.
-								INNER_JOIN(tRolePerms,
-									tRolePerms.RoleID.EQ(tRoles.ID)),
-							).
-							WHERE(jet.AND(
-								tRoles.Job.EQ(jet.String(userInfo.Job)),
-								tRoles.Grade.EQ(jet.Int32(userInfo.JobGrade)),
-							)),
-					),
+					WHERE(jet.AND(
+						tRoles.Job.EQ(jet.String(userInfo.Job)),
+						tRoles.Grade.EQ(jet.Int32(userInfo.JobGrade)),
+					)),
 			),
 		)
 
@@ -65,10 +49,11 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 		}
 	}
 
-	result := p.checkIfCan(permId, userInfo, category, name)
-
-	if !result {
-		result = p.checkIfCan(permId, userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName)
+	var result bool
+	if userInfo.SuperUser {
+		result = true
+	} else {
+		result = p.checkIfCan(permId, userInfo, category, name)
 	}
 
 	if cached == nil {
@@ -83,34 +68,7 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 }
 
 func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo, category Category, name Name) (result bool) {
-	if p.checkRoleJob(userInfo.Job, userInfo.JobGrade, permId) {
-		return true
-	}
-
-	return p.checkIfUserCan(userInfo.UserId, permId)
-}
-
-func (p *Perms) checkIfUserCan(userId int32, permId uint64) bool {
-	stmt :=
-		tUserPerms.
-			SELECT(
-				tUserPerms.PermissionID.AS("id"),
-			).
-			FROM(tUserPerms).
-			WHERE(jet.AND(
-				tUserPerms.UserID.EQ(jet.Int32(userId)),
-				tUserPerms.PermissionID.EQ(jet.Uint64(permId)),
-			)).
-			LIMIT(1)
-
-	var dest struct {
-		ID int32
-	}
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
-		return false
-	}
-
-	return dest.ID > 0
+	return p.checkRoleJob(userInfo.Job, userInfo.JobGrade, permId)
 }
 
 func (p *Perms) lookupPermIDByGuard(guard string) (uint64, bool) {

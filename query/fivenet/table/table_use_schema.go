@@ -31,7 +31,6 @@ func UseSchema(schema string) {
 	FivenetRolePermissions = FivenetRolePermissions.FromSchema(schema)
 	FivenetUserActivity = FivenetUserActivity.FromSchema(schema)
 	FivenetUserLocations = FivenetUserLocations.FromSchema(schema)
-	FivenetUserPermissions = FivenetUserPermissions.FromSchema(schema)
 	FivenetUserProps = FivenetUserProps.FromSchema(schema)
 	GksphoneJobMessage = GksphoneJobMessage.FromSchema(schema)
 	Jobs = Jobs.FromSchema(schema)

@@ -4,7 +4,6 @@ import (
 	context "context"
 	"errors"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -124,7 +123,7 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 	}
 
 	// Allow superusers access to any docs
-	if s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+	if userInfo.SuperUser {
 		return documentIds, nil
 	}
 
