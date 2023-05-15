@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel, Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue'
+import { Disclosure, DisclosureButton, DisclosurePanel, Listbox, ListboxButton, ListboxOption, ListboxOptions, } from '@headlessui/vue'
 import { AttributeValues, JobGradeList, RoleAttribute, StringList } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid';
 import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { Map as protobufMap } from 'google-protobuf';
 
 const props = defineProps<{
     attribute: RoleAttribute,
@@ -22,7 +21,7 @@ const id = ref<number>(props.attribute.getAttrId());
 const validValues = ref<AttributeValues | undefined>(props.attribute.getValidValues());
 const type = ref<string | undefined>(props.attribute.getType());
 
-const tmp = ref<{ job: string, grade: number }[]>([]);
+const selectedJob = ref<Job>(props.jobs[0]);
 
 function getState(): AttributeValues {
     if (!states.value.has(id.value)) states.value.set(id.value, new AttributeValues());
@@ -55,22 +54,13 @@ async function updateJobGradeValue(job: string, grade: number): Promise<void> {
     if (grade === 0) {
         map.del(job);
     } else {
-        map.set(job, grade -1);
+        map.set(job, grade - 1);
     }
 
     state.setJobGradeList(list);
     states.value.set(id.value, state);
     emit('update:states', states.value);
 }
-
-onMounted(() => {
-    props.jobs.forEach(job => {
-        tmp.value.push({
-            job: job.getName(),
-            grade: 0,
-        })
-    })
-});
 </script>
 
 <style scoped>
@@ -116,19 +106,50 @@ onMounted(() => {
                         </div>
                     </div>
                     <div v-else-if="type === 'JobGradeList'" class="flex flex-col gap-2">
-                        <div v-for="job in props.jobs" :key="job.getName()"
-                            class="flex flex-row flex-initial flex-nowrap gap-2">
-                            <span class="flex-1">{{ job.getLabel() }}</span>
-                            <span class="flex-1">{{
-                                job.getGradesList()[
-                                    getState().getJobGradeList()?.getJobsMap().get(job.getName()) ?? -1
+                        <div class="flex flex-row flex-initial flex-nowrap gap-2">
+                            <Listbox as="div" v-model="selectedJob" class="flex-1">
+                                <div class="relative">
+                                    <ListboxButton
+                                        class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
+                                        <span class="block truncate">{{ selectedJob.getLabel() }}</span>
+                                        <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                            <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
+                                        </span>
+                                    </ListboxButton>
+
+                                    <transition leave-active-class="transition duration-100 ease-in"
+                                        leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                        <ListboxOptions
+                                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
+                                            <ListboxOption as="template" v-for="job in $props.jobs" :key="job.getName()"
+                                                :value="job" v-slot="{ active, selected }">
+                                                <li
+                                                    :class="[active ? 'bg-primary-500' : '', 'text-neutral relative cursor-default select-none py-2 pl-8 pr-4']">
+                                                    <span
+                                                        :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                                                            job.getLabel()
+                                                        }}</span>
+
+                                                    <span v-if="selected"
+                                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                    </span>
+                                                </li>
+                                            </ListboxOption>
+                                        </ListboxOptions>
+                                    </transition>
+                                </div>
+                            </Listbox>
+                            <span class="flex-1 my-auto">{{
+                                selectedJob.getGradesList()[
+                                    getState().getJobGradeList()?.getJobsMap().get(selectedJob.getName()) ?? -1
                                 ]?.getLabel() ?? '-'
                             }}</span>
                             <input id="markerSize" name="markerSize" type="range"
                                 class="h-1.5 flex-1 cursor-grab rounded-full my-auto accent-primary-500" min="0"
-                                :max="job.getGradesList().length" step="1"
-                                :value="(getState().getJobGradeList()?.getJobsMap().get(job.getName()) ?? -1) + 1"
-                                @change="updateJobGradeValue(job.getName(), ($event.target as any).value)" />
+                                :max="selectedJob.getGradesList().length" step="1"
+                                :value="(getState().getJobGradeList()?.getJobsMap().get(selectedJob.getName()) ?? -1) + 1"
+                                @change="updateJobGradeValue(selectedJob.getName(), ($event.target as any).value)" />
                         </div>
                     </div>
                     <div v-else>{{ type }} {{ validValues }}</div>
