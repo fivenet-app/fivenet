@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/notifi"
@@ -62,7 +63,7 @@ func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud au
 }
 
 func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (*ListDocumentsResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	condition := jet.Bool(true)
 	if req.Search != "" {
@@ -85,7 +86,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 	countStmt := s.getDocumentsQuery(
 		condition,
 		jet.ProjectionList{jet.COUNT(jet.DISTINCT(docs.ID)).AS("datacount.totalcount")},
-		-1, userId, job, jobGrade)
+		-1, userInfo.UserId, userInfo.Job, userInfo.JobGrade)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -101,7 +102,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 	}
 
 	stmt := s.getDocumentsQuery(condition, nil,
-		DocShortContentLength, userId, job, jobGrade).
+		DocShortContentLength, userInfo.UserId, userInfo.Job, userInfo.JobGrade).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(docs.ID).
 		LIMIT(limit)
@@ -120,18 +121,18 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 }
 
 func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*GetDocumentResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "GetDocument",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
@@ -141,8 +142,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	resp := &GetDocumentResponse{}
 	resp.Document, err = s.getDocument(ctx,
-		docs.ID.EQ(jet.Uint64(req.DocumentId)),
-		userId, job, jobGrade)
+		docs.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -165,10 +165,10 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	return resp, nil
 }
 
-func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, userId int32, job string, jobGrade int32) (*documents.Document, error) {
+func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*documents.Document, error) {
 	var doc documents.Document
 
-	stmt := s.getDocumentsQuery(condition, nil, -1, userId, job, jobGrade).
+	stmt := s.getDocumentsQuery(condition, nil, -1, userInfo.UserId, userInfo.Job, userInfo.JobGrade).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
@@ -185,13 +185,13 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 }
 
 func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest) (*CreateDocumentResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "CreateDocument",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
@@ -224,8 +224,8 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 			htmlsanitizer.Sanitize(req.Content),
 			documents.DOC_CONTENT_TYPE_HTML,
 			req.Data,
-			userId,
-			job,
+			userInfo.UserId,
+			userInfo.Job,
 			req.State,
 			req.Closed,
 			req.Public,
@@ -258,30 +258,30 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 }
 
 func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest) (*UpdateDocumentResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "UpdateDocument",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
 	if !check {
-		if !s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+		if !s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
 			return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
 		}
 	}
 
 	doc, err := s.getDocument(ctx,
 		docs.ID.EQ(jet.Uint64(req.DocumentId)),
-		userId, job, jobGrade)
+		userInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -337,22 +337,22 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 }
 
 func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "DeleteDocument",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
-	if !check && !s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+	if !check && !s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
 	}
 

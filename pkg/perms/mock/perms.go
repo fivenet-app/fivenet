@@ -2,6 +2,7 @@ package mock
 
 import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
@@ -104,16 +105,16 @@ func (p *PermsMock) CreatePermission(category perms.Category, name perms.Name) (
 	return 0, nil
 }
 
-func (p *PermsMock) GetPermissionsOfUser(userId int32, job string, grade int32) (collections.Permissions, error) {
+func (p *PermsMock) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {
 	ps := collections.Permissions{}
 
-	if _, ok := p.UserPerms[userId]; !ok {
+	if _, ok := p.UserPerms[userInfo.UserId]; !ok {
 		return nil, nil
 	}
 
 	track := map[string]interface{}{}
 	i := 0
-	for k := range p.UserPerms[userId] {
+	for k := range p.UserPerms[userInfo.UserId] {
 		if _, ok := track[k]; !ok {
 			ps = append(ps, &model.FivenetPermissions{
 				ID:        uint64(i),
@@ -227,14 +228,14 @@ func (p *PermsMock) RemoveUserFromRoles(userId int32, roles ...string) error {
 	return nil
 }
 
-func (p *PermsMock) Can(userId int32, job string, jobGrade int32, category perms.Category, name perms.Name) bool {
+func (p *PermsMock) Can(userInfo *userinfo.UserInfo, category perms.Category, name perms.Name) bool {
 	guard := helpers.Guard(perms.BuildGuard(category, name))
-	p.Counter.IncUser(userId, guard)
+	p.Counter.IncUser(userInfo.UserId, guard)
 
-	if _, ok := p.UserPerms[userId]; !ok {
+	if _, ok := p.UserPerms[userInfo.UserId]; !ok {
 		return false
 	}
 
-	_, ok := p.UserPerms[userId][guard]
+	_, ok := p.UserPerms[userInfo.UserId][guard]
 	return ok
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/internal/tests/proto"
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms/mock"
 	_ "github.com/go-sql-driver/mysql"
@@ -33,13 +34,14 @@ func TestFullAuthFlow(t *testing.T) {
 	db := dbmanager.TestDBManager.DB()
 
 	ctx := context.Background()
+	ui := userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{})
 	tm := auth.NewTokenMgr("")
 	p := mock.NewMock()
 	aud := &audit.Noop{}
 	c, err := mstlystcdata.NewCache(ctx, zap.NewNop(), db)
 	assert.NoError(t, err)
 	enricher := mstlystcdata.NewEnricher(c)
-	srv := NewServer(db, auth.NewGRPCAuth(tm), tm, p, enricher, aud)
+	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud)
 
 	client, _, cancel := NewTestAuthServiceClient(srv)
 	defer cancel()

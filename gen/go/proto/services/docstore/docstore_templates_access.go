@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -15,7 +16,7 @@ import (
 )
 
 func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx *sql.Tx, templateId uint64, access []*documents.TemplateJobAccess) error {
-	userId := auth.GetUserIDFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	// Get existing job and user accesses from database
 	current, err := s.getTemplateJobAccess(ctx, templateId)
@@ -25,11 +26,11 @@ func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx *sql.Tx, te
 
 	toCreate, toUpdate, toDelete := s.compareTemplateJobAccess(tx, current, access)
 
-	if err := s.createTemplateJobAccess(ctx, tx, templateId, userId, toCreate); err != nil {
+	if err := s.createTemplateJobAccess(ctx, tx, templateId, userInfo.UserId, toCreate); err != nil {
 		return err
 	}
 
-	if err := s.updateTemplateJobAccess(ctx, tx, templateId, userId, toUpdate); err != nil {
+	if err := s.updateTemplateJobAccess(ctx, tx, templateId, userInfo.UserId, toUpdate); err != nil {
 		return err
 	}
 
@@ -240,18 +241,18 @@ func (s *Server) deleteTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 	return nil
 }
 
-func (s *Server) checkIfUserHasAccessToTemplate(ctx context.Context, templateId uint64, userId int32, job string, jobGrade int32, publicOk bool, access documents.ACCESS_LEVEL) (bool, error) {
-	out, err := s.checkIfUserHasAccessToTemplateIDs(ctx, userId, job, jobGrade, publicOk, access, templateId)
+func (s *Server) checkIfUserHasAccessToTemplate(ctx context.Context, templateId uint64, userInfo *userinfo.UserInfo, publicOk bool, access documents.ACCESS_LEVEL) (bool, error) {
+	out, err := s.checkIfUserHasAccessToTemplateIDs(ctx, userInfo, publicOk, access, templateId)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.ACCESS_LEVEL, templateIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, access documents.ACCESS_LEVEL, templateIds ...uint64) ([]uint64, error) {
 	if len(templateIds) == 0 {
 		return templateIds, nil
 	}
 
 	// Allow superusers access to any templates
-	if s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+	if s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
 		return templateIds, nil
 	}
 
@@ -264,7 +265,7 @@ func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userId i
 		dTemplates.ID.IN(ids...),
 		dTemplates.DeletedAt.IS_NULL(),
 		jet.OR(
-			dTemplates.CreatorID.EQ(jet.Int32(userId)),
+			dTemplates.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			jet.AND(
 				dTemplatesJobAccess.Access.IS_NOT_NULL(),
 				dTemplatesJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
@@ -280,8 +281,8 @@ func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userId i
 			dTemplates.
 				LEFT_JOIN(dTemplatesJobAccess,
 					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID).
-						AND(dTemplatesJobAccess.Job.EQ(jet.String(job))).
-						AND(dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
+						AND(dTemplatesJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
 		WHERE(condition).

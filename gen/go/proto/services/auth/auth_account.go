@@ -33,7 +33,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 	}
 
 	// Load account
-	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccountID)))
+	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
 		return nil, GenericAccountErr
 	}

@@ -21,7 +21,7 @@ var (
 )
 
 func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*GetJobPropsResponse, error) {
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	jobProps := table.FivenetJobProps.AS("jobprops")
 	stmt := jobProps.
@@ -30,7 +30,7 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 		).
 		FROM(jobProps).
 		WHERE(
-			jobProps.Job.EQ(jet.String(job)),
+			jobProps.Job.EQ(jet.String(userInfo.Job)),
 		).
 		LIMIT(1)
 
@@ -43,24 +43,24 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 		}
 	}
 
-	resp.JobProps.Default(job)
+	resp.JobProps.Default(userInfo.Job)
 
 	return resp, nil
 }
 func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*SetJobPropsResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: RectorService_ServiceDesc.ServiceName,
 		Method:  "SetJobProps",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
 	// Ensure that the job is the user's job
-	req.JobProps.Job = job
+	req.JobProps.Job = userInfo.Job
 
 	req.JobProps.LivemapMarkerColor = strings.ReplaceAll(req.JobProps.LivemapMarkerColor, "#", "")
 

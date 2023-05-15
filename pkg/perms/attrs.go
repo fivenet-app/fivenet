@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -225,8 +226,8 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, key Key) *cacheRoleA
 	return nil
 }
 
-func (p *Perms) Attr(userId int32, job string, grade int32, category Category, name Name, key Key) (any, error) {
-	cached := p.getClosestRoleAttr(job, grade, key)
+func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error) {
+	cached := p.getClosestRoleAttr(userInfo.Job, userInfo.JobGrade, key)
 
 	if cached == nil {
 		return nil, nil

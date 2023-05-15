@@ -21,7 +21,7 @@ func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *DeleteOAuth2Co
 	stmt := oAuth2Accounts.
 		DELETE().
 		WHERE(jet.AND(
-			oAuth2Accounts.AccountID.EQ(jet.Uint64(claims.AccountID)),
+			oAuth2Accounts.AccountID.EQ(jet.Uint64(claims.AccID)),
 			oAuth2Accounts.Provider.EQ(jet.String(req.Provider)),
 		)).
 		LIMIT(1)

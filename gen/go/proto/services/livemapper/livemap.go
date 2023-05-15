@@ -101,9 +101,9 @@ func (s *Server) Start() {
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(srv.Context())
+	userInfo := auth.GetUserInfoFromContext(srv.Context())
 
-	dispatchesAttr, err := s.p.Attr(userId, job, jobGrade, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
+	dispatchesAttr, err := s.p.Attr(userInfo.CharID, userInfo.Job, userInfo.JobGrade, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
 	if err != nil {
 		return FailedErr
 	}
@@ -112,7 +112,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		dispatchesJobs = dispatchesAttr.([]string)
 	}
 
-	playersAttr, err := s.p.Attr(userId, job, jobGrade, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
+	playersAttr, err := s.p.Attr(userInfo.CharID, userInfo.Job, userInfo.JobGrade, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
 	if err != nil {
 		return FailedErr
 	}
@@ -153,7 +153,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 		resp.Dispatches = dispatchMarkers
 
-		userMarkers, err := s.getUserLocations(playersJobs, userId, job)
+		userMarkers, err := s.getUserLocations(playersJobs, userInfo.CharID, userInfo.Job)
 		if err != nil {
 			return FailedErr
 		}

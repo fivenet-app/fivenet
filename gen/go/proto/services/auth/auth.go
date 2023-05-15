@@ -13,6 +13,7 @@ import (
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -165,13 +166,19 @@ func (s *Server) CheckToken(ctx context.Context, req *CheckTokenRequest) (*Check
 		return nil, auth.InvalidTokenErr
 	}
 
+	userInfo := auth.GetUserInfoFromContext(ctx)
+
 	resp := &CheckTokenResponse{
 		Permissions: []string{},
 	}
 
 	// If the user is logged into a character, load permissions of user
 	if claims.CharID > 0 {
-		perms, err := s.p.GetPermissionsOfUser(claims.CharID, claims.CharJob, claims.CharJobGrade)
+		perms, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
+			UserId:   userInfo.UserId,
+			Job:      userInfo.Job,
+			JobGrade: userInfo.JobGrade,
+		})
 		if err != nil {
 			return nil, auth.CheckTokenErr
 		}
@@ -258,7 +265,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		return nil, GenericLoginErr
 	}
 
-	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccountID)))
+	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
 			return nil, ChangePasswordErr
@@ -376,7 +383,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	}
 
 	// Load account to make sure it (still) exists
-	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccountID)))
+	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -504,7 +511,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccountID)))
+	account, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
 		return nil, NoCharacterFoundErr
 	}
@@ -515,7 +522,11 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	// Load permissions of user
-	perms, err := s.p.GetPermissionsOfUser(char.UserId, char.Job, char.JobGrade)
+	perms, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
+		UserId:   char.UserId,
+		Job:      char.Job,
+		JobGrade: char.JobGrade,
+	})
 	if err != nil {
 		return nil, GenericLoginErr
 	}

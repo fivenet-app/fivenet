@@ -32,7 +32,7 @@ var (
 )
 
 func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*model.FivenetRoles, bool, error) {
-	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	role, err := s.p.GetRole(roleId)
 	if err != nil {
@@ -40,11 +40,11 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 	}
 
 	// Make sure the user is from the job
-	if role.Job != job {
+	if role.Job != userInfo.Job {
 		return nil, false, InvalidRequestErr
 	}
 
-	if role.Grade > jobGrade {
+	if role.Grade > userInfo.JobGrade {
 		return nil, false, InvalidRequestErr
 	}
 
@@ -95,8 +95,8 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 		return attrs, nil
 	}
 
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	if s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+	userInfo := auth.GetUserInfoFromContext(ctx)
+	if s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
 		return attrs, nil
 	}
 
@@ -126,9 +126,9 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 }
 
 func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesResponse, error) {
-	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
-	roles, err := s.p.GetJobRolesUpTo(job, jobGrade)
+	roles, err := s.p.GetJobRolesUpTo(userInfo.Job, userInfo.JobGrade)
 	if err != nil {
 		return nil, err
 	}
@@ -183,8 +183,8 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 	resp.Role.Permissions = make([]*permissions.Permission, len(fPerms))
 	copy(resp.Role.Permissions, fPerms)
 
-	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	resp.Role.Attributes, err = s.p.GetRoleAttributes(job, jobGrade)
+	userInfo := auth.GetUserInfoFromContext(ctx)
+	resp.Role.Attributes, err = s.p.GetRoleAttributes(userInfo.Job, userInfo.JobGrade)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
@@ -193,18 +193,18 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 }
 
 func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*CreateRoleResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: RectorService_ServiceDesc.ServiceName,
 		Method:  "CreateRole",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	role, err := s.p.GetRoleByJobAndGrade(job, req.Grade)
+	role, err := s.p.GetRoleByJobAndGrade(userInfo.Job, req.Grade)
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
@@ -214,7 +214,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		return nil, RoleAlreadyExistsErr
 	}
 
-	cr, err := s.p.CreateRole(job, req.Grade)
+	cr, err := s.p.CreateRole(userInfo.Job, req.Grade)
 	if err != nil {
 		return nil, err
 	}
@@ -230,13 +230,13 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 }
 
 func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*DeleteRoleResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: RectorService_ServiceDesc.ServiceName,
 		Method:  "DeleteRole",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
@@ -249,7 +249,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, NoPermissionErr
 	}
 
-	roleCount, err := s.p.CountRolesForJob(job)
+	roleCount, err := s.p.CountRolesForJob(userInfo.Job)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
@@ -260,7 +260,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 	}
 
 	// Don't allow deleting the own or higher role
-	if role.Grade >= jobGrade {
+	if role.Grade >= userInfo.JobGrade {
 		return nil, InvalidRequestErr
 	}
 
@@ -274,13 +274,13 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 }
 
 func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsRequest) (*UpdateRolePermsResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: RectorService_ServiceDesc.ServiceName,
 		Method:  "UpdateRolePerms",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
@@ -378,7 +378,7 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetR
 }
 
 func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest) (*GetPermissionsResponse, error) {
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	perms, err := s.p.GetAllPermissions()
 	if err != nil {
@@ -393,7 +393,7 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 	resp := &GetPermissionsResponse{}
 	resp.Permissions = filtered
 
-	attrs, err := s.p.GetAllAttributes(job)
+	attrs, err := s.p.GetAllAttributes(userInfo.Job)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}

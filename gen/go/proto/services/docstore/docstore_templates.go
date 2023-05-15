@@ -25,7 +25,7 @@ var (
 )
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
-	_, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	stmt := dTemplates.
 		SELECT(
@@ -43,8 +43,8 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 			dTemplates.
 				INNER_JOIN(dTemplatesJobAccess,
 					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID).
-						AND(dTemplatesJobAccess.Job.EQ(jet.String(job))).
-						AND(dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
+						AND(dTemplatesJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				).
 				LEFT_JOIN(dCategory,
 					dCategory.ID.EQ(dTemplates.CategoryID),
@@ -66,9 +66,9 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 }
 
 func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*GetTemplateResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
-	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.TemplateId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.TemplateId, userInfo, false, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
@@ -171,13 +171,13 @@ func (s *Server) renderTemplate(docTmpl *documents.Template, data map[string]int
 }
 
 func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest) (*CreateTemplateResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "CreateTemplate",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
@@ -190,7 +190,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	req.Template.Job = job
+	req.Template.Job = userInfo.Job
 
 	categoryId := jet.NULL
 	if req.Template.Category != nil {
@@ -224,8 +224,8 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			req.Template.Content,
 			req.Template.ContentAccess,
 			req.Template.Schema,
-			userId,
-			job,
+			userInfo.UserId,
+			userInfo.Job,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -255,18 +255,18 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 }
 
 func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest) (*UpdateTemplateResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "UpdateTemplate",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
@@ -338,18 +338,18 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 }
 
 func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "DeleteTemplate",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
@@ -361,7 +361,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 	stmt := dTemplates.
 		DELETE().
 		WHERE(
-			dTemplates.CreatorJob.EQ(jet.String(job)).AND(
+			dTemplates.CreatorJob.EQ(jet.String(userInfo.Job)).AND(
 				dTemplates.ID.EQ(jet.Uint64(req.Id))),
 		)
 

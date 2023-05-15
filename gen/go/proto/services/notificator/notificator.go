@@ -42,9 +42,9 @@ func (s *Server) PermissionStreamFuncOverride(ctx context.Context, srv interface
 }
 
 func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequest) (*GetNotificationsResponse, error) {
-	userId := auth.GetUserIDFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
-	condition := nots.UserID.EQ(jet.Int32(userId))
+	condition := nots.UserID.EQ(jet.Int32(userInfo.CharID))
 	if req.IncludeRead {
 		condition = jet.AND(
 			condition,
@@ -95,7 +95,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 }
 
 func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRequest) (*ReadNotificationsResponse, error) {
-	userId := auth.GetUserIDFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	ids := make([]jet.Expression, len(req.Ids))
 	for i := 0; i < len(req.Ids); i++ {
@@ -111,7 +111,7 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 		).
 		WHERE(
 			jet.AND(
-				nots.UserID.EQ(jet.Int32(userId)),
+				nots.UserID.EQ(jet.Int32(userInfo.CharID)),
 				nots.ID.IN(ids...),
 			),
 		)
@@ -124,7 +124,7 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 }
 
 func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer) error {
-	userId := auth.GetUserIDFromContext(srv.Context())
+	userInfo := auth.GetUserInfoFromContext(srv.Context())
 
 	nots := nots.AS("notification")
 	stmt := nots.
@@ -146,7 +146,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		q := stmt.
 			WHERE(
 				jet.AND(
-					nots.UserID.EQ(jet.Int32(userId)),
+					nots.UserID.EQ(jet.Int32(userInfo.CharID)),
 					nots.ID.GT(jet.Uint64(req.LastId)),
 				),
 			)

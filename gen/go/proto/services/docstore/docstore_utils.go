@@ -6,6 +6,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -107,23 +108,23 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		)
 }
 
-func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userId int32, job string, jobGrade int32, publicOk bool, access documents.ACCESS_LEVEL) (bool, error) {
-	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, publicOk, access, documentId)
+func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userInfo *userinfo.UserInfo, publicOk bool, access documents.ACCESS_LEVEL) (bool, error) {
+	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, publicOk, access, documentId)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.ACCESS_LEVEL, documentIds ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, publicOk, access, documentIds...)
+func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, access documents.ACCESS_LEVEL, documentIds ...uint64) (bool, error) {
+	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, publicOk, access, documentIds...)
 	return len(out) == len(documentIds), err
 }
 
-func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32, job string, jobGrade int32, publicOk bool, access documents.ACCESS_LEVEL, documentIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, access documents.ACCESS_LEVEL, documentIds ...uint64) ([]uint64, error) {
 	if len(documentIds) == 0 {
 		return documentIds, nil
 	}
 
 	// Allow superusers access to any docs
-	if s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+	if s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
 		return documentIds, nil
 	}
 
@@ -137,7 +138,7 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32,
 		docs.DeletedAt.IS_NULL(),
 		jet.OR(
 			docs.Public.IS_TRUE(),
-			docs.CreatorID.EQ(jet.Int32(userId)),
+			docs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			jet.AND(
 				dUserAccess.Access.IS_NOT_NULL(),
 				dUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
@@ -158,11 +159,11 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userId int32,
 			docs.
 				LEFT_JOIN(dUserAccess,
 					dUserAccess.DocumentID.EQ(docs.ID).
-						AND(dUserAccess.UserID.EQ(jet.Int32(userId)))).
+						AND(dUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
 				LEFT_JOIN(dJobAccess,
 					dJobAccess.DocumentID.EQ(docs.ID).
-						AND(dJobAccess.Job.EQ(jet.String(job))).
-						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(jobGrade))),
+						AND(dJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
 		WHERE(condition).

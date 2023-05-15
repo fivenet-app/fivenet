@@ -86,7 +86,8 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 		return GenericInternalServerError
 	}
 
-	grpcAuth := auth.NewGRPCAuth(tm)
+	ui := auth.NewUIRetriever(ctx, db)
+	grpcAuth := auth.NewGRPCAuth(ui, tm)
 	grpcPerm := auth.NewGRPCPerms(p)
 
 	grpcServer := grpc.NewServer(

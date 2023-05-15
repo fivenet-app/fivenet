@@ -18,11 +18,11 @@ var (
 )
 
 func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	resp := &ListUserDocumentsResponse{}
 	// An user can never see their own activity on their own "profile"
-	if userId == req.UserId {
+	if userInfo.UserId == req.UserId {
 		return resp, nil
 	}
 
@@ -56,7 +56,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		return resp, nil
 	}
 
-	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, true, documents.ACCESS_LEVEL_VIEW, docIds...)
+	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, true, documents.ACCESS_LEVEL_VIEW, docIds...)
 	if err != nil {
 		return nil, err
 	}

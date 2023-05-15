@@ -23,8 +23,8 @@ var (
 )
 
 func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, true, documents.ACCESS_LEVEL_VIEW)
+	userInfo := auth.GetUserInfoFromContext(ctx)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, true, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		}
 	}
 
-	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userId, job, jobGrade, true, documents.ACCESS_LEVEL_VIEW, docIds...)
+	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, true, documents.ACCESS_LEVEL_VIEW, docIds...)
 	if err != nil {
 		return nil, err
 	}
@@ -180,8 +180,8 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 }
 
 func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, true, documents.ACCESS_LEVEL_VIEW)
+	userInfo := auth.GetUserInfoFromContext(ctx)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, true, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -200,24 +200,23 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 }
 
 func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "AddDocumentReference",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
 	if req.Reference.SourceDocumentId == req.Reference.TargetDocumentId {
 		return nil, status.Error(codes.InvalidArgument, "You can't reference a document with itself!")
 	}
 
 	// Check if user has access to both documents
-	check, err := s.checkIfUserHasAccessToDocs(ctx, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT,
+	check, err := s.checkIfUserHasAccessToDocs(ctx, userInfo, false, documents.ACCESS_LEVEL_EDIT,
 		req.Reference.SourceDocumentId, req.Reference.TargetDocumentId)
 	if err != nil {
 		return nil, err
@@ -226,7 +225,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to add references from/to this document!")
 	}
 
-	req.Reference.CreatorId = userId
+	req.Reference.CreatorId = userInfo.UserId
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -274,13 +273,13 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 }
 
 func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumentReferenceRequest) (*RemoveDocumentReferenceResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "RemoveDocumentReference",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
@@ -304,7 +303,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		return nil, err
 	}
 
-	check, err := s.checkIfUserHasAccessToDocs(ctx, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT, docIDs.Source, docIDs.Target)
+	check, err := s.checkIfUserHasAccessToDocs(ctx, userInfo, false, documents.ACCESS_LEVEL_EDIT, docIDs.Source, docIDs.Target)
 	if err != nil {
 		return nil, err
 	}
@@ -333,18 +332,18 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 }
 
 func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "AddDocumentRelation",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -352,7 +351,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to add relation from/to this document!")
 	}
 
-	req.Relation.SourceUserId = userId
+	req.Relation.SourceUserId = userInfo.UserId
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -388,7 +387,8 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	}
 
 	if err := s.addUserActivity(ctx, tx,
-		userId, req.Relation.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "", strconv.Itoa(int(lastId)), req.Relation.Relation.String()); err != nil {
+		userInfo.UserId, req.Relation.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "",
+		strconv.Itoa(int(lastId)), req.Relation.Relation.String()); err != nil {
 		return nil, FailedQueryErr
 	}
 
@@ -407,13 +407,13 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 }
 
 func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "RemoveDocumentRelation",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
@@ -435,7 +435,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		return nil, err
 	}
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, docID.ID, userId, job, jobGrade, false, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, docID.ID, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -472,7 +472,8 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 	}
 
 	if err := s.addUserActivity(ctx, tx,
-		userId, rel.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", strconv.Itoa(int(docID.ID)), "", rel.Relation.String()); err != nil {
+		userInfo.UserId, rel.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation",
+		strconv.Itoa(int(docID.ID)), "", rel.Relation.String()); err != nil {
 		return nil, FailedQueryErr
 	}
 

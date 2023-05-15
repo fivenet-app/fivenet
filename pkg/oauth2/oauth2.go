@@ -222,7 +222,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 			return
 		}
 
-		if err := o.storeUserInfo(c, claims.AccountID, provider.GetName(), userInfo); err != nil {
+		if err := o.storeUserInfo(c, claims.AccID, provider.GetName(), userInfo); err != nil {
 			o.handleRedirect(c, err, connectOnly, false, "internal_error")
 			return
 		}

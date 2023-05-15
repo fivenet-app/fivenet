@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
 	"github.com/galexrt/fivenet/pkg/perms"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
@@ -22,18 +23,21 @@ const (
 )
 
 var (
-	AuthInfoKey     struct{}
+	UserInfoKey     struct{}
 	NoTokenErr      = status.Errorf(codes.Unauthenticated, "authorization string must not be empty")
 	InvalidTokenErr = status.Error(codes.Unauthenticated, "Token invalid/ expired!")
 	CheckTokenErr   = status.Error(codes.Unauthenticated, "Token check failed!")
+	NoUserInfoErr   = status.Error(codes.Unauthenticated, "Something went wrong, please logout and login again!")
 )
 
 type GRPCAuth struct {
+	ui userinfo.UserInfoRetriever
 	tm *TokenMgr
 }
 
-func NewGRPCAuth(tm *TokenMgr) *GRPCAuth {
+func NewGRPCAuth(ui userinfo.UserInfoRetriever, tm *TokenMgr) *GRPCAuth {
 	return &GRPCAuth{
+		ui: ui,
 		tm: tm,
 	}
 }
@@ -59,7 +63,12 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 		AuthAccIDCtxTag, tInfo.CharID,
 	})
 
-	return context.WithValue(ctx, AuthInfoKey, tInfo), nil
+	userInfo, err := g.ui.GetUserInfo(tInfo.CharID)
+	if err != nil {
+		return nil, err
+	}
+
+	return context.WithValue(ctx, UserInfoKey, userInfo), nil
 }
 
 type GRPCPerm struct {
@@ -72,15 +81,15 @@ func NewGRPCPerms(p perms.Permissions) *GRPCPerm {
 	}
 }
 
-func FromContext(ctx context.Context) (*CitizenInfoClaims, bool) {
-	c, ok := ctx.Value(AuthInfoKey).(*CitizenInfoClaims)
+func FromContext(ctx context.Context) (*userinfo.UserInfo, bool) {
+	c, ok := ctx.Value(UserInfoKey).(*userinfo.UserInfo)
 	return c, ok
 }
 
 func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
 	// Check if the method is from a service otherwise the request must be invalid
 	if strings.HasPrefix(info.FullMethod, "/services") {
-		claims, ok := FromContext(ctx)
+		userInfo, ok := FromContext(ctx)
 		if ok {
 			split := strings.Split(info.FullMethod[10:], ".")
 			perm := strings.Join(split[1:], "-")
@@ -96,7 +105,7 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 			category := perms.Category(permSplit[0])
 			name := perms.Name(permSplit[1])
 
-			if g.p.Can(claims.CharID, claims.CharJob, claims.CharJobGrade, category, name) {
+			if g.p.Can(userInfo, category, name) {
 				return ctx, nil
 			}
 		}
@@ -108,7 +117,7 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
 	// Check if the method is from a service otherwise the request must be invalid
 	if strings.HasPrefix(info.FullMethod, "/services") {
-		claims, ok := FromContext(ctx)
+		userInfo, ok := FromContext(ctx)
 		if ok {
 			split := strings.Split(info.FullMethod[10:], ".")
 			perm := strings.Join(split[1:], "-")
@@ -124,7 +133,7 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}
 			category := perms.Category(permSplit[0])
 			name := perms.Name(permSplit[1])
 
-			if g.p.Can(claims.CharID, claims.CharJob, claims.CharJobGrade, category, name) {
+			if g.p.Can(userInfo, category, name) {
 				return ctx, nil
 			}
 		}
@@ -137,18 +146,10 @@ func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
 	return grpc_auth.AuthFromMD(ctx, "bearer")
 }
 
-func GetUserIDFromContext(ctx context.Context) int32 {
-	claims, ok := FromContext(ctx)
+func GetUserInfoFromContext(ctx context.Context) *userinfo.UserInfo {
+	userInfo, ok := FromContext(ctx)
 	if !ok {
-		return -1
+		panic(NoUserInfoErr)
 	}
-	return claims.CharID
-}
-
-func GetUserInfoFromContext(ctx context.Context) (int32, string, int32) {
-	claims, ok := FromContext(ctx)
-	if !ok {
-		return -1, "N/A", 1
-	}
-	return claims.CharID, claims.CharJob, claims.CharJobGrade
+	return userInfo
 }

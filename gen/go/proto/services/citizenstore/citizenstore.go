@@ -57,7 +57,7 @@ func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud au
 }
 
 func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*ListCitizensResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	selectors := jet.ProjectionList{
 		tUser.ID,
@@ -75,7 +75,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	condition := jet.Bool(true)
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userId, job, jobGrade, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceListCitizensFieldsPermField)
+	fieldsAttr, err := s.p.Attr(userInfo.CharID, userInfo.Job, userInfo.JobGrade, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
@@ -163,7 +163,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Users))
 
-	jobGradesAttr, err := s.p.Attr(userId, job, jobGrade, CitizenStoreServicePerm, CitizenStoreServiceGetUserPerm, CitizenStoreServiceGetUserJobsPermField)
+	jobGradesAttr, err := s.p.Attr(userInfo.CharID, userInfo.Job, userInfo.JobGrade, CitizenStoreServicePerm, CitizenStoreServiceGetUserPerm, CitizenStoreServiceGetUserJobsPermField)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
@@ -196,13 +196,13 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 }
 
 func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service:      CitizenStoreService_ServiceDesc.ServiceName,
 		Method:       "GetUser",
-		UserID:       userId,
-		UserJob:      job,
+		UserID:       userInfo.CharID,
+		UserJob:      userInfo.Job,
 		TargetUserID: &req.UserId,
 		State:        int16(rector.EVENT_TYPE_ERRORED),
 	}
@@ -223,7 +223,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userId, job, jobGrade, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceListCitizensFieldsPermField)
+	fieldsAttr, err := s.p.Attr(userInfo.CharID, userInfo.Job, userInfo.JobGrade, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
@@ -266,7 +266,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	if resp.User != nil {
 		if utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
 			// Make sure user has permission to see that grade
-			jobGradesAttr, err := s.p.Attr(userId, job, jobGrade, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceGetUserJobsPermField)
+			jobGradesAttr, err := s.p.Attr(userInfo.CharID, userInfo.Job, userInfo.JobGrade, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceGetUserJobsPermField)
 			if err != nil {
 				return nil, FailedQueryErr
 			}
@@ -327,11 +327,11 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 }
 
 func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequest) (*ListUserActivityResponse, error) {
-	userId, _, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	resp := &ListUserActivityResponse{}
-	// An user can never see their own activity on their own "profile"
-	if userId == req.UserId {
+	// An user can never see their own activity on their "profile"
+	if userInfo.CharID == req.UserId {
 		return resp, nil
 	}
 
@@ -385,13 +385,13 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 }
 
 func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*SetUserPropsResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service:      CitizenStoreService_ServiceDesc.ServiceName,
 		Method:       "SetUserProps",
-		UserID:       userId,
-		UserJob:      job,
+		UserID:       userInfo.CharID,
+		UserJob:      userInfo.Job,
 		TargetUserID: &req.Props.UserId,
 		State:        int16(rector.EVENT_TYPE_ERRORED),
 	}
@@ -406,7 +406,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	// Use getUserProps
-	props, err := s.getUserProps(ctx, userId)
+	props, err := s.getUserProps(ctx, userInfo.CharID)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
@@ -420,7 +420,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 	updateSets := []jet.ColumnAssigment{}
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userId, job, jobGrade, CitizenStoreServicePerm, CitizenStoreServiceSetUserPropsPerm, CitizenStoreServiceSetUserPropsFieldsPermField)
+	fieldsAttr, err := s.p.Attr(userInfo.CharID, userInfo.Job, userInfo.JobGrade, CitizenStoreServicePerm, CitizenStoreServiceSetUserPropsPerm, CitizenStoreServiceSetUserPropsFieldsPermField)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
@@ -491,13 +491,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Create user activity
 	if req.Props.Wanted != props.Wanted {
 		if err := s.addUserActivity(ctx, tx,
-			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted", strconv.FormatBool(*props.Wanted), strconv.FormatBool(*req.Props.Wanted), req.Reason); err != nil {
+			userInfo.CharID, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted", strconv.FormatBool(*props.Wanted), strconv.FormatBool(*req.Props.Wanted), req.Reason); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
 	if req.Props.JobName != props.JobName {
 		if err := s.addUserActivity(ctx, tx,
-			userId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job", *props.JobName, *req.Props.JobName, req.Reason); err != nil {
+			userInfo.CharID, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job", *props.JobName, *req.Props.JobName, req.Reason); err != nil {
 			return nil, FailedQueryErr
 		}
 	}

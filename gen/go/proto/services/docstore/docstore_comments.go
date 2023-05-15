@@ -25,8 +25,8 @@ var (
 )
 
 func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, true, documents.ACCESS_LEVEL_VIEW)
+	userInfo := auth.GetUserInfoFromContext(ctx)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, true, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -109,18 +109,18 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 }
 
 func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "PostDocumentComment",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_COMMENT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, false, documents.ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 		VALUES(
 			req.Comment.DocumentId,
 			req.Comment.Comment,
-			userId,
+			userInfo.UserId,
 		)
 
 	result, err := stmt.ExecContext(ctx, s.db)
@@ -161,18 +161,18 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 }
 
 func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "EditDocumentComment",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_COMMENT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, false, documents.ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +184,7 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 	if err != nil {
 		return nil, err
 	}
-	if comment.CreatorId != userId {
+	if comment.CreatorId != userInfo.UserId {
 		return nil, status.Error(codes.PermissionDenied, "You can't edit others document comments!")
 	}
 
@@ -243,13 +243,13 @@ func (s *Server) getDocumentComment(ctx context.Context, id uint64) (*documents.
 }
 
 func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentCommentRequest) (*DeleteDocumentCommentResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "DeleteDocumentComment",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
@@ -259,8 +259,8 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 		return nil, err
 	}
 	// If the requestor is not the creator nor a superuser
-	can := s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName)
-	if comment.CreatorId != userId && !can {
+	can := s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName)
+	if comment.CreatorId != userInfo.UserId && !can {
 		return nil, status.Error(codes.PermissionDenied, "You can't delete others document comments!")
 	}
 

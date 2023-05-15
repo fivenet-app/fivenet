@@ -18,7 +18,7 @@ var (
 )
 
 func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error) {
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	dCategory := table.FivenetDocumentsCategories.AS("documentcategory")
 	stmt := dCategory.
@@ -29,7 +29,7 @@ func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCa
 			dCategory,
 		).
 		WHERE(
-			dCategory.Job.EQ(jet.String(job)),
+			dCategory.Job.EQ(jet.String(userInfo.Job)),
 		)
 
 	resp := &ListDocumentCategoriesResponse{}
@@ -43,7 +43,7 @@ func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCa
 }
 
 func (s *Server) getDocumentCategory(ctx context.Context, id uint64) (*documents.DocumentCategory, error) {
-	_, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	dCategory := table.FivenetDocumentsCategories.AS("documentcategory")
 	stmt := dCategory.
@@ -55,7 +55,7 @@ func (s *Server) getDocumentCategory(ctx context.Context, id uint64) (*documents
 		).
 		WHERE(
 			jet.AND(
-				dCategory.Job.EQ(jet.String(job)),
+				dCategory.Job.EQ(jet.String(userInfo.Job)),
 				dCategory.ID.EQ(jet.Uint64(id)),
 			),
 		)
@@ -69,13 +69,13 @@ func (s *Server) getDocumentCategory(ctx context.Context, id uint64) (*documents
 }
 
 func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "CreateDocumentCategory",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
@@ -90,7 +90,7 @@ func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocument
 		VALUES(
 			req.Category.Name,
 			req.Category.Description,
-			job,
+			userInfo.Job,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -111,13 +111,13 @@ func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocument
 }
 
 func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocumentCategoryRequest) (*UpdateDocumentCategoryResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "UpdateDocumentCategory",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
@@ -132,11 +132,11 @@ func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocument
 		SET(
 			req.Category.Name,
 			req.Category.Description,
-			job,
+			userInfo.Job,
 		).
 		WHERE(jet.AND(
 			dCategory.ID.EQ(jet.Uint64(req.Category.Id)),
-			dCategory.Job.EQ(jet.String(job)),
+			dCategory.Job.EQ(jet.String(userInfo.Job)),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -149,13 +149,13 @@ func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocument
 }
 
 func (s *Server) DeleteDocumentCategory(ctx context.Context, req *DeleteDocumentCategoryRequest) (*DeleteDocumentCategoryResponse, error) {
-	userId, job, _ := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "DeleteDocumentCategory",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
@@ -170,7 +170,7 @@ func (s *Server) DeleteDocumentCategory(ctx context.Context, req *DeleteDocument
 		DELETE().
 		WHERE(
 			jet.AND(
-				dCategory.Job.EQ(jet.String(job)),
+				dCategory.Job.EQ(jet.String(userInfo.Job)),
 				dCategory.ID.IN(ids...),
 			),
 		)

@@ -18,11 +18,11 @@ var (
 )
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	condition := jet.Bool(true)
-	if !s.p.Can(userId, job, jobGrade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
-		condition = auditLog.UserJob.EQ(jet.String(job))
+	if !s.p.Can(userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName) {
+		condition = auditLog.UserJob.EQ(jet.String(userInfo.Job))
 	}
 
 	if len(req.UserIds) > 0 {

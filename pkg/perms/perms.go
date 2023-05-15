@@ -9,6 +9,7 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -19,7 +20,7 @@ type Permissions interface {
 	GetAllPermissions() ([]*permissions.Permission, error)
 	GetPermissionsByIDs(ids ...uint64) ([]*permissions.Permission, error)
 	CreatePermission(category Category, name Name) (uint64, error)
-	GetPermissionsOfUser(userId int32, job string, grade int32) (collections.Permissions, error)
+	GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error)
 
 	GetJobRoles(job string) (collections.Roles, error)
 	GetJobRolesUpTo(job string, grade int32) (collections.Roles, error)
@@ -35,7 +36,7 @@ type Permissions interface {
 	UpdateRolePermissions(id uint64, perms ...AddPerm) error
 	RemovePermissionsFromRole(id uint64, perms ...uint64) error
 
-	Can(userId int32, job string, grade int32, category Category, name Name) bool
+	Can(userInfo *userinfo.UserInfo, category Category, name Name) bool
 
 	GetAttribute(category Category, name Name, key Key) (*permissions.RoleAttribute, error)
 	CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error)
@@ -46,7 +47,7 @@ type Permissions interface {
 	UpdateRoleAttributes(attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(roleId uint64, attrs ...*permissions.RoleAttribute) error
 
-	Attr(userId int32, job string, grade int32, category Category, name Name, key Key) (any, error)
+	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
 }
 
 type Perms struct {

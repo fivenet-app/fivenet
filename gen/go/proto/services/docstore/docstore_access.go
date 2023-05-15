@@ -18,8 +18,8 @@ import (
 )
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_ACCESS)
+	userInfo := auth.GetUserInfoFromContext(ctx)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_ACCESS)
 	if err != nil {
 		return nil, err
 	}
@@ -50,18 +50,18 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 }
 
 func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
-	userId, job, jobGrade := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
 		Method:  "SetDocumentAccess",
-		UserID:  userId,
-		UserJob: job,
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userId, job, jobGrade, false, documents.ACCESS_LEVEL_ACCESS)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_ACCESS)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 }
 
 func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mode ACCESS_LEVEL_UPDATE_MODE, documentId uint64, access *documents.DocumentAccess) error {
-	userId := auth.GetUserIDFromContext(ctx)
+	userInfo := auth.GetUserInfoFromContext(ctx)
 
 	// Get existing job and user accesses from database
 	current, err := s.getDocumentAccess(ctx, documentId)
@@ -104,11 +104,11 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mo
 	case ACCESS_LEVEL_UPDATE_MODE_UPDATE:
 		toCreate, toUpdate, toDelete := s.compareDocumentAccess(tx, current, access)
 
-		if err := s.createDocumentAccess(ctx, tx, documentId, userId, toCreate); err != nil {
+		if err := s.createDocumentAccess(ctx, tx, documentId, userInfo.UserId, toCreate); err != nil {
 			return err
 		}
 
-		if err := s.updateDocumentAccess(ctx, tx, documentId, userId, toUpdate); err != nil {
+		if err := s.updateDocumentAccess(ctx, tx, documentId, userInfo.UserId, toUpdate); err != nil {
 			return err
 		}
 

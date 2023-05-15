@@ -3,6 +3,7 @@ package mock
 import (
 	"testing"
 
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,7 +26,13 @@ func TestPermsMock(t *testing.T) {
 		p.AddUserPerm(1, v)
 	}
 
-	user1AllPerms, err := p.GetPermissionsOfUser(1, "ambulance", 2)
+	user1AllPerms, err := p.GetPermissionsOfUser(&userinfo.UserInfo{
+		AccountId: 1,
+		UserId:    1,
+		Username:  "test",
+		Job:       "ambulance",
+		JobGrade:  20,
+	})
 	assert.NoError(t, err)
 	assert.Len(t, user1AllPerms, 5)
 

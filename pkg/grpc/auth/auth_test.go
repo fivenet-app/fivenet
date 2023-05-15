@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	grpc_metadata "github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
@@ -18,7 +19,8 @@ func TestGRPCAuthFunc(t *testing.T) {
 	assert.NotNil(t, tm)
 	token, err := tm.NewWithClaims(basicCitizenInfoClaim)
 	assert.NoError(t, err)
-	grpcAuth := NewGRPCAuth(tm)
+	ui := userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{})
+	grpcAuth := NewGRPCAuth(ui, tm)
 
 	for _, run := range []struct {
 		md        metadata.MD

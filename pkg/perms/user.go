@@ -3,6 +3,7 @@ package perms
 import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -10,7 +11,7 @@ import (
 
 var tUserPerms = table.FivenetUserPermissions
 
-func (p *Perms) GetPermissionsOfUser(userId int32, job string, grade int32) (collections.Permissions, error) {
+func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {
 	stmt := tPerms.
 		SELECT(
 			tPerms.AllColumns,
@@ -26,7 +27,7 @@ func (p *Perms) GetPermissionsOfUser(userId int32, job string, grade int32) (col
 						tUserPerms,
 					).
 					WHERE(
-						tUserPerms.UserID.EQ(jet.Int32(userId)),
+						tUserPerms.UserID.EQ(jet.Int32(userInfo.UserId)),
 					).
 					UNION(
 						tRoles.
@@ -36,8 +37,8 @@ func (p *Perms) GetPermissionsOfUser(userId int32, job string, grade int32) (col
 									tRolePerms.RoleID.EQ(tRoles.ID)),
 							).
 							WHERE(jet.AND(
-								tRoles.Job.EQ(jet.String(job)),
-								tRoles.Grade.EQ(jet.Int32(grade)),
+								tRoles.Job.EQ(jet.String(userInfo.Job)),
+								tRoles.Grade.EQ(jet.Int32(userInfo.JobGrade)),
 							)),
 					),
 			),
@@ -51,23 +52,23 @@ func (p *Perms) GetPermissionsOfUser(userId int32, job string, grade int32) (col
 	return perms, nil
 }
 
-func (p *Perms) Can(userId int32, job string, grade int32, category Category, name Name) bool {
+func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) bool {
 	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
 	if !ok {
 		return false
 	}
 
-	cached, ok := p.userCanCache.Get(userId)
+	cached, ok := p.userCanCache.Get(userInfo.UserId)
 	if ok {
 		if result, found := cached[permId]; found {
 			return result
 		}
 	}
 
-	result := p.checkIfCan(permId, userId, job, grade, category, name)
+	result := p.checkIfCan(permId, userInfo, category, name)
 
 	if !result {
-		result = p.checkIfCan(permId, userId, job, grade, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName)
+		result = p.checkIfCan(permId, userInfo, common.SuperuserCategoryPerm, common.SuperuserAnyAccessName)
 	}
 
 	if cached == nil {
@@ -75,18 +76,18 @@ func (p *Perms) Can(userId int32, job string, grade int32, category Category, na
 	}
 	cached[permId] = result
 
-	p.userCanCache.Set(userId, cached,
+	p.userCanCache.Set(userInfo.UserId, cached,
 		cache.WithExpiration(p.userCanCacheTTL))
 
 	return result
 }
 
-func (p *Perms) checkIfCan(permId uint64, userId int32, job string, grade int32, category Category, name Name) (result bool) {
-	if p.checkRoleJob(job, grade, permId) {
+func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo, category Category, name Name) (result bool) {
+	if p.checkRoleJob(userInfo.Job, userInfo.JobGrade, permId) {
 		return true
 	}
 
-	return p.checkIfUserCan(userId, permId)
+	return p.checkIfUserCan(userInfo.UserId, permId)
 }
 
 func (p *Perms) checkIfUserCan(userId int32, permId uint64) bool {

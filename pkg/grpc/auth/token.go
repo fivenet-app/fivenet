@@ -18,12 +18,9 @@ const (
 )
 
 type CitizenInfoClaims struct {
-	AccountID uint64 `json:"accid"`
-	Username  string `json:"usrnm"`
-	CharID    int32  `json:"chrid"`
-	// TODO eliminate job and job grade from info claim, use database
-	CharJob      string `json:"chrjb"`
-	CharJobGrade int32  `json:"chrjbg"`
+	AccID        uint64 `json:"accid"`
+	Username     string `json:"usrnm"`
+	CharID       int32  `json:"chrid"`
 	RenewedCount int32  `json:"renwc"`
 
 	jwt.RegisteredClaims
@@ -65,7 +62,7 @@ func (t *TokenMgr) ParseWithClaims(tokenString string) (*CitizenInfoClaims, erro
 
 func BuildTokenClaimsFromAccount(account *model.FivenetAccounts, activeChar *users.User) *CitizenInfoClaims {
 	claims := &CitizenInfoClaims{
-		AccountID:    account.ID,
+		AccID:        account.ID,
 		Username:     *account.Username,
 		RenewedCount: 0,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -79,12 +76,8 @@ func BuildTokenClaimsFromAccount(account *model.FivenetAccounts, activeChar *use
 
 	if activeChar != nil {
 		claims.CharID = activeChar.UserId
-		claims.CharJob = activeChar.Job
-		claims.CharJobGrade = activeChar.JobGrade
 	} else {
 		claims.CharID = 0
-		claims.CharJob = ""
-		claims.CharJobGrade = 0
 	}
 
 	return claims
