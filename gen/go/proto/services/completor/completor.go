@@ -17,7 +17,8 @@ import (
 )
 
 var (
-	user = table.Users.AS("usershort")
+	tUsers            = table.Users.AS("usershort")
+	tDocumentCategory = table.FivenetDocumentsCategories.AS("document_category")
 )
 
 var (
@@ -50,22 +51,22 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 	condition := jet.Bool(true)
 	if req.Search != "" {
 		req.Search = "%" + req.Search + "%"
-		condition = jet.CONCAT(user.Firstname, jet.String(" "), user.Lastname).
+		condition = jet.CONCAT(tUsers.Firstname, jet.String(" "), tUsers.Lastname).
 			LIKE(jet.String(req.Search))
 	}
 
-	stmt := user.
+	stmt := tUsers.
 		SELECT(
-			user.ID,
-			user.Identifier,
-			user.Firstname,
-			user.Lastname,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
-		FROM(user).
+		FROM(tUsers).
 		WHERE(condition).
 		ORDER_BY(
-			user.Lastname.DESC(),
+			tUsers.Lastname.DESC(),
 		).
 		LIMIT(15)
 
@@ -116,10 +117,35 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 		return resp, nil
 	}
 
-	resp.Categories, err = s.data.GetSearcher().
-		SearchDocumentCategories(ctx, req.Search, jobs)
-	if err != nil {
-		return nil, FailedSearchErr
+	req.Search = strings.TrimSpace(req.Search)
+	req.Search = strings.ReplaceAll(req.Search, "%", "")
+	req.Search = strings.ReplaceAll(req.Search, " ", "%")
+
+	condition := jet.Bool(true)
+	if req.Search != "" {
+		req.Search = "%" + req.Search + "%"
+		condition = tDocumentCategory.Name.LIKE(jet.String(req.Search))
+	}
+
+	stmt := tDocumentCategory.
+		SELECT(
+			tDocumentCategory.ID,
+			tDocumentCategory.Name,
+			tDocumentCategory.Description,
+			tDocumentCategory.Job,
+		).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
+		FROM(tDocumentCategory).
+		WHERE(condition).
+		ORDER_BY(
+			tDocumentCategory.Name.DESC(),
+		).
+		LIMIT(15)
+
+	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, FailedSearchErr
+		}
 	}
 
 	return resp, nil

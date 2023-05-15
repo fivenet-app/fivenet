@@ -3,32 +3,23 @@ package mstlystcdata
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/blevesearch/bleve/v2"
 	"github.com/blevesearch/bleve/v2/search/query"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 )
 
 type Searcher struct {
 	c *Cache
 
-	docCategories bleve.Index
-	jobs          bleve.Index
+	jobs bleve.Index
 }
 
 func NewSearcher(c *Cache) (*Searcher, error) {
 	s := &Searcher{
 		c: c,
 	}
-
-	docCategories, err := s.newDocsCategoriesIndex()
-	if err != nil {
-		return nil, err
-	}
-	s.docCategories = docCategories
 
 	jobs, err := s.newJobsIndex()
 	if err != nil {
@@ -37,19 +28,6 @@ func NewSearcher(c *Cache) (*Searcher, error) {
 	s.jobs = jobs
 
 	return s, nil
-}
-
-func (s *Searcher) newDocsCategoriesIndex() (bleve.Index, error) {
-	indexMapping := bleve.NewIndexMapping()
-	indexMapping.DefaultField = "name"
-
-	jobMapping := bleve.NewDocumentDisabledMapping()
-	categoryMapping := bleve.NewDocumentMapping()
-	categoryMapping.AddSubDocumentMapping("Job", jobMapping)
-
-	indexMapping.AddDocumentMapping("category", categoryMapping)
-
-	return bleve.NewMemOnly(indexMapping)
 }
 
 func (s *Searcher) newJobsIndex() (bleve.Index, error) {
@@ -64,17 +42,6 @@ func (s *Searcher) newJobsIndex() (bleve.Index, error) {
 }
 
 func (s *Searcher) addDataToIndex() {
-	// Fill document categories search from cache
-	for _, k := range s.c.docCategories.Keys() {
-		cat, ok := s.c.docCategories.Get(k)
-		if !ok {
-			continue
-		}
-
-		id := strconv.Itoa(int(cat.Id))
-		s.docCategories.Index(id, cat)
-	}
-
 	// Fill jobs search from cache
 	for _, k := range s.c.jobs.Keys() {
 		job, ok := s.c.jobs.Get(k)
@@ -84,58 +51,6 @@ func (s *Searcher) addDataToIndex() {
 
 		s.jobs.Index(k, job)
 	}
-}
-
-func (s *Searcher) SearchDocumentCategories(ctx context.Context, search string, searchJobs []string) ([]*documents.DocumentCategory, error) {
-	if len(searchJobs) == 0 {
-		return []*documents.DocumentCategory{}, nil
-	}
-
-	var userSearch query.Query
-	if search == "" {
-		userSearch = bleve.NewMatchAllQuery()
-	} else {
-		userSearch = bleve.NewMatchPhraseQuery(search)
-	}
-
-	queries := make([]query.Query, len(searchJobs))
-	for i := 0; i < len(searchJobs); i++ {
-		jobsQuery := bleve.NewTermQuery(searchJobs[i])
-		jobsQuery.SetField("job")
-
-		queries[i] = jobsQuery
-	}
-
-	searchQuery := bleve.NewBooleanQuery()
-	searchQuery.Must = bleve.NewDisjunctionQuery(queries...)
-	searchQuery.Should = userSearch
-
-	searchRequest := bleve.NewSearchRequest(searchQuery)
-	searchRequest.Size = 10
-	searchRequest.Fields = []string{"id", "name", "description", "job"}
-	searchRequest.SortBy([]string{"job", "name", "_id"})
-
-	searchResult, err := s.docCategories.SearchInContext(ctx, searchRequest)
-	if err != nil {
-		return nil, err
-	}
-
-	categories := make([]*documents.DocumentCategory, len(searchResult.Hits))
-	for i, result := range searchResult.Hits {
-		id, err := strconv.Atoi(result.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		category, ok := s.c.docCategories.Get(uint64(id))
-		if !ok {
-			return nil, fmt.Errorf("no document category found for search result id %s (%d)", result.ID, id)
-		}
-
-		categories[i] = category
-	}
-
-	return categories, nil
 }
 
 func (s *Searcher) SearchJobs(ctx context.Context, search string, exactMatch bool) ([]*jobs.Job, error) {
@@ -175,8 +90,4 @@ func (s *Searcher) SearchJobs(ctx context.Context, search string, exactMatch boo
 	}
 
 	return jobs, nil
-}
-
-func CleanupSearchInput(search string) string {
-	return strings.ToLower(strings.Trim(search, "*")) + "*"
 }
