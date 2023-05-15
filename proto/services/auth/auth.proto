@@ -127,13 +127,12 @@ service AuthService {
   rpc ForgotPassword(ForgotPasswordRequest) returns (ForgotPasswordResponse);
 
   rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse);
-  // @perm: Name=GetCharacters
+  // @perm
   rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);
 
   rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
 
   rpc DeleteOAuth2Connection(DeleteOAuth2ConnectionRequest) returns (DeleteOAuth2ConnectionResponse);
 
-  // @perm
   rpc SetJob(SetJobRequest) returns (SetJobResponse);
 }

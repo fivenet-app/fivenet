@@ -17,7 +17,7 @@ var (
 )
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := jet.Bool(true)
 	if !userInfo.SuperUser {

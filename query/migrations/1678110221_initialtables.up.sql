@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_accounts` (
   `password` varchar(60) NULL,
   `license` varchar(64) NOT NULL,
   `reg_token` char(6) DEFAULT NULL,
+  `override_job` varchar(50) DEFAULT NULL,
+  `override_job_grade` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_accounts_username` (`username`),
   UNIQUE KEY `idx_fivenet_accounts_license` (`license`),

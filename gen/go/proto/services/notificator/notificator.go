@@ -42,7 +42,7 @@ func (s *Server) PermissionStreamFuncOverride(ctx context.Context, srv interface
 }
 
 func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequest) (*GetNotificationsResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := nots.UserID.EQ(jet.Int32(userInfo.UserId))
 	if req.IncludeRead {
@@ -95,7 +95,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 }
 
 func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRequest) (*ReadNotificationsResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	ids := make([]jet.Expression, len(req.Ids))
 	for i := 0; i < len(req.Ids); i++ {
@@ -124,7 +124,7 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 }
 
 func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer) error {
-	userInfo := auth.GetUserInfoFromContext(srv.Context())
+	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
 	nots := nots.AS("notification")
 	stmt := nots.

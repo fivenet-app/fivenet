@@ -18,7 +18,7 @@ import (
 )
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_ACCESS)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 }
 
 func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
@@ -92,7 +92,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 }
 
 func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mode ACCESS_LEVEL_UPDATE_MODE, documentId uint64, access *documents.DocumentAccess) error {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Get existing job and user accesses from database
 	current, err := s.getDocumentAccess(ctx, documentId)

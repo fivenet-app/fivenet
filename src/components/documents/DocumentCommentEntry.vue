@@ -81,7 +81,7 @@ async function deleteComment(): Promise<void> {
                         {{ comment.getCreator()?.getFirstname() }} {{ comment.getCreator()?.getLastname() }}
                     </NuxtLink>
                     <div
-                        v-if="comment.getCreatorId() === activeChar?.getUserId() || permissions.includes('superuser-anyaccess')">
+                        v-if="comment.getCreatorId() === activeChar?.getUserId() || permissions.includes('superuser')">
                         <button v-can="'DocStoreService.PostDocumentComment'" @click="editing = true">
                             <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>

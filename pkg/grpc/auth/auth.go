@@ -63,12 +63,36 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 		AuthAccIDCtxTag, tInfo.CharID,
 	})
 
-	userInfo, err := g.ui.GetUserInfo(tInfo.CharID)
+	userInfo, err := g.ui.GetUserInfo(ctx, tInfo.CharID, tInfo.AccID)
 	if err != nil {
 		return nil, err
 	}
 
 	return context.WithValue(ctx, UserInfoKey, userInfo), nil
+}
+
+func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(ctx context.Context, fullMethod string) (context.Context, error) {
+	t, err := GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if t == "" {
+		return nil, NoTokenErr
+	}
+
+	// Parse token only returns the token info when the token is still valid
+	tInfo, err := g.tm.ParseWithClaims(t)
+	if err != nil {
+		return nil, InvalidTokenErr
+	}
+
+	ctx = logging.InjectFields(ctx, logging.Fields{
+		AuthSubCtxTag, tInfo.Subject,
+		AuthAccIDCtxTag, tInfo.CharID,
+	})
+
+	return ctx, nil
 }
 
 type GRPCPerm struct {
@@ -146,7 +170,11 @@ func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
 	return grpc_auth.AuthFromMD(ctx, "bearer")
 }
 
-func GetUserInfoFromContext(ctx context.Context) *userinfo.UserInfo {
+func GetUserInfoFromContext(ctx context.Context) (*userinfo.UserInfo, bool) {
+	return FromContext(ctx)
+}
+
+func MustGetUserInfoFromContext(ctx context.Context) *userinfo.UserInfo {
 	userInfo, ok := FromContext(ctx)
 	if !ok {
 		panic(NoUserInfoErr)

@@ -3,10 +3,7 @@ package common
 import "github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 
 const (
-	SuperuserCategoryPerm   = "Superuser"
-	SuperuserAnyAccessName  = "AnyAccess"
-	SuperuserAnyAccess      = SuperuserCategoryPerm + SuperuserAnyAccessName
-	SuperuserAnyAccessGuard = "superuser-anyaccess"
+	SuperuserPermission = "superuser"
 )
 
 type IJobInfo interface {

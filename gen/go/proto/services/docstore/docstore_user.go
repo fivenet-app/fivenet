@@ -18,7 +18,7 @@ var (
 )
 
 func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	resp := &ListUserDocumentsResponse{}
 	// An user can never see their own activity on their own "profile"

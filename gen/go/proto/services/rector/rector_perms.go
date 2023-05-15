@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
@@ -27,12 +26,11 @@ var (
 var (
 	ignoredGuardPermissions = []string{
 		"authservice-setjob",
-		common.SuperuserAnyAccessGuard,
 	}
 )
 
 func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*model.FivenetRoles, bool, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	role, err := s.p.GetRole(roleId)
 	if err != nil {
@@ -95,7 +93,7 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 		return attrs, nil
 	}
 
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	if userInfo.SuperUser {
 		return attrs, nil
 	}
@@ -126,7 +124,7 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 }
 
 func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	roles, err := s.p.GetJobRolesUpTo(userInfo.Job, userInfo.JobGrade)
 	if err != nil {
@@ -183,7 +181,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 	resp.Role.Permissions = make([]*permissions.Permission, len(fPerms))
 	copy(resp.Role.Permissions, fPerms)
 
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	resp.Role.Attributes, err = s.p.GetRoleAttributes(userInfo.Job, userInfo.JobGrade)
 	if err != nil {
 		return nil, InvalidRequestErr
@@ -193,7 +191,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 }
 
 func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*CreateRoleResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: RectorService_ServiceDesc.ServiceName,
@@ -230,7 +228,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 }
 
 func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*DeleteRoleResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: RectorService_ServiceDesc.ServiceName,
@@ -274,7 +272,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 }
 
 func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsRequest) (*UpdateRolePermsResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: RectorService_ServiceDesc.ServiceName,
@@ -378,7 +376,7 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetR
 }
 
 func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest) (*GetPermissionsResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	perms, err := s.p.GetAllPermissions()
 	if err != nil {

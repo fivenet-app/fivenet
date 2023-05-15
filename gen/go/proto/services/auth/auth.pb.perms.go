@@ -5,20 +5,10 @@ package auth
 
 import "github.com/galexrt/fivenet/pkg/perms"
 
-var PermsRemap = map[string]string{
-	// Service: AuthService
-	"AuthService/ChooseCharacter": "AuthService/GetCharacters",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
-}
-
 const (
 	AuthServicePerm perms.Category = "AuthService"
 
-	AuthServiceGetCharactersPerm perms.Name = "GetCharacters"
-	AuthServiceSetJobPerm        perms.Name = "SetJob"
+	AuthServiceChooseCharacterPerm perms.Name = "ChooseCharacter"
 )
 
 func init() {
@@ -26,12 +16,7 @@ func init() {
 		// Service: AuthService
 		{
 			Category: AuthServicePerm,
-			Name:     AuthServiceGetCharactersPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: AuthServicePerm,
-			Name:     AuthServiceSetJobPerm,
+			Name:     AuthServiceChooseCharacterPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})

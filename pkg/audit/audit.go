@@ -103,7 +103,7 @@ func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
 }
 
 func (a *AuditStorer) createAuditLogEntry(service string, method string, state rector.EVENT_TYPE, targetUserId int32, data any) *model.FivenetAuditLog {
-	userInfo := auth.GetUserInfoFromContext(a.ctx)
+	userInfo := auth.MustGetUserInfoFromContext(a.ctx)
 
 	log := &model.FivenetAuditLog{
 		Service: service,

@@ -7,15 +7,18 @@ import (
 	"strings"
 	"time"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/audit"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -55,9 +58,10 @@ type Server struct {
 	p    perms.Permissions
 	c    *mstlystcdata.Enricher
 	a    audit.IAuditer
+	ui   userinfo.UserInfoRetriever
 }
 
-func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
+func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever) *Server {
 	return &Server{
 		db:   db,
 		auth: auth,
@@ -65,6 +69,7 @@ func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permi
 		p:    p,
 		c:    c,
 		a:    aud,
+		ui:   ui,
 	}
 }
 
@@ -78,7 +83,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		return ctx, nil
 	}
 
-	return s.auth.GRPCAuthFunc(ctx, fullMethod)
+	return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
 }
 
 func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
@@ -166,7 +171,10 @@ func (s *Server) CheckToken(ctx context.Context, req *CheckTokenRequest) (*Check
 		return nil, auth.InvalidTokenErr
 	}
 
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo, ok := auth.GetUserInfoFromContext(ctx)
+	if !ok {
+		return nil, auth.InvalidTokenErr
+	}
 
 	resp := &CheckTokenResponse{
 		Permissions: []string{},
@@ -188,6 +196,9 @@ func (s *Server) CheckToken(ctx context.Context, req *CheckTokenRequest) (*Check
 		}
 
 		resp.Permissions = perms.GuardNames()
+		if userInfo.SuperUser {
+			resp.Permissions = append(resp.Permissions, common.SuperuserPermission)
+		}
 	}
 
 	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
@@ -291,7 +302,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 
 	var char *users.User
 	if claims.CharID > 0 {
-		char, _, err = s.getCharacter(ctx, claims.CharID)
+		char, _, _, err = s.getCharacter(ctx, claims.CharID)
 		if err != nil {
 			return nil, ChangePasswordErr
 		}
@@ -441,7 +452,7 @@ func buildCharSearchIdentifier(license string) string {
 	return "char%:" + license
 }
 
-func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, error) {
+func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, string, error) {
 	stmt := user.
 		SELECT(
 			user.ID,
@@ -450,6 +461,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			user.JobGrade,
 			user.Firstname,
 			user.Lastname,
+			user.Group.AS("group"),
 			js.Label.AS("user.job_label"),
 			jobGrades.Label.AS("user.job_grade_label"),
 			jobProps.Theme,
@@ -477,16 +489,17 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 
 	var dest struct {
 		users.User
+		Group    string
 		JobProps jobs.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
-			return nil, nil, NoCharacterFoundErr
+			return nil, nil, "", NoCharacterFoundErr
 		}
-		return nil, nil, err
+		return nil, nil, "", err
 	}
 
-	return &dest.User, &dest.JobProps, nil
+	return &dest.User, &dest.JobProps, dest.Group, nil
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
@@ -500,7 +513,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, err
 	}
 
-	char, jProps, err := s.getCharacter(ctx, req.CharId)
+	char, jProps, userGroup, err := s.getCharacter(ctx, req.CharId)
 	if err != nil {
 		return nil, NoCharacterFoundErr
 	}
@@ -531,7 +544,13 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, GenericLoginErr
 	}
 
-	if len(perms) == 0 {
+	ps := perms.GuardNames()
+
+	if utils.InStringSlice(config.C.Game.SuperuserGroups, userGroup) {
+		ps = append(ps, common.SuperuserPermission)
+	}
+
+	if len(ps) == 0 {
 		return nil, UnableToChooseCharErr
 	}
 
@@ -546,7 +565,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	return &ChooseCharacterResponse{
 		Token:       newToken,
 		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
-		Permissions: perms.GuardNames(),
+		Permissions: ps,
 		JobProps:    jProps,
 	}, nil
 }
@@ -562,7 +581,9 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		return nil, err
 	}
 
-	char, _, err := s.getCharacter(ctx, claims.CharID)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	char, _, _, err := s.getCharacter(ctx, claims.CharID)
 	if err != nil {
 		return nil, err
 	}
@@ -574,8 +595,11 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 
 	char.Job = job.Name
 	char.JobGrade = jobGrade
-
 	s.c.EnrichJobInfo(char)
+
+	if err := s.ui.SetUserInfo(ctx, userInfo.AccId, char.Job, char.JobGrade); err != nil {
+		return nil, err
+	}
 
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(claims.Username)))

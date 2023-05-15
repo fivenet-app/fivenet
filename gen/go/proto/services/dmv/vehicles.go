@@ -65,7 +65,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	}
 
 	if req.Pagination.Offset <= 0 {
-		userInfo := auth.GetUserInfoFromContext(ctx)
+		userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 		s.a.AddEntryWithData(&model.FivenetAuditLog{
 			Service: DMVService_ServiceDesc.ServiceName,

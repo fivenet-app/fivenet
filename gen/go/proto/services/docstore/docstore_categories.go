@@ -18,7 +18,7 @@ var (
 )
 
 func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	dCategory := table.FivenetDocumentsCategories.AS("documentcategory")
 	stmt := dCategory.
@@ -43,7 +43,7 @@ func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCa
 }
 
 func (s *Server) getDocumentCategory(ctx context.Context, id uint64) (*documents.DocumentCategory, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	dCategory := table.FivenetDocumentsCategories.AS("documentcategory")
 	stmt := dCategory.
@@ -69,7 +69,7 @@ func (s *Server) getDocumentCategory(ctx context.Context, id uint64) (*documents
 }
 
 func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
@@ -111,7 +111,7 @@ func (s *Server) CreateDocumentCategory(ctx context.Context, req *CreateDocument
 }
 
 func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocumentCategoryRequest) (*UpdateDocumentCategoryResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,
@@ -149,7 +149,7 @@ func (s *Server) UpdateDocumentCategory(ctx context.Context, req *UpdateDocument
 }
 
 func (s *Server) DeleteDocumentCategory(ctx context.Context, req *DeleteDocumentCategoryRequest) (*DeleteDocumentCategoryResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: DocStoreService_ServiceDesc.ServiceName,

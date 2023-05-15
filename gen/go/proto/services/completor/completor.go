@@ -84,7 +84,7 @@ func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*C
 
 	var search string
 	if req.Search == nil || req.CurrentJob {
-		userInfo := auth.GetUserInfoFromContext(ctx)
+		userInfo := auth.MustGetUserInfoFromContext(ctx)
 		search = userInfo.Job
 	} else {
 		search = *req.Search
@@ -100,7 +100,7 @@ func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*C
 }
 
 func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDocumentCategoriesRequest) (*CompleteDocumentCategoriesResponse, error) {
-	userInfo := auth.GetUserInfoFromContext(ctx)
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	jobsAttr, err := s.p.Attr(userInfo, CompletorServicePerm, CompletorServiceCompleteDocumentCategoriesPerm, CompletorServiceCompleteDocumentCategoriesJobsPermField)
 	if err != nil {

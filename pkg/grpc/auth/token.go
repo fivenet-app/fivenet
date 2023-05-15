@@ -19,7 +19,7 @@ const (
 
 type CitizenInfoClaims struct {
 	AccID        uint64 `json:"accid"`
-	Username     string `json:"usrnm"`
+	Username     string `json:"usr"`
 	CharID       int32  `json:"chrid"`
 	RenewedCount int32  `json:"renwc"`
 

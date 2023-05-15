@@ -41,7 +41,7 @@ func TestFullAuthFlow(t *testing.T) {
 	c, err := mstlystcdata.NewCache(ctx, zap.NewNop(), db)
 	assert.NoError(t, err)
 	enricher := mstlystcdata.NewEnricher(c)
-	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud)
+	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud, ui)
 
 	client, _, cancel := NewTestAuthServiceClient(srv)
 	defer cancel()

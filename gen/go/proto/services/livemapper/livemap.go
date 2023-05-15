@@ -101,7 +101,7 @@ func (s *Server) Start() {
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
-	userInfo := auth.GetUserInfoFromContext(srv.Context())
+	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
 	dispatchesAttr, err := s.p.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
 	if err != nil {
