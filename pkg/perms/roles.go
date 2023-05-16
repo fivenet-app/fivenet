@@ -276,8 +276,8 @@ func (p *Perms) UpdateRolePermissions(roleId uint64, perms ...AddPerm) error {
 
 	stmt := tRolePerms.
 		INSERT(
-			tRolePerms.PermissionID,
 			tRolePerms.RoleID,
+			tRolePerms.PermissionID,
 			tRolePerms.Val,
 		).
 		MODELS(rolePerms).
