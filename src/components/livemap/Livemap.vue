@@ -260,7 +260,8 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
     return new L.DivIcon({
         html: `<div class="${iconClass}">` + html + '</div>',
         iconSize: [livemapMarkerSize.value, livemapMarkerSize.value],
-        popupAnchor: [0, (livemapMarkerSize.value / 2 * -1)],
+        iconAnchor: [livemapMarkerSize.value / 2, livemapMarkerSize.value],
+        popupAnchor: [0, (livemapMarkerSize.value * -1)],
     });
 
 }
