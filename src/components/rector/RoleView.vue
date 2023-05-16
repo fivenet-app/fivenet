@@ -215,7 +215,8 @@ onMounted(async () => {
                             class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2">
                             <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
                                 <div v-for="(perm, idx) in permList.filter(p => p.getCategory() === category)"
-                                    :key="perm.getId()">
+                                    :key="perm.getId()"
+                                    class="flex flex-col gap-2">
                                     <div class="flex flex-row gap-4">
                                         <div class="flex flex-1 flex-col my-auto">
                                             <span class="truncate lg:max-w-full max-w-xs">
@@ -250,7 +251,7 @@ onMounted(async () => {
                                         :attribute="attr" v-model:states="attrStates" :disabled="permStates.get(perm.getId()) !== true"
                                         :jobs="jobs" />
                                     <div v-if="idx !== permList.filter(p => p.getCategory() === category).length - 1"
-                                        class="w-full border-t border-neutral/20 mt-2" />
+                                        class="w-full border-t border-neutral/20" />
                                 </div>
                             </div>
                         </DisclosurePanel>
