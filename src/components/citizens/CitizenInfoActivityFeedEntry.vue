@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { UserActivity } from '@fivenet/gen/resources/users/users_pb';
-import { QuestionMarkCircleIcon, BellAlertIcon, BellSnoozeIcon, AtSymbolIcon } from '@heroicons/vue/24/outline'
+import { QuestionMarkCircleIcon, BellAlertIcon, BellSnoozeIcon, AtSymbolIcon, BriefcaseIcon } from '@heroicons/vue/24/outline'
 import { FunctionalComponent } from 'vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
@@ -30,6 +30,15 @@ switch (props.activity.getKey()) {
             icon.value = BellSnoozeIcon;
             iconColor.value = 'text-success-400';
         }
+
+        break;
+    };
+
+    case 'UserProps.Job': {
+        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.set_ciizen_job');
+        actionValue.value = props.activity.getNewValue();
+        icon.value = BriefcaseIcon;
+        iconColor.value = 'text-secondary-400';
 
         break;
     };

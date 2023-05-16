@@ -405,8 +405,8 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		return nil, status.Error(codes.InvalidArgument, "Must give a reason!")
 	}
 
-	// Use getUserProps
-	props, err := s.getUserProps(ctx, userInfo.UserId)
+	// Get current user props to be able to compare
+	props, err := s.getUserProps(ctx, req.Props.UserId)
 	if err != nil {
 		return nil, FailedQueryErr
 	}
@@ -489,13 +489,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	// Create user activity
-	if req.Props.Wanted != props.Wanted {
+	if *req.Props.Wanted != *props.Wanted {
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted", strconv.FormatBool(*props.Wanted), strconv.FormatBool(*req.Props.Wanted), req.Reason); err != nil {
 			return nil, FailedQueryErr
 		}
 	}
-	if req.Props.JobName != props.JobName {
+	if *req.Props.JobName != *props.JobName {
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job", *props.JobName, *req.Props.JobName, req.Reason); err != nil {
 			return nil, FailedQueryErr
@@ -513,6 +513,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 }
 
 func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserProps, error) {
+	tUserProps := tUserProps.AS("userprops")
 	stmt := tUserProps.
 		SELECT(
 			tUserProps.UserID,

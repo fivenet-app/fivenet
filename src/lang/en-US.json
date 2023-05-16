@@ -194,7 +194,8 @@
                 "with_reason": "with reason",
                 "set_citizen_as": "Set the citizen as",
                 "document_relation": "Related the citizen in a",
-                "document_relation_removed": "Removed citizen document relation in"
+                "document_relation_removed": "Removed citizen document relation in",
+                "set_ciizen_job": "Set the citizen's job to "
             }
         },
         "partials": {
