@@ -581,8 +581,6 @@ func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute)
 				tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("values(`value`)"))),
 			)
 
-		fmt.Println(stmt.DebugSql())
-
 		if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
 			if err != nil && !dbutils.IsDuplicateError(err) {
 				return err
