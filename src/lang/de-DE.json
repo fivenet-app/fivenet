@@ -438,7 +438,8 @@
         "no_licenses": "Keine Lizenzen.",
         "available": "verfügbar",
         "reason": "Grund | Gründe",
-        "preview": "Vorschau"
+        "preview": "Vorschau",
+        "weight": "Gewichtung"
     },
     "notifications": {
         "clipboard": {

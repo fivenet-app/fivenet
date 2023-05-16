@@ -37,6 +37,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const maxAccessEntries = 8;
 
+const weight = ref<number>(0);
 const title = ref<string>('');
 const description = ref<string>('');
 const contentTitle = ref<string>('');
@@ -235,6 +236,7 @@ async function createTemplate(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new CreateTemplateRequest();
         const tpl = new Template();
+        tpl.setWeight(weight.value);
         tpl.setTitle(title.value);
         tpl.setDescription(description.value);
         tpl.setContentTitle(contentTitle.value);
@@ -320,6 +322,7 @@ async function updateTemplate(): Promise<void> {
         const req = new UpdateTemplateRequest();
         const tpl = new Template();
         tpl.setId(props.templateId!);
+        tpl.setWeight(weight.value);
         tpl.setTitle(title.value);
         tpl.setDescription(description.value);
         tpl.setContentTitle(contentTitle.value);
@@ -527,6 +530,14 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
 <template>
     <div class="text-neutral">
         <form @submit="onSubmit">
+            <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
+                {{ $t('common.template', 2) }} {{ $t('common.weight') }}
+            </label>
+            <div class="mt-2">
+                <Field type="number" name="weight" id="weight" min="0" max="4294967295"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    v-model="weight" />
+            </div>
             <label for="title" class="block font-medium text-sm mt-2">
                 {{ $t('common.template') }} {{ $t('common.title') }}
             </label>

@@ -92,6 +92,14 @@ const openPreview = ref(false);
             <div class="flow-root mt-4 mb-6">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
+                        {{ $t('common.template', 2) }} {{ $t('common.weight') }}
+                    </label>
+                    <div class="mt-2">
+                        <input type="text"
+                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            disabled :value="template.getWeight()" />
+                    </div>
+                    <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                         {{ $t('common.content') }} {{ $t('common.title') }}
                     </label>
                     <div class="mt-2">
