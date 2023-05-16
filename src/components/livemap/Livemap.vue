@@ -236,11 +236,16 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
     let html = '';
     let color = marker.getIconColor();
     let iconClass = '';
+    let iconAnchor: L.PointExpression | undefined = undefined;
+    let popupAnchor: L.PointExpression = [0, (livemapMarkerSize.value / 2 * -1)];
 
     switch (type) {
         case 'player':
             {
-                if (activeChar.value && (marker as UserMarker).getUser()?.getIdentifier() === activeChar.value?.getIdentifier()) color = 'FCAB10';
+                if (activeChar.value && (marker as UserMarker).getUser()?.getIdentifier() === activeChar.value.getIdentifier()) color = 'FCAB10';
+                iconAnchor = [livemapMarkerSize.value / 2, livemapMarkerSize.value];
+                popupAnchor = [0, (livemapMarkerSize.value * -1)];
+
                 html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${color ? '#' + color : 'currentColor'}" class="w-full h-full">
                     <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
                 </svg>`;
@@ -249,7 +254,8 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
 
         case 'dispatch':
             {
-                if ((marker as DispatchMarker).getActive()) iconClass = 'animate-dispatch'
+                if ((marker as DispatchMarker).getActive()) iconClass = 'animate-dispatch';
+
                 html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${color ? '#' + color : 'currentColor'}" class="w-full h-full">
                     <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
                 </svg>`;
@@ -260,8 +266,8 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
     return new L.DivIcon({
         html: `<div class="${iconClass}">` + html + '</div>',
         iconSize: [livemapMarkerSize.value, livemapMarkerSize.value],
-        iconAnchor: [livemapMarkerSize.value / 2, livemapMarkerSize.value],
-        popupAnchor: [0, (livemapMarkerSize.value * -1)],
+        iconAnchor,
+        popupAnchor,
     });
 
 }
@@ -414,7 +420,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 :name="`${$t('common.employee', 2)} ${job.getLabel()}`" layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.getUser()?.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
-                    :icon="getIcon('player', marker) as L.Icon" @click="setSelectedMarker(marker.getId())">
+                    :icon="getIcon('player', marker) as L.Icon" @click="setSelectedMarker(marker.getId())"
+                    :z-index-offset="activeChar && marker.getUser()?.getIdentifier() === activeChar.getIdentifier() ? 25 : 20">
                     <LPopup :options="{ closeButton: false }"
                         :content="`<span class='font-semibold'>${$t('common.employee', 2)} ${marker.getUser()?.getJobLabel()}</span><br><span class='italic'>[${marker.getUser()?.getJobGrade()}] ${marker.getUser()?.getJobGradeLabel()}</span><br>${marker.getUser()?.getFirstname()} ${marker.getUser()?.getLastname()}`">
                     </LPopup>
@@ -425,7 +432,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                 :name="`${$t('common.dispatch', 2)} ${job.getLabel()}`" layer-type="overlay" :visible="true">
                 <LMarker v-for="marker in dispatchMarkersFiltered.filter(m => m.getJob() === job.getName())"
                     :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
-                    :icon="getIcon('dispatch', marker) as L.Icon" @click="setSelectedMarker(marker.getId())">
+                    :icon="getIcon('dispatch', marker) as L.Icon" @click="setSelectedMarker(marker.getId())"
+                    :z-index-offset="marker.getActive() ? 15 : 10">
                     <LPopup :options="{ closeButton: false }"
                         :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span>${useLocaleTimeAgo(toDate(marker.getUpdatedAt())!).value}</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.getName()}</span>`">
                     </LPopup>
@@ -468,8 +476,8 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
                         <span class="text-lg mr-2 text-[#6f7683]">{{ $t('components.livemap.center_selected_marker')
                         }}</span>
-                        <input v-model="livemapCenterSelectedMarker" class="my-auto" id="livemapMarkerSize" name="livemapMarkerSize"
-                            type="checkbox" />
+                        <input v-model="livemapCenterSelectedMarker" class="my-auto" id="livemapMarkerSize"
+                            name="livemapMarkerSize" type="checkbox" />
                     </div>
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
                         <span class="text-lg mr-2 text-[#6f7683]">{{ livemapMarkerSize }}</span>
