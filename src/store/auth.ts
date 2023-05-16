@@ -56,12 +56,12 @@ export const useAuthStore = defineStore('auth', {
         setPermissions(permissions: string[]): void {
             this.permissions = permissions.sort();
         },
-        setJobProps(jobProps: null | JobProps): void {
-            if (jobProps === null) {
+        setJobProps(jp: null | JobProps): void {
+            if (jp === null) {
                 this.jobProps = null;
             } else {
                 this.jobProps = {
-                    quickButtons: jobProps
+                    quickButtons: jp
                         .getQuickButtons()
                         .split(';')
                         .filter((v) => v !== ''),

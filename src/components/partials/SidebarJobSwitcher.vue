@@ -55,11 +55,14 @@ async function setJob(): Promise<void> {
             const resp = await $grpc.getAuthClient().
                 setJob(req, null);
 
-            await Promise.all([
+            const promises = [
                 setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date),
                 setActiveChar(resp.getChar()!),
-                setJobProps(resp.getJobProps()!),
-            ]);
+            ];
+            if (resp.hasJobProps()) {
+                promises.push(setJobProps(resp.getJobProps()!));
+            }
+            await Promise.all(promises);
 
             notifications.dispatchNotification({
                 title: 'notifications.job_switcher.setjob.title',
