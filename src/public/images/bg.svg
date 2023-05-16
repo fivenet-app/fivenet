@@ -1,0 +1,553 @@
+<?xml version='1.0' standalone='no'?>
+<svg xmlns:xlink='http://www.w3.org/1999/xlink' xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 2160 1002.8603844297437' preserveAspectRatio='xMaxYMax slice'>
+    <g transform='scale(1.2265409840720025)'>
+        <rect x='0' y='0' width='1823.9438461538464' height='880.5246153846155' fill='#16171a' />
+        <g transform='translate(446.55 6.29) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#2a2842' />
+        </g>
+        <g transform='translate(698.13 6.29) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1a494b' />
+        </g>
+        <g transform='translate(949.71 6.29) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1d6466' />
+        </g>
+        <rect x='1012.6033076923078' y='6.2894615384615395' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1037.76 6.29) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#47417d' />
+        </g>
+        <rect x='1264.1817692307695' y='6.2894615384615395' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(132.08 69.18) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#37335d' />
+        </g>
+        <g transform='translate(194.97 69.18) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#208182' />
+        </g>
+        <g transform='translate(635.24 69.18) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#252439' />
+        </g>
+        <g transform='translate(886.81 69.18) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#22191d' />
+        </g>
+        <g transform='translate(1012.6 69.18) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#16171a' />
+        </g>
+        <g transform='translate(1452.87 69.18) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#208889' />
+        </g>
+        <rect x='1515.760230769231' y='69.18407692307693' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1540.92 69.18) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1c5b5d' />
+        </g>
+        <g transform='translate(1641.55 69.18) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1a1a22' />
+        </g>
+        <rect x='6.2894615384615395' y='132.07869230769234' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(194.97 132.08) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1c5d5f' />
+        </g>
+        <rect x='320.7625384615385' y='132.07869230769234' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(345.92 132.08) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#bb3548' />
+        </g>
+        <g transform='translate(635.24 132.08) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#393562' />
+        </g>
+        <g transform='translate(761.02 132.08) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1a4345' />
+        </g>
+        <g transform='translate(886.81 132.08) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#f33f58' />
+        </g>
+        <g transform='translate(1012.6 132.08) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#574e9e' />
+        </g>
+        <g transform='translate(1327.08 132.08) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1f7e7f' />
+        </g>
+        <rect x='1515.760230769231' y='132.07869230769234' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1515.76 132.08) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#554c99' />
+        </g>
+        <g transform='translate(1578.65 132.08) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#544c98' />
+        </g>
+        <g transform='translate(1641.55 132.08) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#383460' />
+        </g>
+        <rect x='69.18407692307693' y='194.9733076923077' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(69.18 194.97) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#ec3e56' />
+        </g>
+        <g transform='translate(94.34 194.97) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#484280' />
+        </g>
+        <rect x='132.07869230769234' y='194.9733076923077' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(132.08 220.13) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#22191d' />
+        </g>
+        <g transform='translate(157.24 220.13) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#50212a' />
+        </g>
+        <g transform='translate(446.55 194.97) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#252438' />
+        </g>
+        <g transform='translate(509.45 194.97) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1f8182' />
+        </g>
+        <g transform='translate(572.34 194.97) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#492028' />
+        </g>
+        <rect x='698.1302307692308' y='194.9733076923077' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(761.02 194.97) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#48417f' />
+        </g>
+        <g transform='translate(1075.5 194.97) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#261a1e' />
+        </g>
+        <g transform='translate(1641.55 194.97) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#212030' />
+        </g>
+        <g transform='translate(1704.44 194.97) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#302d4f' />
+        </g>
+        <g transform='translate(132.08 257.87) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#161c1f' />
+        </g>
+        <rect x='509.44638461538466' y='257.8679230769231' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(534.6 257.87) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#862b39' />
+        </g>
+        <g transform='translate(572.34 257.87) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#9a2f3f' />
+        </g>
+        <rect x='761.0248461538462' y='257.8679230769231' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(761.02 257.87) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#219697' />
+        </g>
+        <g transform='translate(786.18 257.87) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#292741' />
+        </g>
+        <g transform='translate(786.18 283.03) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#171e21' />
+        </g>
+        <g transform='translate(1075.5 257.87) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#219798' />
+        </g>
+        <g transform='translate(1327.08 257.87) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#219292' />
+        </g>
+        <g transform='translate(194.97 320.76) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#54222b' />
+        </g>
+        <g transform='translate(446.55 320.76) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#411f26' />
+        </g>
+        <g transform='translate(1201.29 320.76) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#193335' />
+        </g>
+        <rect x='1327.0763846153848' y='320.7625384615385' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1327.08 320.76) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#972e3e' />
+        </g>
+        <g transform='translate(1515.76 320.76) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#752834' />
+        </g>
+        <g transform='translate(6.29 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#3e396c' />
+        </g>
+        <rect x='194.9733076923077' y='383.65715384615385' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(194.97 383.66) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1f7e7f' />
+        </g>
+        <g transform='translate(220.13 408.82) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#3d3869' />
+        </g>
+        <g transform='translate(509.45 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#24aeae' />
+        </g>
+        <g transform='translate(572.34 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1b4a4c' />
+        </g>
+        <g transform='translate(635.24 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#6d2732' />
+        </g>
+        <g transform='translate(823.92 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#504991' />
+        </g>
+        <g transform='translate(886.81 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#3a3664' />
+        </g>
+        <g transform='translate(1075.5 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#208485' />
+        </g>
+        <g transform='translate(1201.29 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#7b2936' />
+        </g>
+        <g transform='translate(1452.87 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1f8081' />
+        </g>
+        <g transform='translate(1515.76 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#208a8b' />
+        </g>
+        <g transform='translate(1767.34 383.66) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#182d30' />
+        </g>
+        <rect x='257.8679230769231' y='446.55176923076925' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(283.03 446.55) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#182c2f' />
+        </g>
+        <g transform='translate(283.03 471.71) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#17181d' />
+        </g>
+        <g transform='translate(320.76 446.55) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#229f9f' />
+        </g>
+        <g transform='translate(761.02 446.55) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1d6667' />
+        </g>
+        <g transform='translate(1012.6 446.55) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#a43142' />
+        </g>
+        <g transform='translate(1138.39 446.55) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#219394' />
+        </g>
+        <rect x='1327.0763846153848' y='446.55176923076925' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1352.23 446.55) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#292741' />
+        </g>
+        <g transform='translate(1352.23 471.71) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1c5d5f' />
+        </g>
+        <g transform='translate(1389.97 446.55) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#161c1f' />
+        </g>
+        <g transform='translate(6.29 509.45) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#db3b51' />
+        </g>
+        <g transform='translate(132.08 509.45) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#242337' />
+        </g>
+        <g transform='translate(383.66 509.45) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#2a1b1f' />
+        </g>
+        <rect x='509.44638461538466' y='509.44638461538466' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(823.92 509.45) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#cd384d' />
+        </g>
+        <rect x='1075.4979230769234' y='509.44638461538466' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1100.66 509.45) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#792936' />
+        </g>
+        <g transform='translate(1075.5 534.6) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#433d75' />
+        </g>
+        <g transform='translate(1100.66 534.6) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#d0384e' />
+        </g>
+        <g transform='translate(1138.39 509.45) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#453f79' />
+        </g>
+        <g transform='translate(1201.29 509.45) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#4d468a' />
+        </g>
+        <g transform='translate(1452.87 509.45) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#3d1e25' />
+        </g>
+        <g transform='translate(1704.44 509.45) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#229a9a' />
+        </g>
+        <rect x='132.07869230769234' y='572.341' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(157.24 597.5) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#e83d54' />
+        </g>
+        <g transform='translate(509.45 572.34) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#ae3244' />
+        </g>
+        <g transform='translate(886.81 572.34) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#bb3548' />
+        </g>
+        <g transform='translate(949.71 572.34) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#4b4485' />
+        </g>
+        <g transform='translate(1012.6 572.34) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#36325c' />
+        </g>
+        <g transform='translate(1327.08 572.34) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#208687' />
+        </g>
+        <g transform='translate(1515.76 572.34) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#e43c54' />
+        </g>
+        <g transform='translate(383.66 635.24) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1f8081' />
+        </g>
+        <g transform='translate(446.55 635.24) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#6b2632' />
+        </g>
+        <g transform='translate(698.13 635.24) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#d4394f' />
+        </g>
+        <g transform='translate(823.92 635.24) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#5f242e' />
+        </g>
+        <g transform='translate(1012.6 635.24) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#423c73' />
+        </g>
+        <rect x='1075.4979230769234' y='635.2356153846155' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1075.5 635.24) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1e7476' />
+        </g>
+        <g transform='translate(1452.87 635.24) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#d3394f' />
+        </g>
+        <rect x='1578.6548461538464' y='635.2356153846155' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1578.65 635.24) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#9f3040' />
+        </g>
+        <g transform='translate(6.29 698.13) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#bc3548' />
+        </g>
+        <g transform='translate(132.08 698.13) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#5e54ac' />
+        </g>
+        <g transform='translate(320.76 698.13) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#5d54ab' />
+        </g>
+        <g transform='translate(383.66 698.13) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#182d2f' />
+        </g>
+        <rect x='446.55176923076925' y='698.1302307692308' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(471.71 698.13) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#982f3e' />
+        </g>
+        <g transform='translate(509.45 698.13) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1c5c5e' />
+        </g>
+        <g transform='translate(761.02 698.13) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1b4f50' />
+        </g>
+        <g transform='translate(1138.39 698.13) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#5a50a3' />
+        </g>
+        <g transform='translate(1201.29 698.13) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#208485' />
+        </g>
+        <rect x='1264.1817692307695' y='698.1302307692308' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1264.18 698.13) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#7f2a37' />
+        </g>
+        <g transform='translate(1289.34 723.29) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#63252f' />
+        </g>
+        <g transform='translate(1452.87 698.13) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#343157' />
+        </g>
+        <g transform='translate(1578.65 698.13) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1f7b7c' />
+        </g>
+        <g transform='translate(6.29 761.02) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#932d3d' />
+        </g>
+        <g transform='translate(698.13 761.02) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1e6e6f' />
+        </g>
+        <g transform='translate(949.71 761.02) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#fb405a' />
+        </g>
+        <g transform='translate(1138.39 761.02) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#4b4486' />
+        </g>
+        <g transform='translate(1264.18 761.02) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#16171a' />
+        </g>
+        <g transform='translate(1641.55 761.02) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1f7f80' />
+        </g>
+        <g transform='translate(69.18 823.92) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#219293' />
+        </g>
+        <g transform='translate(194.97 823.92) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#534b96' />
+        </g>
+        <g transform='translate(320.76 823.92) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#48417f' />
+        </g>
+        <g transform='translate(509.45 823.92) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#6d2732' />
+        </g>
+        <rect x='761.0248461538462' y='823.9194615384616' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <rect x='1012.6033076923078' y='823.9194615384616' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1012.6 849.08) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#534b95' />
+        </g>
+        <rect x='1201.287153846154' y='823.9194615384616' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1201.29 823.92) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#421f26' />
+        </g>
+        <g transform='translate(1264.18 823.92) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1b5153' />
+        </g>
+        <rect x='1389.9710000000002' y='823.9194615384616' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1415.13 823.92) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#982e3e' />
+        </g>
+        <g transform='translate(1415.13 849.08) scale(1.258) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#1e7374' />
+        </g>
+        <rect x='1578.6548461538464' y='823.9194615384616' width='50.315692307692316'
+            height='50.315692307692316' fill='#16171a' />
+        <g transform='translate(1641.55 823.92) scale(2.516) rotate(0)'>
+            <path d='M10 5L5 0L0 5L5 10L0 15L5 20L10 15L15 20L20 15L15 10L20 5L15 0L10 5Z'
+                fill='#eb3d56' />
+        </g>
+    </g>
+</svg>

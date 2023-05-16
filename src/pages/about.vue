@@ -4,6 +4,7 @@ import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon, LockClosedIcon, ServerIcon } from '@heroicons/vue/20/solid';
 import Footer from '~/components/partials/Footer.vue';
 import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
+import '~/assets/css/herofull-pattern.css';
 
 const { t } = useI18n();
 
@@ -41,15 +42,16 @@ const faqs = [
 <template>
     <div class="h-full justify-between flex flex-col">
         <div>
-            <div class="bg-gray-900 px-6 py-24 sm:py-32 lg:px-8">
-                <div class="mx-auto max-w-2xl text-center">
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                        {{ $t('common.about') }}
-                    </h2>
-                    <p class="mt-6 text-lg leading-8 text-gray-300">
-                        {{ $t('pages.about.sub_title') }}
-                    </p>
-                </div>
+            <div class="relative isolate bg-gray-900 px-6 py-24 sm:py-32 lg:px-8 hero">
+                <div class="hero-overlay absolute z-[-1] h-full w-full top-0 left-0"></div>
+                    <div class="mx-auto max-w-2xl text-center">
+                        <h2 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+                            {{ $t('common.about') }}
+                        </h2>
+                        <p class="mt-6 text-lg leading-8 text-gray-300">
+                            {{ $t('pages.about.sub_title') }}
+                        </p>
+                    </div>
             </div>
 
             <div class="relative isolate overflow-hidden px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0">
