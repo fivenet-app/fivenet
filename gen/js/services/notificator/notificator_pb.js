@@ -23,10 +23,14 @@ var global =
 
 var resources_common_database_database_pb = require('../../resources/common/database/database_pb.js');
 goog.object.extend(proto, resources_common_database_database_pb);
+var resources_jobs_jobs_pb = require('../../resources/jobs/jobs_pb.js');
+goog.object.extend(proto, resources_jobs_jobs_pb);
 var resources_notifications_notifications_pb = require('../../resources/notifications/notifications_pb.js');
 goog.object.extend(proto, resources_notifications_notifications_pb);
 var resources_timestamp_timestamp_pb = require('../../resources/timestamp/timestamp_pb.js');
 goog.object.extend(proto, resources_timestamp_timestamp_pb);
+var resources_users_users_pb = require('../../resources/users/users_pb.js');
+goog.object.extend(proto, resources_users_users_pb);
 goog.exportSymbol('proto.services.notificator.GetNotificationsRequest', null, global);
 goog.exportSymbol('proto.services.notificator.GetNotificationsResponse', null, global);
 goog.exportSymbol('proto.services.notificator.ReadNotificationsRequest', null, global);
@@ -968,7 +972,7 @@ proto.services.notificator.StreamRequest.prototype.setLastId = function(value) {
  * @private {!Array<number>}
  * @const
  */
-proto.services.notificator.StreamResponse.repeatedFields_ = [2];
+proto.services.notificator.StreamResponse.repeatedFields_ = [3];
 
 
 
@@ -1002,10 +1006,10 @@ proto.services.notificator.StreamResponse.prototype.toObject = function(opt_incl
 proto.services.notificator.StreamResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     lastId: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    restartStream: jspb.Message.getBooleanFieldWithDefault(msg, 2, false),
     notificationsList: jspb.Message.toObjectList(msg.getNotificationsList(),
     resources_notifications_notifications_pb.Notification.toObject, includeInstance),
-    token: (f = msg.getToken()) && proto.services.notificator.TokenUpdate.toObject(includeInstance, f),
-    restartStream: jspb.Message.getBooleanFieldWithDefault(msg, 4, false)
+    token: (f = msg.getToken()) && proto.services.notificator.TokenUpdate.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1047,18 +1051,18 @@ proto.services.notificator.StreamResponse.deserializeBinaryFromReader = function
       msg.setLastId(value);
       break;
     case 2:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setRestartStream(value);
+      break;
+    case 3:
       var value = new resources_notifications_notifications_pb.Notification;
       reader.readMessage(value,resources_notifications_notifications_pb.Notification.deserializeBinaryFromReader);
       msg.addNotifications(value);
       break;
-    case 3:
+    case 4:
       var value = new proto.services.notificator.TokenUpdate;
       reader.readMessage(value,proto.services.notificator.TokenUpdate.deserializeBinaryFromReader);
       msg.setToken(value);
-      break;
-    case 4:
-      var value = /** @type {boolean} */ (reader.readBool());
-      msg.setRestartStream(value);
       break;
     default:
       reader.skipField();
@@ -1096,10 +1100,17 @@ proto.services.notificator.StreamResponse.serializeBinaryToWriter = function(mes
       f
     );
   }
+  f = message.getRestartStream();
+  if (f) {
+    writer.writeBool(
+      2,
+      f
+    );
+  }
   f = message.getNotificationsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      2,
+      3,
       f,
       resources_notifications_notifications_pb.Notification.serializeBinaryToWriter
     );
@@ -1107,16 +1118,9 @@ proto.services.notificator.StreamResponse.serializeBinaryToWriter = function(mes
   f = message.getToken();
   if (f != null) {
     writer.writeMessage(
-      3,
+      4,
       f,
       proto.services.notificator.TokenUpdate.serializeBinaryToWriter
-    );
-  }
-  f = message.getRestartStream();
-  if (f) {
-    writer.writeBool(
-      4,
-      f
     );
   }
 };
@@ -1141,12 +1145,30 @@ proto.services.notificator.StreamResponse.prototype.setLastId = function(value) 
 
 
 /**
- * repeated resources.notifications.Notification notifications = 2;
+ * optional bool restart_stream = 2;
+ * @return {boolean}
+ */
+proto.services.notificator.StreamResponse.prototype.getRestartStream = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.services.notificator.StreamResponse} returns this
+ */
+proto.services.notificator.StreamResponse.prototype.setRestartStream = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 2, value);
+};
+
+
+/**
+ * repeated resources.notifications.Notification notifications = 3;
  * @return {!Array<!proto.resources.notifications.Notification>}
  */
 proto.services.notificator.StreamResponse.prototype.getNotificationsList = function() {
   return /** @type{!Array<!proto.resources.notifications.Notification>} */ (
-    jspb.Message.getRepeatedWrapperField(this, resources_notifications_notifications_pb.Notification, 2));
+    jspb.Message.getRepeatedWrapperField(this, resources_notifications_notifications_pb.Notification, 3));
 };
 
 
@@ -1155,7 +1177,7 @@ proto.services.notificator.StreamResponse.prototype.getNotificationsList = funct
  * @return {!proto.services.notificator.StreamResponse} returns this
 */
 proto.services.notificator.StreamResponse.prototype.setNotificationsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+  return jspb.Message.setRepeatedWrapperField(this, 3, value);
 };
 
 
@@ -1165,7 +1187,7 @@ proto.services.notificator.StreamResponse.prototype.setNotificationsList = funct
  * @return {!proto.resources.notifications.Notification}
  */
 proto.services.notificator.StreamResponse.prototype.addNotifications = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.resources.notifications.Notification, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 3, opt_value, proto.resources.notifications.Notification, opt_index);
 };
 
 
@@ -1179,12 +1201,12 @@ proto.services.notificator.StreamResponse.prototype.clearNotificationsList = fun
 
 
 /**
- * optional TokenUpdate token = 3;
+ * optional TokenUpdate token = 4;
  * @return {?proto.services.notificator.TokenUpdate}
  */
 proto.services.notificator.StreamResponse.prototype.getToken = function() {
   return /** @type{?proto.services.notificator.TokenUpdate} */ (
-    jspb.Message.getWrapperField(this, proto.services.notificator.TokenUpdate, 3));
+    jspb.Message.getWrapperField(this, proto.services.notificator.TokenUpdate, 4));
 };
 
 
@@ -1193,7 +1215,7 @@ proto.services.notificator.StreamResponse.prototype.getToken = function() {
  * @return {!proto.services.notificator.StreamResponse} returns this
 */
 proto.services.notificator.StreamResponse.prototype.setToken = function(value) {
-  return jspb.Message.setWrapperField(this, 3, value);
+  return jspb.Message.setWrapperField(this, 4, value);
 };
 
 
@@ -1211,25 +1233,7 @@ proto.services.notificator.StreamResponse.prototype.clearToken = function() {
  * @return {boolean}
  */
 proto.services.notificator.StreamResponse.prototype.hasToken = function() {
-  return jspb.Message.getField(this, 3) != null;
-};
-
-
-/**
- * optional bool restart_stream = 4;
- * @return {boolean}
- */
-proto.services.notificator.StreamResponse.prototype.getRestartStream = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 4, false));
-};
-
-
-/**
- * @param {boolean} value
- * @return {!proto.services.notificator.StreamResponse} returns this
- */
-proto.services.notificator.StreamResponse.prototype.setRestartStream = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 4, value);
+  return jspb.Message.getField(this, 4) != null;
 };
 
 
@@ -1274,7 +1278,9 @@ proto.services.notificator.TokenUpdate.toObject = function(includeInstance, msg)
   var f, obj = {
     newToken: jspb.Message.getFieldWithDefault(msg, 1, ""),
     expires: (f = msg.getExpires()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
-    permissionsList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f
+    permissionsList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
+    userInfo: (f = msg.getUserInfo()) && resources_users_users_pb.User.toObject(includeInstance, f),
+    jobProps: (f = msg.getJobProps()) && resources_jobs_jobs_pb.JobProps.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1323,6 +1329,16 @@ proto.services.notificator.TokenUpdate.deserializeBinaryFromReader = function(ms
     case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.addPermissions(value);
+      break;
+    case 4:
+      var value = new resources_users_users_pb.User;
+      reader.readMessage(value,resources_users_users_pb.User.deserializeBinaryFromReader);
+      msg.setUserInfo(value);
+      break;
+    case 5:
+      var value = new resources_jobs_jobs_pb.JobProps;
+      reader.readMessage(value,resources_jobs_jobs_pb.JobProps.deserializeBinaryFromReader);
+      msg.setJobProps(value);
       break;
     default:
       reader.skipField();
@@ -1373,6 +1389,22 @@ proto.services.notificator.TokenUpdate.serializeBinaryToWriter = function(messag
     writer.writeRepeatedString(
       3,
       f
+    );
+  }
+  f = message.getUserInfo();
+  if (f != null) {
+    writer.writeMessage(
+      4,
+      f,
+      resources_users_users_pb.User.serializeBinaryToWriter
+    );
+  }
+  f = message.getJobProps();
+  if (f != null) {
+    writer.writeMessage(
+      5,
+      f,
+      resources_jobs_jobs_pb.JobProps.serializeBinaryToWriter
     );
   }
 };
@@ -1485,6 +1517,80 @@ proto.services.notificator.TokenUpdate.prototype.addPermissions = function(value
  */
 proto.services.notificator.TokenUpdate.prototype.clearPermissionsList = function() {
   return this.setPermissionsList([]);
+};
+
+
+/**
+ * optional resources.users.User user_info = 4;
+ * @return {?proto.resources.users.User}
+ */
+proto.services.notificator.TokenUpdate.prototype.getUserInfo = function() {
+  return /** @type{?proto.resources.users.User} */ (
+    jspb.Message.getWrapperField(this, resources_users_users_pb.User, 4));
+};
+
+
+/**
+ * @param {?proto.resources.users.User|undefined} value
+ * @return {!proto.services.notificator.TokenUpdate} returns this
+*/
+proto.services.notificator.TokenUpdate.prototype.setUserInfo = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.notificator.TokenUpdate} returns this
+ */
+proto.services.notificator.TokenUpdate.prototype.clearUserInfo = function() {
+  return this.setUserInfo(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.notificator.TokenUpdate.prototype.hasUserInfo = function() {
+  return jspb.Message.getField(this, 4) != null;
+};
+
+
+/**
+ * optional resources.jobs.JobProps job_props = 5;
+ * @return {?proto.resources.jobs.JobProps}
+ */
+proto.services.notificator.TokenUpdate.prototype.getJobProps = function() {
+  return /** @type{?proto.resources.jobs.JobProps} */ (
+    jspb.Message.getWrapperField(this, resources_jobs_jobs_pb.JobProps, 5));
+};
+
+
+/**
+ * @param {?proto.resources.jobs.JobProps|undefined} value
+ * @return {!proto.services.notificator.TokenUpdate} returns this
+*/
+proto.services.notificator.TokenUpdate.prototype.setJobProps = function(value) {
+  return jspb.Message.setWrapperField(this, 5, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.services.notificator.TokenUpdate} returns this
+ */
+proto.services.notificator.TokenUpdate.prototype.clearJobProps = function() {
+  return this.setJobProps(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.services.notificator.TokenUpdate.prototype.hasJobProps = function() {
+  return jspb.Message.getField(this, 5) != null;
 };
 
 

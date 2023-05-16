@@ -32,6 +32,8 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                         authStore.setPermissions(resp.getPermissionsList());
                         if (resp.hasJobProps()) {
                             authStore.setJobProps(resp.getJobProps()!);
+                        } else {
+                            authStore.setJobProps(null);
                         }
                     } catch (e) {
                         $grpc.handleRPCError(e as RpcError);

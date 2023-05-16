@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	userAct = table.FivenetUserActivity
+	tUserAct = table.FivenetUserActivity
 )
 
 func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
@@ -27,20 +27,20 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	}
 
 	condition := jet.AND(
-		docRel.DeletedAt.IS_NULL(),
+		tDocRel.DeletedAt.IS_NULL(),
 		jet.OR(
-			docRel.SourceUserID.EQ(jet.Int32(req.UserId)),
-			docRel.TargetUserID.EQ(jet.Int32(req.UserId)),
+			tDocRel.SourceUserID.EQ(jet.Int32(req.UserId)),
+			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
 		),
 	)
 
 	var docIds []uint64
-	idStmt := docRel.
+	idStmt := tDocRel.
 		SELECT(
-			docRel.DocumentID,
+			tDocRel.DocumentID,
 		).
 		FROM(
-			docRel,
+			tDocRel,
 		).
 		WHERE(jet.AND(
 			condition,
@@ -70,42 +70,42 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		dIds[i] = jet.Uint64(ids[i])
 	}
 
-	dCreator := user.AS("creator")
-	uSource := user.AS("source_user")
-	uTarget := user.AS("target_user")
-	stmt := docRel.
+	dCreator := tUsers.AS("creator")
+	uSource := tUsers.AS("source_user")
+	uTarget := tUsers.AS("target_user")
+	stmt := tDocRel.
 		SELECT(
-			docRel.ID,
-			docRel.CreatedAt,
-			docRel.DeletedAt,
-			docRel.DocumentID,
-			docRel.SourceUserID,
-			docs.ID,
-			docs.CreatedAt,
-			docs.UpdatedAt,
-			docs.CategoryID,
-			docs.CreatorID,
-			docs.State,
-			docs.Closed,
-			docs.Title,
-			dCategory.ID,
-			dCategory.Name,
-			dCategory.Description,
+			tDocRel.ID,
+			tDocRel.CreatedAt,
+			tDocRel.DeletedAt,
+			tDocRel.DocumentID,
+			tDocRel.SourceUserID,
+			tDocs.ID,
+			tDocs.CreatedAt,
+			tDocs.UpdatedAt,
+			tDocs.CategoryID,
+			tDocs.CreatorID,
+			tDocs.State,
+			tDocs.Closed,
+			tDocs.Title,
+			tDCategory.ID,
+			tDCategory.Name,
+			tDCategory.Description,
 			dCreator.ID,
 			dCreator.Identifier,
 			dCreator.Job,
 			dCreator.JobGrade,
 			dCreator.Firstname,
 			dCreator.Lastname,
-			docRel.SourceUserID,
+			tDocRel.SourceUserID,
 			uSource.ID,
 			uSource.Identifier,
 			uSource.Job,
 			uSource.JobGrade,
 			uSource.Firstname,
 			uSource.Lastname,
-			docRel.Relation,
-			docRel.TargetUserID,
+			tDocRel.Relation,
+			tDocRel.TargetUserID,
 			uTarget.ID,
 			uTarget.Identifier,
 			uTarget.Job,
@@ -114,32 +114,32 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			uTarget.Lastname,
 		).
 		FROM(
-			docRel.
-				LEFT_JOIN(docs,
-					docRel.DocumentID.EQ(docs.ID),
+			tDocRel.
+				LEFT_JOIN(tDocs,
+					tDocRel.DocumentID.EQ(tDocs.ID),
 				).
-				LEFT_JOIN(dCategory,
-					docs.CategoryID.EQ(dCategory.ID),
+				LEFT_JOIN(tDCategory,
+					tDocs.CategoryID.EQ(tDCategory.ID),
 				).
 				LEFT_JOIN(dCreator,
-					docs.CreatorID.EQ(dCreator.ID),
+					tDocs.CreatorID.EQ(dCreator.ID),
 				).
 				LEFT_JOIN(uSource,
-					uSource.ID.EQ(docRel.SourceUserID),
+					uSource.ID.EQ(tDocRel.SourceUserID),
 				).
 				LEFT_JOIN(uTarget,
-					uTarget.ID.EQ(docRel.TargetUserID),
+					uTarget.ID.EQ(tDocRel.TargetUserID),
 				),
 		).
 		WHERE(
 			jet.AND(
-				docRel.DocumentID.IN(dIds...),
+				tDocRel.DocumentID.IN(dIds...),
 				condition,
-				docs.DeletedAt.IS_NULL(),
+				tDocs.DeletedAt.IS_NULL(),
 			),
 		).
 		ORDER_BY(
-			docRel.CreatedAt.DESC(),
+			tDocRel.CreatedAt.DESC(),
 		)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
@@ -162,15 +162,15 @@ func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, 
 		reasonField = jet.String(reason)
 	}
 
-	stmt := userAct.
+	stmt := tUserAct.
 		INSERT(
-			userAct.SourceUserID,
-			userAct.TargetUserID,
-			userAct.Type,
-			userAct.Key,
-			userAct.OldValue,
-			userAct.NewValue,
-			userAct.Reason,
+			tUserAct.SourceUserID,
+			tUserAct.TargetUserID,
+			tUserAct.Type,
+			tUserAct.Key,
+			tUserAct.OldValue,
+			tUserAct.NewValue,
+			tUserAct.Reason,
 		).
 		VALUES(
 			userId,

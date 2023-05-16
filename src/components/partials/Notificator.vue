@@ -16,6 +16,10 @@ const activeChar = computed(() => authStore.getActiveChar);
 
 const stream = ref<ClientReadableStream<StreamResponse> | undefined>(undefined);
 
+// In seconds
+const initialBackoffTime = 2;
+let restartBackoffTime = 0;
+
 async function streamNotifications(): Promise<void> {
     if (stream.value !== undefined) return;
 
@@ -26,7 +30,6 @@ async function streamNotifications(): Promise<void> {
         stream(request).
         on('error', async (err: RpcError) => {
             console.debug('Notificator: Stream errored', err);
-            stream.value?.cancel();
             restartStream();
         }).
         on('data', async (resp) => {
@@ -45,9 +48,18 @@ async function streamNotifications(): Promise<void> {
             // If the response contains an (updated) token
             if (resp.hasToken()) {
                 const tokenUpdate = resp.getToken()!;
+
+                if (tokenUpdate.hasUserInfo())
+                    authStore.setActiveChar(tokenUpdate.getUserInfo()!);
+                if (tokenUpdate.hasJobProps()) {
+                    authStore.setJobProps(tokenUpdate.getJobProps()!);
+                } else {
+                    authStore.setJobProps(null);
+                }
+
                 if (tokenUpdate.hasNewToken() && tokenUpdate.hasExpires()) {
-                    console.log(tokenUpdate.getNewToken());
                     authStore.setAccessToken(tokenUpdate.getNewToken(), toDate(tokenUpdate.getExpires()) as null | Date);
+                    authStore.setPermissions(tokenUpdate.getPermissionsList());
 
                     notifications.dispatchNotification({
                         title: 'notifications.renewed_token.title',
@@ -60,13 +72,13 @@ async function streamNotifications(): Promise<void> {
             }
 
             if (resp.getRestartStream()) {
-                console.debug('Notificator: Server requested stream to be restarted')
-                cancelStream();
+                console.debug('Notificator: Server requested stream to be restarted');
+                restartBackoffTime = 0;
                 restartStream();
             }
         }).
         on('end', async () => {
-            console.debug('Notificator: Stream Ended');
+            console.debug('Notificator: Stream ended');
             restartStream();
         });
 
@@ -79,26 +91,37 @@ async function cancelStream(): Promise<void> {
 }
 
 async function restartStream(): Promise<void> {
+    // Reset back off time when over 3 minutes
+    if (restartBackoffTime > 180) {
+        restartBackoffTime = initialBackoffTime;
+    } else {
+        restartBackoffTime += initialBackoffTime;
+    }
+
+    await cancelStream();
+    console.debug('Notificator: Restart back off time in', restartBackoffTime, "seconds");
     setTimeout(async () => {
         toggleStream();
-    }, 2250);
+    }, restartBackoffTime * 1000);
 }
 
 async function toggleStream(): Promise<void> {
     // Only stream notifications when a character is active
     if (accessToken.value && activeChar.value) {
         streamNotifications();
-    } else {
+    } else if (stream.value !== undefined) {
         cancelStream();
     }
 }
 
 watch(activeChar, async () => toggleStream());
-onMounted(() => {
-    streamNotifications();
+
+onMounted(async () => {
+    toggleStream();
 });
 
-onBeforeUnmount(() => {
+onBeforeUnmount(async () => {
+    console.debug('Notificator: Unmount');
     cancelStream();
 });
 </script>

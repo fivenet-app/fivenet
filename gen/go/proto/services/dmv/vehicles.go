@@ -19,8 +19,8 @@ import (
 )
 
 var (
-	vehicle = table.OwnedVehicles.AS("vehicle")
-	user    = table.Users.AS("usershort")
+	tVehicles = table.OwnedVehicles.AS("vehicle")
+	tUsers    = table.Users.AS("usershort")
 )
 
 var (
@@ -47,21 +47,21 @@ func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud au
 
 func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*ListVehiclesResponse, error) {
 	condition := jet.Bool(true)
-	userCondition := user.Identifier.EQ(vehicle.Owner)
+	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)
 	if req.Search != "" {
 		req.Search = strings.ReplaceAll(req.Search, "%", "") + "%"
-		condition = jet.AND(condition, vehicle.Plate.LIKE(jet.String(req.Search)))
+		condition = jet.AND(condition, tVehicles.Plate.LIKE(jet.String(req.Search)))
 	}
 	if req.Model != "" {
 		req.Model = strings.ReplaceAll(req.Model, "%", "") + "%"
-		condition = jet.AND(condition, vehicle.Model.LIKE(jet.String(req.Model)))
+		condition = jet.AND(condition, tVehicles.Model.LIKE(jet.String(req.Model)))
 	}
 	if req.UserId != 0 {
 		condition = jet.AND(condition,
-			user.Identifier.EQ(vehicle.Owner),
-			user.ID.EQ(jet.Int32(req.UserId)),
+			tUsers.Identifier.EQ(tVehicles.Owner),
+			tUsers.ID.EQ(jet.Int32(req.UserId)),
 		)
-		userCondition = jet.AND(userCondition, user.ID.EQ(jet.Int32(req.UserId)))
+		userCondition = jet.AND(userCondition, tUsers.ID.EQ(jet.Int32(req.UserId)))
 	}
 
 	if req.Pagination.Offset <= 0 {
@@ -76,13 +76,13 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		}, req)
 	}
 
-	countStmt := vehicle.
+	countStmt := tVehicles.
 		SELECT(
-			jet.COUNT(vehicle.Owner).AS("datacount.totalcount"),
+			jet.COUNT(tVehicles.Owner).AS("datacount.totalcount"),
 		).
 		FROM(
-			vehicle.
-				LEFT_JOIN(user,
+			tVehicles.
+				LEFT_JOIN(tUsers,
 					userCondition,
 				),
 		).
@@ -108,10 +108,10 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 			var column jet.Column
 			switch orderBy.Column {
 			case "plate":
-				column = vehicle.Plate
+				column = tVehicles.Plate
 			case "model":
 			default:
-				column = vehicle.Model
+				column = tVehicles.Model
 			}
 
 			if orderBy.Desc {
@@ -122,24 +122,24 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		}
 	} else {
 		orderBys = append(orderBys,
-			vehicle.Type.ASC(),
-			vehicle.Plate.ASC(),
+			tVehicles.Type.ASC(),
+			tVehicles.Plate.ASC(),
 		)
 	}
 
-	stmt := vehicle.
+	stmt := tVehicles.
 		SELECT(
-			vehicle.Plate,
-			vehicle.Model,
-			vehicle.Type,
-			user.ID,
-			user.Identifier,
-			user.Firstname,
-			user.Lastname,
+			tVehicles.Plate,
+			tVehicles.Model,
+			tVehicles.Type,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
 		).
 		FROM(
-			vehicle.
-				LEFT_JOIN(user,
+			tVehicles.
+				LEFT_JOIN(tUsers,
 					userCondition,
 				),
 		).

@@ -30,9 +30,9 @@ const (
 )
 
 var (
-	locs     = table.FivenetUserLocations
-	users    = table.Users.AS("user")
-	jobProps = table.FivenetJobProps
+	tPlayerLocs = table.FivenetUserLocations
+	tUsers      = table.Users.AS("user")
+	tJobProps   = table.FivenetJobProps
 )
 
 var (
@@ -208,7 +208,7 @@ func (s *Server) getUserDispatches(jobs []string) ([]*livemap.DispatchMarker, er
 func (s *Server) refreshUserLocations() error {
 	markers := map[string][]*livemap.UserMarker{}
 
-	locs := locs.AS("usermarker")
+	locs := tPlayerLocs.AS("usermarker")
 	stmt := locs.
 		SELECT(
 			locs.Identifier,
@@ -216,22 +216,22 @@ func (s *Server) refreshUserLocations() error {
 			locs.X,
 			locs.Y,
 			locs.UpdatedAt,
-			users.ID.AS("user.id"),
-			users.ID.AS("usermarker.id"),
-			users.Identifier,
-			users.Job,
-			users.JobGrade,
-			users.Firstname,
-			users.Lastname,
-			jobProps.LivemapMarkerColor.AS("usermarker.icon_color"),
+			tUsers.ID.AS("user.id"),
+			tUsers.ID.AS("usermarker.id"),
+			tUsers.Identifier,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tJobProps.LivemapMarkerColor.AS("usermarker.icon_color"),
 		).
 		FROM(
 			locs.
-				INNER_JOIN(users,
-					locs.Identifier.EQ(users.Identifier),
+				INNER_JOIN(tUsers,
+					locs.Identifier.EQ(tUsers.Identifier),
 				).
-				LEFT_JOIN(jobProps,
-					jobProps.Job.EQ(users.Job),
+				LEFT_JOIN(tJobProps,
+					tJobProps.Job.EQ(tUsers.Job),
 				),
 		).
 		WHERE(

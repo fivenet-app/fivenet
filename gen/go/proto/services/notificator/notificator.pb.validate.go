@@ -685,6 +685,8 @@ func (m *StreamResponse) validate(all bool) error {
 
 	// no validation rules for LastId
 
+	// no validation rules for RestartStream
+
 	for idx, item := range m.GetNotifications() {
 		_, _ = idx, item
 
@@ -718,8 +720,6 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 	}
-
-	// no validation rules for RestartStream
 
 	if m.Token != nil {
 
@@ -885,6 +885,72 @@ func (m *TokenUpdate) validate(all bool) error {
 
 	if m.NewToken != nil {
 		// no validation rules for NewToken
+	}
+
+	if m.UserInfo != nil {
+
+		if all {
+			switch v := interface{}(m.GetUserInfo()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TokenUpdateValidationError{
+						field:  "UserInfo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TokenUpdateValidationError{
+						field:  "UserInfo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUserInfo()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TokenUpdateValidationError{
+					field:  "UserInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.JobProps != nil {
+
+		if all {
+			switch v := interface{}(m.GetJobProps()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TokenUpdateValidationError{
+						field:  "JobProps",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TokenUpdateValidationError{
+						field:  "JobProps",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJobProps()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TokenUpdateValidationError{
+					field:  "JobProps",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {

@@ -132,7 +132,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 	go livemapper.Start()
 
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
-	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p, tm))
+	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p, tm, ui))
 	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher, aud))
 	pbrector.RegisterRectorServiceServer(grpcServer, pbrector.NewServer(logger, db, p, aud, enricher))
 

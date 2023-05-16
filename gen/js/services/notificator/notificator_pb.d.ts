@@ -1,8 +1,10 @@
 import * as jspb from 'google-protobuf'
 
 import * as resources_common_database_database_pb from '../../resources/common/database/database_pb';
+import * as resources_jobs_jobs_pb from '../../resources/jobs/jobs_pb';
 import * as resources_notifications_notifications_pb from '../../resources/notifications/notifications_pb';
 import * as resources_timestamp_timestamp_pb from '../../resources/timestamp/timestamp_pb';
+import * as resources_users_users_pb from '../../resources/users/users_pb';
 
 
 export class GetNotificationsRequest extends jspb.Message {
@@ -111,6 +113,9 @@ export class StreamResponse extends jspb.Message {
   getLastId(): number;
   setLastId(value: number): StreamResponse;
 
+  getRestartStream(): boolean;
+  setRestartStream(value: boolean): StreamResponse;
+
   getNotificationsList(): Array<resources_notifications_notifications_pb.Notification>;
   setNotificationsList(value: Array<resources_notifications_notifications_pb.Notification>): StreamResponse;
   clearNotificationsList(): StreamResponse;
@@ -120,9 +125,6 @@ export class StreamResponse extends jspb.Message {
   setToken(value?: TokenUpdate): StreamResponse;
   hasToken(): boolean;
   clearToken(): StreamResponse;
-
-  getRestartStream(): boolean;
-  setRestartStream(value: boolean): StreamResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): StreamResponse.AsObject;
@@ -135,14 +137,14 @@ export class StreamResponse extends jspb.Message {
 export namespace StreamResponse {
   export type AsObject = {
     lastId: number,
+    restartStream: boolean,
     notificationsList: Array<resources_notifications_notifications_pb.Notification.AsObject>,
     token?: TokenUpdate.AsObject,
-    restartStream: boolean,
   }
 
   export enum TokenCase { 
     _TOKEN_NOT_SET = 0,
-    TOKEN = 3,
+    TOKEN = 4,
   }
 }
 
@@ -162,6 +164,16 @@ export class TokenUpdate extends jspb.Message {
   clearPermissionsList(): TokenUpdate;
   addPermissions(value: string, index?: number): TokenUpdate;
 
+  getUserInfo(): resources_users_users_pb.User | undefined;
+  setUserInfo(value?: resources_users_users_pb.User): TokenUpdate;
+  hasUserInfo(): boolean;
+  clearUserInfo(): TokenUpdate;
+
+  getJobProps(): resources_jobs_jobs_pb.JobProps | undefined;
+  setJobProps(value?: resources_jobs_jobs_pb.JobProps): TokenUpdate;
+  hasJobProps(): boolean;
+  clearJobProps(): TokenUpdate;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): TokenUpdate.AsObject;
   static toObject(includeInstance: boolean, msg: TokenUpdate): TokenUpdate.AsObject;
@@ -175,11 +187,23 @@ export namespace TokenUpdate {
     newToken?: string,
     expires?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     permissionsList: Array<string>,
+    userInfo?: resources_users_users_pb.User.AsObject,
+    jobProps?: resources_jobs_jobs_pb.JobProps.AsObject,
   }
 
   export enum NewTokenCase { 
     _NEW_TOKEN_NOT_SET = 0,
     NEW_TOKEN = 1,
+  }
+
+  export enum UserInfoCase { 
+    _USER_INFO_NOT_SET = 0,
+    USER_INFO = 4,
+  }
+
+  export enum JobPropsCase { 
+    _JOB_PROPS_NOT_SET = 0,
+    JOB_PROPS = 5,
   }
 }
 

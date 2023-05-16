@@ -29,11 +29,11 @@ import (
 )
 
 var (
-	account   = table.FivenetAccounts
-	user      = table.Users.AS("user")
-	js        = table.Jobs
-	jobGrades = table.JobGrades
-	jobProps  = table.FivenetJobProps.AS("jobprops")
+	tAccounts  = table.FivenetAccounts
+	tUsers     = table.Users.AS("user")
+	tJobs      = table.Jobs
+	tJobGrades = table.JobGrades
+	tJobProps  = table.FivenetJobProps.AS("jobprops")
 )
 
 var (
@@ -97,13 +97,13 @@ func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, a
 }
 
 func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpression) (*model.FivenetAccounts, error) {
-	stmt := account.
+	stmt := tAccounts.
 		SELECT(
-			account.AllColumns,
+			tAccounts.AllColumns,
 		).
-		FROM(account).
+		FROM(tAccounts).
 		WHERE(
-			account.Enabled.IS_TRUE().
+			tAccounts.Enabled.IS_TRUE().
 				AND(condition),
 		).
 		LIMIT(1)
@@ -120,9 +120,9 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 	req.Username = strings.TrimSpace(req.Username)
 
 	account, err := s.getAccountFromDB(ctx, jet.AND(
-		account.Username.EQ(jet.String(req.Username)),
-		account.RegToken.IS_NULL(),
-		account.Password.IS_NOT_NULL(),
+		tAccounts.Username.EQ(jet.String(req.Username)),
+		tAccounts.RegToken.IS_NULL(),
+		tAccounts.Password.IS_NOT_NULL(),
 	))
 	if err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
@@ -161,9 +161,9 @@ func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutRespons
 
 func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {
 	acc, err := s.getAccountFromDB(ctx, jet.AND(
-		account.RegToken.EQ(jet.String(req.RegToken)),
-		account.Username.IS_NULL(),
-		account.Password.IS_NULL(),
+		tAccounts.RegToken.EQ(jet.String(req.RegToken)),
+		tAccounts.Username.IS_NULL(),
+		tAccounts.Password.IS_NULL(),
 	))
 	if err != nil {
 		return nil, AccountCreateFailedErr
@@ -176,21 +176,21 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		return nil, AccountCreateFailedErr
 	}
 
-	stmt := account.
+	stmt := tAccounts.
 		UPDATE(
-			account.Username,
-			account.Password,
-			account.RegToken,
+			tAccounts.Username,
+			tAccounts.Password,
+			tAccounts.RegToken,
 		).
 		SET(
-			account.Username.SET(jet.String(req.Username)),
-			account.Password.SET(jet.String(string(hashedPassword))),
-			account.RegToken.SET(jet.StringExp(jet.NULL)),
+			tAccounts.Username.SET(jet.String(req.Username)),
+			tAccounts.Password.SET(jet.String(string(hashedPassword))),
+			tAccounts.RegToken.SET(jet.StringExp(jet.NULL)),
 		).
 		WHERE(
 			jet.AND(
-				account.ID.EQ(jet.Uint64(acc.ID)),
-				account.RegToken.EQ(jet.String(req.RegToken)),
+				tAccounts.ID.EQ(jet.Uint64(acc.ID)),
+				tAccounts.RegToken.EQ(jet.String(req.RegToken)),
 			),
 		)
 
@@ -212,7 +212,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		return nil, GenericLoginErr
 	}
 
-	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccID)))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
 			return nil, ChangePasswordErr
@@ -247,15 +247,15 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 	pass := string(hashedPassword)
 	acc.Password = &pass
 
-	stmt := account.
+	stmt := tAccounts.
 		UPDATE(
-			account.Password,
+			tAccounts.Password,
 		).
 		SET(
-			account.Password.SET(jet.String(pass)),
+			tAccounts.Password.SET(jet.String(pass)),
 		).
 		WHERE(
-			account.ID.EQ(jet.Uint64(acc.ID)),
+			tAccounts.ID.EQ(jet.Uint64(acc.ID)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -275,9 +275,9 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 
 func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest) (*ForgotPasswordResponse, error) {
 	acc, err := s.getAccountFromDB(ctx, jet.AND(
-		account.RegToken.EQ(jet.String(req.RegToken)),
-		account.Username.IS_NOT_NULL(),
-		account.Password.IS_NULL(),
+		tAccounts.RegToken.EQ(jet.String(req.RegToken)),
+		tAccounts.Username.IS_NOT_NULL(),
+		tAccounts.Password.IS_NULL(),
 	))
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
@@ -298,17 +298,17 @@ func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest)
 	pass := string(hashedPassword)
 	acc.Password = &pass
 
-	stmt := account.
+	stmt := tAccounts.
 		UPDATE(
-			account.Password,
-			account.RegToken,
+			tAccounts.Password,
+			tAccounts.RegToken,
 		).
 		SET(
-			account.Password.SET(jet.String(pass)),
-			account.RegToken.SET(jet.StringExp(jet.NULL)),
+			tAccounts.Password.SET(jet.String(pass)),
+			tAccounts.RegToken.SET(jet.StringExp(jet.NULL)),
 		).
 		WHERE(
-			account.ID.EQ(jet.Uint64(acc.ID)),
+			tAccounts.ID.EQ(jet.Uint64(acc.ID)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -330,7 +330,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	}
 
 	// Load account to make sure it (still) exists
-	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccID)))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
 		return nil, GenericLoginErr
 	}
@@ -339,38 +339,38 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	}
 
 	// Load chars from database
-	stmt := user.
+	stmt := tUsers.
 		SELECT(
-			user.ID,
-			user.Identifier,
-			user.Job,
-			js.Label.AS("user.job_label"),
-			user.JobGrade,
-			jobGrades.Label.AS("user.job_grade_label"),
-			user.Firstname,
-			user.Lastname,
-			user.Dateofbirth,
-			user.Sex,
-			user.Height,
-			user.PhoneNumber,
-			user.Visum,
-			user.Playtime,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Job,
+			tJobs.Label.AS("user.job_label"),
+			tUsers.JobGrade,
+			tJobGrades.Label.AS("user.job_grade_label"),
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.Sex,
+			tUsers.Height,
+			tUsers.PhoneNumber,
+			tUsers.Visum,
+			tUsers.Playtime,
 		).
-		FROM(user.
-			LEFT_JOIN(js,
-				js.Name.EQ(user.Job),
+		FROM(tUsers.
+			LEFT_JOIN(tJobs,
+				tJobs.Name.EQ(tUsers.Job),
 			).
-			LEFT_JOIN(jobGrades,
+			LEFT_JOIN(tJobGrades,
 				jet.AND(
-					jobGrades.Grade.EQ(user.JobGrade),
-					jobGrades.JobName.EQ(user.Job),
+					tJobGrades.Grade.EQ(tUsers.JobGrade),
+					tJobGrades.JobName.EQ(tUsers.Job),
 				),
 			),
 		).
 		WHERE(
-			user.Identifier.LIKE(jet.String(buildCharSearchIdentifier(claims.Subject))),
+			tUsers.Identifier.LIKE(jet.String(buildCharSearchIdentifier(claims.Subject))),
 		).
-		ORDER_BY(user.ID).
+		ORDER_BY(tUsers.ID).
 		LIMIT(10)
 
 	resp := &GetCharactersResponse{}
@@ -389,37 +389,37 @@ func buildCharSearchIdentifier(license string) string {
 }
 
 func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, string, error) {
-	stmt := user.
+	stmt := tUsers.
 		SELECT(
-			user.ID,
-			user.Identifier,
-			user.Job,
-			user.JobGrade,
-			user.Firstname,
-			user.Lastname,
-			user.Group.AS("group"),
-			js.Label.AS("user.job_label"),
-			jobGrades.Label.AS("user.job_grade_label"),
-			jobProps.Theme,
-			jobProps.QuickButtons,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Group.AS("group"),
+			tJobs.Label.AS("user.job_label"),
+			tJobGrades.Label.AS("user.job_grade_label"),
+			tJobProps.Theme,
+			tJobProps.QuickButtons,
 		).
 		FROM(
-			user.
-				LEFT_JOIN(js,
-					js.Name.EQ(user.Job),
+			tUsers.
+				LEFT_JOIN(tJobs,
+					tJobs.Name.EQ(tUsers.Job),
 				).
-				LEFT_JOIN(jobGrades,
+				LEFT_JOIN(tJobGrades,
 					jet.AND(
-						jobGrades.Grade.EQ(user.JobGrade),
-						jobGrades.JobName.EQ(user.Job),
+						tJobGrades.Grade.EQ(tUsers.JobGrade),
+						tJobGrades.JobName.EQ(tUsers.Job),
 					),
 				).
-				LEFT_JOIN(jobProps,
-					jobProps.Job.EQ(js.Name),
+				LEFT_JOIN(tJobProps,
+					tJobProps.Job.EQ(tJobs.Name),
 				),
 		).
 		WHERE(
-			user.ID.EQ(jet.Int32(charId)),
+			tUsers.ID.EQ(jet.Int32(charId)),
 		).
 		LIMIT(1)
 
@@ -460,7 +460,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccID)))
+	account, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
 		return nil, NoCharacterFoundErr
 	}
@@ -534,12 +534,17 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 	char.JobGrade = jobGrade
 	s.c.EnrichJobInfo(char)
 
-	if err := s.ui.SetUserInfo(ctx, userInfo.AccId, char.Job, char.JobGrade); err != nil {
+	if err := s.ui.SetUserInfo(ctx, claims.AccID, char.Job, char.JobGrade); err != nil {
 		return nil, err
 	}
 
+	userInfo.OrigJob = userInfo.Job
+	userInfo.OrigJobGrade = userInfo.JobGrade
+	userInfo.Job = job.Name
+	userInfo.JobGrade = jobGrade
+
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, account.Username.EQ(jet.String(claims.Username)))
+	account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(claims.Username)))
 	if err != nil {
 		return nil, err
 	}
@@ -558,26 +563,26 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 }
 
 func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*jobs.Job, int32, *jobs.JobProps, error) {
-	js := js.AS("job")
+	js := tJobs.AS("job")
 	stmt := js.
 		SELECT(
 			js.Name,
 			js.Label,
-			jobGrades.Grade.AS("job_grade"),
-			jobProps.AllColumns,
+			tJobGrades.Grade.AS("job_grade"),
+			tJobProps.AllColumns,
 		).
 		FROM(
 			js.
-				INNER_JOIN(jobGrades,
-					jobGrades.JobName.EQ(js.Name),
+				INNER_JOIN(tJobGrades,
+					tJobGrades.JobName.EQ(js.Name),
 				).
-				LEFT_JOIN(jobProps,
-					jobProps.Job.EQ(js.Name)),
+				LEFT_JOIN(tJobProps,
+					tJobProps.Job.EQ(js.Name)),
 		).
 		WHERE(
 			js.Name.EQ(jet.String(jobName)),
 		).
-		ORDER_BY(jobGrades.Grade.DESC()).
+		ORDER_BY(tJobGrades.Grade.DESC()).
 		LIMIT(1)
 
 	var dest struct {

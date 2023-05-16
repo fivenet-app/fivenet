@@ -20,7 +20,7 @@ const (
 )
 
 var (
-	dComments = table.FivenetDocumentsComments
+	tDComments = table.FivenetDocumentsComments
 )
 
 func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {
@@ -33,7 +33,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view document comments!")
 	}
 
-	dComments := dComments.AS("documentcomment")
+	dComments := tDComments.AS("documentcomment")
 	condition := jet.AND(
 		dComments.DocumentID.EQ(jet.Uint64(req.DocumentId)),
 		dComments.DeletedAt.IS_NULL(),
@@ -70,17 +70,17 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 			dComments.UpdatedAt,
 			dComments.Comment,
 			dComments.CreatorID,
-			uCreator.ID,
-			uCreator.Identifier,
-			uCreator.Job,
-			uCreator.JobGrade,
-			uCreator.Firstname,
-			uCreator.Lastname,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
 		).
 		FROM(
 			dComments.
-				LEFT_JOIN(uCreator,
-					dComments.CreatorID.EQ(uCreator.ID),
+				LEFT_JOIN(tCreator,
+					dComments.CreatorID.EQ(tCreator.ID),
 				),
 		).
 		WHERE(condition).
@@ -130,11 +130,11 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 	// Clean comment from
 	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
 
-	stmt := dComments.
+	stmt := tDComments.
 		INSERT(
-			dComments.DocumentID,
-			dComments.Comment,
-			dComments.CreatorID,
+			tDComments.DocumentID,
+			tDComments.Comment,
+			tDComments.CreatorID,
 		).
 		VALUES(
 			req.Comment.DocumentId,
@@ -190,17 +190,17 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 	// Clean comment from
 	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
 
-	stmt := dComments.
+	stmt := tDComments.
 		UPDATE(
-			dComments.Comment,
+			tDComments.Comment,
 		).
 		SET(
-			dComments.Comment.SET(jet.String(req.Comment.Comment)),
+			tDComments.Comment.SET(jet.String(req.Comment.Comment)),
 		).
 		WHERE(
 			jet.AND(
-				dComments.ID.EQ(jet.Uint64(req.Comment.Id)),
-				dComments.DeletedAt.IS_NULL(),
+				tDComments.ID.EQ(jet.Uint64(req.Comment.Id)),
+				tDComments.DeletedAt.IS_NULL(),
 			),
 		)
 
@@ -217,7 +217,7 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 func (s *Server) getDocumentComment(ctx context.Context, id uint64) (*documents.DocumentComment, error) {
 	comment := &documents.DocumentComment{}
 
-	dComments := dComments.AS("documentcomment")
+	dComments := tDComments.AS("documentcomment")
 	stmt := dComments.
 		SELECT(
 			dComments.ID,
@@ -262,17 +262,17 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 		return nil, status.Error(codes.PermissionDenied, "You can't delete others document comments!")
 	}
 
-	stmt := dComments.
+	stmt := tDComments.
 		UPDATE(
-			dComments.DeletedAt,
+			tDComments.DeletedAt,
 		).
 		SET(
-			dComments.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tDComments.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
 			jet.AND(
-				dComments.ID.EQ(jet.Uint64(req.CommentId)),
-				dComments.DeletedAt.IS_NULL(),
+				tDComments.ID.EQ(jet.Uint64(req.CommentId)),
+				tDComments.DeletedAt.IS_NULL(),
 			),
 		)
 

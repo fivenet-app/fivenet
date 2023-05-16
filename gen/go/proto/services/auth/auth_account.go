@@ -15,8 +15,6 @@ import (
 )
 
 var (
-	oAuth2Accounts = table.FivenetOauth2Accounts
-
 	GenericAccountErr = status.Error(codes.Internal, "Failed to get/update your account, please try again.")
 	InvalidTokenErr   = status.Error(codes.Unauthenticated, "")
 )
@@ -33,7 +31,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 	}
 
 	// Load account
-	acc, err := s.getAccountFromDB(ctx, account.ID.EQ(jet.Uint64(claims.AccID)))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
 		return nil, GenericAccountErr
 	}

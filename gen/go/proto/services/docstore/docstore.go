@@ -29,11 +29,11 @@ const (
 )
 
 var (
-	user        = table.Users
-	uCreator    = user.AS("creator")
-	docs        = table.FivenetDocuments.AS("document")
-	dUserAccess = table.FivenetDocumentsUserAccess.AS("user_access")
-	dJobAccess  = table.FivenetDocumentsJobAccess.AS("job_access")
+	tUsers       = table.Users
+	tCreator     = tUsers.AS("creator")
+	tDocs        = table.FivenetDocuments.AS("document")
+	tDUserAccess = table.FivenetDocumentsUserAccess.AS("user_access")
+	tDJobAccess  = table.FivenetDocumentsJobAccess.AS("job_access")
 )
 
 var (
@@ -78,12 +78,12 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		}
 
 		condition = condition.AND(
-			docs.CategoryID.IN(categoryIds...),
+			tDocs.CategoryID.IN(categoryIds...),
 		)
 	}
 
 	countStmt := s.getDocumentsQuery(
-		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(docs.ID)).AS("datacount.totalcount")},
+		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocs.ID)).AS("datacount.totalcount")},
 		-1, userInfo)
 
 	var count database.DataCount
@@ -102,7 +102,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 	stmt := s.getDocumentsQuery(condition, nil,
 		DocShortContentLength, userInfo).
 		OFFSET(req.Pagination.Offset).
-		GROUP_BY(docs.ID).
+		GROUP_BY(tDocs.ID).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
@@ -140,7 +140,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	resp := &GetDocumentResponse{}
 	resp.Document, err = s.getDocument(ctx,
-		docs.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+		tDocs.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +278,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	doc, err := s.getDocument(ctx,
-		docs.ID.EQ(jet.Uint64(req.DocumentId)),
+		tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
 		userInfo)
 	if err != nil {
 		return nil, err
@@ -295,13 +295,13 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, FailedQueryErr
 	}
 
-	stmt := docs.
+	stmt := tDocs.
 		UPDATE(
-			docs.Title,
-			docs.Content,
-			docs.Closed,
-			docs.State,
-			docs.Public,
+			tDocs.Title,
+			tDocs.Content,
+			tDocs.Closed,
+			tDocs.State,
+			tDocs.Public,
 		).
 		SET(
 			req.Title,
@@ -311,7 +311,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			req.Public,
 		).
 		WHERE(
-			docs.ID.EQ(jet.Uint64(req.DocumentId)),
+			tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -354,15 +354,15 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
 	}
 
-	stmt := docs.
+	stmt := tDocs.
 		UPDATE(
-			docs.DeletedAt,
+			tDocs.DeletedAt,
 		).
 		SET(
-			docs.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tDocs.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			docs.ID.EQ(jet.Uint64(req.DocumentId)),
+			tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

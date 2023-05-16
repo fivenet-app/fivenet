@@ -13,21 +13,21 @@ import (
 func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, contentLength int, userInfo *userinfo.UserInfo) jet.SelectStatement {
 	wheres := []jet.BoolExpression{
 		jet.AND(
-			docs.DeletedAt.IS_NULL(),
+			tDocs.DeletedAt.IS_NULL(),
 			jet.OR(
 				jet.OR(
-					docs.Public.IS_TRUE(),
-					docs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+					tDocs.Public.IS_TRUE(),
+					tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				),
 				jet.OR(
 					jet.AND(
-						dUserAccess.Access.IS_NOT_NULL(),
-						dUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+						tDUserAccess.Access.IS_NOT_NULL(),
+						tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
 					),
 					jet.AND(
-						dUserAccess.Access.IS_NULL(),
-						dJobAccess.Access.IS_NOT_NULL(),
-						dJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+						tDUserAccess.Access.IS_NULL(),
+						tDJobAccess.Access.IS_NOT_NULL(),
+						tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
 					),
 				),
 			),
@@ -40,60 +40,60 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 
 	var q jet.SelectStatement
 	if onlyColumns != nil {
-		q = docs.
+		q = tDocs.
 			SELECT(
 				onlyColumns,
 			)
 	} else {
 		columns := jet.ProjectionList{
-			docs.ID,
-			docs.CreatedAt,
-			docs.UpdatedAt,
-			docs.DeletedAt,
-			docs.CategoryID,
-			dCategory.ID,
-			dCategory.Name,
-			dCategory.Description,
-			dCategory.Job,
-			docs.Title,
-			docs.ContentType,
-			docs.Data,
-			docs.CreatorID,
-			uCreator.ID,
-			uCreator.Identifier,
-			uCreator.Job,
-			uCreator.JobGrade,
-			uCreator.Firstname,
-			uCreator.Lastname,
-			docs.CreatorJob,
-			docs.State,
-			docs.Closed,
-			docs.Public,
+			tDocs.ID,
+			tDocs.CreatedAt,
+			tDocs.UpdatedAt,
+			tDocs.DeletedAt,
+			tDocs.CategoryID,
+			tDCategory.ID,
+			tDCategory.Name,
+			tDCategory.Description,
+			tDCategory.Job,
+			tDocs.Title,
+			tDocs.ContentType,
+			tDocs.Data,
+			tDocs.CreatorID,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tDocs.CreatorJob,
+			tDocs.State,
+			tDocs.Closed,
+			tDocs.Public,
 		}
 		if contentLength > 0 {
-			columns = append(columns, jet.LEFT(docs.Content, jet.Int(int64(contentLength))).AS("document.content"))
+			columns = append(columns, jet.LEFT(tDocs.Content, jet.Int(int64(contentLength))).AS("document.content"))
 		} else {
-			columns = append(columns, docs.Content)
+			columns = append(columns, tDocs.Content)
 		}
-		q = docs.SELECT(columns[0], columns[1:])
+		q = tDocs.SELECT(columns[0], columns[1:])
 	}
 
 	return q.
 		FROM(
-			docs.
-				LEFT_JOIN(dUserAccess,
-					dUserAccess.DocumentID.EQ(docs.ID).
-						AND(dUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
-				LEFT_JOIN(dJobAccess,
-					dJobAccess.DocumentID.EQ(docs.ID).
-						AND(dJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			tDocs.
+				LEFT_JOIN(tDUserAccess,
+					tDUserAccess.DocumentID.EQ(tDocs.ID).
+						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
+				LEFT_JOIN(tDJobAccess,
+					tDJobAccess.DocumentID.EQ(tDocs.ID).
+						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				).
-				LEFT_JOIN(dCategory,
-					docs.CategoryID.EQ(dCategory.ID),
+				LEFT_JOIN(tDCategory,
+					tDocs.CategoryID.EQ(tDCategory.ID),
 				).
-				LEFT_JOIN(uCreator,
-					docs.CreatorID.EQ(uCreator.ID),
+				LEFT_JOIN(tCreator,
+					tDocs.CreatorID.EQ(tCreator.ID),
 				),
 		).
 		WHERE(
@@ -102,8 +102,8 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			),
 		).
 		ORDER_BY(
-			docs.CreatedAt.DESC(),
-			docs.UpdatedAt.DESC(),
+			tDocs.CreatedAt.DESC(),
+			tDocs.UpdatedAt.DESC(),
 		)
 }
 
@@ -133,41 +133,41 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 	}
 
 	condition := jet.AND(
-		docs.ID.IN(ids...),
-		docs.DeletedAt.IS_NULL(),
+		tDocs.ID.IN(ids...),
+		tDocs.DeletedAt.IS_NULL(),
 		jet.OR(
-			docs.Public.IS_TRUE(),
-			docs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			tDocs.Public.IS_TRUE(),
+			tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			jet.AND(
-				dUserAccess.Access.IS_NOT_NULL(),
-				dUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
+				tDUserAccess.Access.IS_NOT_NULL(),
+				tDUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
 			),
 			jet.AND(
-				dUserAccess.Access.IS_NULL(),
-				dJobAccess.Access.IS_NOT_NULL(),
-				dJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
+				tDUserAccess.Access.IS_NULL(),
+				tDJobAccess.Access.IS_NOT_NULL(),
+				tDJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
 			),
 		),
 	)
 
-	stmt := docs.
+	stmt := tDocs.
 		SELECT(
-			docs.ID,
+			tDocs.ID,
 		).
 		FROM(
-			docs.
-				LEFT_JOIN(dUserAccess,
-					dUserAccess.DocumentID.EQ(docs.ID).
-						AND(dUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
-				LEFT_JOIN(dJobAccess,
-					dJobAccess.DocumentID.EQ(docs.ID).
-						AND(dJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(dJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			tDocs.
+				LEFT_JOIN(tDUserAccess,
+					tDUserAccess.DocumentID.EQ(tDocs.ID).
+						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
+				LEFT_JOIN(tDJobAccess,
+					tDJobAccess.DocumentID.EQ(tDocs.ID).
+						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
 		WHERE(condition).
-		GROUP_BY(docs.ID).
-		ORDER_BY(docs.ID.DESC(), dJobAccess.MinimumGrade)
+		GROUP_BY(tDocs.ID).
+		ORDER_BY(tDocs.ID.DESC(), tDJobAccess.MinimumGrade)
 
 	var dest struct {
 		IDs []uint64 `alias:"document.id"`

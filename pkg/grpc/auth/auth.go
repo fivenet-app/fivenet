@@ -110,6 +110,22 @@ func FromContext(ctx context.Context) (*userinfo.UserInfo, bool) {
 	return c, ok
 }
 
+func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
+	return grpc_auth.AuthFromMD(ctx, "bearer")
+}
+
+func GetUserInfoFromContext(ctx context.Context) (*userinfo.UserInfo, bool) {
+	return FromContext(ctx)
+}
+
+func MustGetUserInfoFromContext(ctx context.Context) *userinfo.UserInfo {
+	userInfo, ok := FromContext(ctx)
+	if !ok {
+		panic(NoUserInfoErr)
+	}
+	return userInfo
+}
+
 func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
 	// Check if the method is from a service otherwise the request must be invalid
 	if strings.HasPrefix(info.FullMethod, "/services") {
@@ -164,20 +180,4 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}
 	}
 
 	return nil, status.Errorf(codes.PermissionDenied, "You don't have permission to do that! Permission: "+info.FullMethod)
-}
-
-func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
-	return grpc_auth.AuthFromMD(ctx, "bearer")
-}
-
-func GetUserInfoFromContext(ctx context.Context) (*userinfo.UserInfo, bool) {
-	return FromContext(ctx)
-}
-
-func MustGetUserInfoFromContext(ctx context.Context) *userinfo.UserInfo {
-	userInfo, ok := FromContext(ctx)
-	if !ok {
-		panic(NoUserInfoErr)
-	}
-	return userInfo
 }

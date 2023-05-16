@@ -242,17 +242,17 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 	jobStmt := dJobAccess.
 		SELECT(
 			dJobAccess.AllColumns,
-			uCreator.ID,
-			uCreator.Identifier,
-			uCreator.Job,
-			uCreator.JobGrade,
-			uCreator.Firstname,
-			uCreator.Lastname,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
 		).
 		FROM(
 			dJobAccess.
-				LEFT_JOIN(uCreator,
-					uCreator.ID.EQ(dJobAccess.CreatorID),
+				LEFT_JOIN(tCreator,
+					tCreator.ID.EQ(dJobAccess.CreatorID),
 				),
 		).
 		WHERE(
@@ -269,7 +269,7 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 		}
 	}
 
-	user := user.AS("usershort")
+	user := tUsers.AS("usershort")
 	dUserAccess := table.FivenetDocumentsUserAccess.AS("documentuseraccess")
 	userStmt := dUserAccess.
 		SELECT(
@@ -280,20 +280,20 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 			user.JobGrade,
 			user.Firstname,
 			user.Lastname,
-			uCreator.ID,
-			uCreator.Identifier,
-			uCreator.Job,
-			uCreator.JobGrade,
-			uCreator.Firstname,
-			uCreator.Lastname,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
 		).
 		FROM(
 			dUserAccess.
 				LEFT_JOIN(user,
 					user.ID.EQ(dUserAccess.UserID),
 				).
-				LEFT_JOIN(uCreator,
-					uCreator.ID.EQ(dUserAccess.CreatorID),
+				LEFT_JOIN(tCreator,
+					tCreator.ID.EQ(dUserAccess.CreatorID),
 				),
 		).
 		WHERE(
@@ -497,17 +497,17 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 }
 
 func (s *Server) clearDocumentAccess(ctx context.Context, tx *sql.Tx, documentId uint64) error {
-	jobStmt := dJobAccess.
+	jobStmt := tDJobAccess.
 		DELETE().
-		WHERE(dJobAccess.DocumentID.EQ(jet.Uint64(documentId)))
+		WHERE(tDJobAccess.DocumentID.EQ(jet.Uint64(documentId)))
 
 	if _, err := jobStmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 
-	userStmt := dUserAccess.
+	userStmt := tDUserAccess.
 		DELETE().
-		WHERE(dUserAccess.DocumentID.EQ(jet.Uint64(documentId)))
+		WHERE(tDUserAccess.DocumentID.EQ(jet.Uint64(documentId)))
 
 	if _, err := userStmt.ExecContext(ctx, tx); err != nil {
 		return err

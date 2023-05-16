@@ -20,40 +20,40 @@ import (
 )
 
 var (
-	dTemplates          = table.FivenetDocumentsTemplates.AS("templateshort")
-	dTemplatesJobAccess = table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
+	tDTemplates          = table.FivenetDocumentsTemplates.AS("templateshort")
+	tDTemplatesJobAccess = table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
 )
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	stmt := dTemplates.
+	stmt := tDTemplates.
 		SELECT(
-			dTemplates.ID,
-			dCategory.ID,
-			dCategory.Name,
-			dCategory.Description,
-			dCategory.Job,
-			dTemplates.Title,
-			dTemplates.Description,
-			dTemplates.Schema,
-			dTemplates.CreatorID,
+			tDTemplates.ID,
+			tDCategory.ID,
+			tDCategory.Name,
+			tDCategory.Description,
+			tDCategory.Job,
+			tDTemplates.Title,
+			tDTemplates.Description,
+			tDTemplates.Schema,
+			tDTemplates.CreatorID,
 		).
 		FROM(
-			dTemplates.
-				INNER_JOIN(dTemplatesJobAccess,
-					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID).
-						AND(dTemplatesJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			tDTemplates.
+				INNER_JOIN(tDTemplatesJobAccess,
+					tDTemplatesJobAccess.TemplateID.EQ(tDTemplates.ID).
+						AND(tDTemplatesJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tDTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				).
-				LEFT_JOIN(dCategory,
-					dCategory.ID.EQ(dTemplates.CategoryID),
+				LEFT_JOIN(tDCategory,
+					tDCategory.ID.EQ(tDTemplates.CategoryID),
 				),
 		).
 		WHERE(
-			dTemplates.DeletedAt.IS_NULL(),
+			tDTemplates.DeletedAt.IS_NULL(),
 		).
-		GROUP_BY(dTemplates.ID)
+		GROUP_BY(tDTemplates.ID)
 
 	resp := &ListTemplatesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
@@ -76,16 +76,16 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this template!")
 	}
 
-	dTemplates := dTemplates.AS("template")
+	dTemplates := tDTemplates.AS("template")
 	stmt := dTemplates.
 		SELECT(
 			dTemplates.ID,
 			dTemplates.CreatedAt,
 			dTemplates.UpdatedAt,
-			dCategory.ID,
-			dCategory.Name,
-			dCategory.Description,
-			dCategory.Job,
+			tDCategory.ID,
+			tDCategory.Name,
+			tDCategory.Description,
+			tDCategory.Job,
 			dTemplates.Title,
 			dTemplates.Description,
 			dTemplates.ContentTitle,
@@ -97,8 +97,8 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		).
 		FROM(
 			dTemplates.
-				LEFT_JOIN(dCategory,
-					dCategory.ID.EQ(dTemplates.CategoryID),
+				LEFT_JOIN(tDCategory,
+					tDCategory.ID.EQ(dTemplates.CategoryID),
 				),
 		).
 		WHERE(

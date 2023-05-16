@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	dCategory = table.FivenetDocumentsCategories.AS("category")
+	tDCategory = table.FivenetDocumentsCategories.AS("category")
 )
 
 func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error) {

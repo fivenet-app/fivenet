@@ -4,7 +4,12 @@ import (
 	"context"
 
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+)
+
+var (
+	tOAuth2Accs = table.FivenetOauth2Accounts
 )
 
 func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *DeleteOAuth2ConnectionRequest) (*DeleteOAuth2ConnectionResponse, error) {
@@ -18,11 +23,11 @@ func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *DeleteOAuth2Co
 		return nil, GenericAccountErr
 	}
 
-	stmt := oAuth2Accounts.
+	stmt := tOAuth2Accs.
 		DELETE().
 		WHERE(jet.AND(
-			oAuth2Accounts.AccountID.EQ(jet.Uint64(claims.AccID)),
-			oAuth2Accounts.Provider.EQ(jet.String(req.Provider)),
+			tOAuth2Accs.AccountID.EQ(jet.Uint64(claims.AccID)),
+			tOAuth2Accs.Provider.EQ(jet.String(req.Provider)),
 		)).
 		LIMIT(1)
 

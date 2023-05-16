@@ -72,6 +72,7 @@ export const useAuthStore = defineStore('auth', {
             this.setAccessToken(null, null);
             this.setActiveChar(null);
             this.setPermissions([]);
+            this.setJobProps(null);
         },
     },
     getters: {

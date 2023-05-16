@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	docRef = table.FivenetDocumentsReferences.AS("documentreference")
-	docRel = table.FivenetDocumentsRelations.AS("documentrelation")
+	tDocRef = table.FivenetDocumentsReferences.AS("documentreference")
+	tDocRel = table.FivenetDocumentsRelations.AS("documentrelation")
 )
 
 func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
@@ -38,20 +38,20 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		Source *uint64
 		Target *uint64
 	}
-	idStmt := docRef.
+	idStmt := tDocRef.
 		SELECT(
-			docRef.SourceDocumentID.AS("source"),
-			docRef.TargetDocumentID.AS("target"),
+			tDocRef.SourceDocumentID.AS("source"),
+			tDocRef.TargetDocumentID.AS("target"),
 		).
 		FROM(
-			docRef,
+			tDocRef,
 		).
 		WHERE(
 			jet.AND(
-				docRef.DeletedAt.IS_NULL(),
+				tDocRef.DeletedAt.IS_NULL(),
 				jet.OR(
-					docRef.SourceDocumentID.EQ(jet.Uint64(req.DocumentId)),
-					docRef.TargetDocumentID.EQ(jet.Uint64(req.DocumentId)),
+					tDocRef.SourceDocumentID.EQ(jet.Uint64(req.DocumentId)),
+					tDocRef.TargetDocumentID.EQ(jet.Uint64(req.DocumentId)),
 				),
 			),
 		)
@@ -90,18 +90,18 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		dIds[i] = jet.Uint64(ids[i])
 	}
 
-	sourceDoc := docs.AS("source_document")
-	targetDoc := docs.AS("target_document")
-	refCreator := user.AS("ref_creator")
-	dCreator := user.AS("creator")
-	stmt := docRef.
+	sourceDoc := tDocs.AS("source_document")
+	targetDoc := tDocs.AS("target_document")
+	refCreator := tUsers.AS("ref_creator")
+	dCreator := tUsers.AS("creator")
+	stmt := tDocRef.
 		SELECT(
-			docRef.ID,
-			docRef.CreatedAt,
-			docRef.SourceDocumentID,
-			docRef.Reference,
-			docRef.TargetDocumentID,
-			docRef.CreatorID,
+			tDocRef.ID,
+			tDocRef.CreatedAt,
+			tDocRef.SourceDocumentID,
+			tDocRef.Reference,
+			tDocRef.TargetDocumentID,
+			tDocRef.CreatorID,
 			sourceDoc.ID,
 			sourceDoc.CreatedAt,
 			sourceDoc.UpdatedAt,
@@ -132,31 +132,31 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 			refCreator.Lastname,
 		).
 		FROM(
-			docRef.
+			tDocRef.
 				LEFT_JOIN(sourceDoc,
-					docRef.SourceDocumentID.EQ(sourceDoc.ID),
+					tDocRef.SourceDocumentID.EQ(sourceDoc.ID),
 				).
 				LEFT_JOIN(targetDoc,
-					docRef.TargetDocumentID.EQ(targetDoc.ID),
+					tDocRef.TargetDocumentID.EQ(targetDoc.ID),
 				).
 				LEFT_JOIN(dCreator,
 					sourceDoc.CreatorID.EQ(dCreator.ID),
 				).
 				LEFT_JOIN(refCreator,
-					docRef.CreatorID.EQ(refCreator.ID),
+					tDocRef.CreatorID.EQ(refCreator.ID),
 				),
 		).
 		WHERE(
 			jet.AND(
-				docRef.DeletedAt.IS_NULL(),
+				tDocRef.DeletedAt.IS_NULL(),
 				jet.OR(
-					docRef.SourceDocumentID.EQ(jet.Uint64(req.DocumentId)),
-					docRef.TargetDocumentID.EQ(jet.Uint64(req.DocumentId)),
+					tDocRef.SourceDocumentID.EQ(jet.Uint64(req.DocumentId)),
+					tDocRef.TargetDocumentID.EQ(jet.Uint64(req.DocumentId)),
 				),
 			),
 		).
 		ORDER_BY(
-			docRef.CreatedAt.DESC(),
+			tDocRef.CreatedAt.DESC(),
 		).
 		LIMIT(25)
 
@@ -290,13 +290,13 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 	}
 
 	// Get document IDs of reference entry
-	docsStmt := docRef.
+	docsStmt := tDocRef.
 		SELECT(
-			docRef.SourceDocumentID.AS("source"),
-			docRef.TargetDocumentID.AS("target"),
+			tDocRef.SourceDocumentID.AS("source"),
+			tDocRef.TargetDocumentID.AS("target"),
 		).
-		FROM(docRef).
-		WHERE(docRef.ID.EQ(jet.Uint64(req.Id))).
+		FROM(tDocRef).
+		WHERE(tDocRef.ID.EQ(jet.Uint64(req.Id))).
 		LIMIT(1)
 
 	if err := docsStmt.QueryContext(ctx, s.db, &docIDs); err != nil {
@@ -311,15 +311,15 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
 	}
 
-	stmt := docRef.
+	stmt := tDocRef.
 		UPDATE(
-			docRef.DeletedAt,
+			tDocRef.DeletedAt,
 		).
 		SET(
-			docRef.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tDocRef.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			docRef.ID.EQ(jet.Uint64(req.Id)),
+			tDocRef.ID.EQ(jet.Uint64(req.Id)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -423,12 +423,12 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 	}
 
 	// Get document IDs of reference entry
-	docsStmt := docRel.
+	docsStmt := tDocRel.
 		SELECT(
-			docRel.DocumentID.AS("id"),
+			tDocRel.DocumentID.AS("id"),
 		).
-		FROM(docRel).
-		WHERE(docRel.ID.EQ(jet.Uint64(req.Id))).
+		FROM(tDocRel).
+		WHERE(tDocRel.ID.EQ(jet.Uint64(req.Id))).
 		LIMIT(1)
 
 	if err := docsStmt.QueryContext(ctx, s.db, &docID); err != nil {
@@ -451,15 +451,15 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := docRel.
+	stmt := tDocRel.
 		UPDATE(
-			docRel.DeletedAt,
+			tDocRel.DeletedAt,
 		).
 		SET(
-			docRel.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tDocRel.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			docRel.ID.EQ(jet.Uint64(req.Id)),
+			tDocRel.ID.EQ(jet.Uint64(req.Id)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -488,20 +488,20 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 }
 
 func (s *Server) getDocumentRelation(ctx context.Context, id uint64) (*documents.DocumentRelation, error) {
-	stmt := docRel.
+	stmt := tDocRel.
 		SELECT(
-			docRel.ID,
-			docRel.CreatedAt,
-			docRel.DocumentID,
-			docRel.SourceUserID,
-			docRel.Relation,
-			docRel.TargetUserID,
+			tDocRel.ID,
+			tDocRel.CreatedAt,
+			tDocRel.DocumentID,
+			tDocRel.SourceUserID,
+			tDocRel.Relation,
+			tDocRel.TargetUserID,
 		).
 		FROM(
-			docRel,
+			tDocRel,
 		).
 		WHERE(
-			docRel.ID.EQ(jet.Uint64(id)),
+			tDocRel.ID.EQ(jet.Uint64(id)),
 		).
 		LIMIT(1)
 
@@ -516,27 +516,27 @@ func (s *Server) getDocumentRelation(ctx context.Context, id uint64) (*documents
 }
 
 func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([]*documents.DocumentRelation, error) {
-	uSource := user.AS("source_user")
-	uTarget := user.AS("target_user")
-	stmt := docRel.
+	uSource := tUsers.AS("source_user")
+	uTarget := tUsers.AS("target_user")
+	stmt := tDocRel.
 		SELECT(
-			docRel.ID,
-			docRel.CreatedAt,
-			docRel.DocumentID,
-			docRel.SourceUserID,
-			docRel.Relation,
-			docRel.TargetUserID,
-			docs.ID,
-			docs.CreatedAt,
-			docs.UpdatedAt,
-			docs.CategoryID,
-			docs.Title,
-			docs.CreatorID,
-			docs.State,
-			docs.Closed,
-			dCategory.ID,
-			dCategory.Name,
-			dCategory.Description,
+			tDocRel.ID,
+			tDocRel.CreatedAt,
+			tDocRel.DocumentID,
+			tDocRel.SourceUserID,
+			tDocRel.Relation,
+			tDocRel.TargetUserID,
+			tDocs.ID,
+			tDocs.CreatedAt,
+			tDocs.UpdatedAt,
+			tDocs.CategoryID,
+			tDocs.Title,
+			tDocs.CreatorID,
+			tDocs.State,
+			tDocs.Closed,
+			tDCategory.ID,
+			tDCategory.Name,
+			tDCategory.Description,
 			uSource.ID,
 			uSource.Identifier,
 			uSource.Job,
@@ -551,28 +551,28 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([
 			uTarget.Lastname,
 		).
 		FROM(
-			docRel.
-				LEFT_JOIN(docs,
-					docs.ID.EQ(docRel.DocumentID),
+			tDocRel.
+				LEFT_JOIN(tDocs,
+					tDocs.ID.EQ(tDocRel.DocumentID),
 				).
-				LEFT_JOIN(dCategory,
-					docs.CategoryID.EQ(dCategory.ID),
+				LEFT_JOIN(tDCategory,
+					tDocs.CategoryID.EQ(tDCategory.ID),
 				).
 				LEFT_JOIN(uSource,
-					uSource.ID.EQ(docRel.SourceUserID),
+					uSource.ID.EQ(tDocRel.SourceUserID),
 				).
 				LEFT_JOIN(uTarget,
-					uTarget.ID.EQ(docRel.TargetUserID),
+					uTarget.ID.EQ(tDocRel.TargetUserID),
 				),
 		).
 		WHERE(
 			jet.AND(
-				docRel.DocumentID.EQ(jet.Uint64(documentId)),
-				docRel.DeletedAt.IS_NULL(),
+				tDocRel.DocumentID.EQ(jet.Uint64(documentId)),
+				tDocRel.DeletedAt.IS_NULL(),
 			),
 		).
 		ORDER_BY(
-			docRel.CreatedAt.DESC(),
+			tDocRel.CreatedAt.DESC(),
 		).
 		LIMIT(25)
 

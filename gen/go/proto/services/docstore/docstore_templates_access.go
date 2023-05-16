@@ -45,17 +45,17 @@ func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([
 	jobStmt := dTemplatesJobAccess.
 		SELECT(
 			dTemplatesJobAccess.AllColumns,
-			uCreator.ID,
-			uCreator.Identifier,
-			uCreator.Job,
-			uCreator.JobGrade,
-			uCreator.Firstname,
-			uCreator.Lastname,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
 		).
 		FROM(
 			dTemplatesJobAccess.
-				LEFT_JOIN(uCreator,
-					uCreator.ID.EQ(dTemplatesJobAccess.CreatorID),
+				LEFT_JOIN(tCreator,
+					tCreator.ID.EQ(dTemplatesJobAccess.CreatorID),
 				),
 		).
 		WHERE(
@@ -261,32 +261,32 @@ func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo
 	}
 
 	condition := jet.AND(
-		dTemplates.ID.IN(ids...),
-		dTemplates.DeletedAt.IS_NULL(),
+		tDTemplates.ID.IN(ids...),
+		tDTemplates.DeletedAt.IS_NULL(),
 		jet.OR(
-			dTemplates.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			tDTemplates.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			jet.AND(
-				dTemplatesJobAccess.Access.IS_NOT_NULL(),
-				dTemplatesJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
+				tDTemplatesJobAccess.Access.IS_NOT_NULL(),
+				tDTemplatesJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
 			),
 		),
 	)
 
-	stmt := dTemplates.
+	stmt := tDTemplates.
 		SELECT(
-			dTemplates.ID,
+			tDTemplates.ID,
 		).
 		FROM(
-			dTemplates.
-				LEFT_JOIN(dTemplatesJobAccess,
-					dTemplatesJobAccess.TemplateID.EQ(dTemplates.ID).
-						AND(dTemplatesJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(dTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			tDTemplates.
+				LEFT_JOIN(tDTemplatesJobAccess,
+					tDTemplatesJobAccess.TemplateID.EQ(tDTemplates.ID).
+						AND(tDTemplatesJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tDTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
 		WHERE(condition).
-		GROUP_BY(dTemplates.ID).
-		ORDER_BY(dTemplates.ID.DESC(), dTemplatesJobAccess.MinimumGrade)
+		GROUP_BY(tDTemplates.ID).
+		ORDER_BY(tDTemplates.ID.DESC(), tDTemplatesJobAccess.MinimumGrade)
 
 	var dest struct {
 		IDs []uint64 `alias:"document.id"`

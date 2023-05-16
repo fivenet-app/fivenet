@@ -74,8 +74,6 @@ async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
     map.set(job.getName(), grade.getGrade());
     jobGrades.value.set(job.getName(), job.getGradesList()[grade.getGrade() - 1]);
 
-    console.log(map)
-
     state.setJobGradeList(list);
     states.value.set(id.value, state);
     emit('update:states', states.value);

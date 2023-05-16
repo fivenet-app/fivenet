@@ -8,7 +8,9 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -17,10 +19,20 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
-	nots = table.FivenetNotifications
+	tNotifications = table.FivenetNotifications
+	tUsers         = table.Users.AS("user")
+	tJobs          = table.Jobs
+	tJobGrades     = table.JobGrades
+	tJobProps      = table.FivenetJobProps.AS("jobprops")
+)
+
+var (
+	InvalidRequestErr = status.Error(codes.InvalidArgument, "Invalid notificator stream request!")
 )
 
 type Server struct {
@@ -30,14 +42,16 @@ type Server struct {
 	db     *sql.DB
 	p      perms.Permissions
 	tm     *auth.TokenMgr
+	ui     userinfo.UserInfoRetriever
 }
 
-func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions, tm *auth.TokenMgr) *Server {
+func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions, tm *auth.TokenMgr, ui userinfo.UserInfoRetriever) *Server {
 	return &Server{
 		logger: logger,
 		db:     db,
 		p:      p,
 		tm:     tm,
+		ui:     ui,
 	}
 }
 
@@ -49,19 +63,19 @@ func (s *Server) PermissionStreamFuncOverride(ctx context.Context, srv interface
 func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequest) (*GetNotificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := nots.UserID.EQ(jet.Int32(userInfo.UserId))
+	condition := tNotifications.UserID.EQ(jet.Int32(userInfo.UserId))
 	if req.IncludeRead {
 		condition = jet.AND(
 			condition,
-			nots.ReadAt.IS_NOT_NULL(),
+			tNotifications.ReadAt.IS_NOT_NULL(),
 		)
 	}
 
-	countStmt := nots.
+	countStmt := tNotifications.
 		SELECT(
-			jet.COUNT(nots.ID).AS("datacount.totalcount"),
+			jet.COUNT(tNotifications.ID).AS("datacount.totalcount"),
 		).
-		FROM(nots).
+		FROM(tNotifications).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -77,11 +91,11 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 		return resp, nil
 	}
 
-	stmt := nots.
+	stmt := tNotifications.
 		SELECT(
-			nots.AllColumns,
+			tNotifications.AllColumns,
 		).
-		FROM(nots).
+		FROM(tNotifications).
 		WHERE(
 			condition,
 		).
@@ -107,17 +121,17 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 		ids[i] = jet.Uint64(req.Ids[i])
 	}
 
-	stmt := nots.
+	stmt := tNotifications.
 		UPDATE(
-			nots.ReadAt,
+			tNotifications.ReadAt,
 		).
 		SET(
-			nots.ReadAt.SET(jet.CURRENT_TIMESTAMP()),
+			tNotifications.ReadAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
 			jet.AND(
-				nots.UserID.EQ(jet.Int32(userInfo.UserId)),
-				nots.ID.IN(ids...),
+				tNotifications.UserID.EQ(jet.Int32(userInfo.UserId)),
+				tNotifications.ID.IN(ids...),
 			),
 		)
 
@@ -129,9 +143,7 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 }
 
 func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer) error {
-	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
-
-	nots := nots.AS("notification")
+	nots := tNotifications.AS("notification")
 	stmt := nots.
 		SELECT(
 			nots.ID,
@@ -144,7 +156,22 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		ORDER_BY(nots.ID.DESC()).
 		LIMIT(10)
 
-	counter := 0
+	userInfo, ok := auth.GetUserInfoFromContext(srv.Context())
+	if !ok {
+		return InvalidRequestErr
+	}
+
+	// Track changes to user info, so we can send an updated user info to the user
+	currentUserInfo := userinfo.UserInfo{
+		AccId:        userInfo.AccId,
+		UserId:       userInfo.UserId,
+		Job:          userInfo.Job,
+		JobGrade:     userInfo.JobGrade,
+		OrigJob:      userInfo.OrigJob,
+		OrigJobGrade: userInfo.OrigJobGrade,
+		Group:        userInfo.Group,
+		SuperUser:    userInfo.SuperUser,
+	}
 
 	for {
 		resp := &StreamResponse{
@@ -170,26 +197,24 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			resp.LastId = resp.Notifications[0].Id
 		}
 
-		// TODO Update token only every n-time or when the token is about to expire (range 4-10 hours)
-		if counter != 0 && counter%12 >= 0 {
-			if err := s.checkAndUpdateToken(srv.Context(), resp.Token); err != nil {
-				return err
-			}
-			counter = 0
+		if err := s.checkAndUpdateToken(srv.Context(), resp.Token); err != nil {
+			return err
+		}
+
+		if err := s.checkAndUpdateUserInfo(srv.Context(), resp.Token, &currentUserInfo); err != nil {
+			return err
 		}
 
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
 
-		counter++
-
 		resp.Notifications = nil
 
 		select {
 		case <-srv.Context().Done():
 			return nil
-		case <-time.After(10 * time.Second):
+		case <-time.After(20 * time.Second):
 		}
 	}
 }
@@ -205,13 +230,48 @@ func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) error
 		return auth.InvalidTokenErr
 	}
 
-	userInfo, ok := auth.GetUserInfoFromContext(ctx)
-	if !ok {
-		return auth.InvalidTokenErr
+	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
+		if claims.RenewedCount >= auth.TokenMaxRenews {
+			return auth.InvalidTokenErr
+		}
+
+		// Increase re-newed count
+		claims.RenewedCount++
+
+		auth.SetTokenClaimsTimes(claims)
+		newToken, err := s.tm.NewWithClaims(claims)
+		if err != nil {
+			return auth.CheckTokenErr
+		}
+
+		tu.NewToken = &newToken
+		tu.Expires = timestamp.New(claims.ExpiresAt.Time)
 	}
 
-	// If the user is logged into a character, load permissions of user
-	if claims.CharID > 0 {
+	return nil
+}
+
+func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, currentUserInfo *userinfo.UserInfo) error {
+	userInfo, err := s.ui.GetUserInfo(ctx, currentUserInfo.UserId, currentUserInfo.AccId)
+	if err != nil {
+		return err
+	}
+
+	// If the user is logged into a character, update user info and load permissions of user
+	if !currentUserInfo.Equal(userInfo) {
+		char, jobProps, group, err := s.getCharacter(ctx, userInfo.UserId)
+		if err != nil {
+			return err
+		}
+		tu.UserInfo = char
+		tu.JobProps = jobProps
+
+		// Update current user info with new data from database
+		currentUserInfo.UserId = char.UserId
+		currentUserInfo.Job = char.Job
+		currentUserInfo.JobGrade = char.JobGrade
+		currentUserInfo.Group = group
+
 		perms, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
 			UserId:   userInfo.UserId,
 			Job:      userInfo.Job,
@@ -231,24 +291,52 @@ func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) error
 		}
 	}
 
-	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
-		if claims.RenewedCount >= auth.TokenMaxRenews {
-			return auth.InvalidTokenErr
-		}
+	return nil
+}
 
-		// Increase re-newed count
-		claims.RenewedCount++
+func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, string, error) {
+	stmt := tUsers.
+		SELECT(
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Group.AS("group"),
+			tJobs.Label.AS("user.job_label"),
+			tJobGrades.Label.AS("user.job_grade_label"),
+			tJobProps.Theme,
+			tJobProps.QuickButtons,
+		).
+		FROM(
+			tUsers.
+				LEFT_JOIN(tJobs,
+					tJobs.Name.EQ(tUsers.Job),
+				).
+				LEFT_JOIN(tJobGrades,
+					jet.AND(
+						tJobGrades.Grade.EQ(tUsers.JobGrade),
+						tJobGrades.JobName.EQ(tUsers.Job),
+					),
+				).
+				LEFT_JOIN(tJobProps,
+					tJobProps.Job.EQ(tJobs.Name),
+				),
+		).
+		WHERE(
+			tUsers.ID.EQ(jet.Int32(charId)),
+		).
+		LIMIT(1)
 
-		auth.SetTokenClaimsTimes(claims)
-		newToken, err := s.tm.NewWithClaims(claims)
-		if err != nil {
-			return auth.CheckTokenErr
-		}
-
-		tu.NewToken = &newToken
+	var dest struct {
+		users.User
+		Group    string
+		JobProps jobs.JobProps
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, nil, "", err
 	}
 
-	tu.Expires = timestamp.New(claims.ExpiresAt.Time)
-
-	return nil
+	return &dest.User, &dest.JobProps, dest.Group, nil
 }

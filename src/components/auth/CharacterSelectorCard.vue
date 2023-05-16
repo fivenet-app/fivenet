@@ -35,6 +35,8 @@ async function chooseCharacter(): Promise<void> {
             authStore.setPermissions(resp.getPermissionsList());
             if (resp.hasJobProps()) {
                 authStore.setJobProps(resp.getJobProps()!);
+            } else {
+                authStore.setJobProps(null);
             }
 
             const path = route.query.redirect?.toString() || "/overview";
