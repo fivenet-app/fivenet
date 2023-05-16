@@ -46,6 +46,23 @@ async function toggleListValue(value: string): Promise<void> {
     emit('update:states', states.value);
 }
 
+async function toggleJobListValue(value: string): Promise<void> {
+    const state = getState();
+    const list = state.getJobList() ?? new StringList();
+    const array = list.getStringsList();
+
+    if (array.indexOf(value) < 0) {
+        array.push(value);
+    } else {
+        array.splice(array.indexOf(value), 1);
+    }
+
+    list.setStringsList(array);
+    state.setJobList(list);
+    states.value.set(id.value, state);
+    emit('update:states', states.value);
+}
+
 async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
     const state = getState();
     const list = state.getJobGradeList() ?? new JobGradeList();
@@ -125,7 +142,7 @@ onMounted(() => {
                         <div v-for="job in props.jobs" :key="job.getName()" class="flex flex-row flex-initial flex-nowrap">
                             <input :id="job.getName()" :name="job.getName()" type="checkbox"
                                 :checked="!!getState().getJobList()?.getStringsList().find(v => v === job.getName())"
-                                @click="toggleListValue(job.getName())"
+                                @click="toggleJobListValue(job.getName())"
                                 class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500" />
                             <span class="ml-1">{{ job.getLabel() }}</span>
                         </div>

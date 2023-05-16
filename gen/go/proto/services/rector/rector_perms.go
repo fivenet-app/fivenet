@@ -8,7 +8,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -88,39 +87,47 @@ func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64) ([]uint6
 	return permIds, nil
 }
 
-func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.RoleAttribute) ([]*permissions.RoleAttribute, error) {
+func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.RoleAttribute) error {
 	if len(attrs) == 0 {
-		return attrs, nil
+		return nil
 	}
 
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	if userInfo.SuperUser {
-		return attrs, nil
-	}
-
-	for _, a := range attrs {
-		attr, err := s.p.GetAttribute(perms.Category(a.Category), perms.Name(a.Name), perms.Key(a.Key))
+	for i := 0; i < len(attrs); i++ {
+		dbAttrs, err := s.p.GetAttributeByIDs(attrs[i].AttrId)
 		if err != nil {
-			return nil, err
+			return err
+		}
+		attr := dbAttrs[0]
+
+		// If the attribute valid values is null, nothing to validate
+		if attrs[i].Value != nil && attr.ValidValues != nil {
+			switch perms.AttributeTypes(attr.Type) {
+			case perms.StringListAttributeType:
+				if attr.ValidValues.GetStringList() != nil && attr.ValidValues.GetStringList().Strings != nil {
+					if !perms.ValidateStringList(attrs[i].Value.GetStringList().Strings, attr.ValidValues.GetStringList().Strings) {
+						return fmt.Errorf("invalid option in list")
+					}
+				}
+			case perms.JobListAttributeType:
+				if attr.ValidValues.GetJobList() != nil && attr.ValidValues.GetJobList().Strings != nil {
+					if !perms.ValidateJobList(attrs[i].Value.GetJobList().Strings, attr.ValidValues.GetJobList().Strings) {
+						return fmt.Errorf("invalid job in job list")
+					}
+				}
+			case perms.JobGradeListAttributeType:
+				if attr.ValidValues.GetJobGradeList() != nil && attrs[i].Value.GetJobGradeList().Jobs != nil {
+					if !perms.ValidateJobGradeList(attrs[i].Value.GetJobGradeList().Jobs) {
+						return fmt.Errorf("invalid job/ grade in job grade list")
+					}
+				}
+			}
 		}
 
-		switch perms.AttributeTypes(a.Type) {
-		case perms.StringListAttributeType:
-			if !perms.ValidateStringList(a.Value.GetStringList().Strings, attr.ValidValues.GetStringList().Strings) {
-				return nil, fmt.Errorf("invalid option in list")
-			}
-		case perms.JobListAttributeType:
-			if !perms.ValidateJobList(a.Value.GetJobList().Strings, config.C.Game.PermissionRoleJobs) {
-				return nil, fmt.Errorf("invalid job in job list")
-			}
-		case perms.JobGradeListAttributeType:
-			if !perms.ValidateJobGradeList(a.Value.GetJobGradeList().Jobs) {
-				return nil, fmt.Errorf("invalid job/ grade in job grade list")
-			}
-		}
+		attrs[i].AttrId = attr.AttrId
+		attrs[i].Type = attr.Type
 	}
 
-	return attrs, nil
+	return nil
 }
 
 func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesResponse, error) {
@@ -349,25 +356,21 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 }
 
 func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetRoles, attrUpdates *AttrsUpdate) error {
-	toUpdate, err := s.filterAttributes(ctx, attrUpdates.ToUpdate)
-	if err != nil {
+	if err := s.filterAttributes(ctx, attrUpdates.ToUpdate); err != nil {
 		return InvalidRequestErr
 	}
 
-	toDelete, err := s.filterAttributes(ctx, attrUpdates.ToRemove)
-	if err != nil {
+	if err := s.filterAttributes(ctx, attrUpdates.ToRemove); err != nil {
 		return InvalidRequestErr
 	}
 
-	// TODO validate each attribute by type
-
-	if len(toUpdate) > 0 {
-		if err := s.p.AddOrUpdateAttributesToRole(toUpdate...); err != nil {
+	if len(attrUpdates.ToUpdate) > 0 {
+		if err := s.p.AddOrUpdateAttributesToRole(attrUpdates.ToUpdate...); err != nil {
 			return err
 		}
 	}
-	if len(toDelete) > 0 {
-		if err := s.p.RemoveAttributesFromRole(role.ID, toDelete...); err != nil {
+	if len(attrUpdates.ToRemove) > 0 {
+		if err := s.p.RemoveAttributesFromRole(role.ID, attrUpdates.ToRemove...); err != nil {
 			return err
 		}
 	}

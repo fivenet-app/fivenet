@@ -39,6 +39,7 @@ type Permissions interface {
 	Can(userInfo *userinfo.UserInfo, category Category, name Name) bool
 
 	GetAttribute(category Category, name Name, key Key) (*permissions.RoleAttribute, error)
+	GetAttributeByIDs(ids ...uint64) ([]*permissions.RoleAttribute, error)
 	CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error)
 	UpdateAttribute(attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)

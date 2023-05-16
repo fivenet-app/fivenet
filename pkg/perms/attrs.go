@@ -74,17 +74,17 @@ var (
 func (p *Perms) GetAttribute(category Category, name Name, key Key) (*permissions.RoleAttribute, error) {
 	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
 	if !ok {
-		return nil, nil
+		return nil, fmt.Errorf("unable to find perm ID by attribute")
 	}
 
 	attrs, ok := p.permIDToAttrsMap.Load(permId)
 	if !ok {
-		return nil, nil
+		return nil, fmt.Errorf("no attributes found by perm ID")
 	}
 
 	attr, ok := attrs[key]
 	if !ok {
-		return nil, nil
+		return nil, fmt.Errorf("no attribute found for key")
 	}
 
 	return &permissions.RoleAttribute{
@@ -96,6 +96,52 @@ func (p *Perms) GetAttribute(category Category, name Name, key Key) (*permission
 		Type:         string(attr.Type),
 		ValidValues:  attr.ValidValues,
 	}, nil
+}
+
+func (p *Perms) GetAttributeByIDs(attrIds ...uint64) ([]*permissions.RoleAttribute, error) {
+	ids := make([]jet.Expression, len(attrIds))
+	for i := 0; i < len(attrIds); i++ {
+		ids[i] = jet.Uint64(attrIds[i])
+	}
+
+	stmt := tAttrs.
+		SELECT(
+			tAttrs.AllColumns,
+		).
+		FROM(tAttrs).
+		WHERE(jet.AND(
+			tAttrs.ID.IN(ids...),
+		)).
+		LIMIT(1)
+
+	var dest []*model.FivenetAttrs
+	err := stmt.QueryContext(p.ctx, p.db, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	attrs := make([]*permissions.RoleAttribute, len(dest))
+	for i := 0; i < len(dest); i++ {
+		pAttrs, ok := p.permIDToAttrsMap.Load(dest[i].PermissionID)
+		if !ok {
+			return nil, fmt.Errorf("no attributes found by perm ID")
+		}
+
+		attr, ok := pAttrs[Key(dest[i].Key)]
+		if !ok {
+			return nil, fmt.Errorf("no attribute found for key")
+		}
+
+		attrs[i] = &permissions.RoleAttribute{
+			AttrId:       dest[i].ID,
+			PermissionId: dest[i].PermissionID,
+			Key:          dest[i].Key,
+			Type:         dest[i].Type,
+			ValidValues:  attr.ValidValues,
+		}
+	}
+
+	return attrs, nil
 }
 
 func (p *Perms) getAttributeFromDatabase(permId uint64, key Key) (*model.FivenetAttrs, error) {
@@ -453,8 +499,8 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 			tPerms.Name.AS("rawattribute.name"),
 			tAttrs.Key.AS("rawattribute.key"),
 			tAttrs.Type.AS("rawattribute.type"),
-			tRoleAttrs.Value.AS("rawattribute.raw_value"),
-			tAttrs.ValidValues.AS("rawattribute.raw_valid_values"),
+			tRoleAttrs.Value.AS("rawattribute.value"),
+			tAttrs.ValidValues.AS("rawattribute.valid_values"),
 		).
 		FROM(
 			tRoleAttrs.
@@ -480,20 +526,69 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 }
 
 func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute) error {
-	stmt := tRoleAttrs.
-		INSERT().
-		MODELS(attrs).
-		ON_DUPLICATE_KEY_UPDATE(
-			tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("values(`value`)"))),
-		)
-
-	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
-		if err != nil && !dbutils.IsDuplicateError(err) {
-			return err
-		}
-	}
-
 	for i := 0; i < len(attrs); i++ {
+		validV := jet.String("")
+		if attrs[i].Value != nil {
+			var out string
+			var err error
+			switch AttributeTypes(attrs[i].Type) {
+			case StringListAttributeType:
+				if attrs[i].Value.GetStringList().Strings == nil {
+					attrs[i].Value.GetStringList().Strings = []string{}
+				}
+
+				out, err = json.MarshalToString(attrs[i].Value.GetStringList().Strings)
+				if err != nil {
+					return err
+				}
+			case JobListAttributeType:
+				if attrs[i].Value.GetJobList().Strings == nil {
+					attrs[i].Value.GetJobList().Strings = []string{}
+				}
+
+				out, err = json.MarshalToString(attrs[i].Value.GetJobList().Strings)
+				if err != nil {
+					return err
+				}
+			case JobGradeListAttributeType:
+				if attrs[i].Value.GetJobGradeList().Jobs == nil {
+					attrs[i].Value.GetJobGradeList().Jobs = map[string]int32{}
+				}
+
+				out, err = json.MarshalToString(attrs[i].Value.GetJobGradeList().Jobs)
+				if err != nil {
+					return err
+				}
+			}
+
+			if out != "" && out != "null" {
+				validV = jet.String(out)
+			}
+		}
+
+		stmt := tRoleAttrs.
+			INSERT(
+				tRoleAttrs.RoleID,
+				tRoleAttrs.AttrID,
+				tRoleAttrs.Value,
+			).
+			VALUES(
+				attrs[i].RoleId,
+				attrs[i].AttrId,
+				validV,
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("values(`value`)"))),
+			)
+
+		fmt.Println(stmt.DebugSql())
+
+		if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
+			if err != nil && !dbutils.IsDuplicateError(err) {
+				return err
+			}
+		}
+
 		p.updateRoleAttributeInMap(attrs[i].RoleId, Key(attrs[i].Key), AttributeTypes(attrs[i].Type), attrs[i].Value)
 	}
 

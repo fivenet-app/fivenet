@@ -130,8 +130,8 @@ async function updatePermissions(): Promise<void> {
                 perms.addToUpdate(item);
             }
         } else if (state === undefined && currentPermissions.includes(perm)) {
-            perms.addToRemove(perm)
-        };
+            perms.addToRemove(perm);
+        }
     });
 
     if (perms.getToUpdateList().length == 0 && perms.getToRemoveList().length == 0) return;
