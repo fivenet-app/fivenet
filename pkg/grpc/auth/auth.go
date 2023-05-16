@@ -27,6 +27,7 @@ var (
 	NoTokenErr      = status.Errorf(codes.Unauthenticated, "authorization string must not be empty")
 	InvalidTokenErr = status.Error(codes.Unauthenticated, "Token invalid/ expired!")
 	CheckTokenErr   = status.Error(codes.Unauthenticated, "Token check failed!")
+	NoPermsErr      = status.Error(codes.PermissionDenied, "No permissions associated with your user!")
 	NoUserInfoErr   = status.Error(codes.Unauthenticated, "Something went wrong, please logout and login again!")
 )
 

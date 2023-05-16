@@ -110,6 +110,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 			case "plate":
 				column = tVehicles.Plate
 			case "model":
+				fallthrough
 			default:
 				column = tVehicles.Model
 			}

@@ -282,7 +282,7 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, cu
 		}
 
 		if len(perms) == 0 {
-			return auth.CheckTokenErr
+			return auth.NoPermsErr
 		}
 
 		tu.Permissions = perms.GuardNames()
