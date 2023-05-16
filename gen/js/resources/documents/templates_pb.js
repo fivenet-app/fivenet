@@ -193,7 +193,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.resources.documents.Template.repeatedFields_ = [13];
+proto.resources.documents.Template.repeatedFields_ = [14];
 
 
 
@@ -230,14 +230,15 @@ proto.resources.documents.Template.toObject = function(includeInstance, msg) {
     createdAt: (f = msg.getCreatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     category: (f = msg.getCategory()) && resources_documents_category_pb.DocumentCategory.toObject(includeInstance, f),
-    title: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    description: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    contentTitle: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    content: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    weight: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    title: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    description: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    contentTitle: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    content: jspb.Message.getFieldWithDefault(msg, 9, ""),
     schema: (f = msg.getSchema()) && proto.resources.documents.TemplateSchema.toObject(includeInstance, f),
-    creatorId: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    creatorId: jspb.Message.getFieldWithDefault(msg, 11, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f),
-    job: jspb.Message.getFieldWithDefault(msg, 12, ""),
+    job: jspb.Message.getFieldWithDefault(msg, 13, ""),
     jobAccessList: jspb.Message.toObjectList(msg.getJobAccessList(),
     proto.resources.documents.TemplateJobAccess.toObject, includeInstance),
     contentAccess: (f = msg.getContentAccess()) && resources_documents_documents_pb.DocumentAccess.toObject(includeInstance, f)
@@ -297,45 +298,49 @@ proto.resources.documents.Template.deserializeBinaryFromReader = function(msg, r
       msg.setCategory(value);
       break;
     case 5:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setTitle(value);
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setWeight(value);
       break;
     case 6:
       var value = /** @type {string} */ (reader.readString());
-      msg.setDescription(value);
+      msg.setTitle(value);
       break;
     case 7:
       var value = /** @type {string} */ (reader.readString());
-      msg.setContentTitle(value);
+      msg.setDescription(value);
       break;
     case 8:
       var value = /** @type {string} */ (reader.readString());
-      msg.setContent(value);
+      msg.setContentTitle(value);
       break;
     case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setContent(value);
+      break;
+    case 10:
       var value = new proto.resources.documents.TemplateSchema;
       reader.readMessage(value,proto.resources.documents.TemplateSchema.deserializeBinaryFromReader);
       msg.setSchema(value);
       break;
-    case 10:
+    case 11:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorId(value);
       break;
-    case 11:
+    case 12:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setCreator(value);
       break;
-    case 12:
+    case 13:
       var value = /** @type {string} */ (reader.readString());
       msg.setJob(value);
       break;
-    case 13:
+    case 14:
       var value = new proto.resources.documents.TemplateJobAccess;
       reader.readMessage(value,proto.resources.documents.TemplateJobAccess.deserializeBinaryFromReader);
       msg.addJobAccess(value);
       break;
-    case 14:
+    case 15:
       var value = new resources_documents_documents_pb.DocumentAccess;
       reader.readMessage(value,resources_documents_documents_pb.DocumentAccess.deserializeBinaryFromReader);
       msg.setContentAccess(value);
@@ -400,38 +405,45 @@ proto.resources.documents.Template.serializeBinaryToWriter = function(message, w
       resources_documents_category_pb.DocumentCategory.serializeBinaryToWriter
     );
   }
-  f = message.getTitle();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getWeight();
+  if (f !== 0) {
+    writer.writeUint32(
       5,
       f
     );
   }
-  f = message.getDescription();
+  f = message.getTitle();
   if (f.length > 0) {
     writer.writeString(
       6,
       f
     );
   }
-  f = message.getContentTitle();
+  f = message.getDescription();
   if (f.length > 0) {
     writer.writeString(
       7,
       f
     );
   }
-  f = message.getContent();
+  f = message.getContentTitle();
   if (f.length > 0) {
     writer.writeString(
       8,
       f
     );
   }
+  f = message.getContent();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
+      f
+    );
+  }
   f = message.getSchema();
   if (f != null) {
     writer.writeMessage(
-      9,
+      10,
       f,
       proto.resources.documents.TemplateSchema.serializeBinaryToWriter
     );
@@ -439,14 +451,14 @@ proto.resources.documents.Template.serializeBinaryToWriter = function(message, w
   f = message.getCreatorId();
   if (f !== 0) {
     writer.writeInt32(
-      10,
+      11,
       f
     );
   }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      11,
+      12,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -454,14 +466,14 @@ proto.resources.documents.Template.serializeBinaryToWriter = function(message, w
   f = message.getJob();
   if (f.length > 0) {
     writer.writeString(
-      12,
+      13,
       f
     );
   }
   f = message.getJobAccessList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      13,
+      14,
       f,
       proto.resources.documents.TemplateJobAccess.serializeBinaryToWriter
     );
@@ -469,7 +481,7 @@ proto.resources.documents.Template.serializeBinaryToWriter = function(message, w
   f = message.getContentAccess();
   if (f != null) {
     writer.writeMessage(
-      14,
+      15,
       f,
       resources_documents_documents_pb.DocumentAccess.serializeBinaryToWriter
     );
@@ -607,28 +619,28 @@ proto.resources.documents.Template.prototype.hasCategory = function() {
 
 
 /**
- * optional string title = 5;
+ * optional uint32 weight = 5;
+ * @return {number}
+ */
+proto.resources.documents.Template.prototype.getWeight = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.resources.documents.Template} returns this
+ */
+proto.resources.documents.Template.prototype.setWeight = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional string title = 6;
  * @return {string}
  */
 proto.resources.documents.Template.prototype.getTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.resources.documents.Template} returns this
- */
-proto.resources.documents.Template.prototype.setTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
-};
-
-
-/**
- * optional string description = 6;
- * @return {string}
- */
-proto.resources.documents.Template.prototype.getDescription = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
@@ -637,16 +649,16 @@ proto.resources.documents.Template.prototype.getDescription = function() {
  * @param {string} value
  * @return {!proto.resources.documents.Template} returns this
  */
-proto.resources.documents.Template.prototype.setDescription = function(value) {
+proto.resources.documents.Template.prototype.setTitle = function(value) {
   return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
 /**
- * optional string content_title = 7;
+ * optional string description = 7;
  * @return {string}
  */
-proto.resources.documents.Template.prototype.getContentTitle = function() {
+proto.resources.documents.Template.prototype.getDescription = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
@@ -655,16 +667,16 @@ proto.resources.documents.Template.prototype.getContentTitle = function() {
  * @param {string} value
  * @return {!proto.resources.documents.Template} returns this
  */
-proto.resources.documents.Template.prototype.setContentTitle = function(value) {
+proto.resources.documents.Template.prototype.setDescription = function(value) {
   return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
 /**
- * optional string content = 8;
+ * optional string content_title = 8;
  * @return {string}
  */
-proto.resources.documents.Template.prototype.getContent = function() {
+proto.resources.documents.Template.prototype.getContentTitle = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
@@ -673,18 +685,36 @@ proto.resources.documents.Template.prototype.getContent = function() {
  * @param {string} value
  * @return {!proto.resources.documents.Template} returns this
  */
-proto.resources.documents.Template.prototype.setContent = function(value) {
+proto.resources.documents.Template.prototype.setContentTitle = function(value) {
   return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 
 /**
- * optional TemplateSchema schema = 9;
+ * optional string content = 9;
+ * @return {string}
+ */
+proto.resources.documents.Template.prototype.getContent = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.documents.Template} returns this
+ */
+proto.resources.documents.Template.prototype.setContent = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional TemplateSchema schema = 10;
  * @return {?proto.resources.documents.TemplateSchema}
  */
 proto.resources.documents.Template.prototype.getSchema = function() {
   return /** @type{?proto.resources.documents.TemplateSchema} */ (
-    jspb.Message.getWrapperField(this, proto.resources.documents.TemplateSchema, 9));
+    jspb.Message.getWrapperField(this, proto.resources.documents.TemplateSchema, 10));
 };
 
 
@@ -693,7 +723,7 @@ proto.resources.documents.Template.prototype.getSchema = function() {
  * @return {!proto.resources.documents.Template} returns this
 */
 proto.resources.documents.Template.prototype.setSchema = function(value) {
-  return jspb.Message.setWrapperField(this, 9, value);
+  return jspb.Message.setWrapperField(this, 10, value);
 };
 
 
@@ -711,16 +741,16 @@ proto.resources.documents.Template.prototype.clearSchema = function() {
  * @return {boolean}
  */
 proto.resources.documents.Template.prototype.hasSchema = function() {
-  return jspb.Message.getField(this, 9) != null;
+  return jspb.Message.getField(this, 10) != null;
 };
 
 
 /**
- * optional int32 creator_id = 10;
+ * optional int32 creator_id = 11;
  * @return {number}
  */
 proto.resources.documents.Template.prototype.getCreatorId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
 };
 
 
@@ -729,17 +759,17 @@ proto.resources.documents.Template.prototype.getCreatorId = function() {
  * @return {!proto.resources.documents.Template} returns this
  */
 proto.resources.documents.Template.prototype.setCreatorId = function(value) {
-  return jspb.Message.setProto3IntField(this, 10, value);
+  return jspb.Message.setProto3IntField(this, 11, value);
 };
 
 
 /**
- * optional resources.users.UserShort creator = 11;
+ * optional resources.users.UserShort creator = 12;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.documents.Template.prototype.getCreator = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 11));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 12));
 };
 
 
@@ -748,7 +778,7 @@ proto.resources.documents.Template.prototype.getCreator = function() {
  * @return {!proto.resources.documents.Template} returns this
 */
 proto.resources.documents.Template.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 11, value);
+  return jspb.Message.setWrapperField(this, 12, value);
 };
 
 
@@ -766,16 +796,16 @@ proto.resources.documents.Template.prototype.clearCreator = function() {
  * @return {boolean}
  */
 proto.resources.documents.Template.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 11) != null;
+  return jspb.Message.getField(this, 12) != null;
 };
 
 
 /**
- * optional string job = 12;
+ * optional string job = 13;
  * @return {string}
  */
 proto.resources.documents.Template.prototype.getJob = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 12, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 13, ""));
 };
 
 
@@ -784,17 +814,17 @@ proto.resources.documents.Template.prototype.getJob = function() {
  * @return {!proto.resources.documents.Template} returns this
  */
 proto.resources.documents.Template.prototype.setJob = function(value) {
-  return jspb.Message.setProto3StringField(this, 12, value);
+  return jspb.Message.setProto3StringField(this, 13, value);
 };
 
 
 /**
- * repeated TemplateJobAccess job_access = 13;
+ * repeated TemplateJobAccess job_access = 14;
  * @return {!Array<!proto.resources.documents.TemplateJobAccess>}
  */
 proto.resources.documents.Template.prototype.getJobAccessList = function() {
   return /** @type{!Array<!proto.resources.documents.TemplateJobAccess>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.resources.documents.TemplateJobAccess, 13));
+    jspb.Message.getRepeatedWrapperField(this, proto.resources.documents.TemplateJobAccess, 14));
 };
 
 
@@ -803,7 +833,7 @@ proto.resources.documents.Template.prototype.getJobAccessList = function() {
  * @return {!proto.resources.documents.Template} returns this
 */
 proto.resources.documents.Template.prototype.setJobAccessList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 13, value);
+  return jspb.Message.setRepeatedWrapperField(this, 14, value);
 };
 
 
@@ -813,7 +843,7 @@ proto.resources.documents.Template.prototype.setJobAccessList = function(value) 
  * @return {!proto.resources.documents.TemplateJobAccess}
  */
 proto.resources.documents.Template.prototype.addJobAccess = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 13, opt_value, proto.resources.documents.TemplateJobAccess, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 14, opt_value, proto.resources.documents.TemplateJobAccess, opt_index);
 };
 
 
@@ -827,12 +857,12 @@ proto.resources.documents.Template.prototype.clearJobAccessList = function() {
 
 
 /**
- * optional DocumentAccess content_access = 14;
+ * optional DocumentAccess content_access = 15;
  * @return {?proto.resources.documents.DocumentAccess}
  */
 proto.resources.documents.Template.prototype.getContentAccess = function() {
   return /** @type{?proto.resources.documents.DocumentAccess} */ (
-    jspb.Message.getWrapperField(this, resources_documents_documents_pb.DocumentAccess, 14));
+    jspb.Message.getWrapperField(this, resources_documents_documents_pb.DocumentAccess, 15));
 };
 
 
@@ -841,7 +871,7 @@ proto.resources.documents.Template.prototype.getContentAccess = function() {
  * @return {!proto.resources.documents.Template} returns this
 */
 proto.resources.documents.Template.prototype.setContentAccess = function(value) {
-  return jspb.Message.setWrapperField(this, 14, value);
+  return jspb.Message.setWrapperField(this, 15, value);
 };
 
 
@@ -859,7 +889,7 @@ proto.resources.documents.Template.prototype.clearContentAccess = function() {
  * @return {boolean}
  */
 proto.resources.documents.Template.prototype.hasContentAccess = function() {
-  return jspb.Message.getField(this, 14) != null;
+  return jspb.Message.getField(this, 15) != null;
 };
 
 
@@ -898,13 +928,14 @@ proto.resources.documents.TemplateShort.toObject = function(includeInstance, msg
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     createdAt: (f = msg.getCreatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
     updatedAt: (f = msg.getUpdatedAt()) && resources_timestamp_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    weight: jspb.Message.getFieldWithDefault(msg, 4, 0),
     category: (f = msg.getCategory()) && resources_documents_category_pb.DocumentCategory.toObject(includeInstance, f),
-    title: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    description: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    title: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    description: jspb.Message.getFieldWithDefault(msg, 7, ""),
     schema: (f = msg.getSchema()) && proto.resources.documents.TemplateSchema.toObject(includeInstance, f),
-    creatorId: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    creatorId: jspb.Message.getFieldWithDefault(msg, 9, 0),
     creator: (f = msg.getCreator()) && resources_users_users_pb.UserShort.toObject(includeInstance, f),
-    job: jspb.Message.getFieldWithDefault(msg, 10, "")
+    job: jspb.Message.getFieldWithDefault(msg, 11, "")
   };
 
   if (includeInstance) {
@@ -956,33 +987,37 @@ proto.resources.documents.TemplateShort.deserializeBinaryFromReader = function(m
       msg.setUpdatedAt(value);
       break;
     case 4:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setWeight(value);
+      break;
+    case 5:
       var value = new resources_documents_category_pb.DocumentCategory;
       reader.readMessage(value,resources_documents_category_pb.DocumentCategory.deserializeBinaryFromReader);
       msg.setCategory(value);
       break;
-    case 5:
+    case 6:
       var value = /** @type {string} */ (reader.readString());
       msg.setTitle(value);
       break;
-    case 6:
+    case 7:
       var value = /** @type {string} */ (reader.readString());
       msg.setDescription(value);
       break;
-    case 7:
+    case 8:
       var value = new proto.resources.documents.TemplateSchema;
       reader.readMessage(value,proto.resources.documents.TemplateSchema.deserializeBinaryFromReader);
       msg.setSchema(value);
       break;
-    case 8:
+    case 9:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCreatorId(value);
       break;
-    case 9:
+    case 10:
       var value = new resources_users_users_pb.UserShort;
       reader.readMessage(value,resources_users_users_pb.UserShort.deserializeBinaryFromReader);
       msg.setCreator(value);
       break;
-    case 10:
+    case 11:
       var value = /** @type {string} */ (reader.readString());
       msg.setJob(value);
       break;
@@ -1038,10 +1073,17 @@ proto.resources.documents.TemplateShort.serializeBinaryToWriter = function(messa
       resources_timestamp_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
   }
+  f = message.getWeight();
+  if (f !== 0) {
+    writer.writeUint32(
+      4,
+      f
+    );
+  }
   f = message.getCategory();
   if (f != null) {
     writer.writeMessage(
-      4,
+      5,
       f,
       resources_documents_category_pb.DocumentCategory.serializeBinaryToWriter
     );
@@ -1049,21 +1091,21 @@ proto.resources.documents.TemplateShort.serializeBinaryToWriter = function(messa
   f = message.getTitle();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      6,
       f
     );
   }
   f = message.getDescription();
   if (f.length > 0) {
     writer.writeString(
-      6,
+      7,
       f
     );
   }
   f = message.getSchema();
   if (f != null) {
     writer.writeMessage(
-      7,
+      8,
       f,
       proto.resources.documents.TemplateSchema.serializeBinaryToWriter
     );
@@ -1071,14 +1113,14 @@ proto.resources.documents.TemplateShort.serializeBinaryToWriter = function(messa
   f = message.getCreatorId();
   if (f !== 0) {
     writer.writeInt32(
-      8,
+      9,
       f
     );
   }
   f = message.getCreator();
   if (f != null) {
     writer.writeMessage(
-      9,
+      10,
       f,
       resources_users_users_pb.UserShort.serializeBinaryToWriter
     );
@@ -1086,7 +1128,7 @@ proto.resources.documents.TemplateShort.serializeBinaryToWriter = function(messa
   f = message.getJob();
   if (f.length > 0) {
     writer.writeString(
-      10,
+      11,
       f
     );
   }
@@ -1186,12 +1228,30 @@ proto.resources.documents.TemplateShort.prototype.hasUpdatedAt = function() {
 
 
 /**
- * optional DocumentCategory category = 4;
+ * optional uint32 weight = 4;
+ * @return {number}
+ */
+proto.resources.documents.TemplateShort.prototype.getWeight = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.resources.documents.TemplateShort} returns this
+ */
+proto.resources.documents.TemplateShort.prototype.setWeight = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional DocumentCategory category = 5;
  * @return {?proto.resources.documents.DocumentCategory}
  */
 proto.resources.documents.TemplateShort.prototype.getCategory = function() {
   return /** @type{?proto.resources.documents.DocumentCategory} */ (
-    jspb.Message.getWrapperField(this, resources_documents_category_pb.DocumentCategory, 4));
+    jspb.Message.getWrapperField(this, resources_documents_category_pb.DocumentCategory, 5));
 };
 
 
@@ -1200,7 +1260,7 @@ proto.resources.documents.TemplateShort.prototype.getCategory = function() {
  * @return {!proto.resources.documents.TemplateShort} returns this
 */
 proto.resources.documents.TemplateShort.prototype.setCategory = function(value) {
-  return jspb.Message.setWrapperField(this, 4, value);
+  return jspb.Message.setWrapperField(this, 5, value);
 };
 
 
@@ -1218,33 +1278,15 @@ proto.resources.documents.TemplateShort.prototype.clearCategory = function() {
  * @return {boolean}
  */
 proto.resources.documents.TemplateShort.prototype.hasCategory = function() {
-  return jspb.Message.getField(this, 4) != null;
+  return jspb.Message.getField(this, 5) != null;
 };
 
 
 /**
- * optional string title = 5;
+ * optional string title = 6;
  * @return {string}
  */
 proto.resources.documents.TemplateShort.prototype.getTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.resources.documents.TemplateShort} returns this
- */
-proto.resources.documents.TemplateShort.prototype.setTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
-};
-
-
-/**
- * optional string description = 6;
- * @return {string}
- */
-proto.resources.documents.TemplateShort.prototype.getDescription = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
@@ -1253,18 +1295,36 @@ proto.resources.documents.TemplateShort.prototype.getDescription = function() {
  * @param {string} value
  * @return {!proto.resources.documents.TemplateShort} returns this
  */
-proto.resources.documents.TemplateShort.prototype.setDescription = function(value) {
+proto.resources.documents.TemplateShort.prototype.setTitle = function(value) {
   return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
 /**
- * optional TemplateSchema schema = 7;
+ * optional string description = 7;
+ * @return {string}
+ */
+proto.resources.documents.TemplateShort.prototype.getDescription = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.resources.documents.TemplateShort} returns this
+ */
+proto.resources.documents.TemplateShort.prototype.setDescription = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
+};
+
+
+/**
+ * optional TemplateSchema schema = 8;
  * @return {?proto.resources.documents.TemplateSchema}
  */
 proto.resources.documents.TemplateShort.prototype.getSchema = function() {
   return /** @type{?proto.resources.documents.TemplateSchema} */ (
-    jspb.Message.getWrapperField(this, proto.resources.documents.TemplateSchema, 7));
+    jspb.Message.getWrapperField(this, proto.resources.documents.TemplateSchema, 8));
 };
 
 
@@ -1273,7 +1333,7 @@ proto.resources.documents.TemplateShort.prototype.getSchema = function() {
  * @return {!proto.resources.documents.TemplateShort} returns this
 */
 proto.resources.documents.TemplateShort.prototype.setSchema = function(value) {
-  return jspb.Message.setWrapperField(this, 7, value);
+  return jspb.Message.setWrapperField(this, 8, value);
 };
 
 
@@ -1291,16 +1351,16 @@ proto.resources.documents.TemplateShort.prototype.clearSchema = function() {
  * @return {boolean}
  */
 proto.resources.documents.TemplateShort.prototype.hasSchema = function() {
-  return jspb.Message.getField(this, 7) != null;
+  return jspb.Message.getField(this, 8) != null;
 };
 
 
 /**
- * optional int32 creator_id = 8;
+ * optional int32 creator_id = 9;
  * @return {number}
  */
 proto.resources.documents.TemplateShort.prototype.getCreatorId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
 };
 
 
@@ -1309,17 +1369,17 @@ proto.resources.documents.TemplateShort.prototype.getCreatorId = function() {
  * @return {!proto.resources.documents.TemplateShort} returns this
  */
 proto.resources.documents.TemplateShort.prototype.setCreatorId = function(value) {
-  return jspb.Message.setProto3IntField(this, 8, value);
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
 /**
- * optional resources.users.UserShort creator = 9;
+ * optional resources.users.UserShort creator = 10;
  * @return {?proto.resources.users.UserShort}
  */
 proto.resources.documents.TemplateShort.prototype.getCreator = function() {
   return /** @type{?proto.resources.users.UserShort} */ (
-    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 9));
+    jspb.Message.getWrapperField(this, resources_users_users_pb.UserShort, 10));
 };
 
 
@@ -1328,7 +1388,7 @@ proto.resources.documents.TemplateShort.prototype.getCreator = function() {
  * @return {!proto.resources.documents.TemplateShort} returns this
 */
 proto.resources.documents.TemplateShort.prototype.setCreator = function(value) {
-  return jspb.Message.setWrapperField(this, 9, value);
+  return jspb.Message.setWrapperField(this, 10, value);
 };
 
 
@@ -1346,16 +1406,16 @@ proto.resources.documents.TemplateShort.prototype.clearCreator = function() {
  * @return {boolean}
  */
 proto.resources.documents.TemplateShort.prototype.hasCreator = function() {
-  return jspb.Message.getField(this, 9) != null;
+  return jspb.Message.getField(this, 10) != null;
 };
 
 
 /**
- * optional string job = 10;
+ * optional string job = 11;
  * @return {string}
  */
 proto.resources.documents.TemplateShort.prototype.getJob = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 11, ""));
 };
 
 
@@ -1364,7 +1424,7 @@ proto.resources.documents.TemplateShort.prototype.getJob = function() {
  * @return {!proto.resources.documents.TemplateShort} returns this
  */
 proto.resources.documents.TemplateShort.prototype.setJob = function(value) {
-  return jspb.Message.setProto3StringField(this, 10, value);
+  return jspb.Message.setProto3StringField(this, 11, value);
 };
 
 

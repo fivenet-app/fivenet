@@ -30,6 +30,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 	stmt := tDTemplates.
 		SELECT(
 			tDTemplates.ID,
+			tDTemplates.Weight,
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
@@ -52,6 +53,10 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 		).
 		WHERE(
 			tDTemplates.DeletedAt.IS_NULL(),
+		).
+		ORDER_BY(
+			tDTemplates.Weight.DESC(),
+			tDTemplates.ID.ASC(),
 		).
 		GROUP_BY(tDTemplates.ID)
 
@@ -76,33 +81,34 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this template!")
 	}
 
-	dTemplates := tDTemplates.AS("template")
-	stmt := dTemplates.
+	tDTemplates := tDTemplates.AS("template")
+	stmt := tDTemplates.
 		SELECT(
-			dTemplates.ID,
-			dTemplates.CreatedAt,
-			dTemplates.UpdatedAt,
+			tDTemplates.ID,
+			tDTemplates.Weight,
+			tDTemplates.CreatedAt,
+			tDTemplates.UpdatedAt,
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
 			tDCategory.Job,
-			dTemplates.Title,
-			dTemplates.Description,
-			dTemplates.ContentTitle,
-			dTemplates.Content,
-			dTemplates.Access,
-			dTemplates.Schema,
-			dTemplates.CreatorID,
-			dTemplates.CreatorJob,
+			tDTemplates.Title,
+			tDTemplates.Description,
+			tDTemplates.ContentTitle,
+			tDTemplates.Content,
+			tDTemplates.Access,
+			tDTemplates.Schema,
+			tDTemplates.CreatorID,
+			tDTemplates.CreatorJob,
 		).
 		FROM(
-			dTemplates.
+			tDTemplates.
 				LEFT_JOIN(tDCategory,
-					tDCategory.ID.EQ(dTemplates.CategoryID),
+					tDCategory.ID.EQ(tDTemplates.CategoryID),
 				),
 		).
 		WHERE(
-			dTemplates.ID.EQ(jet.Uint64(req.TemplateId)),
+			tDTemplates.ID.EQ(jet.Uint64(req.TemplateId)),
 		).
 		LIMIT(1)
 
@@ -203,20 +209,22 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		}
 	}
 
-	dTemplates := table.FivenetDocumentsTemplates
-	stmt := dTemplates.
+	tDTemplates := table.FivenetDocumentsTemplates
+	stmt := tDTemplates.
 		INSERT(
-			dTemplates.CategoryID,
-			dTemplates.Title,
-			dTemplates.Description,
-			dTemplates.ContentTitle,
-			dTemplates.Content,
-			dTemplates.Access,
-			dTemplates.Schema,
-			dTemplates.CreatorID,
-			dTemplates.CreatorJob,
+			tDTemplates.Weight,
+			tDTemplates.CategoryID,
+			tDTemplates.Title,
+			tDTemplates.Description,
+			tDTemplates.ContentTitle,
+			tDTemplates.Content,
+			tDTemplates.Access,
+			tDTemplates.Schema,
+			tDTemplates.CreatorID,
+			tDTemplates.CreatorJob,
 		).
 		VALUES(
+			req.Template.Weight,
 			categoryId,
 			req.Template.Title,
 			req.Template.Description,
@@ -293,18 +301,20 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	dTemplates := table.FivenetDocumentsTemplates
-	stmt := dTemplates.
+	tDTemplates := table.FivenetDocumentsTemplates
+	stmt := tDTemplates.
 		UPDATE(
-			dTemplates.CategoryID,
-			dTemplates.Title,
-			dTemplates.Description,
-			dTemplates.ContentTitle,
-			dTemplates.Content,
-			dTemplates.Access,
-			dTemplates.Schema,
+			tDTemplates.Weight,
+			tDTemplates.CategoryID,
+			tDTemplates.Title,
+			tDTemplates.Description,
+			tDTemplates.ContentTitle,
+			tDTemplates.Content,
+			tDTemplates.Access,
+			tDTemplates.Schema,
 		).
 		SET(
+			req.Template.Weight,
 			categoryId,
 			req.Template.Title,
 			req.Template.Description,
@@ -314,7 +324,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 			req.Template.Schema,
 		).
 		WHERE(
-			dTemplates.ID.EQ(jet.Uint64(req.Template.Id)),
+			tDTemplates.ID.EQ(jet.Uint64(req.Template.Id)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -357,12 +367,12 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this template!")
 	}
 
-	dTemplates := table.FivenetDocumentsTemplates
-	stmt := dTemplates.
+	tDTemplates := table.FivenetDocumentsTemplates
+	stmt := tDTemplates.
 		DELETE().
 		WHERE(
-			dTemplates.CreatorJob.EQ(jet.String(userInfo.Job)).AND(
-				dTemplates.ID.EQ(jet.Uint64(req.Id))),
+			tDTemplates.CreatorJob.EQ(jet.String(userInfo.Job)).AND(
+				tDTemplates.ID.EQ(jet.Uint64(req.Id))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

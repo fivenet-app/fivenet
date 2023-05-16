@@ -27,6 +27,9 @@ export class Template extends jspb.Message {
   hasCategory(): boolean;
   clearCategory(): Template;
 
+  getWeight(): number;
+  setWeight(value: number): Template;
+
   getTitle(): string;
   setTitle(value: string): Template;
 
@@ -79,6 +82,7 @@ export namespace Template {
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     category?: resources_documents_category_pb.DocumentCategory.AsObject,
+    weight: number,
     title: string,
     description: string,
     contentTitle: string,
@@ -103,7 +107,7 @@ export namespace Template {
 
   export enum CreatorCase { 
     _CREATOR_NOT_SET = 0,
-    CREATOR = 11,
+    CREATOR = 12,
   }
 }
 
@@ -120,6 +124,9 @@ export class TemplateShort extends jspb.Message {
   setUpdatedAt(value?: resources_timestamp_timestamp_pb.Timestamp): TemplateShort;
   hasUpdatedAt(): boolean;
   clearUpdatedAt(): TemplateShort;
+
+  getWeight(): number;
+  setWeight(value: number): TemplateShort;
 
   getCategory(): resources_documents_category_pb.DocumentCategory | undefined;
   setCategory(value?: resources_documents_category_pb.DocumentCategory): TemplateShort;
@@ -161,6 +168,7 @@ export namespace TemplateShort {
     id: number,
     createdAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
     updatedAt?: resources_timestamp_timestamp_pb.Timestamp.AsObject,
+    weight: number,
     category?: resources_documents_category_pb.DocumentCategory.AsObject,
     title: string,
     description: string,
@@ -182,7 +190,7 @@ export namespace TemplateShort {
 
   export enum CreatorCase { 
     _CREATOR_NOT_SET = 0,
-    CREATOR = 9,
+    CREATOR = 10,
   }
 }
 

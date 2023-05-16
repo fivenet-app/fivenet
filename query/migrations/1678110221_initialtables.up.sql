@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates` (
   `created_at` datetime(3) DEFAULT current_timestamp(3),
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE current_timestamp(3),
   `deleted_at` datetime(3) DEFAULT NULL,
+  `weight` int(11) unsigned DEFAULT 0,
   `category_id` bigint(20) unsigned DEFAULT NULL,
   `title` longtext NOT NULL,
   `description` longtext NOT NULL,
@@ -47,6 +48,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates` (
   `creator_job` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_documents_templates_deleted_at` (`deleted_at`),
+  KEY `idx_fivenet_documents_templates_weight` (`weight`),
   KEY `idx_fivenet_documents_templates_category_id` (`category_id`),
   CONSTRAINT `fk_fivenet_documents_templates_categories` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   CONSTRAINT `fk_fivenet_documents_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)

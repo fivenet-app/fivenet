@@ -41,10 +41,10 @@ func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx *sql.Tx, te
 }
 
 func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([]*documents.TemplateJobAccess, error) {
-	dTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
-	jobStmt := dTemplatesJobAccess.
+	tDTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
+	jobStmt := tDTemplatesJobAccess.
 		SELECT(
-			dTemplatesJobAccess.AllColumns,
+			tDTemplatesJobAccess.AllColumns,
 			tCreator.ID,
 			tCreator.Identifier,
 			tCreator.Job,
@@ -53,16 +53,16 @@ func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([
 			tCreator.Lastname,
 		).
 		FROM(
-			dTemplatesJobAccess.
+			tDTemplatesJobAccess.
 				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(dTemplatesJobAccess.CreatorID),
+					tCreator.ID.EQ(tDTemplatesJobAccess.CreatorID),
 				),
 		).
 		WHERE(
-			dTemplatesJobAccess.TemplateID.EQ(jet.Uint64(templateId)),
+			tDTemplatesJobAccess.TemplateID.EQ(jet.Uint64(templateId)),
 		).
 		ORDER_BY(
-			dTemplatesJobAccess.ID.ASC(),
+			tDTemplatesJobAccess.ID.ASC(),
 		)
 
 	var jobAccess []*documents.TemplateJobAccess
@@ -147,14 +147,14 @@ func (s *Server) createTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 
 	for k := 0; k < len(access); k++ {
 		// Create document job access
-		dTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess
-		stmt := dTemplatesJobAccess.
+		tDTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess
+		stmt := tDTemplatesJobAccess.
 			INSERT(
-				dTemplatesJobAccess.TemplateID,
-				dTemplatesJobAccess.Job,
-				dTemplatesJobAccess.MinimumGrade,
-				dTemplatesJobAccess.Access,
-				dTemplatesJobAccess.CreatorID,
+				tDTemplatesJobAccess.TemplateID,
+				tDTemplatesJobAccess.Job,
+				tDTemplatesJobAccess.MinimumGrade,
+				tDTemplatesJobAccess.Access,
+				tDTemplatesJobAccess.CreatorID,
 			).
 			VALUES(
 				templateId,
@@ -179,14 +179,14 @@ func (s *Server) updateTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 
 	for k := 0; k < len(access); k++ {
 		// Create document job access
-		dTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess
-		stmt := dTemplatesJobAccess.
+		tDTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess
+		stmt := tDTemplatesJobAccess.
 			UPDATE(
-				dTemplatesJobAccess.TemplateID,
-				dTemplatesJobAccess.Job,
-				dTemplatesJobAccess.MinimumGrade,
-				dTemplatesJobAccess.Access,
-				dTemplatesJobAccess.CreatorID,
+				tDTemplatesJobAccess.TemplateID,
+				tDTemplatesJobAccess.Job,
+				tDTemplatesJobAccess.MinimumGrade,
+				tDTemplatesJobAccess.Access,
+				tDTemplatesJobAccess.CreatorID,
 			).
 			SET(
 				templateId,
@@ -196,7 +196,7 @@ func (s *Server) updateTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 				userId,
 			).
 			WHERE(
-				dTemplatesJobAccess.ID.EQ(jet.Uint64(access[k].Id)),
+				tDTemplatesJobAccess.ID.EQ(jet.Uint64(access[k].Id)),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -221,13 +221,13 @@ func (s *Server) deleteTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 			jobIds = append(jobIds, jet.Uint64(access[i].Id))
 		}
 
-		dTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess
-		jobStmt := dTemplatesJobAccess.
+		tDTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess
+		jobStmt := tDTemplatesJobAccess.
 			DELETE().
 			WHERE(
 				jet.AND(
-					dTemplatesJobAccess.ID.IN(jobIds...),
-					dTemplatesJobAccess.TemplateID.EQ(jet.Uint64(templateId)),
+					tDTemplatesJobAccess.ID.IN(jobIds...),
+					tDTemplatesJobAccess.TemplateID.EQ(jet.Uint64(templateId)),
 				),
 			).
 			LIMIT(25)

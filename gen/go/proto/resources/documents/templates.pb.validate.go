@@ -88,6 +88,8 @@ func (m *Template) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for Weight
+
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
 		err := TemplateValidationError{
 			field:  "Title",
@@ -458,6 +460,8 @@ func (m *TemplateShort) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for Id
+
+	// no validation rules for Weight
 
 	if all {
 		switch v := interface{}(m.GetCategory()).(type) {
