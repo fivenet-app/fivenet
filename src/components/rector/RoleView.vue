@@ -8,7 +8,7 @@ import Divider from '~/components/partials/Divider.vue';
 import RoleViewAttr from '~/components/rector/RoleViewAttr.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
 import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
 
 const { $grpc } = useNuxtApp();
@@ -246,9 +246,8 @@ onMounted(async () => {
                                             </button>
                                         </div>
                                     </div>
-                                    <RoleViewAttr v-if="attrList.find(a => a.getPermissionId() === perm.getId())"
-                                        :attribute="attrList.find(a => a.getPermissionId() === perm.getId())!"
-                                        v-model:states="attrStates" :disabled="permStates.get(perm.getId()) !== true"
+                                    <RoleViewAttr v-for="attr in attrList.filter(a => a.getPermissionId() === perm.getId())"
+                                        :attribute="attr" v-model:states="attrStates" :disabled="permStates.get(perm.getId()) !== true"
                                         :jobs="jobs" />
                                     <div v-if="idx !== permList.filter(p => p.getCategory() === category).length - 1"
                                         class="w-full border-t border-neutral/20 mt-2" />

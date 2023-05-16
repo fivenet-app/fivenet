@@ -437,7 +437,8 @@
         "no_licenses": "No Licenses.",
         "available": "available",
         "reason": "Reason | Reasons",
-        "preview": "Preview"
+        "preview": "Preview",
+        "option": "Option | Options"
     },
     "notifications": {
         "clipboard": {
@@ -615,8 +616,8 @@
     "perms": {
         "AuthService": {
             "category": "Authentication",
-            "GetCharacters": {
-                "key": "List Character",
+            "ChooseCharacter": {
+                "key": "Choose Character",
                 "description": "Permission to choose character, basically allow or disallow access to FiveNet."
             },
             "SetJob": {
@@ -787,5 +788,37 @@
             }
         }
     },
-    "attrs": {}
+    "attrs": {
+        "CitizenStoreService":{
+            "GetUser": {
+                "Jobs": "Factions"
+            },
+            "ListCitizens": {
+                "Fields": "Fields"
+            },
+            "ListUserActivity": {
+                "Fields": "Fields"
+            },
+            "SetUserProps": {
+                "Fields": "User Properties Fields"
+            }
+        },
+        "CompletorService":{
+            "CompleteDocumentCategories": {
+                "Jobs": "Factions"
+            }
+        },
+        "LivemapperService":{
+            "Stream": {
+                "Dispatches": "Dispatch Locations",
+                "Players": "Player Location"
+            }
+        },
+        "RectorService":{
+            "GetPermissions": {
+                "Jobs": "Factions"
+            }
+        }
+    },
+    "errors": {}
 }

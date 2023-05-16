@@ -102,7 +102,7 @@ onMounted(() => {
             <DisclosureButton :disabled="$props.disabled"
                 :class="[open ? 'rounded-t-lg border-b-0' : 'rounded-lg', $props.disabled ? 'cursor-not-allowed' : '', ' flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors']">
                 <span class="text-base leading-7 transition-colors">
-                    Options
+                    {{ $t(`attrs.${attribute.getCategory()}.${attribute.getName()}.${attribute.getKey()}`) }}
                 </span>
                 <span class="ml-6 flex h-7 items-center">
                     <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"

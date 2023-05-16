@@ -23,12 +23,13 @@ const (
 )
 
 var (
-	UserInfoKey     struct{}
-	NoTokenErr      = status.Errorf(codes.Unauthenticated, "authorization string must not be empty")
-	InvalidTokenErr = status.Error(codes.Unauthenticated, "Token invalid/ expired!")
-	CheckTokenErr   = status.Error(codes.Unauthenticated, "Token check failed!")
-	NoPermsErr      = status.Error(codes.PermissionDenied, "No permissions associated with your user!")
-	NoUserInfoErr   = status.Error(codes.Unauthenticated, "Something went wrong, please logout and login again!")
+	UserInfoKey         struct{}
+	NoTokenErr          = status.Errorf(codes.Unauthenticated, "authorization string must not be empty")
+	InvalidTokenErr     = status.Error(codes.Unauthenticated, "Token invalid/ expired!")
+	CheckTokenErr       = status.Error(codes.Unauthenticated, "Token check failed!")
+	NoPermsErr          = status.Error(codes.PermissionDenied, "No permissions associated with your user!")
+	NoUserInfoErr       = status.Error(codes.Unauthenticated, "Something went wrong, please logout and login again!")
+	PermissionDeniedErr = status.Errorf(codes.PermissionDenied, "You don't have permission to do that!")
 )
 
 type GRPCAuth struct {
@@ -152,7 +153,7 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 		}
 	}
 
-	return nil, status.Errorf(codes.PermissionDenied, "You don't have permission to do that! Permission: "+info.FullMethod)
+	return nil, PermissionDeniedErr
 }
 
 func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
@@ -180,5 +181,5 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}
 		}
 	}
 
-	return nil, status.Errorf(codes.PermissionDenied, "You don't have permission to do that! Permission: "+info.FullMethod)
+	return nil, PermissionDeniedErr
 }
