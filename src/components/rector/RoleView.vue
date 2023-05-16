@@ -134,8 +134,6 @@ async function updatePermissions(): Promise<void> {
         }
     });
 
-    if (perms.getToUpdateList().length == 0 && perms.getToRemoveList().length == 0) return;
-
     const attrs = new AttrsUpdate();
     attrStates.value.forEach((state, attr) => {
         if (state !== undefined) {
@@ -153,6 +151,8 @@ async function updatePermissions(): Promise<void> {
             attrs.addToRemove(item);
         }
     });
+
+    if (perms.getToUpdateList().length == 0 && perms.getToRemoveList().length == 0 && attrs.getToUpdateList().length == 0 && attrs.getToRemoveList().length == 0) return;
 
     const req = new UpdateRolePermsRequest();
     req.setId(props.roleId);
