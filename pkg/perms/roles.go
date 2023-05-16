@@ -13,6 +13,11 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+const (
+	DefaultRoleJob      = "__default__"
+	DefaultRoleJobGrade = int32(1)
+)
+
 var (
 	tRoles     = table.FivenetRoles
 	tRolePerms = table.FivenetRolePermissions

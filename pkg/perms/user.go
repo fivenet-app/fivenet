@@ -1,36 +1,44 @@
 package perms
 
 import (
+	"fmt"
+	"time"
+
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 )
 
 func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {
-	stmt := tPerms.
-		SELECT(
-			tPerms.AllColumns,
-		).
-		FROM(tPerms).
-		WHERE(
-			tPerms.ID.IN(
-				tRoles.
-					SELECT(tRolePerms.PermissionID).
-					FROM(tRoles.
-						INNER_JOIN(tRolePerms,
-							tRolePerms.RoleID.EQ(tRoles.ID)),
-					).
-					WHERE(jet.AND(
-						tRoles.Job.EQ(jet.String(userInfo.Job)),
-						tRoles.Grade.EQ(jet.Int32(userInfo.JobGrade)),
-					)),
-			),
-		)
+	roleId, ok := p.lookupRoleIDForJobAndGrade(userInfo.Job, userInfo.JobGrade)
+	if !ok {
+		roleId, ok = p.lookupRoleIDForJobAndGrade(DefaultRoleJob, DefaultRoleJobGrade)
+		if !ok {
+			return nil, fmt.Errorf("failed to fallback to default role")
+		}
+	}
 
-	var perms collections.Permissions
-	if err := stmt.QueryContext(p.ctx, p.db, &perms); err != nil {
+	ps, err := p.GetRolePermissions(roleId)
+	if err != nil {
 		return nil, err
+	}
+
+	perms := make(collections.Permissions, len(ps))
+	for i := 0; i < len(ps); i++ {
+		var createdAt *time.Time
+		if ps[i].CreatedAt != nil {
+			createdAtTime := ps[i].CreatedAt.AsTime()
+			createdAt = &createdAtTime
+		}
+
+		perms[i] = &model.FivenetPermissions{
+			ID:        ps[i].Id,
+			Category:  ps[i].Category,
+			CreatedAt: createdAt,
+			Name:      ps[i].Name,
+			GuardName: ps[i].GuardName,
+		}
 	}
 
 	return perms, nil
@@ -75,6 +83,19 @@ func (p *Perms) lookupPermIDByGuard(guard string) (uint64, bool) {
 	return p.guardToPermIDMap.Load(guard)
 }
 
+func (p *Perms) lookupRoleIDForJobAndGrade(job string, grade int32) (uint64, bool) {
+	grades, ok := p.jobsToRoleIDMap.Load(job)
+	if !ok {
+		return 0, false
+	}
+	roleId, ok := grades[grade]
+	if !ok {
+		return 0, false
+	}
+
+	return roleId, true
+}
+
 func (p *Perms) getRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64, bool) {
 	grades, ok := p.jobsToRoleIDMap.Load(job)
 	if !ok {
@@ -95,7 +116,11 @@ func (p *Perms) getRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64, bo
 func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) bool {
 	roleIds, ok := p.getRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
-		return false
+		// Fallback to default role
+		roleIds, ok = p.getRoleIDsForJobUpToGrade(DefaultRoleJob, DefaultRoleJobGrade)
+		if !ok {
+			return false
+		}
 	}
 
 	for i := len(roleIds) - 1; i >= 0; i-- {

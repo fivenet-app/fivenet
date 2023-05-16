@@ -67,7 +67,14 @@ var serverCmd = &cobra.Command{
 
 		// Setup permissions system
 		p := perms.New(ctx, db)
-		if err := p.Register(); err != nil {
+
+		cfgDefaultPerms := config.C.Game.DefaultPermissions
+		defaultPerms := make([]string, len(config.C.Game.DefaultPermissions))
+		for i := 0; i < len(config.C.Game.DefaultPermissions); i++ {
+			defaultPerms[i] = perms.BuildGuard(perms.Category(cfgDefaultPerms[i].Category), perms.Name(cfgDefaultPerms[i].Name))
+		}
+
+		if err := p.Register(defaultPerms); err != nil {
 			return fmt.Errorf("failed to register permissions. %w", err)
 		}
 

@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
 	"golang.org/x/exp/slices"
@@ -45,8 +46,13 @@ func BuildGuard(category Category, name Name) string {
 	return helpers.Guard(fmt.Sprintf("%s.%s", category, name))
 }
 
-func (p *Perms) Register() error {
+func (p *Perms) Register(defaultRolePerms []string) error {
 	if err := p.cleanupRoles(); err != nil {
+		return err
+	}
+
+	defaultRole, err := p.CreateRole(DefaultRoleJob, DefaultRoleJobGrade)
+	if err != nil {
 		return err
 	}
 
@@ -68,6 +74,29 @@ func (p *Perms) Register() error {
 				return err
 			}
 		}
+	}
+
+	if err := p.setupDefaultRolePerms(defaultRole, defaultRolePerms); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *Perms) setupDefaultRolePerms(role *model.FivenetRoles, defaultPerms []string) error {
+	addPerms := make([]AddPerm, len(defaultPerms))
+	for i, perm := range defaultPerms {
+		permId, ok := p.guardToPermIDMap.Load(perm)
+		if !ok {
+			return fmt.Errorf("permission by guard %s not found", perm)
+		}
+		addPerms[i] = AddPerm{
+			Id:  permId,
+			Val: true,
+		}
+	}
+	if err := p.UpdateRolePermissions(role.ID, addPerms...); err != nil {
+		return err
 	}
 
 	return nil
@@ -145,6 +174,16 @@ func (p *Perms) cleanupRoles() error {
 	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
 		return err
 	}
+	// Add default job to avoid deletion
+	dest = append(dest, &jobs.Job{
+		Name: DefaultRoleJob,
+		Grades: []*jobs.JobGrade{
+			{
+				JobName: DefaultRoleJob,
+				Grade:   DefaultRoleJobGrade,
+			},
+		},
+	})
 
 	allRoles, err := p.getRoles()
 	if err != nil {

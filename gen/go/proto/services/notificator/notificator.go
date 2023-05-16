@@ -278,10 +278,6 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, cu
 			JobGrade: userInfo.JobGrade,
 		})
 		if err != nil {
-			return auth.CheckTokenErr
-		}
-
-		if len(perms) == 0 {
 			return auth.NoPermsErr
 		}
 
