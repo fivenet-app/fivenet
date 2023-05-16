@@ -9,7 +9,7 @@ export default defineNuxtPlugin((nuxtApp) => {
             return;
         }
 
-        const permissions = useAuthStore().getPermissions;
+        const permissions = useAuthStore().permissions;
         if (permissions.includes('superuser')) {
             return (vnode.el.hidden = false);
         }

@@ -4,14 +4,15 @@ import { useAuthStore } from '~/store/auth';
 export default defineNuxtRouteMiddleware(
     (to: RouteLocationNormalized, from: RouteLocationNormalized): ReturnType<NavigationGuard> => {
         const authStore = useAuthStore();
+        const { getAccessTokenExpiration, setAccessToken } = authStore;
 
-        const expiration = authStore.getAccessTokenExpiration;
+        const expiration = getAccessTokenExpiration;
         // Check if we have an expiration time, make sure the token isn't expired (yet)
         if (expiration !== null) {
             const now = new Date();
             // Token expired, redirect to login
             if (expiration <= now) {
-                authStore.setAccessToken(null, null);
+                setAccessToken(null, null);
 
                 // Only update the redirect query param if it isn't set already
                 const redirect = to.query.redirect ?? to.fullPath;

@@ -33,10 +33,8 @@ import QuickButtons from './QuickButtons.vue';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
+const { accessToken, activeChar } = storeToRefs(authStore);
 const router = useRouter();
-
-const accessToken = computed(() => authStore.getAccessToken);
-const activeChar = computed(() => authStore.getActiveChar);
 
 const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, position: 'top' | 'bottom', current: boolean }[] = [
     {
@@ -113,7 +111,7 @@ const mobileMenuOpen = ref(false);
 onMounted(() => {
     updateUserNav();
     updateActiveItem();
-    updateBread();
+    updateBreadcrumbs();
 });
 
 function updateUserNav(): void {
@@ -151,7 +149,7 @@ function updateActiveItem(): void {
     }
 }
 
-function updateBread(): void {
+function updateBreadcrumbs(): void {
     // Clear current breadcrumbs
     breadcrumbs.value.length = 0;
     const currentRoute = router.currentRoute.value;
@@ -205,7 +203,7 @@ watch(activeChar, () => updateUserNav());
 
 watch(router.currentRoute, () => {
     updateActiveItem();
-    updateBread();
+    updateBreadcrumbs();
 });
 
 const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ? '-dev' : '-prod')) : '';

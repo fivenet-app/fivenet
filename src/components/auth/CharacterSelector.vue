@@ -10,6 +10,8 @@ import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 
+const { setActiveChar, setPermissions, setJobProps } = authStore;
+
 const { data: chars, pending, refresh, error } = useLazyAsyncData('chars', () => fetchCharacters());
 
 async function fetchCharacters(): Promise<Array<User>> {
@@ -26,12 +28,9 @@ async function fetchCharacters(): Promise<Array<User>> {
     });
 }
 
-onBeforeMount(async () => {
-    await Promise.all([
-        authStore.setActiveChar(null),
-        authStore.setPermissions([])
-    ]);
-});
+setActiveChar(null);
+setPermissions([]);
+setJobProps(null);
 </script>
 
 <template>

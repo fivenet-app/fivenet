@@ -4,6 +4,8 @@ import { useAuthStore } from '~/store/auth';
 
 const authStore = useAuthStore();
 
+const { accessToken } = storeToRefs(authStore);
+
 defineProps({
     provider: {
         type: OAuth2Provider,
@@ -19,6 +21,6 @@ defineProps({
             {{ $t('common.connect') }}
         </button>
         <input type="hidden" name="connect-only" value="true" />
-        <input type="hidden" name="token" :value="authStore.$state.accessToken" />
+        <input type="hidden" name="token" :value="accessToken" />
     </form>
 </template>

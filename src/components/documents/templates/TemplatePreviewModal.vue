@@ -10,7 +10,7 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
 
-const activeChar = computed(() => authStore.getActiveChar);
+const { activeChar } = storeToRefs(authStore);
 
 const props = defineProps({
     id: {

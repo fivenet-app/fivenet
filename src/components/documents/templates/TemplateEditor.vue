@@ -33,7 +33,7 @@ const props = defineProps({
     }
 });
 
-const activeChar = computed(() => authStore.getActiveChar);
+const { activeChar } = storeToRefs(authStore);
 
 const maxAccessEntries = 8;
 

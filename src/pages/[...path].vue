@@ -12,7 +12,7 @@ definePageMeta({
 });
 
 const authStore = useAuthStore();
-const accessToken = computed(() => authStore.getAccessToken);
+const { accessToken } = storeToRefs(authStore);
 </script>
 
 <template>

@@ -18,16 +18,18 @@ import { useNotificationsStore } from '~/store/notifications';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
 
 const { $grpc, $loading } = useNuxtApp();
-const userSettings = useUserSettingsStore();
+const userSettingsStore = useUserSettingsStore();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 const route = useRoute();
+
+const { livemapCenterSelectedMarker, livemapMarkerSize } = storeToRefs(userSettingsStore);
 
 const { t } = useI18n();
 
 $loading.start();
 
-const activeChar = computed(() => authStore.getActiveChar);
+const { activeChar } = storeToRefs(authStore);
 
 const stream = ref<ClientReadableStream<StreamResponse> | null>(null);
 const error = ref<RpcError | null>(null);
@@ -66,14 +68,11 @@ const zoom = ref(2);
 let center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 
-const markerSize = ref<number>(userSettings.getLivemapMarkerSize);
 const markerDispatches = ref<Job[]>([]);
 const markerPlayers = ref<Job[]>([]);
 const selectedMarker = ref<number>();
-const centerSelectedMarker = ref<boolean>(userSettings.getLivemapCenterSelectedMarker);
 
-watch(centerSelectedMarker, () => {
-    userSettings.setLivemapCenterSelectedMarker(centerSelectedMarker.value);
+watch(livemapCenterSelectedMarker, () => {
     applySelectedMarkerCentering();
 });
 
@@ -219,7 +218,7 @@ async function stopDataStream(): Promise<void> {
 }
 
 async function applySelectedMarkerCentering(): Promise<void> {
-    if (!centerSelectedMarker.value) return;
+    if (!livemapCenterSelectedMarker.value) return;
     if (selectedMarker.value === undefined) return;
 
     const marker = playerMarkers.find(m => m.getId() === selectedMarker.value) || playerMarkers.find(m => m.getId() === selectedMarker.value);
@@ -260,8 +259,8 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
 
     return new L.DivIcon({
         html: `<div class="${iconClass}">` + html + '</div>',
-        iconSize: [markerSize.value, markerSize.value],
-        popupAnchor: [0, (markerSize.value / 2 * -1)],
+        iconSize: [livemapMarkerSize.value, livemapMarkerSize.value],
+        popupAnchor: [0, (livemapMarkerSize.value / 2 * -1)],
     });
 
 }
@@ -339,8 +338,6 @@ watch(selectedPostal, () => {
         duration: 0.850,
     });
 });
-
-watchDebounced(markerSize, () => userSettings.setLivemapMarkerSize(markerSize.value), { debounce: 250, maxWait: 850 });
 
 watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 });
 </script>
@@ -470,14 +467,14 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
                         <span class="text-lg mr-2 text-[#6f7683]">{{ $t('components.livemap.center_selected_marker')
                         }}</span>
-                        <input v-model="centerSelectedMarker" class="my-auto" id="markerSize" name="markerSize"
+                        <input v-model="livemapCenterSelectedMarker" class="my-auto" id="livemapMarkerSize" name="livemapMarkerSize"
                             type="checkbox" />
                     </div>
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
-                        <span class="text-lg mr-2 text-[#6f7683]">{{ markerSize }}</span>
-                        <input id="markerSize" name="markerSize" type="range"
+                        <span class="text-lg mr-2 text-[#6f7683]">{{ livemapMarkerSize }}</span>
+                        <input id="livemapMarkerSize" name="livemapMarkerSize" type="range"
                             class="h-1.5 w-full cursor-grab rounded-full my-auto" min="14" max="34" step="2"
-                            :value="markerSize" @change="markerSize = ($event.target as any).value" />
+                            :value="livemapMarkerSize" @change="livemapMarkerSize = ($event.target as any).value" />
                     </div>
                 </div>
             </LControl>

@@ -19,9 +19,9 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
-const { t } = useI18n();
+const { activeChar } = storeToRefs(authStore);
 
-const activeChar = computed(() => authStore.activeChar);
+const { t } = useI18n();
 
 const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
 
@@ -148,8 +148,7 @@ onMounted(async () => {
                                 </div>
                                 <div class="flex-initial form-control flex flex-col justify-end"
                                     v-can="'RectorService.CreateRole'">
-                                    <button type="submit"
-                                        :disabled="selectedJobGrade && selectedJobGrade.getGrade() <= 0"
+                                    <button type="submit" :disabled="selectedJobGrade && selectedJobGrade.getGrade() <= 0"
                                         class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                         Create
                                     </button>

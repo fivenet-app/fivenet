@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
 import { useAuthStore } from '~/store/auth';
 import { ChooseCharacterRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { User } from '@fivenet/gen/resources/users/users_pb';
@@ -12,7 +11,8 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const route = useRoute();
 
-const lastCharID = computed(() => authStore.$state.lastCharID);
+const { lastCharID } = storeToRefs(authStore);
+const { setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
 
 const props = defineProps({
     char: {
@@ -30,13 +30,13 @@ async function chooseCharacter(): Promise<void> {
             const resp = await $grpc.getAuthClient()
                 .chooseCharacter(req, null);
 
-            authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
-            authStore.setActiveChar(props.char);
-            authStore.setPermissions(resp.getPermissionsList());
+            setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
+            setActiveChar(props.char);
+            setPermissions(resp.getPermissionsList());
             if (resp.hasJobProps()) {
-                authStore.setJobProps(resp.getJobProps()!);
+                setJobProps(resp.getJobProps()!);
             } else {
-                authStore.setJobProps(null);
+                setJobProps(null);
             }
 
             const path = route.query.redirect?.toString() || "/overview";

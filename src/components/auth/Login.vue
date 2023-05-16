@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
-import { computed, ref, watch } from 'vue';
 import { NavigationFailure } from 'vue-router';
 import LoginForm from './LoginForm.vue';
 import CreateAccountForm from './CreateAccountForm.vue';
@@ -10,14 +9,14 @@ import ForgotPasswordForm from './ForgotPasswordForm.vue';
 const authStore = useAuthStore();
 const route = useRoute();
 
-const accesToken = computed(() => authStore.getAccessToken);
+const { accessToken } = storeToRefs(authStore);
 
 const forms = ref<{ create: boolean; forgot: boolean; }>({
     create: false, forgot: false
 });
 
-watch(accesToken, async (): Promise<NavigationFailure | TypedRouteFromName<'auth-character-selector'> | void | undefined> => {
-    if (accesToken) {
+watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'auth-character-selector'> | void | undefined> => {
+    if (accessToken) {
         return await navigateTo({ name: 'auth-character-selector', query: route.query });
     }
 });

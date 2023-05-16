@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
-import { computed } from 'vue';
 import { LoginRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
 import { ErrorMessage, Field, useForm } from 'vee-validate';
@@ -12,14 +11,15 @@ import config from '~/config';
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 
-const loginError = computed(() => authStore.$state.loginError);
+const { loginError } = storeToRefs(authStore);
+const { loginStart, loginStop, setActiveChar, setPermissions, setAccessToken } = authStore;
 
 async function login(username: string, password: string): Promise<void> {
     return new Promise(async (res, rej) => {
         // Start login
-        authStore.loginStart();
-        authStore.setActiveChar(null);
-        authStore.setPermissions([]);
+        loginStart();
+        setActiveChar(null);
+        setPermissions([]);
 
         const req = new LoginRequest();
         req.setUsername(username);
@@ -29,13 +29,13 @@ async function login(username: string, password: string): Promise<void> {
             const resp = await $grpc.getUnAuthClient()
                 .login(req, null);
 
-            authStore.loginStop(null);
-            authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
+            loginStop(null);
+            setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
 
             return res();
         } catch (e) {
-            authStore.loginStop((e as RpcError).message);
-            authStore.setAccessToken(null, null);
+            loginStop((e as RpcError).message);
+            setAccessToken(null, null);
             return rej(e as RpcError);
         }
     });

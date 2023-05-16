@@ -35,6 +35,8 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const clipboard = useClipboardStore();
 
+const { activeChar } = storeToRefs(authStore);
+
 const { t } = useI18n();
 
 const props = defineProps<{
@@ -87,8 +89,8 @@ function addReference(doc: Document, reference: number): void {
 
     const ref = new DocumentReference();
     ref.setId(key);
-    ref.setCreatorId(authStore.getActiveChar!.getUserId());
-    ref.setCreator(authStore.getActiveChar!)
+    ref.setCreatorId(activeChar.value!.getUserId());
+    ref.setCreator(activeChar.value!)
     ref.setTargetDocumentId(doc.getId());
     ref.setTargetDocument(doc);
     ref.setReference(DOC_REFERENCE_Util.fromInt(reference));

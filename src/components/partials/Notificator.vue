@@ -11,8 +11,8 @@ const store = useNotificatorStore();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
-const accessToken = computed(() => authStore.getAccessToken);
-const activeChar = computed(() => authStore.getActiveChar);
+const { accessToken, activeChar } = storeToRefs(authStore);
+const { setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
 
 const stream = ref<ClientReadableStream<StreamResponse> | undefined>(undefined);
 
@@ -49,17 +49,19 @@ async function streamNotifications(): Promise<void> {
             if (resp.hasToken()) {
                 const tokenUpdate = resp.getToken()!;
 
-                if (tokenUpdate.hasUserInfo())
-                    authStore.setActiveChar(tokenUpdate.getUserInfo()!);
+                // Update active char when updated user info is received
+                if (tokenUpdate.hasUserInfo()) {
+                    setActiveChar(tokenUpdate.getUserInfo()!);
+                    setPermissions(tokenUpdate.getPermissionsList());
+                }
                 if (tokenUpdate.hasJobProps()) {
-                    authStore.setJobProps(tokenUpdate.getJobProps()!);
+                    setJobProps(tokenUpdate.getJobProps()!);
                 } else {
-                    authStore.setJobProps(null);
+                    setJobProps(null);
                 }
 
                 if (tokenUpdate.hasNewToken() && tokenUpdate.hasExpires()) {
-                    authStore.setAccessToken(tokenUpdate.getNewToken(), toDate(tokenUpdate.getExpires()) as null | Date);
-                    authStore.setPermissions(tokenUpdate.getPermissionsList());
+                    setAccessToken(tokenUpdate.getNewToken(), toDate(tokenUpdate.getExpires()) as null | Date);
 
                     notifications.dispatchNotification({
                         title: 'notifications.renewed_token.title',

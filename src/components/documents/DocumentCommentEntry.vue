@@ -3,14 +3,12 @@ import { useAuthStore } from '~/store/auth';
 import { DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
 import { DeleteDocumentCommentRequest, EditDocumentCommentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { PencilIcon, TrashIcon } from '@heroicons/vue/20/solid';
-import { computed, ref } from 'vue';
 import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 
-const activeChar = computed(() => authStore.getActiveChar);
-const permissions = computed(() => authStore.getPermissions);
+const { activeChar, permissions } = storeToRefs(authStore);
 
 const emit = defineEmits<{
     (e: 'removed', comment: DocumentComment): void,

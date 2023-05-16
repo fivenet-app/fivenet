@@ -9,31 +9,34 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
     // Default is that a page requires authentication
     if (!to.meta.hasOwnProperty('requiresAuth') || to.meta.requiresAuth) {
         const authStore = useAuthStore();
-        if (to.meta.authOnlyToken && authStore.getAccessToken !== null) {
+        const { activeChar, accessToken, permissions, lastCharID,
+            setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
+
+        if (to.meta.authOnlyToken && accessToken !== null) {
             return true;
         }
 
         // Check if user has access token
-        if (authStore.getAccessToken !== null) {
+        if (accessToken !== null) {
             // If the user has an acitve char, check for perms otherwise, redirect to char selector
-            if (authStore.getActiveChar === null) {
+            if (activeChar === null) {
                 // If we don't have an active char, but a last char ID set, try to choose it and immidiately continue
-                if (authStore.getLastCharID > 0) {
+                if (lastCharID > 0) {
                     const { $grpc } = useNuxtApp();
 
                     const req = new ChooseCharacterRequest();
-                    req.setCharId(authStore.getLastCharID);
+                    req.setCharId(lastCharID);
 
                     try {
                         const resp = await $grpc.getAuthClient().chooseCharacter(req, null);
 
-                        authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
-                        authStore.setActiveChar(resp.getChar()!);
-                        authStore.setPermissions(resp.getPermissionsList());
+                        setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
+                        setActiveChar(resp.getChar()!);
+                        setPermissions(resp.getPermissionsList());
                         if (resp.hasJobProps()) {
-                            authStore.setJobProps(resp.getJobProps()!);
+                            setJobProps(resp.getJobProps()!);
                         } else {
-                            authStore.setJobProps(null);
+                            setJobProps(null);
                         }
                     } catch (e) {
                         $grpc.handleRPCError(e as RpcError);
@@ -47,7 +50,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                     }
                 }
 
-                if (authStore.getActiveChar === null) {
+                if (activeChar === null) {
                     // Only update the redirect query param if it isn't set already
                     const redirect = to.query.redirect ?? to.fullPath;
                     return navigateTo({
@@ -56,7 +59,6 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                     });
                 }
             }
-            const permissions = useAuthStore().getPermissions;
             if (permissions.includes('superuser')) {
                 return true;
             }
@@ -64,7 +66,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
             // Route has permission attached to it, check if user has required permission
             if (to.meta.permission) {
                 const perm = slug(to.meta.permission as string);
-                if (authStore.getPermissions.includes(perm)) {
+                if (permissions.includes(perm)) {
                     // User has permission
                     return true;
                 } else {
@@ -74,7 +76,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                         type: 'warning',
                     });
 
-                    if (authStore.getAccessToken) {
+                    if (accessToken) {
                         return navigateTo({
                             name: 'overview',
                         });

@@ -20,9 +20,10 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
-const { t } = useI18n();
+const { accessToken } = storeToRefs(authStore);
+const { clearAuthInfo } = authStore;
 
-const accessToken = computed(() => authStore.getAccessToken);
+const { t } = useI18n();
 
 function redirect(): void {
     setTimeout(async () => {
@@ -34,7 +35,7 @@ function redirect(): void {
 }
 
 onBeforeMount(async () => {
-    authStore.clear();
+    clearAuthInfo();
 
     if (!accessToken.value) {
         redirect();

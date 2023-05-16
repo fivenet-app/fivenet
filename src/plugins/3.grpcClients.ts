@@ -54,7 +54,7 @@ export class GRPCClients {
 
         switch (err.code) {
             case StatusCode.UNAUTHENTICATED:
-                await useAuthStore().clear();
+                await useAuthStore().clearAuthInfo();
 
                 notifications.dispatchNotification({
                     title: 'notifications.grpc_errors.unauthenticated.title',
@@ -225,9 +225,10 @@ export class AuthInterceptor implements UnaryInterceptor<any, any> {
     }
 
     intercept(request: any, invoker: any) {
-        if (this.authStore.getAccessToken !== null) {
+        const { accessToken } = this.authStore;
+        if (accessToken !== null) {
             const metadata = request.getMetadata();
-            metadata.Authorization = 'Bearer ' + this.authStore.getAccessToken;
+            metadata.Authorization = 'Bearer ' + accessToken;
         }
 
         return invoker(request);

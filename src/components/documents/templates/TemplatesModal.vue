@@ -2,7 +2,6 @@
 import { TemplateShort, TemplateRequirements } from '@fivenet/gen/resources/documents/templates_pb';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { PencilIcon } from '@heroicons/vue/24/solid';
-import { ref, watch } from 'vue';
 import ClipboardModalDocuments from '~/components/clipboard/ClipboardModalDocuments.vue';
 import ClipboardModalUsers from '~/components/clipboard/ClipboardModalUsers.vue';
 import ClipboardModalVehicles from '~/components/clipboard/ClipboardModalVehicles.vue';

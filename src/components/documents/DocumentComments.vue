@@ -12,7 +12,7 @@ import { RpcError } from 'grpc-web';
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 
-const activeChar = computed(() => authStore.getActiveChar);
+const { activeChar } = storeToRefs(authStore);
 
 const props = defineProps({
     documentId: {

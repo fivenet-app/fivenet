@@ -13,6 +13,8 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
+const { setAccessToken } = authStore;
+
 defineProps({
     open: {
         required: true,
@@ -38,7 +40,7 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
             const resp = await $grpc.getAuthClient()
                 .changePassword(req, null);
 
-            authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
+            setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
 
             notifications.dispatchNotification({
                 title: t('notifications.auth.changed_password.title'),

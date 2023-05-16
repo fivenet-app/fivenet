@@ -68,7 +68,7 @@ export const useAuthStore = defineStore('auth', {
                 };
             }
         },
-        async clear(): Promise<void> {
+        async clearAuthInfo(): Promise<void> {
             this.setAccessToken(null, null);
             this.setActiveChar(null);
             this.setPermissions([]);
@@ -76,17 +76,12 @@ export const useAuthStore = defineStore('auth', {
         },
     },
     getters: {
-        getAccessToken: (state): null | string => state.accessToken,
         getAccessTokenExpiration(state): null | Date {
             if (typeof state.accessTokenExpiration === 'string')
                 state.accessTokenExpiration = new Date(Date.parse(state.accessTokenExpiration));
 
             return state.accessTokenExpiration;
         },
-        getLastCharID: (state): number => state.lastCharID,
-        getActiveChar: (state): null | User => state.activeChar,
-        getPermissions: (state): Array<String> => state.permissions,
-        getJobProps: (state): null | JobPropsState => state.jobProps,
     },
 });
 

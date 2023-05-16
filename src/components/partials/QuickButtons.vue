@@ -4,7 +4,7 @@ import QuickButton, { ButtonComponents as QuickButtonTypes } from './QuickButton
 
 const authStore = useAuthStore();
 
-const jobProps = computed(() => authStore.getJobProps);
+const { jobProps } = storeToRefs(authStore);
 </script>
 
 <template>

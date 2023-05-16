@@ -6,12 +6,11 @@ import { useClipboardStore } from '~/store/clipboard';
 const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
 
-const accessTokenExpiration = computed(() => authStore.getAccessTokenExpiration);
-const activeChar = computed(() => authStore.getActiveChar);
-const perms = computed(() => authStore.getPermissions);
+const { activeChar, permissions, getAccessTokenExpiration } = storeToRefs(authStore);
+const { clearAuthInfo } = authStore;
 
 async function resetLocalStorage(): Promise<void> {
-    authStore.clear();
+    clearAuthInfo();
 
     window.localStorage.clear();
 
@@ -47,13 +46,14 @@ async function resetLocalStorage(): Promise<void> {
                         {{ activeChar.getJob() }} ({{ $t('common.rank') }}: {{ activeChar.getJobGrade() }})
                     </dd>
                 </div>
-                <div v-if="accessTokenExpiration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div v-if="getAccessTokenExpiration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.access_token_expiration') }}
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        <time :datetime="accessTokenExpiration.toDateString()">
-                            {{ useLocaleTimeAgo(accessTokenExpiration).value }} ({{ $d(accessTokenExpiration, 'long') }})
+                        <time :datetime="getAccessTokenExpiration.toDateString()">
+                            {{ useLocaleTimeAgo(getAccessTokenExpiration).value }} ({{ $d(getAccessTokenExpiration, 'long')
+                            }})
                         </time>
                     </dd>
                 </div>
@@ -72,13 +72,13 @@ async function resetLocalStorage(): Promise<void> {
                         </button>
                     </dd>
                 </div>
-                <div v-if="perms.length > 0" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                <div v-if="permissions.length > 0" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.perms') }}
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                         <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
-                            <li v-for="perm in perms"
+                            <li v-for="perm in permissions"
                                 class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
                                 <KeyIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                                 <div class="ml-4 flex min-w-0 flex-1 gap-2">

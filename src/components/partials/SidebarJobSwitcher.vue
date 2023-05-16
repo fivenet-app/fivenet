@@ -15,7 +15,8 @@ const { t } = useI18n();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
-const activeChar = computed(() => authStore.getActiveChar);
+const { activeChar } = storeToRefs(authStore);
+const { setAccessToken, setActiveChar, setJobProps } = authStore;
 
 let entriesJobs = [] as Job[];
 const filteredJobs = ref<Job[]>([]);
@@ -55,8 +56,9 @@ async function setJob(): Promise<void> {
                 setJob(req, null);
 
             await Promise.all([
-                authStore.setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date),
-                authStore.setActiveChar(resp.getChar()!),
+                setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date),
+                setActiveChar(resp.getChar()!),
+                setJobProps(resp.getJobProps()!),
             ]);
 
             notifications.dispatchNotification({

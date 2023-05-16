@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useClipboardStore } from '~/store/clipboard';
-import { computed, ref, watch } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 import { DocumentTextIcon } from '@heroicons/vue/20/solid';
 import { ClipboardDocument } from '~/store/clipboard';
@@ -10,9 +9,9 @@ import { ObjectSpecs } from '@fivenet/gen/resources/documents/templates_pb';
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
-const { t } = useI18n();
+const { documents } = storeToRefs(clipboardStore);
 
-const documents = computed(() => clipboardStore.$state.documents);
+const { t } = useI18n();
 
 const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void,

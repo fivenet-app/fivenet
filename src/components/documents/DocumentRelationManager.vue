@@ -38,6 +38,8 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const clipboard = useClipboardStore();
 
+const { activeChar } = storeToRefs(authStore);
+
 const { t } = useI18n();
 
 const props = defineProps<{
@@ -90,8 +92,8 @@ function addRelation(user: User, relation: number): void {
     const rel = new DocumentRelation();
     rel.setId(key);
     rel.setDocumentId(props.document!);
-    rel.setSourceUserId(authStore.getActiveChar!.getUserId());
-    rel.setSourceUser(authStore.getActiveChar!);
+    rel.setSourceUserId(activeChar.value!.getUserId());
+    rel.setSourceUser(activeChar.value!);
     rel.setTargetUserId(user.getUserId());
     rel.setTargetUser(user);
     rel.setRelation(DOC_RELATION_Util.fromInt(relation));

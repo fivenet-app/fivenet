@@ -33,8 +33,7 @@ try {
 const userSettings = useUserSettingsStore();
 
 // Set user setting locale on load of app
-const locale = computed(() => userSettings.getLocale);
-setLocale(locale.value);
+setLocale(userSettings.locale);
 </script>
 
 <template>

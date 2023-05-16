@@ -53,7 +53,7 @@ const props = defineProps({
     },
 });
 
-const activeChar = computed(() => authStore.getActiveChar);
+const { activeChar } = storeToRefs(authStore);
 
 const maxAccessEntries = 8;
 
@@ -182,8 +182,8 @@ onMounted(async () => {
         rel.setDocumentId(props.id!);
         rel.setTargetUserId(user.id!);
         rel.setTargetUser(getUser(user));
-        rel.setSourceUserId(authStore.getActiveChar!.getUserId());
-        rel.setSourceUser(authStore.getActiveChar!);
+        rel.setSourceUserId(activeChar.value!.getUserId());
+        rel.setSourceUser(activeChar.value!);
         rel.setRelation(DOC_RELATION.CAUSED);
 
         relationManagerData.value.set(i, rel);
