@@ -84,6 +84,10 @@ func (p *Perms) Register(defaultRolePerms []string) error {
 }
 
 func (p *Perms) setupDefaultRolePerms(role *model.FivenetRoles, defaultPerms []string) error {
+	if len(defaultPerms) == 0 {
+		return nil
+	}
+
 	addPerms := make([]AddPerm, len(defaultPerms))
 	for i, perm := range defaultPerms {
 		permId, ok := p.guardToPermIDMap.Load(perm)
