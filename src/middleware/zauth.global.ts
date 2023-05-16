@@ -4,28 +4,29 @@ import { RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import slug from '~/utils/slugify';
+import { toDate } from '~/utils/time';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
     // Default is that a page requires authentication
     if (!to.meta.hasOwnProperty('requiresAuth') || to.meta.requiresAuth) {
         const authStore = useAuthStore();
-        const { activeChar, accessToken, permissions, lastCharID,
-            setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
+        const { activeChar, accessToken, permissions, lastCharID } = storeToRefs(authStore);
+        const { setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
 
-        if (to.meta.authOnlyToken && accessToken !== null) {
+        if (to.meta.authOnlyToken && accessToken.value !== null) {
             return true;
         }
 
         // Check if user has access token
-        if (accessToken !== null) {
+        if (accessToken.value !== null) {
             // If the user has an acitve char, check for perms otherwise, redirect to char selector
-            if (activeChar === null) {
+            if (activeChar.value === null) {
                 // If we don't have an active char, but a last char ID set, try to choose it and immidiately continue
-                if (lastCharID > 0) {
+                if (lastCharID.value > 0) {
                     const { $grpc } = useNuxtApp();
 
                     const req = new ChooseCharacterRequest();
-                    req.setCharId(lastCharID);
+                    req.setCharId(lastCharID.value);
 
                     try {
                         const resp = await $grpc.getAuthClient().chooseCharacter(req, null);
@@ -50,7 +51,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                     }
                 }
 
-                if (activeChar === null) {
+                if (activeChar.value === null) {
                     // Only update the redirect query param if it isn't set already
                     const redirect = to.query.redirect ?? to.fullPath;
                     return navigateTo({
@@ -59,14 +60,14 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                     });
                 }
             }
-            if (permissions.includes('superuser')) {
+            if (permissions.value.includes('superuser')) {
                 return true;
             }
 
             // Route has permission attached to it, check if user has required permission
             if (to.meta.permission) {
                 const perm = slug(to.meta.permission as string);
-                if (permissions.includes(perm)) {
+                if (permissions.value.includes(perm)) {
                     // User has permission
                     return true;
                 } else {
@@ -76,7 +77,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                         type: 'warning',
                     });
 
-                    if (accessToken) {
+                    if (accessToken.value) {
                         return navigateTo({
                             name: 'overview',
                         });
