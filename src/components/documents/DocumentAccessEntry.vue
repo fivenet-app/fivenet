@@ -56,7 +56,7 @@ const queryMinimumRank = ref('');
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
 let entriesAccessRoles = new Array<{ id: ACCESS_LEVEL; label: string; value: string }>();
-if (!props.accessRoles || props.accessRoles.length == 0) {
+if (!props.accessRoles || props.accessRoles.length === 0) {
     entriesAccessRoles = Object.keys(ACCESS_LEVEL).map(e => {
         return {
             id: ACCESS_LEVEL_Util.fromString(e),
@@ -157,7 +157,7 @@ watch(selectedAccessRole, () => {
 <template>
     <div class="flex flex-row items-center my-2">
         <div class="flex-initial mr-2 w-60">
-            <input v-if="accessTypes.length == 1" type="text" disabled :value="accessTypes[0].name"
+            <input v-if="accessTypes.length === 1" type="text" disabled :value="accessTypes[0].name"
                 class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
             <Listbox v-else as="div" v-model="selectedAccessType">
                 <div class="relative">

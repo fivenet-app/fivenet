@@ -47,7 +47,7 @@ function selected(idx: number): TemplateShort {
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])"
             :retry="refresh" />
-        <button v-else-if="templates && templates.length == 0" type="button"
+        <button v-else-if="templates && templates.length === 0" type="button"
             class="relative block w-full p-12 text-center rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold text-base-200">

@@ -23,7 +23,7 @@ const emit = defineEmits<{
 }>();
 
 function getProviderConnection(provider: string): undefined | OAuth2Account {
-    return props.connections.find((v) => v.getProviderName() == provider);
+    return props.connections.find((v) => v.getProviderName() === provider);
 }
 
 async function disconnect(provider: OAuth2Provider): Promise<void> {

@@ -105,7 +105,7 @@ watch(props, async (newVal) => {
 
 <template>
     <h3 class="font-medium pt-1 pb-1">Documents</h3>
-    <button v-if="documents?.length == 0" type="button"
+    <button v-if="documents?.length === 0" type="button"
         class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
         disabled>
         <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />

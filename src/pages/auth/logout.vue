@@ -28,7 +28,7 @@ const { t } = useI18n();
 function redirect(): void {
     setTimeout(async () => {
         const route = useRoute();
-        if (route.name == 'auth-logout') {
+        if (route.name === 'auth-logout') {
             await navigateTo({ name: 'index' });
         }
     }, 1500);

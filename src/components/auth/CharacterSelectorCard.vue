@@ -60,7 +60,7 @@ async function chooseCharacter(): Promise<void> {
                     {{ char.getFirstname() }}, {{ char.getLastname() }}
                 </h2>
                 <CharSexBadge :sex="char.getSex()" />
-                <div v-if="lastCharID == char.getUserId()">
+                <div v-if="lastCharID === char.getUserId()">
                     <span
                         class="inline-flex items-center rounded-full bg-success-100 px-3 py-0.5 text-sm font-medium text-success-800">
                         {{ $t('common.last_used') }}

@@ -31,7 +31,7 @@ async function getAccountInfo(): Promise<GetAccountInfoResponse | undefined> {
 const changePasswordModal = ref(false);
 
 async function removeOAuth2Connection(provider: string): Promise<void> {
-    const idx = account.value?.getOauth2ConnectionsList().findIndex((v) => v.getProviderName() == provider);
+    const idx = account.value?.getOauth2ConnectionsList().findIndex((v) => v.getProviderName() === provider);
     if (idx !== undefined && idx > -1) {
         account.value?.getOauth2ConnectionsList().splice(idx, 1);
 

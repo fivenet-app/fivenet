@@ -19,7 +19,7 @@ const end = computed(() => props.pagination?.getEnd() ?? 0);
     <nav class="flex items-center justify-between px-4 py-3 border-t sm:px-6" aria-label="Pagination">
         <div class="hidden sm:block">
             <p class="text-sm text-gray-300"
-                v-html="$t('components.partials.table_pagination.showing_results', [total == 0 ? offset : offset + 1, end, total])" />
+                v-html="$t('components.partials.table_pagination.showing_results', [total === 0 ? offset : offset + 1, end, total])" />
         </div>
         <div class="flex justify-between flex-1 sm:justify-end">
             <button :class="[offset <= 0 ? 'disabled' : '']" :disabled="offset <= 0"

@@ -48,7 +48,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
         <DataErrorBlock v-else-if="error"
             :title="$t('common.unable_to_load', [`${$t('common.user', 1)} ${$t('common.document', 2)}`])"
             :retry="refresh" />
-        <button v-else-if="relations && relations.length == 0" type="button"
+        <button v-else-if="relations && relations.length === 0" type="button"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
             disabled>
             <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />

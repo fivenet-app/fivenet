@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-    <span v-if="sex == 'f'"
+    <span v-if="sex === 'f'"
         class="bg-pink-200 text-pink-600 inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-female"
             viewBox="0 0 16 16">
@@ -17,7 +17,7 @@ defineProps({
         </svg>
     </span>
 
-    <span v-else-if="sex == 'm'"
+    <span v-else-if="sex === 'm'"
         class="bg-blue-200 text-blue-600 inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male"
             viewBox="0 0 16 16">

@@ -157,7 +157,7 @@ watch(offset, async () => refresh());
         </div>
     </div>
     <div class="bg-base-800">
-        <button v-if="!comments || comments.length == 0" type="button" @click="focusComment()"
+        <button v-if="!comments || comments.length === 0" type="button" @click="focusComment()"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
             <ChatBubbleLeftEllipsisIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold text-gray-300">

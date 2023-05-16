@@ -33,7 +33,7 @@ if (query.t && query.t !== "" && query.exp) {
     });
 
     await navigateTo({ name: 'auth-character-selector' });
-} else if (query.oauth2Login && query.oauth2Login == "failed") {
+} else if (query.oauth2Login && query.oauth2Login === "failed") {
     const reason = query.reason ?? "N/A";
 
     notifications.dispatchNotification({

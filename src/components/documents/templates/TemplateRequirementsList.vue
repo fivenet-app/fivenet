@@ -25,7 +25,7 @@ defineProps({
         <span v-if="specs.getMin() > 0">
             {{ $t('common.min') }}{{ ' ' }}
         </span>
-        <span v-if="specs.getMax() == specs.getMin()">
+        <span v-if="specs.getMax() === specs.getMin()">
             {{ specs.getMax() }} {{ name }}
         </span>
         <span v-else>

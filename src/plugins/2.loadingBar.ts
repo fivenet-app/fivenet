@@ -23,7 +23,7 @@ export class LoadingManager {
 
     async start(): Promise<void> {
         this.counted++;
-        if (this.counted == 1) {
+        if (this.counted === 1) {
             useNuxtApp().callHook('data:loading:start');
         }
     }

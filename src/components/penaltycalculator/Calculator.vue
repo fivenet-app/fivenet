@@ -816,7 +816,7 @@ async function applyQuery(): Promise<void> {
 watch(queryPenalities, async () => applyQuery());
 
 function calculate(e: SelectedPenalty): void {
-    const idx = selectedPenalties.value.findIndex((v) => v.penalty.category == e.penalty.category && v.penalty.name == e.penalty.name);
+    const idx = selectedPenalties.value.findIndex((v) => v.penalty.category === e.penalty.category && v.penalty.name === e.penalty.name);
     let count = e.count;
     if (idx > -1) {
         const existing = selectedPenalties.value.at(idx)!;

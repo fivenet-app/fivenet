@@ -47,7 +47,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
 
 <template>
     <div>
-        <span v-if="relations && relations.length == 0" class="text-neutral">{{ $t('common.not_found',
+        <span v-if="relations && relations.length === 0" class="text-neutral">{{ $t('common.not_found',
             [`${$t('common.document', 1)} ${$t('common.relation', 2)}`]) }}</span>
         <!-- Relations list (smallest breakpoint only) -->
         <div v-if="relations && relations.length > 0" class="sm:hidden text-neutral">

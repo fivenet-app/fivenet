@@ -41,7 +41,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
 
 <template>
     <div>
-        <span v-if="references && references.length == 0" class="text-neutral">{{ $t('common.not_found',
+        <span v-if="references && references.length === 0" class="text-neutral">{{ $t('common.not_found',
             [`${$t('common.document', 1)}
                     ${$t('common.reference', 2)}`]) }}</span>
         <!-- Relations list (smallest breakpoint only) -->

@@ -96,7 +96,7 @@ watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 14
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
                         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])"
                             :retry="refresh" />
-                        <button v-else-if="documents && documents.length == 0" type="button" @click="focusSearch()"
+                        <button v-else-if="documents && documents.length === 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                             <DocumentMagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">

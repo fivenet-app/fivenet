@@ -92,7 +92,7 @@ async function listVehicles(): Promise<Array<Vehicle>> {
 
 async function toggleOrderBy(column: string): Promise<void> {
     const index = orderBys.value.findIndex((o) => {
-        return o.getColumn() == column;
+        return o.getColumn() === column;
     });
     let orderBy: OrderBy;
     if (index > -1) {
@@ -203,7 +203,7 @@ watch(selectedChar, () => {
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.vehicle', 2)])" />
                         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.vehicle', 2)])" :retry="refresh" />
-                        <button v-else-if="vehicles && vehicles.length == 0" type="button" @click="focusSearch()"
+                        <button v-else-if="vehicles && vehicles.length === 0" type="button" @click="focusSearch()"
                             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
