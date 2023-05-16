@@ -152,7 +152,7 @@ async function updatePermissions(): Promise<void> {
         }
     });
 
-    if (perms.getToUpdateList().length == 0 && perms.getToRemoveList().length == 0 && attrs.getToUpdateList().length == 0 && attrs.getToRemoveList().length == 0) return;
+    if (perms.getToUpdateList().length === 0 && perms.getToRemoveList().length === 0 && attrs.getToUpdateList().length === 0 && attrs.getToRemoveList().length === 0) return;
 
     const req = new UpdateRolePermsRequest();
     req.setId(props.roleId);
