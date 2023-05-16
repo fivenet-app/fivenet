@@ -13,7 +13,7 @@ useHead({
     bodyAttrs: {
         class: 'h-full overflow-hidden',
     },
-    titleTemplate: (title) => {
+    titleTemplate: (title?: string) => {
         if (title?.includes('.')) {
             title = t(title);
         }

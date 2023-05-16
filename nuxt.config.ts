@@ -146,6 +146,9 @@ const config = defineNuxtConfig({
         },
         pageTransition: { name: 'page', mode: 'out-in' },
     },
+    experimental: {
+        polyfillVueUseHead: false,
+    },
 });
 
 if (process.env.NODE_ENV !== 'production') {
