@@ -41,6 +41,7 @@ var db *sql.DB
 var serverCmd = &cobra.Command{
 	Use: "server",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		start := time.Now()
 		// Setup Sentry Integration
 		if config.C.Sentry.ServerDSN != "" && config.C.Mode != gin.DebugMode {
 			err := sentry.Init(sentry.ClientOptions{
@@ -90,10 +91,13 @@ var serverCmd = &cobra.Command{
 			audit: aud,
 		}
 
+		logger.Info("server start preparations took", zap.Duration("duration", time.Since(start)))
 		return server.runServers(ctx)
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) (err error) {
+		start := time.Now()
 		db, err = query.SetupDB(logger)
+		logger.Info("database setup took", zap.Duration("duration", time.Since(start)))
 		return err
 	},
 }

@@ -782,7 +782,7 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.2.tgz#5749f04df13bda4c863338d8dabaf370f45ef7c7"
   integrity sha512-GBzP8zOc7CGWyFQS6dv1lQz8VVpz5C2yRszbXufwG/9zhStTIH50EtD87NmWbTMwXDvZLNg8GIpb1UFdH93JCA==
 
-"@nuxt/kit@3.5.0":
+"@nuxt/kit@3.5.0", "@nuxt/kit@^3.5.0":
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.5.0.tgz#ae8d8a64936714b3603230a2861539f95dbd218e"
   integrity sha512-QqhOPTan5cpaYCksSWdmtpldCGfnsqTd55blztMSF+OPxfGav4GE4BrBD3ZSMn2/5MxieF3GU/w5/tgcDXE3bA==
@@ -1122,13 +1122,13 @@
     defu "^6.1.2"
     pinia-plugin-persistedstate ">=3.1.0"
 
-"@pinia/nuxt@^0.4.10":
-  version "0.4.10"
-  resolved "https://registry.yarnpkg.com/@pinia/nuxt/-/nuxt-0.4.10.tgz#b93f008f22053727cf69c496b516db81290b142f"
-  integrity sha512-/16Eac9B9BT+LnhGL2np3bO3DXYcIEjUIGmU9MzUu7y2exDYq1eOce4Yt+ZtLpb0hN0BBGNyP0ZWoHJ6KJIVfA==
+"@pinia/nuxt@^0.4.11":
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/@pinia/nuxt/-/nuxt-0.4.11.tgz#1b3f728ae112d45deff5971376e05b8a8d64f720"
+  integrity sha512-bhuNFngJpmBCdAqWguezNJ/oJFR7wvKieqiZrmmdmPR07XjsidAw8RLXHMZE9kUm32M9E6T057OBbG/22jERTg==
   dependencies:
-    "@nuxt/kit" "^3.0.0"
-    pinia ">=2.0.36"
+    "@nuxt/kit" "^3.5.0"
+    pinia ">=2.1.0"
 
 "@rollup/plugin-alias@^5.0.0":
   version "5.0.0"
@@ -1275,10 +1275,10 @@
   dependencies:
     "@types/geojson" "*"
 
-"@types/node@^18.16.10":
-  version "18.16.10"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.10.tgz#9b16d918f4f6fec6cae4af34283a91d555b81519"
-  integrity sha512-sMo3EngB6QkMBlB9rBe1lFdKSLqljyWPPWv6/FzSxh/IDlyVWSzE9RiF4eAuerQHybrWdqBgAGb03PM89qOasA==
+"@types/node@^18.16.12":
+  version "18.16.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.12.tgz#f11e19055c5b3daeb79dc6eb7ccdd3d036313034"
+  integrity sha512-tIRrjbY9C277MOfP8M3zjMIhtMlUJ6YVqkGgLjz+74jVsdf4/UjC6Hku4+1N0BS0qyC0JAS6tJLUk9H6JUKviQ==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -5375,13 +5375,13 @@ pinia-plugin-persistedstate@>=3.1.0:
   resolved "https://registry.yarnpkg.com/pinia-plugin-persistedstate/-/pinia-plugin-persistedstate-3.1.0.tgz#eada2b61ecd478fce88e490a685210415cd7a1b4"
   integrity sha512-8UN+vYMEPBdgNLwceY08mi5olI0wkYaEb8b6hD6xW7SnBRuPydWHlEhZvUWgNb/ibuf4PvufpvtS+dmhYjJQOw==
 
-pinia@>=2.0.36, pinia@^2.0.36:
-  version "2.0.36"
-  resolved "https://registry.yarnpkg.com/pinia/-/pinia-2.0.36.tgz#65130f3b94cc7fe25156308634010fab893dff24"
-  integrity sha512-4UKApwjlmJH+VuHKgA+zQMddcCb3ezYnyewQ9NVrsDqZ/j9dMv5+rh+1r48whKNdpFkZAWVxhBp5ewYaYX9JcQ==
+pinia@>=2.1.0, pinia@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/pinia/-/pinia-2.1.1.tgz#542c6bb8a7c27b342082f431bccd6124b63c5b55"
+  integrity sha512-Y2CgpcUtD8Ogdvo5LW5g20ykSZgnVDMgTSZFr40EvO6HB8axQk+0lHa1UrRah9wworFaxjovwRlY/wRICWj/KQ==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
-    vue-demi "*"
+    vue-demi ">=0.14.2"
 
 pinkie-promise@^2.0.0:
   version "2.0.1"
@@ -7035,10 +7035,15 @@ vue-bundle-renderer@^1.0.3:
   dependencies:
     ufo "^1.1.1"
 
-vue-demi@*, vue-demi@>=0.14.0:
+vue-demi@>=0.14.0:
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.14.0.tgz#dcfd9a9cf9bb62ada1582ec9042372cf67ca6190"
   integrity sha512-gt58r2ogsNQeVoQ3EhoUAvUsH9xviydl0dWJj7dabBC/2L4uBId7ujtCwDRD0JhkGsV1i0CtfLAeyYKBht9oWg==
+
+vue-demi@>=0.14.2:
+  version "0.14.3"
+  resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.14.3.tgz#5c7375527ad32580a7d8d28ee322bc059dbc1b99"
+  integrity sha512-aknytzARm7U20nMhvOdfa5IRiS+oyATtd55s3fICsT7wEtN/qoOiOINsNsNJjeZCOsPNOGS4p1yDOwH9cTxgjg==
 
 vue-demi@^0.13.11, vue-demi@^0.13.5:
   version "0.13.11"

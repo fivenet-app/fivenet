@@ -177,7 +177,7 @@ func (p *Perms) CreateRole(job string, grade int32) (*model.FivenetRoles, error)
 		}
 	}
 
-	p.rolePermsMap.Store(role.ID, map[uint64]bool{})
+	p.permsRoleMap.Store(role.ID, map[uint64]bool{})
 
 	return role, nil
 }
@@ -193,7 +193,7 @@ func (p *Perms) DeleteRole(id uint64) error {
 		return err
 	}
 
-	p.rolePermsMap.Delete(id)
+	p.permsRoleMap.Delete(id)
 
 	return nil
 }
@@ -289,7 +289,7 @@ func (p *Perms) UpdateRolePermissions(roleId uint64, perms ...AddPerm) error {
 		return err
 	}
 
-	roleCache, ok := p.rolePermsMap.Load(roleId)
+	roleCache, ok := p.permsRoleMap.Load(roleId)
 	if !ok {
 		return nil
 	}
@@ -318,7 +318,7 @@ func (p *Perms) RemovePermissionsFromRole(roleId uint64, perms ...uint64) error 
 		return err
 	}
 
-	roleCache, ok := p.rolePermsMap.Load(roleId)
+	roleCache, ok := p.permsRoleMap.Load(roleId)
 	if !ok {
 		return nil
 	}

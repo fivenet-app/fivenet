@@ -65,7 +65,13 @@ func (p *Perms) Register(defaultRolePerms []string) error {
 		if err != nil {
 			return err
 		}
-		p.guardToPermIDMap.Store(BuildGuard(perm.Category, perm.Name), permId)
+		p.permsMap.Store(permId, &cachePerm{
+			ID:        permId,
+			Category:  perm.Category,
+			Name:      perm.Name,
+			GuardName: BuildGuard(perm.Category, perm.Name),
+		})
+		p.permsGuardToIDMap.Store(BuildGuard(perm.Category, perm.Name), permId)
 
 		for _, attr := range perm.Attrs {
 			switch attr.ValidValues {
@@ -94,7 +100,7 @@ func (p *Perms) setupDefaultRolePerms(role *model.FivenetRoles, defaultPerms []s
 
 	addPerms := make([]AddPerm, len(defaultPerms))
 	for i, perm := range defaultPerms {
-		permId, ok := p.guardToPermIDMap.Load(perm)
+		permId, ok := p.permsGuardToIDMap.Load(perm)
 		if !ok {
 			return fmt.Errorf("permission by guard %s not found", perm)
 		}
@@ -111,7 +117,7 @@ func (p *Perms) setupDefaultRolePerms(role *model.FivenetRoles, defaultPerms []s
 }
 
 func (p *Perms) createOrUpdatePermission(category Category, name Name) (uint64, error) {
-	perm, err := p.getPermissionByGuard(BuildGuard(category, name))
+	perm, err := p.lookupPermissionByGuard(BuildGuard(category, name))
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return 0, err
