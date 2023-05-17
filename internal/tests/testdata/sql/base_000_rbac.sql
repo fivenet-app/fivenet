@@ -23,8 +23,8 @@ LOCK TABLES `fivenet_permissions` WRITE;
 INSERT INTO `fivenet_permissions` VALUES
 (1,'2023-03-18 16:37:43.273',NULL,'AuthService.GetCharacters','authservice-getcharacters',''),
 (3,'2023-03-18 16:37:43.290',NULL,'CitizenStoreService.ListCitizens','citizenstoreservice-listusers',''),
-(4,'2023-03-18 16:37:43.299',NULL,'CitizenStoreService.ListCitizens.Licenses','citizenstoreservice-listusers-licenses',''),
-(5,'2023-03-18 16:37:43.307',NULL,'CitizenStoreService.ListCitizens.UserProps','citizenstoreservice-listusers-userprops',''),
+(4,'2023-03-18 16:37:43.299',NULL,'CitizenStoreService.ListCitizens.Fields.Licenses','citizenstoreservice-listusers-licenses',''),
+(5,'2023-03-18 16:37:43.307',NULL,'CitizenStoreService.ListCitizens.Fields.UserProps','citizenstoreservice-listusers-userprops',''),
 (7,'2023-03-18 16:37:43.316',NULL,'CitizenStoreService.ListUserActivity','citizenstoreservice-listuseractivity',''),
 (8,'2023-03-18 16:37:43.325',NULL,'CitizenStoreService.ListUserActivity.SourceUser','citizenstoreservice-listuseractivity-sourceuser',''),
 (9,'2023-03-18 16:37:43.333',NULL,'CitizenStoreService.ListUserDocuments','citizenstoreservice-getuserdocuments',''),

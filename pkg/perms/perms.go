@@ -43,6 +43,7 @@ type Permissions interface {
 	CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error)
 	UpdateAttribute(attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
+	FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	GetAllAttributes(job string) ([]*permissions.RoleAttribute, error)
 	AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute) error
 	UpdateRoleAttributes(attrs ...*permissions.RoleAttribute) error

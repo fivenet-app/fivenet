@@ -116,7 +116,7 @@ function openTemplates(): void {
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
                                     user?.getHeight() }}cm</dd>
                             </div>
-                            <div v-can="'CitizenStoreService.ListCitizens.PhoneNumber'" class="sm:flex sm:px-6 sm:py-5">
+                            <div v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.phone') }} {{ $t('common.number') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
@@ -128,7 +128,7 @@ function openTemplates(): void {
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                                     {{ user?.getVisum() }}</dd>
                             </div>
-                            <div v-can="'CitizenStoreService.ListCitizens.Licenses'" class="sm:flex sm:px-6 sm:py-5">
+                            <div v-can="'CitizenStoreService.ListCitizens.Fields.Licenses'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.license', 2) }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
@@ -156,13 +156,13 @@ function openTemplates(): void {
 
         <div class="flex flex-col gap-2 px-2 py-4 pr-2 shrink-0 lg:w-96">
             <div class="flex-initial">
-                <button v-can="'CitizenStoreService.SetUserProps.Job'" type="button"
+                <button v-can="'CitizenStoreService.SetUserProps.Fields.Job'" type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="jobModal = true">
                     {{ $t('components.citizens.citizen_info_profile.set_job') }}
                 </button>
             </div>
-            <div class="flex-initial" v-can="'CitizenStoreService.SetUserProps.Wanted'">
+            <div class="flex-initial" v-can="'CitizenStoreService.SetUserProps.Fields.Wanted'">
                 <button type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="reasonOpen = true">{{ wantedState ?
@@ -178,7 +178,7 @@ function openTemplates(): void {
                 </button>
             </div>
             <div class="flex-initial">
-                <button v-can="'CitizenStoreService.SetUserProps.Wanted'" type="button"
+                <button v-can="'CitizenStoreService.SetUserProps.Fields.Wanted'" type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="clipboard.copy(w.location.href)">
                     {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}

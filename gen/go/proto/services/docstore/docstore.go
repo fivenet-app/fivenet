@@ -153,10 +153,18 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		DocumentId: resp.Document.Id,
 	})
 	if err != nil {
-		return nil, FailedQueryErr
+		if st, ok := status.FromError(err); !ok {
+			return nil, FailedQueryErr
+		} else {
+			// Ignore permission denied as we are simply getting the document
+			if st.Code() != codes.PermissionDenied {
+				return nil, err
+			}
+		}
 	}
-
-	resp.Access = docAccess.Access
+	if docAccess != nil {
+		resp.Access = docAccess.Access
+	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)
 

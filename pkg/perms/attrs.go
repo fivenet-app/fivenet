@@ -7,6 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -533,6 +534,29 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 	}
 
 	return p.convertRawToRoleAttributes(dest)
+}
+
+func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error) {
+	attrs, err := p.GetRoleAttributes(job, grade)
+	if err != nil {
+		return nil, err
+	}
+
+	as := []string{}
+	for _, attr := range attrs {
+		_ = attr
+
+		switch AttributeTypes(attr.Type) {
+		case StringListAttributeType:
+			aKey := BuildGuardWithKey(Category(attr.Category), Name(attr.Name), Key(attr.Key))
+			for _, v := range attr.Value.GetStringList().Strings {
+				guard := helpers.Guard(aKey + "." + v)
+				as = append(as, guard)
+			}
+		}
+	}
+
+	return as, nil
 }
 
 func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute) error {

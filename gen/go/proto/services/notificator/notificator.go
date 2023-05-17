@@ -272,7 +272,7 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, cu
 		currentUserInfo.JobGrade = char.JobGrade
 		currentUserInfo.Group = group
 
-		perms, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
+		ps, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
 			UserId:   userInfo.UserId,
 			Job:      userInfo.Job,
 			JobGrade: userInfo.JobGrade,
@@ -280,11 +280,17 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, cu
 		if err != nil {
 			return auth.NoPermsErr
 		}
+		tu.Permissions = ps.GuardNames()
 
-		tu.Permissions = perms.GuardNames()
 		if userInfo.SuperUser {
 			tu.Permissions = append(tu.Permissions, common.SuperuserPermission)
 		}
+
+		attrs, err := s.p.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
+		if err != nil {
+			return auth.NoPermsErr
+		}
+		tu.Permissions = append(tu.Permissions, attrs...)
 	}
 
 	return nil

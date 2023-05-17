@@ -43,7 +43,7 @@ function addToClipboard(): void {
         <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
             {{ user.getSex().toUpperCase() }}
         </td>
-        <td v-can="'CitizenStoreService.ListCitizens.PhoneNumber'"
+        <td v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'"
             class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
             {{ user.getPhoneNumber() }}
         </td>

@@ -474,7 +474,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	// Load permissions of user
-	perms, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
+	userPs, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
 		UserId:   char.UserId,
 		Job:      char.Job,
 		JobGrade: char.JobGrade,
@@ -482,12 +482,17 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	if err != nil {
 		return nil, GenericLoginErr
 	}
-
-	ps := perms.GuardNames()
+	ps := userPs.GuardNames()
 
 	if utils.InStringSlice(config.C.Game.SuperuserGroups, userGroup) {
 		ps = append(ps, common.SuperuserPermission)
 	}
+
+	attrs, err := s.p.FlattenRoleAttributes(char.Job, char.JobGrade)
+	if err != nil {
+		return nil, GenericLoginErr
+	}
+	ps = append(ps, attrs...)
 
 	if len(ps) == 0 {
 		return nil, UnableToChooseCharErr

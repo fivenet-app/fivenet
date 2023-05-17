@@ -46,6 +46,10 @@ func BuildGuard(category Category, name Name) string {
 	return helpers.Guard(fmt.Sprintf("%s.%s", category, name))
 }
 
+func BuildGuardWithKey(category Category, name Name, key Key) string {
+	return helpers.Guard(fmt.Sprintf("%s.%s.%s", category, name, key))
+}
+
 func (p *Perms) Register(defaultRolePerms []string) error {
 	if err := p.cleanupRoles(); err != nil {
 		return err
