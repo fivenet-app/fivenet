@@ -35,6 +35,8 @@ var (
 	InvalidRequestErr = status.Error(codes.InvalidArgument, "Invalid notificator stream request!")
 )
 
+const StartWaitTicks = 3
+
 type Server struct {
 	NotificatorServiceServer
 
@@ -173,6 +175,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		SuperUser:    userInfo.SuperUser,
 	}
 
+	waitTicks := StartWaitTicks
 	for {
 		resp := &StreamResponse{
 			LastId: req.LastId,
@@ -197,12 +200,18 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			resp.LastId = resp.Notifications[0].Id
 		}
 
-		if err := s.checkAndUpdateToken(srv.Context(), resp.Token); err != nil {
+		claims, err := s.checkAndUpdateToken(srv.Context(), resp.Token)
+		if err != nil {
 			return err
 		}
 
-		if err := s.checkAndUpdateUserInfo(srv.Context(), resp.Token, &currentUserInfo); err != nil {
-			return err
+		if waitTicks <= 0 {
+			if claims.CharID > 0 {
+				if err := s.checkAndUpdateUserInfo(srv.Context(), resp.Token, &currentUserInfo); err != nil {
+					return err
+				}
+			}
+			waitTicks = StartWaitTicks
 		}
 
 		if err := srv.Send(resp); err != nil {
@@ -215,24 +224,25 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		case <-srv.Context().Done():
 			return nil
 		case <-time.After(20 * time.Second):
+			waitTicks--
 		}
 	}
 }
 
-func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) error {
+func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) (*auth.CitizenInfoClaims, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return auth.InvalidTokenErr
+		return nil, auth.InvalidTokenErr
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return auth.InvalidTokenErr
+		return nil, auth.InvalidTokenErr
 	}
 
 	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
 		if claims.RenewedCount >= auth.TokenMaxRenews {
-			return auth.InvalidTokenErr
+			return nil, auth.InvalidTokenErr
 		}
 
 		// Increase re-newed count
@@ -241,14 +251,14 @@ func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) error
 		auth.SetTokenClaimsTimes(claims)
 		newToken, err := s.tm.NewWithClaims(claims)
 		if err != nil {
-			return auth.CheckTokenErr
+			return nil, auth.CheckTokenErr
 		}
 
 		tu.NewToken = &newToken
 		tu.Expires = timestamp.New(claims.ExpiresAt.Time)
 	}
 
-	return nil
+	return claims, nil
 }
 
 func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, currentUserInfo *userinfo.UserInfo) error {

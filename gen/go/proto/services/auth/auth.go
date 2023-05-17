@@ -212,7 +212,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, GenericLoginErr
+		return nil, ChangePasswordErr
 	}
 
 	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))

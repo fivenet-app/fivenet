@@ -84,10 +84,14 @@ async function streamNotifications(): Promise<void> {
             restartStream();
         });
 
-    console.debug('Notificator: Stream Started');
+    console.debug('Notificator: Stream started');
 }
 
 async function cancelStream(): Promise<void> {
+    if (stream.value === undefined) {
+        return;
+    }
+
     stream.value?.cancel();
     stream.value = undefined;
 }
@@ -109,13 +113,14 @@ async function restartStream(): Promise<void> {
 
 async function toggleStream(): Promise<void> {
     // Only stream notifications when a character is active
-    if (accessToken.value && activeChar.value) {
+    if (accessToken.value !== null && activeChar.value !== null) {
         streamNotifications();
-    } else if (stream.value !== undefined) {
+    } else {
         cancelStream();
     }
 }
 
+watch(accessToken, async () => toggleStream());
 watch(activeChar, async () => toggleStream());
 
 onMounted(async () => {
