@@ -58,14 +58,4 @@ CREATE TABLE IF NOT EXISTS `fivenet_role_permissions` (
   CONSTRAINT `fk_fivenet_role_permissions_role` FOREIGN KEY (`role_id`) REFERENCES `fivenet_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: fivenet_user_permissions
-CREATE TABLE IF NOT EXISTS `fivenet_user_permissions` (
-  `user_id` int(11) NOT NULL,
-  `permission_id` bigint(20) unsigned NOT NULL,
-  `val` tinyint(1) NOT NULL,
-  PRIMARY KEY (`user_id`,`permission_id`),
-  CONSTRAINT `fk_fivenet_user_permissions_permission` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_permissions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_user_permissions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 COMMIT;
