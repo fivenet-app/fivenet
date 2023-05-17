@@ -26,7 +26,6 @@ const selectedJob = ref<undefined | Job>();
 async function findJobs(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new CompleteJobsRequest();
-        req.setSearch(queryJob.value);
 
         try {
             const resp = await $grpc.getCompletorClient().

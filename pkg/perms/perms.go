@@ -66,7 +66,7 @@ type Perms struct {
 	// Perm ID to map Key -> cached attribute
 	permIDToAttrsMap syncx.Map[uint64, map[Key]cacheAttr]
 	// Role ID to map of Key -> cached role attribute
-	roleIDToAttrMap syncx.Map[uint64, map[Key]cacheRoleAttr]
+	roleIDToAttrMap syncx.Map[uint64, map[uint64]cacheRoleAttr]
 
 	userCanCacheTTL time.Duration
 	userCanCache    *cache.Cache[int32, map[uint64]bool]
@@ -89,7 +89,7 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 		rolePermsMap:     syncx.Map[uint64, map[uint64]bool]{},
 
 		permIDToAttrsMap: syncx.Map[uint64, map[Key]cacheAttr]{},
-		roleIDToAttrMap:  syncx.Map[uint64, map[Key]cacheRoleAttr]{},
+		roleIDToAttrMap:  syncx.Map[uint64, map[uint64]cacheRoleAttr]{},
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
@@ -199,6 +199,7 @@ func (p *Perms) loadRolePermissions() error {
 func (p *Perms) loadRoleAttributes() error {
 	stmt := tRoleAttrs.
 		SELECT(
+			tRoleAttrs.AttrID.AS("attr_id"),
 			tRoleAttrs.RoleID.AS("role_id"),
 			tAttrs.Key.AS("key"),
 			tAttrs.Type.AS("type"),
@@ -213,6 +214,7 @@ func (p *Perms) loadRoleAttributes() error {
 		)
 
 	var dest []struct {
+		AttrID      uint64
 		RoleID      uint64
 		Key         Key
 		Type        AttributeTypes
@@ -227,7 +229,7 @@ func (p *Perms) loadRoleAttributes() error {
 	}
 
 	for _, v := range dest {
-		if err := p.addOrUpdateRoleAttributeInMap(v.RoleID, v.Key, v.Type, v.Value, v.ValidValues); err != nil {
+		if err := p.addOrUpdateRoleAttributeInMap(v.RoleID, v.AttrID, v.Type, v.Value, v.ValidValues); err != nil {
 			return err
 		}
 	}
@@ -235,7 +237,7 @@ func (p *Perms) loadRoleAttributes() error {
 	return nil
 }
 
-func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, key Key, aType AttributeTypes, value string, validValues string) error {
+func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, attrId uint64, aType AttributeTypes, value string, validValues string) error {
 	val := &permissions.AttributeValues{}
 	if err := p.convertRawValue(val, value, aType); err != nil {
 		return err
@@ -246,18 +248,18 @@ func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, key Key, aType Attr
 		return err
 	}
 
-	p.updateRoleAttributeInMap(roleId, key, aType, val)
+	p.updateRoleAttributeInMap(roleId, attrId, aType, val)
 
 	return nil
 }
 
-func (p *Perms) updateRoleAttributeInMap(roleId uint64, key Key, aType AttributeTypes, value *permissions.AttributeValues) {
+func (p *Perms) updateRoleAttributeInMap(roleId uint64, attrId uint64, aType AttributeTypes, value *permissions.AttributeValues) {
 	attrMap, ok := p.roleIDToAttrMap.Load(roleId)
 	if !ok || attrMap == nil {
-		attrMap = map[Key]cacheRoleAttr{}
+		attrMap = map[uint64]cacheRoleAttr{}
 	}
 
-	attrMap[key] = cacheRoleAttr{
+	attrMap[attrId] = cacheRoleAttr{
 		Type:  aType,
 		Value: value,
 	}
@@ -265,14 +267,14 @@ func (p *Perms) updateRoleAttributeInMap(roleId uint64, key Key, aType Attribute
 	p.roleIDToAttrMap.Store(roleId, attrMap)
 }
 
-func (p *Perms) removeRoleAttributeFromMap(roleId uint64, key Key) {
+func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
 	attrMap, ok := p.roleIDToAttrMap.Load(roleId)
 	if !ok || attrMap == nil {
 		return
 	}
 
-	if _, ok := attrMap[key]; ok {
-		delete(attrMap, key)
+	if _, ok := attrMap[attrId]; ok {
+		delete(attrMap, attrId)
 		p.roleIDToAttrMap.Store(roleId, attrMap)
 	}
 }

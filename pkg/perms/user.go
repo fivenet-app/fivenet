@@ -7,6 +7,7 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 )
 
@@ -97,17 +98,22 @@ func (p *Perms) lookupRoleIDForJobAndGrade(job string, grade int32) (uint64, boo
 }
 
 func (p *Perms) getRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64, bool) {
-	grades, ok := p.jobsToRoleIDMap.Load(job)
+	gradesMap, ok := p.jobsToRoleIDMap.Load(job)
 	if !ok {
 		return nil, false
 	}
 
-	gradeList := []uint64{}
-	for g, value := range grades {
+	grades := []int32{}
+	for g := range gradesMap {
 		if g > grade {
 			continue
 		}
-		gradeList = append(gradeList, value)
+		grades = append(grades, g)
+	}
+	utils.SortInt32Slice(grades)
+	gradeList := []uint64{}
+	for i := 0; i < len(grades); i++ {
+		gradeList = append(gradeList, gradesMap[grades[i]])
 	}
 
 	return gradeList, true

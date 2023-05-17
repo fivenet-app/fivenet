@@ -297,8 +297,17 @@ func (p *Perms) UpdateAttribute(attrId uint64, permId uint64, key Key, aType Att
 	return nil
 }
 
-func (p *Perms) getClosestRoleAttr(job string, grade int32, key Key) *cacheRoleAttr {
+func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key Key) *cacheRoleAttr {
 	roleIds, ok := p.getRoleIDsForJobUpToGrade(job, grade)
+	if !ok {
+		return nil
+	}
+
+	pAttrs, ok := p.permIDToAttrsMap.Load(permId)
+	if !ok {
+		return nil
+	}
+	attrId, ok := pAttrs[key]
 	if !ok {
 		return nil
 	}
@@ -308,7 +317,7 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, key Key) *cacheRoleA
 		if !ok {
 			continue
 		}
-		val, ok := as[key]
+		val, ok := as[attrId.ID]
 		if !ok {
 			continue
 		}
@@ -320,14 +329,15 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, key Key) *cacheRoleA
 }
 
 func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error) {
+	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
+	if !ok {
+		return nil, nil
+	}
+
 	var cached *cacheRoleAttr
 	if !userInfo.SuperUser {
-		cached = p.getClosestRoleAttr(userInfo.Job, userInfo.JobGrade, key)
+		cached = p.getClosestRoleAttr(userInfo.Job, userInfo.JobGrade, permId, key)
 	} else {
-		permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
-		if !ok {
-			return nil, nil
-		}
 		attrs, ok := p.permIDToAttrsMap.Load(permId)
 		if !ok {
 			return nil, nil
@@ -587,7 +597,7 @@ func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute)
 			}
 		}
 
-		p.updateRoleAttributeInMap(attrs[i].RoleId, Key(attrs[i].Key), AttributeTypes(attrs[i].Type), attrs[i].Value)
+		p.updateRoleAttributeInMap(attrs[i].RoleId, attrs[i].AttrId, AttributeTypes(attrs[i].Type), attrs[i].Value)
 	}
 
 	return nil
@@ -613,7 +623,7 @@ func (p *Perms) UpdateRoleAttributes(attrs ...*permissions.RoleAttribute) error 
 			}
 		}
 
-		p.updateRoleAttributeInMap(attrs[i].RoleId, Key(attrs[i].Key), AttributeTypes(attrs[i].Type), attrs[i].Value)
+		p.updateRoleAttributeInMap(attrs[i].RoleId, attrs[i].AttrId, AttributeTypes(attrs[i].Type), attrs[i].Value)
 	}
 
 	return nil
@@ -637,7 +647,7 @@ func (p *Perms) RemoveAttributesFromRole(roleId uint64, attrs ...*permissions.Ro
 	}
 
 	for i := 0; i < len(attrs); i++ {
-		p.removeRoleAttributeFromMap(roleId, Key(attrs[i].Key))
+		p.removeRoleAttributeFromMap(roleId, attrs[i].AttrId)
 	}
 
 	return nil
