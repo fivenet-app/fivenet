@@ -139,7 +139,8 @@ onMounted(() => {
                         </div>
                     </div>
                     <div v-else-if="type === 'JobList'" class="flex flex-row gap-4 flex-wrap">
-                        <div v-for="job in props.jobs" :key="job.getName()" class="flex flex-row flex-initial flex-nowrap">
+                        <div v-for="job in props.jobs.filter(j => !validValues?.getJobList()?.getStringsList().length || validValues.getJobList()?.getStringsList().includes(j.getName()))"
+                            :key="job.getName()" class="flex flex-row flex-initial flex-nowrap">
                             <input :id="job.getName()" :name="job.getName()" type="checkbox"
                                 :checked="!!getState().getJobList()?.getStringsList().find(v => v === job.getName())"
                                 @click="toggleJobListValue(job.getName())"
