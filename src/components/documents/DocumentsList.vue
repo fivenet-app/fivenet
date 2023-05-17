@@ -10,12 +10,18 @@ import TemplatesModal from './templates/TemplatesModal.vue';
 import { RpcError } from 'grpc-web';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
+import { CompleteDocumentCategoriesRequest } from '@fivenet/gen/services/completor/completor_pb';
 
 const { $grpc } = useNuxtApp();
 
-const search = ref({ title: '', });
+const search = ref<{ title: string, category?: DocumentCategory }>({ title: '' });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
+
+const entriesCategories = ref<DocumentCategory[]>([]);
+const queryCategories = ref<string>('');
 
 const { data: documents, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
 
@@ -25,6 +31,7 @@ async function listDocuments(): Promise<Array<Document>> {
         req.setPagination((new PaginationRequest()).setOffset(offset.value));
         req.setOrderbyList([]);
         req.setSearch(search.value.title);
+        if (search.value.category) req.setCategoryIdsList([search.value.category.getId()]);
 
         try {
             const resp = await $grpc.getDocStoreClient().
@@ -32,6 +39,23 @@ async function listDocuments(): Promise<Array<Document>> {
 
             pagination.value = resp.getPagination();
             return res(resp.getDocumentsList());
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+async function findCategories(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const req = new CompleteDocumentCategoriesRequest();
+            req.setSearch(queryCategories.value);
+
+            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req, null)
+            entriesCategories.value = resp.getCategoriesList();
+
+            return res();
         } catch (e) {
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
@@ -50,6 +74,11 @@ const templatesOpen = ref(false);
 
 watch(offset, async () => refresh());
 watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
+watchDebounced(queryCategories, async () => findCategories(), { debounce: 600, maxWait: 1400 });
+
+onMounted(async () => {
+    findCategories();
+});
 </script>
 
 <template>
@@ -67,6 +96,37 @@ watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 14
                                 <input v-model="search.title" ref="searchInput" type="text" name="search" id="search"
                                     :placeholder="$t('common.title')"
                                     class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                            </div>
+                            <div class="flex-1 form-control">
+                                <Combobox as="div" v-model="search.category" nullable>
+                                    <div class="relative">
+                                        <ComboboxButton as="div">
+                                            <ComboboxInput
+                                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                @change="queryCategories = $event.target.value"
+                                                :display-value="(category: any) => category?.getName()"
+                                                placeholder="Category" />
+                                        </ComboboxButton>
+
+                                        <ComboboxOptions v-if="entriesCategories.length > 0"
+                                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
+                                            <ComboboxOption v-for="category in entriesCategories" :key="category.getId()"
+                                                :value="category" as="category" v-slot="{ active, selected }">
+                                                <li
+                                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                                    <span :class="['block truncate', selected && 'font-semibold']">
+                                                        {{ category.getName() }}
+                                                    </span>
+
+                                                    <span v-if="selected"
+                                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                    </span>
+                                                </li>
+                                            </ComboboxOption>
+                                        </ComboboxOptions>
+                                    </div>
+                                </Combobox>
                             </div>
                             <div class="flex-initial form-control" v-can="'DocStoreService.CreateDocument'">
                                 <button @click="templatesOpen = true"
