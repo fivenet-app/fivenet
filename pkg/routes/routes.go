@@ -49,6 +49,10 @@ func (r *Routes) Register(e *gin.Engine, oa2 *oauth2.OAuth2) {
 		g.POST("/config", func(c *gin.Context) {
 			c.JSON(http.StatusOK, r.clientCfg)
 		})
+		g.GET("/clear-site-data", func(c *gin.Context) {
+			c.Header("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"")
+			c.JSON(http.StatusOK, "Your local site data should be cleared now, please go back to the FiveNet homepage yourself.")
+		})
 	}
 
 	// OAuth2
