@@ -20,6 +20,7 @@ var (
 	InvalidRequestErr    = status.Error(codes.InvalidArgument, "Invalid role action requested!")
 	NoPermissionErr      = status.Error(codes.PermissionDenied, "No permission to create/change/delete role!")
 	RoleAlreadyExistsErr = status.Error(codes.InvalidArgument, "Role already exists!")
+	OwnRoleDeletionErr   = status.Error(codes.InvalidArgument, "Can't delete your own role!")
 )
 
 var (
@@ -266,7 +267,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 
 	// Don't allow deleting the own or higher role
 	if role.Grade >= userInfo.JobGrade {
-		return nil, InvalidRequestErr
+		return nil, OwnRoleDeletionErr
 	}
 
 	if err := s.p.DeleteRole(role.ID); err != nil {
