@@ -3,6 +3,7 @@ package docstore
 import (
 	context "context"
 	"errors"
+	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -132,24 +133,6 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 		ids[i] = jet.Uint64(documentIds[i])
 	}
 
-	condition := jet.AND(
-		tDocs.ID.IN(ids...),
-		tDocs.DeletedAt.IS_NULL(),
-		jet.OR(
-			tDocs.Public.IS_TRUE(),
-			tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-			jet.AND(
-				tDUserAccess.Access.IS_NOT_NULL(),
-				tDUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
-			),
-			jet.AND(
-				tDUserAccess.Access.IS_NULL(),
-				tDJobAccess.Access.IS_NOT_NULL(),
-				tDJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
-			),
-		),
-	)
-
 	stmt := tDocs.
 		SELECT(
 			tDocs.ID,
@@ -165,9 +148,27 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
-		WHERE(condition).
+		WHERE(jet.AND(
+			tDocs.ID.IN(ids...),
+			tDocs.DeletedAt.IS_NULL(),
+			jet.OR(
+				tDocs.Public.IS_TRUE(),
+				tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				jet.AND(
+					tDUserAccess.Access.IS_NOT_NULL(),
+					tDUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
+				),
+				jet.AND(
+					tDUserAccess.Access.IS_NULL(),
+					tDJobAccess.Access.IS_NOT_NULL(),
+					tDJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
+				),
+			),
+		)).
 		GROUP_BY(tDocs.ID).
 		ORDER_BY(tDocs.ID.DESC(), tDJobAccess.MinimumGrade)
+
+	fmt.Println(stmt.DebugSql())
 
 	var dest struct {
 		IDs []uint64 `alias:"document.id"`
