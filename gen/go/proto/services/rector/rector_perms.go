@@ -101,7 +101,7 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 		attr := dbAttrs[0]
 
 		// If the attribute valid values is null, nothing to validate
-		if attrs[i].Value != nil && attr.ValidValues != nil {
+		if attrs[i].Value != nil && attrs[i].Value.ValidValues != nil && attr.ValidValues != nil {
 			switch perms.AttributeTypes(attr.Type) {
 			case perms.StringListAttributeType:
 				if attr.ValidValues.GetStringList() != nil && attr.ValidValues.GetStringList().Strings != nil {

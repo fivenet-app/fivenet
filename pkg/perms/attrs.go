@@ -604,7 +604,6 @@ func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute)
 			switch AttributeTypes(attrs[i].Type) {
 			case StringListAttributeType:
 				if attrs[i].Value.GetStringList() == nil || attrs[i].Value.GetStringList().Strings == nil {
-					attrs[i].Value.GetStringList().Strings = []string{}
 					attrs[i].Value.ValidValues = &permissions.AttributeValues_StringList{
 						StringList: &permissions.StringList{
 							Strings: []string{},
@@ -618,7 +617,6 @@ func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute)
 				}
 			case JobListAttributeType:
 				if attrs[i].Value.GetJobList() == nil || attrs[i].Value.GetJobList().Strings == nil {
-					attrs[i].Value.GetJobList().Strings = []string{}
 					attrs[i].Value.ValidValues = &permissions.AttributeValues_JobList{
 						JobList: &permissions.StringList{
 							Strings: []string{},
