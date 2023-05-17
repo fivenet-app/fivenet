@@ -36,28 +36,41 @@ const attrStates = ref<Map<number, AttributeValues | undefined>>(new Map());
 const jobs = ref<Job[]>([]);
 
 async function getRole(): Promise<void> {
-    const req = new GetRoleRequest();
-    req.setId(props.roleId);
+    return new Promise(async (res, rej) => {
+        const req = new GetRoleRequest();
+        req.setId(props.roleId);
 
-    try {
-        const resp = await $grpc.getRectorClient().getRole(req, null);
+        try {
+            const resp = await $grpc.getRectorClient().getRole(req, null);
 
-        role.value = resp.getRole();
-        role.value?.getAttributesList().forEach(attr => {
-            attrStates.value.set(attr.getAttrId(), attr.getValue())
-        });
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            role.value = resp.getRole();
+            role.value?.getAttributesList().forEach(attr => {
+                attrStates.value.set(attr.getAttrId(), attr.getValue())
+            });
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function prepareAttributeData(): Promise<void> {
-    const req = new CompleteJobsRequest();
-    req.setSearch('')
+    return new Promise(async (res, rej) => {
+        try {
+            const req = new CompleteJobsRequest();
+            req.setSearch('')
 
-    const resp = await $grpc.getCompletorClient().completeJobs(req, null);
-    jobs.value = resp.getJobsList();
+            const resp = await $grpc.getCompletorClient().completeJobs(req, null);
+            jobs.value = resp.getJobsList();
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function deleteRole(): Promise<void> {
@@ -84,18 +97,22 @@ async function deleteRole(): Promise<void> {
 }
 
 async function getPermissions(): Promise<void> {
-    const req = new GetPermissionsRequest();
+    return new Promise(async (res, rej) => {
+        const req = new GetPermissionsRequest();
 
-    try {
-        const resp = await $grpc.getRectorClient().getPermissions(req, null);
-        permList.value = resp.getPermissionsList();
-        attrList.value = resp.getAttributesList();
+        try {
+            const resp = await $grpc.getRectorClient().getPermissions(req, null);
+            permList.value = resp.getPermissionsList();
+            attrList.value = resp.getAttributesList();
 
-        genPermissionCategories();
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-        return;
-    }
+            genPermissionCategories();
+
+            return res();
+        } catch (e) {
+            $grpc.handleRPCError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function genPermissionCategories(): Promise<void> {
@@ -215,8 +232,7 @@ onMounted(async () => {
                             class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2">
                             <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
                                 <div v-for="(perm, idx) in permList.filter(p => p.getCategory() === category)"
-                                    :key="perm.getId()"
-                                    class="flex flex-col gap-2">
+                                    :key="perm.getId()" class="flex flex-col gap-2">
                                     <div class="flex flex-row gap-4">
                                         <div class="flex flex-1 flex-col my-auto">
                                             <span class="truncate lg:max-w-full max-w-xs">
@@ -248,8 +264,8 @@ onMounted(async () => {
                                         </div>
                                     </div>
                                     <RoleViewAttr v-for="attr in attrList.filter(a => a.getPermissionId() === perm.getId())"
-                                        :attribute="attr" v-model:states="attrStates" :disabled="permStates.get(perm.getId()) !== true"
-                                        :jobs="jobs" />
+                                        :attribute="attr" v-model:states="attrStates"
+                                        :disabled="permStates.get(perm.getId()) !== true" :jobs="jobs" />
                                     <div v-if="idx !== permList.filter(p => p.getCategory() === category).length - 1"
                                         class="w-full border-t border-neutral/20" />
                                 </div>
