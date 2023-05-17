@@ -35,6 +35,7 @@ const { t } = useI18n();
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
 const router = useRouter();
+const route = useRoute();
 
 const sidebarNavigation: { name: string, href: RoutesNamedLocations, permission: string, icon: FunctionalComponent, position: 'top' | 'bottom', current: boolean }[] = [
     {
@@ -411,7 +412,7 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                 <section aria-labelledby="primary-heading" class="h-full min-w-0 lg:order-last">
                     <slot></slot>
                     <QuickButtons
-                        v-if="activeChar && ($route.meta.showQuickButtons === undefined || $route.meta.showQuickButtons)" />
+                        v-if="activeChar && (route.meta.showQuickButtons === undefined || route.meta.showQuickButtons)" />
                 </section>
             </main>
         </div>

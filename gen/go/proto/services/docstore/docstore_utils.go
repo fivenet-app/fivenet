@@ -3,7 +3,6 @@ package docstore
 import (
 	context "context"
 	"errors"
-	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -167,8 +166,6 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 		)).
 		GROUP_BY(tDocs.ID).
 		ORDER_BY(tDocs.ID.DESC(), tDJobAccess.MinimumGrade)
-
-	fmt.Println(stmt.DebugSql())
 
 	var dest struct {
 		IDs []uint64 `alias:"document.id"`

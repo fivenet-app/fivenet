@@ -8,5 +8,5 @@ const { jobProps } = storeToRefs(authStore);
 </script>
 
 <template>
-    <QuickButton v-for="prop in jobProps?.quickButtons" :comp="(prop as QuickButtonTypes)" />
+    <QuickButton v-for="button in jobProps?.quickButtons" :comp="(button as QuickButtonTypes)" />
 </template>

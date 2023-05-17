@@ -61,6 +61,8 @@ async function setJob(): Promise<void> {
             ];
             if (resp.hasJobProps()) {
                 promises.push(setJobProps(resp.getJobProps()!));
+            } else {
+                setJobProps(null);
             }
             await Promise.all(promises);
 

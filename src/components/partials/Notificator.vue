@@ -53,11 +53,11 @@ async function streamNotifications(): Promise<void> {
                 if (tokenUpdate.hasUserInfo()) {
                     setActiveChar(tokenUpdate.getUserInfo()!);
                     setPermissions(tokenUpdate.getPermissionsList());
-                }
-                if (tokenUpdate.hasJobProps()) {
-                    setJobProps(tokenUpdate.getJobProps()!);
-                } else {
-                    setJobProps(null);
+                    if (tokenUpdate.hasJobProps()) {
+                        setJobProps(tokenUpdate.getJobProps()!);
+                    } else {
+                        setJobProps(null);
+                    }
                 }
 
                 if (tokenUpdate.hasNewToken() && tokenUpdate.hasExpires()) {
@@ -91,6 +91,7 @@ async function cancelStream(): Promise<void> {
     if (stream.value === undefined) {
         return;
     }
+    console.debug("Notificator: Stream cancelled");
 
     stream.value?.cancel();
     stream.value = undefined;
