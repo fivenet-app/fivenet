@@ -203,7 +203,7 @@ function saveToStore(): void {
     documentStore.save(doc.value);
     setTimeout(() => {
         saving.value = false;
-    }, 750);
+    }, 850);
 }
 
 watchDebounced(doc.value, () => saveToStore(), { debounce: 1250, maxWait: 3500 });
