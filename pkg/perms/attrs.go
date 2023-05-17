@@ -568,8 +568,13 @@ func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute)
 			var err error
 			switch AttributeTypes(attrs[i].Type) {
 			case StringListAttributeType:
-				if attrs[i].Value.GetStringList().Strings == nil {
+				if attrs[i].Value.GetStringList() == nil || attrs[i].Value.GetStringList().Strings == nil {
 					attrs[i].Value.GetStringList().Strings = []string{}
+					attrs[i].Value.ValidValues = &permissions.AttributeValues_StringList{
+						StringList: &permissions.StringList{
+							Strings: []string{},
+						},
+					}
 				}
 
 				out, err = json.MarshalToString(attrs[i].Value.GetStringList().Strings)
@@ -577,8 +582,13 @@ func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute)
 					return err
 				}
 			case JobListAttributeType:
-				if attrs[i].Value.GetJobList().Strings == nil {
+				if attrs[i].Value.GetJobList() == nil || attrs[i].Value.GetJobList().Strings == nil {
 					attrs[i].Value.GetJobList().Strings = []string{}
+					attrs[i].Value.ValidValues = &permissions.AttributeValues_JobList{
+						JobList: &permissions.StringList{
+							Strings: []string{},
+						},
+					}
 				}
 
 				out, err = json.MarshalToString(attrs[i].Value.GetJobList().Strings)
@@ -586,8 +596,12 @@ func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute)
 					return err
 				}
 			case JobGradeListAttributeType:
-				if attrs[i].Value.GetJobGradeList().Jobs == nil {
-					attrs[i].Value.GetJobGradeList().Jobs = map[string]int32{}
+				if attrs[i].Value.GetJobGradeList() == nil || attrs[i].Value.GetJobGradeList().Jobs == nil {
+					attrs[i].Value.ValidValues = &permissions.AttributeValues_JobGradeList{
+						JobGradeList: &permissions.JobGradeList{
+							Jobs: map[string]int32{},
+						},
+					}
 				}
 
 				out, err = json.MarshalToString(attrs[i].Value.GetJobGradeList().Jobs)

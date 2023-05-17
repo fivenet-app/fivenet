@@ -553,8 +553,8 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 		return nil, err
 	}
 
-	userInfo.OrigJob = userInfo.Job
-	userInfo.OrigJobGrade = userInfo.JobGrade
+	userInfo.OrigJob = char.Job
+	userInfo.OrigJobGrade = char.JobGrade
 	userInfo.Job = job.Name
 	userInfo.JobGrade = jobGrade
 

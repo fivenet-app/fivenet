@@ -115,7 +115,7 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 					}
 				}
 			case perms.JobGradeListAttributeType:
-				if attr.ValidValues.GetJobGradeList() != nil && attrs[i].Value.GetJobGradeList().Jobs != nil {
+				if attr.ValidValues.GetJobGradeList() != nil && attr.ValidValues.GetJobGradeList().Jobs != nil {
 					if !perms.ValidateJobGradeList(attrs[i].Value.GetJobGradeList().Jobs) {
 						return fmt.Errorf("invalid job/ grade in job grade list")
 					}
@@ -357,11 +357,11 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 
 func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetRoles, attrUpdates *AttrsUpdate) error {
 	if err := s.filterAttributes(ctx, attrUpdates.ToUpdate); err != nil {
-		return InvalidRequestErr
+		return err
 	}
 
 	if err := s.filterAttributes(ctx, attrUpdates.ToRemove); err != nil {
-		return InvalidRequestErr
+		return err
 	}
 
 	if len(attrUpdates.ToUpdate) > 0 {
