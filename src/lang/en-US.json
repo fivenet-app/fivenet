@@ -293,7 +293,8 @@
             "access_token_expiration": "Access Token Expiration",
             "reset_clipboard": "Reset Clipboard",
             "debug_functions": "Debug Functions",
-            "reset_local_storage": "Reset Local Storage"
+            "reset_local_storage": "Reset Local Storage",
+            "factory_reset": "Factory Reset FiveNet App"
         },
         "penaltycalculator": {
             "title": "Penalty Calculator",

@@ -62,6 +62,7 @@ async function resetLocalStorage(): Promise<void> {
                         {{ $t('components.debug_info.debug_functions') }}
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                        <span class="isolate inline-flex rounded-md shadow-sm">
                         <button type="button" @click="clipboardStore.clear()"
                             class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
                             {{ $t('components.debug_info.reset_clipboard') }}
@@ -70,6 +71,11 @@ async function resetLocalStorage(): Promise<void> {
                             class="rounded-md bg-base-500 py-2.5 px-3.5 ml-2 text-sm font-semibold text-neutral hover:bg-base-400">
                             {{ $t('components.debug_info.reset_local_storage') }}
                         </button>
+                        <NuxtLink :external="true" to="/api/clear-site-data"
+                            class="rounded-md bg-red-800 text-center py-2.5 px-3.5 ml-2 text-sm font-semibold text-neutral hover:bg-red-600">
+                            {{ $t('components.debug_info.factory_reset') }}
+                        </NuxtLink>
+                    </span>
                     </dd>
                 </div>
                 <div v-if="permissions.length > 0" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">

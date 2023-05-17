@@ -51,7 +51,7 @@ func (r *Routes) Register(e *gin.Engine, oa2 *oauth2.OAuth2) {
 		})
 		g.GET("/clear-site-data", func(c *gin.Context) {
 			c.Header("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"")
-			c.JSON(http.StatusOK, "Your local site data should be cleared now, please go back to the FiveNet homepage yourself.")
+			c.String(http.StatusOK, "Your local site data should be cleared now, please go back to the FiveNet homepage yourself.")
 		})
 	}
 

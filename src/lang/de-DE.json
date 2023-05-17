@@ -293,7 +293,8 @@
             "access_token_expiration": "Ablauf des Zugangstokens",
             "reset_clipboard": "Clipboard zurücksetzen",
             "debug_functions": "Debug-Funktionen",
-            "reset_local_storage": "Lokalen Browser Storage zurücksetzen"
+            "reset_local_storage": "Lokalen Browser Storage zurücksetzen",
+            "factory_reset": "FiveNet App auf Standard zurücksetzen"
         },
         "penaltycalculator": {
             "title": "Strafenrechner",
