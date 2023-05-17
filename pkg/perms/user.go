@@ -20,11 +20,12 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 	}
 
 	ps := p.getRolePermissionsFromCache(roleIds)
+	perms := make(collections.Permissions, len(ps))
+
 	if len(ps) == 0 {
-		return nil, fmt.Errorf("failed to get role permissions from cache")
+		return perms, nil
 	}
 
-	perms := make(collections.Permissions, len(ps))
 	for i := 0; i < len(ps); i++ {
 		perms[i] = &model.FivenetPermissions{
 			ID:        ps[i].ID,

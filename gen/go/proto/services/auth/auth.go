@@ -487,7 +487,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		JobGrade: char.JobGrade,
 	})
 	if err != nil {
-		return nil, GenericLoginErr
+		return nil, err
 	}
 	ps := userPs.GuardNames()
 
