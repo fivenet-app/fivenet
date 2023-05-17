@@ -26,6 +26,7 @@ const selectedJob = ref<undefined | Job>();
 async function findJobs(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new CompleteJobsRequest();
+        req.setSearch(queryJob.value);
 
         try {
             const resp = await $grpc.getCompletorClient().
@@ -72,8 +73,10 @@ async function setJob(): Promise<void> {
 
             await navigateTo({ name: 'overview' });
 
+            queryJob.value = '';
             return res();
         } catch (e) {
+            queryJob.value = '';
             $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }

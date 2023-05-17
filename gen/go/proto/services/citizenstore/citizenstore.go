@@ -263,38 +263,41 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		return nil, FailedQueryErr
 	}
 
-	if resp.User != nil {
-		if utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
-			// Make sure user has permission to see that grade
-			jobGradesAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceGetUserJobsPermField)
-			if err != nil {
-				return nil, FailedQueryErr
-			}
-			var jobGrades perms.JobGradeList
-			if jobGradesAttr != nil {
-				jobGrades = jobGradesAttr.(map[string]int32)
-			}
-
-			if len(jobGrades) == 0 {
-				return nil, JobGradeNoPermissionErr
-			}
-
-			grade, ok := jobGrades[resp.User.Job]
-			if ok && grade > resp.User.JobGrade {
-				return nil, JobGradeNoPermissionErr
-			}
-		} else {
-			resp.User.Job = config.C.Game.UnemployedJob.Name
-			resp.User.JobGrade = config.C.Game.UnemployedJob.Grade
-		}
-
-		if resp.User.Props != nil && resp.User.Props.Job != nil {
-			resp.User.Job = *resp.User.Props.JobName
-			resp.User.JobGrade = 0
-		}
-
-		s.c.EnrichJobInfo(resp.User)
+	if resp.User.UserId <= 0 {
+		return nil, JobGradeNoPermissionErr
 	}
+
+	if utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
+		// Make sure user has permission to see that grade
+		jobGradesAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceGetUserPerm, CitizenStoreServiceGetUserJobsPermField)
+		if err != nil {
+			return nil, FailedQueryErr
+		}
+		var jobGrades perms.JobGradeList
+		if jobGradesAttr != nil {
+			jobGrades = jobGradesAttr.(map[string]int32)
+		}
+
+		if len(jobGrades) == 0 {
+			return nil, JobGradeNoPermissionErr
+		}
+
+		// Make sure user has permission to see that grade, otherwise "hide" the user's job
+		grade, ok := jobGrades[resp.User.Job]
+		if !ok || grade > resp.User.JobGrade {
+			return nil, JobGradeNoPermissionErr
+		}
+	} else {
+		resp.User.Job = config.C.Game.UnemployedJob.Name
+		resp.User.JobGrade = config.C.Game.UnemployedJob.Grade
+	}
+
+	if resp.User.Props != nil && resp.User.Props.Job != nil {
+		resp.User.Job = *resp.User.Props.JobName
+		resp.User.JobGrade = 0
+	}
+
+	s.c.EnrichJobInfo(resp.User)
 
 	// Check if user can see licenses and fetch them
 	if utils.InStringSlice(fields, "Licenses") {

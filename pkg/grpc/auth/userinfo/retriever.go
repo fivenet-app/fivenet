@@ -91,14 +91,21 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 }
 
 func (ui *UIRetriever) SetUserInfo(ctx context.Context, accountId uint64, job string, jobGrade int32) error {
+	jobVal := jet.NULL
+	jobGradeVal := jet.NULL
+	if job != "" && jobGrade > 0 {
+		jobVal = jet.String(job)
+		jobGradeVal = jet.Int32(jobGrade)
+	}
+
 	stmt := tFivenetAccounts.
 		UPDATE(
 			tFivenetAccounts.OverrideJob,
 			tFivenetAccounts.OverrideJobGrade,
 		).
 		SET(
-			tFivenetAccounts.OverrideJob.SET(jet.String(job)),
-			tFivenetAccounts.OverrideJobGrade.SET(jet.Int32(jobGrade)),
+			tFivenetAccounts.OverrideJob.SET(jet.StringExp(jobVal)),
+			tFivenetAccounts.OverrideJobGrade.SET(jet.IntExp(jobGradeVal)),
 		).
 		WHERE(
 			tFivenetAccounts.ID.EQ(jet.Uint64(accountId)),

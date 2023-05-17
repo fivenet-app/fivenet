@@ -468,6 +468,13 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, NoCharacterFoundErr
 	}
 
+	// Reset override jobs when choosing a character
+	if account.OverrideJob != nil {
+		if err := s.ui.SetUserInfo(ctx, claims.AccID, "", 0); err != nil {
+			return nil, GenericLoginErr
+		}
+	}
+
 	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
 	if err != nil {
 		return nil, GenericLoginErr

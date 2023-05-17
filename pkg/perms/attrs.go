@@ -336,9 +336,8 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 	}
 
 	var cached *cacheRoleAttr
-	if !userInfo.SuperUser {
-		cached = p.getClosestRoleAttr(userInfo.Job, userInfo.JobGrade, permId, key)
-	} else {
+	cached = p.getClosestRoleAttr(userInfo.Job, userInfo.JobGrade, permId, key)
+	if userInfo.SuperUser {
 		attrs, ok := p.permIDToAttrsMap.Load(permId)
 		if !ok {
 			return nil, nil
@@ -347,9 +346,11 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 		if !ok {
 			return nil, nil
 		}
-		cached = &cacheRoleAttr{
-			Type:  attr.Type,
-			Value: attr.ValidValues,
+		if attr.ValidValues != nil {
+			cached = &cacheRoleAttr{
+				Type:  attr.Type,
+				Value: attr.ValidValues,
+			}
 		}
 	}
 
