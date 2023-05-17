@@ -218,14 +218,8 @@ export class GRPCClients {
 }
 
 export class AuthInterceptor implements UnaryInterceptor<any, any> {
-    private authStore;
-
-    constructor() {
-        this.authStore = useAuthStore();
-    }
-
     intercept(request: any, invoker: any) {
-        const { accessToken } = this.authStore;
+        const { accessToken } = useAuthStore();
         if (accessToken !== null) {
             const metadata = request.getMetadata();
             metadata.Authorization = 'Bearer ' + accessToken;

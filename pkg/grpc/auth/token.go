@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	TokenExpireTime  = 24 * time.Hour
-	TokenRenewalTime = 22 * time.Hour
+	TokenExpireTime  = 26 * time.Hour
+	TokenRenewalTime = 23 * time.Hour
 	TokenMaxRenews   = 5
 )
 
