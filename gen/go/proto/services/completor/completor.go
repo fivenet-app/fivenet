@@ -112,19 +112,25 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 		jobs = jobsAttr.([]string)
 	}
 
-	resp := &CompleteDocumentCategoriesResponse{}
 	if len(jobs) == 0 {
-		return resp, nil
+		jobs = append(jobs, userInfo.Job)
 	}
 
 	req.Search = strings.TrimSpace(req.Search)
 	req.Search = strings.ReplaceAll(req.Search, "%", "")
 	req.Search = strings.ReplaceAll(req.Search, " ", "%")
 
-	condition := jet.Bool(true)
+	jobsExp := make([]jet.Expression, len(jobs))
+	for i := 0; i < len(jobs); i++ {
+		jobsExp[i] = jet.String(jobs[i])
+	}
+
+	condition := tDocumentCategory.Job.IN(jobsExp...)
 	if req.Search != "" {
 		req.Search = "%" + req.Search + "%"
-		condition = tDocumentCategory.Name.LIKE(jet.String(req.Search))
+		condition = condition.AND(
+			tDocumentCategory.Name.LIKE(jet.String(req.Search)),
+		)
 	}
 
 	stmt := tDocumentCategory.
@@ -142,6 +148,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 		).
 		LIMIT(15)
 
+	resp := &CompleteDocumentCategoriesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, FailedSearchErr
