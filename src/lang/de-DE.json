@@ -150,7 +150,7 @@
                 "register_account": "Konto mit Token registrieren",
                 "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!",
                 "title": "Anmeldung",
-                "forgot_password": "Passwort vergessen"
+                "forgot_password": "Passwort zurücksetzen"
             },
             "create_account": {
                 "title": "Konto erstellen",
@@ -170,7 +170,7 @@
                 "subtitle": "Ihr Third-Party Login, für schnelleres Anmelden und coole zusätzliche Funktionen."
             },
             "forgot_password": {
-                "title": "Passwort vergessen",
+                "title": "Passwort zurücksetzen",
                 "subtitle": "Um Ihr Passwort zurückzusetzen, treten Sie dem FiveM-Server bei und geben Sie den Befehl /fivenet ein, um einen neuen Registrierungstoken zu erhalten.",
                 "registration_token": "Registrierungstoken",
                 "submit_button": "Neues Passwort festlegen",

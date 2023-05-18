@@ -150,7 +150,7 @@
                 "register_account": "Register Account using Token",
                 "login_error": "There was an error signing you in, please try again!",
                 "title": "Login",
-                "forgot_password": "Forgot Password"
+                "forgot_password": "Reset/ Forgot Password"
             },
             "create_account": {
                 "title": "Create Account",
@@ -170,7 +170,7 @@
                 "subtitle": "Your Social Login connections, for faster login and cool additional features."
             },
             "forgot_password": {
-                "title": "Forgot Password",
+                "title": "Reset Password",
                 "subtitle": "To reset your apssword, join the FiveM server and run /fivenet command to get a new registration token.",
                 "registration_token": "Registration Token",
                 "submit_button": "Set new Password",
