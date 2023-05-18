@@ -37,16 +37,12 @@ func (p *Perms) lookupRoleAttribute(roleId uint64, attrId uint64) (*cacheRoleAtt
 
 // Roles
 func (p *Perms) lookupRoleIDForJobAndGrade(job string, grade int32) (uint64, bool) {
-	grades, ok := p.permsJobsRoleMap.Load(job)
-	if !ok {
-		return 0, false
-	}
-	roleId, ok := grades[grade]
+	roles, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
 		return 0, false
 	}
 
-	return roleId, true
+	return roles[0], true
 }
 
 func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64, bool) {
@@ -66,6 +62,10 @@ func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64,
 	gradeList := []uint64{}
 	for i := 0; i < len(grades); i++ {
 		gradeList = append(gradeList, gradesMap[grades[i]])
+	}
+
+	if len(gradeList) == 0 {
+		return nil, false
 	}
 
 	return gradeList, true

@@ -278,14 +278,17 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			jobGrades = jobGradesAttr.(map[string]int32)
 		}
 
-		if len(jobGrades) == 0 {
+		if len(jobGrades) == 0 && !userInfo.SuperUser {
 			return nil, JobGradeNoPermissionErr
 		}
 
 		// Make sure user has permission to see that grade, otherwise "hide" the user's job
 		grade, ok := jobGrades[resp.User.Job]
 		if !ok || grade > resp.User.JobGrade {
-			return nil, JobGradeNoPermissionErr
+			// Skip for superuser
+			if !userInfo.SuperUser {
+				return nil, JobGradeNoPermissionErr
+			}
 		}
 	} else {
 		resp.User.Job = config.C.Game.UnemployedJob.Name

@@ -192,7 +192,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	resp.Role.Attributes, err = s.p.GetRoleAttributes(userInfo.Job, userInfo.JobGrade)
 	if err != nil {
-		return nil, InvalidRequestErr
+		return nil, err
 	}
 
 	return resp, nil
