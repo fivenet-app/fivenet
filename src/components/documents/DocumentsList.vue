@@ -13,6 +13,7 @@ import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
 import { CompleteDocumentCategoriesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CheckIcon } from '@heroicons/vue/24/solid';
 
 const { $grpc } = useNuxtApp();
 

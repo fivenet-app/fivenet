@@ -37,7 +37,7 @@ __debug_bin
 localhost.*
 
 # Map tiles
-src/public/tiles/*/
+src/public/images/livemap/tiles/*/
 
 # Repo checkouts
 /gdal2tiles-leaflet/

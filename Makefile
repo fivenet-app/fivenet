@@ -6,7 +6,7 @@ VALIDATE_VERSION ?= v0.10.1
 
 .PHONY: clean
 clean:
-	rm -rf ./.nuxt/dist/ ./src/public/tiles/*/
+	rm -rf ./.nuxt/dist/ ./src/public/images/livemap/tiles/*/
 	rm -rf gdal2tiles-leaflet
 
 .PHONY: watch
@@ -108,10 +108,10 @@ gdal2tiles-leaflet:
 
 .PHONY: gen-tiles
 gen-tiles: gdal2tiles-leaflet
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ATLAS_8192x8192.jpg ./src/public/tiles/atlas
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_POSTAL_8192x8192.jpg ./src/public/tiles/postal
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ROAD_8192x8192.jpg ./src/public/tiles/road
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_SATELITE_8192x8192.jpg ./src/public/tiles/satelite
+	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ATLAS_8192x8192.jpg ./src/public/images/livemap/tiles/atlas
+	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_POSTAL_8192x8192.jpg ./src/public/images/livemap/tiles/postal
+	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ROAD_8192x8192.jpg ./src/public/images/livemap/tiles/road
+	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_SATELITE_8192x8192.jpg ./src/public/images/livemap/tiles/satelite
 
 .PHONY: optimize-tiles
 optimize-tiles:

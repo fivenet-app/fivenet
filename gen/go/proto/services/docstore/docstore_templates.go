@@ -24,6 +24,10 @@ var (
 	tDTemplatesJobAccess = table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
 )
 
+var (
+	TemplateNoPermsErr = status.Error(codes.PermissionDenied, "You don't have permission to view/update/delete this template!")
+)
+
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -78,7 +82,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		return nil, FailedQueryErr
 	}
 	if !check {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this template!")
+		return nil, TemplateNoPermsErr
 	}
 
 	tDTemplates := tDTemplates.AS("template")
@@ -279,7 +283,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		return nil, FailedQueryErr
 	}
 	if !check {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this template!")
+		return nil, TemplateNoPermsErr
 	}
 
 	categoryId := jet.NULL
@@ -364,7 +368,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		return nil, FailedQueryErr
 	}
 	if !check {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this template!")
+		return nil, TemplateNoPermsErr
 	}
 
 	tDTemplates := table.FivenetDocumentsTemplates

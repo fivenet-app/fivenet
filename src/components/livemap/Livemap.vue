@@ -422,13 +422,13 @@ watch(focused, () => {
         <LMap class="z-0" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="1" :max-zoom="6"
             @click="selectedMarker = undefined" :inertia="false" :style="{ backgroundColor }" @ready="onMapReady($event)"
             :use-global-leaflet="false">
-            <LTileLayer url="/tiles/postal/{z}/{x}/{y}.png" layer-type="base" name="Postal" :no-wrap="true" :tms="true"
+            <LTileLayer url="/images/livemap/tiles/postal/{z}/{x}/{y}.png" layer-type="base" name="Postal" :no-wrap="true" :tms="true"
                 :visible="true" :attribution="attribution" />
-            <LTileLayer url="/tiles/atlas/{z}/{x}/{y}.png" layer-type="base" name="Atlas" :no-wrap="true" :tms="true"
+            <LTileLayer url="/images/livemap/tiles/atlas/{z}/{x}/{y}.png" layer-type="base" name="Atlas" :no-wrap="true" :tms="true"
                 :visible="false" :attribution="attribution" />
-            <LTileLayer url="/tiles/road/{z}/{x}/{y}.png" layer-type="base" name="Road" :no-wrap="true" :tms="true"
+            <LTileLayer url="/images/livemap/tiles/road/{z}/{x}/{y}.png" layer-type="base" name="Road" :no-wrap="true" :tms="true"
                 :visible="false" :attribution="attribution" />
-            <LTileLayer url="/tiles/satelite/{z}/{x}/{y}.png" layer-type="base" name="Satelite" :no-wrap="true" :tms="true"
+            <LTileLayer url="/images/livemap/tiles/satelite/{z}/{x}/{y}.png" layer-type="base" name="Satelite" :no-wrap="true" :tms="true"
                 :visible="false" :attribution="attribution" />
 
             <LControlLayers />
