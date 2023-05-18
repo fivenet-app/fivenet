@@ -502,7 +502,10 @@ func (p *Perms) GetAllAttributes(job string) ([]*permissions.RoleAttribute, erro
 func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
 	roleId, ok := p.lookupRoleIDForJobAndGrade(job, grade)
 	if !ok {
-		return nil, fmt.Errorf("no role attributes mapping found")
+		roleId, ok = p.lookupRoleIDForJobAndGrade(DefaultRoleJob, DefaultRoleJobGrade)
+		if !ok {
+			return nil, fmt.Errorf("failed to fallback to default role")
+		}
 	}
 
 	as, ok := p.attrsRoleMap.Load(roleId)
@@ -536,7 +539,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 func (p *Perms) getRoleAttributesFromCache(job string, grade int32) ([]*cacheRoleAttr, error) {
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
-		return nil, fmt.Errorf("no role id for job and grade found")
+		return []*cacheRoleAttr{}, nil
 	}
 
 	attrs := map[uint64]*cacheRoleAttr{}
