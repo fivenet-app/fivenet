@@ -13,8 +13,8 @@ import (
 
 const (
 	TokenExpireTime  = 26 * time.Hour
-	TokenRenewalTime = 23 * time.Hour
-	TokenMaxRenews   = 5
+	TokenRenewalTime = 10 * time.Hour
+	TokenMaxRenews   = 7
 )
 
 type CitizenInfoClaims struct {
