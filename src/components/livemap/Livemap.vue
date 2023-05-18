@@ -10,7 +10,7 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { ValueOf } from '~/utils/types';
 import { DispatchMarker, UserMarker } from '@fivenet/gen/resources/livemap/livemap_pb';
 import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { useTimeoutFn, useWindowFocus, watchDebounced } from '@vueuse/core';
+import { watchDebounced } from '@vueuse/core';
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { useUserSettingsStore } from '~/store/usersettings';
 import { useAuthStore } from '~/store/auth';
@@ -22,7 +22,6 @@ const userSettingsStore = useUserSettingsStore();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 const route = useRoute();
-const focused = useWindowFocus();
 
 const { livemapCenterSelectedMarker, livemapMarkerSize } = storeToRefs(userSettingsStore);
 
@@ -348,19 +347,6 @@ watch(selectedPostal, () => {
 });
 
 watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 });
-
-const { start, stop } = useTimeoutFn(async () => {
-    stopDataStream();
-}, 7500);
-
-watch(focused, () => {
-    if (focused.value) {
-        stop();
-        startDataStream();
-    } else {
-        start();
-    }
-});
 </script>
 
 <style>
@@ -411,25 +397,23 @@ watch(focused, () => {
     <div class="relative w-full h-full z-0">
         <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center z-20"
             style="background-color: rgba(62, 60, 62, 0.5)">
-            <DataPendingBlock v-if="!error && focused"
-                :message="$t('components.livemap.starting_datastream')" />
+            <DataPendingBlock v-if="!error" :message="$t('components.livemap.starting_datastream')" />
             <DataErrorBlock v-else-if="error" :title="$t('components.livemap.failed_datastream')"
                 :retry="() => { startDataStream() }" />
-            <DataPendingBlock v-else-if="!error && !focused"
-                :message="$t('components.livemap.paused_datastream')" :paused="true" />
+            <DataPendingBlock v-else-if="!error" :message="$t('components.livemap.paused_datastream')" :paused="true" />
         </div>
 
         <LMap class="z-0" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="1" :max-zoom="6"
             @click="selectedMarker = undefined" :inertia="false" :style="{ backgroundColor }" @ready="onMapReady($event)"
             :use-global-leaflet="false">
-            <LTileLayer url="/images/livemap/tiles/postal/{z}/{x}/{y}.png" layer-type="base" name="Postal" :no-wrap="true" :tms="true"
-                :visible="true" :attribution="attribution" />
-            <LTileLayer url="/images/livemap/tiles/atlas/{z}/{x}/{y}.png" layer-type="base" name="Atlas" :no-wrap="true" :tms="true"
-                :visible="false" :attribution="attribution" />
-            <LTileLayer url="/images/livemap/tiles/road/{z}/{x}/{y}.png" layer-type="base" name="Road" :no-wrap="true" :tms="true"
-                :visible="false" :attribution="attribution" />
-            <LTileLayer url="/images/livemap/tiles/satelite/{z}/{x}/{y}.png" layer-type="base" name="Satelite" :no-wrap="true" :tms="true"
-                :visible="false" :attribution="attribution" />
+            <LTileLayer url="/images/livemap/tiles/postal/{z}/{x}/{y}.png" layer-type="base" name="Postal" :no-wrap="true"
+                :tms="true" :visible="true" :attribution="attribution" />
+            <LTileLayer url="/images/livemap/tiles/atlas/{z}/{x}/{y}.png" layer-type="base" name="Atlas" :no-wrap="true"
+                :tms="true" :visible="false" :attribution="attribution" />
+            <LTileLayer url="/images/livemap/tiles/road/{z}/{x}/{y}.png" layer-type="base" name="Road" :no-wrap="true"
+                :tms="true" :visible="false" :attribution="attribution" />
+            <LTileLayer url="/images/livemap/tiles/satelite/{z}/{x}/{y}.png" layer-type="base" name="Satelite"
+                :no-wrap="true" :tms="true" :visible="false" :attribution="attribution" />
 
             <LControlLayers />
 
