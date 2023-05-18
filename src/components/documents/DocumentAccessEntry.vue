@@ -65,11 +65,11 @@ if (!props.accessRoles || props.accessRoles.length === 0) {
         };
     });
 } else {
-    props.accessRoles.forEach((v) => {
+    props.accessRoles.forEach((e) => {
         entriesAccessRoles.push({
-            id: v,
-            label: t(`enums.docstore.ACCESS_LEVEL.${v}`),
-            value: ACCESS_LEVEL_Util.toEnumKey(v)!,
+            id: e,
+            label: t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL_Util.toEnumKey(e as number)}`),
+            value: ACCESS_LEVEL_Util.toEnumKey(e)!,
         });
     });
 }

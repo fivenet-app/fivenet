@@ -270,6 +270,7 @@
         },
         "livemap": {
             "starting_datastream": "Starte Livemap Datenstrom...",
+            "paused_datastream": "Livemap Datenstrom pausiert (Fenster nicht im Fokus).",
             "failed_datastream": "Livemap Datenstrom fehlgeschlagen!",
             "sent_by": "Gesendet von",
             "center_selected_marker": "Zentriere ausgewählten Marker"

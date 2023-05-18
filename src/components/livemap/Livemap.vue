@@ -16,7 +16,6 @@ import { useUserSettingsStore } from '~/store/usersettings';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
-import { start } from 'repl';
 
 const { $grpc, $loading } = useNuxtApp();
 const userSettingsStore = useUserSettingsStore();
@@ -352,9 +351,9 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 
 const { start, stop } = useTimeoutFn(() => {
     stopDataStream();
-}, 5000);
+}, 7500);
 
-watchDebounced(focused, () => {
+watch(focused, () => {
     if (focused.value) {
         stop();
         startDataStream();
@@ -412,9 +411,12 @@ watchDebounced(focused, () => {
     <div class="relative w-full h-full z-0">
         <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center z-20"
             style="background-color: rgba(62, 60, 62, 0.5)">
-            <DataPendingBlock v-if="!error && stream === null" :message="$t('components.livemap.starting_datastream')" />
+            <DataPendingBlock v-if="!error && focused && stream === null"
+                :message="$t('components.livemap.starting_datastream')" />
             <DataErrorBlock v-else-if="error" :title="$t('components.livemap.failed_datastream')"
                 :retry="() => { startDataStream() }" />
+            <DataPendingBlock v-else-if="!error && !focused && stream === null"
+                :message="$t('components.livemap.paused_datastream')" :paused="true" />
         </div>
 
         <LMap class="z-0" v-model:zoom="zoom" v-model:center="center" :crs="customCRS" :min-zoom="1" :max-zoom="6"
