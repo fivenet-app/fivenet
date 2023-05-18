@@ -56,6 +56,7 @@ message ListDocumentsRequest {
   // Search param
   string search = 3;
   repeated uint64 category_ids = 4;
+  repeated int32 creator_ids = 5;
 }
 
 message ListDocumentsResponse {

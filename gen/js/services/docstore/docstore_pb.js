@@ -2667,7 +2667,7 @@ proto.services.docstore.DeleteTemplateResponse.serializeBinaryToWriter = functio
  * @private {!Array<number>}
  * @const
  */
-proto.services.docstore.ListDocumentsRequest.repeatedFields_ = [2,4];
+proto.services.docstore.ListDocumentsRequest.repeatedFields_ = [2,4,5];
 
 
 
@@ -2704,7 +2704,8 @@ proto.services.docstore.ListDocumentsRequest.toObject = function(includeInstance
     orderbyList: jspb.Message.toObjectList(msg.getOrderbyList(),
     resources_common_database_database_pb.OrderBy.toObject, includeInstance),
     search: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    categoryIdsList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f
+    categoryIdsList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
+    creatorIdsList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -2759,6 +2760,12 @@ proto.services.docstore.ListDocumentsRequest.deserializeBinaryFromReader = funct
       var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedUint64() : [reader.readUint64()]);
       for (var i = 0; i < values.length; i++) {
         msg.addCategoryIds(values[i]);
+      }
+      break;
+    case 5:
+      var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedInt32() : [reader.readInt32()]);
+      for (var i = 0; i < values.length; i++) {
+        msg.addCreatorIds(values[i]);
       }
       break;
     default:
@@ -2817,6 +2824,13 @@ proto.services.docstore.ListDocumentsRequest.serializeBinaryToWriter = function(
   if (f.length > 0) {
     writer.writePackedUint64(
       4,
+      f
+    );
+  }
+  f = message.getCreatorIdsList();
+  if (f.length > 0) {
+    writer.writePackedInt32(
+      5,
       f
     );
   }
@@ -2950,6 +2964,43 @@ proto.services.docstore.ListDocumentsRequest.prototype.addCategoryIds = function
  */
 proto.services.docstore.ListDocumentsRequest.prototype.clearCategoryIdsList = function() {
   return this.setCategoryIdsList([]);
+};
+
+
+/**
+ * repeated int32 creator_ids = 5;
+ * @return {!Array<number>}
+ */
+proto.services.docstore.ListDocumentsRequest.prototype.getCreatorIdsList = function() {
+  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 5));
+};
+
+
+/**
+ * @param {!Array<number>} value
+ * @return {!proto.services.docstore.ListDocumentsRequest} returns this
+ */
+proto.services.docstore.ListDocumentsRequest.prototype.setCreatorIdsList = function(value) {
+  return jspb.Message.setField(this, 5, value || []);
+};
+
+
+/**
+ * @param {number} value
+ * @param {number=} opt_index
+ * @return {!proto.services.docstore.ListDocumentsRequest} returns this
+ */
+proto.services.docstore.ListDocumentsRequest.prototype.addCreatorIds = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 5, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.services.docstore.ListDocumentsRequest} returns this
+ */
+proto.services.docstore.ListDocumentsRequest.prototype.clearCreatorIdsList = function() {
+  return this.setCreatorIdsList([]);
 };
 
 

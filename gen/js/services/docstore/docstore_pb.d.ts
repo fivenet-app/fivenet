@@ -224,6 +224,11 @@ export class ListDocumentsRequest extends jspb.Message {
   clearCategoryIdsList(): ListDocumentsRequest;
   addCategoryIds(value: number, index?: number): ListDocumentsRequest;
 
+  getCreatorIdsList(): Array<number>;
+  setCreatorIdsList(value: Array<number>): ListDocumentsRequest;
+  clearCreatorIdsList(): ListDocumentsRequest;
+  addCreatorIds(value: number, index?: number): ListDocumentsRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ListDocumentsRequest.AsObject;
   static toObject(includeInstance: boolean, msg: ListDocumentsRequest): ListDocumentsRequest.AsObject;
@@ -238,6 +243,7 @@ export namespace ListDocumentsRequest {
     orderbyList: Array<resources_common_database_database_pb.OrderBy.AsObject>,
     search: string,
     categoryIdsList: Array<number>,
+    creatorIdsList: Array<number>,
   }
 }
 

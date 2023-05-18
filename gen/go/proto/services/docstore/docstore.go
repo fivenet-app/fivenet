@@ -72,13 +72,23 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		)
 	}
 	if len(req.CategoryIds) > 0 {
-		categoryIds := make([]jet.Expression, len(req.CategoryIds))
+		ids := make([]jet.Expression, len(req.CategoryIds))
 		for i := 0; i < len(req.CategoryIds); i++ {
-			categoryIds[i] = jet.Uint64(req.CategoryIds[i])
+			ids[i] = jet.Uint64(req.CategoryIds[i])
 		}
 
 		condition = condition.AND(
-			tDocs.CategoryID.IN(categoryIds...),
+			tDocs.CategoryID.IN(ids...),
+		)
+	}
+	if len(req.CreatorIds) > 0 {
+		ids := make([]jet.Expression, len(req.CreatorIds))
+		for i := 0; i < len(req.CreatorIds); i++ {
+			ids[i] = jet.Int32(req.CreatorIds[i])
+		}
+
+		condition = condition.AND(
+			tDocs.CreatorID.IN(ids...),
 		)
 	}
 
