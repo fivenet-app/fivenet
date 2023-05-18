@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import CharacterSelector from '~/components/auth/CharacterSelector.vue';
+import { useAuthStore } from '~/store/auth';
+import { useDocumentEditorStore } from '~/store/documenteditor';
 
 useHead({
     title: 'pages.auth.character_selector.title',
@@ -11,6 +13,17 @@ definePageMeta({
     authOnlyToken: true,
     showQuickButtons: false,
 });
+
+const authStore = useAuthStore();
+const documentEditorStore = useDocumentEditorStore();
+
+const { setActiveChar, setPermissions, setJobProps } = authStore;
+const { clear } = documentEditorStore;
+
+setActiveChar(null);
+setPermissions([]);
+setJobProps(null);
+clear();
 </script>
 
 <template>
