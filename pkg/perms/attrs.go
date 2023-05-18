@@ -510,7 +510,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 
 	as, ok := p.attrsRoleMap.Load(roleId)
 	if !ok {
-		return nil, fmt.Errorf("no attributes found for role")
+		return []*permissions.RoleAttribute{}, nil
 	}
 
 	dest := []*permissions.RoleAttribute{}

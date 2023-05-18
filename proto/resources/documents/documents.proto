@@ -32,7 +32,7 @@ message Document {
   resources.documents.DocumentCategory category = 5; // @gotags: alias:"category"
   string title = 6 [(validate.rules).string = {min_len: 3, max_bytes: 21845}]; // @gotags: alias:"title"
   DOC_CONTENT_TYPE content_type = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
-  string content = 8 [(validate.rules).string = {min_len: 20, max_bytes: 65535}]; // @gotags: alias:"content"
+  string content = 8 [(validate.rules).string = {min_len: 20, max_bytes: 1000000}]; // @gotags: alias:"content"
   string data = 9; // @gotags: alias:"data"
   int32 creator_id = 10; // @gotags: alias:"creator_id"
   resources.users.UserShort creator = 11; // @gotags: alias:"creator"

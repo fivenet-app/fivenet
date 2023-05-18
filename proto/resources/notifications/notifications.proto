@@ -13,6 +13,6 @@ message Notification {
   int32 user_id = 4; // @gotags: alias:"user_id"
   string title = 5 [(validate.rules).string.max_len = 255]; // @gotags: alias:"title"
   optional string type = 6 [(validate.rules).string.max_len = 128]; // @gotags: alias:"type"
-  string content = 7 [(validate.rules).string.max_bytes = 512]; // @gotags: alias:"content"
-  optional string data = 8 [(validate.rules).string.max_bytes = 512]; // @gotags: alias:"data"
+  string content = 7 [(validate.rules).string.max_len = 256]; // @gotags: alias:"content"
+  optional string data = 8 [(validate.rules).string.max_len = 256]; // @gotags: alias:"data"
 }

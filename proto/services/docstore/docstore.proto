@@ -150,7 +150,7 @@ message DeleteDocumentCommentResponse {}
 message CreateDocumentRequest {
   optional uint64 category_id = 1; // @gotags: alias:"category_id"
   string title = 2 [(validate.rules).string = {min_len: 3, max_bytes: 21845}]; // @gotags: alias:"title"
-  string content = 3 [(validate.rules).string = {min_len: 20, max_bytes: 65535}]; // @gotags: alias:"content"
+  string content = 3 [(validate.rules).string = {min_len: 20, max_bytes: 1000000}]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 5; // @gotags: alias:"data"
   string state = 6 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
@@ -168,7 +168,7 @@ message UpdateDocumentRequest {
   uint64 document_id = 1; // @gotags: alias:"id"
   uint64 category_id = 2; // @gotags: alias:"category_id"
   string title = 3 [(validate.rules).string = {min_len: 3, max_bytes: 21845}]; // @gotags: alias:"title"
-  string content = 4 [(validate.rules).string = {min_len: 20, max_bytes: 65535}]; // @gotags: alias:"content"
+  string content = 4 [(validate.rules).string = {min_len: 20, max_bytes: 1000000}]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   string data = 6; // @gotags: alias:"data"
   string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
