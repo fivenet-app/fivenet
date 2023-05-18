@@ -349,7 +349,7 @@ watch(selectedPostal, () => {
 
 watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 });
 
-const { start, stop } = useTimeoutFn(() => {
+const { start, stop } = useTimeoutFn(async () => {
     stopDataStream();
 }, 7500);
 
@@ -411,11 +411,11 @@ watch(focused, () => {
     <div class="relative w-full h-full z-0">
         <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center z-20"
             style="background-color: rgba(62, 60, 62, 0.5)">
-            <DataPendingBlock v-if="!error && focused && stream === null"
+            <DataPendingBlock v-if="!error && focused"
                 :message="$t('components.livemap.starting_datastream')" />
             <DataErrorBlock v-else-if="error" :title="$t('components.livemap.failed_datastream')"
                 :retry="() => { startDataStream() }" />
-            <DataPendingBlock v-else-if="!error && !focused && stream === null"
+            <DataPendingBlock v-else-if="!error && !focused"
                 :message="$t('components.livemap.paused_datastream')" :paused="true" />
         </div>
 
