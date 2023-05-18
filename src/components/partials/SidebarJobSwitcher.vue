@@ -25,6 +25,10 @@ const selectedJob = ref<undefined | Job>();
 
 async function findJobs(): Promise<void> {
     return new Promise(async (res, rej) => {
+        if (entriesJobs.length > 0) {
+            return res();
+        }
+
         const req = new CompleteJobsRequest();
         req.setSearch(queryJob.value);
 

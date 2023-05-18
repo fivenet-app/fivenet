@@ -502,43 +502,35 @@ func (p *Perms) GetAllAttributes(job string) ([]*permissions.RoleAttribute, erro
 func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
 	roleId, ok := p.lookupRoleIDForJobAndGrade(job, grade)
 	if !ok {
-		return nil, nil
+		return nil, fmt.Errorf("no role attributes mapping found")
 	}
 
-	stmt := tRoleAttrs.
-		SELECT(
-			tAttrs.ID.AS("rawattribute.attr_id"),
-			tRoleAttrs.RoleID.AS("rawattribute.role_id"),
-			tAttrs.PermissionID.AS("rawattribute.permission_id"),
-			tPerms.Category.AS("rawattribute.category"),
-			tPerms.Name.AS("rawattribute.name"),
-			tAttrs.Key.AS("rawattribute.key"),
-			tAttrs.Type.AS("rawattribute.type"),
-			tRoleAttrs.Value.AS("rawattribute.value"),
-			tAttrs.ValidValues.AS("rawattribute.valid_values"),
-		).
-		FROM(
-			tRoleAttrs.
-				LEFT_JOIN(tAttrs,
-					tAttrs.ID.EQ(tRoleAttrs.AttrID),
-				).
-				LEFT_JOIN(tPerms,
-					tPerms.ID.EQ(tAttrs.PermissionID),
-				),
-		).
-		WHERE(jet.AND(
-			tRoleAttrs.RoleID.EQ(jet.Uint64(roleId)),
-		)).
-		GROUP_BY(tAttrs.ID)
+	as, ok := p.attrsRoleMap.Load(roleId)
+	if !ok {
+		return nil, fmt.Errorf("no attributes found for role")
+	}
 
-	var dest []*permissions.RawAttribute
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
+	dest := []*permissions.RoleAttribute{}
+	for k, v := range as {
+		attr, ok := p.lookupAttributeByID(k)
+		if !ok {
+			return nil, fmt.Errorf("no attribute found by id for role")
 		}
+
+		dest = append(dest, &permissions.RoleAttribute{
+			RoleId:       roleId,
+			AttrId:       k,
+			PermissionId: attr.PermissionID,
+			Category:     string(attr.Category),
+			Name:         string(attr.Name),
+			Key:          string(v.Key),
+			Type:         string(v.Type),
+			Value:        v.Value,
+			ValidValues:  attr.ValidValues,
+		})
 	}
 
-	return p.convertRawToRoleAttributes(dest)
+	return dest, nil
 }
 
 func (p *Perms) getRoleAttributesFromCache(job string, grade int32) ([]*cacheRoleAttr, error) {
