@@ -35,7 +35,21 @@ func init() {
 	p.AllowStyles("text-decoration").MatchingEnum("underline", "line-through", "none").OnElements("span", "p")
 
 	// Links
-	p.AllowStandardURLs()
+	// Custom policy based on the origional "AllowStandardURLs" helper func
+	// URLs must be parseable by net/url.Parse()
+	p.RequireParseableURLs(true)
+
+	// !url.IsAbs() is permitted
+	p.AllowRelativeURLs(true)
+
+	// Most common URL schemes only
+	p.AllowURLSchemes("mailto", "https")
+
+	// For linking elements we will add rel="nofollow" if it does not already exist
+	// This applies to "a" "area" "link"
+	p.RequireNoFollowOnLinks(true)
+	// Custom end
+
 	p.AllowAttrs("cite").OnElements("blockquote", "q")
 	p.AllowAttrs("href").OnElements("a", "area")
 	p.AllowAttrs("src").OnElements("img")
