@@ -16,7 +16,7 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 		if !ok {
 			return nil, fmt.Errorf("failed to fallback to default role")
 		}
-		roleIds[0] = roleId
+		roleIds = []uint64{roleId}
 	}
 
 	ps := p.getRolePermissionsFromCache(roleIds)
