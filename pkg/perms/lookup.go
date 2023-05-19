@@ -38,11 +38,11 @@ func (p *Perms) lookupRoleAttribute(roleId uint64, attrId uint64) (*cacheRoleAtt
 // Roles
 func (p *Perms) lookupRoleIDForJobAndGrade(job string, grade int32) (uint64, bool) {
 	roles, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
-	if !ok {
+	if !ok || len(roles) == 0 {
 		return 0, false
 	}
 
-	return roles[0], true
+	return roles[len(roles)-1], true
 }
 
 func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64, bool) {

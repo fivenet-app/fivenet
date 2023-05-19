@@ -99,7 +99,7 @@ async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
 onMounted(() => {
     if (type.value === 'JobGradeList') {
         props.jobs.forEach(job => {
-            jobGrades.value.set(job.getName(), job.getGradesList()[(getState().getJobGradeList()?.getJobsMap().get(job.getName()) ?? 0)]);
+            jobGrades.value.set(job.getName(), job.getGradesList()[(getState().getJobGradeList()?.getJobsMap().get(job.getName()) ?? 1) - 1]);
         });
     }
 });
