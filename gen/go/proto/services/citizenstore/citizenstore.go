@@ -284,7 +284,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 		// Make sure user has permission to see that grade, otherwise "hide" the user's job
 		grade, ok := jobGrades[resp.User.Job]
-		if !ok || grade > resp.User.JobGrade {
+		if !ok || resp.User.JobGrade > grade {
 			// Skip for superuser
 			if !userInfo.SuperUser {
 				return nil, JobGradeNoPermissionErr
