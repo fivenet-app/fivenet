@@ -200,9 +200,12 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			resp.LastId = resp.Notifications[0].Id
 		}
 
-		claims, err := s.checkAndUpdateToken(srv.Context(), resp.Token)
+		claims, restart, err := s.checkAndUpdateToken(srv.Context(), resp.Token)
 		if err != nil {
 			return err
+		}
+		if restart {
+			resp.RestartStream = true
 		}
 
 		if waitTicks <= 0 {
@@ -229,20 +232,20 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 }
 
-func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) (*auth.CitizenInfoClaims, error) {
+func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) (*auth.CitizenInfoClaims, bool, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, auth.InvalidTokenErr
+		return nil, true, auth.InvalidTokenErr
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, auth.InvalidTokenErr
+		return nil, true, auth.InvalidTokenErr
 	}
 
 	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
 		if claims.RenewedCount >= auth.TokenMaxRenews {
-			return nil, auth.InvalidTokenErr
+			return nil, true, auth.InvalidTokenErr
 		}
 
 		// Increase re-newed count
@@ -251,14 +254,16 @@ func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) (*aut
 		auth.SetTokenClaimsTimes(claims)
 		newToken, err := s.tm.NewWithClaims(claims)
 		if err != nil {
-			return nil, auth.CheckTokenErr
+			return nil, true, auth.CheckTokenErr
 		}
 
 		tu.NewToken = &newToken
 		tu.Expires = timestamp.New(claims.ExpiresAt.Time)
+
+		return claims, true, nil
 	}
 
-	return claims, nil
+	return claims, false, nil
 }
 
 func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, currentUserInfo *userinfo.UserInfo) error {
