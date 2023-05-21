@@ -12,7 +12,7 @@
     },
     "dependencies": {
         "@fivenet/gen": "file:./gen/js",
-        "@fontsource/inter": "^4.5.15",
+        "@fontsource/inter": "^5.0.0",
         "@headlessui/vue": "^1.7.13",
         "@heroicons/vue": "^2.0.18",
         "@nuxtjs/robots": "^3.0.0",
