@@ -78,10 +78,24 @@ export class GRPCClients {
                 });
                 break;
             case StatusCode.INTERNAL:
+                let title = 'notifications.grpc_errors.internal.title';
+                let content = err.message;
+                let contentI18n = false;
+                if (err.message.startsWith('errors.')) {
+                    contentI18n = true;
+
+                    const errSplits = err.message.split(';');
+                    if (errSplits.length > 1) {
+                        title = errSplits[1];
+                        content = errSplits[0];
+                    }
+                }
+
                 notifications.dispatchNotification({
-                    title: 'notifications.grpc_errors.internal.title',
+                    title: title,
                     titleI18n: true,
                     content: err.message,
+                    contentI18n: contentI18n,
                     type: 'error',
                 });
                 break;
