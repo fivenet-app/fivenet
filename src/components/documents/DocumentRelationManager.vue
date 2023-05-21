@@ -309,7 +309,7 @@ function removeRelation(id: number): void {
                                         <TabPanel class="w-full">
                                             <div>
                                                 <label for="name" class="sr-only">Name</label>
-                                                <input type="text" name="name" id="name"
+                                                <input type="text" name="name"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                                                     v-model="queryChar" />

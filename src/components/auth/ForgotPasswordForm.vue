@@ -73,7 +73,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await forgotPassw
                 {{ $t('components.auth.forgot_password.registration_token') }}
             </label>
             <div>
-                <Field id="registrationToken" name="registrationToken" type="text" inputmode="numeric"
+                <Field name="registrationToken" type="text" inputmode="numeric"
                     aria-describedby="hint" pattern="[0-9]*" autocomplete="registrationToken"
                     :placeholder="$t('components.auth.forgot_password.registration_token')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6" />
@@ -85,7 +85,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await forgotPassw
                 {{ $t('common.password') }}
             </label>
             <div>
-                <Field id="password" name="password" type="password" autocomplete="current-password"
+                <Field name="password" type="password" autocomplete="current-password"
                     :placeholder="$t('common.password')" v-model:model-value="currPassword"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <PartialsPasswordStrengthMeter :input="currPassword" class="mt-2" />

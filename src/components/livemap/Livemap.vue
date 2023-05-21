@@ -447,11 +447,11 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
             <LControl position="topleft">
                 <div class="form-control flex flex-col gap-2">
                     <div>
-                        <input v-model="playerQuery" class="w-full" type="text" name="searchPlayer" id="searchPlayer"
+                        <input v-model="playerQuery" class="w-full" type="text" name="searchPlayer"
                             :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`" />
                     </div>
                     <div>
-                        <input v-model="dispatchQuery" class="w-full" type="text" name="searchDispatch" id="searchDispatch"
+                        <input v-model="dispatchQuery" class="w-full" type="text" name="searchDispatch"
                             :placeholder="`${$t('common.dispatch', 1)} ${$t('common.filter')}`" />
                     </div>
                     <div>
@@ -477,12 +477,12 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
                         <span class="text-lg mr-2 text-[#6f7683]">{{ $t('components.livemap.center_selected_marker')
                         }}</span>
-                        <input v-model="livemapCenterSelectedMarker" class="my-auto" id="livemapMarkerSize"
+                        <input v-model="livemapCenterSelectedMarker" class="my-auto"
                             name="livemapMarkerSize" type="checkbox" />
                     </div>
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
                         <span class="text-lg mr-2 text-[#6f7683]">{{ livemapMarkerSize }}</span>
-                        <input id="livemapMarkerSize" name="livemapMarkerSize" type="range"
+                        <input name="livemapMarkerSize" type="range"
                             class="h-1.5 w-full cursor-grab rounded-full my-auto" min="14" max="34" step="2"
                             :value="livemapMarkerSize" @change="livemapMarkerSize = ($event.target as any).value" />
                     </div>

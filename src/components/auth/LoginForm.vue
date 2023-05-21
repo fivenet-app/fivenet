@@ -66,7 +66,7 @@ const providers = config.login.providers;
                 {{ $t('common.username') }}
             </label>
             <div>
-                <Field id="username" name="username" type="text" autocomplete="username"
+                <Field name="username" type="text" autocomplete="username"
                     :placeholder="$t('common.username')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <ErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
@@ -77,7 +77,7 @@ const providers = config.login.providers;
                 {{ $t('common.password') }}
             </label>
             <div>
-                <Field id="password" name="password" type="password" autocomplete="current-password"
+                <Field name="password" type="password" autocomplete="current-password"
                     :placeholder="$t('common.password')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <ErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />

@@ -131,7 +131,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                                                         $t('common.category', 1) }}
                                                                 </label>
                                                                 <div class="relative flex items-center mt-2">
-                                                                    <Field type="text" name="name" id="name"
+                                                                    <Field type="text" name="name"
                                                                         :placeholder="$t('common.category', 1)"
                                                                         :value="category?.getName()"
                                                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
@@ -145,7 +145,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                                                         $t('common.description') }}
                                                                 </label>
                                                                 <div class="relative flex items-center mt-2">
-                                                                    <Field type="text" name="description" id="description"
+                                                                    <Field type="text" name="description"
                                                                         :placeholder="$t('common.description')"
                                                                         :value="category?.getDescription()"
                                                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />

@@ -148,7 +148,7 @@ watch(props, async (newVal) => {
                         </button>
                     </div>
                     <div v-else>
-                        <input id="selected" name="selected" :key="item.id" :checked="selected.includes(item)" :value="item"
+                        <input name="selected" :key="item.id" :checked="selected.includes(item)" :value="item"
                             v-model="selected" type="checkbox"
                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
                     </div>

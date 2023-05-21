@@ -129,7 +129,7 @@ watch(offset, async () => refresh());
                         <label for="comment" class="sr-only">
                             {{ $t('components.documents.document_comments.add_comment') }}
                         </label>
-                        <textarea rows="3" name="comment" id="comment"
+                        <textarea rows="3" name="comment"
                             class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
                             ref="commentInput" v-model="message"
                             :placeholder="$t('components.documents.document_comments.add_comment')" />

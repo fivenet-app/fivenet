@@ -65,7 +65,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input v-model="query.name" ref="searchNameInput" type="text" name="searchName"
-                                        id="searchName" :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
+                                        :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
                             </div>
@@ -74,7 +74,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     {{ $t('common.search') }} {{ $t('common.phone') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="query.phone" type="tel" name="searchPhone" id="searchPhone"
+                                    <input v-model="query.phone" type="tel" name="searchPhone"
                                         :placeholder="`${$t('common.phone')} ${$t('common.number')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>

@@ -886,7 +886,7 @@ onMounted(async () => {
                 <div class="sm:flex-auto">
                     <div class="divide-y divide-white/10">
                         <div class="mt-5">
-                            <input v-model="queryPenalities" type="text" name="search" id="search"
+                            <input v-model="queryPenalities" type="text" name="search"
                                 :placeholder="$t('common.filter')"
                                 class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                         </div>

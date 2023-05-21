@@ -29,7 +29,7 @@ defineEmits<{
                 {{ $t('common.citizen', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
-                <input v-model="modelValue.users.req" type="checkbox" name="users" id="users" data-te-toggle="tooltip"
+                <input v-model="modelValue.users.req" type="checkbox" name="users" data-te-toggle="tooltip"
                     class="h-8 w-8 rounded-md transition-colors bg-base-700 text-primary-600 hover:text-primary-500 hover:bg-base-600 focus:ring-2 focus:ring-inset focus:ring-base-300 border-0" />
                 <div class="flex flex-row">
                     <span
@@ -37,7 +37,7 @@ defineEmits<{
                         {{ $t('common.min') }}
                     </span>
                     <input v-model="modelValue.users.min" :disabled="!modelValue.users.req" type="number" min="0"
-                        oninput="validity.valid||(value='');" name="users" id="users"
+                        oninput="validity.valid||(value='');" name="users"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
                 <div class="flex flex-row">
@@ -46,7 +46,7 @@ defineEmits<{
                         {{ $t('common.max') }}
                     </span>
                     <input v-model="modelValue.users.max" type="number" min="0"
-                        oninput="validity.valid||(value='');" name="users" id="users"
+                        oninput="validity.valid||(value='');" name="users"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
             </div>
@@ -56,7 +56,7 @@ defineEmits<{
                 {{ $t('common.document', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
-                <input v-model="modelValue.documents.req" type="checkbox" name="documents" id="documents"
+                <input v-model="modelValue.documents.req" type="checkbox" name="documents"
                     data-te-toggle="tooltip"
                     class="h-8 w-8 rounded-md transition-colors bg-base-700 text-primary-600 hover:text-primary-500 hover:bg-base-600 focus:ring-2 focus:ring-inset focus:ring-base-300 border-0" />
                 <div class="flex flex-row">
@@ -65,7 +65,7 @@ defineEmits<{
                         {{ $t('common.min') }}
                     </span>
                     <input v-model="modelValue.documents.min" :disabled="!modelValue.documents.req" type="number" min="0"
-                        oninput="validity.valid||(value='');" name="documents" id="documents"
+                        oninput="validity.valid||(value='');" name="documents"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
                 <div class="flex flex-row">
@@ -74,7 +74,7 @@ defineEmits<{
                         {{ $t('common.max') }}
                     </span>
                     <input v-model="modelValue.documents.max" type="number" min="0"
-                        oninput="validity.valid||(value='');" name="documents" id="documents"
+                        oninput="validity.valid||(value='');" name="documents"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
             </div>
@@ -84,7 +84,7 @@ defineEmits<{
                 {{ $t('common.vehicle', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
-                <input v-model="modelValue.vehicles.req" type="checkbox" name="vehicles" id="vehicles"
+                <input v-model="modelValue.vehicles.req" type="checkbox" name="vehicles"
                     data-te-toggle="tooltip"
                     class="h-8 w-8 rounded-md transition-colors bg-base-700 text-primary-600 hover:text-primary-500 hover:bg-base-600 focus:ring-2 focus:ring-inset focus:ring-base-300 border-0" />
                 <div class="flex flex-row">
@@ -93,7 +93,7 @@ defineEmits<{
                         {{ $t('common.min') }}
                     </span>
                     <input v-model="modelValue.vehicles.min" :disabled="!modelValue.vehicles.req" type="number" min="0"
-                        oninput="validity.valid||(value='');" name="vehicles" id="vehicles"
+                        oninput="validity.valid||(value='');" name="vehicles"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
                 <div class="flex flex-row">
@@ -102,7 +102,7 @@ defineEmits<{
                         {{ $t('common.max') }}
                     </span>
                     <input v-model="modelValue.vehicles.max" type="number" min="0"
-                        oninput="validity.valid||(value='');" name="vehicles" id="vehicles"
+                        oninput="validity.valid||(value='');" name="vehicles"
                         class="block w-full rounded-r-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 disabled:text-base-400 transition-colors" />
                 </div>
             </div>

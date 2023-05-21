@@ -99,7 +99,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                             <div>
                                                 <label for="currentPassword" class="sr-only">Password</label>
                                                 <div>
-                                                    <Field id="currentPassword" name="currentPassword" type="password"
+                                                    <Field name="currentPassword" type="password"
                                                         autocomplete="current-password"
                                                         :placeholder="$t('components.auth.change_password_modal.current_password')"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
@@ -110,7 +110,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                             <div>
                                                 <label for="newPassword" class="sr-only">Password</label>
                                                 <div>
-                                                    <Field id="newPassword" name="newPassword" type="password"
+                                                    <Field name="newPassword" type="password"
                                                         autocomplete="new-password"
                                                         :placeholder="$t('components.auth.change_password_modal.new_password')"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"

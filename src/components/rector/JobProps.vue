@@ -145,7 +145,7 @@ async function saveJobProps(): Promise<void> {
                                     <div class="space-y-5">
                                         <div class="relative flex items-start">
                                             <div class="flex h-6 items-center">
-                                                <input id="comments" aria-describedby="comments-description" name="comments"
+                                                <input aria-describedby="comments-description" name="comments"
                                                     type="checkbox" v-model="properties.quickButtons.PenaltyCalculator"
                                                     class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600" />
                                             </div>

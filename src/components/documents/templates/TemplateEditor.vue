@@ -534,7 +534,7 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.template', 2) }} {{ $t('common.weight') }}
             </label>
             <div class="mt-2">
-                <Field type="number" name="weight" id="weight" min="0" max="4294967295"
+                <Field type="number" name="weight" min="0" max="4294967295"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="weight" />
             </div>
@@ -542,7 +542,7 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.template') }} {{ $t('common.title') }}
             </label>
             <div>
-                <Field as="textarea" rows="1" name="title" id="title"
+                <Field as="textarea" rows="1" name="title"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="title" />
                 <ErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
@@ -551,7 +551,7 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.template') }} {{ $t('common.description') }}
             </label>
             <div>
-                <Field as="textarea" rows="4" name="description" id="description"
+                <Field as="textarea" rows="4" name="description"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="description" />
                 <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
@@ -576,7 +576,7 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.content') }} {{ $t('common.title') }}
             </label>
             <div>
-                <Field as="textarea" rows="2" name="contentTitle" id="contentTitle"
+                <Field as="textarea" rows="2" name="contentTitle"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="contentTitle" />
                 <ErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
@@ -623,7 +623,7 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.content') }} {{ $t('common.template') }}
             </label>
             <div>
-                <Field as="textarea" rows="6" name="content" id="content"
+                <Field as="textarea" rows="6" name="content"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="content" />
                 <ErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />

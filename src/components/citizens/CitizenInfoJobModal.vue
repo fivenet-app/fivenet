@@ -148,7 +148,7 @@ async function setJobProp(): Promise<void> {
                                     </div>
                                 </Combobox>
 
-                                <input type="text" name="reason" id="reason"
+                                <input type="text" name="reason"
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :placeholder="$t('common.reason')" v-model="reason" />
                             </div>

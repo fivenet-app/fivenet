@@ -75,7 +75,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
                 {{ $t('components.auth.create_account.registration_token') }}
             </label>
             <div>
-                <Field id="registrationToken" name="registrationToken" type="text" inputmode="numeric"
+                <Field name="registrationToken" type="text" inputmode="numeric"
                     aria-describedby="hint" pattern="[0-9]*" autocomplete="registrationToken"
                     :placeholder="$t('components.auth.create_account.registration_token')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6" />
@@ -87,7 +87,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
                 {{ $t('common.username') }}
             </label>
             <div>
-                <Field id="username" name="username" type="text" autocomplete="username"
+                <Field name="username" type="text" autocomplete="username"
                     :placeholder="$t('common.username')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <ErrorMessage name="Username" as="p" class="mt-2 text-sm text-error-400" />
@@ -98,7 +98,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
                 {{ $t('common.password') }}
             </label>
             <div>
-                <Field id="password" name="password" type="password" autocomplete="current-password"
+                <Field name="password" type="password" autocomplete="current-password"
                     :placeholder="$t('common.password')" v-model:model-value="currPassword"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <PartialsPasswordStrengthMeter :input="currPassword" class="mt-2" />

@@ -36,7 +36,7 @@ defineEmits<{
                         <DialogPanel
                             class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 h-96">
                             <div class="my-2 space-y-24">
-                                <input type="text" name="reason" id="reason"
+                                <input type="text" name="reason"
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :placeholder="$t('common.reason')" :value="reason"
                                     @input="$emit('update:reason', ($event.target as HTMLInputElement).value)" />

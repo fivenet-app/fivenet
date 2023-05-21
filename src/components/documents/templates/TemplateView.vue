@@ -103,7 +103,7 @@ const openPreview = ref(false);
                         {{ $t('common.content') }} {{ $t('common.title') }}
                     </label>
                     <div class="mt-2">
-                        <textarea rows="4" name="content" id="content"
+                        <textarea rows="4" name="content"
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             disabled :value="template.getContentTitle()" />
                     </div>
@@ -111,7 +111,7 @@ const openPreview = ref(false);
                         {{ $t('common.content') }}
                     </label>
                     <div class="mt-2">
-                        <textarea rows="4" name="content" id="content"
+                        <textarea rows="4" name="content"
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             disabled :value="template.getContent()" />
                     </div>
