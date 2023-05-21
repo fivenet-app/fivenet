@@ -80,11 +80,11 @@ fivenet:
     #   memory: 128Mi
   livenessProbe:
     httpGet:
-      path: /
+      path: /readiness
       port: http
   readinessProbe:
     httpGet:
-      path: /
+      path: /readiness
       port: http
   additionalEnv: []
   # -- FiveNet config

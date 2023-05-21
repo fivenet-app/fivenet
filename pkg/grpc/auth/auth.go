@@ -60,15 +60,15 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 		return nil, InvalidTokenErr
 	}
 
-	ctx = logging.InjectFields(ctx, logging.Fields{
-		AuthSubCtxTag, tInfo.Subject,
-		AuthAccIDCtxTag, tInfo.CharID,
-	})
-
 	userInfo, err := g.ui.GetUserInfo(ctx, tInfo.CharID, tInfo.AccID)
 	if err != nil {
 		return nil, err
 	}
+
+	ctx = logging.InjectFields(ctx, logging.Fields{
+		AuthSubCtxTag, tInfo.Subject,
+		AuthAccIDCtxTag, tInfo.CharID,
+	})
 
 	return context.WithValue(ctx, UserInfoKey, userInfo), nil
 }

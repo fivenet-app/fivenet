@@ -32,7 +32,7 @@ var (
 )
 
 var (
-	InvalidRequestErr = status.Error(codes.InvalidArgument, "Invalid notificator stream request!")
+	InvalidRequestErr = status.Error(codes.InvalidArgument, "errors.NotificatorService.InvalidRequestErr")
 )
 
 const StartWaitTicks = 3

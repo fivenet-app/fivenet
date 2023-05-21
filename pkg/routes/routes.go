@@ -40,6 +40,9 @@ func New(logger *zap.Logger) *Routes {
 }
 
 func (r *Routes) Register(e *gin.Engine, oa2 *oauth2.OAuth2) {
+	e.GET("/readiness", func(c *gin.Context) {
+		c.String(http.StatusOK, "OK")
+	})
 	// API Base
 	g := e.Group("/api")
 	{

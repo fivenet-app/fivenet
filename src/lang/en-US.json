@@ -824,5 +824,9 @@
             }
         }
     },
-    "errors": {}
+    "errors": {
+        "NotificatorService": {
+            "InvalidRequestErr": "Invalid notificator stream request!"
+        }
+    }
 }
