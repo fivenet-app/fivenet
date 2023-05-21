@@ -28,9 +28,14 @@ func SetupDB(logger *zap.Logger) (*sql.DB, error) {
 
 	// Connect to database
 	var err error
-	db, err = otelsql.Open("mysql", config.C.Database.DSN, otelsql.WithAttributes(
-		semconv.DBSystemMySQL,
-	))
+	db, err = otelsql.Open("mysql", config.C.Database.DSN,
+		otelsql.WithAttributes(
+			semconv.DBSystemMySQL,
+		),
+		otelsql.WithSpanOptions(otelsql.SpanOptions{
+			DisableErrSkip: true,
+		}),
+	)
 	if err != nil {
 		return nil, err
 	}
