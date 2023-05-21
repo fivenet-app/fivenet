@@ -33,6 +33,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/version"
 	"github.com/spf13/cobra"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
 )
 
@@ -79,12 +80,27 @@ var serverCmd = &cobra.Command{
 			return fmt.Errorf("failed to register permissions. %w", err)
 		}
 
+		// Set up OTLP tracing
+		tp, err := tracerProvider()
+		if err != nil {
+			logger.Fatal("failed to setup tracing provider", zap.Error(err))
+		}
+		defer func(ctx context.Context) {
+			<-ctx.Done()
+			ctx, cancel := context.WithTimeout(ctx, time.Second*5)
+			defer cancel()
+			if err := tp.Shutdown(ctx); err != nil {
+				logger.Error("failed to cleanly shut down tracing", zap.Error(err))
+			}
+		}(ctx)
+
 		// Audit Storer
-		aud := audit.New(logger.Named("audit"), db)
+		aud := audit.New(logger.Named("audit"), tp, db)
 		aud.Start()
 
 		// Wrap the server parts to try to isolate the actual "run servers" logic
 		server := &server{
+			tp:    tp,
 			db:    db,
 			tm:    tm,
 			p:     p,
@@ -107,6 +123,7 @@ func init() {
 }
 
 type server struct {
+	tp    *tracesdk.TracerProvider
 	db    *sql.DB
 	tm    *auth.TokenMgr
 	p     perms.Permissions
@@ -114,7 +131,7 @@ type server struct {
 }
 
 func (s *server) runServers(bctx context.Context) error {
-	grpcServer, grpcLis := proto.NewGRPCServer(bctx, logger.Named("grpc/server"), s.db, s.tm, s.p, s.audit)
+	grpcServer, grpcLis := proto.NewGRPCServer(bctx, logger.Named("grpc/server"), s.tp, s.db, s.tm, s.p, s.audit)
 
 	go func() {
 		if err := grpcServer.Serve(grpcLis); err != nil {
@@ -194,7 +211,12 @@ func (s *server) setupHTTPServer() *gin.Engine {
 	e.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	// Prometheus Metrics endpoint
-	e.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	e.GET("/metrics", gin.WrapH(promhttp.InstrumentMetricHandler(
+		prometheus.DefaultRegisterer, promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{
+			// Opt into OpenMetrics e.g. to support exemplars
+			EnableOpenMetrics: true,
+		}),
+	)))
 
 	oauth := oauth2.New(logger.Named("oauth"), s.db, s.tm, config.C.OAuth2.Providers)
 

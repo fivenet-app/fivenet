@@ -97,6 +97,9 @@ fivenet:
       # Your Sentry or Glitchtip SDN
       clientDSN: ""
       serverDSN: ""
+    tracing:
+      url: ""
+      environment: "dev"
     http:
       listen: ":8080"
       sessions:

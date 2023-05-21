@@ -5,11 +5,13 @@ import (
 	"embed"
 	"errors"
 
+	"github.com/XSAM/otelsql"
 	"github.com/galexrt/fivenet/pkg/config"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/zap"
 )
 
@@ -26,7 +28,16 @@ func SetupDB(logger *zap.Logger) (*sql.DB, error) {
 
 	// Connect to database
 	var err error
-	db, err = sql.Open("mysql", config.C.Database.DSN)
+	db, err = otelsql.Open("mysql", config.C.Database.DSN, otelsql.WithAttributes(
+		semconv.DBSystemMySQL,
+	))
+	if err != nil {
+		return nil, err
+	}
+
+	err = otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
+		semconv.DBSystemMySQL,
+	))
 	if err != nil {
 		return nil, err
 	}

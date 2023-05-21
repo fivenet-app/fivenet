@@ -107,12 +107,12 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		for _, orderBy := range req.OrderBy {
 			var column jet.Column
 			switch orderBy.Column {
-			case "plate":
-				column = tVehicles.Plate
 			case "model":
+				column = tVehicles.Model
+			case "plate":
 				fallthrough
 			default:
-				column = tVehicles.Model
+				column = tVehicles.Plate
 			}
 
 			if orderBy.Desc {

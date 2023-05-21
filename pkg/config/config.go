@@ -34,7 +34,9 @@ type Config struct {
 	LogLevel string `default:"DEBUG" yaml:"logLevel"`
 	Mode     string `default:"debug" yaml:"mode"`
 
-	Sentry   Sentry   `yaml:"sentry"`
+	Sentry  Sentry  `yaml:"sentry"`
+	Tracing Tracing `yaml:"tracing"`
+
 	HTTP     HTTP     `yaml:"http"`
 	GRPC     GRPC     `yaml:"grpc"`
 	Database Database `yaml:"database"`
@@ -48,6 +50,11 @@ type Sentry struct {
 	ServerDSN   string `yaml:"serverDSN"`
 	Environment string `default:"dev" yaml:"environment"`
 	ClientDSN   string `default:"" yaml:"clientDSN"`
+}
+
+type Tracing struct {
+	URL         string `yaml:"url"`
+	Environment string `default:"dev" yaml:"environment"`
 }
 
 type HTTP struct {

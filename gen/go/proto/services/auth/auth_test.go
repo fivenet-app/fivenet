@@ -14,6 +14,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms/mock"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/metadata"
 )
@@ -38,7 +39,8 @@ func TestFullAuthFlow(t *testing.T) {
 	tm := auth.NewTokenMgr("")
 	p := mock.NewMock()
 	aud := &audit.Noop{}
-	c, err := mstlystcdata.NewCache(ctx, zap.NewNop(), db)
+	tp := tracesdk.NewTracerProvider()
+	c, err := mstlystcdata.NewCache(ctx, zap.NewNop(), tp, db)
 	assert.NoError(t, err)
 	enricher := mstlystcdata.NewEnricher(c)
 	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud, ui)

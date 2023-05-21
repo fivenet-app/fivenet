@@ -14,6 +14,8 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/go-jet/jet/v2/qrm"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Permissions interface {
@@ -55,7 +57,8 @@ type Permissions interface {
 type Perms struct {
 	db *sql.DB
 
-	ctx context.Context
+	tracer trace.Tracer
+	ctx    context.Context
 
 	permsMap syncx.Map[uint64, *cachePerm]
 	// Guard name to permission ID
@@ -76,7 +79,7 @@ type Perms struct {
 	userCanCache    *cache.Cache[int32, map[uint64]bool]
 }
 
-func New(ctx context.Context, db *sql.DB) *Perms {
+func New(ctx context.Context, tp *tracesdk.TracerProvider, db *sql.DB) *Perms {
 	userCanCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[int32, map[uint64]bool](lru.WithCapacity(128)),
@@ -86,7 +89,8 @@ func New(ctx context.Context, db *sql.DB) *Perms {
 	p := &Perms{
 		db: db,
 
-		ctx: ctx,
+		tracer: tp.Tracer("perms"),
+		ctx:    ctx,
 
 		permsMap:          syncx.Map[uint64, *cachePerm]{},
 		permsGuardToIDMap: syncx.Map[string, uint64]{},
@@ -131,22 +135,25 @@ type cacheRoleAttr struct {
 }
 
 func (p *Perms) load() error {
-	if err := p.loadRoleIDs(); err != nil {
+	ctx, span := p.tracer.Start(p.ctx, "perms-load")
+	defer span.End()
+
+	if err := p.loadRoleIDs(ctx); err != nil {
 		return err
 	}
 
-	if err := p.loadRolePermissions(); err != nil {
+	if err := p.loadRolePermissions(ctx); err != nil {
 		return err
 	}
 
-	if err := p.loadRoleAttributes(); err != nil {
+	if err := p.loadRoleAttributes(ctx); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (p *Perms) loadRoleIDs() error {
+func (p *Perms) loadRoleIDs(ctx context.Context) error {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID.AS("id"),
@@ -160,7 +167,7 @@ func (p *Perms) loadRoleIDs() error {
 		Job   string
 		Grade int32
 	}
-	if err := stmt.Query(p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return err
 	}
 
@@ -178,7 +185,7 @@ func (p *Perms) loadRoleIDs() error {
 	return nil
 }
 
-func (p *Perms) loadRolePermissions() error {
+func (p *Perms) loadRolePermissions(ctx context.Context) error {
 	stmt := tRolePerms.
 		SELECT(
 			tRolePerms.RoleID.AS("role_id"),
@@ -199,7 +206,7 @@ func (p *Perms) loadRolePermissions() error {
 		ID     uint64
 		Val    bool
 	}
-	if err := stmt.Query(p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return err
 	}
 
@@ -215,7 +222,7 @@ func (p *Perms) loadRolePermissions() error {
 	return nil
 }
 
-func (p *Perms) loadRoleAttributes() error {
+func (p *Perms) loadRoleAttributes(ctx context.Context) error {
 	stmt := tRoleAttrs.
 		SELECT(
 			tRoleAttrs.AttrID.AS("attr_id"),
@@ -243,7 +250,7 @@ func (p *Perms) loadRoleAttributes() error {
 		ValidValues  string
 	}
 
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return err
 		}

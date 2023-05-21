@@ -11,6 +11,8 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 )
 
@@ -24,6 +26,7 @@ type Cache struct {
 	logger *zap.Logger
 	db     *sql.DB
 
+	tracer             trace.Tracer
 	ctx                context.Context
 	jobs               *cache.Cache[string, *jobs.Job]
 	docCategories      *cache.Cache[uint64, *documents.DocumentCategory]
@@ -32,7 +35,7 @@ type Cache struct {
 	searcher *Searcher
 }
 
-func NewCache(ctx context.Context, logger *zap.Logger, db *sql.DB) (*Cache, error) {
+func NewCache(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB) (*Cache, error) {
 	jobsCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[string, *jobs.Job](lru.WithCapacity(32)),
@@ -53,6 +56,7 @@ func NewCache(ctx context.Context, logger *zap.Logger, db *sql.DB) (*Cache, erro
 		logger: logger,
 		db:     db,
 
+		tracer:             tp.Tracer("mstlystcdata-cache"),
 		ctx:                ctx,
 		jobs:               jobsCache,
 		docCategories:      docCategoriesCache,
@@ -67,18 +71,15 @@ func NewCache(ctx context.Context, logger *zap.Logger, db *sql.DB) (*Cache, erro
 }
 
 func (c *Cache) Start() {
-	if err := c.refreshCache(); err != nil {
-		c.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
-	}
-
 	for {
+		if err := c.refreshCache(); err != nil {
+			c.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
+		}
+
 		select {
 		case <-c.ctx.Done():
 			return
-		case <-time.After(5 * time.Minute):
-			if err := c.refreshCache(); err != nil {
-				c.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
-			}
+		case <-time.After(3 * time.Minute):
 		}
 	}
 }
@@ -88,11 +89,14 @@ func (c *Cache) GetSearcher() *Searcher {
 }
 
 func (c *Cache) refreshCache() error {
-	if err := c.refreshDocumentCategories(); err != nil {
+	ctx, span := c.tracer.Start(c.ctx, "mstlystcdata-refresh-cache")
+	defer span.End()
+
+	if err := c.refreshDocumentCategories(ctx); err != nil {
 		return err
 	}
 
-	if err := c.refreshJobs(); err != nil {
+	if err := c.refreshJobs(ctx); err != nil {
 		return err
 	}
 
@@ -103,7 +107,7 @@ func (c *Cache) refreshCache() error {
 	return nil
 }
 
-func (c *Cache) refreshDocumentCategories() error {
+func (c *Cache) refreshDocumentCategories(ctx context.Context) error {
 	stmt := adc.
 		SELECT(
 			adc.ID,
@@ -118,7 +122,7 @@ func (c *Cache) refreshDocumentCategories() error {
 		)
 
 	var dest []*documents.DocumentCategory
-	if err := stmt.QueryContext(c.ctx, c.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		return err
 	}
 
@@ -140,7 +144,7 @@ func (c *Cache) refreshDocumentCategories() error {
 	return nil
 }
 
-func (c *Cache) refreshJobs() error {
+func (c *Cache) refreshJobs(ctx context.Context) error {
 	stmt := j.
 		SELECT(
 			j.Name,
@@ -160,7 +164,7 @@ func (c *Cache) refreshJobs() error {
 		)
 
 	var dest []*jobs.Job
-	if err := stmt.QueryContext(c.ctx, c.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		return err
 	}
 

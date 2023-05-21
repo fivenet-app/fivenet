@@ -10,6 +10,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jsoniter "github.com/json-iterator/go"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 )
 
@@ -27,15 +29,17 @@ type IAuditer interface {
 
 type AuditStorer struct {
 	logger *zap.Logger
+	tracer trace.Tracer
 	db     *sql.DB
 	ctx    context.Context
 	wg     sync.WaitGroup
 	input  chan *model.FivenetAuditLog
 }
 
-func New(logger *zap.Logger, db *sql.DB) *AuditStorer {
+func New(logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB) *AuditStorer {
 	return &AuditStorer{
 		logger: logger,
+		tracer: tp.Tracer("audit-storer"),
 		db:     db,
 		ctx:    context.Background(),
 		wg:     sync.WaitGroup{},
@@ -83,6 +87,9 @@ func (a *AuditStorer) AddEntryWithData(in *model.FivenetAuditLog, data any) {
 }
 
 func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
+	ctx, span := a.tracer.Start(a.ctx, "audit-log-store")
+	defer span.End()
+
 	stmt := audit.
 		INSERT(
 			audit.UserID,
@@ -95,7 +102,7 @@ func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
 		).
 		MODEL(in)
 
-	if _, err := stmt.ExecContext(a.ctx, a.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, a.db); err != nil {
 		return err
 	}
 

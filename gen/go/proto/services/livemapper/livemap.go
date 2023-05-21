@@ -20,6 +20,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 	codes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -42,6 +44,7 @@ var (
 type Server struct {
 	LivemapperServiceServer
 
+	tracer trace.Tracer
 	ctx    context.Context
 	logger *zap.Logger
 	db     *sql.DB
@@ -54,7 +57,7 @@ type Server struct {
 	broker *utils.Broker[interface{}]
 }
 
-func NewServer(ctx context.Context, logger *zap.Logger, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
+func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
 	dispatchesCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[string, []*livemap.DispatchMarker](lru.WithCapacity(32)),
@@ -72,6 +75,8 @@ func NewServer(ctx context.Context, logger *zap.Logger, db *sql.DB, p perms.Perm
 	return &Server{
 		ctx:    ctx,
 		logger: logger,
+
+		tracer: tp.Tracer("livemapper-cache"),
 		db:     db,
 		p:      p,
 		c:      c,
@@ -84,20 +89,28 @@ func NewServer(ctx context.Context, logger *zap.Logger, db *sql.DB, p perms.Perm
 
 func (s *Server) Start() {
 	for {
+		s.refreshCache()
+
 		select {
 		case <-s.ctx.Done():
 			return
 		// 3.85 seconds
 		case <-time.After(3850 * time.Millisecond):
-			if err := s.refreshUserLocations(); err != nil {
-				s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
-			}
-			if err := s.refreshDispatches(); err != nil {
-				s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
-			}
-			s.broker.Publish(nil)
 		}
 	}
+}
+
+func (s *Server) refreshCache() {
+	ctx, span := s.tracer.Start(s.ctx, "livemap-refresh-cache")
+	defer span.End()
+
+	if err := s.refreshUserLocations(ctx); err != nil {
+		s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
+	}
+	if err := s.refreshDispatches(ctx); err != nil {
+		s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
+	}
+	s.broker.Publish(nil)
 }
 
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
@@ -205,7 +218,7 @@ func (s *Server) getUserDispatches(jobs []string) ([]*livemap.DispatchMarker, er
 	return ds, nil
 }
 
-func (s *Server) refreshUserLocations() error {
+func (s *Server) refreshUserLocations(ctx context.Context) error {
 	markers := map[string][]*livemap.UserMarker{}
 
 	locs := tPlayerLocs.AS("usermarker")
@@ -242,7 +255,7 @@ func (s *Server) refreshUserLocations() error {
 		)
 
 	var dest []*livemap.UserMarker
-	if err := stmt.QueryContext(s.ctx, s.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
 
@@ -266,7 +279,7 @@ func (s *Server) refreshUserLocations() error {
 	return nil
 }
 
-func (s *Server) refreshDispatches() error {
+func (s *Server) refreshDispatches(ctx context.Context) error {
 	if len(config.C.Game.LivemapJobs) == 0 {
 		s.logger.Warn("empty livemap jobs in config, no dispatches can be found because of that")
 		return nil
@@ -301,7 +314,7 @@ func (s *Server) refreshDispatches() error {
 		LIMIT(DispatchMarkerLimit)
 
 	var dest []*model.GksphoneJobMessage
-	if err := stmt.QueryContext(s.ctx, s.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
 

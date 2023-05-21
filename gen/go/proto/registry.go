@@ -23,6 +23,11 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/validator"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -46,22 +51,39 @@ var (
 
 type RegisterFunc func() error
 
-func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth.TokenMgr, p perms.Permissions, aud audit.IAuditer) (*grpc.Server, net.Listener) {
+func NewGRPCServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, tm *auth.TokenMgr, p perms.Permissions, aud audit.IAuditer) (*grpc.Server, net.Listener) {
 	// Create GRPC Server
 	lis, err := net.Listen("tcp", config.C.GRPC.Listen)
 	if err != nil {
 		logger.Fatal("failed to listen", zap.Error(err))
 	}
 
-	// Setup metrics.
+	logTraceID := func(ctx context.Context) logging.Fields {
+		if span := trace.SpanContextFromContext(ctx); span.IsSampled() {
+			return logging.Fields{"traceID", span.TraceID().String()}
+		}
+		return nil
+	}
+
+	// Setup metrics
 	srvMetrics := grpcprom.NewServerMetrics(
 		grpcprom.WithServerHandlingTimeHistogram(
 			grpcprom.WithHistogramBuckets([]float64{0.001, 0.01, 0.1, 0.3, 0.6, 1, 3, 6, 9, 20, 30, 60, 90, 120}),
 		),
 	)
 	prometheus.MustRegister(srvMetrics)
+	exemplarFromContext := func(ctx context.Context) prometheus.Labels {
+		if span := trace.SpanContextFromContext(ctx); span.IsSampled() {
+			return prometheus.Labels{"traceID": span.TraceID().String()}
+		}
+		return nil
+	}
 
-	// Setup metric for panic recoveries.
+	// Setup GRPC tracing
+	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+
+	// Setup metric for panic recoveries
 	panicsTotal := promauto.With(prometheus.DefaultRegisterer).NewCounter(prometheus.CounterOpts{
 		Name: "grpc_req_panics_recovered_total",
 		Help: "Total number of gRPC requests recovered from internal panic.",
@@ -83,8 +105,10 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			srvMetrics.UnaryServerInterceptor(),
+			otelgrpc.UnaryServerInterceptor(),
+			srvMetrics.UnaryServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
 			logging.UnaryServerInterceptor(InterceptorLogger(logger),
+				logging.WithFieldsFromContext(logTraceID),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
 			grpc_auth.UnaryServerInterceptor(grpcAuth.GRPCAuthFunc),
@@ -95,8 +119,10 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 			),
 		),
 		grpc.ChainStreamInterceptor(
-			srvMetrics.StreamServerInterceptor(),
+			otelgrpc.StreamServerInterceptor(),
+			srvMetrics.StreamServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
 			logging.StreamServerInterceptor(InterceptorLogger(logger),
+				logging.WithFieldsFromContext(logTraceID),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
 			grpc_auth.StreamServerInterceptor(grpcAuth.GRPCAuthFunc),
@@ -110,7 +136,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 
 	// "Mostly Static Data" Cache
 	cache, err := mstlystcdata.NewCache(ctx,
-		logger.Named("mstlystcdata"), db)
+		logger.Named("mstlystcdata"), tp, db)
 	if err != nil {
 		logger.Fatal("failed to create mostly static data cache", zap.Error(err))
 	}
@@ -128,7 +154,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tm *auth
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, notif))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
-	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), db, p, enricher)
+	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher)
 	go livemapper.Start()
 
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)

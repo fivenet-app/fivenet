@@ -66,34 +66,39 @@ func (s *Server) GenerateRandomUserMarker() {
 
 	counter := 0
 	for {
-		if counter >= 15 {
-			resetMarkers()
-			counter = 0
-		} else {
-			moveMarkers()
-		}
+		func() {
+			ctx, span := s.tracer.Start(s.ctx, "livemap-gen-users")
+			defer span.End()
 
-		stmt := tPlayerLocs.
-			INSERT(
-				tPlayerLocs.Identifier,
-				tPlayerLocs.Job,
-				tPlayerLocs.X,
-				tPlayerLocs.Y,
-				tPlayerLocs.Hidden,
-			).
-			MODELS(markers).
-			ON_DUPLICATE_KEY_UPDATE(
-				tPlayerLocs.X.SET(jet.RawFloat("VALUES(x)")),
-				tPlayerLocs.Y.SET(jet.RawFloat("VALUES(y)")),
-			)
+			if counter >= 15 {
+				resetMarkers()
+				counter = 0
+			} else {
+				moveMarkers()
+			}
 
-		_, err := stmt.Exec(s.db)
-		if err != nil {
-			s.logger.Error("failed to insert/ update random location to locations table", zap.Error(err))
-		}
+			stmt := tPlayerLocs.
+				INSERT(
+					tPlayerLocs.Identifier,
+					tPlayerLocs.Job,
+					tPlayerLocs.X,
+					tPlayerLocs.Y,
+					tPlayerLocs.Hidden,
+				).
+				MODELS(markers).
+				ON_DUPLICATE_KEY_UPDATE(
+					tPlayerLocs.X.SET(jet.RawFloat("VALUES(x)")),
+					tPlayerLocs.Y.SET(jet.RawFloat("VALUES(y)")),
+				)
 
-		counter++
-		time.Sleep(3 * time.Second)
+			_, err := stmt.ExecContext(ctx, s.db)
+			if err != nil {
+				s.logger.Error("failed to insert/ update random location to locations table", zap.Error(err))
+			}
+
+			counter++
+			time.Sleep(3 * time.Second)
+		}()
 	}
 }
 
@@ -110,6 +115,9 @@ func (s *Server) GenerateRandomDispatchMarker() {
 
 	jMessage := table.GksphoneJobMessage
 	resetMarkers := func() {
+		ctx, span := s.tracer.Start(s.ctx, "livemap-gen-dispatches")
+		defer span.End()
+
 		xMin := -3300
 		xMax := 4300
 		yMin := -3300
@@ -163,7 +171,7 @@ func (s *Server) GenerateRandomDispatchMarker() {
 			).
 			MODELS(markers)
 
-		_, err := stmt.Exec(s.db)
+		_, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
 			s.logger.Error("failed to insert random dispatch", zap.Error(err))
 		}
