@@ -32,7 +32,7 @@ var (
 func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*model.FivenetRoles, bool, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	role, err := s.p.GetRole(roleId)
+	role, err := s.p.GetRole(ctx, roleId)
 	if err != nil {
 		return nil, false, err
 	}
@@ -71,7 +71,7 @@ func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64) ([]uint6
 		return ids, nil
 	}
 
-	perms, err := s.p.GetPermissionsByIDs(ids...)
+	perms, err := s.p.GetPermissionsByIDs(ctx, ids...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 	}
 
 	for i := 0; i < len(attrs); i++ {
-		dbAttrs, err := s.p.GetAttributeByIDs(attrs[i].AttrId)
+		dbAttrs, err := s.p.GetAttributeByIDs(ctx, attrs[i].AttrId)
 		if err != nil {
 			return err
 		}
@@ -134,7 +134,7 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	roles, err := s.p.GetJobRolesUpTo(userInfo.Job, userInfo.JobGrade)
+	roles, err := s.p.GetJobRolesUpTo(ctx, userInfo.Job, userInfo.JobGrade)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +166,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 		return nil, NoPermissionErr
 	}
 
-	perms, err := s.p.GetRolePermissions(role.ID)
+	perms, err := s.p.GetRolePermissions(ctx, role.ID)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
@@ -210,7 +210,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	role, err := s.p.GetRoleByJobAndGrade(userInfo.Job, req.Grade)
+	role, err := s.p.GetRoleByJobAndGrade(ctx, userInfo.Job, req.Grade)
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
@@ -220,7 +220,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		return nil, RoleAlreadyExistsErr
 	}
 
-	cr, err := s.p.CreateRole(userInfo.Job, req.Grade)
+	cr, err := s.p.CreateRole(ctx, userInfo.Job, req.Grade)
 	if err != nil {
 		return nil, err
 	}
@@ -255,7 +255,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, NoPermissionErr
 	}
 
-	roleCount, err := s.p.CountRolesForJob(userInfo.Job)
+	roleCount, err := s.p.CountRolesForJob(ctx, userInfo.Job)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}
@@ -270,7 +270,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, OwnRoleDeletionErr
 	}
 
-	if err := s.p.DeleteRole(role.ID); err != nil {
+	if err := s.p.DeleteRole(ctx, role.ID); err != nil {
 		return nil, InvalidRequestErr
 	}
 
@@ -343,12 +343,12 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 				}
 			}
 		}
-		if err := s.p.UpdateRolePermissions(role.ID, toUpdatePerms...); err != nil {
+		if err := s.p.UpdateRolePermissions(ctx, role.ID, toUpdatePerms...); err != nil {
 			return err
 		}
 	}
 	if len(toDelete) > 0 {
-		if err := s.p.RemovePermissionsFromRole(role.ID, toDelete...); err != nil {
+		if err := s.p.RemovePermissionsFromRole(ctx, role.ID, toDelete...); err != nil {
 			return err
 		}
 	}
@@ -366,12 +366,12 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetR
 	}
 
 	if len(attrUpdates.ToUpdate) > 0 {
-		if err := s.p.AddOrUpdateAttributesToRole(attrUpdates.ToUpdate...); err != nil {
+		if err := s.p.AddOrUpdateAttributesToRole(ctx, attrUpdates.ToUpdate...); err != nil {
 			return err
 		}
 	}
 	if len(attrUpdates.ToRemove) > 0 {
-		if err := s.p.RemoveAttributesFromRole(role.ID, attrUpdates.ToRemove...); err != nil {
+		if err := s.p.RemoveAttributesFromRole(ctx, role.ID, attrUpdates.ToRemove...); err != nil {
 			return err
 		}
 	}
@@ -382,7 +382,7 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetR
 func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest) (*GetPermissionsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	perms, err := s.p.GetAllPermissions()
+	perms, err := s.p.GetAllPermissions(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -395,7 +395,7 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 	resp := &GetPermissionsResponse{}
 	resp.Permissions = filtered
 
-	attrs, err := s.p.GetAllAttributes(userInfo.Job)
+	attrs, err := s.p.GetAllAttributes(ctx, userInfo.Job)
 	if err != nil {
 		return nil, InvalidRequestErr
 	}

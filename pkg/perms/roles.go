@@ -1,6 +1,7 @@
 package perms
 
 import (
+	"context"
 	"errors"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
@@ -23,7 +24,7 @@ var (
 	tRolePerms = table.FivenetRolePermissions
 )
 
-func (p *Perms) GetJobRoles(job string) (collections.Roles, error) {
+func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.AllColumns,
@@ -38,14 +39,14 @@ func (p *Perms) GetJobRoles(job string) (collections.Roles, error) {
 		)
 
 	var dest collections.Roles
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
 
 	return dest, nil
 }
 
-func (p *Perms) GetJobRolesUpTo(job string, grade int32) (collections.Roles, error) {
+func (p *Perms) GetJobRolesUpTo(ctx context.Context, job string, grade int32) (collections.Roles, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.AllColumns,
@@ -61,14 +62,14 @@ func (p *Perms) GetJobRolesUpTo(job string, grade int32) (collections.Roles, err
 		)
 
 	var dest collections.Roles
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
 
 	return dest, nil
 }
 
-func (p *Perms) getRoles() (collections.Roles, error) {
+func (p *Perms) getRoles(ctx context.Context) (collections.Roles, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.AllColumns,
@@ -80,14 +81,14 @@ func (p *Perms) getRoles() (collections.Roles, error) {
 		)
 
 	var dest collections.Roles
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
 
 	return dest, nil
 }
 
-func (p *Perms) GetClosesJobRole(job string, grade int32) (*model.FivenetRoles, error) {
+func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.AllColumns,
@@ -100,14 +101,14 @@ func (p *Perms) GetClosesJobRole(job string, grade int32) (*model.FivenetRoles, 
 		LIMIT(1)
 
 	var dest model.FivenetRoles
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
 
 	return &dest, nil
 }
 
-func (p *Perms) CountRolesForJob(job string) (int64, error) {
+func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error) {
 	stmt := tRoles.
 		SELECT(
 			jet.COUNT(tRoles.ID).AS("datacount.totalcount"),
@@ -118,14 +119,14 @@ func (p *Perms) CountRolesForJob(job string) (int64, error) {
 		)
 
 	var dest database.DataCount
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return -1, err
 	}
 
 	return dest.TotalCount, nil
 }
 
-func (p *Perms) GetRole(id uint64) (*model.FivenetRoles, error) {
+func (p *Perms) GetRole(ctx context.Context, id uint64) (*model.FivenetRoles, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.AllColumns,
@@ -136,14 +137,14 @@ func (p *Perms) GetRole(id uint64) (*model.FivenetRoles, error) {
 		)
 
 	var dest model.FivenetRoles
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
 
 	return &dest, nil
 }
 
-func (p *Perms) CreateRole(job string, grade int32) (*model.FivenetRoles, error) {
+func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error) {
 	stmt := tRoles.
 		INSERT(
 			tRoles.Job,
@@ -154,7 +155,7 @@ func (p *Perms) CreateRole(job string, grade int32) (*model.FivenetRoles, error)
 			grade,
 		)
 
-	res, err := stmt.ExecContext(p.ctx, p.db)
+	res, err := stmt.ExecContext(ctx, p.db)
 	if err != nil && !dbutils.IsDuplicateError(err) {
 		return nil, err
 	}
@@ -166,12 +167,12 @@ func (p *Perms) CreateRole(job string, grade int32) (*model.FivenetRoles, error)
 			return nil, err
 		}
 
-		role, err = p.GetRole(uint64(lastId))
+		role, err = p.GetRole(ctx, uint64(lastId))
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		role, err = p.GetRoleByJobAndGrade(job, grade)
+		role, err = p.GetRoleByJobAndGrade(ctx, job, grade)
 		if err != nil {
 			return nil, err
 		}
@@ -182,13 +183,13 @@ func (p *Perms) CreateRole(job string, grade int32) (*model.FivenetRoles, error)
 	return role, nil
 }
 
-func (p *Perms) DeleteRole(id uint64) error {
+func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	_, err := tRoles.
 		DELETE().
 		WHERE(
 			tRoles.ID.EQ(jet.Uint64(id)),
 		).
-		ExecContext(p.ctx, p.db)
+		ExecContext(ctx, p.db)
 	if err != nil {
 		return err
 	}
@@ -198,7 +199,7 @@ func (p *Perms) DeleteRole(id uint64) error {
 	return nil
 }
 
-func (p *Perms) GetRoleByJobAndGrade(job string, grade int32) (*model.FivenetRoles, error) {
+func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.AllColumns,
@@ -210,7 +211,7 @@ func (p *Perms) GetRoleByJobAndGrade(job string, grade int32) (*model.FivenetRol
 		))
 
 	var dest model.FivenetRoles
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
 			return nil, nil
 		} else {
@@ -221,7 +222,7 @@ func (p *Perms) GetRoleByJobAndGrade(job string, grade int32) (*model.FivenetRol
 	return &dest, nil
 }
 
-func (p *Perms) GetRolePermissions(id uint64) ([]*permissions.Permission, error) {
+func (p *Perms) GetRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error) {
 	tRolePerms := tRolePerms
 	tPerms := tPerms.AS("permission")
 	stmt := tRolePerms.
@@ -244,7 +245,7 @@ func (p *Perms) GetRolePermissions(id uint64) ([]*permissions.Permission, error)
 		)
 
 	var dest []*permissions.Permission
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
 
@@ -256,7 +257,7 @@ type AddPerm struct {
 	Val bool
 }
 
-func (p *Perms) UpdateRolePermissions(roleId uint64, perms ...AddPerm) error {
+func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms ...AddPerm) error {
 	var rolePerms []struct {
 		RoleID       uint64
 		PermissionID uint64
@@ -285,7 +286,7 @@ func (p *Perms) UpdateRolePermissions(roleId uint64, perms ...AddPerm) error {
 			tRolePerms.Val.SET(jet.BoolExp(jet.Raw("values(`val`)"))),
 		)
 
-	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil && !dbutils.IsDuplicateError(err) {
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil && !dbutils.IsDuplicateError(err) {
 		return err
 	}
 
@@ -300,7 +301,7 @@ func (p *Perms) UpdateRolePermissions(roleId uint64, perms ...AddPerm) error {
 	return nil
 }
 
-func (p *Perms) RemovePermissionsFromRole(roleId uint64, perms ...uint64) error {
+func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, perms ...uint64) error {
 	ids := make([]jet.Expression, len(perms))
 	for i := 0; i < len(perms); i++ {
 		ids[i] = jet.Uint64(perms[i])
@@ -313,7 +314,7 @@ func (p *Perms) RemovePermissionsFromRole(roleId uint64, perms ...uint64) error 
 			tRolePerms.PermissionID.IN(ids...),
 		))
 
-	_, err := stmt.ExecContext(p.ctx, p.db)
+	_, err := stmt.ExecContext(ctx, p.db)
 	if err != nil {
 		return err
 	}

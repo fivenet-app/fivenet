@@ -19,37 +19,37 @@ import (
 )
 
 type Permissions interface {
-	GetAllPermissions() ([]*permissions.Permission, error)
-	GetPermissionsByIDs(ids ...uint64) ([]*permissions.Permission, error)
-	CreatePermission(category Category, name Name) (uint64, error)
+	GetAllPermissions(ctx context.Context) ([]*permissions.Permission, error)
+	GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*permissions.Permission, error)
+	CreatePermission(ctx context.Context, category Category, name Name) (uint64, error)
 	GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error)
 
-	GetJobRoles(job string) (collections.Roles, error)
-	GetJobRolesUpTo(job string, grade int32) (collections.Roles, error)
-	GetClosesJobRole(job string, grade int32) (*model.FivenetRoles, error)
-	CountRolesForJob(prefix string) (int64, error)
+	GetJobRoles(ctx context.Context, job string) (collections.Roles, error)
+	GetJobRolesUpTo(ctx context.Context, job string, grade int32) (collections.Roles, error)
+	GetClosestJobRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error)
+	CountRolesForJob(ctx context.Context, prefix string) (int64, error)
 
-	GetRole(id uint64) (*model.FivenetRoles, error)
-	GetRoleByJobAndGrade(job string, grade int32) (*model.FivenetRoles, error)
-	GetRolePermissions(id uint64) ([]*permissions.Permission, error)
+	GetRole(ctx context.Context, id uint64) (*model.FivenetRoles, error)
+	GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error)
+	GetRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
 
-	CreateRole(job string, grade int32) (*model.FivenetRoles, error)
-	DeleteRole(id uint64) error
-	UpdateRolePermissions(id uint64, perms ...AddPerm) error
-	RemovePermissionsFromRole(id uint64, perms ...uint64) error
+	CreateRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error)
+	DeleteRole(ctx context.Context, id uint64) error
+	UpdateRolePermissions(ctx context.Context, id uint64, perms ...AddPerm) error
+	RemovePermissionsFromRole(ctx context.Context, id uint64, perms ...uint64) error
 
 	Can(userInfo *userinfo.UserInfo, category Category, name Name) bool
 
 	GetAttribute(category Category, name Name, key Key) (*permissions.RoleAttribute, error)
-	GetAttributeByIDs(ids ...uint64) ([]*permissions.RoleAttribute, error)
-	CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error)
-	UpdateAttribute(attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error
+	GetAttributeByIDs(ctx context.Context, ids ...uint64) ([]*permissions.RoleAttribute, error)
+	CreateAttribute(ctx context.Context, permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error)
+	UpdateAttribute(ctx context.Context, attributeId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
 	FlattenRoleAttributes(job string, grade int32) ([]string, error)
-	GetAllAttributes(job string) ([]*permissions.RoleAttribute, error)
-	AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute) error
-	UpdateRoleAttributes(attrs ...*permissions.RoleAttribute) error
-	RemoveAttributesFromRole(roleId uint64, attrs ...*permissions.RoleAttribute) error
+	GetAllAttributes(ctx context.Context, job string) ([]*permissions.RoleAttribute, error)
+	AddOrUpdateAttributesToRole(ctx context.Context, attrs ...*permissions.RoleAttribute) error
+	UpdateRoleAttributes(ctx context.Context, attrs ...*permissions.RoleAttribute) error
+	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
 }

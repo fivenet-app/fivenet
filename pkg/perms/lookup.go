@@ -1,10 +1,7 @@
 package perms
 
 import (
-	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/galexrt/fivenet/query/fivenet/model"
-	jet "github.com/go-jet/jet/v2/mysql"
 )
 
 func (p *Perms) lookupAttributeByID(id uint64) (*cacheAttr, bool) {
@@ -74,28 +71,6 @@ func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64,
 // Permissions
 func (p *Perms) lookupPermIDByGuard(guard string) (uint64, bool) {
 	return p.permsGuardToIDMap.Load(guard)
-}
-
-func (p *Perms) lookupPermissionByGuard(name string) (*model.FivenetPermissions, error) {
-	guard := helpers.Guard(name)
-
-	stmt := tPerms.
-		SELECT(
-			tPerms.AllColumns,
-		).
-		FROM(tPerms).
-		WHERE(
-			tPerms.GuardName.EQ(jet.String(guard)),
-		).
-		LIMIT(1)
-
-	var dest model.FivenetPermissions
-	err := stmt.QueryContext(p.ctx, p.db, &dest)
-	if err != nil {
-		return nil, err
-	}
-
-	return &dest, nil
 }
 
 func (p *Perms) lookupPermByID(id uint64) (*cachePerm, bool) {

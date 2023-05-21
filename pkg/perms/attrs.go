@@ -1,6 +1,7 @@
 package perms
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -45,7 +46,7 @@ func (p *Perms) GetAttribute(category Category, name Name, key Key) (*permission
 	}, nil
 }
 
-func (p *Perms) GetAttributeByIDs(attrIds ...uint64) ([]*permissions.RoleAttribute, error) {
+func (p *Perms) GetAttributeByIDs(ctx context.Context, attrIds ...uint64) ([]*permissions.RoleAttribute, error) {
 	ids := make([]jet.Expression, len(attrIds))
 	for i := 0; i < len(attrIds); i++ {
 		ids[i] = jet.Uint64(attrIds[i])
@@ -62,7 +63,7 @@ func (p *Perms) GetAttributeByIDs(attrIds ...uint64) ([]*permissions.RoleAttribu
 		LIMIT(1)
 
 	var dest []*model.FivenetAttrs
-	err := stmt.QueryContext(p.ctx, p.db, &dest)
+	err := stmt.QueryContext(ctx, p.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +89,7 @@ func (p *Perms) GetAttributeByIDs(attrIds ...uint64) ([]*permissions.RoleAttribu
 	return attrs, nil
 }
 
-func (p *Perms) getAttributeFromDatabase(permId uint64, key Key) (*model.FivenetAttrs, error) {
+func (p *Perms) getAttributeFromDatabase(ctx context.Context, permId uint64, key Key) (*model.FivenetAttrs, error) {
 	stmt := tAttrs.
 		SELECT(
 			tAttrs.AllColumns,
@@ -101,7 +102,7 @@ func (p *Perms) getAttributeFromDatabase(permId uint64, key Key) (*model.Fivenet
 		LIMIT(1)
 
 	var dest model.FivenetAttrs
-	err := stmt.QueryContext(p.ctx, p.db, &dest)
+	err := stmt.QueryContext(ctx, p.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +110,7 @@ func (p *Perms) getAttributeFromDatabase(permId uint64, key Key) (*model.Fivenet
 	return &dest, nil
 }
 
-func (p *Perms) CreateAttribute(permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error) {
+func (p *Perms) CreateAttribute(ctx context.Context, permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error) {
 	validV := jet.NULL
 	if validValues != nil {
 		out, err := json.MarshalToString(validValues)
@@ -136,13 +137,13 @@ func (p *Perms) CreateAttribute(permId uint64, key Key, aType AttributeTypes, va
 			validV,
 		)
 
-	res, err := stmt.ExecContext(p.ctx, p.db)
+	res, err := stmt.ExecContext(ctx, p.db)
 	if err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return 0, err
 		}
 
-		attr, err := p.getAttributeFromDatabase(permId, key)
+		attr, err := p.getAttributeFromDatabase(ctx, permId, key)
 		if err != nil {
 			return 0, err
 		}
@@ -185,22 +186,16 @@ func (p *Perms) addOrUpdateAttributeInMap(permId uint64, attrId uint64, key Key,
 }
 
 func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aType AttributeTypes, validValues *permissions.AttributeValues) error {
-	perms, err := p.GetPermissionsByIDs(permId)
-	if err != nil {
-		return err
+	perm, ok := p.lookupPermByID(permId)
+	if !ok {
+		return fmt.Errorf("no permission found by id")
 	}
-
-	if len(perms) == 0 {
-		return fmt.Errorf("no permission by id found")
-	}
-
-	perm := perms[0]
 
 	attr := &cacheAttr{
 		ID:           attrId,
 		PermissionID: permId,
-		Category:     Category(perm.Category),
-		Name:         Name(perm.Name),
+		Category:     perm.Category,
+		Name:         perm.Name,
 		Key:          key,
 		Type:         aType,
 		ValidValues:  validValues,
@@ -220,7 +215,7 @@ func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aTyp
 	return nil
 }
 
-func (p *Perms) UpdateAttribute(attrId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error {
+func (p *Perms) UpdateAttribute(ctx context.Context, attrId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error {
 	validV := jet.StringExp(jet.NULL)
 	if validValues != nil {
 		out, err := json.MarshalToString(validValues)
@@ -250,7 +245,7 @@ func (p *Perms) UpdateAttribute(attrId uint64, permId uint64, key Key, aType Att
 			tAttrs.ID.EQ(jet.Uint64(attrId)),
 		)
 
-	_, err := stmt.ExecContext(p.ctx, p.db)
+	_, err := stmt.ExecContext(ctx, p.db)
 	if err != nil {
 		return err
 	}
@@ -423,7 +418,7 @@ func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal s
 	return nil
 }
 
-func (p *Perms) GetAllAttributes(job string) ([]*permissions.RoleAttribute, error) {
+func (p *Perms) GetAllAttributes(ctx context.Context, job string) ([]*permissions.RoleAttribute, error) {
 	stmt := tAttrs.
 		SELECT(
 			tAttrs.ID.AS("rawattribute.attr_id"),
@@ -441,7 +436,7 @@ func (p *Perms) GetAllAttributes(job string) ([]*permissions.RoleAttribute, erro
 		)
 
 	var dest []*permissions.RawAttribute
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
@@ -541,7 +536,7 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	return as, nil
 }
 
-func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute) error {
+func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, attrs ...*permissions.RoleAttribute) error {
 	for i := 0; i < len(attrs); i++ {
 		validV := jet.String("")
 		if attrs[i].Value != nil {
@@ -610,7 +605,7 @@ func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute)
 				tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("values(`value`)"))),
 			)
 
-		if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 			if err != nil && !dbutils.IsDuplicateError(err) {
 				return err
 			}
@@ -627,7 +622,7 @@ func (p *Perms) AddOrUpdateAttributesToRole(attrs ...*permissions.RoleAttribute)
 	return nil
 }
 
-func (p *Perms) UpdateRoleAttributes(attrs ...*permissions.RoleAttribute) error {
+func (p *Perms) UpdateRoleAttributes(ctx context.Context, attrs ...*permissions.RoleAttribute) error {
 	for i := 0; i < len(attrs); i++ {
 		stmt := tRoleAttrs.
 			UPDATE(
@@ -641,7 +636,7 @@ func (p *Perms) UpdateRoleAttributes(attrs ...*permissions.RoleAttribute) error 
 				tRoleAttrs.AttrID.EQ(jet.Uint64(attrs[i].AttrId)),
 			))
 
-		if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 			if err != nil && !dbutils.IsDuplicateError(err) {
 				return err
 			}
@@ -658,7 +653,7 @@ func (p *Perms) UpdateRoleAttributes(attrs ...*permissions.RoleAttribute) error 
 	return nil
 }
 
-func (p *Perms) RemoveAttributesFromRole(roleId uint64, attrs ...*permissions.RoleAttribute) error {
+func (p *Perms) RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error {
 	ids := make([]jet.Expression, len(attrs))
 	for i := 0; i < len(attrs); i++ {
 		ids[i] = jet.Uint64(attrs[i].AttrId)
@@ -671,7 +666,7 @@ func (p *Perms) RemoveAttributesFromRole(roleId uint64, attrs ...*permissions.Ro
 			tRoleAttrs.AttrID.IN(ids...),
 		))
 
-	if _, err := stmt.ExecContext(p.ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		return err
 	}
 

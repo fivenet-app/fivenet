@@ -64,22 +64,6 @@ var serverCmd = &cobra.Command{
 		// Setup SQL Prometheus metrics collector
 		prometheus.MustRegister(collectors.NewDBStatsCollector(db, config.C.Database.DBName))
 
-		// Create JWT Token TokenMgr
-		tm := auth.NewTokenMgr(config.C.JWT.Secret)
-
-		// Setup permissions system
-		p := perms.New(ctx, db)
-
-		cfgDefaultPerms := config.C.Game.DefaultPermissions
-		defaultPerms := make([]string, len(config.C.Game.DefaultPermissions))
-		for i := 0; i < len(config.C.Game.DefaultPermissions); i++ {
-			defaultPerms[i] = perms.BuildGuard(perms.Category(cfgDefaultPerms[i].Category), perms.Name(cfgDefaultPerms[i].Name))
-		}
-
-		if err := p.Register(defaultPerms); err != nil {
-			return fmt.Errorf("failed to register permissions. %w", err)
-		}
-
 		// Set up OTLP tracing
 		tp, err := tracerProvider()
 		if err != nil {
@@ -93,6 +77,22 @@ var serverCmd = &cobra.Command{
 				logger.Error("failed to cleanly shut down tracing", zap.Error(err))
 			}
 		}(ctx)
+
+		// Create JWT Token TokenMgr
+		tm := auth.NewTokenMgr(config.C.JWT.Secret)
+
+		// Setup permissions system
+		p := perms.New(ctx, tp, db)
+
+		cfgDefaultPerms := config.C.Game.DefaultPermissions
+		defaultPerms := make([]string, len(config.C.Game.DefaultPermissions))
+		for i := 0; i < len(config.C.Game.DefaultPermissions); i++ {
+			defaultPerms[i] = perms.BuildGuard(perms.Category(cfgDefaultPerms[i].Category), perms.Name(cfgDefaultPerms[i].Name))
+		}
+
+		if err := p.Register(defaultPerms); err != nil {
+			return fmt.Errorf("failed to register permissions. %w", err)
+		}
 
 		// Audit Storer
 		aud := audit.New(logger.Named("audit"), tp, db)

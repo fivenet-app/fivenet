@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"context"
 	"testing"
 
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -11,7 +12,7 @@ import (
 // mock permissions
 func TestPermsMock(t *testing.T) {
 	p := NewMock()
-	ps, err := p.GetAllPermissions()
+	ps, err := p.GetAllPermissions(context.Background())
 	assert.NoError(t, err)
 	assert.Empty(t, ps)
 

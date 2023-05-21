@@ -1,18 +1,20 @@
 package perms
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
 var tPerms = table.FivenetPermissions
 
-func (p *Perms) CreatePermission(category Category, name Name) (uint64, error) {
+func (p *Perms) CreatePermission(ctx context.Context, category Category, name Name) (uint64, error) {
 	guard := BuildGuard(category, name)
 	stmt := tPerms.
 		INSERT(
@@ -26,18 +28,18 @@ func (p *Perms) CreatePermission(category Category, name Name) (uint64, error) {
 			guard,
 		)
 
-	res, err := stmt.ExecContext(p.ctx, p.db)
+	res, err := stmt.ExecContext(ctx, p.db)
 	if err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return 0, err
 		}
 
-		perm, err := p.lookupPermissionByGuard(guard)
-		if err != nil {
-			return 0, err
+		permId, ok := p.lookupPermIDByGuard(guard)
+		if !ok {
+			return 0, fmt.Errorf("created permission not found in our cache ")
 		}
 
-		return perm.ID, nil
+		return permId, nil
 	}
 
 	lastId, err := res.LastInsertId()
@@ -48,7 +50,29 @@ func (p *Perms) CreatePermission(category Category, name Name) (uint64, error) {
 	return uint64(lastId), nil
 }
 
-func (p *Perms) UpdatePermission(id uint64, category Category, name Name) error {
+func (p *Perms) loadPermissionFromDatabaseByGuard(ctx context.Context, name string) (*model.FivenetPermissions, error) {
+	guard := helpers.Guard(name)
+
+	stmt := tPerms.
+		SELECT(
+			tPerms.AllColumns,
+		).
+		FROM(tPerms).
+		WHERE(
+			tPerms.GuardName.EQ(jet.String(guard)),
+		).
+		LIMIT(1)
+
+	var dest model.FivenetPermissions
+	err := stmt.QueryContext(ctx, p.db, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
+}
+
+func (p *Perms) UpdatePermission(ctx context.Context, id uint64, category Category, name Name) error {
 	guard := helpers.Guard(fmt.Sprintf("%s-%s", category, name))
 	stmt := tPerms.
 		UPDATE(
@@ -65,7 +89,7 @@ func (p *Perms) UpdatePermission(id uint64, category Category, name Name) error 
 			tPerms.ID.EQ(jet.Uint64(id)),
 		)
 
-	_, err := stmt.ExecContext(p.ctx, p.db)
+	_, err := stmt.ExecContext(ctx, p.db)
 	if err != nil {
 		return err
 	}
@@ -73,7 +97,7 @@ func (p *Perms) UpdatePermission(id uint64, category Category, name Name) error 
 	return nil
 }
 
-func (p *Perms) GetAllPermissions() ([]*permissions.Permission, error) {
+func (p *Perms) GetAllPermissions(ctx context.Context) ([]*permissions.Permission, error) {
 	tPerms := tPerms.AS("permission")
 
 	stmt := tPerms.
@@ -83,14 +107,14 @@ func (p *Perms) GetAllPermissions() ([]*permissions.Permission, error) {
 		FROM(tPerms)
 
 	var dest []*permissions.Permission
-	if err := stmt.QueryContext(p.ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
 
 	return dest, nil
 }
 
-func (p *Perms) RemovePermissionsByIDs(ids ...uint64) error {
+func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...uint64) error {
 	wIds := make([]jet.Expression, len(ids))
 	for i := 0; i < len(ids); i++ {
 		wIds[i] = jet.Uint64(ids[i])
@@ -102,7 +126,7 @@ func (p *Perms) RemovePermissionsByIDs(ids ...uint64) error {
 			tPerms.ID.IN(wIds...),
 		)
 
-	_, err := stmt.ExecContext(p.ctx, p.db)
+	_, err := stmt.ExecContext(ctx, p.db)
 	if err != nil {
 		return err
 	}
@@ -110,7 +134,7 @@ func (p *Perms) RemovePermissionsByIDs(ids ...uint64) error {
 	return nil
 }
 
-func (p *Perms) GetPermissionsByIDs(ids ...uint64) ([]*permissions.Permission, error) {
+func (p *Perms) GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*permissions.Permission, error) {
 	wIds := make([]jet.Expression, len(ids))
 	for i := 0; i < len(ids); i++ {
 		wIds[i] = jet.Uint64(ids[i])
@@ -128,7 +152,7 @@ func (p *Perms) GetPermissionsByIDs(ids ...uint64) ([]*permissions.Permission, e
 		)
 
 	var dest []*permissions.Permission
-	err := stmt.QueryContext(p.ctx, p.db, &dest)
+	err := stmt.QueryContext(ctx, p.db, &dest)
 	if err != nil {
 		return nil, err
 	}
