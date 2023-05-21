@@ -72,7 +72,7 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 		)).
 		LIMIT(1)
 
-	if err := stmt.QueryContext(ui.ctx, ui.db, dest); err != nil {
+	if err := stmt.QueryContext(ctx, ui.db, dest); err != nil {
 		return nil, err
 	}
 

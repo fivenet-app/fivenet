@@ -33,6 +33,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/version"
 	"github.com/spf13/cobra"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
 )
@@ -217,6 +218,9 @@ func (s *server) setupHTTPServer() *gin.Engine {
 			EnableOpenMetrics: true,
 		}),
 	)))
+
+	// Tracing
+	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(s.tp)))
 
 	oauth := oauth2.New(logger.Named("oauth"), s.db, s.tm, config.C.OAuth2.Providers)
 
