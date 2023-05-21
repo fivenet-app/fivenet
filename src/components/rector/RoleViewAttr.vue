@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel, Listbox, ListboxButton, ListboxOption, ListboxOptions, } from '@headlessui/vue'
+import { Disclosure, DisclosureButton, DisclosurePanel, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
 import { AttributeValues, JobGradeList, RoleAttribute, StringList } from '@fivenet/gen/resources/permissions/permissions_pb';
 import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid';
 import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';

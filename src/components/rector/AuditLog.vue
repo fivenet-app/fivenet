@@ -18,7 +18,7 @@ import { watchDebounced } from '@vueuse/core';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ from: string; to: string }>({ from: '', to: '', });
+const query = ref<{ from: string; to: string }>({ from: '', to: '' });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 

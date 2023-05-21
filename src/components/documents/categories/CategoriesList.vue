@@ -7,10 +7,9 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { CardElements } from '~/utils/types';
 import CategoryModal from './CategoryModal.vue';
-import { ErrorMessage, Field, useForm } from 'vee-validate';
-import { object, string } from 'yup';
-import { toTypedSchema } from '@vee-validate/yup';
+import { ErrorMessage, Field, Form, defineRule } from 'vee-validate';
 import { CreateDocumentCategoryRequest, ListDocumentCategoriesRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { max, min, required } from '@vee-validate/rules';
 
 const { $grpc } = useNuxtApp();
 
@@ -50,12 +49,16 @@ async function openCategory(idx: number): Promise<void> {
     open.value = true;
 }
 
-async function createDocumentCategory(name: string, description: string): Promise<void> {
+const form = ref<{ name: string; description: string; }>({
+    name: '', description: '',
+});
+
+async function createDocumentCategory(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new CreateDocumentCategoryRequest();
         const cat = new DocumentCategory();
-        cat.setName(name);
-        cat.setDescription(description);
+        cat.setName(form.value.name);
+        cat.setDescription(form.value.description);
         req.setCategory(cat);
 
         try {
@@ -72,16 +75,9 @@ async function createDocumentCategory(name: string, description: string): Promis
     });
 }
 
-const { handleSubmit } = useForm({
-    validationSchema: toTypedSchema(
-        object({
-            name: string().required().min(3).max(255),
-            description: string().required().max(255),
-        }),
-    ),
-});
-
-const onSubmit = handleSubmit(async (values): Promise<void> => await createDocumentCategory(values.name, values.description));
+defineRule('required', required);
+defineRule('min', min);
+defineRule('max', max);
 </script>
 
 <template>
@@ -91,7 +87,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
             <div class="px-2 sm:px-6 lg:px-8">
                 <div v-can="'DocStoreService.CreateDocumentCategory'" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
-                        <form @submit="onSubmit">
+                        <Form @submit.prevent="createDocumentCategory">
                             <div class="flex flex-row gap-4 mx-auto">
                                 <div class="flex-1 form-control">
                                     <label for="name" class="block text-sm font-medium leading-6 text-neutral">
@@ -99,6 +95,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                     </label>
                                     <div class="relative flex items-center mt-2">
                                         <Field type="text" name="name" :placeholder="$t('common.category', 1)"
+                                            :label="$t('common.category', 1)"
+                                            :rules="{ required: true, min: 3, max: 128 }"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                         <ErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
@@ -108,8 +106,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                         {{ $t('common.description') }}
                                     </label>
                                     <div class="relative flex items-center mt-2">
-                                        <Field type="text" name="description"
-                                            :placeholder="$t('common.description')"
+                                        <Field type="text" name="description" :placeholder="$t('common.description')" :label="$t('common.description')"
+                                        :rules="{ required: true, min: 0, max: 255 }"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                         <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
@@ -126,7 +124,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        </Form>
                     </div>
                 </div>
                 <div class="flow-root mt-2">

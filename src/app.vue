@@ -2,6 +2,10 @@
 import { loadConfig } from '~/config';
 import { useUserSettingsStore } from './store/usersettings';
 import { NuxtError } from 'nuxt/app';
+import { configure } from 'vee-validate';
+import { localize, setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
+import en from '@vee-validate/i18n/dist/locale/en.json';
+import de from '@vee-validate/i18n/dist/locale/de.json';
 
 const { t, setLocale } = useI18n();
 
@@ -34,6 +38,15 @@ const userSettings = useUserSettingsStore();
 
 // Set user setting locale on load of app
 setLocale(userSettings.locale);
+
+configure({
+  generateMessage: localize({
+    en,
+    de,
+  }),
+});
+
+veeValidateSetLocale(userSettings.locale);
 </script>
 
 <template>

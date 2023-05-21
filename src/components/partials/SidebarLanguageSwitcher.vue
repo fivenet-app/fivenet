@@ -4,6 +4,7 @@ import { LanguageIcon } from '@heroicons/vue/24/outline';
 import { LocaleObject } from 'vue-i18n-routing';
 import { useUserSettingsStore } from '~/store/usersettings';
 import { useNotificationsStore } from '~/store/notifications';
+import { setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
 
 const { t, locales, setLocale } = useI18n();
 const settings = useUserSettingsStore();
@@ -25,6 +26,7 @@ onMounted(async () => {
 async function switchLanguage(lang: { name: string, iso: string }): Promise<void> {
     settings.setLocale(lang.iso);
     setLocale(lang.iso);
+    veeValidateSetLocale(lang.iso);
 
     notifications.dispatchNotification({
         title: t('notifications.language_switched.title'),

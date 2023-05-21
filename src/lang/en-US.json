@@ -828,5 +828,14 @@
         "NotificatorService": {
             "InvalidRequestErr": "Invalid notificator stream request!"
         }
+    },
+    "fields": {
+        "field_invalid": "Invalid field value.",
+        "field_required": "Field {0} is required.",
+        "number": {
+            "too_short": "",
+            "too_big": "",
+            "no_match": ""
+        }
     }
 }

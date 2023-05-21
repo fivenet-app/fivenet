@@ -34,7 +34,7 @@ async function listTemplates(): Promise<Array<TemplateShort>> {
 
 const items = ref<CardElements>([]);
 watch(templates, () => templates.value?.forEach((v) => {
-    items.value.push({ title: v?.getTitle(), description: v?.getDescription(), });
+    items.value.push({ title: v?.getTitle(), description: v?.getDescription() });
 }));
 
 function selected(idx: number): TemplateShort {

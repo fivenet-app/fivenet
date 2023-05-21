@@ -87,7 +87,7 @@ async function createRole(): Promise<void> {
                 type: 'success'
             });
 
-            await navigateTo({ name: 'rector-roles-id', params: { id: role.getRole()?.getId()!, } });
+            await navigateTo({ name: 'rector-roles-id', params: { id: role.getRole()?.getId()! } });
 
             return res();
         } catch (e) {

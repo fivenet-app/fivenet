@@ -1,13 +1,12 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { KeyIcon } from '@heroicons/vue/24/solid';
-import { ErrorMessage, Field, useForm } from 'vee-validate';
-import { object, string } from 'yup';
-import { toTypedSchema } from '@vee-validate/yup';
+import { ErrorMessage, Field, Form, defineRule } from 'vee-validate';
 import { ChangePasswordRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
+import { max, min, required } from '@vee-validate/rules';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -28,13 +27,16 @@ defineEmits<{
 
 const { t } = useI18n();
 
-const newPassword = ref<string>('');
+const form = ref<{ currentPassword: string; newPassword: string; }>({
+    currentPassword: '',
+    newPassword: '',
+});
 
-async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+async function changePassword(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new ChangePasswordRequest();
-        req.setCurrent(currentPassword);
-        req.setNew(newPassword);
+        req.setCurrent(form.value.currentPassword);
+        req.setNew(form.value.newPassword);
 
         try {
             const resp = await $grpc.getAuthClient()
@@ -57,16 +59,9 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
     });
 }
 
-const { handleSubmit } = useForm({
-    validationSchema: toTypedSchema(
-        object({
-            currentPassword: string().required().min(6).max(70),
-            newPassword: string().required().min(6).max(70),
-        }),
-    ),
-});
-
-const onSubmit = handleSubmit(async (values): Promise<void> => await changePassword(values.currentPassword, values.newPassword));
+defineRule('required', required);
+defineRule('min', min);
+defineRule('max', max);
 </script>
 
 <template>
@@ -95,13 +90,15 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                         Change Password
                                     </DialogTitle>
                                     <div class="mt-2">
-                                        <form @submit="onSubmit" class="my-2 space-y-6">
+                                        <Form @submit.prevent="changePassword" class="my-2 space-y-6">
                                             <div>
                                                 <label for="currentPassword" class="sr-only">Password</label>
                                                 <div>
                                                     <Field name="currentPassword" type="password"
                                                         autocomplete="current-password"
                                                         :placeholder="$t('components.auth.change_password_modal.current_password')"
+                                                        :label="$t('components.auth.change_password_modal.current_password')"
+                                                        :rules="{ required: true, min: 6, max: 70 }"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                                     <ErrorMessage name="currentPassword" as="p"
                                                         class="mt-2 text-sm text-error-400" />
@@ -113,9 +110,11 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                                     <Field name="newPassword" type="password"
                                                         autocomplete="new-password"
                                                         :placeholder="$t('components.auth.change_password_modal.new_password')"
+                                                        :label="$t('components.auth.change_password_modal.new_password')"
+                                                        :rules="{ required: true, min: 6, max: 70 }"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        v-model:model-value="newPassword" />
-                                                    <PartialsPasswordStrengthMeter :input="newPassword" class="mt-2" />
+                                                        v-model:model-value="form.newPassword" />
+                                                    <PartialsPasswordStrengthMeter :input="form.newPassword" class="mt-2" />
                                                     <ErrorMessage name="newPassword" as="p"
                                                         class="mt-2 text-sm text-error-400" />
                                                 </div>
@@ -127,7 +126,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                                     {{ $t('components.auth.change_password_modal.change_password') }}
                                                 </button>
                                             </div>
-                                        </form>
+                                        </Form>
                                     </div>
                                 </div>
                             </div>

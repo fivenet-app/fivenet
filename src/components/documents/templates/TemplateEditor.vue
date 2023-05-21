@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { ErrorMessage, Field, useForm } from 'vee-validate';
-import { object, string } from 'yup';
-import { toTypedSchema } from '@vee-validate/yup';
+import { ErrorMessage, Field, Form, defineRule } from 'vee-validate';
 import { CreateTemplateRequest, GetTemplateRequest, UpdateTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { RpcError } from 'grpc-web';
 import { Template, ObjectSpecs, TemplateRequirements, TemplateSchema, TemplateJobAccess } from '@fivenet/gen/resources/documents/templates_pb';
@@ -19,6 +17,7 @@ import { DocumentAccess, DocumentJobAccess, DocumentUserAccess } from '@fivenet/
 import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
 import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { max, min, numeric, required } from '@vee-validate/rules';
 
 const { $grpc } = useNuxtApp();
 const { t } = useI18n();
@@ -403,25 +402,13 @@ async function updateTemplate(): Promise<void> {
     });
 }
 
-const { handleSubmit } = useForm({
-    validationSchema: toTypedSchema(
-        object({
-            title: string().required().min(3).max(255),
-            description: string().required().max(512),
-            contentTitle: string().required().min(3).max(1536),
-            content: string().required().min(6).max(15360),
-            schema: object().optional(),
-        }),
-    ),
-});
-
-const onSubmit = handleSubmit(async (): Promise<void> => {
+async function onSubmit(): Promise<void> {
     if (props.templateId && props.templateId > 0) {
         return updateTemplate();
     } else {
         await createTemplate();
     }
-});
+};
 
 let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
@@ -525,16 +512,22 @@ onMounted(async () => {
 });
 
 watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.filter(r => r.getLabel().startsWith(queryRank.value)), { debounce: 600, maxWait: 1750 });
+
+defineRule('required', required);
+defineRule('numeric', numeric);
+defineRule('min', min);
+defineRule('max', max);
 </script>
 
 <template>
     <div class="text-neutral">
-        <form @submit="onSubmit">
+        <Form @submit.prevent="onSubmit">
             <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                 {{ $t('common.template', 2) }} {{ $t('common.weight') }}
             </label>
             <div class="mt-2">
-                <Field type="number" name="weight" min="0" max="4294967295"
+                <Field type="number" name="weight" min="0" max="4294967295" :label="t('common.weight')"
+                    :rules="{ required: true, numeric: { min: 0, max: 4294967295 } }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="weight" />
             </div>
@@ -542,7 +535,8 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.template') }} {{ $t('common.title') }}
             </label>
             <div>
-                <Field as="textarea" rows="1" name="title"
+                <Field as="textarea" rows="1" name="title" :label="t('common.title')"
+                    :rules="{ required: true, min: 3, max: 255 }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="title" />
                 <ErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
@@ -551,7 +545,8 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.template') }} {{ $t('common.description') }}
             </label>
             <div>
-                <Field as="textarea" rows="4" name="description"
+                <Field as="textarea" rows="4" name="description" :label="t('common.description')"
+                    :rules="{ required: true, min: 3, max: 255 }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="description" />
                 <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
@@ -576,7 +571,8 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.content') }} {{ $t('common.title') }}
             </label>
             <div>
-                <Field as="textarea" rows="2" name="contentTitle"
+                <Field as="textarea" rows="2" name="contentTitle" :label="t('common.title')"
+                :rules="{ required: true, min: 3, max: 2048 }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="contentTitle" />
                 <ErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
@@ -623,7 +619,7 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.content') }} {{ $t('common.template') }}
             </label>
             <div>
-                <Field as="textarea" rows="6" name="content"
+                <Field as="textarea" rows="6" name="content" :label="t('common.template')" :rules="{ required: true, min: 3, max: 1500000 }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="content" />
                 <ErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
@@ -656,6 +652,6 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 mt-4">
                 {{ templateId ? $t('common.save') : $t('common.create') }}
             </button>
-        </form>
+        </Form>
     </div>
 </template>
