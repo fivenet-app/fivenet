@@ -2,7 +2,7 @@
 import { ForgotPasswordRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { digits, max, min, required } from '@vee-validate/rules';
 import { RpcError } from 'grpc-web';
-import { ErrorMessage, Field, Form, defineRule } from 'vee-validate';
+import { defineRule } from 'vee-validate';
 import Alert from '~/components/partials/Alert.vue';
 import { useNotificationsStore } from '~/store/notifications';
 
@@ -63,18 +63,18 @@ defineRule('max', max);
         {{ $t('components.auth.forgot_password.subtitle') }}
     </p>
 
-    <Form @submit.prevent="forgotPassword" class="my-2 space-y-6">
+    <VeeForm @submit.prevent="forgotPassword" class="my-2 space-y-6">
         <div>
             <label for="registrationToken" class="sr-only">
                 {{ $t('components.auth.forgot_password.registration_token') }}
             </label>
             <div>
-                <Field name="registrationToken" type="text" inputmode="numeric" v-model="form.registrationToken"
+                <VeeField name="registrationToken" type="text" inputmode="numeric" v-model="form.registrationToken"
                     aria-describedby="hint" pattern="[0-9]*" autocomplete="registrationToken"
                     :placeholder="$t('components.auth.forgot_password.registration_token')"
                     :label="$t('components.auth.forgot_password.registration_token')" :rules="{ required: true, digits: 6 }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6" />
-                <ErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
+                <VeeErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
         <div>
@@ -82,12 +82,12 @@ defineRule('max', max);
                 {{ $t('common.password') }}
             </label>
             <div>
-                <Field name="password" type="password" autocomplete="current-password" :placeholder="$t('common.password')"
-                    :label="$t('common.password')" :rules="{ required: true, min: 6, max: 70 }"
-                    v-model:model-value="form.currPassword"
+                <VeeField name="password" type="password" autocomplete="current-password"
+                    :placeholder="$t('common.password')" :label="$t('common.password')"
+                    :rules="{ required: true, min: 6, max: 70 }" v-model:model-value="form.currPassword"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <PartialsPasswordStrengthMeter :input="form.currPassword" class="mt-2" />
-                <ErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
+                <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
 
@@ -97,7 +97,7 @@ defineRule('max', max);
                 {{ $t('components.auth.forgot_password.submit_button') }}
             </button>
         </div>
-    </Form>
+    </VeeForm>
 
     <div class="mt-6">
         <button type="button" @click="$emit('back')"

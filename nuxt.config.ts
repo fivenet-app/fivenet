@@ -36,6 +36,7 @@ const config = defineNuxtConfig({
         '@nuxtjs/robots',
         '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',
+        '@vee-validate/nuxt',
     ],
     pinia: {
         autoImports: [
@@ -86,6 +87,17 @@ const config = defineNuxtConfig({
         routesNameSeparator: '___',
         trailingSlash: false,
     },
+    veeValidate: {
+        // disable or enable auto imports
+        autoImports: true,
+        // Use different names for components
+        componentNames: {
+          Form: 'VeeForm',
+          Field: 'VeeField',
+          FieldArray: 'VeeFieldArray',
+          ErrorMessage: 'VeeErrorMessage',
+        },
+      },
     vite: {
         define: {
             __APP_VERSION__: '"' + version + '"',

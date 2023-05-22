@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ErrorMessage, Field, Form, defineRule } from 'vee-validate';
+import { defineRule } from 'vee-validate';
 import { CreateTemplateRequest, GetTemplateRequest, UpdateTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { RpcError } from 'grpc-web';
 import { Template, ObjectSpecs, TemplateRequirements, TemplateSchema, TemplateJobAccess } from '@fivenet/gen/resources/documents/templates_pb';
@@ -521,12 +521,12 @@ defineRule('max', max);
 
 <template>
     <div class="text-neutral">
-        <Form @submit.prevent="onSubmit">
+        <VeeForm @submit.prevent="onSubmit">
             <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                 {{ $t('common.template', 2) }} {{ $t('common.weight') }}
             </label>
             <div class="mt-2">
-                <Field type="number" name="weight" min="0" max="4294967295" :label="t('common.weight')"
+                <VeeField type="number" name="weight" min="0" max="4294967295" :label="t('common.weight')"
                     :rules="{ required: true, numeric: { min: 0, max: 4294967295 } }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="weight" />
@@ -535,21 +535,21 @@ defineRule('max', max);
                 {{ $t('common.template') }} {{ $t('common.title') }}
             </label>
             <div>
-                <Field as="textarea" rows="1" name="title" :label="t('common.title')"
+                <VeeField as="textarea" rows="1" name="title" :label="t('common.title')"
                     :rules="{ required: true, min: 3, max: 255 }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="title" />
-                <ErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
+                <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <label for="description" class="block font-medium text-sm mt-2">
                 {{ $t('common.template') }} {{ $t('common.description') }}
             </label>
             <div>
-                <Field as="textarea" rows="4" name="description" :label="t('common.description')"
+                <VeeField as="textarea" rows="4" name="description" :label="t('common.description')"
                     :rules="{ required: true, min: 3, max: 255 }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="description" />
-                <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
+                <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <div class="my-3">
                 <h2 class="text-neutral">
@@ -571,11 +571,11 @@ defineRule('max', max);
                 {{ $t('common.content') }} {{ $t('common.title') }}
             </label>
             <div>
-                <Field as="textarea" rows="2" name="contentTitle" :label="t('common.title')"
-                :rules="{ required: true, min: 3, max: 2048 }"
+                <VeeField as="textarea" rows="2" name="contentTitle" :label="t('common.title')"
+                    :rules="{ required: true, min: 3, max: 2048 }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="contentTitle" />
-                <ErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
+                <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
                 <p class="text-neutral">
                     <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
                         Golang {{ $t('common.template') }}
@@ -619,10 +619,11 @@ defineRule('max', max);
                 {{ $t('common.content') }} {{ $t('common.template') }}
             </label>
             <div>
-                <Field as="textarea" rows="6" name="content" :label="t('common.template')" :rules="{ required: true, min: 3, max: 1500000 }"
+                <VeeField as="textarea" rows="6" name="content" :label="t('common.template')"
+                    :rules="{ required: true, min: 3, max: 1500000 }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     v-model="content" />
-                <ErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
+                <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
                 <p class="text-neutral">
                     <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
                         Golang {{ $t('common.template') }}
@@ -652,6 +653,6 @@ defineRule('max', max);
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 mt-4">
                 {{ templateId ? $t('common.save') : $t('common.create') }}
             </button>
-        </Form>
+        </VeeForm>
     </div>
 </template>

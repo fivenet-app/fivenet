@@ -2,7 +2,7 @@
 import { useAuthStore } from '~/store/auth';
 import { LoginRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
-import { ErrorMessage, Field, Form, defineRule } from 'vee-validate';
+import { defineRule } from 'vee-validate';
 import Alert from '~/components/partials/Alert.vue';
 import config from '~/config';
 import { required, min, max, alpha_dash } from '@vee-validate/rules';
@@ -55,17 +55,17 @@ defineRule('alpha_dash', alpha_dash);
         {{ $t('components.auth.login.title') }}
     </h2>
 
-    <Form @submit.prevent="login" class="my-2 space-y-6">
+    <VeeForm @submit.prevent="login" class="my-2 space-y-6">
         <div>
             <label for="username" class="sr-only">
                 {{ $t('common.username') }}
             </label>
             <div>
-                <Field name="username" type="text" autocomplete="username" :placeholder="$t('common.username')"
+                <VeeField name="username" type="text" autocomplete="username" :placeholder="$t('common.username')"
                     :label="$t('common.username')" v-model="form.username"
                     :rules="{ required: true, min: 3, max: 24, alpha_dash: true }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                <ErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
+                <VeeErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
         <div>
@@ -73,10 +73,10 @@ defineRule('alpha_dash', alpha_dash);
                 {{ $t('common.password') }}
             </label>
             <div>
-                <Field name="password" type="password" autocomplete="current-password" :placeholder="$t('common.password')"
+                <VeeField name="password" type="password" autocomplete="current-password" :placeholder="$t('common.password')"
                     :label="$t('common.password')" v-model="form.password" :rules="{ required: true, min: 6, max: 70 }"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                <ErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
+                <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
 
@@ -86,7 +86,7 @@ defineRule('alpha_dash', alpha_dash);
                 {{ $t('common.login') }}
             </button>
         </div>
-    </Form>
+    </VeeForm>
 
     <div class="my-4 space-y-2">
         <div v-for="prov in providers" class="">

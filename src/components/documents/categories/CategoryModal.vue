@@ -5,7 +5,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { TagIcon } from '@heroicons/vue/24/solid';
 import { max, min, required } from '@vee-validate/rules';
 import { RpcError } from 'grpc-web';
-import { ErrorMessage, Field, Form, defineRule } from 'vee-validate';
+import { defineRule } from 'vee-validate';
 import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
@@ -119,7 +119,7 @@ defineRule('max', max);
                                             </DialogTitle>
                                             <div class="mt-2">
                                                 <div class="sm:flex-auto">
-                                                    <Form @submit.prevent="updateCategory">
+                                                    <VeeForm @submit.prevent="updateCategory">
                                                         <div class="flex flex-row gap-4 mx-auto">
                                                             <div class="flex-1 form-control">
                                                                 <label for="name"
@@ -127,13 +127,13 @@ defineRule('max', max);
                                                                         $t('common.category', 1) }}
                                                                 </label>
                                                                 <div class="relative flex items-center mt-2">
-                                                                    <Field type="text" name="name"
+                                                                    <VeeField type="text" name="name"
                                                                         :placeholder="$t('common.category', 1)"
                                                                         :value="category?.getName()"
                                                                         :label="$t('common.category', 1)"
                                                                         :rules="{ required: true, min: 3, max: 128 }"
                                                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                                                                    <ErrorMessage name="category" as="p"
+                                                                    <VeeErrorMessage name="category" as="p"
                                                                         class="mt-2 text-sm text-error-400" />
                                                                 </div>
                                                             </div>
@@ -143,13 +143,13 @@ defineRule('max', max);
                                                                         $t('common.description') }}
                                                                 </label>
                                                                 <div class="relative flex items-center mt-2">
-                                                                    <Field type="text" name="description"
+                                                                    <VeeField type="text" name="description"
                                                                         :placeholder="$t('common.description')"
                                                                         :value="category?.getDescription()"
                                                                         :label="$t('common.description')"
                                                                         :rules="{ required: true, min: 0, max: 255 }"
                                                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                                                                    <ErrorMessage name="description" as="p"
+                                                                    <VeeErrorMessage name="description" as="p"
                                                                         class="mt-2 text-sm text-error-400" />
                                                                 </div>
                                                             </div>
@@ -162,7 +162,7 @@ defineRule('max', max);
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </Form>
+                                                    </VeeForm>
                                                 </div>
                                             </div>
                                         </div>

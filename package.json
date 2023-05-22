@@ -21,6 +21,7 @@
         "@types/leaflet": "^1.9.3",
         "@types/uuid": "^9.0.1",
         "@vee-validate/i18n": "^4.9.4",
+        "@vee-validate/nuxt": "^4.9.5",
         "@vee-validate/rules": "^4.9.4",
         "@vue-leaflet/vue-leaflet": "0.9.0",
         "@vueup/vue-quill": "^1.2.0",

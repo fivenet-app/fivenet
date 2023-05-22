@@ -7,7 +7,7 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { CardElements } from '~/utils/types';
 import CategoryModal from './CategoryModal.vue';
-import { ErrorMessage, Field, Form, defineRule } from 'vee-validate';
+import { defineRule } from 'vee-validate';
 import { CreateDocumentCategoryRequest, ListDocumentCategoriesRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { max, min, required } from '@vee-validate/rules';
 
@@ -87,18 +87,18 @@ defineRule('max', max);
             <div class="px-2 sm:px-6 lg:px-8">
                 <div v-can="'DocStoreService.CreateDocumentCategory'" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
-                        <Form @submit.prevent="createDocumentCategory">
+                        <VeeForm @submit.prevent="createDocumentCategory">
                             <div class="flex flex-row gap-4 mx-auto">
                                 <div class="flex-1 form-control">
                                     <label for="name" class="block text-sm font-medium leading-6 text-neutral">
                                         {{ $t('common.category', 1) }}
                                     </label>
                                     <div class="relative flex items-center mt-2">
-                                        <Field type="text" name="name" :placeholder="$t('common.category', 1)"
+                                        <VeeField type="text" name="name" :placeholder="$t('common.category', 1)"
                                             :label="$t('common.category', 1)"
                                             :rules="{ required: true, min: 3, max: 128 }"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                                        <ErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
+                                        <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
                                 </div>
                                 <div class="flex-1 form-control">
@@ -106,10 +106,10 @@ defineRule('max', max);
                                         {{ $t('common.description') }}
                                     </label>
                                     <div class="relative flex items-center mt-2">
-                                        <Field type="text" name="description" :placeholder="$t('common.description')" :label="$t('common.description')"
+                                        <VeeField type="text" name="description" :placeholder="$t('common.description')" :label="$t('common.description')"
                                         :rules="{ required: true, min: 0, max: 255 }"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                                        <ErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
+                                        <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
                                 </div>
                                 <div class="flex-1 form-control">
@@ -124,7 +124,7 @@ defineRule('max', max);
                                     </div>
                                 </div>
                             </div>
-                        </Form>
+                        </VeeForm>
                     </div>
                 </div>
                 <div class="flow-root mt-2">
