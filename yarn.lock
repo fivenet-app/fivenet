@@ -1262,12 +1262,12 @@
     unhead "1.1.27"
 
 "@vee-validate/yup@^4.9.4":
-  version "4.9.4"
-  resolved "https://registry.yarnpkg.com/@vee-validate/yup/-/yup-4.9.4.tgz#f4f3e6d5658be353ac097b89efefd315f05ff14f"
-  integrity sha512-SJRFaCRQWq/0fZehe75HvhpKibojEzR1IQC4iFSGHMNO6Yu3nOY/ljaphTTtaeGzf8oFq2MD3zgiE3IvOONkAQ==
+  version "4.9.5"
+  resolved "https://registry.yarnpkg.com/@vee-validate/yup/-/yup-4.9.5.tgz#302b86a7f4cd9150de625ba695b3e8c3595a666d"
+  integrity sha512-0+YgLDgsQarMFZl4eHU/t9vsPsQU7anrSyibpQy5QVflcNmfw4cskRMzImBWWFsvvRDGHHuEJ7t4FZMti7A6IQ==
   dependencies:
     type-fest "^3.10.0"
-    vee-validate "^4.9.4"
+    vee-validate "^4.9.5"
     yup "^1.1.1"
 
 "@vercel/nft@^0.22.6":
@@ -6551,9 +6551,9 @@ type-fest@^2.11.2, type-fest@^2.19.0:
   integrity sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==
 
 type-fest@^3.10.0:
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-3.10.0.tgz#d75f17a22be8816aea6315ab2739fe1c0c211863"
-  integrity sha512-hmAPf1datm+gt3c2mvu0sJyhFy6lTkIGf0GzyaZWxRLnabQfPUqg6tF95RPg6sLxKI7nFLGdFxBcf2/7+GXI+A==
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-3.11.0.tgz#e78ea6b50d6a6b1e4609035fb9ea8f1e3c328194"
+  integrity sha512-JaPw5U9ixP0XcpUbQoVSbxSDcK/K4nww20C3kjm9yE6cDRRhptU28AH60VWf9ltXmCrIfIbtt9J+2OUk2Uqiaw==
 
 type-is@^1.6.16:
   version "1.6.18"
@@ -6765,6 +6765,14 @@ vee-validate@^4.9.4:
   version "4.9.4"
   resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.9.4.tgz#37608b8eec53ba7fec473e7aa938fbd131a536d0"
   integrity sha512-KksxOjLZ4s+Bo2UwDYoK4PNTOlGRquNLxHQAiEY6tw9MHrgkfefSjpmrysRSaSmv7Ny9ySINCfYryofuXC9n9Q==
+  dependencies:
+    "@vue/devtools-api" "^6.5.0"
+    type-fest "^3.10.0"
+
+vee-validate@^4.9.5:
+  version "4.9.5"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.9.5.tgz#ee72492a9c491e5eeb91f84c3d623e81dafc7cbe"
+  integrity sha512-BVhGHjD6lWdEltDg08+wN/oTtSEDJcpwpgb5IJVvTmzEU0Dunn3j/JwVfbM+WSLCj4SMxnfar59qLnDLyZpQWg==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
     type-fest "^3.10.0"
