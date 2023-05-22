@@ -1266,10 +1266,10 @@
     hookable "^5.5.3"
     unhead "1.1.27"
 
-"@vee-validate/i18n@^4.9.4":
-  version "4.9.4"
-  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.9.4.tgz#50382c114b5c21087a213ee87b0120f8fa8398ba"
-  integrity sha512-wmjLEkGLQnAMaCMRmRfD9ogy9M4y36wk6JKFn5W3c+G0ofcozr2A7juGsrQu8VDDsU1b0Gd/5DCPdqJ/FeU72g==
+"@vee-validate/i18n@^4.9.5":
+  version "4.9.5"
+  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.9.5.tgz#ed0a2bae64fec481f9538a34a04e52c58f9edf38"
+  integrity sha512-aV1vWOKH2NPOQEvwFWKJxQPN3I1X80H4I4la9x8+gI0hrDEzrCZzwQ9Rr5z4jDrddvM1RDX36Q9jcdrRMiev2Q==
 
 "@vee-validate/nuxt@^4.9.5":
   version "4.9.5"
@@ -1280,12 +1280,12 @@
     local-pkg "^0.4.3"
     vee-validate "^4.9.5"
 
-"@vee-validate/rules@^4.9.4":
-  version "4.9.4"
-  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.9.4.tgz#0c7719c977783ef671dafa57979e961eb5966fd8"
-  integrity sha512-Kj6BSZfNpLlmrMV8DA1XYJCBr9xsbvXa9lURySJpCVNT3MFm1eAarYD5Pu/XuolXUFPOt89RvbRXrgnxliMrhA==
+"@vee-validate/rules@^4.9.5":
+  version "4.9.5"
+  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.9.5.tgz#7fef18bc10bf3c5026d49ace3d995a95b6fb2e25"
+  integrity sha512-HtBIfSQtesRyidW6dPvFI5jMZmmZAbsbliwbAIBPhjzXoeFInUXj5is1F9mjTA+C/PSAwiOUFb6g0yY2mxi+pA==
   dependencies:
-    vee-validate "^4.9.4"
+    vee-validate "^4.9.5"
 
 "@vercel/nft@^0.22.6":
   version "0.22.6"
@@ -6762,14 +6762,6 @@ vary@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
-
-vee-validate@^4.9.4:
-  version "4.9.4"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.9.4.tgz#37608b8eec53ba7fec473e7aa938fbd131a536d0"
-  integrity sha512-KksxOjLZ4s+Bo2UwDYoK4PNTOlGRquNLxHQAiEY6tw9MHrgkfefSjpmrysRSaSmv7Ny9ySINCfYryofuXC9n9Q==
-  dependencies:
-    "@vue/devtools-api" "^6.5.0"
-    type-fest "^3.10.0"
 
 vee-validate@^4.9.5:
   version "4.9.5"
