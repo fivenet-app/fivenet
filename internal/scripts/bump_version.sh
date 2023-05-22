@@ -35,7 +35,8 @@ sed \
         ./charts/fivenet/Chart.yaml
 
 HELM_CHART_VERSION=$(grep \
-    -oP \
+    --only-matching \
+    --perl-regexp \
     'version: ([0-9\.]+)' \
         ./charts/fivenet/Chart.yaml)
 
@@ -49,3 +50,12 @@ sed \
     --regexp-extended \
     --expression 's~version: [0-9\.]+~version: '"${version_rest}.${version_patch_new}"'~' \
         ./charts/fivenet/Chart.yaml
+
+git add --all
+
+git commit \
+    --signoff \
+    --gpg-sign \
+    --message "version: bump to v${VERSION}"
+
+git tag "v${VERSION}"
