@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/Code-Hex/go-generics-cache v1.3.1
 	github.com/Masterminds/sprig/v3 v3.2.3
-	github.com/XSAM/otelsql v0.22.0
+	github.com/XSAM/otelsql v0.23.0
 	github.com/blevesearch/bleve/v2 v2.3.8
 	github.com/creasty/defaults v1.7.0
 	github.com/envoyproxy/protoc-gen-validate v1.0.1
