@@ -38,9 +38,9 @@ type DocStoreServiceClient interface {
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
 	// @perm
 	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
@@ -60,11 +60,11 @@ type DocStoreServiceClient interface {
 	PostDocumentComment(ctx context.Context, in *PostDocumentCommentRequest, opts ...grpc.CallOption) (*PostDocumentCommentResponse, error)
 	// @perm: Name=PostDocumentComment
 	EditDocumentComment(ctx context.Context, in *EditDocumentCommentRequest, opts ...grpc.CallOption) (*EditDocumentCommentResponse, error)
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
 	DeleteDocumentComment(ctx context.Context, in *DeleteDocumentCommentRequest, opts ...grpc.CallOption) (*DeleteDocumentCommentResponse, error)
-	// @perm
+	// @perm: Name=GetDocument
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
-	// @perm
+	// @perm: Name=CreateDocument
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
 	// @perm
 	ListUserDocuments(ctx context.Context, in *ListUserDocumentsRequest, opts ...grpc.CallOption) (*ListUserDocumentsResponse, error)
@@ -349,9 +349,9 @@ type DocStoreServiceServer interface {
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
 	// @perm
 	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
@@ -371,11 +371,11 @@ type DocStoreServiceServer interface {
 	PostDocumentComment(context.Context, *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error)
 	// @perm: Name=PostDocumentComment
 	EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error)
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
 	DeleteDocumentComment(context.Context, *DeleteDocumentCommentRequest) (*DeleteDocumentCommentResponse, error)
-	// @perm
+	// @perm: Name=GetDocument
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
-	// @perm
+	// @perm: Name=CreateDocument
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
 	// @perm
 	ListUserDocuments(context.Context, *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error)

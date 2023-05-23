@@ -8,11 +8,13 @@ import "github.com/galexrt/fivenet/pkg/perms"
 var PermsRemap = map[string]string{
 	// Service: DocStoreService
 	"DocStoreService/EditDocumentComment":     "DocStoreService/PostDocumentComment",
+	"DocStoreService/GetDocumentAccess":       "DocStoreService/GetDocument",
 	"DocStoreService/GetDocumentReferences":   "DocStoreService/GetDocument",
 	"DocStoreService/GetDocumentRelations":    "DocStoreService/GetDocument",
 	"DocStoreService/GetTemplate":             "DocStoreService/ListTemplates",
 	"DocStoreService/RemoveDocumentReference": "DocStoreService/AddDocumentReference",
 	"DocStoreService/RemoveDocumentRelation":  "DocStoreService/AddDocumentRelation",
+	"DocStoreService/SetDocumentAccess":       "DocStoreService/CreateDocument",
 	"DocStoreService/UpdateDocumentCategory":  "DocStoreService/CreateDocumentCategory",
 	"DocStoreService/UpdateTemplate":          "DocStoreService/CreateTemplate",
 }
@@ -24,25 +26,26 @@ func (s *Server) GetPermsRemap() map[string]string {
 const (
 	DocStoreServicePerm perms.Category = "DocStoreService"
 
-	DocStoreServiceAddDocumentReferencePerm   perms.Name = "AddDocumentReference"
-	DocStoreServiceAddDocumentRelationPerm    perms.Name = "AddDocumentRelation"
-	DocStoreServiceCreateDocumentPerm         perms.Name = "CreateDocument"
-	DocStoreServiceCreateDocumentCategoryPerm perms.Name = "CreateDocumentCategory"
-	DocStoreServiceCreateTemplatePerm         perms.Name = "CreateTemplate"
-	DocStoreServiceDeleteDocumentPerm         perms.Name = "DeleteDocument"
-	DocStoreServiceDeleteDocumentCategoryPerm perms.Name = "DeleteDocumentCategory"
-	DocStoreServiceDeleteDocumentCommentPerm  perms.Name = "DeleteDocumentComment"
-	DocStoreServiceDeleteTemplatePerm         perms.Name = "DeleteTemplate"
-	DocStoreServiceGetDocumentPerm            perms.Name = "GetDocument"
-	DocStoreServiceGetDocumentAccessPerm      perms.Name = "GetDocumentAccess"
-	DocStoreServiceGetDocumentCommentsPerm    perms.Name = "GetDocumentComments"
-	DocStoreServiceListDocumentCategoriesPerm perms.Name = "ListDocumentCategories"
-	DocStoreServiceListDocumentsPerm          perms.Name = "ListDocuments"
-	DocStoreServiceListTemplatesPerm          perms.Name = "ListTemplates"
-	DocStoreServiceListUserDocumentsPerm      perms.Name = "ListUserDocuments"
-	DocStoreServicePostDocumentCommentPerm    perms.Name = "PostDocumentComment"
-	DocStoreServiceSetDocumentAccessPerm      perms.Name = "SetDocumentAccess"
-	DocStoreServiceUpdateDocumentPerm         perms.Name = "UpdateDocument"
+	DocStoreServiceAddDocumentReferencePerm             perms.Name = "AddDocumentReference"
+	DocStoreServiceAddDocumentRelationPerm              perms.Name = "AddDocumentRelation"
+	DocStoreServiceCreateDocumentPerm                   perms.Name = "CreateDocument"
+	DocStoreServiceCreateDocumentCategoryPerm           perms.Name = "CreateDocumentCategory"
+	DocStoreServiceCreateTemplatePerm                   perms.Name = "CreateTemplate"
+	DocStoreServiceDeleteDocumentPerm                   perms.Name = "DeleteDocument"
+	DocStoreServiceDeleteDocumentAccessPermField        perms.Key  = "Access"
+	DocStoreServiceDeleteDocumentCategoryPerm           perms.Name = "DeleteDocumentCategory"
+	DocStoreServiceDeleteDocumentCommentPerm            perms.Name = "DeleteDocumentComment"
+	DocStoreServiceDeleteDocumentCommentAccessPermField perms.Key  = "Access"
+	DocStoreServiceDeleteTemplatePerm                   perms.Name = "DeleteTemplate"
+	DocStoreServiceGetDocumentPerm                      perms.Name = "GetDocument"
+	DocStoreServiceGetDocumentCommentsPerm              perms.Name = "GetDocumentComments"
+	DocStoreServiceListDocumentCategoriesPerm           perms.Name = "ListDocumentCategories"
+	DocStoreServiceListDocumentsPerm                    perms.Name = "ListDocuments"
+	DocStoreServiceListTemplatesPerm                    perms.Name = "ListTemplates"
+	DocStoreServiceListUserDocumentsPerm                perms.Name = "ListUserDocuments"
+	DocStoreServicePostDocumentCommentPerm              perms.Name = "PostDocumentComment"
+	DocStoreServiceUpdateDocumentPerm                   perms.Name = "UpdateDocument"
+	DocStoreServiceUpdateDocumentAccessPermField        perms.Key  = "Access"
 )
 
 func init() {
@@ -76,7 +79,13 @@ func init() {
 		{
 			Category: DocStoreServicePerm,
 			Name:     DocStoreServiceDeleteDocumentPerm,
-			Attrs:    []perms.Attr{},
+			Attrs: []perms.Attr{
+				{
+					Key:         DocStoreServiceDeleteDocumentAccessPermField,
+					Type:        perms.StringListAttributeType,
+					ValidValues: []string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"},
+				},
+			},
 		},
 		{
 			Category: DocStoreServicePerm,
@@ -86,7 +95,13 @@ func init() {
 		{
 			Category: DocStoreServicePerm,
 			Name:     DocStoreServiceDeleteDocumentCommentPerm,
-			Attrs:    []perms.Attr{},
+			Attrs: []perms.Attr{
+				{
+					Key:         DocStoreServiceDeleteDocumentCommentAccessPermField,
+					Type:        perms.StringListAttributeType,
+					ValidValues: []string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"},
+				},
+			},
 		},
 		{
 			Category: DocStoreServicePerm,
@@ -96,11 +111,6 @@ func init() {
 		{
 			Category: DocStoreServicePerm,
 			Name:     DocStoreServiceGetDocumentPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceGetDocumentAccessPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
@@ -135,13 +145,14 @@ func init() {
 		},
 		{
 			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceSetDocumentAccessPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: DocStoreServicePerm,
 			Name:     DocStoreServiceUpdateDocumentPerm,
-			Attrs:    []perms.Attr{},
+			Attrs: []perms.Attr{
+				{
+					Key:         DocStoreServiceUpdateDocumentAccessPermField,
+					Type:        perms.StringListAttributeType,
+					ValidValues: []string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"},
+				},
+			},
 		},
 	})
 }
