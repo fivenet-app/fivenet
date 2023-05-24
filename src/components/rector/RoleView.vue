@@ -179,6 +179,7 @@ async function updatePermissions(): Promise<void> {
     try {
         await $grpc.getRectorClient().updateRolePerms(req, null);
 
+        // TODO update current state to reflect the updated one
         notifications.dispatchNotification({
             title: t('notifications.rector.role_updated.title'),
             content: t('notifications.rector.role_updated.content'),

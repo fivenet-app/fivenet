@@ -55,7 +55,7 @@ defineRule('alpha_dash', alpha_dash);
         {{ $t('components.auth.login.title') }}
     </h2>
 
-    <VeeForm @submit.prevent="login" class="my-2 space-y-6">
+    <VeeForm @submit="login" class="my-2 space-y-6">
         <div>
             <label for="username" class="sr-only">
                 {{ $t('common.username') }}

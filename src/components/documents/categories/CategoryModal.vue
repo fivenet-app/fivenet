@@ -119,7 +119,7 @@ defineRule('max', max);
                                             </DialogTitle>
                                             <div class="mt-2">
                                                 <div class="sm:flex-auto">
-                                                    <VeeForm @submit.prevent="updateCategory">
+                                                    <VeeForm @submit="updateCategory">
                                                         <div class="flex flex-row gap-4 mx-auto">
                                                             <div class="flex-1 form-control">
                                                                 <label for="name"

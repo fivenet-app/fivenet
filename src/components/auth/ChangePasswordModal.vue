@@ -90,7 +90,7 @@ defineRule('max', max);
                                         Change Password
                                     </DialogTitle>
                                     <div class="mt-2">
-                                        <VeeForm @submit.prevent="changePassword" class="my-2 space-y-6">
+                                        <VeeForm @submit="changePassword" class="my-2 space-y-6">
                                             <div>
                                                 <label for="currentPassword" class="sr-only">Password</label>
                                                 <div>

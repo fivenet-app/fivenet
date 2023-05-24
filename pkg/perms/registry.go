@@ -108,11 +108,13 @@ func (p *Perms) setupDefaultRolePerms(ctx context.Context, role *model.FivenetRo
 		if !ok {
 			return fmt.Errorf("permission by guard %s not found", perm)
 		}
+
 		addPerms[i] = AddPerm{
 			Id:  permId,
 			Val: true,
 		}
 	}
+
 	if err := p.UpdateRolePermissions(ctx, role.ID, addPerms...); err != nil {
 		return err
 	}

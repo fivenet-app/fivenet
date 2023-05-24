@@ -54,6 +54,11 @@ type Permissions interface {
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
 }
 
+type userCacheKey struct {
+	userId int32
+	permId uint64
+}
+
 type Perms struct {
 	db *sql.DB
 
@@ -64,26 +69,26 @@ type Perms struct {
 	// Guard name to permission ID
 	permsGuardToIDMap syncx.Map[string, uint64]
 	// Job name to map of grade numbers to role ID
-	permsJobsRoleMap syncx.Map[string, map[int32]uint64]
+	permsJobsRoleMap syncx.Map[string, syncx.Map[int32, uint64]]
 	// Role ID to map of permissions ID and result
-	permsRoleMap syncx.Map[uint64, map[uint64]bool]
+	permsRoleMap syncx.Map[uint64, syncx.Map[uint64, bool]]
 
 	// Attribute map (key: ID of attribute)
 	attrsMap syncx.Map[uint64, *cacheAttr]
 	// Role ID to map of role attributes
-	attrsRoleMap syncx.Map[uint64, map[uint64]*cacheRoleAttr]
+	attrsRoleMap syncx.Map[uint64, syncx.Map[uint64, *cacheRoleAttr]]
 	// Perm ID to map Key -> cached attribute
-	attrsPermsMap syncx.Map[uint64, map[Key]uint64]
+	attrsPermsMap syncx.Map[uint64, syncx.Map[Key, uint64]]
 
 	userCanCacheTTL time.Duration
-	userCanCache    *cache.Cache[int32, map[uint64]bool]
+	userCanCache    *cache.Cache[userCacheKey, bool]
 }
 
 func New(ctx context.Context, tp *tracesdk.TracerProvider, db *sql.DB) *Perms {
 	userCanCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[int32, map[uint64]bool](lru.WithCapacity(128)),
-		cache.WithJanitorInterval[int32, map[uint64]bool](15*time.Second),
+		cache.AsLRU[userCacheKey, bool](lru.WithCapacity(128)),
+		cache.WithJanitorInterval[userCacheKey, bool](15*time.Second),
 	)
 
 	p := &Perms{
@@ -94,12 +99,12 @@ func New(ctx context.Context, tp *tracesdk.TracerProvider, db *sql.DB) *Perms {
 
 		permsMap:          syncx.Map[uint64, *cachePerm]{},
 		permsGuardToIDMap: syncx.Map[string, uint64]{},
-		permsJobsRoleMap:  syncx.Map[string, map[int32]uint64]{},
-		permsRoleMap:      syncx.Map[uint64, map[uint64]bool]{},
+		permsJobsRoleMap:  syncx.Map[string, syncx.Map[int32, uint64]]{},
+		permsRoleMap:      syncx.Map[uint64, syncx.Map[uint64, bool]]{},
 
 		attrsMap:      syncx.Map[uint64, *cacheAttr]{},
-		attrsRoleMap:  syncx.Map[uint64, map[uint64]*cacheRoleAttr]{},
-		attrsPermsMap: syncx.Map[uint64, map[Key]uint64]{},
+		attrsRoleMap:  syncx.Map[uint64, syncx.Map[uint64, *cacheRoleAttr]]{},
+		attrsPermsMap: syncx.Map[uint64, syncx.Map[Key, uint64]]{},
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
@@ -171,15 +176,11 @@ func (p *Perms) loadRoleIDs(ctx context.Context) error {
 		return err
 	}
 
-	for _, v := range dest {
-		grades, loaded := p.permsJobsRoleMap.LoadOrStore(v.Job, map[int32]uint64{
-			v.Grade: v.ID,
-		})
-		if loaded {
-			grades[v.Grade] = v.ID
+	for _, role := range dest {
+		grades, _ := p.permsJobsRoleMap.LoadOrStore(role.Job, syncx.Map[int32, uint64]{})
+		grades.Store(role.Grade, role.ID)
 
-			p.permsJobsRoleMap.Store(v.Job, grades)
-		}
+		p.permsJobsRoleMap.Store(role.Job, grades)
 	}
 
 	return nil
@@ -210,13 +211,11 @@ func (p *Perms) loadRolePermissions(ctx context.Context) error {
 		return err
 	}
 
-	for _, v := range dest {
-		perms, loaded := p.permsRoleMap.LoadOrStore(v.RoleID, map[uint64]bool{
-			v.ID: v.Val,
-		})
-		if loaded {
-			perms[v.ID] = v.Val
-		}
+	for _, rPerms := range dest {
+		perms, _ := p.permsRoleMap.LoadOrStore(rPerms.RoleID, syncx.Map[uint64, bool]{})
+		perms.Store(rPerms.ID, rPerms.Val)
+
+		p.permsRoleMap.Store(rPerms.RoleID, perms)
 	}
 
 	return nil
@@ -282,29 +281,24 @@ func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, permId uint64, attr
 }
 
 func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType AttributeTypes, value *permissions.AttributeValues) {
-	attrMap, ok := p.attrsRoleMap.Load(roleId)
-	if !ok || attrMap == nil {
-		attrMap = map[uint64]*cacheRoleAttr{}
-	}
+	attrMap, _ := p.attrsRoleMap.LoadOrStore(roleId, syncx.Map[uint64, *cacheRoleAttr]{})
 
-	attrMap[attrId] = &cacheRoleAttr{
+	attrMap.Store(attrId, &cacheRoleAttr{
 		AttrID: attrId,
 		Key:    key,
 		Type:   aType,
 		Value:  value,
-	}
+	})
 
 	p.attrsRoleMap.Store(roleId, attrMap)
 }
 
 func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
 	attrMap, ok := p.attrsRoleMap.Load(roleId)
-	if !ok || attrMap == nil {
+	if !ok {
 		return
 	}
 
-	if _, ok := attrMap[attrId]; ok {
-		delete(attrMap, attrId)
-		p.attrsRoleMap.Store(roleId, attrMap)
-	}
+	attrMap.Delete(attrId)
+	p.attrsRoleMap.Store(roleId, attrMap)
 }

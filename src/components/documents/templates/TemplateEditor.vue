@@ -521,7 +521,7 @@ defineRule('max', max);
 
 <template>
     <div class="text-neutral">
-        <VeeForm @submit.prevent="onSubmit">
+        <VeeForm @submit="onSubmit">
             <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                 {{ $t('common.template', 2) }} {{ $t('common.weight') }}
             </label>

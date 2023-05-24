@@ -3,11 +3,13 @@ package perms
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
+	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -178,7 +180,7 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 		}
 	}
 
-	p.permsRoleMap.Store(role.ID, map[uint64]bool{})
+	p.permsRoleMap.Store(role.ID, syncx.Map[uint64, bool]{})
 
 	return role, nil
 }
@@ -294,8 +296,9 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 	if !ok {
 		return nil
 	}
+
 	for _, v := range rolePerms {
-		roleCache[v.PermissionID] = v.Val
+		roleCache.LoadOrStore(v.PermissionID, v.Val)
 	}
 
 	return nil
@@ -323,8 +326,10 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 	if !ok {
 		return nil
 	}
-	for _, v := range perms {
-		delete(roleCache, v)
+
+	for _, permId := range perms {
+		fmt.Println(permId)
+		roleCache.Delete(permId)
 	}
 
 	return nil

@@ -66,7 +66,7 @@ defineRule('alpha_dash', alpha_dash);
         {{ $t('components.auth.create_account.subtitle') }}
     </p>
 
-    <VeeForm @submit.prevent="createAccount" class="my-2 space-y-6">
+    <VeeForm @submit="createAccount" class="my-2 space-y-6">
         <div>
             <label for="registrationToken" class="sr-only">
                 {{ $t('components.auth.create_account.registration_token') }}

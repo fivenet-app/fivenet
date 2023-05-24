@@ -87,7 +87,7 @@ defineRule('max', max);
             <div class="px-2 sm:px-6 lg:px-8">
                 <div v-can="'DocStoreService.CreateDocumentCategory'" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
-                        <VeeForm @submit.prevent="createDocumentCategory">
+                        <VeeForm @submit="createDocumentCategory">
                             <div class="flex flex-row gap-4 mx-auto">
                                 <div class="flex-1 form-control">
                                     <label for="name" class="block text-sm font-medium leading-6 text-neutral">

@@ -42,19 +42,21 @@ func (p *Perms) getRolePermissionsFromCache(roleIds []uint64) []*cachePerm {
 	perms := map[uint64]interface{}{}
 	for i := len(roleIds) - 1; i >= 0; i-- {
 		permsMap, ok := p.permsRoleMap.Load(roleIds[i])
-		if !ok || permsMap == nil {
+		if !ok {
 			continue
 		}
 
-		for k, v := range permsMap {
-			if !v {
-				continue
+		permsMap.Range(func(key uint64, value bool) bool {
+			if !value {
+				return true
 			}
 
-			if _, ok := perms[k]; !ok {
-				perms[k] = nil
+			if _, ok := perms[key]; !ok {
+				perms[key] = nil
 			}
-		}
+
+			return true
+		})
 	}
 
 	ps := []*cachePerm{}
@@ -76,26 +78,22 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 		return false
 	}
 
-	cached, ok := p.userCanCache.Get(userInfo.UserId)
+	cacheKey := userCacheKey{
+		userId: userInfo.UserId,
+		permId: permId,
+	}
+	result, ok := p.userCanCache.Get(cacheKey)
 	if ok {
-		if result, found := cached[permId]; found {
-			return result
-		}
+		return result
 	}
 
-	var result bool
 	if userInfo.SuperUser {
 		result = true
 	} else {
 		result = p.checkIfCan(permId, userInfo, category, name)
 	}
 
-	if cached == nil {
-		cached = map[uint64]bool{}
-	}
-	cached[permId] = result
-
-	p.userCanCache.Set(userInfo.UserId, cached,
+	p.userCanCache.Set(cacheKey, result,
 		cache.WithExpiration(p.userCanCacheTTL))
 
 	return result
@@ -120,7 +118,7 @@ func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) bool {
 		if !ok {
 			continue
 		}
-		val, ok := ps[permId]
+		val, ok := ps.Load(permId)
 		if !ok {
 			continue
 		}

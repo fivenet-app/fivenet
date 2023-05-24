@@ -63,7 +63,7 @@ defineRule('max', max);
         {{ $t('components.auth.forgot_password.subtitle') }}
     </p>
 
-    <VeeForm @submit.prevent="forgotPassword" class="my-2 space-y-6">
+    <VeeForm @submit="forgotPassword" class="my-2 space-y-6">
         <div>
             <label for="registrationToken" class="sr-only">
                 {{ $t('components.auth.forgot_password.registration_token') }}

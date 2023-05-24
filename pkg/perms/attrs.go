@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
+	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -203,12 +204,9 @@ func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aTyp
 
 	p.attrsMap.Store(attrId, attr)
 
-	pAttrMap, ok := p.attrsPermsMap.Load(permId)
-	if !ok || pAttrMap == nil {
-		pAttrMap = map[Key]uint64{}
-	}
+	pAttrMap, _ := p.attrsPermsMap.LoadOrStore(permId, syncx.Map[Key, uint64]{})
 
-	pAttrMap[key] = attrId
+	pAttrMap.Store(key, attrId)
 
 	p.attrsPermsMap.Store(permId, pAttrMap)
 
@@ -267,7 +265,7 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key K
 	if !ok {
 		return nil
 	}
-	attrId, ok := pAttrs[key]
+	attrId, ok := pAttrs.Load(key)
 	if !ok {
 		return nil
 	}
@@ -460,20 +458,25 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 	}
 
 	dest := []*permissions.RoleAttribute{}
-	for k, v := range as {
-		attr, ok := p.lookupAttributeByID(k)
+	for _, attrId := range as.Keys() {
+		attr, ok := p.lookupAttributeByID(attrId)
 		if !ok {
 			return nil, fmt.Errorf("no attribute found by id for role")
 		}
 
+		v, ok := as.Load(attrId)
+		if !ok {
+			return nil, fmt.Errorf("no role attribute found by id for role")
+		}
+
 		dest = append(dest, &permissions.RoleAttribute{
 			RoleId:       roleId,
-			AttrId:       k,
+			AttrId:       attrId,
 			PermissionId: attr.PermissionID,
 			Category:     string(attr.Category),
 			Name:         string(attr.Name),
-			Key:          string(v.Key),
-			Type:         string(v.Type),
+			Key:          string(attr.Key),
+			Type:         string(attr.Type),
 			Value:        v.Value,
 			ValidValues:  attr.ValidValues,
 		})
@@ -491,15 +494,17 @@ func (p *Perms) getRoleAttributesFromCache(job string, grade int32) ([]*cacheRol
 	attrs := map[uint64]*cacheRoleAttr{}
 	for i := len(roleIds) - 1; i >= 0; i-- {
 		attrMap, ok := p.attrsRoleMap.Load(roleIds[i])
-		if !ok || attrMap == nil {
+		if !ok {
 			continue
 		}
 
-		for k, v := range attrMap {
-			if _, ok := attrs[k]; !ok {
-				attrs[k] = v
+		attrMap.Range(func(key uint64, value *cacheRoleAttr) bool {
+			if _, ok := attrs[key]; !ok {
+				attrs[key] = value
 			}
-		}
+
+			return true
+		})
 	}
 
 	as := []*cacheRoleAttr{}

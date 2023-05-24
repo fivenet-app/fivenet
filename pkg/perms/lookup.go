@@ -14,7 +14,7 @@ func (p *Perms) lookupAttributeByPermID(id uint64, key Key) (*cacheAttr, bool) {
 		return nil, false
 	}
 
-	aId, ok := as[key]
+	aId, ok := as.Load(key)
 	if !ok {
 		return nil, false
 	}
@@ -28,8 +28,7 @@ func (p *Perms) lookupRoleAttribute(roleId uint64, attrId uint64) (*cacheRoleAtt
 		return nil, false
 	}
 
-	a, ok := as[attrId]
-	return a, ok
+	return as.Load(attrId)
 }
 
 // Roles
@@ -49,16 +48,23 @@ func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64,
 	}
 
 	grades := []int32{}
-	for g := range gradesMap {
+	gradesMap.Range(func(g int32, _ uint64) bool {
 		if g > grade {
-			continue
+			return true
 		}
+
 		grades = append(grades, g)
-	}
+		return true
+	})
 	utils.SortInt32Slice(grades)
 	gradeList := []uint64{}
 	for i := 0; i < len(grades); i++ {
-		gradeList = append(gradeList, gradesMap[grades[i]])
+		grade, ok := gradesMap.Load(grades[i])
+		if !ok {
+			return nil, false
+		}
+
+		gradeList = append(gradeList, grade)
 	}
 
 	if len(gradeList) == 0 {
