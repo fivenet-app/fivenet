@@ -150,7 +150,7 @@
                 "register_account": "Register Account using Token",
                 "login_error": "There was an error signing you in, please try again!",
                 "title": "Login",
-                "forgot_password": "Reset/ Forgot Password"
+                "forgot_password": "Reset Password"
             },
             "create_account": {
                 "title": "Create Account",
@@ -191,10 +191,10 @@
                 "set_job": "Set Person's Job"
             },
             "citizen_info_activity_feed_entry": {
-                "with_reason": "with reason",
                 "set_citizen_as": "Set the citizen as",
                 "document_relation": "Related the citizen in a",
                 "document_relation_removed": "Removed citizen document relation in",
+                "with_reason": "with reason",
                 "set_ciizen_job": "Set the citizen's job to "
             }
         },
@@ -270,10 +270,10 @@
         },
         "livemap": {
             "starting_datastream": "Starting Livemap data stream...",
-            "paused_datastream": "Livemap data stream paused (window not in focus).",
             "failed_datastream": "Failed to stream Livemap data!",
             "sent_by": "Sent by",
-            "center_selected_marker": "Center selected Marker"
+            "center_selected_marker": "Center selected Marker",
+            "paused_datastream": "Livemap data stream paused (window not in focus)."
         },
         "rector": {
             "job_props": {
@@ -620,13 +620,13 @@
     "perms": {
         "AuthService": {
             "category": "Authentication",
-            "ChooseCharacter": {
-                "key": "Choose Character",
-                "description": "Permission to choose character, basically allow or disallow access to FiveNet."
-            },
             "SetJob": {
                 "key": "Override own Job",
                 "description": "Superuser: Allow to override their own job on the go."
+            },
+            "ChooseCharacter": {
+                "key": "Choose Character",
+                "description": "Permission to choose character, basically allow or disallow access to FiveNet."
             }
         },
         "CitizenStoreService": {
@@ -778,10 +778,6 @@
                 "key": "Delete Role",
                 "description": "Delete FiveNet job roles"
             },
-            "UpdateRolePerms": {
-                "key": "Manage Role Permissions",
-                "description": "Add/ Delete permissions to FiveNet job roles"
-            },
             "GetPermissions": {
                 "key": "GetPermissions",
                 "description": "Get list of available FiveNet permissions"
@@ -789,11 +785,15 @@
             "ViewAuditLog": {
                 "key": "Audit Log",
                 "description": "View audit log"
+            },
+            "UpdateRolePerms": {
+                "key": "Manage Role Permissions",
+                "description": "Add/ Delete permissions to FiveNet job roles"
             }
         }
     },
     "attrs": {
-        "CitizenStoreService":{
+        "CitizenStoreService": {
             "GetUser": {
                 "Jobs": "Factions"
             },
@@ -807,8 +807,19 @@
                 "Fields": "User Properties Fields"
             }
         },
-        "CompletorService":{
+        "CompletorService": {
             "CompleteDocumentCategories": {
+                "Jobs": "Factions"
+            }
+        },
+        "LivemapperService": {
+            "Stream": {
+                "Dispatches": "Dispatch Locations",
+                "Players": "Player Location"
+            }
+        },
+        "RectorService": {
+            "GetPermissions": {
                 "Jobs": "Factions"
             }
         },
@@ -821,17 +832,6 @@
             },
             "DeleteDocumentComment": {
                 "Access": "Access"
-            }
-        },
-        "LivemapperService":{
-            "Stream": {
-                "Dispatches": "Dispatch Locations",
-                "Players": "Player Location"
-            }
-        },
-        "RectorService":{
-            "GetPermissions": {
-                "Jobs": "Factions"
             }
         }
     },
