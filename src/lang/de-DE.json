@@ -191,10 +191,10 @@
                 "set_job": "Job der Person setzen"
             },
             "citizen_info_activity_feed_entry": {
-                "with_reason": "mit dem Grund",
-                "set_citizen_as": "Setzte den Bürger als",
+                "set_citizen_as": "Setze den Bürger als",
                 "document_relation": "Bürger zugehörig zu",
                 "document_relation_removed": "Bürger nicht mehr zugehörig zu",
+                "with_reason": "mit dem Grund",
                 "set_ciizen_job": "Setzte den Beruf des Bürgers zu "
             }
         },
@@ -270,10 +270,10 @@
         },
         "livemap": {
             "starting_datastream": "Starte Livemap Datenstrom...",
-            "paused_datastream": "Livemap Datenstrom pausiert (Fenster nicht im Fokus).",
             "failed_datastream": "Livemap Datenstrom fehlgeschlagen!",
             "sent_by": "Gesendet von",
-            "center_selected_marker": "Zentriere ausgewählten Marker"
+            "center_selected_marker": "Zentriere ausgewählten Marker",
+            "paused_datastream": "Livemap Datenstrom pausiert (Fenster nicht im Fokus)."
         },
         "rector": {
             "job_props": {
@@ -441,6 +441,7 @@
         "available": "verfügbar",
         "reason": "Grund | Gründe",
         "preview": "Vorschau",
+        "option": "",
         "weight": "Gewichtung"
     },
     "notifications": {
@@ -614,6 +615,229 @@
                 "TARGETS": "zielt auf",
                 "CAUSED": "verursacht"
             }
+        }
+    },
+    "perms": {
+        "AuthService": {
+            "category": "Authentifizierung",
+            "SetJob": {
+                "key": "Eigenen Job überschreiben",
+                "description": "Superuser: Ermöglicht das Überschreiben des eigenen Jobs während der Laufzeit."
+            },
+            "ChooseCharacter": {
+                "key": "",
+                "description": ""
+            }
+        },
+        "CitizenStoreService": {
+            "category": "Bürger",
+            "ListCitizens": {
+                "key": "Bürger auflisten",
+                "description": "Bürger auflisten und suchen"
+            },
+            "ListUserActivity": {
+                "key": "Nutzeraktivität auflisten",
+                "description": "Aktivitäten-Feed für Bürgerinformationen"
+            },
+            "SetUserProps": {
+                "key": "Nutzereigenschaften festlegen",
+                "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus)"
+            },
+            "GetUser": {
+                "key": "Nutzer abrufen",
+                "description": "Einen Bürger ansehen."
+            }
+        },
+        "CompletorService": {
+            "category": "Autovervollständigung",
+            "CompleteCitizens": {
+                "key": "Bürger-Namen",
+                "description": "Vollständige Bürger-Namen."
+            },
+            "CompleteJobs": {
+                "key": "Vollständige Job-Namen und Ränge",
+                "description": "Vollständige Job-Namen und Ränge."
+            },
+            "CompleteDocumentCategories": {
+                "key": "Dokumentenkategorien auflisten",
+                "description": "Eine Dokumentenkategorie vervollständigen."
+            }
+        },
+        "DMVService": {
+            "category": "Fahrzeuge",
+            "ListVehicles": {
+                "key": "Fahrzeuge suchen",
+                "description": ""
+            }
+        },
+        "DocStoreService": {
+            "category": "",
+            "AddDocumentReference": {
+                "key": "",
+                "description": ""
+            },
+            "AddDocumentRelation": {
+                "key": "",
+                "description": ""
+            },
+            "CreateDocument": {
+                "key": "",
+                "description": ""
+            },
+            "DeleteDocumentComment": {
+                "key": "",
+                "description": ""
+            },
+            "ListDocuments": {
+                "key": "",
+                "description": ""
+            },
+            "GetDocument": {
+                "key": "",
+                "description": ""
+            },
+            "GetDocumentAccess": {
+                "key": "",
+                "description": ""
+            },
+            "GetDocumentComments": {
+                "key": "",
+                "description": ""
+            },
+            "ListUserDocuments": {
+                "key": "",
+                "description": ""
+            },
+            "ListTemplates": {
+                "key": "Vorlagen auflisten",
+                "description": "Verfügbare Vorlagen auflisten."
+            },
+            "PostDocumentComment": {
+                "key": "Kommentar zum Dokument posten",
+                "description": "Dokumentkommentare posten"
+            },
+            "SetDocumentAccess": {
+                "key": "Dokumentzugriff festlegen",
+                "description": "Zugriff auf Dokument hinzufügen/bearbeiten"
+            },
+            "UpdateDocument": {
+                "key": "Dokument aktualisieren",
+                "description": "Ein vorhandenes Dokument bearbeiten/aktualisieren"
+            },
+            "CreateDocumentCategory": {
+                "key": "Dokumentenkategorie erstellen",
+                "description": "Dokumentenkategorien erstellen/aktualisieren"
+            },
+            "DeleteDocumentCategory": {
+                "key": "Dokumentenkategorie löschen",
+                "description": "Dokumentenkategorien löschen"
+            },
+            "ListDocumentCategories": {
+                "key": "Auflisten der Dokumentenkategorien",
+                "description": "Liste der Dokumentkategorien"
+            },
+            "CreateTemplate": {
+                "key": "Vorlage erstellen",
+                "description": "Erstellen von Dokumentenvorlagen"
+            },
+            "DeleteTemplate": {
+                "key": "Vorlage löschen",
+                "description": ""
+            },
+            "DeleteDocument": {
+                "key": "",
+                "description": ""
+            }
+        },
+        "LivemapperService": {
+            "category": "",
+            "Stream": {
+                "key": "",
+                "description": ""
+            }
+        },
+        "RectorService": {
+            "category": "",
+            "GetJobProps": {
+                "key": "",
+                "description": ""
+            },
+            "SetJobProps": {
+                "key": "",
+                "description": ""
+            },
+            "GetRoles": {
+                "key": "",
+                "description": ""
+            },
+            "CreateRole": {
+                "key": "",
+                "description": ""
+            },
+            "DeleteRole": {
+                "key": "",
+                "description": ""
+            },
+            "GetPermissions": {
+                "key": "",
+                "description": ""
+            },
+            "ViewAuditLog": {
+                "key": "",
+                "description": "Audit-Protokoll anzeigen"
+            },
+            "UpdateRolePerms": {
+                "key": "Berechtigungen für Rollen verwalten",
+                "description": "Hinzufügen/Löschen von Berechtigungen für FiveNet-Jobrollen"
+            }
+        }
+    },
+    "attrs": {
+        "CitizenStoreService": {
+            "GetUser": {
+                "Jobs": ""
+            },
+            "ListCitizens": {
+                "Fields": ""
+            },
+            "ListUserActivity": {
+                "Fields": ""
+            },
+            "SetUserProps": {
+                "Fields": ""
+            }
+        },
+        "CompletorService": {
+            "CompleteDocumentCategories": {
+                "Jobs": ""
+            }
+        },
+        "LivemapperService": {
+            "Stream": {
+                "Dispatches": "",
+                "Players": ""
+            }
+        },
+        "RectorService": {
+            "GetPermissions": {
+                "Jobs": ""
+            }
+        },
+        "DocStoreService": {
+            "UpdateDocument": {
+                "Access": ""
+            },
+            "DeleteDocument": {
+                "Access": ""
+            },
+            "DeleteDocumentComment": {
+                "Access": ""
+            }
+        }
+    },
+    "errors": {
+        "NotificatorService": {
+            "InvalidRequestErr": ""
         }
     }
 }
