@@ -812,6 +812,17 @@
                 "Jobs": "Factions"
             }
         },
+        "DocStoreService": {
+            "UpdateDocument": {
+                "Access": "Access"
+            },
+            "DeleteDocument": {
+                "Access": "Access"
+            },
+            "DeleteDocumentComment": {
+                "Access": "Access"
+            }
+        },
         "LivemapperService":{
             "Stream": {
                 "Dispatches": "Dispatch Locations",
