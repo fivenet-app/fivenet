@@ -189,8 +189,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 	resp.Role.Permissions = make([]*permissions.Permission, len(fPerms))
 	copy(resp.Role.Permissions, fPerms)
 
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	resp.Role.Attributes, err = s.p.GetRoleAttributes(userInfo.Job, userInfo.JobGrade)
+	resp.Role.Attributes, err = s.p.GetRoleAttributes(role.Job, role.Grade)
 	if err != nil {
 		return nil, err
 	}
