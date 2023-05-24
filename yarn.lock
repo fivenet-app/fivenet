@@ -433,7 +433,7 @@
   integrity sha512-lAhycmKnVOuRYNtRtatQR1LPQf2oYCkRGkSFnseDAKPl8lu5SOsK/e1sXe5a0Pc5kHIHe6P2I/ilntNv2xf3cA==
 
 "@fivenet/gen@file:./gen/js":
-  version "0.4.3"
+  version "0.4.4"
 
 "@fontsource/inter@^5.0.0":
   version "5.0.1"
