@@ -44,6 +44,8 @@ async function getRole(): Promise<void> {
             const resp = await $grpc.getRectorClient().getRole(req, null);
 
             role.value = resp.getRole();
+
+            attrStates.value.clear();
             role.value?.getAttributesList().forEach(attr => {
                 attrStates.value.set(attr.getAttrId(), attr.getValue())
             });
@@ -116,12 +118,16 @@ async function getPermissions(): Promise<void> {
 }
 
 async function genPermissionCategories(): Promise<void> {
+    permCategories.value.clear();
+
     permList.value.forEach(perm => {
         permCategories.value.add(perm.getCategory());
     });
 }
 
 async function propogatePermissionStates(): Promise<void> {
+    permStates.value.clear();
+
     role.value?.getPermissionsList().forEach(perm => {
         permStates.value.set(perm.getId(), Boolean(perm.getVal()));
     });
@@ -179,23 +185,28 @@ async function updatePermissions(): Promise<void> {
     try {
         await $grpc.getRectorClient().updateRolePerms(req, null);
 
-        // TODO update current state to reflect the updated one
         notifications.dispatchNotification({
             title: t('notifications.rector.role_updated.title'),
             content: t('notifications.rector.role_updated.content'),
             type: 'success'
         });
+
+        initializeRoleView();
     } catch (e) {
         $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
 
-onMounted(async () => {
+async function initializeRoleView(): Promise<void> {
     await getRole();
     await prepareAttributeData();
     await getPermissions();
-    propogatePermissionStates();
+    await propogatePermissionStates();
+}
+
+onMounted(async () => {
+    initializeRoleView();
 });
 </script>
 
