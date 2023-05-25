@@ -155,11 +155,6 @@ fivenet:
           - doj
           - fib
           - police
-      permissionRoleJobs:
-        - ambulance
-        - doj
-        - fib
-        - police
       defaultPermissions:
         - category: AuthService
           name: ChooseCharacter

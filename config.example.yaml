@@ -66,8 +66,16 @@ game:
       - doj
       - fib
       - police
-  permissionRoleJobs:
-    - ambulance
-    - doj
-    - fib
-    - police
+  defaultPermissions:
+    - category: AuthService
+      name: ChooseCharacter
+    - category: CompletorService
+      name: CompleteJobs
+    - category: DocStoreService
+      name: ListDocuments
+    - category: DocStoreService
+      name: GetDocument
+    - category: DocStoreService
+      name: GetDocumentComments
+    - category: DocStoreService
+      name: PostDocumentComment

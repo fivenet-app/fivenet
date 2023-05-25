@@ -91,7 +91,6 @@ type Game struct {
 	SuperuserGroups    []string      `yaml:"superuserGroups"`
 	UnemployedJob      UnemployedJob `yaml:"unemployedJob"`
 	PublicJobs         []string      `yaml:"publicJobs"`
-	PermissionRoleJobs []string      `yaml:"permissionRoleJobs"`
 	Livemap            Livemap       `yaml:"livemap"`
 	DefaultPermissions []Perm        `yaml:"defaultPermissions"`
 }
