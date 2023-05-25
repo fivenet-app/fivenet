@@ -36,11 +36,37 @@ const { activeChar } = storeToRefs(authStore);
 
 const maxAccessEntries = 8;
 
-const weight = ref<number>(0);
-const title = ref<string>('');
-const description = ref<string>('');
-const contentTitle = ref<string>('');
-const content = ref<string>('');
+defineRule('required', required);
+defineRule('numeric', numeric);
+defineRule('min', min);
+defineRule('max', max);
+
+interface FormData {
+    weight: number;
+    title: string;
+    description: string;
+    contentTitle: string;
+    content: string;
+}
+
+const { handleSubmit, setValues } = useForm<FormData>({
+    validationSchema: {
+        weight: { required: true, numeric: { min: 0, max: 4294967295 } },
+        title: { required: true, min: 3, max: 255 },
+        description: { required: true, min: 3, max: 255 },
+        contentTitle: { required: true, min: 3, max: 2048 },
+        content: { required: true, min: 3, max: 1500000 },
+    },
+});
+
+const onSubmit = handleSubmit(async (values): Promise<void> => {
+    if (props.templateId && props.templateId > 0) {
+        return updateTemplate(values);
+    } else {
+        await createTemplate(values);
+    }
+});
+
 const schema = ref<TemplateSchemaEditorValue>({
     users: {
         req: false,
@@ -231,15 +257,15 @@ function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
     return o;
 }
 
-async function createTemplate(): Promise<void> {
+async function createTemplate(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new CreateTemplateRequest();
         const tpl = new Template();
-        tpl.setWeight(weight.value);
-        tpl.setTitle(title.value);
-        tpl.setDescription(description.value);
-        tpl.setContentTitle(contentTitle.value);
-        tpl.setContent(content.value);
+        tpl.setWeight(values.weight);
+        tpl.setTitle(values.title);
+        tpl.setDescription(values.description);
+        tpl.setContentTitle(values.contentTitle);
+        tpl.setContent(values.content);
         if (selectedCategory.value) {
             tpl.setCategory(selectedCategory.value);
         }
@@ -316,16 +342,16 @@ async function createTemplate(): Promise<void> {
     });
 }
 
-async function updateTemplate(): Promise<void> {
+async function updateTemplate(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new UpdateTemplateRequest();
         const tpl = new Template();
         tpl.setId(props.templateId!);
-        tpl.setWeight(weight.value);
-        tpl.setTitle(title.value);
-        tpl.setDescription(description.value);
-        tpl.setContentTitle(contentTitle.value);
-        tpl.setContent(content.value);
+        tpl.setWeight(values.weight);
+        tpl.setTitle(values.title);
+        tpl.setDescription(values.description);
+        tpl.setContentTitle(values.contentTitle);
+        tpl.setContent(values.content);
         if (selectedCategory.value) {
             tpl.setCategory(selectedCategory.value);
         }
@@ -402,14 +428,6 @@ async function updateTemplate(): Promise<void> {
     });
 }
 
-async function onSubmit(): Promise<void> {
-    if (props.templateId && props.templateId > 0) {
-        return updateTemplate();
-    } else {
-        await createTemplate();
-    }
-};
-
 let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
 const selectedCategory = ref<DocumentCategory | undefined>(undefined);
@@ -448,10 +466,13 @@ onMounted(async () => {
             const tpl = resp.getTemplate();
             if (!tpl) return;
 
-            title.value = tpl.getTitle();
-            description.value = tpl.getDescription();
-            contentTitle.value = tpl.getContentTitle();
-            content.value = tpl.getContent();
+            setValues({
+                weight: tpl.getWeight(),
+                title: tpl.getTitle(),
+                description: tpl.getDescription(),
+                contentTitle: tpl.getContentTitle(),
+                content: tpl.getContent(),
+            });
             if (tpl.hasCategory()) {
                 selectedCategory.value = tpl.getCategory();
             }
@@ -512,33 +533,24 @@ onMounted(async () => {
 });
 
 watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.filter(r => r.getLabel().startsWith(queryRank.value)), { debounce: 600, maxWait: 1750 });
-
-defineRule('required', required);
-defineRule('numeric', numeric);
-defineRule('min', min);
-defineRule('max', max);
 </script>
 
 <template>
     <div class="text-neutral">
-        <VeeForm @submit="onSubmit">
+        <form @submit="onSubmit">
             <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                 {{ $t('common.template', 2) }} {{ $t('common.weight') }}
             </label>
             <div class="mt-2">
                 <VeeField type="number" name="weight" min="0" max="4294967295" :label="t('common.weight')"
-                    :rules="{ required: true, numeric: { min: 0, max: 4294967295 } }"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    v-model="weight" />
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
             </div>
             <label for="title" class="block font-medium text-sm mt-2">
                 {{ $t('common.template') }} {{ $t('common.title') }}
             </label>
             <div>
                 <VeeField as="textarea" rows="1" name="title" :label="t('common.title')"
-                    :rules="{ required: true, min: 3, max: 255 }"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    v-model="title" />
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <label for="description" class="block font-medium text-sm mt-2">
@@ -546,9 +558,7 @@ defineRule('max', max);
             </label>
             <div>
                 <VeeField as="textarea" rows="4" name="description" :label="t('common.description')"
-                    :rules="{ required: true, min: 3, max: 255 }"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    v-model="description" />
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <div class="my-3">
@@ -572,9 +582,7 @@ defineRule('max', max);
             </label>
             <div>
                 <VeeField as="textarea" rows="2" name="contentTitle" :label="t('common.title')"
-                    :rules="{ required: true, min: 3, max: 2048 }"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    v-model="contentTitle" />
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
                 <p class="text-neutral">
                     <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
@@ -620,9 +628,7 @@ defineRule('max', max);
             </label>
             <div>
                 <VeeField as="textarea" rows="6" name="content" :label="t('common.template')"
-                    :rules="{ required: true, min: 3, max: 1500000 }"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    v-model="content" />
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
                 <p class="text-neutral">
                     <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
@@ -653,6 +659,6 @@ defineRule('max', max);
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 mt-4">
                 {{ templateId ? $t('common.save') : $t('common.create') }}
             </button>
-        </VeeForm>
+        </form>
     </div>
 </template>

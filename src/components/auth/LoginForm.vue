@@ -13,9 +13,7 @@ const authStore = useAuthStore();
 const { loginError } = storeToRefs(authStore);
 const { loginStart, loginStop, setActiveChar, setPermissions, setAccessToken } = authStore;
 
-const form = ref<{ username: string; password: string; }>({ username: '', password: '' });
-
-async function login(): Promise<void> {
+async function login(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         // Start login
         loginStart();
@@ -23,8 +21,8 @@ async function login(): Promise<void> {
         setPermissions([]);
 
         const req = new LoginRequest();
-        req.setUsername(form.value.username);
-        req.setPassword(form.value.password);
+        req.setUsername(values.username);
+        req.setPassword(values.password);
 
         try {
             const resp = await $grpc.getUnAuthClient()
@@ -48,6 +46,21 @@ defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
 defineRule('alpha_dash', alpha_dash);
+
+interface FormData {
+    registrationToken: number;
+    username: string;
+    password: string;
+}
+
+const { handleSubmit } = useForm<FormData>({
+    validationSchema: {
+        username: { required: true, min: 3, max: 24, alpha_dash: true },
+        password: { required: true, min: 6, max: 70 },
+    },
+});
+
+const onSubmit = handleSubmit(async (values): Promise<void> => await login(values));
 </script>
 
 <template>
@@ -55,15 +68,14 @@ defineRule('alpha_dash', alpha_dash);
         {{ $t('components.auth.login.title') }}
     </h2>
 
-    <VeeForm @submit="login" class="my-2 space-y-6">
+    <form @submit="onSubmit" class="my-2 space-y-6">
         <div>
             <label for="username" class="sr-only">
                 {{ $t('common.username') }}
             </label>
             <div>
                 <VeeField name="username" type="text" autocomplete="username" :placeholder="$t('common.username')"
-                    :label="$t('common.username')" v-model="form.username"
-                    :rules="{ required: true, min: 3, max: 24, alpha_dash: true }"
+                    :label="$t('common.username')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <VeeErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
             </div>
@@ -74,7 +86,7 @@ defineRule('alpha_dash', alpha_dash);
             </label>
             <div>
                 <VeeField name="password" type="password" autocomplete="current-password" :placeholder="$t('common.password')"
-                    :label="$t('common.password')" v-model="form.password" :rules="{ required: true, min: 6, max: 70 }"
+                    :label="$t('common.password')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
             </div>
@@ -86,7 +98,7 @@ defineRule('alpha_dash', alpha_dash);
                 {{ $t('common.login') }}
             </button>
         </div>
-    </VeeForm>
+    </form>
 
     <div class="my-4 space-y-2">
         <div v-for="prov in providers" class="">

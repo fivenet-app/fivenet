@@ -16,16 +16,13 @@ defineEmits<{
 
 const { t } = useI18n();
 
-const form = ref<{ currPassword: string; registrationToken: number; }>({
-    registrationToken: 0,
-    currPassword: '',
-});
+const newPassword = ref('');
 
-async function forgotPassword(): Promise<void> {
+async function forgotPassword(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new ForgotPasswordRequest();
-        req.setRegToken(form.value.registrationToken.toString());
-        req.setNew(form.value.currPassword);
+        req.setRegToken(values.registrationToken.toString());
+        req.setNew(values.password);
 
         try {
             await $grpc.getUnAuthClient().
@@ -52,6 +49,20 @@ defineRule('required', required);
 defineRule('digits', digits);
 defineRule('min', min);
 defineRule('max', max);
+
+interface FormData {
+    registrationToken: number;
+    password: string;
+}
+
+const { handleSubmit } = useForm<FormData>({
+    validationSchema: {
+        registrationToken: { required: true, digits: 6 },
+        password: { required: true, min: 6, max: 70 },
+    },
+});
+
+const onSubmit = handleSubmit(async (values): Promise<void> => await forgotPassword(values));
 </script>
 
 <template>
@@ -63,16 +74,16 @@ defineRule('max', max);
         {{ $t('components.auth.forgot_password.subtitle') }}
     </p>
 
-    <VeeForm @submit="forgotPassword" class="my-2 space-y-6">
+    <form @submit="onSubmit" class="my-2 space-y-6">
         <div>
             <label for="registrationToken" class="sr-only">
                 {{ $t('components.auth.forgot_password.registration_token') }}
             </label>
             <div>
-                <VeeField name="registrationToken" type="text" inputmode="numeric" v-model="form.registrationToken"
+                <VeeField name="registrationToken" type="text" inputmode="numeric"
                     aria-describedby="hint" pattern="[0-9]*" autocomplete="registrationToken"
                     :placeholder="$t('components.auth.forgot_password.registration_token')"
-                    :label="$t('components.auth.forgot_password.registration_token')" :rules="{ required: true, digits: 6 }"
+                    :label="$t('components.auth.forgot_password.registration_token')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6" />
                 <VeeErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
             </div>
@@ -84,9 +95,9 @@ defineRule('max', max);
             <div>
                 <VeeField name="password" type="password" autocomplete="current-password"
                     :placeholder="$t('common.password')" :label="$t('common.password')"
-                    :rules="{ required: true, min: 6, max: 70 }" v-model:model-value="form.currPassword"
+                    v-model:model-value="newPassword"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
-                <PartialsPasswordStrengthMeter :input="form.currPassword" class="mt-2" />
+                <PartialsPasswordStrengthMeter :input="newPassword" class="mt-2" />
                 <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
@@ -97,7 +108,7 @@ defineRule('max', max);
                 {{ $t('components.auth.forgot_password.submit_button') }}
             </button>
         </div>
-    </VeeForm>
+    </form>
 
     <div class="mt-6">
         <button type="button" @click="$emit('back')"

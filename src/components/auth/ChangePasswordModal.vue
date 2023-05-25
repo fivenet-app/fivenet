@@ -27,16 +27,13 @@ defineEmits<{
 
 const { t } = useI18n();
 
-const form = ref<{ currentPassword: string; newPassword: string; }>({
-    currentPassword: '',
-    newPassword: '',
-});
+const newPassword = ref('');
 
-async function changePassword(): Promise<void> {
+async function changePassword(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new ChangePasswordRequest();
-        req.setCurrent(form.value.currentPassword);
-        req.setNew(form.value.newPassword);
+        req.setCurrent(values.currentPassword);
+        req.setNew(values.newPassword);
 
         try {
             const resp = await $grpc.getAuthClient()
@@ -62,6 +59,20 @@ async function changePassword(): Promise<void> {
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
+
+interface FormData {
+    currentPassword: string;
+    newPassword: string;
+}
+
+const { handleSubmit } = useForm<FormData>({
+    validationSchema: {
+        password: { required: true, min: 6, max: 70 },
+        newPassword: { required: true, min: 6, max: 70 },
+    },
+});
+
+const onSubmit = handleSubmit(async (values): Promise<void> => await changePassword(values));
 </script>
 
 <template>
@@ -90,7 +101,7 @@ defineRule('max', max);
                                         Change Password
                                     </DialogTitle>
                                     <div class="mt-2">
-                                        <VeeForm @submit="changePassword" class="my-2 space-y-6">
+                                        <form @submit="onSubmit" class="my-2 space-y-6">
                                             <div>
                                                 <label for="currentPassword" class="sr-only">Password</label>
                                                 <div>
@@ -98,7 +109,6 @@ defineRule('max', max);
                                                         autocomplete="current-password"
                                                         :placeholder="$t('components.auth.change_password_modal.current_password')"
                                                         :label="$t('components.auth.change_password_modal.current_password')"
-                                                        :rules="{ required: true, min: 6, max: 70 }"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                                     <VeeErrorMessage name="currentPassword" as="p"
                                                         class="mt-2 text-sm text-error-400" />
@@ -110,10 +120,9 @@ defineRule('max', max);
                                                     <VeeField name="newPassword" type="password" autocomplete="new-password"
                                                         :placeholder="$t('components.auth.change_password_modal.new_password')"
                                                         :label="$t('components.auth.change_password_modal.new_password')"
-                                                        :rules="{ required: true, min: 6, max: 70 }"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        v-model:model-value="form.newPassword" />
-                                                    <PartialsPasswordStrengthMeter :input="form.newPassword" class="mt-2" />
+                                                        v-model:model-value="newPassword" />
+                                                    <PartialsPasswordStrengthMeter :input="newPassword" class="mt-2" />
                                                     <VeeErrorMessage name="newPassword" as="p"
                                                         class="mt-2 text-sm text-error-400" />
                                                 </div>
@@ -125,7 +134,7 @@ defineRule('max', max);
                                                     {{ $t('components.auth.change_password_modal.change_password') }}
                                                 </button>
                                             </div>
-                                        </VeeForm>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
