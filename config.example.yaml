@@ -59,12 +59,14 @@ game:
     - doj
     - fib
     - police
+  livemap:
+    usersCacheSize: 256
+    jobs:
+      - ambulance
+      - doj
+      - fib
+      - police
   permissionRoleJobs:
-    - ambulance
-    - doj
-    - fib
-    - police
-  livemapJobs:
     - ambulance
     - doj
     - fib

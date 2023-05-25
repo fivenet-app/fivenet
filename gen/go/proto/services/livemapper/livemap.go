@@ -60,12 +60,12 @@ type Server struct {
 func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
 	dispatchesCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[string, []*livemap.DispatchMarker](lru.WithCapacity(32)),
+		cache.AsLRU[string, []*livemap.DispatchMarker](lru.WithCapacity(DispatchMarkerLimit)),
 		cache.WithJanitorInterval[string, []*livemap.DispatchMarker](120*time.Second),
 	)
 	usersCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[string, []*livemap.UserMarker](lru.WithCapacity(32)),
+		cache.AsLRU[string, []*livemap.UserMarker](lru.WithCapacity(256)),
 		cache.WithJanitorInterval[string, []*livemap.UserMarker](120*time.Second),
 	)
 
@@ -280,7 +280,7 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 }
 
 func (s *Server) refreshDispatches(ctx context.Context) error {
-	if len(config.C.Game.LivemapJobs) == 0 {
+	if len(config.C.Game.Livemap.Jobs) == 0 {
 		s.logger.Warn("empty livemap jobs in config, no dispatches can be found because of that")
 		return nil
 	}
@@ -303,7 +303,7 @@ func (s *Server) refreshDispatches(ctx context.Context) error {
 		).
 		WHERE(
 			jet.AND(
-				d.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(config.C.Game.LivemapJobs, "|")+")\"\\]")),
+				d.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(config.C.Game.Livemap.Jobs, "|")+")\"\\]")),
 				d.Time.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE))),
 			),
 		).

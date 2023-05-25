@@ -92,18 +92,22 @@ type Game struct {
 	UnemployedJob      UnemployedJob `yaml:"unemployedJob"`
 	PublicJobs         []string      `yaml:"publicJobs"`
 	PermissionRoleJobs []string      `yaml:"permissionRoleJobs"`
-	LivemapJobs        []string      `yaml:"livemapJobs"`
+	Livemap            Livemap       `yaml:"livemap"`
 	DefaultPermissions []Perm        `yaml:"defaultPermissions"`
+}
+type UnemployedJob struct {
+	Name  string `default:"unemployed" yaml:"job"`
+	Grade int32  `default:"1" yaml:"grade"`
+}
+
+type Livemap struct {
+	UsersCacheSize int      `default:"256" yaml:"usersCacheSize"`
+	Jobs           []string `yaml:"jobs"`
 }
 
 type Perm struct {
 	Category string `yaml:"category"`
 	Name     string `yaml:"name"`
-}
-
-type UnemployedJob struct {
-	Name  string `default:"unemployed" yaml:"job"`
-	Grade int32  `default:"1" yaml:"grade"`
 }
 
 type OAuth2 struct {

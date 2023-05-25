@@ -111,7 +111,7 @@ service RectorService {
   // @perm
   rpc UpdateRolePerms(UpdateRolePermsRequest) returns (UpdateRolePermsResponse);
 
-  // @perm: Attrs=Jobs/JobList:"config.C.Game.LivemapJobs"
+  // @perm: Attrs=Jobs/JobList:"config.C.Game.Livemap.Jobs"
   rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
 
   // @perm

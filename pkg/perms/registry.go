@@ -79,8 +79,8 @@ func (p *Perms) Register(defaultRolePerms []string) error {
 
 		for _, attr := range perm.Attrs {
 			switch attr.ValidValues {
-			case "config.C.Game.LivemapJobs":
-				attr.ValidValues = config.C.Game.LivemapJobs
+			case "config.C.Game.Livemap.Jobs":
+				attr.ValidValues = config.C.Game.Livemap.Jobs
 			}
 
 			_, err := p.createOrUpdateAttribute(ctx, permId, attr.Key, attr.Type, attr.ValidValues)
