@@ -65,7 +65,7 @@ func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvi
 	)
 	usersCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[string, []*livemap.UserMarker](lru.WithCapacity(256)),
+		cache.AsLRU[string, []*livemap.UserMarker](lru.WithCapacity(config.C.Game.Livemap.UsersCacheSize)),
 		cache.WithJanitorInterval[string, []*livemap.UserMarker](120*time.Second),
 	)
 
