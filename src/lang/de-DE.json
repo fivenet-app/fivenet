@@ -441,7 +441,7 @@
         "available": "verfügbar",
         "reason": "Grund | Gründe",
         "preview": "Vorschau",
-        "option": "",
+        "option": "Option | Optionen",
         "weight": "Gewichtung"
     },
     "notifications": {
@@ -625,7 +625,7 @@
                 "description": "Superuser: Ermöglicht das Überschreiben des eigenen Jobs während der Laufzeit."
             },
             "ChooseCharacter": {
-                "key": "",
+                "key": "Character Auswählen",
                 "description": ""
             }
         },
@@ -667,45 +667,41 @@
             "category": "Fahrzeuge",
             "ListVehicles": {
                 "key": "Fahrzeuge suchen",
-                "description": ""
+                "description": "Suchen und Finden von Fahrzeugen von Bürgern."
             }
         },
         "DocStoreService": {
-            "category": "",
+            "category": "Dokumenten-System",
             "AddDocumentReference": {
-                "key": "",
-                "description": ""
+                "key": "Dokument-Referenzen erstellen",
+                "description": "Hinzufügen von Dokument-Referenzen an Dokumente."
             },
             "AddDocumentRelation": {
-                "key": "",
+                "key": "Dokumenten-Bürger-Beziehungen hinzufügen",
                 "description": ""
             },
             "CreateDocument": {
-                "key": "",
+                "key": "Dokument Erstellen",
                 "description": ""
             },
             "DeleteDocumentComment": {
-                "key": "",
+                "key": "Dokumenten Kommentare löschen",
                 "description": ""
             },
             "ListDocuments": {
-                "key": "",
+                "key": "Dokumenten Suchen und Auflisten",
                 "description": ""
             },
             "GetDocument": {
-                "key": "",
-                "description": ""
-            },
-            "GetDocumentAccess": {
-                "key": "",
+                "key": "Dokumente Anzeigen können",
                 "description": ""
             },
             "GetDocumentComments": {
-                "key": "",
+                "key": "Dokumenten Kommentare Sehen",
                 "description": ""
             },
             "ListUserDocuments": {
-                "key": "",
+                "key": "Bürger-Dokumente Sehen",
                 "description": ""
             },
             "ListTemplates": {
@@ -715,10 +711,6 @@
             "PostDocumentComment": {
                 "key": "Kommentar zum Dokument posten",
                 "description": "Dokumentkommentare posten"
-            },
-            "SetDocumentAccess": {
-                "key": "Dokumentzugriff festlegen",
-                "description": "Zugriff auf Dokument hinzufügen/bearbeiten"
             },
             "UpdateDocument": {
                 "key": "Dokument aktualisieren",
@@ -745,45 +737,45 @@
                 "description": ""
             },
             "DeleteDocument": {
-                "key": "",
+                "key": "Dokumenten Löschung",
                 "description": ""
             }
         },
         "LivemapperService": {
-            "category": "",
+            "category": "Livemap",
             "Stream": {
-                "key": "",
-                "description": ""
+                "key": "Aufrufen",
+                "description": "Livemap aufrufen können."
             }
         },
         "RectorService": {
-            "category": "",
+            "category": "Kontrollzentrum",
             "GetJobProps": {
-                "key": "",
+                "key": "Job Eigenschaften ansehen",
                 "description": ""
             },
             "SetJobProps": {
-                "key": "",
-                "description": ""
+                "key": "Job Eigenschaften ändern",
+                "description": "Setze Eigenschaften deines Jobs."
             },
             "GetRoles": {
-                "key": "",
+                "key": "Rolen ansehen",
                 "description": ""
             },
             "CreateRole": {
-                "key": "",
+                "key": "Rollen erstellen",
                 "description": ""
             },
             "DeleteRole": {
-                "key": "",
+                "key": "Rollen löschen",
                 "description": ""
             },
             "GetPermissions": {
-                "key": "",
-                "description": ""
+                "key": "Berechtigungen ansehen können",
+                "description": "Benötigt um Rollen zu erstellen/ bearbeiten zu können."
             },
             "ViewAuditLog": {
-                "key": "",
+                "key": "Zugriff auf Audit Log",
                 "description": "Audit-Protokoll anzeigen"
             },
             "UpdateRolePerms": {
@@ -795,49 +787,49 @@
     "attrs": {
         "CitizenStoreService": {
             "GetUser": {
-                "Jobs": ""
+                "Jobs": "Fraktionen"
             },
             "ListCitizens": {
-                "Fields": ""
+                "Fields": "Felder"
             },
             "ListUserActivity": {
-                "Fields": ""
+                "Fields": "Felder"
             },
             "SetUserProps": {
-                "Fields": ""
+                "Fields": "Bürger Eigenschaften"
             }
         },
         "CompletorService": {
             "CompleteDocumentCategories": {
-                "Jobs": ""
+                "Jobs": "Fraktionen"
             }
         },
         "LivemapperService": {
             "Stream": {
-                "Dispatches": "",
-                "Players": ""
+                "Dispatches": "Dispatch Positionen",
+                "Players": "Spieler Positionen"
             }
         },
         "RectorService": {
             "GetPermissions": {
-                "Jobs": ""
+                "Jobs": "Fraktionen"
             }
         },
         "DocStoreService": {
             "UpdateDocument": {
-                "Access": ""
+                "Access": "Zugriff"
             },
             "DeleteDocument": {
-                "Access": ""
+                "Access": "Zugriff"
             },
             "DeleteDocumentComment": {
-                "Access": ""
+                "Access": "Zugriff"
             }
         }
     },
     "errors": {
         "NotificatorService": {
-            "InvalidRequestErr": ""
+            "InvalidRequestErr": "Fehlerhafte Anfrage für Benachrichtigungs-Datenstrom!"
         }
     }
 }
