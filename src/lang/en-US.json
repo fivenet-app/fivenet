@@ -696,10 +696,6 @@
                 "key": "GetDocument",
                 "description": "View a document"
             },
-            "GetDocumentAccess": {
-                "key": "GetDocumentAccess",
-                "description": "View a document's access"
-            },
             "GetDocumentComments": {
                 "key": "GetDocumentComments",
                 "description": "View document comments"
@@ -715,10 +711,6 @@
             "PostDocumentComment": {
                 "key": "PostDocumentComment",
                 "description": "Post document comments"
-            },
-            "SetDocumentAccess": {
-                "key": "SetDocumentAccess",
-                "description": "Add/ edit document's access"
             },
             "UpdateDocument": {
                 "key": "UpdateDocument",
