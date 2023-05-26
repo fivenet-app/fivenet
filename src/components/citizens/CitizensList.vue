@@ -1,41 +1,49 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { User } from '@fivenet/gen/resources/users/users_pb';
-import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
+import { User } from '~~/gen/ts/resources/users/users';
+import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { watchDebounced } from '@vueuse/core'
-import { ListCitizensRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import CitizenListEntry from './CitizensListEntry.vue';
 import { Switch } from '@headlessui/vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
-import { RpcError } from 'grpc-web';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import { RpcError } from 'grpc-web';
+import { ListCitizensRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ name: string; phone: string; wanted: boolean; }>({ name: '', phone: '', wanted: false });
+const query = ref<{ name: string; phoneNumber?: string; wanted?: boolean; }>({ name: '' });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
-const { data: users, pending, refresh, error } = useLazyAsyncData(`citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phone}`, () => listCitizens());
+const { data: users, pending, refresh, error } = useLazyAsyncData(`citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phoneNumber}`, () => listCitizens());
 
 async function listCitizens(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {
-        const req = new ListCitizensRequest();
-        req.setPagination((new PaginationRequest()).setOffset(offset.value));
-        req.setSearchName(query.value.name);
-        req.setWanted(query.value.wanted);
-        req.setPhoneNumber(query.value.phone);
-
         try {
-            const resp = await $grpc.getCitizenStoreClient().
-                listCitizens(req, null);
+            const req: ListCitizensRequest = {
+                pagination: {
+                    offset: offset.value,
+                },
+                searchName: query.value.name,
+            };
+            if (query.value.wanted) {
+                req.wanted = query.value.wanted;
+            }
+            if (query.value.phoneNumber) {
+                req.phoneNumber = query.value.phoneNumber;
+            }
 
-            pagination.value = resp.getPagination();
-            return res(resp.getUsersList());
+            const call = $grpc.getCitizenStoreClient().
+                listCitizens(req);
+            const { response } = await call;
+
+            pagination.value = response.pagination;
+            return res(response.users);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -74,7 +82,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     {{ $t('common.search') }} {{ $t('common.phone') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="query.phone" type="tel" name="searchPhone"
+                                    <input v-model="query.phoneNumber" type="tel" name="searchPhone"
                                         :placeholder="`${$t('common.phone')} ${$t('common.number')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                 </div>
@@ -141,7 +149,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <CitizenListEntry v-for="user in users" :key="user.getUserId()" :user="user"
+                                    <CitizenListEntry v-for="user in users" :key="user.userId" :user="user"
                                         class="transition-colors hover:bg-neutral/5" />
                                 </tbody>
                                 <thead>

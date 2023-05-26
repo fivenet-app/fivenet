@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
-import { LoginRequest } from '@fivenet/gen/services/auth/auth_pb';
-import { RpcError } from 'grpc-web';
 import { defineRule } from 'vee-validate';
 import Alert from '~/components/partials/Alert.vue';
 import config from '~/config';
 import { required, min, max, alpha_dash } from '@vee-validate/rules';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -20,16 +19,16 @@ async function login(values: FormData): Promise<void> {
         setActiveChar(null);
         setPermissions([]);
 
-        const req = new LoginRequest();
-        req.setUsername(values.username);
-        req.setPassword(values.password);
-
         try {
-            const resp = await $grpc.getUnAuthClient()
-                .login(req, null);
+            const call = $grpc.getUnAuthClient()
+                .login({
+                    username: values.username,
+                    password: values.password,
+                });
+            const { response } = await call;
 
             loginStop(null);
-            setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
+            setAccessToken(response.token, toDate(response.expires) as null | Date);
 
             return res();
         } catch (e) {
@@ -85,8 +84,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
                 {{ $t('common.password') }}
             </label>
             <div>
-                <VeeField name="password" type="password" autocomplete="current-password" :placeholder="$t('common.password')"
-                    :label="$t('common.password')"
+                <VeeField name="password" type="password" autocomplete="current-password"
+                    :placeholder="$t('common.password')" :label="$t('common.password')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
             </div>

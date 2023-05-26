@@ -35,7 +35,7 @@ async function resetLocalStorage(): Promise<void> {
                         {{ $t('components.debug_info.active_char_id') }}
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        {{ activeChar.getUserId() }}
+                        {{ activeChar.userId }}
                     </dd>
                 </div>
                 <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
@@ -43,7 +43,7 @@ async function resetLocalStorage(): Promise<void> {
                         {{ $t('common.job') }}
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        {{ activeChar.getJob() }} ({{ $t('common.rank') }}: {{ activeChar.getJobGrade() }})
+                        {{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})
                     </dd>
                 </div>
                 <div v-if="getAccessTokenExpiration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">

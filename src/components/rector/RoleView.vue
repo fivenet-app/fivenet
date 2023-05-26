@@ -1,15 +1,14 @@
 <script lang="ts" setup>
-import { Permission, Role, RoleAttribute, AttributeValues } from '@fivenet/gen/resources/permissions/permissions_pb';
-import { RpcError } from 'grpc-web';
-import { UpdateRolePermsRequest, DeleteRoleRequest, GetPermissionsRequest, GetRoleRequest, PermsUpdate, PermItem, AttrsUpdate } from '@fivenet/gen/services/rector/rector_pb';
+import { Permission, Role, RoleAttribute, AttributeValues } from '~~/gen/ts/resources/permissions/permissions';
+import { UpdateRolePermsRequest, DeleteRoleRequest, GetPermissionsRequest, PermsUpdate, PermItem, AttrsUpdate } from '~~/gen/ts/services/rector/rector';
 import { ChevronDownIcon, CheckIcon, XMarkIcon, MinusIcon } from '@heroicons/vue/24/solid';
 import { TrashIcon } from '@heroicons/vue/20/solid';
 import Divider from '~/components/partials/Divider.vue';
 import RoleViewAttr from '~/components/rector/RoleViewAttr.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { Job } from '~~/gen/ts/resources/jobs/jobs';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -37,22 +36,22 @@ const jobs = ref<Job[]>([]);
 
 async function getRole(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new GetRoleRequest();
-        req.setId(props.roleId);
-
         try {
-            const resp = await $grpc.getRectorClient().getRole(req, null);
+            const call = $grpc.getRectorClient().getRole({
+                id: props.roleId,
+            });
+            const { response } = await call;
 
-            role.value = resp.getRole();
+            role.value = response.role;
 
             attrStates.value.clear();
-            role.value?.getAttributesList().forEach(attr => {
-                attrStates.value.set(attr.getAttrId(), attr.getValue())
+            role.value?.attributes.forEach(attr => {
+                attrStates.value.set(attr.attrId, attr.value)
             });
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -61,15 +60,14 @@ async function getRole(): Promise<void> {
 async function prepareAttributeData(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const req = new CompleteJobsRequest();
-            req.setSearch('')
+            const call = $grpc.getCompletorClient().completeJobs({});
+            const { response } = await call;
 
-            const resp = await $grpc.getCompletorClient().completeJobs(req, null);
-            jobs.value = resp.getJobsList();
+            jobs.value = response.jobs;
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -77,22 +75,22 @@ async function prepareAttributeData(): Promise<void> {
 
 async function deleteRole(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new DeleteRoleRequest();
-        req.setId(props.roleId);
-
         try {
             await $grpc.getRectorClient().
-                deleteRole(req, null);
+                deleteRole({
+                    id: props.roleId,
+                });
 
             notifications.dispatchNotification({
                 title: t('notifications.rector.role_deleted.title'),
                 content: t('notifications.rector.role_deleted.content'),
                 type: 'success'
             });
+
             await navigateTo({ name: 'rector-roles' });
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -100,18 +98,17 @@ async function deleteRole(): Promise<void> {
 
 async function getPermissions(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new GetPermissionsRequest();
-
         try {
-            const resp = await $grpc.getRectorClient().getPermissions(req, null);
-            permList.value = resp.getPermissionsList();
-            attrList.value = resp.getAttributesList();
+            const call = $grpc.getRectorClient().getPermissions({});
+            const { response } = await call;
+
+            permList.value = response.permissions;
+            attrList.value = response.attributes;
 
             genPermissionCategories();
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -121,15 +118,15 @@ async function genPermissionCategories(): Promise<void> {
     permCategories.value.clear();
 
     permList.value.forEach(perm => {
-        permCategories.value.add(perm.getCategory());
+        permCategories.value.add(perm.category);
     });
 }
 
 async function propogatePermissionStates(): Promise<void> {
     permStates.value.clear();
 
-    role.value?.getPermissionsList().forEach(perm => {
-        permStates.value.set(perm.getId(), Boolean(perm.getVal()));
+    role.value?.permissions.forEach(perm => {
+        permStates.value.set(perm.id, Boolean(perm.val));
     });
 }
 
@@ -138,14 +135,14 @@ async function updatePermissionState(perm: number, state: boolean | undefined): 
 }
 
 async function updatePermissions(): Promise<void> {
-    const currentPermissions = role.value?.getPermissionsList().map(p => p.getId()) ?? [];
+    const currentPermissions = role.value?.permissions.map(p => p.id) ?? [];
 
     const perms = new PermsUpdate();
     permStates.value.forEach((state, perm) => {
         if (state !== undefined) {
-            const p = role.value?.getPermissionsList().find(v => v.getId() === perm);
+            const p = role.value?.permissions.find(v => v.id === perm);
 
-            if (p?.getVal() !== state) {
+            if (p?.val !== state) {
                 const item = new PermItem();
                 item.setId(perm);
                 item.setVal(state);
@@ -161,14 +158,14 @@ async function updatePermissions(): Promise<void> {
     attrStates.value.forEach((state, attr) => {
         if (state !== undefined) {
             const item = new RoleAttribute();
-            item.setRoleId(role.value!.getId());
+            item.setRoleId(role.value!.id);
             item.setAttrId(attr);
             item.setValue(state);
 
             attrs.addToUpdate(item);
         } else if (state === undefined) {
             const item = new RoleAttribute();
-            item.setRoleId(role.value!.getId());
+            item.setRoleId(role.value!.id);
             item.setAttrId(attr);
 
             attrs.addToRemove(item);
@@ -183,7 +180,7 @@ async function updatePermissions(): Promise<void> {
     req.setAttrs(attrs);
 
     try {
-        await $grpc.getRectorClient().updateRolePerms(req, null);
+        await $grpc.getRectorClient().updateRolePerms(req);
 
         notifications.dispatchNotification({
             title: t('notifications.rector.role_updated.title'),
@@ -193,7 +190,6 @@ async function updatePermissions(): Promise<void> {
 
         initializeRoleView();
     } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
         return;
     }
 }
@@ -221,7 +217,7 @@ onMounted(async () => {
         <div class="px-2 sm:px-6 lg:px-8">
             <div v-if="role">
                 <h2 class="text-3xl text-white">
-                    {{ role?.getJobLabel()! }} - {{ role?.getJobGradeLabel() }}
+                    {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }}
                     <button v-can="'RectorService.DeleteRole'" @click="deleteRole()">
                         <TrashIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
@@ -243,42 +239,41 @@ onMounted(async () => {
                         <DisclosurePanel
                             class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2">
                             <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
-                                <div v-for="(perm, idx) in permList.filter(p => p.getCategory() === category)"
-                                    :key="perm.getId()" class="flex flex-col gap-2">
+                                <div v-for="(perm, idx) in permList.filter(p => p.category === category)" :key="perm.id"
+                                    class="flex flex-col gap-2">
                                     <div class="flex flex-row gap-4">
                                         <div class="flex flex-1 flex-col my-auto">
                                             <span class="truncate lg:max-w-full max-w-xs">
-                                                {{ $t(`perms.${perm.getCategory()}.${perm.getName()}.key`) }}
+                                                {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </span>
                                             <span class="text-base-500 truncate lg:max-w-full max-w-xs">
-                                                {{ $t(`perms.${perm.getCategory()}.${perm.getName()}.description`) }}
+                                                {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
                                             </span>
                                         </div>
                                         <div class="flex flex-initial flex-row max-h-8 my-auto">
-                                            <button
-                                                :data-active="permStates.has(perm.getId()) ? permStates.get(perm.getId()) : false"
-                                                @click="updatePermissionState(perm.getId(), true)"
+                                            <button :data-active="permStates.has(perm.id) ? permStates.get(perm.id) : false"
+                                                @click="updatePermissionState(perm.id, true)"
                                                 class="transition-colors rounded-l-lg p-1 bg-success-600/50 data-[active=true]:bg-success-600 text-base-300 data-[active=true]:text-neutral hover:bg-success-600/70">
                                                 <CheckIcon class="w-6 h-6" />
                                             </button>
                                             <button
-                                                :data-active="!permStates.has(perm.getId()) || permStates.get(perm.getId()) === undefined"
-                                                @click="updatePermissionState(perm.getId(), undefined)"
+                                                :data-active="!permStates.has(perm.id) || permStates.get(perm.id) === undefined"
+                                                @click="updatePermissionState(perm.id, undefined)"
                                                 class="transition-colors p-1 bg-base-700 data-[active=true]:bg-base-500 text-base-300 data-[active=true]:text-neutral hover:bg-base-600">
                                                 <MinusIcon class="w-6 h-6" />
                                             </button>
                                             <button
-                                                :data-active="permStates.has(perm.getId()) ? (permStates.get(perm.getId()) !== undefined && !permStates.get(perm.getId())) : false"
-                                                @click="updatePermissionState(perm.getId(), false)"
+                                                :data-active="permStates.has(perm.id) ? (permStates.get(perm.id) !== undefined && !permStates.get(perm.id)) : false"
+                                                @click="updatePermissionState(perm.id, false)"
                                                 class="transition-colors rounded-r-lg p-1 bg-error-600/50 data-[active=true]:bg-error-600 text-base-300 data-[active=true]:text-neutral hover:bg-error-600/70">
                                                 <XMarkIcon class="w-6 h-6" />
                                             </button>
                                         </div>
                                     </div>
-                                    <RoleViewAttr v-for="attr in attrList.filter(a => a.getPermissionId() === perm.getId())"
+                                    <RoleViewAttr v-for="attr in attrList.filter(a => a.getPermissionId() === perm.id)"
                                         :attribute="attr" v-model:states="attrStates"
-                                        :disabled="permStates.get(perm.getId()) !== true" :jobs="jobs" />
-                                    <div v-if="idx !== permList.filter(p => p.getCategory() === category).length - 1"
+                                        :disabled="permStates.get(perm.id) !== true" :jobs="jobs" />
+                                    <div v-if="idx !== permList.filter(p => p.category === category).length - 1"
                                         class="w-full border-t border-neutral/20" />
                                 </div>
                             </div>

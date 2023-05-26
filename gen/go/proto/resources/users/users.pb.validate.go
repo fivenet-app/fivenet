@@ -345,30 +345,6 @@ func (m *User) validate(all bool) error {
 
 	}
 
-	if l := utf8.RuneCountInString(m.GetSex()); l < 1 || l > 2 {
-		err := UserValidationError{
-			field:  "Sex",
-			reason: "value length must be between 1 and 2 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for Height
-
-	if utf8.RuneCountInString(m.GetPhoneNumber()) > 20 {
-		err := UserValidationError{
-			field:  "PhoneNumber",
-			reason: "value length must be at most 20 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if all {
 		switch v := interface{}(m.GetProps()).(type) {
 		case interface{ ValidateAll() error }:
@@ -428,6 +404,40 @@ func (m *User) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.Sex != nil {
+
+		if l := utf8.RuneCountInString(m.GetSex()); l < 1 || l > 2 {
+			err := UserValidationError{
+				field:  "Sex",
+				reason: "value length must be between 1 and 2 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Height != nil {
+		// no validation rules for Height
+	}
+
+	if m.PhoneNumber != nil {
+
+		if utf8.RuneCountInString(m.GetPhoneNumber()) > 20 {
+			err := UserValidationError{
+				field:  "PhoneNumber",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}

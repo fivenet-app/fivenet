@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { ListUserActivityRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
-import { UserActivity } from '@fivenet/gen/resources/users/users_pb';
+import { UserActivity } from '~~/gen/ts/resources/users/users';
 import { RectangleGroupIcon } from '@heroicons/vue/24/outline';
-import { RpcError } from 'grpc-web';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import CitizenInfoActivityFeedEntry from '~/components/citizens/CitizenInfoActivityFeedEntry.vue';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -20,16 +19,16 @@ const { data: activities, pending, refresh, error } = useLazyAsyncData(`citizeni
 
 async function listUserActivity(): Promise<Array<UserActivity>> {
     return new Promise(async (res, rej) => {
-        const req = new ListUserActivityRequest();
-        req.setUserId(props.userId);
-
         try {
-            const resp = await $grpc.getCitizenStoreClient().
-                listUserActivity(req, null);
+            const call = $grpc.getCitizenStoreClient().
+                listUserActivity({
+                    userId: props.userId,
+                });
+            const { response } = await call;
 
-            return res(resp.getActivityList());
+            return res(response.activity);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -38,8 +37,10 @@ async function listUserActivity(): Promise<Array<UserActivity>> {
 
 <template>
     <div class="mt-2">
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.user', 1)} ${$t('common.activity')}`])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [`${$t('common.user', 1)} ${$t('common.activity')}`])" :retry="refresh" />
+        <DataPendingBlock v-if="pending"
+            :message="$t('common.loading', [`${$t('common.user', 1)} ${$t('common.activity')}`])" />
+        <DataErrorBlock v-else-if="error"
+            :title="$t('common.not_found', [`${$t('common.user', 1)} ${$t('common.activity')}`])" :retry="refresh" />
         <button v-else-if="activities && activities.length === 0" type="button"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
             disabled>
@@ -49,7 +50,7 @@ async function listUserActivity(): Promise<Array<UserActivity>> {
             </span>
         </button>
         <ul v-else role="list" class="divide-y divide-gray-200">
-            <li v-for="activity in activities" :key="activity.getId()" class="py-4">
+            <li v-for="activity in activities" :key="activity.id" class="py-4">
                 <CitizenInfoActivityFeedEntry :activity="activity" />
             </li>
         </ul>

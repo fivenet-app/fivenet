@@ -1,18 +1,16 @@
 <script lang="ts" setup>
-import { Role } from '@fivenet/gen/resources/permissions/permissions_pb';
-import { RpcError } from 'grpc-web';
-import { CreateRoleRequest, GetRolesRequest } from '@fivenet/gen/services/rector/rector_pb';
+import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import RolesListEntry from './RolesListEntry.vue';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { useAuthStore } from '~/store/auth';
 import { watchDebounced } from '@vueuse/core';
 import { useNotificationsStore } from '~/store/notifications';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -27,15 +25,14 @@ const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles'
 
 async function getRoles(): Promise<Array<Role>> {
     return new Promise(async (res, rej) => {
-        const req = new GetRolesRequest();
-
         try {
-            const resp = await $grpc.getRectorClient().
-                getRoles(req, null);
+            const call = $grpc.getRectorClient().
+                getRoles({});
+            const { response } = await call;
 
-            return res(resp.getRolesList());
+            return res(response.roles);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -47,20 +44,24 @@ const queryJobGrade = ref('');
 const selectedJobGrade = ref<JobGrade>();
 
 async function findJobGrades(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getCompletorClient().
+                completeJobs({
+                    currentJob: true,
+                    exactMatch: true,
+                });
+            const { response } = await call;
 
-    const req = new CompleteJobsRequest();
-    req.setExactMatch(true);
-    req.setCurrentJob(true);
+            entriesJobGrades = response.jobs[0].grades;
+            filteredJobGrades.value = entriesJobGrades;
 
-    try {
-        const resp = await $grpc.getCompletorClient().
-            completeJobs(req, null);
-
-        entriesJobGrades = resp.getJobsList()[0].getGradesList();
-        filteredJobGrades.value = entriesJobGrades;
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
-    }
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function createRole(): Promise<void> {
@@ -69,16 +70,16 @@ async function createRole(): Promise<void> {
             return res();
         }
 
-        const req = new CreateRoleRequest();
-        req.setJob(activeChar.value?.getJob()!);
-        req.setGrade(selectedJobGrade.value.getGrade());
-
         try {
-            const role = await $grpc.getRectorClient().
-                createRole(req, null);
+            const call = $grpc.getRectorClient().
+                createRole({
+                    job: activeChar.value?.job!,
+                    grade: selectedJobGrade.value.grade,
+                });
+            const { response } = await call;
 
-            if (role.hasRole()) {
-                roles.value?.unshift(role.getRole()!);
+            if (response.role) {
+                roles.value?.unshift(response.role!);
             }
 
             notifications.dispatchNotification({
@@ -87,17 +88,16 @@ async function createRole(): Promise<void> {
                 type: 'success'
             });
 
-            await navigateTo({ name: 'rector-roles-id', params: { id: role.getRole()?.getId()! } });
+            await navigateTo({ name: 'rector-roles-id', params: { id: response.role?.id! } });
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
 }
 
-watchDebounced(queryJobGrade, async () => { filteredJobGrades.value = entriesJobGrades.filter(g => g.getLabel().toLowerCase().includes(queryJobGrade.value.toLowerCase())) }, { debounce: 600, maxWait: 1750 });
+watchDebounced(queryJobGrade, async () => { filteredJobGrades.value = entriesJobGrades.filter(g => g.label.toLowerCase().includes(queryJobGrade.value.toLowerCase())) }, { debounce: 600, maxWait: 1750 });
 
 onMounted(async () => {
     await findJobGrades();
@@ -123,17 +123,17 @@ onMounted(async () => {
                                                 <ComboboxInput
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     @change="queryJobGrade = $event.target.value"
-                                                    :display-value="(grade: any) => grade?.getLabel()" />
+                                                    :display-value="(grade: any) => grade?.label" />
                                             </ComboboxButton>
 
                                             <ComboboxOptions v-if="filteredJobGrades.length > 0"
                                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                                <ComboboxOption v-for="grade in filteredJobGrades" :key="grade.getGrade()"
+                                                <ComboboxOption v-for="grade in filteredJobGrades" :key="grade.grade"
                                                     :value="grade" as="grade" v-slot="{ active, selected }">
                                                     <li
                                                         :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                                         <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ grade.getLabel() }}
+                                                            {{ grade.label }}
                                                         </span>
 
                                                         <span v-if="selected"
@@ -148,7 +148,7 @@ onMounted(async () => {
                                 </div>
                                 <div class="flex-initial form-control flex flex-col justify-end"
                                     v-can="'RectorService.CreateRole'">
-                                    <button type="submit" :disabled="selectedJobGrade && selectedJobGrade.getGrade() <= 0"
+                                    <button type="submit" :disabled="selectedJobGrade && selectedJobGrade.grade <= 0"
                                         class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
                                         Create
                                     </button>

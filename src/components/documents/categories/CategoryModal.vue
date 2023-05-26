@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
-import { DeleteDocumentCategoryRequest, UpdateDocumentCategoryRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
+import { DeleteDocumentCategoryRequest, UpdateDocumentCategoryRequest } from '~~/gen/ts/services/docstore/docstore';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { TagIcon } from '@heroicons/vue/24/solid';
 import { max, min, required } from '@vee-validate/rules';
-import { RpcError } from 'grpc-web';
 import { defineRule } from 'vee-validate';
 import { useNotificationsStore } from '~/store/notifications';
 
@@ -32,11 +31,11 @@ const props = defineProps({
 async function deleteCategory(): Promise<void> {
     return new Promise(async (res, rej) => {
         const req = new DeleteDocumentCategoryRequest();
-        req.setIdsList([props.category?.getId()!]);
+        req.setIdsList([props.category?.id!]);
 
         try {
             await $grpc.getDocStoreClient()
-                .deleteDocumentCategory(req, null);
+                .deleteDocumentCategory(req);
 
             notifications.dispatchNotification({
                 title: t('notifications.category_deleted.title'),
@@ -48,7 +47,6 @@ async function deleteCategory(): Promise<void> {
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -63,7 +61,7 @@ async function updateCategory(values: FormData): Promise<void> {
 
         try {
             await $grpc.getDocStoreClient()
-                .updateDocumentCategory(req, null);
+                .updateDocumentCategory(req);
 
             notifications.dispatchNotification({
                 title: t('notifications.category_updated.title'),
@@ -74,7 +72,6 @@ async function updateCategory(values: FormData): Promise<void> {
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -125,7 +122,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                         </div>
                                         <div class="mt-3 text-center sm:mt-5">
                                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                                {{ $t('common.category', 1) }}: {{ category?.getName() }}
+                                                {{ $t('common.category', 1) }}: {{ category?.name }}
                                             </DialogTitle>
                                             <div class="mt-2">
                                                 <div class="sm:flex-auto">
@@ -139,7 +136,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                                                 <div class="relative flex items-center mt-2">
                                                                     <VeeField type="text" name="name"
                                                                         :placeholder="$t('common.category', 1)"
-                                                                        :value="category?.getName()"
+                                                                        :value="category?.name"
                                                                         :label="$t('common.category', 1)"
                                                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                                                     <VeeErrorMessage name="category" as="p"

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { Template, TemplateRequirements } from '@fivenet/gen/resources/documents/templates_pb';
-import { DeleteTemplateRequest, GetTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { RpcError } from 'grpc-web';
+import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import { DeleteTemplateRequest, GetTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
 import TemplateRequirementsList from './TemplateRequirementsList.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import TemplatePreviewModal from './TemplatePreviewModal.vue';
@@ -27,7 +26,7 @@ async function getTemplate(): Promise<Template | undefined> {
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                getTemplate(req, null);
+                getTemplate(req);
 
             if (resp.getTemplate()?.hasSchema()) {
                 reqs.value = resp.getTemplate()?.getSchema()?.getRequirements();
@@ -35,7 +34,6 @@ async function getTemplate(): Promise<Template | undefined> {
 
             return res(resp.getTemplate()!);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -48,7 +46,7 @@ async function deleteTemplate(): Promise<void> {
 
         try {
             await $grpc.getDocStoreClient().
-                deleteTemplate(req, null);
+                deleteTemplate(req);
 
             notifications.dispatchNotification({
                 title: 'Template: Deleted',
@@ -60,7 +58,6 @@ async function deleteTemplate(): Promise<void> {
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -121,8 +118,8 @@ const openPreview = ref(false);
                         </label>
                         <div class="mt-2">
                             <p class="text-sm font-medium leading-6 text-gray-100">
-                                {{ template.getCategory()?.getName() }} ({{ $t('common.description') }}: {{
-                                    template.getCategory()?.getDescription() }})
+                                {{ template.category?.name }} ({{ $t('common.description') }}: {{
+                                    template.category?.getDescription() }})
                             </p>
                         </div>
                     </div>

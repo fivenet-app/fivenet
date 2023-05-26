@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { Template } from '@fivenet/gen/resources/documents/templates_pb';
-import { GetTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { Template } from '~~/gen/ts/resources/documents/templates';
+import { GetTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { RpcError } from 'grpc-web';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 
@@ -41,11 +40,10 @@ async function getTemplate(): Promise<Template> {
             req.setData(JSON.stringify(data.toObject()));
 
             const resp = await $grpc.getDocStoreClient().
-                getTemplate(req, null);
+                getTemplate(req);
 
             return res(resp.getTemplate()!);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej();
         }
     });
@@ -81,7 +79,7 @@ async function getTemplate(): Promise<Template> {
                                                     {{ $t('common.title') }}
                                                 </label>
                                                 <h1 class="p-2 mt-4 rounded-lg text-2xl font-bold text-neutral bg-base-800 break-words">
-                                                    {{ template?.getTitle() }}
+                                                    {{ template?.title }}
                                                 </h1>
 
                                                 <label class="block mb-2 text-sm font-medium leading-6 text-neutral">

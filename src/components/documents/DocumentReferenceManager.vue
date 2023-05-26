@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
-import { DOC_REFERENCE_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
-import { Document, DocumentReference } from '@fivenet/gen/resources/documents/documents_pb';
-import { ListDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { PaginationRequest } from '~~/gen/ts/resources/common/database/database';
+import { DOC_REFERENCE_Util } from '~~/gen/ts/resources/documents/documents.pb_enums';
+import { Document, DocumentReference } from '~~/gen/ts/resources/documents/documents';
+import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
 import {
     Dialog,
     DialogPanel,
@@ -25,7 +25,6 @@ import {
 } from '@heroicons/vue/24/outline';
 import { ChevronDoubleUpIcon, DocumentCheckIcon, DocumentTextIcon, LockClosedIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
-import { RpcError } from 'grpc-web';
 import { FunctionalComponent } from 'vue';
 import { ClipboardDocument, getDocument } from '~/store/clipboard';
 import { useAuthStore } from '~/store/auth';
@@ -70,14 +69,13 @@ async function listDocuments(): Promise<Array<Document>> {
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                listDocuments(req, null);
+                listDocuments(req);
 
             return res(resp.getDocumentsList().
                 filter(doc => !(Array.from(props.modelValue.values()).
-                    find(r => r.getTargetDocumentId() === doc.getId() || doc.getId() === props.document)))
+                    find(r => r.getTardocumentId === doc.id || doc.id === props.document)))
             );
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -89,9 +87,9 @@ function addReference(doc: Document, reference: number): void {
 
     const ref = new DocumentReference();
     ref.setId(key);
-    ref.setCreatorId(activeChar.value!.getUserId());
+    ref.setCreatorId(activeChar.value!.userId);
     ref.setCreator(activeChar.value!)
-    ref.setTargetDocumentId(doc.getId());
+    ref.setTargetDocumentId(doc.id);
     ref.setTargetDocument(doc);
     ref.setReference(DOC_REFERENCE_Util.fromInt(reference));
 
@@ -184,19 +182,19 @@ function removeReference(id: number): void {
                                                                 <tr v-for="[key, ref] in $props.modelValue" :key="key">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
-                                                                        {{ ref.getTargetDocument()?.getTitle() }}</td>
+                                                                        {{ ref.getTardocument?.title }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
-                                                                            ref.getCreator()?.getFirstname() }}
-                                                                        {{ ref.getCreator()?.getLastname() }}
+                                                                            ref.getCreator()?.firstname }}
+                                                                        {{ ref.getCreator()?.lastname }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ ref.getTargetDocument()?.getState() }}</td>
+                                                                        {{ ref.getTardocument?.state }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <NuxtLink
-                                                                                    :to="{ name: 'documents-id', params: { id: ref.getTargetDocumentId() } }"
+                                                                                    :to="{ name: 'documents-id', params: { id: ref.getTardocumentId } }"
                                                                                     target="_blank" data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.open_document')">
                                                                                     <ArrowTopRightOnSquareIcon
@@ -206,7 +204,7 @@ function removeReference(id: number): void {
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="removeReference(ref.getId())"
+                                                                                    @click="removeReference(ref.id)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.remove_reference')">
                                                                                     <DocumentMinusIcon
@@ -363,22 +361,22 @@ function removeReference(id: number): void {
                                                             <tbody class="divide-y divide-base-500">
                                                                 <template v-if="documents">
                                                                     <tr v-for="doc in documents.slice(0, 8)"
-                                                                        :key="doc.getId()">
+                                                                        :key="doc.id">
                                                                         <td
                                                                             class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
-                                                                            {{ doc.getTitle() }}</td>
+                                                                            {{ doc.title }}</td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            {{ doc.getCreator()?.getFirstname() }} {{
-                                                                                doc.getCreator()?.getLastname() }}
+                                                                            {{ doc.getCreator()?.firstname }} {{
+                                                                                doc.getCreator()?.lastname }}
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            {{ doc.getState() }}
+                                                                            {{ doc.state }}
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                             {{ $t('common.created') }} <time
-                                                                                :datetime="$d(doc.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')">
+                                                                                :datetime="$d(doc.createdAt?.timestamp?.toDate()!, 'short')">
                                                                                 {{
-                                                                                    useLocaleTimeAgo(toDate(doc.getCreatedAt())!).value
+                                                                                    useLocaleTimeAgo(toDate(doc.createdAt)!).value
                                                                                 }}
                                                                             </time>
                                                                         </td>

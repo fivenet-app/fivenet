@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { User, UserProps } from '@fivenet/gen/resources/users/users_pb';
-import { SetUserPropsRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
-import { CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { Job } from '~~/gen/ts/resources/jobs/jobs';
+import { User, UserProps } from '~~/gen/ts/resources/users/users';
+import { SetUserPropsRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
 import {
     Dialog,
     DialogPanel,
@@ -16,8 +15,8 @@ import {
 } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
-import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const notifications = useNotificationsStore();
@@ -42,16 +41,16 @@ const { data: jobs } = useLazyAsyncData('jobs', () => getJobs());
 
 async function getJobs(): Promise<Array<Job>> {
     return new Promise(async (res, rej) => {
-        const req = new CompleteJobsRequest();
-        req.setSearch(queryJob.value);
-
         try {
-            const resp = await $grpc.getCompletorClient().
-                completeJobs(req, null);
+            const call = await $grpc.getCompletorClient().
+                completeJobs({
+                    search: queryJob.value,
+                });
+            const { response } = await call;
 
-            return res(resp.getJobsList());
+            return res(response.jobs);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -59,7 +58,7 @@ async function getJobs(): Promise<Array<Job>> {
 
 watch(jobs, () => {
     if (jobs.value) {
-        selectedJob.value = jobs.value.find(j => j.getName() === props.user.getJob());
+        selectedJob.value = jobs.value.find(j => j.name === props.user.job);
     }
 });
 
@@ -67,23 +66,23 @@ watchDebounced(queryJob, async () => await getJobs(), { debounce: 600, maxWait: 
 
 async function setJobProp(): Promise<void> {
     return new Promise(async (res, rej) => {
-        if (!selectedJob.value || selectedJob.value.getName() === props.user.getJob()) return res();
+        if (!selectedJob.value || selectedJob.value.name === props.user.job) return res();
 
         if (reason.value.length < 3) return res();
 
-        const userProps = new UserProps();
-        userProps.setUserId(props.user.getUserId());
-        userProps.setJobName(selectedJob.value.getName());
-
-        const req = new SetUserPropsRequest();
-        req.setProps(userProps);
-        req.setReason(reason.value);
+        const userProps: UserProps = {
+            userId: props.user.userId,
+            jobName: selectedJob.value.name,
+        };
 
         try {
-            await $grpc.getCitizenStoreClient().setUserProps(req, null);
+            await $grpc.getCitizenStoreClient().setUserProps({
+                props: userProps,
+                reason: reason.value,
+            });
 
-            props.user.setJob(selectedJob.value?.getName()!);
-            props.user.setJobLabel(selectedJob.value?.getLabel()!);
+            props.user.job = selectedJob.value?.name!;
+            props.user.jobLabel = selectedJob.value?.label!;
 
             notifications.dispatchNotification({
                 title: t('notifications.action_successfull.title'),
@@ -94,7 +93,7 @@ async function setJobProp(): Promise<void> {
             reason.value = '';
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -125,17 +124,17 @@ async function setJobProp(): Promise<void> {
                                             <ComboboxInput
                                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @change="queryJob = $event.target.value"
-                                                :display-value="(job: any) => job.getLabel()" autocomplete="off" />
+                                                :display-value="(job: any) => job.label" autocomplete="off" />
                                         </ComboboxButton>
 
                                         <ComboboxOptions v-if="jobs"
                                             class="absolute z-10 w-full py-1 mt-5 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                            <ComboboxOption v-for="job in jobs" :key="job.getName()" :value="job" as="char"
+                                            <ComboboxOption v-for="job in jobs" :key="job.name" :value="job" as="char"
                                                 v-slot="{ active, selected }">
                                                 <li
                                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                                     <span :class="['block truncate', selected && 'font-semibold']">
-                                                        {{ job.getLabel() }}
+                                                        {{ job.label }}
                                                     </span>
 
                                                     <span v-if="selected"

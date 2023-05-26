@@ -1,20 +1,18 @@
 <script lang="ts" setup>
-import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
-import { AuditEntry } from '@fivenet/gen/resources/rector/audit_pb';
-import { ViewAuditLogRequest } from '@fivenet/gen/services/rector/rector_pb';
-import { RpcError } from 'grpc-web';
+import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
+import { AuditEntry } from '~~/gen/ts/resources/rector/audit';
+import { ViewAuditLogRequest } from '~~/gen/ts/services/rector/rector';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components//partials/DataErrorBlock.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import AuditLogEntry from './AuditLogEntry.vue';
 import TablePagination from '~/components//partials/TablePagination.vue';
-import { Timestamp } from '@fivenet/gen/resources/timestamp/timestamp_pb';
-import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
-import { UserShort } from '@fivenet/gen/resources/users/users_pb';
+import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
+import { UserShort } from '~~/gen/ts/resources/users/users';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/20/solid';
-import { CompleteCitizensRequest } from '@fivenet/gen/services/completor/completor_pb';
 import { watchDebounced } from '@vueuse/core';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -24,35 +22,36 @@ const offset = ref(0);
 
 async function getAuditLog(): Promise<Array<AuditEntry>> {
     return new Promise(async (res, rej) => {
-        const req = new ViewAuditLogRequest();
-        req.setPagination((new PaginationRequest()).setOffset(offset.value));
+        const req: ViewAuditLogRequest = {
+            pagination: {
+                offset: offset.value,
+            },
+            userIds: [],
+        };
         const users = new Array<number>();
-        selectedChars.value?.forEach((v) => users.push(v.getUserId()));
-        req.setUserIdsList(users);
+        selectedChars.value?.forEach((v) => users.push(v.userId));
+        req.userIds = users;
 
         if (query.value.from != '') {
-            const tts = new google_protobuf_timestamp_pb.Timestamp();
-            tts.fromDate(fromString(query.value.from)!);
-            const ts = new Timestamp();
-            ts.setTimestamp(tts);
-            req.setFrom(ts);
+            req.from = {
+                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
+            };
         }
         if (query.value.from != '') {
-            const tts = new google_protobuf_timestamp_pb.Timestamp();
-            tts.fromDate(fromString(query.value.to)!);
-            const ts = new Timestamp();
-            ts.setTimestamp(tts);
-            req.setTo(ts);
+            req.to = {
+                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
+            };
         }
 
         try {
-            const resp = await $grpc.getRectorClient().
-                viewAuditLog(req, null);
+            const call = $grpc.getRectorClient().
+                viewAuditLog(req);
+            const { response } = await call;
 
-            pagination.value = resp.getPagination();
-            return res(resp.getLogsList());
+            pagination.value = response.pagination;
+            return res(response.logs);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -69,13 +68,13 @@ async function findChars(): Promise<void> {
         return;
     }
 
-    const req = new CompleteCitizensRequest();
-    req.setSearch(queryChar.value);
+    const call = $grpc.getCompletorClient().
+        completeCitizens({
+            search: queryChar.value,
+        });
+    const { response } = await call;
 
-    const resp = await $grpc.getCompletorClient().
-        completeCitizens(req, null);
-
-    entriesChars.value = resp.getUsersList();
+    entriesChars.value = response.users;
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -87,7 +86,7 @@ function focusSearch(): void {
 
 function charsGetDisplayValue(chars: UserShort[]): string {
     const cs = new Array<string>();
-    chars.forEach(c => cs.push(`${c?.getFirstname()} ${c?.getLastname()}`));
+    chars.forEach(c => cs.push(`${c?.firstname} ${c?.lastname}`));
 
     return cs.join(', ');
 }
@@ -143,12 +142,12 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
 
                                             <ComboboxOptions v-if="entriesChars.length > 0"
                                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                                <ComboboxOption v-for="char in entriesChars" :key="char?.getIdentifier()"
+                                                <ComboboxOption v-for="char in entriesChars" :key="char?.identifier"
                                                     :value="char" as="char" v-slot="{ active, selected }">
                                                     <li
                                                         :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                                         <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ char?.getFirstname() }} {{ char?.getLastname() }}
+                                                            {{ char?.firstname }} {{ char?.lastname }}
                                                         </span>
 
                                                         <span v-if="selected"
@@ -209,7 +208,7 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <AuditLogEntry v-for="log in logs" :key="log.getId()" :log="log"
+                                    <AuditLogEntry v-for="log in logs" :key="log.id" :log="log"
                                         class="transition-colors hover:bg-neutral/5" />
                                 </tbody>
                                 <thead>
@@ -247,4 +246,5 @@ watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWai
                 </div>
             </div>
         </div>
-</div></template>
+    </div>
+</template>

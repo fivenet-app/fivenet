@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { DeleteDocumentRequest, GetDocumentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { Document, DocumentAccess } from '@fivenet/gen/resources/documents/documents_pb';
-import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
+import { DeleteDocumentRequest, GetDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
+import { Document, DocumentAccess } from '~~/gen/ts/resources/documents/documents';
+import { ACCESS_LEVEL_Util } from '~~/gen/ts/resources/documents/access.pb_enums';
 import {
     TabGroup,
     TabList,
@@ -25,7 +25,6 @@ import DocumentRelations from './DocumentRelations.vue';
 import DocumentReferences from './DocumentReferences.vue';
 import DocumentComments from './DocumentComments.vue';
 import { useClipboardStore } from '~/store/clipboard';
-import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
@@ -52,22 +51,21 @@ const props = defineProps({
     },
 });
 
-const { data: document, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}`, () => getDocument());
+const { data: document, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}`, () => document);
 
-async function getDocument(): Promise<Document> {
+async function document: Promise<Document> {
     return new Promise(async (res, rej) => {
         const req = new GetDocumentRequest();
         req.setDocumentId(props.documentId);
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                getDocument(req, null);
+                getDocument(req);
 
             access.value = resp.getAccess();
 
-            return res(resp.getDocument()!);
+            return res(resp.document!);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -80,7 +78,7 @@ async function deleteDocument(): Promise<void> {
 
         try {
             await $grpc.getDocStoreClient().
-                deleteDocument(req, null);
+                deleteDocument(req);
 
             notifications.dispatchNotification({
                 title: t('notifications.document_deleted.title'),
@@ -92,7 +90,6 @@ async function deleteDocument(): Promise<void> {
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -137,21 +134,21 @@ function addToClipboard(): void {
                         <div class="pb-2 md:flex md:items-center md:justify-between md:space-x-4">
                             <div>
                                 <h1 class="text-2xl font-bold text-neutral break-all">
-                                    {{ document?.getTitle() }}
+                                    {{ document?.title }}
                                 </h1>
                                 <p class="text-sm text-base-300">
                                     {{ $t('common.created_by') }}
                                     {{ ' ' }}
                                     <NuxtLink
-                                        :to="{ name: 'citizens-id', params: { id: document?.getCreator()?.getUserId() ?? 0 } }"
+                                        :to="{ name: 'citizens-id', params: { id: document?.getCreator()?.userId ?? 0 } }"
                                         class="font-medium text-primary-400 hover:text-primary-300">
-                                        {{ document?.getCreator()?.getFirstname() }}
-                                        {{ document?.getCreator()?.getLastname() }}
+                                        {{ document?.getCreator()?.firstname }}
+                                        {{ document?.getCreator()?.lastname }}
                                     </NuxtLink>
                                 </p>
                             </div>
                             <div class="flex mt-4 space-x-3 md:mt-0">
-                                <NuxtLink :to="{ name: 'documents-edit-id', params: { id: document?.getId() ?? 0 } }"
+                                <NuxtLink :to="{ name: 'documents-edit-id', params: { id: document?.id ?? 0 } }"
                                     type="button"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     v-can="'DocStoreService.CreateDocument'">
@@ -166,7 +163,7 @@ function addToClipboard(): void {
                             </div>
                         </div>
                         <div class="flex flex-row gap-2">
-                            <div v-if="document?.getClosed()"
+                            <div v-if="document?.closed"
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
                                 <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                                 <span class="text-sm font-medium text-error-700">
@@ -190,28 +187,28 @@ function addToClipboard(): void {
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700"><time
-                                        :datetime="$d(document?.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')">
-                                        {{ $d(document?.getCreatedAt()?.getTimestamp()?.toDate()!, 'short') }}
+                                        :datetime="$d(document?.createdAt?.timestamp?.toDate()!, 'short')">
+                                        {{ $d(document?.createdAt?.timestamp?.toDate()!, 'short') }}
                                     </time>
                                 </span>
                             </div>
                         </div>
                         <div class="flex flex-row gap-2 pb-3 mt-2 overflow-x-auto snap-x sm:pb-0">
-                            <div v-for="entry in access?.getJobsList()" :key="entry.getId()"
+                            <div v-for="entry in access?.getJobsList()" :key="entry.id"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-info-100 whitespace-nowrap snap-start">
                                 <span class="w-2 h-2 rounded-full bg-info-500" aria-hidden="true" />
-                                <span class="text-sm font-medium text-info-800">{{ entry.getJobLabel() }}<span
-                                        :title="entry.getJobGradeLabel()" v-if="entry.getMinimumgrade() > 0"> ({{
+                                <span class="text-sm font-medium text-info-800">{{ entry.jobLabel }}<span
+                                        :title="entry.jobGradeLabel" v-if="entry.getMinimumgrade() > 0"> ({{
                                             $t('common.rank') }}: {{ entry.getMinimumgrade() }})</span> - {{
         $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!}`) }}
                                 </span>
                             </div>
-                            <div v-for="entry in access?.getUsersList()" :key="entry.getId()"
+                            <div v-for="entry in access?.getUsersList()" :key="entry.id"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap snap-start">
                                 <span class="w-2 h-2 rounded-full bg-secondary-400" aria-hidden="true" />
                                 <span class="text-sm font-medium text-secondary-700">
-                                    {{ entry.getUser()?.getFirstname() }}
-                                    {{ entry.getUser()?.getLastname() }} - {{
+                                    {{ entry.getUser()?.firstname }}
+                                    {{ entry.getUser()?.lastname }} - {{
                                         $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!}`) }}
                                 </span>
                             </div>
@@ -256,7 +253,7 @@ function addToClipboard(): void {
                             <h2 class="text-lg font-semibold text-neutral">
                                 {{ $t('common.comment', 2) }}
                             </h2>
-                            <DocumentComments :document-id="documentId" :closed="document?.getClosed()"
+                            <DocumentComments :document-id="documentId" :closed="document?.closed"
                                 @counted="commentCount = $event" />
                         </div>
                     </div>

@@ -4,16 +4,16 @@ import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useClipboardStore, getUser } from '~/store/clipboard';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_CONTENT_TYPE, DOC_RELATION } from '@fivenet/gen/resources/documents/documents_pb';
-import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
+import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
+import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_CONTENT_TYPE, DOC_RELATION } from '~~/gen/ts/resources/documents/documents';
+import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import {
     PlusIcon,
     ChevronDownIcon,
     CheckIcon,
 } from '@heroicons/vue/20/solid';
-import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { UserShort } from '@fivenet/gen/resources/users/users_pb';
+import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { UserShort } from '~~/gen/ts/resources/users/users';
 import {
     Listbox,
     ListboxButton,
@@ -25,16 +25,15 @@ import {
     ComboboxOption,
     ComboboxOptions
 } from '@headlessui/vue';
-import { CompleteDocumentCategoriesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { CompleteDocumentCategoriesRequest } from '~~/gen/ts/services/completor/completor';
 import { watchDebounced } from '@vueuse/core';
-import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
+import { ACCESS_LEVEL_Util } from '~~/gen/ts/resources/documents/access.pb_enums';
 import DocumentReferenceManager from './DocumentReferenceManager.vue';
 import DocumentRelationManager from './DocumentRelationManager.vue';
 import DocumentAccessEntry from './DocumentAccessEntry.vue';
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
-import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
-import { ACCESS_LEVEL } from '@fivenet/gen/resources/documents/access_pb';
+import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -76,12 +75,12 @@ const access = ref<Map<number, { id: number, type: number, values: { job?: strin
 const relationManagerShow = ref<boolean>(false);
 const relationManagerData = ref<Map<number, DocumentRelation>>(new Map());
 const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
-watch(currentRelations, () => currentRelations.value.forEach(e => relationManagerData.value.set(e.getId(), e)))
+watch(currentRelations, () => currentRelations.value.forEach(e => relationManagerData.value.set(e.id, e)))
 
 const referenceManagerShow = ref<boolean>(false);
 const referenceManagerData = ref<Map<number, DocumentReference>>(new Map());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
-watch(currentReferences, () => currentReferences.value.forEach(e => referenceManagerData.value.set(e.getId(), e)))
+watch(currentReferences, () => currentReferences.value.forEach(e => referenceManagerData.value.set(e.id, e)))
 
 let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
@@ -103,48 +102,47 @@ onMounted(async () => {
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                getTemplate(req, null);
+                getTemplate(req);
 
             const template = resp.getTemplate();
             doc.value.title = template?.getContentTitle()!;
             doc.value.content = template?.getContent()!;
-            selectedCategory.value = entriesCategory.find(e => e.getId() === template?.getCategory()?.getId());
+            selectedCategory.value = entriesCategory.find(e => e.id === template?.category?.id);
 
             if (template?.hasContentAccess()) {
                 const docAccess = template?.getContentAccess()!;
                 let accessId = 0;
                 docAccess.getUsersList().forEach(user => {
-                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } });
+                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.getAccess() } });
                     accessId++;
                 });
 
                 docAccess.getJobsList().forEach(job => {
-                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
                     accessId++;
                 });
             }
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
         }
     } else if (props.id) {
         const req = new GetDocumentRequest();
         req.setDocumentId(props.id);
 
-        $grpc.getDocStoreClient().getDocument(req, null).then(async (resp) => {
-            const document = resp.getDocument();
+        $grpc.getDocStoreClient().getDocument(req).then(async (resp) => {
+            const document = resp.document;
             const docAccess = resp.getAccess();
 
             if (document) {
-                doc.value.title = document.getTitle();
+                doc.value.title = document.title;
                 doc.value.content = document.getContent();
-                doc.value.closed = openclose.find(e => e.closed === document.getClosed()) as { id: number; label: string; closed: boolean; };
-                doc.value.state = document.getState();
-                selectedCategory.value = entriesCategory.find(e => e.getId() === document.getCategory()?.getId());
+                doc.value.closed = openclose.find(e => e.closed === document.closed) as { id: number; label: string; closed: boolean; };
+                doc.value.state = document.state;
+                selectedCategory.value = entriesCategory.find(e => e.id === document.category?.id);
                 isPublic.value = document.getPublic();
 
-                const refs = await $grpc.getDocStoreClient().getDocumentReferences(req, null);
+                const refs = await $grpc.getDocStoreClient().getDocumentReferences(req);
                 currentReferences.value = refs.getReferencesList();
-                const rels = await $grpc.getDocStoreClient().getDocumentRelations(req, null);
+                const rels = await $grpc.getDocStoreClient().getDocumentRelations(req);
                 currentRelations.value = rels.getRelationsList();
             };
 
@@ -152,12 +150,12 @@ onMounted(async () => {
                 let accessId = 0;
 
                 docAccess.getUsersList().forEach(user => {
-                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } });
+                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.getAccess() } });
                     accessId++;
                 });
 
                 docAccess.getJobsList().forEach(job => {
-                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
                     accessId++;
                 });
             }
@@ -173,7 +171,7 @@ onMounted(async () => {
             }
         }
 
-        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: ACCESS_LEVEL.EDIT } });
+        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.job, minimumrank: 1, accessrole: ACCESS_LEVEL.EDIT } });
     }
 
     clipboardStore.users.forEach((user, i) => {
@@ -182,7 +180,7 @@ onMounted(async () => {
         rel.setDocumentId(props.id!);
         rel.setTargetUserId(user.id!);
         rel.setTargetUser(getUser(user));
-        rel.setSourceUserId(activeChar.value!.getUserId());
+        rel.setSourceUserId(activeChar.value!.userId);
         rel.setSourceUser(activeChar.value!);
         rel.setRelation(DOC_RELATION.CAUSED);
 
@@ -216,12 +214,11 @@ async function findCategories(): Promise<void> {
             const req = new CompleteDocumentCategoriesRequest();
             req.setSearch(queryCategory.value);
 
-            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req, null)
+            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req)
             entriesCategory = resp.getCategoriesList();
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -276,11 +273,11 @@ function updateAccessEntryName(event: {
     if (!accessEntry) return;
 
     if (event.job) {
-        accessEntry.values.job = event.job.getName();
+        accessEntry.values.job = event.job.name;
         accessEntry.values.char = undefined;
     } else if (event.char) {
         accessEntry.values.job = undefined;
-        accessEntry.values.char = event.char.getUserId();
+        accessEntry.values.char = event.char.userId;
     }
 
     access.value.set(event.id, accessEntry);
@@ -319,7 +316,7 @@ async function submitForm(): Promise<void> {
         req.setState(doc.value.state);
         req.setPublic(isPublic.value);
         if (selectedCategory.value != undefined)
-            req.setCategoryId(selectedCategory.value.getId());
+            req.setCategoryId(selectedCategory.value.id);
 
         const reqAccess = new DocumentAccess();
         access.value.forEach(entry => {
@@ -349,23 +346,23 @@ async function submitForm(): Promise<void> {
         // Try to submit to server
         try {
             const resp = await $grpc.getDocStoreClient().
-                createDocument(req, null);
+                createDocument(req);
 
             const promises = new Array<Promise<any>>();
             referenceManagerData.value.forEach((ref) => {
-                ref.setSourceDocumentId(resp.getDocumentId());
+                ref.setSourceDocumentId(resp.documentId);
 
                 const req = new AddDocumentReferenceRequest();
                 req.setReference(ref);
-                promises.push($grpc.getDocStoreClient().addDocumentReference(req, null));
+                promises.push($grpc.getDocStoreClient().addDocumentReference(req));
             });
 
             relationManagerData.value.forEach((rel) => {
-                rel.setDocumentId(resp.getDocumentId());
+                rel.setDocumentId(resp.documentId);
 
                 const req = new AddDocumentRelationRequest();
                 req.setRelation(rel);
-                promises.push($grpc.getDocStoreClient().addDocumentRelation(req, null));
+                promises.push($grpc.getDocStoreClient().addDocumentRelation(req));
             });
             await Promise.all(promises);
 
@@ -377,11 +374,10 @@ async function submitForm(): Promise<void> {
             clipboardStore.clearActiveStack();
             documentStore.clear();
 
-            await navigateTo({ name: 'documents-id', params: { id: resp.getDocumentId() } });
+            await navigateTo({ name: 'documents-id', params: { id: resp.documentId } });
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -398,7 +394,7 @@ async function editForm(): Promise<void> {
         req.setState(doc.value.state);
         req.setPublic(isPublic.value);
         if (selectedCategory.value != undefined)
-            req.setCategoryId(selectedCategory.value.getId());
+            req.setCategoryId(selectedCategory.value.id);
 
         const reqAccess = new DocumentAccess();
         access.value.forEach(entry => {
@@ -410,7 +406,7 @@ async function editForm(): Promise<void> {
                 const user = new DocumentUserAccess();
                 user.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
                 user.setUserId(entry.values.char);
-                if (activeChar.value) user.setCreatorId(activeChar.value.getUserId());
+                if (activeChar.value) user.setCreatorId(activeChar.value.userId);
 
                 reqAccess.addUsers(user);
             } else if (entry.type === 1) {
@@ -420,7 +416,7 @@ async function editForm(): Promise<void> {
                 job.setJob(entry.values.job);
                 job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
                 job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-                if (activeChar.value) job.setCreatorId(activeChar.value.getUserId());
+                if (activeChar.value) job.setCreatorId(activeChar.value.userId);
 
                 reqAccess.addJobs(job);
             }
@@ -429,44 +425,44 @@ async function editForm(): Promise<void> {
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                updateDocument(req, null);
+                updateDocument(req);
 
             const referencesToRemove: number[] = [];
             currentReferences.value.forEach((ref) => {
-                if (!referenceManagerData.value.has(ref.getId())) referencesToRemove.push(ref.getId());
+                if (!referenceManagerData.value.has(ref.id)) referencesToRemove.push(ref.id);
             });
             referencesToRemove.forEach((id) => {
                 const req = new RemoveDocumentReferenceRequest();
                 req.setId(id);
-                $grpc.getDocStoreClient().removeDocumentReference(req, null);
+                $grpc.getDocStoreClient().removeDocumentReference(req);
             });
 
             const relationsToRemove: number[] = [];
             currentRelations.value.forEach((rel) => {
-                if (!relationManagerData.value.has(rel.getId())) relationsToRemove.push(rel.getId());
+                if (!relationManagerData.value.has(rel.id)) relationsToRemove.push(rel.id);
             });
             relationsToRemove.forEach((id) => {
                 const req = new RemoveDocumentRelationRequest();
                 req.setId(id);
-                $grpc.getDocStoreClient().removeDocumentRelation(req, null);
+                $grpc.getDocStoreClient().removeDocumentRelation(req);
             });
 
             referenceManagerData.value.forEach((ref) => {
-                if (currentReferences.value.find(r => r.getId() === ref.getId())) return;
-                ref.setSourceDocumentId(resp.getDocumentId());
+                if (currentReferences.value.find(r => r.id === ref.id)) return;
+                ref.setSourceDocumentId(resp.documentId);
 
                 const req = new AddDocumentReferenceRequest();
                 req.setReference(ref);
-                $grpc.getDocStoreClient().addDocumentReference(req, null);
+                $grpc.getDocStoreClient().addDocumentReference(req);
             });
 
             relationManagerData.value.forEach((rel) => {
-                if (currentRelations.value.find(r => r.getId() === rel.getId())) return;
-                rel.setDocumentId(resp.getDocumentId());
+                if (currentRelations.value.find(r => r.id === rel.id)) return;
+                rel.setDocumentId(resp.documentId);
 
                 const req = new AddDocumentRelationRequest();
                 req.setRelation(rel);
-                $grpc.getDocStoreClient().addDocumentRelation(req, null);
+                $grpc.getDocStoreClient().addDocumentRelation(req);
             });
 
             notifications.dispatchNotification({
@@ -477,10 +473,9 @@ async function editForm(): Promise<void> {
             clipboardStore.clearActiveStack();
             documentStore.clear();
 
-            await navigateTo({ name: 'documents-id', params: { id: resp.getDocumentId() } });
+            await navigateTo({ name: 'documents-id', params: { id: resp.documentId } });
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -518,17 +513,17 @@ async function editForm(): Promise<void> {
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryCategory = $event.target.value"
-                                :display-value="(category: any) => category?.getName()" />
+                                :display-value="(category: any) => category?.name" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesCategory.length > 0"
                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ComboboxOption v-for="category in entriesCategory" :key="category.getId()" :value="category"
+                            <ComboboxOption v-for="category in entriesCategory" :key="category.id" :value="category"
                                 as="category" v-slot="{ active, selected }">
                                 <li
                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ category.getName() }}
+                                        {{ category.name }}
                                     </span>
 
                                     <span v-if="selected"

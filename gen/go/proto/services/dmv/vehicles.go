@@ -48,20 +48,22 @@ func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud au
 func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*ListVehiclesResponse, error) {
 	condition := jet.Bool(true)
 	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)
-	if req.Search != "" {
-		req.Search = strings.ReplaceAll(req.Search, "%", "") + "%"
-		condition = jet.AND(condition, tVehicles.Plate.LIKE(jet.String(req.Search)))
+	if req.Search != nil && *req.Search != "" {
+		condition = jet.AND(condition, tVehicles.Plate.LIKE(jet.String(
+			strings.ReplaceAll(*req.Search, "%", "")+"%",
+		)))
 	}
-	if req.Model != "" {
-		req.Model = strings.ReplaceAll(req.Model, "%", "") + "%"
-		condition = jet.AND(condition, tVehicles.Model.LIKE(jet.String(req.Model)))
+	if req.Model != nil && *req.Model != "" {
+		condition = jet.AND(condition, tVehicles.Model.LIKE(jet.String(
+			strings.ReplaceAll(*req.Model, "%", "")+"%",
+		)))
 	}
-	if req.UserId != 0 {
+	if req.UserId != nil && *req.UserId != 0 {
 		condition = jet.AND(condition,
 			tUsers.Identifier.EQ(tVehicles.Owner),
-			tUsers.ID.EQ(jet.Int32(req.UserId)),
+			tUsers.ID.EQ(jet.Int32(*req.UserId)),
 		)
-		userCondition = jet.AND(userCondition, tUsers.ID.EQ(jet.Int32(req.UserId)))
+		userCondition = jet.AND(userCondition, tUsers.ID.EQ(jet.Int32(*req.UserId)))
 	}
 
 	if req.Pagination.Offset <= 0 {

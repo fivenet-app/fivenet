@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
-import { TemplateShort } from '@fivenet/gen/resources/documents/templates_pb';
+import { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
 useHead({
     title: 'pages.documents.templates.title',
@@ -13,7 +13,7 @@ definePageMeta({
 });
 
 async function selected(t: TemplateShort): Promise<void> {
-    await navigateTo({ name: 'documents-templates-id', params: { id: t.getId() } });
+    await navigateTo({ name: 'documents-templates-id', params: { id: t.id } });
 }
 </script>
 

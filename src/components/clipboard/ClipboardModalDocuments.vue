@@ -4,7 +4,7 @@ import { TrashIcon } from '@heroicons/vue/24/solid';
 import { DocumentTextIcon } from '@heroicons/vue/20/solid';
 import { ClipboardDocument } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
-import { ObjectSpecs } from '@fivenet/gen/resources/documents/templates_pb';
+import { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();

@@ -28,9 +28,9 @@ message User {
   string firstname = 7 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"firstname"
   string lastname = 8 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"lastname"
   string dateofbirth = 9 [(validate.rules).string.len = 10]; // @gotags: alias:"dateofbirth"
-  string sex = 10 [(validate.rules).string = {min_len: 1, max_len: 2}]; // @gotags: alias:"sex"
-  string height = 11; // @gotags: alias:"height"
-  string phone_number = 12 [(validate.rules).string.max_len = 20]; // @gotags: alias:"phone_number"
+  optional string sex = 10 [(validate.rules).string = {min_len: 1, max_len: 2}]; // @gotags: alias:"sex"
+  optional string height = 11; // @gotags: alias:"height"
+  optional string phone_number = 12 [(validate.rules).string.max_len = 20]; // @gotags: alias:"phone_number"
   optional int32 visum = 13 [(validate.rules).int32.gte = 0]; // @gotags: alias:"visum"
   optional int32 playtime = 14 [(validate.rules).int32.gte = 0]; // @gotags: alias:"playtime"
 

@@ -1,16 +1,15 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { User, UserProps } from '@fivenet/gen/resources/users/users_pb';
-import { SetUserPropsRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
+import { User } from '~~/gen/ts/resources/users/users';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import CitizenInfoJobModal from '~/components/citizens/CitizenInfoJobModal.vue'
 import { useClipboardStore } from '~/store/clipboard';
-import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
 import CitizenInfoReasonModal from './CitizenInfoReasonModal.vue';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -21,14 +20,11 @@ const { t } = useI18n();
 const w = window;
 const clipboard = useClipboard();
 
-const props = defineProps({
-    user: {
-        required: true,
-        type: User,
-    },
-});
+const props = defineProps<{
+    user: User,
+}>();
 
-const wantedState = ref(props.user.getProps() ? props.user.getProps()?.getWanted() : false);
+const wantedState = ref(props.user.props ? props.user.props?.wanted : false);
 const reason = ref<string>('');
 const jobModal = ref<boolean>(false);
 
@@ -38,24 +34,25 @@ async function toggleWantedStatus(): Promise<void> {
             return res();
         }
 
-        wantedState.value = !props.user.getProps()?.getWanted();
+        wantedState.value = !props.user.props?.wanted;
 
-        const req = new SetUserPropsRequest();
-        let userProps = props.user?.getProps();
+        let userProps = props.user?.props;
         if (!userProps) {
-            userProps = new UserProps();
-            userProps.setUserId(props.user.getUserId());
+            userProps = {
+                userId: props.user.userId,
+            };
 
-            props.user.setProps(userProps);
+            props.user.props = userProps;
         }
 
-        userProps?.setWanted(wantedState.value);
-        req.setProps(userProps);
-        req.setReason(reason.value);
+        userProps.wanted = wantedState.value;
 
         try {
             await $grpc.getCitizenStoreClient().
-                setUserProps(req, null);
+                setUserProps({
+                    props: userProps,
+                    reason: reason.value,
+                });
 
             notifications.dispatchNotification({
                 title: t('notifications.action_successfull.title'),
@@ -66,7 +63,7 @@ async function toggleWantedStatus(): Promise<void> {
             reason.value = '';
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -98,51 +95,51 @@ function openTemplates(): void {
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.date_of_birth') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                    {{ user?.getDateofbirth() }}
+                                    {{ user?.dateofbirth }}
                                 </dd>
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.sex') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                    {{ user?.getSex().toUpperCase() }}
+                                    {{ user?.sex!.toUpperCase() }}
                                     {{ ' ' }}
-                                    <CharSexBadge :sex="user?.getSex() ? user?.getSex() : ''" />
+                                    <CharSexBadge :sex="user?.sex ? user?.sex : ''" />
                                 </dd>
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.height') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
-                                    user?.getHeight() }}cm</dd>
+                                    user?.height }}cm</dd>
                             </div>
                             <div v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.phone') }} {{ $t('common.number') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
-                                    user?.getPhoneNumber() }}</dd>
+                                    user?.phoneNumber }}</dd>
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.visum') }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                    {{ user?.getVisum() }}</dd>
+                                    {{ user?.visum }}</dd>
                             </div>
                             <div v-can="'CitizenStoreService.ListCitizens.Fields.Licenses'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.license', 2) }}</dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                    <span v-if="user?.getLicensesList().length === 0">
+                                    <span v-if="user?.licenses.length === 0">
                                         {{ $t('common.no_licenses') }}
                                     </span>
                                     <ul v-else role="list"
                                         class="border divide-y rounded-md divide-base-200 border-base-200">
-                                        <li v-for="license in user?.getLicensesList()"
+                                        <li v-for="license in user?.licenses"
                                             class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
                                             <div class="flex items-center flex-1">
                                                 <KeyIcon class="flex-shrink-0 w-5 h-5 text-base-400" aria-hidden="true" />
                                                 <span class="flex-1 ml-2 truncate">{{
-                                                    license.getLabel() }} ({{ license.getType().toUpperCase() }})</span>
+                                                    license.label }} ({{ license.type.toUpperCase() }})</span>
                                             </div>
                                         </li>
                                     </ul>

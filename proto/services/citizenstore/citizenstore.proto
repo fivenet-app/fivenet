@@ -11,8 +11,8 @@ message ListCitizensRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
   string search_name = 2 [(validate.rules).string.max_len = 50];
-  bool wanted = 3;
-  string phone_number = 4 [(validate.rules).string.max_len = 20];
+  optional bool wanted = 3;
+  optional string phone_number = 4 [(validate.rules).string.max_len = 20];
 }
 
 message ListCitizensResponse {

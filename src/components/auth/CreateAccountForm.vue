@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import { CreateAccountRequest } from '@fivenet/gen/services/auth/auth_pb';
-import { RpcError } from 'grpc-web';
 import Alert from '~/components/partials/Alert.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { alpha_dash, digits, max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -21,14 +20,13 @@ const curPassword = ref('');
 
 async function createAccount(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new CreateAccountRequest();
-        req.setRegToken(values.registrationToken.toString());
-        req.setUsername(values.username);
-        req.setPassword(values.password);
-
         try {
             await $grpc.getUnAuthClient().
-                createAccount(req, null);
+                createAccount({
+                    regToken: values.registrationToken.toString(),
+                    username: values.username,
+                    password: values.password,
+                });
 
             notifications.dispatchNotification({
                 title: t('notifications.auth.account_created.title'),
@@ -38,7 +36,7 @@ async function createAccount(values: FormData): Promise<void> {
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             accountError.value = (e as RpcError).message;
             return rej(e as RpcError);
         }

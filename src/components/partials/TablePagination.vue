@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
+import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 
 const props = defineProps<{
     pagination: undefined | PaginationResponse,
@@ -9,10 +9,10 @@ defineEmits<{
     (e: 'offsetChange', offset: number): void,
 }>();
 
-const offset = computed(() => props.pagination?.getOffset() ?? 0);
-const total = computed(() => props.pagination?.getTotalCount() ?? 0);
-const pageSize = computed(() => props.pagination?.getPageSize() ?? 0);
-const end = computed(() => props.pagination?.getEnd() ?? 0);
+const offset = computed(() => props.pagination?.offset ?? 0);
+const total = computed(() => props.pagination?.totalCount ?? 0);
+const pageSize = computed(() => props.pagination?.pageSize ?? 0);
+const end = computed(() => props.pagination?.end ?? 0);
 </script>
 
 <template>

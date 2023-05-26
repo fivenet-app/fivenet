@@ -16,12 +16,11 @@ import {
     XMarkIcon,
 } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/core';
-import { CompleteCitizensRequest, CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
-import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { UserShort } from '@fivenet/gen/resources/users/users_pb';
-import { ACCESS_LEVEL } from '@fivenet/gen/resources/documents/access_pb';
+import { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
+import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { UserShort } from '~~/gen/ts/resources/users/users';
+import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { ArrayElement } from '~/utils/types';
-import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
 
 const { $grpc } = useNuxtApp();
 
@@ -59,7 +58,7 @@ let entriesAccessRoles = new Array<{ id: ACCESS_LEVEL; label: string; value: str
 if (!props.accessRoles || props.accessRoles.length === 0) {
     entriesAccessRoles = Object.keys(ACCESS_LEVEL).map(e => {
         return {
-            id: ACCESS_LEVEL_Util.fromString(e),
+            id: e,
             label: t(`enums.docstore.ACCESS_LEVEL.${e}`),
             value: e,
         };
@@ -68,8 +67,8 @@ if (!props.accessRoles || props.accessRoles.length === 0) {
     props.accessRoles.forEach((e) => {
         entriesAccessRoles.push({
             id: e,
-            label: t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL_Util.toEnumKey(e as number)}`),
-            value: ACCESS_LEVEL_Util.toEnumKey(e)!,
+            label: t(`enums.docstore.ACCESS_LEVEL.${e}`),
+            value: e,
         });
     });
 }
@@ -81,7 +80,7 @@ async function findJobs(): Promise<void> {
     req.setSearch(queryJob.value);
 
     const resp = await $grpc.getCompletorClient().
-        completeJobs(req, null);
+        completeJobs(req);
     entriesJobs = resp.getJobsList();
 }
 
@@ -90,8 +89,8 @@ async function findChars(): Promise<void> {
     req.setSearch(queryChar.value);
 
     const resp = await $grpc.getCompletorClient().
-        completeCitizens(req, null);
-    entriesChars = resp.getUsersList();
+        completeCitizens(req);
+    entriesChars = resp.users;
 }
 
 onMounted(async () => {
@@ -100,13 +99,13 @@ onMounted(async () => {
 
     if (props.init.type === 0 && props.init.values.char !== undefined && props.init.values.accessrole !== undefined) {
         await findChars();
-        selectedChar.value = entriesChars.find(char => char.getUserId() === props.init.values.char);
+        selectedChar.value = entriesChars.find(char => char.userId === props.init.values.char);
         selectedAccessRole.value = entriesAccessRoles.find(type => type.id === props.init.values.accessrole);
     } else if (props.init.type === 1 && props.init.values.job !== undefined && props.init.values.minimumrank !== undefined && props.init.values.accessrole !== undefined) {
         await findJobs();
-        selectedJob.value = entriesJobs.find(job => job.getName() === props.init.values.job);
-        if (selectedJob.value) entriesMinimumRank = selectedJob.value.getGradesList();
-        selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.getGrade() === props.init.values.minimumrank);
+        selectedJob.value = entriesJobs.find(job => job.name === props.init.values.job);
+        if (selectedJob.value) entriesMinimumRank = selectedJob.value.grades;
+        selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.grade === props.init.values.minimumrank);
         selectedAccessRole.value = entriesAccessRoles.find(type => type.id === props.init.values.accessrole);
     }
 });
@@ -135,7 +134,7 @@ watch(selectedJob, () => {
     if (!selectedJob.value) return;
     emit('nameChange', { id: props.init.id, job: selectedJob.value, char: undefined });
 
-    entriesMinimumRank = selectedJob.value.getGradesList()
+    entriesMinimumRank = selectedJob.value.grades;
 });
 
 watch(selectedChar, () => {
@@ -200,7 +199,7 @@ watch(selectedAccessRole, () => {
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryChar = $event.target.value"
-                                :display-value="(char: any) => `${char?.getFirstname()} ${char?.getLastname()}`" />
+                                :display-value="(char: any) => `${char?.firstname} ${char?.lastname}`" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesChars.length > 0"
@@ -210,7 +209,7 @@ watch(selectedAccessRole, () => {
                                 <li
                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ char.getFirstname() }} {{ char.getLastname() }}
+                                        {{ char.firstname }} {{ char.lastname }}
                                     </span>
 
                                     <span v-if="selected"
@@ -231,17 +230,17 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                @change="queryJob = $event.target.value" :display-value="(job: any) => job?.getLabel()" />
+                                @change="queryJob = $event.target.value" :display-value="(job: any) => job?.label" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesJobs.length > 0"
                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ComboboxOption v-for="job in entriesJobs" :key="job.getName()" :value="job" as="job"
+                            <ComboboxOption v-for="job in entriesJobs" :key="job.name" :value="job" as="job"
                                 v-slot="{ active, selected }">
                                 <li
                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ job.getLabel() }}
+                                        {{ job.label }}
                                     </span>
 
                                     <span v-if="selected"
@@ -261,7 +260,7 @@ watch(selectedAccessRole, () => {
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryMinimumRank = $event.target.value"
-                                :display-value="(rank: any) => rank?.getLabel()" />
+                                :display-value="(rank: any) => rank?.label" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesMinimumRank.length > 0"
@@ -271,7 +270,7 @@ watch(selectedAccessRole, () => {
                                 <li
                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ rank.getLabel() }}
+                                        {{ rank.label }}
                                     </span>
 
                                     <span v-if="selected"

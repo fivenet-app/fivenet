@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RectangleGroupIcon, UserIcon, TruckIcon, DocumentTextIcon } from '@heroicons/vue/20/solid'
-import { User } from '@fivenet/gen/resources/users/users_pb';
+import { User } from '~~/gen/ts/resources/users/users';
 import CitizenInfoProfile from './CitizenInfoProfile.vue';
 import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
 import CitizenInfoActivityFeed from './CitizenInfoActivityFeed.vue';
@@ -46,10 +46,10 @@ function addToClipboard(): void {
     <div class="py-2">
         <div class="flex flex-row items-center gap-3">
             <p class="text-xl font-bold text-neutral sm:text-4xl inline-flex">
-                {{ user?.getFirstname() }}, {{ user?.getLastname() }}
+                {{ user?.firstname }}, {{ user?.lastname }}
             </p>
             <span class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">
-                {{ user.getJobLabel() }} ({{ $t('common.rank') }}: {{ user.getJobGradeLabel() }})
+                {{ user.jobLabel }} ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
             </span>
             <span v-if="user.getProps()?.getWanted()"
                 class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700">
@@ -76,13 +76,13 @@ function addToClipboard(): void {
                     <CitizenInfoProfile :user="user" />
                 </TabPanel>
                 <TabPanel v-can="'DMVService.ListVehicles'">
-                    <VehiclesList :userId="user.getUserId()" :hide-owner="true" :hide-citizen-link="true" />
+                    <VehiclesList :userId="user.userId" :hide-owner="true" :hide-citizen-link="true" />
                 </TabPanel>
                 <TabPanel v-can="'DocStoreService.ListUserDocuments'">
-                    <CitizenInfoDocuments :userId="user.getUserId()" />
+                    <CitizenInfoDocuments :userId="user.userId" />
                 </TabPanel>
                 <TabPanel v-can="'CitizenStoreService.ListUserActivity'">
-                    <CitizenInfoActivityFeed :userId="user.getUserId()" />
+                    <CitizenInfoActivityFeed :userId="user.userId" />
                 </TabPanel>
             </TabPanels>
         </TabGroup>

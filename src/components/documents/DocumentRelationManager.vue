@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
-import { DOC_RELATION_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
-import { DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb';
-import { User } from '@fivenet/gen/resources/users/users_pb';
-import { ListCitizensRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
+import { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { User } from '~~/gen/ts/resources/users/users';
 import {
     Dialog,
     DialogPanel,
@@ -29,10 +26,10 @@ import {
 } from '@heroicons/vue/24/outline';
 import { UsersIcon } from '@heroicons/vue/24/solid';
 import { watchDebounced } from '@vueuse/core';
-import { RpcError } from 'grpc-web';
 import { FunctionalComponent } from 'vue';
 import { useClipboardStore, getUser } from '~/store/clipboard';
 import { useAuthStore } from '~/store/auth';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -67,19 +64,21 @@ watchDebounced(queryChar, async () => await refresh(), { debounce: 600, maxWait:
 
 async function listCitizens(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {
-        const req = new ListCitizensRequest();
-        req.setPagination((new PaginationRequest()).setOffset(0).setPageSize(8));
-        req.setSearchName(queryChar.value);
-
         try {
-            const resp = await $grpc.getCitizenStoreClient().
-                listCitizens(req, null);
+            const call = $grpc.getCitizenStoreClient().
+                listCitizens({
+                    pagination: {
+                        offset: 0,
+                    },
+                    searchName: queryChar.value,
+                });
+            const { response } = await call;
 
             return res(
-                resp.getUsersList().filter(user => !Array.from(props.modelValue.values()).find(r => r.getTargetUserId() === user.getUserId()))
+                response.users.filter(user => !Array.from(props.modelValue.values()).find(r => r.targetUserId === user.userId))
             );
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -89,16 +88,15 @@ function addRelation(user: User, relation: number): void {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1 : keys[keys.length - 1] + 1;
 
-    const rel = new DocumentRelation();
-    rel.setId(key);
-    rel.setDocumentId(props.document!);
-    rel.setSourceUserId(activeChar.value!.getUserId());
-    rel.setSourceUser(activeChar.value!);
-    rel.setTargetUserId(user.getUserId());
-    rel.setTargetUser(user);
-    rel.setRelation(DOC_RELATION_Util.fromInt(relation));
-
-    props.modelValue.set(key, rel);
+    props.modelValue.set(key, {
+        id: key,
+        documentId: props.document!,
+        sourceUserId: activeChar.value!.userId,
+        sourceUser: activeChar.value!,
+        targetUserId: user.userId,
+        targetUser: user,
+        relation: relation,
+    });
     refresh();
 }
 
@@ -181,23 +179,23 @@ function removeRelation(id: number): void {
                                                                 <tr v-for="[key, rel] in $props.modelValue" :key="key">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
-                                                                        {{ rel.getTargetUser()?.getFirstname() }} {{
-                                                                            rel.getTargetUser()?.getLastname() }}</td>
+                                                                        {{ rel.targetUser?.firstname }} {{
+                                                                            rel.targetUser?.lastname }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
-                                                                            rel.getSourceUser()?.getFirstname() }}
-                                                                        {{ rel.getSourceUser()?.getLastname() }}
+                                                                            rel.sourceUser?.firstname }}
+                                                                        {{ rel.sourceUser?.lastname }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
-                                                                            $t(`enums.docstore.DOC_RELATION.${DOC_RELATION_Util.toEnumKey(rel.getRelation())!}`)
+                                                                            $t(`enums.docstore.DOC_RELATION.${rel.relation}`)
                                                                         }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <NuxtLink
-                                                                                    :to="{ name: 'citizens-id', params: { id: rel.getTargetUserId() } }"
+                                                                                    :to="{ name: 'citizens-id', params: { id: rel.targetUserId } }"
                                                                                     target="_blank" data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.open_citizen')">
                                                                                     <ArrowTopRightOnSquareIcon
@@ -207,7 +205,7 @@ function removeRelation(id: number): void {
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="removeRelation(rel.getId())"
+                                                                                    @click="removeRelation(rel.id!)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.remove_relation')">
                                                                                     <UserMinusIcon
@@ -337,14 +335,13 @@ function removeRelation(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody v-if="users" class="divide-y divide-base-500">
-                                                                <tr v-for="user in users.slice(0, 8)"
-                                                                    :key="user.getUserId()">
+                                                                <tr v-for="user in users.slice(0, 8)" :key="user.userId">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
-                                                                        {{ user.getFirstname() }} {{
-                                                                            user.getLastname() }}</td>
+                                                                        {{ user.firstname }} {{
+                                                                            user.lastname }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ user.getJobLabel() }}
+                                                                        {{ user.jobLabel }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">

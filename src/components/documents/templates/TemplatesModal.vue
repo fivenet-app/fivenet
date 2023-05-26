@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { TemplateShort, TemplateRequirements } from '@fivenet/gen/resources/documents/templates_pb';
+import { TemplateShort, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { PencilIcon } from '@heroicons/vue/24/solid';
 import ClipboardModalDocuments from '~/components/clipboard/ClipboardModalDocuments.vue';
@@ -97,7 +97,7 @@ async function templateSelected(t: TemplateShort): Promise<void> {
             steps.value.selectTemplate = false;
             steps.value.selectClipboard = true;
         } else {
-            await navigateTo({ name: 'documents-create', query: { templateId: template.value?.getId() } });
+            await navigateTo({ name: 'documents-create', query: { templateId: template.value?.id } });
         }
     } else {
         reqStatus.value.documents = false;
@@ -118,7 +118,7 @@ const submit = ref(false);
 
 async function clipboardDialog(): Promise<void> {
     submit.value = true;
-    await navigateTo({ name: 'documents-create', query: { templateId: template.value?.getId() } });
+    await navigateTo({ name: 'documents-create', query: { templateId: template.value?.id } });
 }
 </script>
 
@@ -176,7 +176,7 @@ async function clipboardDialog(): Promise<void> {
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">
-                                            {{ $t('common.template', 1) }}: {{ template.getTitle() }}
+                                            {{ $t('common.template', 1) }}: {{ template.title }}
                                         </DialogTitle>
                                         <div class="mt-2 text-white">
                                             <div v-if="reqs.hasUsers()">

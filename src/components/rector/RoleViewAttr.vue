@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
-import { AttributeValues, JobGradeList, RoleAttribute, StringList } from '@fivenet/gen/resources/permissions/permissions_pb';
+import { AttributeValues, JobGradeList, RoleAttribute, StringList } from '~~/gen/ts/resources/permissions/permissions';
 import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid';
-import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 
 const props = defineProps<{
     attribute: RoleAttribute,
@@ -16,22 +16,43 @@ const emit = defineEmits<{
 }>();
 
 const states = ref<typeof props.states>(props.states);
-const id = ref<number>(props.attribute.getAttrId());
+const id = ref<number>(props.attribute.attrId);
 
-const validValues = ref<AttributeValues | undefined>(props.attribute.getValidValues());
-const type = ref<string | undefined>(props.attribute.getType());
+const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
+
+const type = ref<'stringList' | 'jobList' | 'jobGradeList' | undefined>();
+switch (props.attribute.type) {
+    case 'stringList':
+        type.value = 'stringList';
+        break;
+
+    case 'jobList':
+        type.value = 'jobList';
+        break;
+
+    case 'jobGradeList':
+        type.value = 'jobGradeList';
+        break;
+
+    default:
+        break;
+}
 
 const jobGrades = ref<Map<string, JobGrade>>(new Map());
 
 function getState(): AttributeValues {
-    if (!states.value.has(id.value)) states.value.set(id.value, new AttributeValues());
+    if (!states.value.has(id.value)) states.value.set(id.value, {
+        validValues: {
+            oneofKind: type,
+        },
+    });
 
     return states.value.get(id.value)!;
 }
 
 async function toggleListValue(value: string): Promise<void> {
     const state = getState();
-    const list = state.getStringList() ?? new StringList();
+    const list = state.validValues ?? new StringList();
     const array = list.getStringsList();
 
     if (array.indexOf(value) < 0) {
@@ -68,12 +89,12 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
     const list = state.getJobGradeList() ?? new JobGradeList();
     const map = list.getJobsMap();
 
-    if (checked && !map.has(job.getName())) {
-        map.set(job.getName(), 1);
-        jobGrades.value.set(job.getName(), job.getGradesList()[0]);
-    } else if (!checked && map.has(job.getName())) {
-        map.del(job.getName());
-        jobGrades.value.set(job.getName(), job.getGradesList()[0]);
+    if (checked && !map.has(job.name)) {
+        map.set(job.name, 1);
+        jobGrades.value.set(job.name, job.getGradesList()[0]);
+    } else if (!checked && map.has(job.name)) {
+        map.del(job.name);
+        jobGrades.value.set(job.name, job.getGradesList()[0]);
     } else {
         return;
     }
@@ -88,8 +109,8 @@ async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
     const list = state.getJobGradeList() ?? new JobGradeList();
     const map = list.getJobsMap();
 
-    map.set(job.getName(), grade.getGrade());
-    jobGrades.value.set(job.getName(), job.getGradesList()[grade.getGrade() - 1]);
+    map.set(job.name, grade.getGrade());
+    jobGrades.value.set(job.name, job.grades[grade.grade - 1]);
 
     state.setJobGradeList(list);
     states.value.set(id.value, state);
@@ -99,7 +120,7 @@ async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
 onMounted(() => {
     if (type.value === 'JobGradeList') {
         props.jobs.forEach(job => {
-            jobGrades.value.set(job.getName(), job.getGradesList()[(getState().getJobGradeList()?.getJobsMap().get(job.getName()) ?? 1) - 1]);
+            jobGrades.value.set(job.name, job.grades[(getState().getJobGradeList()?.getJobsMap().get(job.name) ?? 1) - 1]);
         });
     }
 });
@@ -119,7 +140,7 @@ onMounted(() => {
             <DisclosureButton :disabled="$props.disabled"
                 :class="[open ? 'rounded-t-lg border-b-0' : 'rounded-lg', $props.disabled ? 'cursor-not-allowed' : '', ' flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors']">
                 <span class="text-base leading-7 transition-colors">
-                    {{ $t(`attrs.${attribute.getCategory()}.${attribute.getName()}.${attribute.getKey()}`) }}
+                    {{ $t(`attrs.${attribute.category}.${attribute.name}.${attribute.key}`) }}
                 </span>
                 <span class="ml-6 flex h-7 items-center">
                     <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
@@ -139,30 +160,29 @@ onMounted(() => {
                         </div>
                     </div>
                     <div v-else-if="type === 'JobList'" class="flex flex-row gap-4 flex-wrap">
-                        <div v-for="job in props.jobs.filter(j => !validValues?.getJobList()?.getStringsList().length || validValues.getJobList()?.getStringsList().includes(j.getName()))"
-                            :key="job.getName()" class="flex flex-row flex-initial flex-nowrap">
-                            <input :id="job.getName()" :name="job.getName()" type="checkbox"
-                                :checked="!!getState().getJobList()?.getStringsList().find(v => v === job.getName())"
-                                @click="toggleJobListValue(job.getName())"
+                        <div v-for="job in props.jobs.filter(j => !validValues?.getJobList()?.getStringsList().length || validValues.getJobList()?.getStringsList().includes(j.name))"
+                            :key="job.name" class="flex flex-row flex-initial flex-nowrap">
+                            <input :id="job.name" :name="job.name" type="checkbox"
+                                :checked="!!getState().getJobList()?.getStringsList().find(v => v === job.name)"
+                                @click="toggleJobListValue(job.name)"
                                 class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500" />
-                            <span class="ml-1">{{ job.getLabel() }}</span>
+                            <span class="ml-1">{{ job.label }}</span>
                         </div>
                     </div>
                     <div v-else-if="type === 'JobGradeList'" class="flex flex-col gap-2">
-                        <div v-for="job in props.jobs" :key="job.getName()"
-                            class="flex flex-row flex-initial flex-nowrap gap-2">
-                            <input :id="job.getName()" :name="job.getName()" type="checkbox"
-                                :checked="!!getState().getJobGradeList()?.getJobsMap().has(job.getName())"
+                        <div v-for="job in props.jobs" :key="job.name" class="flex flex-row flex-initial flex-nowrap gap-2">
+                            <input :id="job.name" :name="job.name" type="checkbox"
+                                :checked="!!getState().getJobGradeList()?.getJobsMap().has(job.name)"
                                 @change="toggleJobGradeValue(job, ($event.target as any).checked)"
                                 class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500" />
-                            <span class="flex-1 my-auto">{{ job.getLabel() }}</span>
-                            <Listbox as="div" class="flex-1" :model-value="jobGrades.get(job.getName())"
+                            <span class="flex-1 my-auto">{{ job.label }}</span>
+                            <Listbox as="div" class="flex-1" :model-value="jobGrades.get(job.name)"
                                 @update:model-value="updateJobGradeValue(job, $event)"
-                                :disabled="!getState().getJobGradeList()?.getJobsMap().has(job.getName())">
+                                :disabled="!getState().getJobGradeList()?.getJobsMap().has(job.name)">
                                 <div class="relative">
                                     <ListboxButton
                                         class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 disabled:bg-base-800 disabled:text-neutral/50 disabled:cursor-not-allowed focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
-                                        <span class="block truncate">{{ jobGrades.get(job.getName())?.getLabel() }}</span>
+                                        <span class="block truncate">{{ jobGrades.get(job.name)?.label }}</span>
                                         <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                             <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
                                         </span>
@@ -172,13 +192,13 @@ onMounted(() => {
                                         leave-from-class="opacity-100" leave-to-class="opacity-0">
                                         <ListboxOptions
                                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                            <ListboxOption as="template" v-for="grade in job.getGradesList()"
-                                                :key="grade.getGrade()" :value="grade" v-slot="{ active, selected }">
+                                            <ListboxOption as="template" v-for="grade in job.grades" :key="grade.grade"
+                                                :value="grade" v-slot="{ active, selected }">
                                                 <li
                                                     :class="[active ? 'bg-primary-500' : '', 'text-neutral relative cursor-default select-none py-2 pl-8 pr-4']">
                                                     <span
                                                         :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                                                            grade.getLabel()
+                                                            grade.label
                                                         }}</span>
 
                                                     <span v-if="selected"

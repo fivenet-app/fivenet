@@ -344,37 +344,6 @@ func (m *Document) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for CategoryId
-
-	if all {
-		switch v := interface{}(m.GetCategory()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentValidationError{
-					field:  "Category",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentValidationError{
-					field:  "Category",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentValidationError{
-				field:  "Category",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
 		err := DocumentValidationError{
 			field:  "Title",
@@ -477,6 +446,43 @@ func (m *Document) validate(all bool) error {
 	// no validation rules for Closed
 
 	// no validation rules for Public
+
+	if m.CategoryId != nil {
+		// no validation rules for CategoryId
+	}
+
+	if m.Category != nil {
+
+		if all {
+			switch v := interface{}(m.GetCategory()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentValidationError{
+						field:  "Category",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentValidationError{
+						field:  "Category",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentValidationError{
+					field:  "Category",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return DocumentMultiError(errors)
@@ -637,37 +643,6 @@ func (m *DocumentShort) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for CategoryId
-
-	if all {
-		switch v := interface{}(m.GetCategory()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentShortValidationError{
-					field:  "Category",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentShortValidationError{
-					field:  "Category",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentShortValidationError{
-				field:  "Category",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
 		err := DocumentShortValidationError{
 			field:  "Title",
@@ -722,6 +697,43 @@ func (m *DocumentShort) validate(all bool) error {
 	}
 
 	// no validation rules for Closed
+
+	if m.CategoryId != nil {
+		// no validation rules for CategoryId
+	}
+
+	if m.Category != nil {
+
+		if all {
+			switch v := interface{}(m.GetCategory()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentShortValidationError{
+						field:  "Category",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentShortValidationError{
+						field:  "Category",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentShortValidationError{
+					field:  "Category",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return DocumentShortMultiError(errors)

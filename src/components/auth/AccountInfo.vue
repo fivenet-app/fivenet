@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { GetAccountInfoRequest, GetAccountInfoResponse } from '@fivenet/gen/services/auth/auth_pb';
-import { RpcError } from 'grpc-web';
+import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { UserIcon } from '@heroicons/vue/24/outline';
 import ChangePasswordModal from './ChangePasswordModal.vue';
 import OAuth2Connections from './OAuth2Connections.vue';
 import DebugInfo from './DebugInfo.vue';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -14,15 +14,13 @@ const { data: account, pending, refresh, error } = useLazyAsyncData(`accountinfo
 
 async function getAccountInfo(): Promise<GetAccountInfoResponse | undefined> {
     return new Promise(async (res, rej) => {
-        const req = new GetAccountInfoRequest();
-
         try {
-            const resp = await $grpc.getAuthClient().
-                getAccountInfo(req, null);
+            const call = $grpc.getAuthClient().
+                getAccountInfo({});
 
-            return res(resp);
+            return res(await call.response);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -31,9 +29,9 @@ async function getAccountInfo(): Promise<GetAccountInfoResponse | undefined> {
 const changePasswordModal = ref(false);
 
 async function removeOAuth2Connection(provider: string): Promise<void> {
-    const idx = account.value?.getOauth2ConnectionsList().findIndex((v) => v.getProviderName() === provider);
+    const idx = account.value?.oauth2Connections.findIndex((v) => v.providerName === provider);
     if (idx !== undefined && idx > -1) {
-        account.value?.getOauth2ConnectionsList().splice(idx, 1);
+        account.value?.oauth2Connections.splice(idx, 1);
 
         await refresh();
     }
@@ -71,7 +69,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                                 {{ $t('common.username') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                {{ account.getAccount()?.getUsername() }}
+                                {{ account.account?.username }}
                             </dd>
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
@@ -79,7 +77,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                                 {{ $t('components.auth.account_info.license') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                {{ account.getAccount()?.getLicense() }}
+                                {{ account.account?.license }}
                             </dd>
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
@@ -97,8 +95,8 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                 </div>
             </div>
 
-            <OAuth2Connections v-if="account" @click="removeOAuth2Connection($event)"
-                :providers="account.getOauth2ProvidersList()" :connections="account.getOauth2ConnectionsList()" />
+            <OAuth2Connections v-if="account" @click="removeOAuth2Connection($event)" :providers="account.oauth2Providers"
+                :connections="account.oauth2Connections" />
 
             <DebugInfo />
         </div>

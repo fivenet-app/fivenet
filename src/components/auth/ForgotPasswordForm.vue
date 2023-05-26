@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ForgotPasswordRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { digits, max, min, required } from '@vee-validate/rules';
 import { RpcError } from 'grpc-web';
 import { defineRule } from 'vee-validate';
@@ -20,13 +19,12 @@ const newPassword = ref('');
 
 async function forgotPassword(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new ForgotPasswordRequest();
-        req.setRegToken(values.registrationToken.toString());
-        req.setNew(values.password);
-
         try {
             await $grpc.getUnAuthClient().
-                forgotPassword(req, null);
+                forgotPassword({
+                    regToken: values.registrationToken.toString(),
+                    new: values.password,
+                });
 
             notifications.dispatchNotification({
                 title: t('notifications.auth.account_created.title'),
@@ -36,7 +34,7 @@ async function forgotPassword(values: FormData): Promise<void> {
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             accountError.value = (e as RpcError).message;
             return rej(e as RpcError);
         }
@@ -80,9 +78,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await forgotPassw
                 {{ $t('components.auth.forgot_password.registration_token') }}
             </label>
             <div>
-                <VeeField name="registrationToken" type="text" inputmode="numeric"
-                    aria-describedby="hint" pattern="[0-9]*" autocomplete="registrationToken"
-                    :placeholder="$t('components.auth.forgot_password.registration_token')"
+                <VeeField name="registrationToken" type="text" inputmode="numeric" aria-describedby="hint" pattern="[0-9]*"
+                    autocomplete="registrationToken" :placeholder="$t('components.auth.forgot_password.registration_token')"
                     :label="$t('components.auth.forgot_password.registration_token')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6" />
                 <VeeErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
@@ -94,8 +91,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await forgotPassw
             </label>
             <div>
                 <VeeField name="password" type="password" autocomplete="current-password"
-                    :placeholder="$t('common.password')" :label="$t('common.password')"
-                    v-model:model-value="newPassword"
+                    :placeholder="$t('common.password')" :label="$t('common.password')" v-model:model-value="newPassword"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                 <PartialsPasswordStrengthMeter :input="newPassword" class="mt-2" />
                 <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />

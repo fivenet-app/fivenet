@@ -1,21 +1,20 @@
 <script lang="ts" setup>
 import { defineRule } from 'vee-validate';
-import { CreateTemplateRequest, GetTemplateRequest, UpdateTemplateRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { RpcError } from 'grpc-web';
-import { Template, ObjectSpecs, TemplateRequirements, TemplateSchema, TemplateJobAccess } from '@fivenet/gen/resources/documents/templates_pb';
+import { CreateTemplateRequest, GetTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
+import { Template, ObjectSpecs, TemplateRequirements, TemplateSchema, TemplateJobAccess } from '~~/gen/ts/resources/documents/templates';
 import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
 import { TemplateSchemaEditorValue, ObjectSpecsValue } from './TemplateSchemaEditor.vue';
 import { useNotificationsStore } from '~/store/notifications';
-import { Job, JobGrade } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { CompleteDocumentCategoriesRequest, CompleteJobsRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { CompleteDocumentCategoriesRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
 import { watchDebounced } from '@vueuse/core';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
-import { ACCESS_LEVEL } from '@fivenet/gen/resources/documents/access_pb';
+import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { CheckIcon, PlusIcon } from '@heroicons/vue/20/solid';
 import { useAuthStore } from '~/store/auth';
-import { DocumentAccess, DocumentJobAccess, DocumentUserAccess } from '@fivenet/gen/resources/documents/documents_pb';
-import { ACCESS_LEVEL_Util } from '@fivenet/gen/resources/documents/access.pb_enums';
-import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
+import { DocumentAccess, DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/documents/documents';
+import { ACCESS_LEVEL_Util } from '~~/gen/ts/resources/documents/access.pb_enums';
+import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { max, min, numeric, required } from '@vee-validate/rules';
 
@@ -135,7 +134,7 @@ function updateAccessEntryName(event: {
     if (!accessEntry) return;
 
     if (event.job) {
-        accessEntry.values.job = event.job.getName();
+        accessEntry.values.job = event.job.name;
 
         access.value.set(event.id, accessEntry);
     }
@@ -213,7 +212,7 @@ function updateContentAccessEntryName(event: {
     if (!accessEntry) return;
 
     if (event.job) {
-        accessEntry.values.job = event.job.getName();
+        accessEntry.values.job = event.job.name;
 
         contentAccess.value.set(event.id, accessEntry);
     }
@@ -324,7 +323,7 @@ async function createTemplate(values: FormData): Promise<void> {
         req.setTemplate(tpl);
         try {
             const resp = await $grpc.getDocStoreClient().
-                createTemplate(req, null);
+                createTemplate(req);
 
             notifications.dispatchNotification({
                 title: 'Template: Created',
@@ -332,11 +331,10 @@ async function createTemplate(values: FormData): Promise<void> {
                 type: 'success',
             });
 
-            await navigateTo({ name: 'documents-templates-id', params: { id: resp.getId() } });
+            await navigateTo({ name: 'documents-templates-id', params: { id: resp.id } });
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -410,7 +408,7 @@ async function updateTemplate(values: FormData): Promise<void> {
         req.setTemplate(tpl);
         try {
             const resp = await $grpc.getDocStoreClient().
-                updateTemplate(req, null);
+                updateTemplate(req);
 
             notifications.dispatchNotification({
                 title: 'Template: Updated',
@@ -418,11 +416,10 @@ async function updateTemplate(values: FormData): Promise<void> {
                 type: 'success',
             });
 
-            await navigateTo({ name: 'documents-templates-id', params: { id: resp.getId() } });
+            await navigateTo({ name: 'documents-templates-id', params: { id: resp.id } });
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -440,12 +437,11 @@ async function findCategories(): Promise<void> {
             const req = new CompleteDocumentCategoriesRequest();
             req.setSearch(queryCategory.value);
 
-            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req, null)
+            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req)
             entriesCategory = resp.getCategoriesList();
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -460,7 +456,7 @@ onMounted(async () => {
         req.setRender(false);
 
         try {
-            const resp = (await $grpc.getDocStoreClient().getTemplate(req, null));
+            const resp = (await $grpc.getDocStoreClient().getTemplate(req));
             if (!resp) return;
 
             const tpl = resp.getTemplate();
@@ -468,13 +464,13 @@ onMounted(async () => {
 
             setValues({
                 weight: tpl.getWeight(),
-                title: tpl.getTitle(),
+                title: tpl.title,
                 description: tpl.getDescription(),
                 contentTitle: tpl.getContentTitle(),
                 content: tpl.getContent(),
             });
             if (tpl.hasCategory()) {
-                selectedCategory.value = tpl.getCategory();
+                selectedCategory.value = tpl.category;
             }
 
             const tplAccess = tpl.getJobAccessList();
@@ -482,7 +478,7 @@ onMounted(async () => {
                 let accessId = 0;
 
                 tplAccess.forEach(job => {
-                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
                     accessId++;
                 });
             }
@@ -492,12 +488,12 @@ onMounted(async () => {
                 let accessId = 0;
 
                 ctAccess.getUsersList().forEach(user => {
-                    contentAccess.value.set(accessId, { id: accessId, type: 0, values: { char: user.getUserId(), accessrole: user.getAccess() } });
+                    contentAccess.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.getAccess() } });
                     accessId++;
                 });
 
                 ctAccess.getJobsList().forEach(job => {
-                    contentAccess.value.set(accessId, { id: accessId, type: 1, values: { job: job.getJob(), accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                    contentAccess.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
                     accessId++;
                 });
             }
@@ -514,10 +510,9 @@ onMounted(async () => {
             schema.value.vehicles.min = tpl.getSchema()?.getRequirements()?.getVehicles()?.getMin() ?? 0;
             schema.value.vehicles.max = tpl.getSchema()?.getRequirements()?.getVehicles()?.getMax() ?? 0;
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
         }
     } else {
-        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.getJob(), minimumrank: 1, accessrole: ACCESS_LEVEL.VIEW } });
+        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.job, minimumrank: 1, accessrole: ACCESS_LEVEL.VIEW } });
     }
 
     const req = new CompleteJobsRequest();
@@ -525,14 +520,13 @@ onMounted(async () => {
     req.setCurrentJob(true);
 
     try {
-        const resp = await $grpc.getCompletorClient().completeJobs(req, null);
+        const resp = await $grpc.getCompletorClient().completeJobs(req);
         entriesRank.value = resp.getJobsList()[0].getGradesList();
     } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
     }
 });
 
-watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.filter(r => r.getLabel().startsWith(queryRank.value)), { debounce: 600, maxWait: 1750 });
+watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.filter(r => r.label.startsWith(queryRank.value)), { debounce: 600, maxWait: 1750 });
 </script>
 
 <template>
@@ -600,17 +594,17 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryCategory = $event.target.value"
-                                :display-value="(category: any) => category?.getName()" />
+                                :display-value="(category: any) => category?.name" />
                         </ComboboxButton>
 
                         <ComboboxOptions v-if="entriesCategory.length > 0"
                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ComboboxOption v-for="category in entriesCategory" :key="category.getId()" :value="category"
+                            <ComboboxOption v-for="category in entriesCategory" :key="category.id" :value="category"
                                 as="category" v-slot="{ active, selected }">
                                 <li
                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                     <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ category.getName() }}
+                                        {{ category.name }}
                                     </span>
 
                                     <span v-if="selected"

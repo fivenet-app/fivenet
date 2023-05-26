@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
-import { DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
-import { GetDocumentCommentsRequest, PostDocumentCommentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { PaginationRequest, PaginationResponse } from '~~/gen/ts/resources/common/database/database';
+import { DocumentComment } from '~~/gen/ts/resources/documents/documents';
+import { GetDocumentCommentsRequest, PostDocumentCommentRequest } from '~~/gen/ts/services/docstore/docstore';
 import { computed, ref } from 'vue';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/20/solid';
 import TablePagination from '~/components/partials/TablePagination.vue';
-import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -43,7 +42,7 @@ async function getDocumentComments(): Promise<Array<DocumentComment>> {
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                getDocumentComments(creq, null);
+                getDocumentComments(creq);
 
             pagination.value = resp.getPagination();
             if (pagination.value) {
@@ -52,7 +51,6 @@ async function getDocumentComments(): Promise<Array<DocumentComment>> {
 
             return res(resp.getCommentsList());
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -74,17 +72,16 @@ async function addComment(): Promise<void> {
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                postDocumentComment(req, null);
+                postDocumentComment(req);
 
-            com.setId(resp.getId());
-            com.setCreatorId(activeChar.value!.getUserId());
+            com.setId(resp.id);
+            com.setCreatorId(activeChar.value!.userId);
             com.setCreator(activeChar.value!);
 
             comments.value.unshift(com);
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -97,7 +94,7 @@ async function removeComment(comment: DocumentComment): Promise<void> {
         }
 
         const idx = comments.value.findIndex((c) => {
-            return c.getId() === comment.getId();
+            return c.id === comment.id;
         });
 
         if (idx > -1) {
@@ -166,7 +163,7 @@ watch(offset, async () => refresh());
         </button>
         <div v-else v-can="'DocStoreService.DeleteDocumentComment'" class="flow-root px-4 rounded-lg text-neutral">
             <ul role="list" class="divide-y divide-gray-200">
-                <DocumentCommentEntry v-for="com in comments" :key="com.getId()" :comment="com"
+                <DocumentCommentEntry v-for="com in comments" :key="com.id" :comment="com"
                     @removed="(c: DocumentComment) => removeComment(c)" />
             </ul>
         </div>

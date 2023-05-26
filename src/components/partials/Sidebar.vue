@@ -369,8 +369,8 @@ const appVersion = activeChar ? (' v' + __APP_VERSION__ + (import.meta.env.DEV ?
                                 <SidebarJobSwitcher v-if="activeChar" />
                             </div>
                             <div v-if="activeChar" class="text-sm font-medium text-base-400">
-                                {{ activeChar.getFirstname() }}, {{ activeChar.getLastname() }}
-                                ({{ activeChar.getJobLabel() }})
+                                {{ activeChar.firstname }}, {{ activeChar.lastname }}
+                                ({{ activeChar.jobLabel }})
                             </div>
                             <SidebarLanguageSwitcher />
                             <!-- Profile dropdown -->

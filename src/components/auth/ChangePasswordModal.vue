@@ -2,8 +2,6 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { KeyIcon } from '@heroicons/vue/24/solid';
 import { defineRule } from 'vee-validate';
-import { ChangePasswordRequest } from '@fivenet/gen/services/auth/auth_pb';
-import { RpcError } from 'grpc-web';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { max, min, required } from '@vee-validate/rules';
@@ -31,15 +29,19 @@ const newPassword = ref('');
 
 async function changePassword(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new ChangePasswordRequest();
-        req.setCurrent(values.currentPassword);
-        req.setNew(values.newPassword);
-
         try {
-            const resp = await $grpc.getAuthClient()
-                .changePassword(req, null);
+            const call = $grpc.getAuthClient()
+                .changePassword({
+                    current: values.currentPassword,
+                    new: values.newPassword,
+                });
+            const { response, status } = await call;
 
-            setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
+            if (await $grpc.handleError(status)) {
+                return rej(status);
+            }
+
+            setAccessToken(response.token, toDate(response.expires) as null | Date);
 
             notifications.dispatchNotification({
                 title: t('notifications.auth.changed_password.title'),
@@ -50,8 +52,7 @@ async function changePassword(values: FormData): Promise<void> {
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
-            return rej(e as RpcError);
+            return rej(e);
         }
     });
 }

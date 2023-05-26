@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ObjectSpecs } from '@fivenet/gen/resources/documents/templates_pb';
+import { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
 
 defineProps({
     name: {

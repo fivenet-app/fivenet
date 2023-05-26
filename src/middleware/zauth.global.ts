@@ -1,5 +1,3 @@
-import { ChooseCharacterRequest } from '@fivenet/gen/services/auth/auth_pb';
-import { RpcError } from 'grpc-web';
 import { RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
@@ -25,23 +23,24 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                 if (lastCharID.value > 0) {
                     const { $grpc } = useNuxtApp();
 
-                    const req = new ChooseCharacterRequest();
-                    req.setCharId(lastCharID.value);
-
                     try {
-                        const resp = await $grpc.getAuthClient().chooseCharacter(req, null);
+                        const call = await $grpc.getAuthClient().chooseCharacter({
+                            charId: lastCharID.value,
+                        });
+                        if (await $grpc.handleError(call.status)) {
+                            throw new Error(call.status.detail);
+                        }
 
-                        setAccessToken(resp.getToken(), toDate(resp.getExpires()) as null | Date);
-                        setActiveChar(resp.getChar()!);
-                        setPermissions(resp.getPermissionsList());
-                        if (resp.hasJobProps()) {
-                            setJobProps(resp.getJobProps()!);
+                        let resp = call.response;
+                        setAccessToken(resp.token, toDate(resp.expires) as null | Date);
+                        setActiveChar(resp.char!);
+                        setPermissions(resp.permissions);
+                        if (resp.jobProps) {
+                            setJobProps(resp.jobProps!);
                         } else {
                             setJobProps(null);
                         }
                     } catch (e) {
-                        $grpc.handleRPCError(e as RpcError);
-
                         // Only update the redirect query param if it isn't set already
                         const redirect = to.query.redirect ?? to.fullPath;
                         return navigateTo({

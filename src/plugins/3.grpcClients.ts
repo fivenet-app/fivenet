@@ -1,17 +1,27 @@
 import { useAuthStore } from '~/store/auth';
-import config from '~/config';
-import { AuthServiceClient } from '@fivenet/gen/services/auth/AuthServiceClientPb';
-import { CitizenStoreServiceClient } from '@fivenet/gen/services/citizenstore/CitizenstoreServiceClientPb';
-import { CompletorServiceClient } from '@fivenet/gen/services/completor/CompletorServiceClientPb';
-import { DMVServiceClient } from '@fivenet/gen/services/dmv/VehiclesServiceClientPb';
-import { DocStoreServiceClient } from '@fivenet/gen/services/docstore/DocstoreServiceClientPb';
-import { JobsServiceClient } from '@fivenet/gen/services/jobs/JobsServiceClientPb';
-import { LivemapperServiceClient } from '@fivenet/gen/services/livemapper/LivemapServiceClientPb';
-import { UnaryInterceptor } from 'grpc-web';
+import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
+import { CitizenStoreServiceClient } from '~~/gen/ts/services/citizenstore/citizenstore.client';
+import { CompletorServiceClient } from '~~/gen/ts/services/completor/completor.client';
+import { DMVServiceClient } from '~~/gen/ts/services/dmv/vehicles.client';
+import { DocStoreServiceClient } from '~~/gen/ts/services/docstore/docstore.client';
+import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
+import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 import { RpcError, StatusCode } from 'grpc-web';
-import { RectorServiceClient } from '@fivenet/gen/services/rector/RectorServiceClientPb';
-import { NotificatorServiceClient } from '@fivenet/gen/services/notificator/NotificatorServiceClientPb';
+import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
+import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
 import { useNotificationsStore } from '~/store/notifications';
+import { RpcTransport } from '@protobuf-ts/runtime-rpc';
+import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
+import {
+    NextServerStreamingFn,
+    NextUnaryFn,
+    MethodInfo,
+    RpcOptions,
+    RpcInterceptor,
+    UnaryCall,
+    ServerStreamingCall,
+    RpcStatus,
+} from '@protobuf-ts/runtime-rpc/build/types';
 
 export default defineNuxtPlugin(() => {
     return {
@@ -23,7 +33,7 @@ export default defineNuxtPlugin(() => {
 
 export class GRPCClients {
     private authInterceptor: AuthInterceptor;
-    private grpcClientOptions: { [index: string]: any };
+    private transport: GrpcWebFetchTransport;
 
     constructor() {
         this.authInterceptor = new AuthInterceptor();
@@ -31,23 +41,30 @@ export class GRPCClients {
         const { $loading } = useNuxtApp();
 
         // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
-        this.grpcClientOptions = {
-            unaryInterceptors: [this.authInterceptor, $loading],
-            streamInterceptors: [this.authInterceptor],
-        };
+        const interceptors: RpcInterceptor[] = [this.authInterceptor, $loading];
 
-        //@ts-ignore GRPCWeb Devtools only exist when the user has the extension installed
+        /* //@ts-ignore GRPCWeb Devtools only exist when the user has the extension installed
         const devInterceptors = window.__GRPCWEB_DEVTOOLS__;
         if (devInterceptors) {
             const { devToolsUnaryInterceptor, devToolsStreamInterceptor } = devInterceptors();
 
-            this.grpcClientOptions.unaryInterceptors.push(devToolsUnaryInterceptor);
-            this.grpcClientOptions.streamInterceptors.push(devToolsStreamInterceptor);
-        }
+            devToolsUnaryInterceptor;
+            devToolsStreamInterceptor;
+        } */
+
+        this.transport = new GrpcWebFetchTransport({
+            baseUrl: '/grpc',
+            format: 'text',
+            interceptors: interceptors,
+        });
+    }
+
+    getTransport(): RpcTransport {
+        return this.transport;
     }
 
     // Handle GRPC errors
-    async handleRPCError(err: RpcError): Promise<void> {
+    async handleError(err: RpcError): Promise<boolean> {
         const notifications = useNotificationsStore();
 
         const { $loading } = useNuxtApp();
@@ -69,6 +86,7 @@ export class GRPCClients {
                 const redirect = route.query.redirect ?? route.fullPath;
                 await navigateTo({ name: 'auth-login', query: { redirect: redirect }, replace: true, force: true });
                 break;
+
             case StatusCode.PERMISSION_DENIED:
                 notifications.dispatchNotification({
                     title: 'notifications.grpc_errors.permission_denied.title',
@@ -77,6 +95,7 @@ export class GRPCClients {
                     type: 'error',
                 });
                 break;
+
             case StatusCode.INTERNAL:
                 let title = 'notifications.grpc_errors.internal.title';
                 let content = err.message;
@@ -94,11 +113,12 @@ export class GRPCClients {
                 notifications.dispatchNotification({
                     title: title,
                     titleI18n: true,
-                    content: err.message,
+                    content: content,
                     contentI18n: contentI18n,
                     type: 'error',
                 });
                 break;
+
             case StatusCode.UNAVAILABLE:
                 notifications.dispatchNotification({
                     title: 'notifications.grpc_errors.unavailable.title',
@@ -108,6 +128,7 @@ export class GRPCClients {
                     type: 'error',
                 });
                 break;
+
             case StatusCode.NOT_FOUND:
                 notifications.dispatchNotification({
                     title: 'notifications.grpc_errors.unavailable.title',
@@ -117,6 +138,7 @@ export class GRPCClients {
                 });
 
                 break;
+
             default:
                 notifications.dispatchNotification({
                     title: 'notifications.grpc_errors.default.title',
@@ -128,117 +150,94 @@ export class GRPCClients {
         }
 
         $loading.errored();
+        return true;
     }
 
     // GRPC Clients ===============================================================
     // Account / Auth - Unauthorized and authorized clients
-    private unAuthClient: undefined | AuthServiceClient;
     getUnAuthClient(): AuthServiceClient {
-        if (!this.unAuthClient) {
-            this.unAuthClient = new AuthServiceClient(config.apiProtoURL, null, null);
-        }
-
-        return this.unAuthClient;
+        return new AuthServiceClient(
+            new GrpcWebFetchTransport({
+                baseUrl: '/grpc',
+                format: 'text',
+            })
+        );
     }
 
-    private authClient: undefined | AuthServiceClient;
     getAuthClient(): AuthServiceClient {
-        if (!this.authClient) {
-            this.authClient = new AuthServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
-        }
-
-        return this.authClient;
+        return new AuthServiceClient(this.transport);
     }
 
     // Citizens
-    private citizenStoreClient: undefined | CitizenStoreServiceClient;
     getCitizenStoreClient(): CitizenStoreServiceClient {
-        if (!this.citizenStoreClient) {
-            this.citizenStoreClient = new CitizenStoreServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
-        }
-
-        return this.citizenStoreClient;
+        return new CitizenStoreServiceClient(this.transport);
     }
 
     // Completion
-    private completorClient: undefined | CompletorServiceClient;
     getCompletorClient(): CompletorServiceClient {
-        if (!this.completorClient) {
-            this.completorClient = new CompletorServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
-        }
-
-        return this.completorClient;
+        return new CompletorServiceClient(this.transport);
     }
 
     // DMV (Vehicles)
-    private dmvClient: undefined | DMVServiceClient;
     getDMVClient(): DMVServiceClient {
-        if (!this.dmvClient) {
-            this.dmvClient = new DMVServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
-        }
-
-        return this.dmvClient;
+        return new DMVServiceClient(this.transport);
     }
 
     // Documents
-    private docstoreClient: undefined | DocStoreServiceClient;
     getDocStoreClient(): DocStoreServiceClient {
-        if (!this.docstoreClient) {
-            this.docstoreClient = new DocStoreServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
-        }
-
-        return this.docstoreClient;
+        return new DocStoreServiceClient(this.transport);
     }
 
     // Job
-    private jobsClient: undefined | JobsServiceClient;
     getJobsClient(): JobsServiceClient {
-        if (!this.jobsClient) {
-            this.jobsClient = new JobsServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
-        }
-
-        return this.jobsClient;
+        return new JobsServiceClient(this.transport);
     }
 
     // Livemap
-    private livemapperClient: undefined | LivemapperServiceClient;
     getLivemapperClient(): LivemapperServiceClient {
-        if (!this.livemapperClient) {
-            this.livemapperClient = new LivemapperServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
-        }
-
-        return this.livemapperClient;
+        return new LivemapperServiceClient(this.transport);
     }
 
     // Notificator
-    private notificatorClient: undefined | NotificatorServiceClient;
     getNotificatorClient(): NotificatorServiceClient {
-        if (!this.notificatorClient) {
-            this.notificatorClient = new NotificatorServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
-        }
-
-        return this.notificatorClient;
+        return new NotificatorServiceClient(this.transport);
     }
 
     // Rector
-    private rectorClient: undefined | RectorServiceClient;
     getRectorClient(): RectorServiceClient {
-        if (!this.rectorClient) {
-            this.rectorClient = new RectorServiceClient(config.apiProtoURL, null, this.grpcClientOptions);
-        }
-
-        return this.rectorClient;
+        return new RectorServiceClient(this.transport);
     }
 }
 
-export class AuthInterceptor implements UnaryInterceptor<any, any> {
-    intercept(request: any, invoker: any) {
-        const { accessToken } = useAuthStore();
-        if (accessToken !== null) {
-            const metadata = request.getMetadata();
-            metadata.Authorization = 'Bearer ' + accessToken;
+export class AuthInterceptor implements RpcInterceptor {
+    interceptUnary(next: NextUnaryFn, method: MethodInfo, input: object, options: RpcOptions): UnaryCall {
+        if (!options.meta) {
+            options.meta = {};
         }
 
-        return invoker(request);
+        const { accessToken } = useAuthStore();
+        if (accessToken !== null) {
+            options.meta['Authorization'] = 'Bearer ' + accessToken;
+        }
+
+        return next(method, input, options);
+    }
+
+    interceptServerStreaming?(
+        next: NextServerStreamingFn,
+        method: MethodInfo,
+        input: object,
+        options: RpcOptions
+    ): ServerStreamingCall {
+        if (!options.meta) {
+            options.meta = {};
+        }
+
+        const { accessToken } = useAuthStore();
+        if (accessToken !== null) {
+            options.meta['Authorization'] = 'Bearer ' + accessToken;
+        }
+
+        return next(method, input, options);
     }
 }

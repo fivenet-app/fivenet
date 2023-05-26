@@ -1,21 +1,20 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, ref } from 'vue';
-import { ClientReadableStream, RpcError } from 'grpc-web';
-import { StreamRequest, StreamResponse } from '@fivenet/gen/services/livemapper/livemap_pb';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { LMap, LLayerGroup, LTileLayer, LControlLayers, LMarker, LPopup, LControl } from '@vue-leaflet/vue-leaflet';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { ValueOf } from '~/utils/types';
-import { DispatchMarker, UserMarker } from '@fivenet/gen/resources/livemap/livemap_pb';
-import { Job } from '@fivenet/gen/resources/jobs/jobs_pb';
+import { DispatchMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { watchDebounced } from '@vueuse/core';
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { useUserSettingsStore } from '~/store/usersettings';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
+import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
+import { RpcError } from 'grpc-web';
 
 const { $grpc, $loading } = useNuxtApp();
 const userSettingsStore = useUserSettingsStore();
@@ -31,8 +30,8 @@ $loading.start();
 
 const { activeChar } = storeToRefs(authStore);
 
-const stream = ref<ClientReadableStream<StreamResponse> | null>(null);
-const error = ref<RpcError | null>(null);
+const abort = ref<AbortController | undefined>();
+const error = ref<string | null>(null);
 
 const centerX = 117.3;
 const centerY = 172.8;
@@ -84,8 +83,8 @@ const dispatchQuery = ref<string>('');
 let dispatchMarkers: DispatchMarker[] = [];
 const dispatchMarkersFiltered = ref<DispatchMarker[]>([]);
 
-async function applyPlayerQuery(): Promise<void> { playerMarkersFiltered.value = playerMarkers.filter(m => (m.getUser()?.getFirstname() + ' ' + m.getUser()?.getLastname()).includes(playerQuery.value)) }
-async function applyDispatchQuery(): Promise<void> { dispatchMarkersFiltered.value = dispatchMarkers.filter(m => m.getPopup().includes(dispatchQuery.value) || m.getName().includes(dispatchQuery.value)) }
+async function applyPlayerQuery(): Promise<void> { playerMarkersFiltered.value = playerMarkers.filter(m => (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value)) }
+async function applyDispatchQuery(): Promise<void> { dispatchMarkersFiltered.value = dispatchMarkers.filter(m => m.popup.includes(dispatchQuery.value) || m.name.includes(dispatchQuery.value)) }
 
 watchDebounced(playerQuery, async () => { applyPlayerQuery() }, { debounce: 600, maxWait: 1750 });
 watchDebounced(dispatchQuery, async () => { applyDispatchQuery() }, { debounce: 600, maxWait: 1750 });
@@ -177,54 +176,54 @@ async function onMapReady($event: any): Promise<void> {
 }
 
 async function startDataStream(): Promise<void> {
-    if (stream.value !== null) return;
+    if (abort.value !== undefined) return;
 
     console.debug('Livemap: Starting Data Stream');
+    try {
+        abort.value = new AbortController();
 
-    const request = new StreamRequest();
+        const call = new LivemapperServiceClient($grpc.getTransport()).
+            stream({}, {
+                abort: abort.value.signal,
+            });
 
-    stream.value = $grpc.getLivemapperClient().
-        stream(request).
-        on('error', async (err: RpcError) => {
-            $grpc.handleRPCError(err);
-            error.value = err;
-            $loading.errored();
-            stopDataStream();
-        }).
-        on('data', async (resp) => {
+        for await (let resp of call.responses) {
             error.value = null;
 
-            markerDispatches.value = resp.getJobsDispatchesList();
-            markerPlayers.value = resp.getJobsUsersList();
+            markerDispatches.value = resp.jobsDispatches;
+            markerPlayers.value = resp.jobsUsers;
 
-            playerMarkers = resp.getUsersList();
-            dispatchMarkers = resp.getDispatchesList();
+            playerMarkers = resp.users;
+            dispatchMarkers = resp.dispatches;
 
             await applyPlayerQuery();
             await applyDispatchQuery();
             applySelectedMarkerCentering();
-        }).
-        on('end', async () => {
-            console.debug('Livemap: Data Stream Ended');
-        });
+        }
+    } catch (e) {
+        const err = e as RpcError;
+        error.value = err.message;
+        $loading.errored();
+        stopDataStream();
+    }
+
+    console.debug('Livemap: Data Stream Ended');
 }
 
 async function stopDataStream(): Promise<void> {
     console.debug('Livemap: Stopping Data Stream');
-    if (stream.value !== null) {
-        stream.value.cancel();
-        stream.value = null;
-    }
+    abort.value?.abort();
+    abort.value = undefined;
 }
 
 async function applySelectedMarkerCentering(): Promise<void> {
     if (!livemapCenterSelectedMarker.value) return;
     if (selectedMarker.value === undefined) return;
 
-    const marker = playerMarkers.find(m => m.getId() === selectedMarker.value) || playerMarkers.find(m => m.getId() === selectedMarker.value);
+    const marker = playerMarkers.find(m => m.id === selectedMarker.value) || playerMarkers.find(m => m.id === selectedMarker.value);
     if (!marker) { selectedMarker.value = undefined; return; };
 
-    map?.panTo([marker.getY(), marker.getX()], {
+    map?.panTo([marker.y, marker.x], {
         animate: true,
         duration: 0.850,
     });
@@ -234,7 +233,7 @@ type TMarker<TType> = TType extends 'player' ? UserMarker : TType extends 'dispa
 
 function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMarker<TType>): L.DivIcon {
     let html = '';
-    let color = marker.getIconColor();
+    let color = marker.iconColor;
     let iconClass = '';
     let iconAnchor: L.PointExpression | undefined = undefined;
     let popupAnchor: L.PointExpression = [0, (livemapMarkerSize.value / 2 * -1)];
@@ -242,7 +241,7 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
     switch (type) {
         case 'player':
             {
-                if (activeChar.value && (marker as UserMarker).getUser()?.getIdentifier() === activeChar.value.getIdentifier()) color = 'FCAB10';
+                if (activeChar.value && (marker as UserMarker).user?.identifier === activeChar.value.identifier) color = 'FCAB10';
                 iconAnchor = [livemapMarkerSize.value / 2, livemapMarkerSize.value];
                 popupAnchor = [0, (livemapMarkerSize.value * -1)];
 
@@ -254,7 +253,7 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
 
         case 'dispatch':
             {
-                if ((marker as DispatchMarker).getActive()) iconClass = 'animate-dispatch';
+                if ((marker as DispatchMarker).active) iconClass = 'animate-dispatch';
 
                 html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${color ? '#' + color : 'currentColor'}" class="w-full h-full">
                     <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
@@ -395,7 +394,7 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 <template>
     <LoadingBar />
     <div class="relative w-full h-full z-0">
-        <div v-if="error || stream === null" class="absolute inset-0 flex justify-center items-center z-20"
+        <div v-if="error || abort === undefined" class="absolute inset-0 flex justify-center items-center z-20"
             style="background-color: rgba(62, 60, 62, 0.5)">
             <DataPendingBlock v-if="!error" :message="$t('components.livemap.starting_datastream')" />
             <DataErrorBlock v-else-if="error" :title="$t('components.livemap.failed_datastream')"
@@ -417,26 +416,25 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
 
             <LControlLayers />
 
-            <LLayerGroup v-for="job in markerPlayers" :key="job.getName()"
-                :name="`${$t('common.employee', 2)} ${job.getLabel()}`" layer-type="overlay" :visible="true">
-                <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.getUser()?.getJob() === job.getName())"
-                    :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
-                    :icon="getIcon('player', marker) as L.Icon" @click="setSelectedMarker(marker.getId())"
-                    :z-index-offset="activeChar && marker.getUser()?.getIdentifier() === activeChar.getIdentifier() ? 25 : 20">
+            <LLayerGroup v-for="job in markerPlayers" :key="job.name" :name="`${$t('common.employee', 2)} ${job.label}`"
+                layer-type="overlay" :visible="true">
+                <LMarker v-for="marker in playerMarkersFiltered.filter(p => p.user?.job === job.name)" :key="marker.id"
+                    :latLng="[marker.y, marker.x]" :name="marker.name" :icon="getIcon('player', marker) as L.Icon"
+                    @click="setSelectedMarker(marker.id)"
+                    :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20">
                     <LPopup :options="{ closeButton: false }"
-                        :content="`<span class='font-semibold'>${$t('common.employee', 2)} ${marker.getUser()?.getJobLabel()}</span><br><span class='italic'>[${marker.getUser()?.getJobGrade()}] ${marker.getUser()?.getJobGradeLabel()}</span><br>${marker.getUser()?.getFirstname()} ${marker.getUser()?.getLastname()}`">
+                        :content="`<span class='font-semibold'>${$t('common.employee', 2)} ${marker.user?.jobLabel}</span><br><span class='italic'>[${marker.user?.jobGrade}] ${marker.user?.jobGradeLabel}</span><br>${marker.user?.firstname} ${marker.user?.lastname}`">
                     </LPopup>
                 </LMarker>
             </LLayerGroup>
 
-            <LLayerGroup v-for="job in markerDispatches" :key="job.getName()"
-                :name="`${$t('common.dispatch', 2)} ${job.getLabel()}`" layer-type="overlay" :visible="true">
-                <LMarker v-for="marker in dispatchMarkersFiltered.filter(m => m.getJob() === job.getName())"
-                    :key="marker.getId()" :latLng="[marker.getY(), marker.getX()]" :name="marker.getName()"
-                    :icon="getIcon('dispatch', marker) as L.Icon" @click="setSelectedMarker(marker.getId())"
-                    :z-index-offset="marker.getActive() ? 15 : 10">
+            <LLayerGroup v-for="job in markerDispatches" :key="job.name" :name="`${$t('common.dispatch', 2)} ${job.label}`"
+                layer-type="overlay" :visible="true">
+                <LMarker v-for="marker in dispatchMarkersFiltered.filter(m => m.job === job.name)" :key="marker.id"
+                    :latLng="[marker.y, marker.x]" :name="marker.name" :icon="getIcon('dispatch', marker) as L.Icon"
+                    @click="setSelectedMarker(marker.id)" :z-index-offset="marker.active ? 15 : 10">
                     <LPopup :options="{ closeButton: false }"
-                        :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.getJobLabel()}</span><br>${marker.getPopup()}<br><span>${useLocaleTimeAgo(toDate(marker.getUpdatedAt())!).value}</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.getName()}</span>`">
+                        :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.jobLabel}</span><br>${marker.popup}<br><span>${useLocaleTimeAgo(toDate(marker.updatedAt)!).value}</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.name}</span>`">
                     </LPopup>
                 </LMarker>
             </LLayerGroup>
@@ -477,14 +475,14 @@ watchDebounced(postalQuery, () => findPostal(), { debounce: 250, maxWait: 850 })
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
                         <span class="text-lg mr-2 text-[#6f7683]">{{ $t('components.livemap.center_selected_marker')
                         }}</span>
-                        <input v-model="livemapCenterSelectedMarker" class="my-auto"
-                            name="livemapMarkerSize" type="checkbox" />
+                        <input v-model="livemapCenterSelectedMarker" class="my-auto" name="livemapMarkerSize"
+                            type="checkbox" />
                     </div>
                     <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
                         <span class="text-lg mr-2 text-[#6f7683]">{{ livemapMarkerSize }}</span>
-                        <input name="livemapMarkerSize" type="range"
-                            class="h-1.5 w-full cursor-grab rounded-full my-auto" min="14" max="34" step="2"
-                            :value="livemapMarkerSize" @change="livemapMarkerSize = ($event.target as any).value" />
+                        <input name="livemapMarkerSize" type="range" class="h-1.5 w-full cursor-grab rounded-full my-auto"
+                            min="14" max="34" step="2" :value="livemapMarkerSize"
+                            @change="livemapMarkerSize = ($event.target as any).value" />
                     </div>
                 </div>
             </LControl>

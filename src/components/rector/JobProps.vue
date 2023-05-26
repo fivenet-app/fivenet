@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { JobProps } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { RpcError } from 'grpc-web';
-import { GetJobPropsRequest, SetJobPropsRequest } from '@fivenet/gen/services/rector/rector_pb';
+import { JobProps } from '~~/gen/ts/resources/jobs/jobs';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import { AdjustmentsVerticalIcon } from '@heroicons/vue/24/outline';
 import { useNotificationsStore } from '~/store/notifications';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -29,16 +28,15 @@ const properties = ref<{
 
 async function getJobProps(): Promise<JobProps> {
     return new Promise(async (res, rej) => {
-        const req = new GetJobPropsRequest();
-
         try {
-            const resp = await $grpc.getRectorClient().
-                getJobProps(req, null);
+            const call = $grpc.getRectorClient().
+                getJobProps({});
+            const { response } = await call;
 
-            if (resp.hasJobProps()) {
-                properties.value.livemapMarkerColor = '#' + resp.getJobProps()?.getLivemapMarkerColor();
+            if (response.jobProps) {
+                properties.value.livemapMarkerColor = '#' + response.jobProps?.livemapMarkerColor;
 
-                const components = resp.getJobProps()!.getQuickButtons().split(';').filter(v => v !== '');
+                const components = response.jobProps!.quickButtons.split(';').filter(v => v !== '');
                 components.forEach((v) => {
                     switch (v) {
                         case 'PenaltyCalculator':
@@ -50,9 +48,9 @@ async function getJobProps(): Promise<JobProps> {
                 });
             }
 
-            return res(resp.getJobProps()!);
+            return res(response.jobProps!);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -62,24 +60,27 @@ const { data: jobProps, pending, refresh, error } = useLazyAsyncData(`rector-job
 
 async function saveJobProps(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new SetJobPropsRequest();
-        const jProps = new JobProps();
-        jProps.setTheme(properties.value.theme);
-        // Remove '#' from color code
-        jProps.setLivemapMarkerColor(properties.value.livemapMarkerColor.substring(1));
-
         // How scuffed do you want this code to be: "Yes"
         let quickButtons = '';
         if (properties.value.quickButtons.PenaltyCalculator) {
             quickButtons += 'PenaltyCalculator;';
         }
-        jProps.setQuickButtons(quickButtons.replace(/;$/, ''));
 
-        req.setJobProps(jProps);
+        const jProps: JobProps = {
+            job: '',
+            theme: properties.value.theme,
+            // Remove '#' from color code
+            livemapMarkerColor: properties.value.livemapMarkerColor.substring(1),
+            quickButtons: '',
+        };
+
+        jProps.quickButtons = quickButtons.replace(/;$/, '');
 
         try {
             await $grpc.getRectorClient().
-                setJobProps(req, null);
+                setJobProps({
+                    jobProps: jProps,
+                });
 
             notifications.dispatchNotification({
                 title: t('notifications.rector.job_props.title'),
@@ -89,7 +90,7 @@ async function saveJobProps(): Promise<void> {
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -125,7 +126,7 @@ async function saveJobProps(): Promise<void> {
                                 {{ $t('common.theme') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                {{ jobProps.getTheme() }}
+                                {{ jobProps.theme }}
                             </dd>
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">

@@ -1,18 +1,17 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
-import { ListDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { Document } from '@fivenet/gen/resources/documents/documents_pb';
-import { PaginationRequest, PaginationResponse } from '@fivenet/gen/resources/common/database/database_pb';
+import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
+import { Document } from '~~/gen/ts/resources/documents/documents';
+import { PaginationRequest, PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import TemplatesModal from './templates/TemplatesModal.vue';
-import { RpcError } from 'grpc-web';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
-import { CompleteDocumentCategoriesRequest } from '@fivenet/gen/services/completor/completor_pb';
+import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
+import { CompleteDocumentCategoriesRequest } from '~~/gen/ts/services/completor/completor';
 import { CheckIcon } from '@heroicons/vue/24/solid';
 
 const { $grpc } = useNuxtApp();
@@ -32,16 +31,15 @@ async function listDocuments(): Promise<Array<Document>> {
         req.setPagination((new PaginationRequest()).setOffset(offset.value));
         req.setOrderbyList([]);
         req.setSearch(search.value.title);
-        if (search.value.category) req.setCategoryIdsList([search.value.category.getId()]);
+        if (search.value.category) req.setCategoryIdsList([search.value.category.id]);
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                listDocuments(req, null);
+                listDocuments(req);
 
             pagination.value = resp.getPagination();
             return res(resp.getDocumentsList());
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -53,12 +51,11 @@ async function findCategories(): Promise<void> {
             const req = new CompleteDocumentCategoriesRequest();
             req.setSearch(queryCategories.value);
 
-            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req, null)
+            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req)
             entriesCategories.value = resp.getCategoriesList();
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -105,18 +102,18 @@ onMounted(async () => {
                                             <ComboboxInput
                                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @change="queryCategories = $event.target.value"
-                                                :display-value="(category: any) => category?.getName()"
+                                                :display-value="(category: any) => category?.name"
                                                 placeholder="Category" />
                                         </ComboboxButton>
 
                                         <ComboboxOptions v-if="entriesCategories.length > 0"
                                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                            <ComboboxOption v-for="category in entriesCategories" :key="category.getId()"
+                                            <ComboboxOption v-for="category in entriesCategories" :key="category.id"
                                                 :value="category" as="category" v-slot="{ active, selected }">
                                                 <li
                                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
                                                     <span :class="['block truncate', selected && 'font-semibold']">
-                                                        {{ category.getName() }}
+                                                        {{ category.name }}
                                                     </span>
 
                                                     <span v-if="selected"
@@ -167,18 +164,18 @@ onMounted(async () => {
                         </button>
                         <div v-else>
                             <ul class="flex flex-col">
-                                <li v-for="doc in documents" :key="doc.getId()"
+                                <li v-for="doc in documents" :key="doc.id"
                                     class="flex-initial my-1 rounded-lg hover:bg-base-800 bg-base-850">
-                                    <NuxtLink :to="{ name: 'documents-id', params: { id: doc.getId() } }">
+                                    <NuxtLink :to="{ name: 'documents-id', params: { id: doc.id } }">
                                         <div class="mx-2 mt-1 mb-4">
                                             <div class="flex flex-row">
                                                 <p class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-                                                    {{ doc.getTitle() }}
+                                                    {{ doc.title }}
                                                 </p>
                                                 <p class="px-2 py-2 ml-auto text-sm text-neutral">
                                                 <p
                                                     class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700">
-                                                    {{ doc.getState() }}
+                                                    {{ doc.state }}
                                                 </p>
                                                 </p>
                                             </div>
@@ -186,22 +183,22 @@ onMounted(async () => {
                                                 <div class="flex flex-row items-center justify-start flex-1">
                                                     <UserIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
-                                                    {{ doc.getCreator()?.getFirstname() }}, {{
-                                                        doc.getCreator()?.getLastname()
+                                                    {{ doc.getCreator()?.firstname }}, {{
+                                                        doc.getCreator()?.lastname
                                                     }}
                                                 </div>
                                                 <div class="flex flex-row items-center justify-center flex-1">
                                                     <BriefcaseIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
-                                                    {{ doc.getCreator()?.getJobLabel() }}
+                                                    {{ doc.getCreator()?.jobLabel }}
                                                 </div>
                                                 <div class="flex flex-row items-center justify-end flex-1">
                                                     <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
                                                     <p>
                                                         {{ $t('common.created') }} <time
-                                                            :datetime="$d(doc.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')">
-                                                            {{ useLocaleTimeAgo(toDate(doc.getCreatedAt())!).value }}
+                                                            :datetime="$d(doc.createdAt?.timestamp?.toDate()!, 'short')">
+                                                            {{ useLocaleTimeAgo(toDate(doc.createdAt)!).value }}
                                                         </time>
                                                     </p>
                                                 </div>

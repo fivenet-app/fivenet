@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { DocumentCategory } from '@fivenet/gen/resources/documents/category_pb';
-import { RpcError } from 'grpc-web';
+import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import Cards from '~/components/partials/Cards.vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
@@ -8,7 +7,7 @@ import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { CardElements } from '~/utils/types';
 import CategoryModal from './CategoryModal.vue';
 import { defineRule } from 'vee-validate';
-import { CreateDocumentCategoryRequest, ListDocumentCategoriesRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { CreateDocumentCategoryRequest, ListDocumentCategoriesRequest } from '~~/gen/ts/services/docstore/docstore';
 import { max, min, required } from '@vee-validate/rules';
 
 const { $grpc } = useNuxtApp();
@@ -22,11 +21,10 @@ async function getCategories(): Promise<Array<DocumentCategory>> {
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                listDocumentCategories(req, null);
+                listDocumentCategories(req);
 
             return res(resp.getCategoryList());
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -37,7 +35,7 @@ watch(categories, () => {
         items.value.length = 0;
     }
     categories.value?.forEach((v) => {
-        items.value.push({ title: v?.getName(), description: v?.getDescription() });
+        items.value.push({ title: v?.name, description: v?.getDescription() });
     });
 });
 
@@ -59,13 +57,12 @@ async function createDocumentCategory(values: FormData): Promise<void> {
 
         try {
             await $grpc.getDocStoreClient().
-                createDocumentCategory(req, null);
+                createDocumentCategory(req);
 
             refresh();
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });

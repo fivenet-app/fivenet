@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { TemplateShort } from '@fivenet/gen/resources/documents/templates_pb';
-import { ListTemplatesRequest } from '@fivenet/gen/services/docstore/docstore_pb';
+import { TemplateShort } from '~~/gen/ts/resources/documents/templates';
+import { ListTemplatesRequest } from '~~/gen/ts/services/docstore/docstore';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
-import { RpcError } from 'grpc-web';
 import Cards from '~/components/partials/Cards.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
@@ -22,11 +21,10 @@ async function listTemplates(): Promise<Array<TemplateShort>> {
 
         try {
             const resp = await $grpc.getDocStoreClient().
-                listTemplates(req, null);
+                listTemplates(req);
 
             return res(resp.getTemplatesList());
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -34,7 +32,7 @@ async function listTemplates(): Promise<Array<TemplateShort>> {
 
 const items = ref<CardElements>([]);
 watch(templates, () => templates.value?.forEach((v) => {
-    items.value.push({ title: v?.getTitle(), description: v?.getDescription() });
+    items.value.push({ title: v?.title, description: v?.getDescription() });
 }));
 
 function selected(idx: number): TemplateShort {
