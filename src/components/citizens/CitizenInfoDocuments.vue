@@ -8,6 +8,7 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { DOC_RELATION_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
 import { DocumentTextIcon, ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
+import { LockClosedIcon, LockOpenIcon } from '@heroicons/vue/20/solid';
 
 const { $grpc } = useNuxtApp();
 
@@ -75,6 +76,22 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                             </NuxtLink>
                                         </span>
                                         <span>
+                                            <div v-if="relation.getDocument()?.getClosed()"
+                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
+                                                <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                                <span class="text-sm font-medium text-error-700">
+                                                    {{ $t('common.close', 2) }}
+                                                </span>
+                                            </div>
+                                            <div v-else
+                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
+                                                <LockOpenIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
+                                                <span class="text-sm font-medium text-green-700">
+                                                    {{ $t('common.open') }}
+                                                </span>
+                                            </div>
+                                        </span>
+                                        <span>
                                             <NuxtLink
                                                 :to="{ name: 'citizens-id', params: { id: relation.getTargetUserId() } }"
                                                 class="inline-flex space-x-2 text-sm truncate group">
@@ -115,6 +132,9 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                             {{ $t('common.document', 1) }}
                                         </th>
                                         <th class="px-6 py-3 text-sm font-semibold text-left " scope="col">
+                                            {{ $t('common.close', 2) }}
+                                        </th>
+                                        <th class="px-6 py-3 text-sm font-semibold text-left " scope="col">
                                             {{ $t('common.target') }}
                                         </th>
                                         <th class="px-6 py-3 text-sm font-semibold text-right " scope="col">
@@ -139,6 +159,22 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                                     }}: {{ relation.getDocument()?.getCategory()?.getName() }})
                                                 </span>
                                             </NuxtLink>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm">
+                                            <div v-if="relation.getDocument()?.getClosed()"
+                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
+                                                <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                                <span class="text-sm font-medium text-error-700">
+                                                    {{ $t('common.close', 2) }}
+                                                </span>
+                                            </div>
+                                            <div v-else
+                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
+                                                <LockOpenIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
+                                                <span class="text-sm font-medium text-green-700">
+                                                    {{ $t('common.open') }}
+                                                </span>
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm">
                                             <div class="flex">
@@ -170,7 +206,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                             <time
                                                 :datetime="$d(relation.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')">
-                                                {{ useLocaleTimeAgo(toDate(relation.getCreatedAt())!).value }}
+                                                {{ $d(toDate(relation.getCreatedAt())!) }}
                                             </time>
                                         </td>
                                     </tr>

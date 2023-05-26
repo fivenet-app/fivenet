@@ -169,11 +169,15 @@ function addToClipboard(): void {
                             <div v-if="document?.getClosed()"
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
                                 <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
-                                <span class="text-sm font-medium text-error-700">{{ $t('common.close', 2) }}</span>
+                                <span class="text-sm font-medium text-error-700">
+                                    {{ $t('common.close', 2) }}
+                                </span>
                             </div>
                             <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
                                 <LockOpenIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
-                                <span class="text-sm font-medium text-green-700">{{ $t('common.open') }}</span>
+                                <span class="text-sm font-medium text-green-700">
+                                    {{ $t('common.open') }}
+                                </span>
                             </div>
                             <div
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500">
@@ -219,7 +223,7 @@ function addToClipboard(): void {
                             <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
                                 <div id="editor">
                                     <QuillEditor content-type="html" :content="document?.getContent()" :toolbar="[]"
-                                    theme="snow" :read-only="true" />
+                                        theme="snow" :read-only="true" />
                                 </div>
                             </div>
                         </div>

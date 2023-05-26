@@ -250,7 +250,7 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 		WHERE(
 			locs.Hidden.IS_FALSE().
 				AND(
-					locs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(120, jet.MINUTE))),
+					locs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE))),
 				),
 		)
 
