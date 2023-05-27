@@ -17,13 +17,13 @@ const emit = defineEmits<{
 
 const states = ref<typeof props.states>(props.states);
 const id = ref<number>(props.attribute.attrId);
-const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
 
 const jobGrades = ref<Map<string, JobGrade>>(new Map());
 
+const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
 if (!states.value.has(id.value)) {
     switch (props.attribute.type) {
-        case 'stringList':
+        case 'StringList':
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'stringList',
@@ -34,7 +34,7 @@ if (!states.value.has(id.value)) {
             });
             break;
 
-        case 'jobList':
+        case 'JobList':
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'jobList',
@@ -45,7 +45,7 @@ if (!states.value.has(id.value)) {
             });
             break;
 
-        case 'jobGradeList':
+        case 'JobGradeList':
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'jobGradeList',
@@ -165,7 +165,7 @@ onMounted(() => {
             </DisclosureButton>
             <DisclosurePanel class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2">
                 <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
-                    <div v-if="state.validValues.oneofKind === 'stringList' && validValues && validValues?.validValues.oneofKind === 'stringList'"
+                    <div v-if="state.validValues.oneofKind === 'stringList' && validValues?.validValues && validValues?.validValues.oneofKind === 'stringList'"
                         class="flex flex-row gap-4 flex-wrap">
                         <div v-for="value in validValues.validValues.stringList.strings"
                             :key="value" class="flex flex-row flex-initial flex-nowrap">
@@ -176,7 +176,7 @@ onMounted(() => {
                             <span class="ml-1">{{ value }}</span>
                         </div>
                     </div>
-                    <div v-else-if="state.validValues.oneofKind === 'jobList' && validValues && validValues?.validValues.oneofKind === 'jobList'" class="flex flex-row gap-4 flex-wrap">
+                    <div v-else-if="state.validValues.oneofKind === 'jobList' && validValues?.validValues && validValues?.validValues.oneofKind === 'jobList'" class="flex flex-row gap-4 flex-wrap">
                         <div v-for="job in props.jobs.filter(j => validValues?.validValues.oneofKind === 'jobList' && (!validValues?.validValues.jobList?.strings.length || validValues.validValues?.jobList?.strings.includes(j.name)))"
                             :key="job.name" class="flex flex-row flex-initial flex-nowrap">
                             <input :id="job.name" :name="job.name" type="checkbox"
@@ -186,7 +186,7 @@ onMounted(() => {
                             <span class="ml-1">{{ job.label }}</span>
                         </div>
                     </div>
-                    <div v-else-if="state.validValues.oneofKind === 'jobGradeList' && validValues && validValues.validValues.oneofKind === 'jobGradeList'" class="flex flex-col gap-2">
+                    <div v-else-if="state.validValues.oneofKind === 'jobGradeList' && validValues?.validValues && validValues.validValues.oneofKind === 'jobGradeList'" class="flex flex-col gap-2">
                         <div v-for="job in  props.jobs " :key="job.name"
                             class="flex flex-row flex-initial flex-nowrap gap-2">
                             <input :id="job.name" :name="job.name" type="checkbox"
