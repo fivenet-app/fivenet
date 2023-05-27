@@ -5,6 +5,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { useAuthStore } from '~/store/auth';
 import { NotificationType } from '~/composables/notification/interfaces/Notification.interface';
 import { useNotificationsStore } from '~/store/notifications';
+import { StatusCode } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const store = useNotificatorStore();
@@ -85,7 +86,12 @@ async function streamNotifications(): Promise<void> {
 
         console.debug('Notificator: Stream ended');
     } catch (e) {
-        console.debug('Notificator: Stream errored', e as RpcError);
+        const err = e as RpcError;
+        if (err.code == StatusCode.CANCELLED) {
+            return;
+        }
+
+        console.debug('Notificator: Stream errored', err);
         restartStream();
     }
 

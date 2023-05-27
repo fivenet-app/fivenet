@@ -19,9 +19,9 @@ export interface DocumentCategory {
      */
     description?: string; // @gotags: alias:"description"
     /**
-     * @generated from protobuf field: string job = 4;
+     * @generated from protobuf field: optional string job = 4;
      */
-    job: string; // @gotags: alias:"job"
+    job?: string; // @gotags: alias:"job"
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DocumentCategory$Type extends MessageType<DocumentCategory> {
@@ -30,7 +30,7 @@ class DocumentCategory$Type extends MessageType<DocumentCategory> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
             { no: 3, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
+            { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);
     }
 }

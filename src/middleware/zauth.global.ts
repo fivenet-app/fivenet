@@ -24,19 +24,16 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                     const { $grpc } = useNuxtApp();
 
                     try {
-                        const call = await $grpc.getAuthClient().chooseCharacter({
+                        const call = $grpc.getAuthClient().chooseCharacter({
                             charId: lastCharID.value,
                         });
-                        if (await $grpc.handleError(call.status)) {
-                            throw new Error(call.status.detail);
-                        }
+                        const { response } = await call;
 
-                        let resp = call.response;
-                        setAccessToken(resp.token, toDate(resp.expires) as null | Date);
-                        setActiveChar(resp.char!);
-                        setPermissions(resp.permissions);
-                        if (resp.jobProps) {
-                            setJobProps(resp.jobProps!);
+                        setAccessToken(response.token, toDate(response.expires) as null | Date);
+                        setActiveChar(response.char!);
+                        setPermissions(response.permissions);
+                        if (response.jobProps) {
+                            setJobProps(response.jobProps!);
                         } else {
                             setJobProps(null);
                         }

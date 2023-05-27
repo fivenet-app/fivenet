@@ -1,10 +1,7 @@
 <script lang="ts" setup>
-defineProps({
-    sex: {
-        required: true,
-        type: String,
-    },
-});
+defineProps<{
+    sex: string,
+}>();
 </script>
 
 <template>

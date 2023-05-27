@@ -1,16 +1,11 @@
 <script lang="ts" setup>
 import { PlusIcon } from '@heroicons/vue/24/solid';
 
-defineProps({
-    callback: {
-        type: Function,
-        required: true,
-    },
-    title: {
-        type: String,
-        required: false,
-        default: '',
-    },
+withDefaults(defineProps<{
+    callback: Function,
+    title?: string,
+}>(), {
+    title: '',
 });
 </script>
 

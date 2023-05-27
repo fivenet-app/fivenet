@@ -24,9 +24,9 @@ export interface Job {
  */
 export interface JobGrade {
     /**
-     * @generated from protobuf field: string job_name = 1;
+     * @generated from protobuf field: optional string job_name = 1;
      */
-    jobName: string; // @gotags: alias:"job_name"
+    jobName?: string; // @gotags: alias:"job_name"
     /**
      * @generated from protobuf field: int32 grade = 2;
      */
@@ -75,7 +75,7 @@ export const Job = new Job$Type();
 class JobGrade$Type extends MessageType<JobGrade> {
     constructor() {
         super("resources.jobs.JobGrade", [
-            { no: 1, name: "job_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 1, name: "job_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 2, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 3, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);

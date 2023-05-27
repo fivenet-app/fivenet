@@ -7,8 +7,8 @@ import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { CardElements } from '~/utils/types';
 import CategoryModal from './CategoryModal.vue';
 import { defineRule } from 'vee-validate';
-import { CreateDocumentCategoryRequest, ListDocumentCategoriesRequest } from '~~/gen/ts/services/docstore/docstore';
 import { max, min, required } from '@vee-validate/rules';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -17,14 +17,14 @@ const items = ref<CardElements>([]);
 
 async function getCategories(): Promise<Array<DocumentCategory>> {
     return new Promise(async (res, rej) => {
-        const req = new ListDocumentCategoriesRequest();
-
         try {
-            const resp = await $grpc.getDocStoreClient().
-                listDocumentCategories(req);
+            const call = $grpc.getDocStoreClient().
+                listDocumentCategories({});
+            const { response } = await call;
 
-            return res(resp.getCategoryList());
+            return res(response.category);
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -35,7 +35,7 @@ watch(categories, () => {
         items.value.length = 0;
     }
     categories.value?.forEach((v) => {
-        items.value.push({ title: v?.name, description: v?.getDescription() });
+        items.value.push({ title: v?.name, description: v?.description });
     });
 });
 
@@ -49,15 +49,15 @@ async function openCategory(idx: number): Promise<void> {
 
 async function createDocumentCategory(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new CreateDocumentCategoryRequest();
-        const cat = new DocumentCategory();
-        cat.setName(values.name);
-        cat.setDescription(values.description);
-        req.setCategory(cat);
-
         try {
             await $grpc.getDocStoreClient().
-                createDocumentCategory(req);
+                createDocumentCategory({
+                    category: {
+                        id: 0,
+                        name: values.name,
+                        description: values.description,
+                    },
+                });
 
             refresh();
 
@@ -112,7 +112,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                         {{ $t('common.description') }}
                                     </label>
                                     <div class="relative flex items-center mt-2">
-                                        <VeeField type="text" name="description" :placeholder="$t('common.description')" :label="$t('common.description')"
+                                        <VeeField type="text" name="description" :placeholder="$t('common.description')"
+                                            :label="$t('common.description')"
                                             class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
                                         <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>

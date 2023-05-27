@@ -4,8 +4,8 @@ import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useClipboardStore, getUser } from '~/store/clipboard';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { AddDocumentRelationRequest, CreateDocumentRequest, GetDocumentRequest, RemoveDocumentRelationRequest, UpdateDocumentRequest, RemoveDocumentReferenceRequest, AddDocumentReferenceRequest, GetTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
-import { DocumentAccess, DocumentJobAccess, DocumentReference, DocumentRelation, DocumentUserAccess, DOC_CONTENT_TYPE, DOC_RELATION } from '~~/gen/ts/resources/documents/documents';
+import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
+import { DocumentAccess, DocumentReference, DocumentRelation, DOC_CONTENT_TYPE, DOC_RELATION } from '~~/gen/ts/resources/documents/documents';
 import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import {
     PlusIcon,
@@ -25,15 +25,14 @@ import {
     ComboboxOption,
     ComboboxOptions
 } from '@headlessui/vue';
-import { CompleteDocumentCategoriesRequest } from '~~/gen/ts/services/completor/completor';
 import { watchDebounced } from '@vueuse/core';
-import { ACCESS_LEVEL_Util } from '~~/gen/ts/resources/documents/access.pb_enums';
 import DocumentReferenceManager from './DocumentReferenceManager.vue';
 import DocumentRelationManager from './DocumentRelationManager.vue';
 import DocumentAccessEntry from './DocumentAccessEntry.vue';
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
 import { useNotificationsStore } from '~/store/notifications';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -45,12 +44,9 @@ const { t } = useI18n();
 
 const route = useRoute();
 
-const props = defineProps({
-    id: {
-        required: false,
-        type: Number
-    },
-});
+const props = defineProps<{
+    id?: number,
+}>();
 
 const { activeChar } = storeToRefs(authStore);
 
@@ -75,12 +71,12 @@ const access = ref<Map<number, { id: number, type: number, values: { job?: strin
 const relationManagerShow = ref<boolean>(false);
 const relationManagerData = ref<Map<number, DocumentRelation>>(new Map());
 const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
-watch(currentRelations, () => currentRelations.value.forEach(e => relationManagerData.value.set(e.id, e)))
+watch(currentRelations, () => currentRelations.value.forEach(e => relationManagerData.value.set(e.id!, e)))
 
 const referenceManagerShow = ref<boolean>(false);
 const referenceManagerData = ref<Map<number, DocumentReference>>(new Map());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
-watch(currentReferences, () => currentReferences.value.forEach(e => referenceManagerData.value.set(e.id, e)))
+watch(currentReferences, () => currentReferences.value.forEach(e => referenceManagerData.value.set(e.id!, e)))
 
 let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
@@ -92,75 +88,78 @@ onMounted(async () => {
     await findCategories();
 
     if (route.query.templateId) {
-        const req = new GetTemplateRequest();
-        req.setTemplateId(parseInt(route.query.templateId as string));
-        req.setRender(true);
-
         const data = clipboardStore.getTemplateData();
-        data.setActivechar(activeChar.value!);
-        req.setData(JSON.stringify(data.toObject()));
+        data.activeChar = activeChar.value!;
 
         try {
-            const resp = await $grpc.getDocStoreClient().
-                getTemplate(req);
+            const call = $grpc.getDocStoreClient().
+                getTemplate({
+                    templateId: parseInt(route.query.templateId as string),
+                    data: JSON.stringify(data),
+                    render: true,
+                });
+            const { response } = await call;
 
-            const template = resp.getTemplate();
-            doc.value.title = template?.getContentTitle()!;
-            doc.value.content = template?.getContent()!;
+            const template = response.template;
+            doc.value.title = template?.contentTitle!;
+            doc.value.content = template?.content!;
             selectedCategory.value = entriesCategory.find(e => e.id === template?.category?.id);
 
-            if (template?.hasContentAccess()) {
-                const docAccess = template?.getContentAccess()!;
+            if (template?.contentAccess) {
+                const docAccess = template?.contentAccess!;
                 let accessId = 0;
-                docAccess.getUsersList().forEach(user => {
-                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.getAccess() } });
+                docAccess.users.forEach(user => {
+                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.access } });
                     accessId++;
                 });
 
-                docAccess.getJobsList().forEach(job => {
-                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                docAccess.jobs.forEach(job => {
+                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.access, minimumrank: job.minimumGrade } });
                     accessId++;
                 });
             }
         } catch (e) {
+            $grpc.handleError(e as RpcError);
         }
     } else if (props.id) {
-        const req = new GetDocumentRequest();
-        req.setDocumentId(props.id);
-
-        $grpc.getDocStoreClient().getDocument(req).then(async (resp) => {
-            const document = resp.document;
-            const docAccess = resp.getAccess();
+        try {
+            const req = { documentId: props.id };
+            const call = $grpc.getDocStoreClient().getDocument(req);
+            const { response } = await call;
+            const document = response.document;
+            const docAccess = response.access;
 
             if (document) {
                 doc.value.title = document.title;
-                doc.value.content = document.getContent();
+                doc.value.content = document.content;
                 doc.value.closed = openclose.find(e => e.closed === document.closed) as { id: number; label: string; closed: boolean; };
                 doc.value.state = document.state;
                 selectedCategory.value = entriesCategory.find(e => e.id === document.category?.id);
-                isPublic.value = document.getPublic();
+                isPublic.value = document.public;
 
                 const refs = await $grpc.getDocStoreClient().getDocumentReferences(req);
-                currentReferences.value = refs.getReferencesList();
+                currentReferences.value = refs.response.references;
                 const rels = await $grpc.getDocStoreClient().getDocumentRelations(req);
-                currentRelations.value = rels.getRelationsList();
+                currentRelations.value = rels.response.relations;
             };
 
             if (docAccess) {
                 let accessId = 0;
 
-                docAccess.getUsersList().forEach(user => {
-                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.getAccess() } });
+                docAccess.users.forEach(user => {
+                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.access } });
                     accessId++;
                 });
 
-                docAccess.getJobsList().forEach(job => {
-                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                docAccess.jobs.forEach(job => {
+                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.access, minimumrank: job.minimumGrade } });
                     accessId++;
                 });
             }
 
-        });
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+        }
     } else {
         if (documentStore.$state) {
             doc.value.title = documentStore.$state.title;
@@ -175,16 +174,15 @@ onMounted(async () => {
     }
 
     clipboardStore.users.forEach((user, i) => {
-        const rel = new DocumentRelation();
-        rel.setId(i);
-        rel.setDocumentId(props.id!);
-        rel.setTargetUserId(user.id!);
-        rel.setTargetUser(getUser(user));
-        rel.setSourceUserId(activeChar.value!.userId);
-        rel.setSourceUser(activeChar.value!);
-        rel.setRelation(DOC_RELATION.CAUSED);
-
-        relationManagerData.value.set(i, rel);
+        relationManagerData.value.set(i, {
+            id: i,
+            documentId: props.id!,
+            targetUserId: user.id!,
+            targetUser: getUser(user),
+            sourceUserId: activeChar.value!.userId,
+            sourceUser: activeChar.value!,
+            relation: DOC_RELATION.CAUSED,
+        });
     })
 
     canEdit.value = true;
@@ -211,14 +209,16 @@ watchDebounced(queryCategory, () => findCategories(), { debounce: 600, maxWait: 
 async function findCategories(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const req = new CompleteDocumentCategoriesRequest();
-            req.setSearch(queryCategory.value);
+            const call = $grpc.getCompletorClient().completeDocumentCategories({
+                search: queryCategory.value,
+            });
+            const { response } = await call;
 
-            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req)
-            entriesCategory = resp.getCategoriesList();
+            entriesCategory = response.categories;
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -290,7 +290,7 @@ function updateAccessEntryRank(event: {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
-    accessEntry.values.minimumrank = event.rank.getGrade();
+    accessEntry.values.minimumrank = event.rank.grade;
     access.value.set(event.id, accessEntry);
 }
 
@@ -308,61 +308,70 @@ function updateAccessEntryAccess(event: {
 async function submitForm(): Promise<void> {
     return new Promise(async (res, rej) => {
         // Prepare request
-        const req = new CreateDocumentRequest();
-        req.setTitle(doc.value.title);
-        req.setContent(doc.value.content);
-        req.setContentType(DOC_CONTENT_TYPE.HTML);
-        req.setClosed(doc.value.closed.closed);
-        req.setState(doc.value.state);
-        req.setPublic(isPublic.value);
+        const req: CreateDocumentRequest = {
+            title: doc.value.title,
+            content: doc.value.content,
+            contentType: DOC_CONTENT_TYPE.HTML,
+            closed: doc.value.closed.closed,
+            state: doc.value.state,
+            public: isPublic.value,
+        };
         if (selectedCategory.value != undefined)
-            req.setCategoryId(selectedCategory.value.id);
+            req.categoryId = selectedCategory.value.id;
 
-        const reqAccess = new DocumentAccess();
+        const reqAccess: DocumentAccess = {
+            jobs: [],
+            users: [],
+        };
         access.value.forEach(entry => {
             if (entry.values.accessrole === undefined) return;
 
             if (entry.type === 0) {
                 if (!entry.values.char) return;
 
-                const user = new DocumentUserAccess();
-                user.setUserId(entry.values.char);
-                user.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-
-                reqAccess.addUsers(user);
+                reqAccess.users.push({
+                    id: 0,
+                    documentId: 0,
+                    userId: entry.values.char,
+                    access: entry.values.accessrole,
+                });
             } else if (entry.type === 1) {
                 if (!entry.values.job) return;
 
-                const job = new DocumentJobAccess();
-                job.setJob(entry.values.job);
-                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-
-                reqAccess.addJobs(job);
+                reqAccess.jobs.push({
+                    id: 0,
+                    documentId: 0,
+                    job: entry.values.job,
+                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
+                    access: entry.values.accessrole,
+                });
             }
         });
-        req.setAccess(reqAccess);
+        req.access = reqAccess;
 
         // Try to submit to server
         try {
-            const resp = await $grpc.getDocStoreClient().
+            const call = $grpc.getDocStoreClient().
                 createDocument(req);
+            const { response } = await call;
 
             const promises = new Array<Promise<any>>();
             referenceManagerData.value.forEach((ref) => {
-                ref.setSourceDocumentId(resp.documentId);
+                ref.sourceDocumentId = response.documentId;
 
-                const req = new AddDocumentReferenceRequest();
-                req.setReference(ref);
-                promises.push($grpc.getDocStoreClient().addDocumentReference(req));
+                const prom = $grpc.getDocStoreClient().addDocumentReference({
+                    reference: ref,
+                });
+                promises.push(prom.response);
             });
 
             relationManagerData.value.forEach((rel) => {
-                rel.setDocumentId(resp.documentId);
+                rel.documentId = response.documentId;
 
-                const req = new AddDocumentRelationRequest();
-                req.setRelation(rel);
-                promises.push($grpc.getDocStoreClient().addDocumentRelation(req));
+                const prom = $grpc.getDocStoreClient().addDocumentRelation({
+                    relation: rel,
+                });
+                promises.push(prom.response);
             });
             await Promise.all(promises);
 
@@ -374,7 +383,7 @@ async function submitForm(): Promise<void> {
             clipboardStore.clearActiveStack();
             documentStore.clear();
 
-            await navigateTo({ name: 'documents-id', params: { id: resp.documentId } });
+            await navigateTo({ name: 'documents-id', params: { id: response.documentId } });
 
             return res();
         } catch (e) {
@@ -385,84 +394,89 @@ async function submitForm(): Promise<void> {
 
 async function editForm(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new UpdateDocumentRequest();
-        req.setDocumentId(props.id!);
-        req.setTitle(doc.value.title);
-        req.setContent(doc.value.content);
-        req.setContentType(DOC_CONTENT_TYPE.HTML);
-        req.setClosed(doc.value.closed.closed);
-        req.setState(doc.value.state);
-        req.setPublic(isPublic.value);
+        const req: UpdateDocumentRequest = {
+            documentId: props.id!,
+            title: doc.value.title,
+            content: doc.value.content,
+            contentType: DOC_CONTENT_TYPE.HTML,
+            closed: doc.value.closed.closed,
+            state: doc.value.state,
+            public: isPublic.value,
+        };
         if (selectedCategory.value != undefined)
-            req.setCategoryId(selectedCategory.value.id);
+            req.categoryId = selectedCategory.value.id;
 
-        const reqAccess = new DocumentAccess();
+        const reqAccess: DocumentAccess = {
+            jobs: [],
+            users: [],
+        };
         access.value.forEach(entry => {
             if (entry.values.accessrole === undefined) return;
 
             if (entry.type === 0) {
                 if (!entry.values.char) return;
 
-                const user = new DocumentUserAccess();
-                user.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-                user.setUserId(entry.values.char);
-                if (activeChar.value) user.setCreatorId(activeChar.value.userId);
-
-                reqAccess.addUsers(user);
+                reqAccess.users.push({
+                    id: 0,
+                    documentId: 0,
+                    access: entry.values.accessrole,
+                    userId: entry.values.char,
+                });
             } else if (entry.type === 1) {
                 if (!entry.values.job) return;
 
-                const job = new DocumentJobAccess();
-                job.setJob(entry.values.job);
-                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-                if (activeChar.value) job.setCreatorId(activeChar.value.userId);
-
-                reqAccess.addJobs(job);
+                reqAccess.jobs.push({
+                    id: 0,
+                    documentId: 0,
+                    access: entry.values.accessrole,
+                    job: entry.values.job,
+                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
+                });
             }
         });
-        req.setAccess(reqAccess);
+        req.access = reqAccess;
 
         try {
-            const resp = await $grpc.getDocStoreClient().
+            const call = $grpc.getDocStoreClient().
                 updateDocument(req);
+            const { response } = await call;
 
             const referencesToRemove: number[] = [];
             currentReferences.value.forEach((ref) => {
-                if (!referenceManagerData.value.has(ref.id)) referencesToRemove.push(ref.id);
+                if (!referenceManagerData.value.has(ref.id!)) referencesToRemove.push(ref.id!);
             });
             referencesToRemove.forEach((id) => {
-                const req = new RemoveDocumentReferenceRequest();
-                req.setId(id);
-                $grpc.getDocStoreClient().removeDocumentReference(req);
+                $grpc.getDocStoreClient().removeDocumentReference({
+                    id: id,
+                });
             });
 
             const relationsToRemove: number[] = [];
             currentRelations.value.forEach((rel) => {
-                if (!relationManagerData.value.has(rel.id)) relationsToRemove.push(rel.id);
+                if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
             });
             relationsToRemove.forEach((id) => {
-                const req = new RemoveDocumentRelationRequest();
-                req.setId(id);
-                $grpc.getDocStoreClient().removeDocumentRelation(req);
+                $grpc.getDocStoreClient().removeDocumentRelation({
+                    id: id,
+                });
             });
 
             referenceManagerData.value.forEach((ref) => {
-                if (currentReferences.value.find(r => r.id === ref.id)) return;
-                ref.setSourceDocumentId(resp.documentId);
+                if (currentReferences.value.find(r => r.id === ref.id!)) return;
+                ref.sourceDocumentId = response.documentId;
 
-                const req = new AddDocumentReferenceRequest();
-                req.setReference(ref);
-                $grpc.getDocStoreClient().addDocumentReference(req);
+                $grpc.getDocStoreClient().addDocumentReference({
+                    reference: ref,
+                });
             });
 
             relationManagerData.value.forEach((rel) => {
-                if (currentRelations.value.find(r => r.id === rel.id)) return;
-                rel.setDocumentId(resp.documentId);
+                if (currentRelations.value.find(r => r.id === rel.id!)) return;
+                rel.documentId = response.documentId;
 
-                const req = new AddDocumentRelationRequest();
-                req.setRelation(rel);
-                $grpc.getDocStoreClient().addDocumentRelation(req);
+                $grpc.getDocStoreClient().addDocumentRelation({
+                    relation: rel,
+                });
             });
 
             notifications.dispatchNotification({
@@ -473,7 +487,7 @@ async function editForm(): Promise<void> {
             clipboardStore.clearActiveStack();
             documentStore.clear();
 
-            await navigateTo({ name: 'documents-id', params: { id: resp.documentId } });
+            await navigateTo({ name: 'documents-id', params: { id: response.documentId } });
             return res();
         } catch (e) {
             return rej(e as RpcError);

@@ -6,6 +6,7 @@ import { TagIcon } from '@heroicons/vue/24/solid';
 import { max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
 import { useNotificationsStore } from '~/store/notifications';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const notifications = useNotificationsStore();
@@ -17,25 +18,18 @@ const emit = defineEmits<{
     (e: 'close'): void,
 }>();
 
-const props = defineProps({
-    open: {
-        required: true,
-        type: Boolean,
-    },
-    category: {
-        type: DocumentCategory,
-        required: false,
-    },
-});
+const props = defineProps<{
+    open: boolean,
+    category?: DocumentCategory,
+}>();
 
 async function deleteCategory(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new DeleteDocumentCategoryRequest();
-        req.setIdsList([props.category?.id!]);
-
         try {
             await $grpc.getDocStoreClient()
-                .deleteDocumentCategory(req);
+                .deleteDocumentCategory({
+                    ids: [props.category?.id!],
+                });
 
             notifications.dispatchNotification({
                 title: t('notifications.category_deleted.title'),
@@ -47,6 +41,7 @@ async function deleteCategory(): Promise<void> {
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -54,14 +49,14 @@ async function deleteCategory(): Promise<void> {
 
 async function updateCategory(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new UpdateDocumentCategoryRequest();
-        props.category?.setName(values.name);
-        props.category?.setDescription(values.description);
-        req.setCategory(props.category);
+        props.category!.name = values.name;
+        props.category!.description = values.description;
 
         try {
             await $grpc.getDocStoreClient()
-                .updateDocumentCategory(req);
+                .updateDocumentCategory({
+                    category: props.category!,
+                });
 
             notifications.dispatchNotification({
                 title: t('notifications.category_updated.title'),
@@ -72,6 +67,7 @@ async function updateCategory(values: FormData): Promise<void> {
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });

@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
 import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
 import { Document } from '~~/gen/ts/resources/documents/documents';
-import { PaginationRequest, PaginationResponse } from '~~/gen/ts/resources/common/database/database';
+import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import TemplatesModal from './templates/TemplatesModal.vue';
@@ -11,8 +11,8 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
-import { CompleteDocumentCategoriesRequest } from '~~/gen/ts/services/completor/completor';
 import { CheckIcon } from '@heroicons/vue/24/solid';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -27,19 +27,26 @@ const { data: documents, pending, refresh, error } = useLazyAsyncData(`documents
 
 async function listDocuments(): Promise<Array<Document>> {
     return new Promise(async (res, rej) => {
-        const req = new ListDocumentsRequest();
-        req.setPagination((new PaginationRequest()).setOffset(offset.value));
-        req.setOrderbyList([]);
-        req.setSearch(search.value.title);
-        if (search.value.category) req.setCategoryIdsList([search.value.category.id]);
+        const req: ListDocumentsRequest = {
+            pagination: {
+                offset: offset.value,
+            },
+            orderBy: [],
+            search: search.value.title,
+            categoryIds: [],
+            creatorIds: [],
+        };
+        if (search.value.category) req.categoryIds.push(search.value.category.id);
 
         try {
-            const resp = await $grpc.getDocStoreClient().
+            const call = $grpc.getDocStoreClient().
                 listDocuments(req);
+            const { response } = await call;
 
-            pagination.value = resp.getPagination();
-            return res(resp.getDocumentsList());
+            pagination.value = response.pagination;
+            return res(response.documents);
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -48,11 +55,12 @@ async function listDocuments(): Promise<Array<Document>> {
 async function findCategories(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const req = new CompleteDocumentCategoriesRequest();
-            req.setSearch(queryCategories.value);
+            const call = $grpc.getCompletorClient().completeDocumentCategories({
+                search: queryCategories.value,
+            });
+            const { response } = await call;
 
-            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req)
-            entriesCategories.value = resp.getCategoriesList();
+            entriesCategories.value = response.categories;
 
             return res();
         } catch (e) {
@@ -183,21 +191,21 @@ onMounted(async () => {
                                                 <div class="flex flex-row items-center justify-start flex-1">
                                                     <UserIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
-                                                    {{ doc.getCreator()?.firstname }}, {{
-                                                        doc.getCreator()?.lastname
+                                                    {{ doc.creator?.firstname }}, {{
+                                                        doc.creator?.lastname
                                                     }}
                                                 </div>
                                                 <div class="flex flex-row items-center justify-center flex-1">
                                                     <BriefcaseIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
-                                                    {{ doc.getCreator()?.jobLabel }}
+                                                    {{ doc.creator?.jobLabel }}
                                                 </div>
                                                 <div class="flex flex-row items-center justify-end flex-1">
                                                     <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true" />
                                                     <p>
                                                         {{ $t('common.created') }} <time
-                                                            :datetime="$d(doc.createdAt?.timestamp?.toDate()!, 'short')">
+                                                            :datetime="$d(toDate(doc.createdAt)!, 'short')">
                                                             {{ useLocaleTimeAgo(toDate(doc.createdAt)!).value }}
                                                         </time>
                                                     </p>

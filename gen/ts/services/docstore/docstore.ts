@@ -11,6 +11,7 @@ import { DocumentRelation } from "../../resources/documents/documents.js";
 import { DocumentReference } from "../../resources/documents/documents.js";
 import { DocumentAccess } from "../../resources/documents/documents.js";
 import { Document } from "../../resources/documents/documents.js";
+import { DocumentShort } from "../../resources/documents/documents.js";
 import { PaginationResponse } from "../../resources/common/database/database.js";
 import { OrderBy } from "../../resources/common/database/database.js";
 import { PaginationRequest } from "../../resources/common/database/database.js";
@@ -41,9 +42,9 @@ export interface GetTemplateRequest {
      */
     templateId: number;
     /**
-     * @generated from protobuf field: string data = 2;
+     * @generated from protobuf field: optional string data = 2;
      */
-    data: string;
+    data?: string;
     /**
      * @generated from protobuf field: optional bool render = 3;
      */
@@ -150,9 +151,9 @@ export interface ListDocumentsResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.documents.Document documents = 2;
+     * @generated from protobuf field: repeated resources.documents.DocumentShort documents = 2;
      */
-    documents: Document[];
+    documents: DocumentShort[];
 }
 /**
  * @generated from protobuf message services.docstore.GetDocumentRequest
@@ -409,9 +410,9 @@ export interface UpdateDocumentRequest {
      */
     documentId: number; // @gotags: alias:"id"
     /**
-     * @generated from protobuf field: uint64 category_id = 2;
+     * @generated from protobuf field: optional uint64 category_id = 2;
      */
-    categoryId: number; // @gotags: alias:"category_id"
+    categoryId?: number; // @gotags: alias:"category_id"
     /**
      * @generated from protobuf field: string title = 3;
      */
@@ -425,9 +426,9 @@ export interface UpdateDocumentRequest {
      */
     contentType: DOC_CONTENT_TYPE; // @gotags: alias:"content_type"
     /**
-     * @generated from protobuf field: string data = 6;
+     * @generated from protobuf field: optional string data = 6;
      */
-    data: string; // @gotags: alias:"data"
+    data?: string; // @gotags: alias:"data"
     /**
      * @generated from protobuf field: string state = 7;
      */
@@ -646,7 +647,7 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
     constructor() {
         super("services.docstore.GetTemplateRequest", [
             { no: 1, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "data", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "10240" } } } },
+            { no: 2, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "10240" } } } },
             { no: 3, name: "render", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -759,7 +760,7 @@ class ListDocumentsResponse$Type extends MessageType<ListDocumentsResponse> {
     constructor() {
         super("services.docstore.ListDocumentsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "documents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Document }
+            { no: 2, name: "documents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentShort }
         ]);
     }
 }
@@ -1063,11 +1064,11 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
     constructor() {
         super("services.docstore.UpdateDocumentRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "category_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
             { no: 4, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1000000" } } } },
             { no: 5, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "data", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
             { no: 8, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },

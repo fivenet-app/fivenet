@@ -9,12 +9,9 @@ const notifications = useNotificationsStore();
 
 const { t } = useI18n();
 
-const props = defineProps({
-    user: {
-        required: true,
-        type: User,
-    },
-});
+const props = defineProps<{
+    user: User,
+}>();
 
 function addToClipboard(): void {
     store.addUser(props.user);
@@ -32,7 +29,7 @@ function addToClipboard(): void {
     <tr :key="user.userId">
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             {{ user.firstname }}, {{ user.lastname }}
-            <span v-if="user.getProps()?.getWanted()"
+            <span v-if="user.props?.wanted"
                 class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700 ml-1">
                 {{ $t('common.wanted').toUpperCase() }}
             </span>
@@ -41,7 +38,7 @@ function addToClipboard(): void {
             {{ user.jobLabel }}
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
-            {{ user.sex.toUpperCase() }}
+            {{ user.sex!.toUpperCase() }}
         </td>
         <td v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'"
             class="whitespace-nowrap px-2 py-2 text-sm text-base-200">

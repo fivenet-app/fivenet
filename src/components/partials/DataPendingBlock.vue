@@ -2,16 +2,11 @@
 <script lang="ts" setup>
 import { ArrowPathIcon, PauseIcon } from '@heroicons/vue/24/solid';
 
-defineProps({
-    message: {
-        type: String,
-        required: true,
-    },
-    paused: {
-        type: Boolean,
-        required: false,
-        default: false,
-    }
+withDefaults(defineProps<{
+    message: string,
+    paused?: boolean,
+}>(), {
+    paused: false,
 });
 </script>
 

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
-import { SetUserPropsRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
 import {
     Dialog,
     DialogPanel,
@@ -42,7 +41,7 @@ const { data: jobs } = useLazyAsyncData('jobs', () => getJobs());
 async function getJobs(): Promise<Array<Job>> {
     return new Promise(async (res, rej) => {
         try {
-            const call = await $grpc.getCompletorClient().
+            const call = $grpc.getCompletorClient().
                 completeJobs({
                     search: queryJob.value,
                 });

@@ -1,12 +1,9 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
 
-defineProps({
-    open: {
-        required: true,
-        type: Boolean,
-    },
-});
+defineProps<{
+    open: boolean,
+}>();
 
 defineEmits<{
     (e: 'close'): void,

@@ -5,6 +5,7 @@ import { defineRule } from 'vee-validate';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { max, min, required } from '@vee-validate/rules';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -12,12 +13,9 @@ const notifications = useNotificationsStore();
 
 const { setAccessToken } = authStore;
 
-defineProps({
-    open: {
-        required: true,
-        type: Boolean,
-    },
-});
+defineProps<{
+    open: boolean,
+}>();
 
 defineEmits<{
     (e: 'close'): void,
@@ -35,11 +33,7 @@ async function changePassword(values: FormData): Promise<void> {
                     current: values.currentPassword,
                     new: values.newPassword,
                 });
-            const { response, status } = await call;
-
-            if (await $grpc.handleError(status)) {
-                return rej(status);
-            }
+            const { response } = await call;
 
             setAccessToken(response.token, toDate(response.expires) as null | Date);
 
@@ -52,7 +46,8 @@ async function changePassword(values: FormData): Promise<void> {
 
             return res();
         } catch (e) {
-            return rej(e);
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
         }
     });
 }

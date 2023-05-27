@@ -6,6 +6,7 @@ import { User } from '~~/gen/ts/resources/users/users';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import { RpcError } from 'grpc-web';
 
 useHead({
     title: 'pages.citizens.id.title',
@@ -29,19 +30,16 @@ const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${rout
 async function getUser(): Promise<User> {
     return new Promise(async (res, rej) => {
         try {
-            const call = await $grpc.getCitizenStoreClient().
+            const call = $grpc.getCitizenStoreClient().
                 getUser({
                     userId: parseInt(route.params.id),
                 });
-            const { response, status } = await call;
-
-            if (await $grpc.handleError(status)) {
-                return rej(status);
-            }
+            const { response } = await call;
 
             return res(response.user!);
         } catch (e) {
-            return rej(e);
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
         }
     });
 }

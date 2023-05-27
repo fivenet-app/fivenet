@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Permission, Role, RoleAttribute, AttributeValues } from '~~/gen/ts/resources/permissions/permissions';
-import { UpdateRolePermsRequest, DeleteRoleRequest, GetPermissionsRequest, PermsUpdate, PermItem, AttrsUpdate } from '~~/gen/ts/services/rector/rector';
+import { PermsUpdate, PermItem, AttrsUpdate } from '~~/gen/ts/services/rector/rector';
 import { ChevronDownIcon, CheckIcon, XMarkIcon, MinusIcon } from '@heroicons/vue/24/solid';
 import { TrashIcon } from '@heroicons/vue/20/solid';
 import Divider from '~/components/partials/Divider.vue';
@@ -16,12 +16,9 @@ const notifications = useNotificationsStore();
 
 const { t } = useI18n();
 
-const props = defineProps({
-    roleId: {
-        type: Number,
-        required: true,
-    }
-});
+const props = defineProps<{
+    roleId: number,
+}>();
 
 const role = ref<Role>();
 
@@ -137,50 +134,64 @@ async function updatePermissionState(perm: number, state: boolean | undefined): 
 async function updatePermissions(): Promise<void> {
     const currentPermissions = role.value?.permissions.map(p => p.id) ?? [];
 
-    const perms = new PermsUpdate();
+    const perms: PermsUpdate = {
+        toRemove: [],
+        toUpdate: [],
+    };
     permStates.value.forEach((state, perm) => {
         if (state !== undefined) {
             const p = role.value?.permissions.find(v => v.id === perm);
 
             if (p?.val !== state) {
-                const item = new PermItem();
-                item.setId(perm);
-                item.setVal(state);
+                const item: PermItem = {
+                    id: perm,
+                    val: state,
+                };
 
-                perms.addToUpdate(item);
+                perms.toUpdate.push(item);
             }
         } else if (state === undefined && currentPermissions.includes(perm)) {
-            perms.addToRemove(perm);
+            perms.toRemove.push(perm);
         }
     });
 
-    const attrs = new AttrsUpdate();
+    const attrs: AttrsUpdate = {
+        toRemove: [],
+        toUpdate: [],
+    };
     attrStates.value.forEach((state, attr) => {
         if (state !== undefined) {
-            const item = new RoleAttribute();
-            item.setRoleId(role.value!.id);
-            item.setAttrId(attr);
-            item.setValue(state);
-
-            attrs.addToUpdate(item);
+            attrs.toUpdate.push({
+                roleId: role.value!.id,
+                attrId: attr,
+                value: state,
+                category: '',
+                key: '',
+                name: '',
+                permissionId: 0,
+                type: '',
+            });
         } else if (state === undefined) {
-            const item = new RoleAttribute();
-            item.setRoleId(role.value!.id);
-            item.setAttrId(attr);
-
-            attrs.addToRemove(item);
+            attrs.toRemove.push({
+                roleId: role.value!.id,
+                attrId: attr,
+                category: '',
+                key: '',
+                name: '',
+                permissionId: 0,
+                type: '',
+            });
         }
     });
 
-    if (perms.getToUpdateList().length === 0 && perms.getToRemoveList().length === 0 && attrs.getToUpdateList().length === 0 && attrs.getToRemoveList().length === 0) return;
-
-    const req = new UpdateRolePermsRequest();
-    req.setId(props.roleId);
-    req.setPerms(perms);
-    req.setAttrs(attrs);
+    if (perms.toUpdate.length === 0 && perms.toRemove.length === 0 && attrs.toUpdate.length === 0 && attrs.toRemove.length === 0) return;
 
     try {
-        await $grpc.getRectorClient().updateRolePerms(req);
+        await $grpc.getRectorClient().updateRolePerms({
+            id: props.roleId,
+            perms: perms,
+            attrs: attrs,
+        });
 
         notifications.dispatchNotification({
             title: t('notifications.rector.role_updated.title'),
@@ -270,7 +281,7 @@ onMounted(async () => {
                                             </button>
                                         </div>
                                     </div>
-                                    <RoleViewAttr v-for="attr in attrList.filter(a => a.getPermissionId() === perm.id)"
+                                    <RoleViewAttr v-for="attr in attrList.filter(a => a.permissionId === perm.id)"
                                         :attribute="attr" v-model:states="attrStates"
                                         :disabled="permStates.get(perm.id) !== true" :jobs="jobs" />
                                     <div v-if="idx !== permList.filter(p => p.category === category).length - 1"

@@ -8,12 +8,9 @@ import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
-const props = defineProps({
-    userId: {
-        required: true,
-        type: Number,
-    },
-});
+const props = defineProps<{
+    userId: number,
+}>();
 
 const { data: activities, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity-${props.userId}`, () => listUserActivity());
 

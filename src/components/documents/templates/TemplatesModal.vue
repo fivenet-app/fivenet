@@ -11,16 +11,11 @@ import { useClipboardStore } from '~/store/clipboard';
 
 const clipboardStore = useClipboardStore();
 
-const props = defineProps({
-    open: {
-        required: true,
-        type: Boolean,
-    },
-    autoFill: {
-        required: false,
-        type: Boolean,
-        default: false,
-    },
+const props = withDefaults(defineProps<{
+    open: boolean,
+    autoFill: boolean,
+}>(), {
+    autoFill: false,
 });
 
 const emit = defineEmits<{
@@ -63,27 +58,27 @@ function closeDialog(): void {
 async function templateSelected(t: TemplateShort): Promise<void> {
     if (t) {
         template.value = t;
-        if (t.getSchema()) {
-            reqs.value = t.getSchema()?.getRequirements();
+        if (t.schema) {
+            reqs.value = t.schema?.requirements;
             let reqDocuments = false;
             let reqUsers = false;
             let reqVehicles = false;
 
             if (reqs.value) {
-                if (reqs.value.hasDocuments()) {
-                    reqDocuments = clipboardStore.checkRequirements(reqs.value.getDocuments()!, 'documents');
+                if (reqs.value.documents) {
+                    reqDocuments = clipboardStore.checkRequirements(reqs.value.documents!, 'documents');
                     if (reqDocuments) {
                         clipboardStore.promoteToActiveStack('documents');
                     }
                 }
-                if (reqs.value.hasUsers()) {
-                    reqUsers = clipboardStore.checkRequirements(reqs.value.getUsers()!, 'users');
+                if (reqs.value.users) {
+                    reqUsers = clipboardStore.checkRequirements(reqs.value.users!, 'users');
                     if (reqUsers) {
                         clipboardStore.promoteToActiveStack('users');
                     }
                 }
-                if (reqs.value.hasVehicles()) {
-                    reqVehicles = clipboardStore.checkRequirements(reqs.value.getVehicles()!, 'vehicles');
+                if (reqs.value.vehicles) {
+                    reqVehicles = clipboardStore.checkRequirements(reqs.value.vehicles!, 'vehicles');
                     if (reqVehicles) {
                         clipboardStore.promoteToActiveStack('vehicles');
                     }
@@ -179,31 +174,31 @@ async function clipboardDialog(): Promise<void> {
                                             {{ $t('common.template', 1) }}: {{ template.title }}
                                         </DialogTitle>
                                         <div class="mt-2 text-white">
-                                            <div v-if="reqs.hasUsers()">
+                                            <div v-if="reqs.users">
                                                 <p>
-                                                    <TemplateRequirementsList name="User" :specs="reqs.getUsers()!" />
+                                                    <TemplateRequirementsList name="User" :specs="reqs.users!" />
                                                 </p>
 
                                                 <ClipboardModalUsers :submit.sync="submit" :showSelect="true"
-                                                    :specs="reqs.getUsers()!"
+                                                    :specs="reqs.users!"
                                                     @statisfied="(v: boolean) => reqStatus.users = v" />
                                             </div>
-                                            <div v-if="reqs.hasVehicles()">
+                                            <div v-if="reqs.vehicles">
                                                 <p>
-                                                    <TemplateRequirementsList name="Vehicle" :specs="reqs.getVehicles()!" />
+                                                    <TemplateRequirementsList name="Vehicle" :specs="reqs.vehicles!" />
                                                 </p>
 
                                                 <ClipboardModalVehicles :submit.sync="submit" :showSelect="true"
-                                                    :specs="reqs.getVehicles()!"
+                                                    :specs="reqs.vehicles!"
                                                     @statisfied="(v: boolean) => reqStatus.vehicles = v" />
                                             </div>
-                                            <div v-if="reqs.hasDocuments()">
+                                            <div v-if="reqs.documents">
                                                 <p>
-                                                    <TemplateRequirementsList name="User" :specs="reqs.getDocuments()!" />
+                                                    <TemplateRequirementsList name="User" :specs="reqs.documents!" />
                                                 </p>
 
                                                 <ClipboardModalDocuments :submit.sync="submit" :showSelect="true"
-                                                    :specs="reqs.getDocuments()!"
+                                                    :specs="reqs.documents!"
                                                     @statisfied="(v: boolean) => reqStatus.documents = v" />
                                             </div>
                                         </div>

@@ -55,17 +55,17 @@ export interface Template {
      */
     schema?: TemplateSchema; // @gotags: alias:"schema"
     /**
-     * @generated from protobuf field: int32 creator_id = 11;
+     * @generated from protobuf field: optional int32 creator_id = 11;
      */
-    creatorId: number; // @gotags: alias:"creator_id"
+    creatorId?: number; // @gotags: alias:"creator_id"
     /**
      * @generated from protobuf field: optional resources.users.UserShort creator = 12;
      */
     creator?: UserShort;
     /**
-     * @generated from protobuf field: string job = 13;
+     * @generated from protobuf field: optional string job = 13;
      */
-    job: string; // @gotags: alias:"job"
+    job?: string; // @gotags: alias:"job"
     /**
      * @generated from protobuf field: repeated resources.documents.TemplateJobAccess job_access = 14;
      */
@@ -112,9 +112,9 @@ export interface TemplateShort {
      */
     schema?: TemplateSchema; // @gotags: alias:"schema"
     /**
-     * @generated from protobuf field: int32 creator_id = 9;
+     * @generated from protobuf field: optional int32 creator_id = 9;
      */
-    creatorId: number; // @gotags: alias:"creator_id"
+    creatorId?: number; // @gotags: alias:"creator_id"
     /**
      * @generated from protobuf field: optional resources.users.UserShort creator = 10;
      */
@@ -213,25 +213,25 @@ export interface TemplateJobAccess {
      */
     job: string; // @gotags: alias:"job"
     /**
-     * @generated from protobuf field: string job_label = 6;
+     * @generated from protobuf field: optional string job_label = 6;
      */
-    jobLabel: string; // @gotags: alias:"job_label"
+    jobLabel?: string; // @gotags: alias:"job_label"
     /**
      * @generated from protobuf field: int32 minimumGrade = 7;
      */
     minimumGrade: number; // @gotags: alias:"minimum_grade"
     /**
-     * @generated from protobuf field: string job_grade_label = 8;
+     * @generated from protobuf field: optional string job_grade_label = 8;
      */
-    jobGradeLabel: string; // @gotags: alias:"job_grade_label"
+    jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
     /**
      * @generated from protobuf field: resources.documents.ACCESS_LEVEL access = 9;
      */
     access: ACCESS_LEVEL; // @gotags: alias:"access"
     /**
-     * @generated from protobuf field: int32 creator_id = 10;
+     * @generated from protobuf field: optional int32 creator_id = 10;
      */
-    creatorId: number; // @gotags: alias:"creator_id"
+    creatorId?: number; // @gotags: alias:"creator_id"
     /**
      * @generated from protobuf field: optional resources.users.UserShort creator = 11;
      */
@@ -251,9 +251,9 @@ class Template$Type extends MessageType<Template> {
             { no: 8, name: "content_title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
             { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "0", maxBytes: "1500000" } } } },
             { no: 10, name: "schema", kind: "message", T: () => TemplateSchema },
-            { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 12, name: "creator", kind: "message", T: () => UserShort },
-            { no: 13, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 13, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 14, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TemplateJobAccess },
             { no: 15, name: "content_access", kind: "message", T: () => DocumentAccess }
         ]);
@@ -275,7 +275,7 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
             { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "schema", kind: "message", T: () => TemplateSchema },
-            { no: 9, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 9, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 10, name: "creator", kind: "message", T: () => UserShort },
             { no: 11, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);
@@ -349,11 +349,11 @@ class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 6, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "minimumGrade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 8, name: "job_grade_label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 11, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }

@@ -29,9 +29,9 @@ export interface DispatchMarker {
      */
     job: string; // @gotags: alias:"job"
     /**
-     * @generated from protobuf field: string job_label = 6;
+     * @generated from protobuf field: optional string job_label = 6;
      */
-    jobLabel: string; // @gotags: alias:"job_label"
+    jobLabel?: string; // @gotags: alias:"job_label"
     /**
      * @generated from protobuf field: string name = 7;
      */
@@ -99,7 +99,7 @@ class DispatchMarker$Type extends MessageType<DispatchMarker> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 6, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 9, name: "icon_color", kind: "scalar", T: 9 /*ScalarType.STRING*/ },

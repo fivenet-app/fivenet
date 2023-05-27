@@ -130,10 +130,10 @@ func (c *Cache) refreshDocumentCategories(ctx context.Context) error {
 	for _, d := range dest {
 		c.docCategories.Set(d.Id, d)
 
-		if _, ok := categoriesPerJob[d.Job]; !ok {
-			categoriesPerJob[d.Job] = []*documents.DocumentCategory{}
+		if _, ok := categoriesPerJob[*d.Job]; !ok {
+			categoriesPerJob[*d.Job] = []*documents.DocumentCategory{}
 		}
-		categoriesPerJob[d.Job] = append(categoriesPerJob[d.Job], d)
+		categoriesPerJob[*d.Job] = append(categoriesPerJob[*d.Job], d)
 	}
 
 	// Update cache

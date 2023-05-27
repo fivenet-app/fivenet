@@ -194,13 +194,15 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return err
 	}
+	jobName := DefaultRoleJob
+	jobGrade := DefaultRoleJobGrade
 	// Add default job to avoid deletion
 	dest = append(dest, &jobs.Job{
 		Name: DefaultRoleJob,
 		Grades: []*jobs.JobGrade{
 			{
-				JobName: DefaultRoleJob,
-				Grade:   DefaultRoleJobGrade,
+				JobName: &jobName,
+				Grade:   jobGrade,
 			},
 		},
 	})

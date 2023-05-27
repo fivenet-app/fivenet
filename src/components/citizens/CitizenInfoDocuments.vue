@@ -9,12 +9,9 @@ import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
-const props = defineProps({
-    userId: {
-        required: true,
-        type: Number,
-    },
-});
+const props = defineProps<{
+    userId: number,
+}>();
 
 const offset = ref(0);
 
@@ -68,10 +65,9 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                     <ArrowsRightLeftIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
                                     <span class="flex flex-col text-sm truncate">
                                         <span>
-                                            <NuxtLink
-                                                :to="{ name: 'documents-id', params: { id: relation.documentId } }">
-                                                {{ relation.document?.title }}<span
-                                                    v-if="relation.document?.category"> (Category: {{
+                                            <NuxtLink :to="{ name: 'documents-id', params: { id: relation.documentId } }">
+                                                {{ relation.document?.title }}<span v-if="relation.document?.category">
+                                                    (Category: {{
                                                         relation.document?.category?.name }})</span>
                                             </NuxtLink>
                                         </span>
@@ -150,12 +146,11 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                 <tbody class="divide-y divide-gray-600 bg-base-800 text-neutral">
                                     <tr v-for="relation in relations" :key="relation.id">
                                         <td class="px-6 py-4 text-sm">
-                                            <NuxtLink
-                                                :to="{ name: 'documents-id', params: { id: relation.documentId } }">
-                                                {{ relation.document?.title }}<span
-                                                    v-if="relation.document?.category"> ({{ $t('common.category',
+                                            <NuxtLink :to="{ name: 'documents-id', params: { id: relation.documentId } }">
+                                                {{ relation.document?.title }}<span v-if="relation.document?.category"> ({{
+                                                    $t('common.category',
                                                         1)
-                                                    }}: {{ relation.document?.category?.name }})
+                                                }}: {{ relation.document?.category?.name }})
                                                 </span>
                                             </NuxtLink>
                                         </td>
@@ -203,7 +198,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                            <time :datetime="$d(relation.createdAt?.timestamp?.toDate()!, 'short')">
+                                            <time :datetime="$d(toDate(relation.createdAt)!, 'short')">
                                                 {{ $d(toDate(relation.createdAt)!) }}
                                             </time>
                                         </td>

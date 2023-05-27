@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
 import { DocumentComment } from '~~/gen/ts/resources/documents/documents';
-import { DeleteDocumentCommentRequest, EditDocumentCommentRequest } from '~~/gen/ts/services/docstore/docstore';
 import { PencilIcon, TrashIcon } from '@heroicons/vue/20/solid';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -13,35 +13,33 @@ const emit = defineEmits<{
     (e: 'removed', comment: DocumentComment): void,
 }>();
 
-const props = defineProps({
-    comment: {
-        required: true,
-        type: DocumentComment,
-    },
-});
+const props = defineProps<{
+    comment: DocumentComment,
+}>();
 
 const editing = ref(false);
-const message = ref(props.comment.getComment());
+const message = ref(props.comment.comment);
 
 async function editComment(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new EditDocumentCommentRequest();
-        const c = new DocumentComment();
-        c.setId(props.comment.id);
-        c.setDocumentId(props.comment.documentId);
-        c.setComment(message.value);
-        req.setComment(c);
+        const comment: DocumentComment = {
+            id: props.comment.id,
+            documentId: props.comment.documentId,
+            comment: message.value,
+        };
 
         try {
             await $grpc.getDocStoreClient().
-                editDocumentComment(req);
+                editDocumentComment({
+                    comment: comment,
+                });
 
             editing.value = false;
-            props.comment.setComment(message.value);
+            props.comment.comment = message.value;
 
             return res();
         } catch (e) {
-
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -49,17 +47,17 @@ async function editComment(): Promise<void> {
 
 async function deleteComment(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new DeleteDocumentCommentRequest();
-        req.setCommentId(props.comment.id);
-
         try {
             await $grpc.getDocStoreClient().
-                deleteDocumentComment(req);
+                deleteDocumentComment({
+                    commentId: props.comment.id,
+                });
 
             emit('removed', props.comment);
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -71,12 +69,11 @@ async function deleteComment(): Promise<void> {
         <div v-if="!editing" class="flex space-x-3">
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <NuxtLink :to="{ name: 'citizens-id', params: { id: comment.getCreatorId() } }"
+                    <NuxtLink :to="{ name: 'citizens-id', params: { id: comment.creatorId! } }"
                         class="text-sm font-medium text-primary-400 hover:text-primary-300">
-                        {{ comment.getCreator()?.firstname }} {{ comment.getCreator()?.lastname }}
+                        {{ comment.creator?.firstname }} {{ comment.creator?.lastname }}
                     </NuxtLink>
-                    <div
-                        v-if="comment.getCreatorId() === activeChar?.userId || permissions.includes('superuser')">
+                    <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <button v-can="'DocStoreService.PostDocumentComment'" @click="editing = true">
                             <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
@@ -86,7 +83,7 @@ async function deleteComment(): Promise<void> {
                     </div>
                 </div>
                 <p class="text-sm break-words">
-                    {{ comment.getComment() }}
+                    {{ comment.comment }}
                 </p>
             </div>
         </div>

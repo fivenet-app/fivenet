@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { TemplateShort } from '~~/gen/ts/resources/documents/templates';
-import { ListTemplatesRequest } from '~~/gen/ts/services/docstore/docstore';
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import Cards from '~/components/partials/Cards.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { CardElements } from '~/utils/types';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -17,14 +17,14 @@ const { data: templates, pending, refresh, error } = useLazyAsyncData(`documents
 
 async function listTemplates(): Promise<Array<TemplateShort>> {
     return new Promise(async (res, rej) => {
-        const req = new ListTemplatesRequest();
-
         try {
-            const resp = await $grpc.getDocStoreClient().
-                listTemplates(req);
+            const call = $grpc.getDocStoreClient().
+                listTemplates({});
+            const { response } = await call;
 
-            return res(resp.getTemplatesList());
+            return res(response.templates);
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -32,7 +32,7 @@ async function listTemplates(): Promise<Array<TemplateShort>> {
 
 const items = ref<CardElements>([]);
 watch(templates, () => templates.value?.forEach((v) => {
-    items.value.push({ title: v?.title, description: v?.getDescription() });
+    items.value.push({ title: v?.title, description: v?.description });
 }));
 
 function selected(idx: number): TemplateShort {

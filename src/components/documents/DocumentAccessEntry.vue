@@ -16,11 +16,11 @@ import {
     XMarkIcon,
 } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/core';
-import { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
 import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { ArrayElement } from '~/utils/types';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
@@ -56,9 +56,9 @@ const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
 let entriesAccessRoles = new Array<{ id: ACCESS_LEVEL; label: string; value: string }>();
 if (!props.accessRoles || props.accessRoles.length === 0) {
-    entriesAccessRoles = Object.keys(ACCESS_LEVEL).map(e => {
+    entriesAccessRoles = Object.keys(ACCESS_LEVEL).map((e, v) => {
         return {
-            id: e,
+            id: v,
             label: t(`enums.docstore.ACCESS_LEVEL.${e}`),
             value: e,
         };
@@ -68,7 +68,7 @@ if (!props.accessRoles || props.accessRoles.length === 0) {
         entriesAccessRoles.push({
             id: e,
             label: t(`enums.docstore.ACCESS_LEVEL.${e}`),
-            value: e,
+            value: ACCESS_LEVEL[e],
         });
     });
 }
@@ -76,21 +76,41 @@ const queryAccessRole = ref('');
 const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRoles>>();
 
 async function findJobs(): Promise<void> {
-    const req = new CompleteJobsRequest();
-    req.setSearch(queryJob.value);
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getCompletorClient().
+                completeJobs({
+                    search: queryJob.value,
+                });
+            const { response } = await call;
 
-    const resp = await $grpc.getCompletorClient().
-        completeJobs(req);
-    entriesJobs = resp.getJobsList();
+            entriesJobs = response.jobs;
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function findChars(): Promise<void> {
-    const req = new CompleteCitizensRequest();
-    req.setSearch(queryChar.value);
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getCompletorClient().
+                completeCitizens({
+                    search: queryChar.value,
+                });
+            const { response } = await call;
 
-    const resp = await $grpc.getCompletorClient().
-        completeCitizens(req);
-    entriesChars = resp.users;
+            entriesChars = response.users;
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 onMounted(async () => {
@@ -204,7 +224,7 @@ watch(selectedAccessRole, () => {
 
                         <ComboboxOptions v-if="entriesChars.length > 0"
                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ComboboxOption v-for="char in entriesChars" :key="char.getIdentifier()" :value="char" as="char"
+                            <ComboboxOption v-for="char in entriesChars" :key="char.identifier" :value="char" as="char"
                                 v-slot="{ active, selected }">
                                 <li
                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
@@ -265,7 +285,7 @@ watch(selectedAccessRole, () => {
 
                         <ComboboxOptions v-if="entriesMinimumRank.length > 0"
                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.getGrade()" :value="rank"
+                            <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.grade" :value="rank"
                                 as="minimumrank" v-slot="{ active, selected }">
                                 <li
                                     :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
@@ -290,8 +310,7 @@ watch(selectedAccessRole, () => {
                     <ComboboxButton as="div">
                         <ComboboxInput
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                            @change="queryAccessRole = $event.target.value"
-                            :display-value="(role: any) => role.label" />
+                            @change="queryAccessRole = $event.target.value" :display-value="(role: any) => role.label" />
                     </ComboboxButton>
 
                     <ComboboxOptions v-if="entriesAccessRoles.length > 0"

@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { DeleteDocumentRequest, GetDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
 import { Document, DocumentAccess } from '~~/gen/ts/resources/documents/documents';
-import { ACCESS_LEVEL_Util } from '~~/gen/ts/resources/documents/access.pb_enums';
 import {
     TabGroup,
     TabList,
@@ -30,6 +28,7 @@ import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import AddToClipboardButton from '../clipboard/AddToClipboardButton.vue';
 import { QuillEditor } from '@vueup/vue-quill';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -44,28 +43,26 @@ const tabs = ref<{ name: string, icon: typeof LockOpenIcon }[]>([
     { name: t('common.reference', 2), icon: DocumentMagnifyingGlassIcon },
 ]);
 
-const props = defineProps({
-    documentId: {
-        required: true,
-        type: Number,
-    },
-});
+const props = defineProps<{
+    documentId: number,
+}>();
 
-const { data: document, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}`, () => document);
+const { data: document, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}`, () => getDocument());
 
-async function document: Promise<Document> {
+async function getDocument(): Promise<Document> {
     return new Promise(async (res, rej) => {
-        const req = new GetDocumentRequest();
-        req.setDocumentId(props.documentId);
-
         try {
-            const resp = await $grpc.getDocStoreClient().
-                getDocument(req);
+            const call = $grpc.getDocStoreClient().
+                getDocument({
+                    documentId: props.documentId,
+                });
+            const { response } = await call;
 
-            access.value = resp.getAccess();
+            access.value = response.access;
 
-            return res(resp.document!);
+            return res(response.document!);
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -73,12 +70,11 @@ async function document: Promise<Document> {
 
 async function deleteDocument(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new DeleteDocumentRequest();
-        req.setDocumentId(props.documentId);
-
         try {
             await $grpc.getDocStoreClient().
-                deleteDocument(req);
+                deleteDocument({
+                    documentId: props.documentId,
+                });
 
             notifications.dispatchNotification({
                 title: t('notifications.document_deleted.title'),
@@ -90,6 +86,7 @@ async function deleteDocument(): Promise<void> {
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -139,11 +136,10 @@ function addToClipboard(): void {
                                 <p class="text-sm text-base-300">
                                     {{ $t('common.created_by') }}
                                     {{ ' ' }}
-                                    <NuxtLink
-                                        :to="{ name: 'citizens-id', params: { id: document?.getCreator()?.userId ?? 0 } }"
+                                    <NuxtLink :to="{ name: 'citizens-id', params: { id: document?.creator?.userId ?? 0 } }"
                                         class="font-medium text-primary-400 hover:text-primary-300">
-                                        {{ document?.getCreator()?.firstname }}
-                                        {{ document?.getCreator()?.lastname }}
+                                        {{ document?.creator?.firstname }}
+                                        {{ document?.creator?.lastname }}
                                     </NuxtLink>
                                 </p>
                             </div>
@@ -187,29 +183,29 @@ function addToClipboard(): void {
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700"><time
-                                        :datetime="$d(document?.createdAt?.timestamp?.toDate()!, 'short')">
-                                        {{ $d(document?.createdAt?.timestamp?.toDate()!, 'short') }}
+                                        :datetime="$d(toDate(document?.createdAt)!, 'short')">
+                                        {{ $d(toDate(document?.createdAt)!, 'short') }}
                                     </time>
                                 </span>
                             </div>
                         </div>
                         <div class="flex flex-row gap-2 pb-3 mt-2 overflow-x-auto snap-x sm:pb-0">
-                            <div v-for="entry in access?.getJobsList()" :key="entry.id"
+                            <div v-for="entry in access?.jobs" :key="entry.id"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-info-100 whitespace-nowrap snap-start">
                                 <span class="w-2 h-2 rounded-full bg-info-500" aria-hidden="true" />
                                 <span class="text-sm font-medium text-info-800">{{ entry.jobLabel }}<span
-                                        :title="entry.jobGradeLabel" v-if="entry.getMinimumgrade() > 0"> ({{
-                                            $t('common.rank') }}: {{ entry.getMinimumgrade() }})</span> - {{
-        $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!}`) }}
+                                        :title="entry.jobGradeLabel" v-if="entry.minimumGrade > 0"> ({{
+                                            $t('common.rank') }}: {{ entry.minimumGrade }})</span> - {{
+        $t(`enums.docstore.ACCESS_LEVEL.${entry.access}`) }}
                                 </span>
                             </div>
-                            <div v-for="entry in access?.getUsersList()" :key="entry.id"
+                            <div v-for="entry in access?.users" :key="entry.id"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap snap-start">
                                 <span class="w-2 h-2 rounded-full bg-secondary-400" aria-hidden="true" />
                                 <span class="text-sm font-medium text-secondary-700">
-                                    {{ entry.getUser()?.firstname }}
-                                    {{ entry.getUser()?.lastname }} - {{
-                                        $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL_Util.toEnumKey(entry.getAccess())!}`) }}
+                                    {{ entry.user?.firstname }}
+                                    {{ entry.user?.lastname }} - {{
+                                        $t(`enums.docstore.ACCESS_LEVEL.${entry.access}`) }}
                                 </span>
                             </div>
                         </div>
@@ -219,8 +215,8 @@ function addToClipboard(): void {
                             </h2>
                             <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
                                 <div id="editor">
-                                    <QuillEditor content-type="html" :content="document?.getContent()" :toolbar="[]"
-                                        theme="snow" :read-only="true" />
+                                    <QuillEditor content-type="html" :content="document?.content" :toolbar="[]" theme="snow"
+                                        :read-only="true" />
                                 </div>
                             </div>
                         </div>

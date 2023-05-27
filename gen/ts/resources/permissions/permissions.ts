@@ -49,17 +49,17 @@ export interface Role {
      */
     job: string; // @gotags: alias:"job"
     /**
-     * @generated from protobuf field: string job_label = 4;
+     * @generated from protobuf field: optional string job_label = 4;
      */
-    jobLabel: string; // @gotags: alias:"job_label"
+    jobLabel?: string; // @gotags: alias:"job_label"
     /**
      * @generated from protobuf field: int32 grade = 5;
      */
     grade: number; // @gotags: alias:"grade"
     /**
-     * @generated from protobuf field: string job_grade_label = 6;
+     * @generated from protobuf field: optional string job_grade_label = 6;
      */
-    jobGradeLabel: string; // @gotags: alias:"job_grade_label"
+    jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
     /**
      * @generated from protobuf field: repeated resources.permissions.Permission permissions = 7;
      */
@@ -232,9 +232,9 @@ class Role$Type extends MessageType<Role> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 4, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 5, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 6, name: "job_grade_label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 6, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "permissions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Permission },
             { no: 8, name: "attributes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RoleAttribute }
         ]);

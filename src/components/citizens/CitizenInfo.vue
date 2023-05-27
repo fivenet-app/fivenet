@@ -22,13 +22,9 @@ const tabs = [
     { name: t('common.activity'), icon: RectangleGroupIcon, permission: 'CitizenStoreService.ListUserActivity' },
 ];
 
-
-const props = defineProps({
-    user: {
-        required: true,
-        type: User,
-    },
-});
+const props = defineProps<{
+    user: User,
+}>();
 
 function addToClipboard(): void {
     clipboard.addUser(props.user);
@@ -51,7 +47,7 @@ function addToClipboard(): void {
             <span class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">
                 {{ user.jobLabel }} ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
             </span>
-            <span v-if="user.getProps()?.getWanted()"
+            <span v-if="user.props?.wanted"
                 class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700">
                 {{ $t('common.wanted').toUpperCase() }}
             </span>

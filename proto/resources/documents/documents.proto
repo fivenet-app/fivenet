@@ -15,7 +15,7 @@ message DocumentComment {
   optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   uint64 document_id = 4; // @gotags: alias:"document_id"
   string comment = 5 [(validate.rules).string = {min_len: 3, max_bytes: 2048}]; // @gotags: alias:"comment"
-  int32 creator_id = 6; // @gotags: alias:"creator_id"
+  optional int32 creator_id = 6; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 7;  // @gotags: alias:"creator"
 }
 
@@ -34,7 +34,7 @@ message Document {
   DOC_CONTENT_TYPE content_type = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   string content = 8 [(validate.rules).string = {min_len: 20, max_bytes: 1000000}]; // @gotags: alias:"content"
   string data = 9; // @gotags: alias:"data"
-  int32 creator_id = 10; // @gotags: alias:"creator_id"
+  optional int32 creator_id = 10; // @gotags: alias:"creator_id"
   resources.users.UserShort creator = 11; // @gotags: alias:"creator"
   string state = 12 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 13; // @gotags: alias:"closed"
@@ -48,7 +48,7 @@ message DocumentShort {
   optional uint64 category_id = 4; // @gotags: alias:"category_id"
   optional resources.documents.DocumentCategory category = 5; // @gotags: alias:"category"
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-  int32 creator_id = 7; // @gotags: alias:"creator_id"
+  optional int32 creator_id = 7; // @gotags: alias:"creator_id"
   resources.users.UserShort creator = 8; // @gotags: alias:"creator"
   string state = 9 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 10; // @gotags: alias:"closed"
@@ -65,11 +65,11 @@ message DocumentJobAccess {
   optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   uint64 document_id = 4; // @gotags: alias:"document_id"
   string job = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
-  string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
+  optional string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 minimumGrade = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
-  string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
+  optional string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
   resources.documents.ACCESS_LEVEL access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
-  int32 creator_id = 10; // @gotags: alias:"creator_id"
+  optional int32 creator_id = 10; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
 }
 
@@ -81,7 +81,7 @@ message DocumentUserAccess {
   int32 user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
   optional resources.users.UserShort user = 6;
   resources.documents.ACCESS_LEVEL access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
-  int32 creator_id = 8; // @gotags: alias:"creator_id"
+  optional int32 creator_id = 8; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 9; // @gotags: alias:"creator"
 }
 
@@ -99,8 +99,8 @@ message DocumentReference {
   optional resources.documents.DocumentShort source_document = 4; // @gotags: alias:"source_document"
   DOC_REFERENCE reference = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"reference"
   uint64 target_document_id = 6; // @gotags: alias:"target_document_id"
-  resources.documents.DocumentShort target_document = 7; // @gotags: alias:"target_document"
-  int32 creator_id = 8; // @gotags: alias:"creator_id"
+  optional resources.documents.DocumentShort target_document = 7; // @gotags: alias:"target_document"
+  optional int32 creator_id = 8; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 9; // @gotags: alias:"ref_creator"
 }
 

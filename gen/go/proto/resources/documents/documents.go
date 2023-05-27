@@ -17,11 +17,11 @@ func (x *DocumentJobAccess) GetJobGrade() int32 {
 }
 
 func (x *DocumentJobAccess) SetJobLabel(label string) {
-	x.JobLabel = label
+	x.JobLabel = &label
 }
 
 func (x *DocumentJobAccess) SetJobGradeLabel(label string) {
-	x.JobGradeLabel = label
+	x.JobGradeLabel = &label
 }
 
 func (x *DocumentAccess) Scan(value any) error {

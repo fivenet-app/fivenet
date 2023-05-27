@@ -70,23 +70,27 @@ func (m *DocumentCategory) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
-		err := DocumentCategoryValidationError{
-			field:  "Job",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if m.Description != nil {
 
 		if utf8.RuneCountInString(m.GetDescription()) > 255 {
 			err := DocumentCategoryValidationError{
 				field:  "Description",
 				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Job != nil {
+
+		if utf8.RuneCountInString(m.GetJob()) > 50 {
+			err := DocumentCategoryValidationError{
+				field:  "Job",
+				reason: "value length must be at most 50 runes",
 			}
 			if !all {
 				return err

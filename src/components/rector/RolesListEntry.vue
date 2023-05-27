@@ -2,12 +2,9 @@
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import { EyeIcon } from '@heroicons/vue/24/solid';
 
-defineProps({
-    role: {
-        required: true,
-        type: Role,
-    },
-});
+defineProps<{
+    role: Role,
+}>();
 </script>
 
 <template>

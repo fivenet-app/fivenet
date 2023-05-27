@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { PaginationRequest } from '~~/gen/ts/resources/common/database/database';
-import { DOC_REFERENCE_Util } from '~~/gen/ts/resources/documents/documents.pb_enums';
-import { Document, DocumentReference } from '~~/gen/ts/resources/documents/documents';
-import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
+import { DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import {
     Dialog,
     DialogPanel,
@@ -29,6 +26,7 @@ import { FunctionalComponent } from 'vue';
 import { ClipboardDocument, getDocument } from '~/store/clipboard';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -61,37 +59,43 @@ const { data: documents, pending, refresh, error } = useLazyAsyncData(`document-
 
 watchDebounced(queryDoc, async () => listDocuments(), { debounce: 600, maxWait: 1750 });
 
-async function listDocuments(): Promise<Array<Document>> {
+async function listDocuments(): Promise<Array<DocumentShort>> {
     return new Promise(async (res, rej) => {
-        const req = new ListDocumentsRequest();
-        req.setPagination((new PaginationRequest()).setOffset(0).setPageSize(8));
-        req.setSearch(queryDoc.value);
-
         try {
-            const resp = await $grpc.getDocStoreClient().
-                listDocuments(req);
+            const call = $grpc.getDocStoreClient().
+                listDocuments({
+                    pagination: {
+                        offset: 0,
+                        pageSize: 8,
+                    },
+                    orderBy: [],
+                    search: queryDoc.value,
+                    categoryIds: [],
+                    creatorIds: [],
+                });
+            const { response } = await call;
 
-            return res(resp.getDocumentsList().
+            return res(response.documents.
                 filter(doc => !(Array.from(props.modelValue.values()).
-                    find(r => r.getTardocumentId === doc.id || doc.id === props.document)))
+                    find(r => r.targetDocumentId === doc.id || doc.id === props.document)))
             );
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
 }
 
-function addReference(doc: Document, reference: number): void {
+function addReference(doc: DocumentShort, reference: number): void {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1 : keys[keys.length - 1] + 1;
 
-    const ref = new DocumentReference();
-    ref.setId(key);
-    ref.setCreatorId(activeChar.value!.userId);
-    ref.setCreator(activeChar.value!)
-    ref.setTargetDocumentId(doc.id);
-    ref.setTargetDocument(doc);
-    ref.setReference(DOC_REFERENCE_Util.fromInt(reference));
+    const ref: DocumentReference = {
+        id: key,
+        sourceDocumentId: 0,
+        reference: reference,
+        targetDocumentId: doc.id,
+    };
 
     props.modelValue.set(key, ref);
     listDocuments();
@@ -182,19 +186,19 @@ function removeReference(id: number): void {
                                                                 <tr v-for="[key, ref] in $props.modelValue" :key="key">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
-                                                                        {{ ref.getTardocument?.title }}</td>
+                                                                        {{ ref.targetDocument?.title }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
-                                                                            ref.getCreator()?.firstname }}
-                                                                        {{ ref.getCreator()?.lastname }}
+                                                                            ref.creator?.firstname }}
+                                                                        {{ ref.creator?.lastname }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ ref.getTardocument?.state }}</td>
+                                                                        {{ ref.targetDocument?.state }}</td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <NuxtLink
-                                                                                    :to="{ name: 'documents-id', params: { id: ref.getTardocumentId } }"
+                                                                                    :to="{ name: 'documents-id', params: { id: ref.targetDocumentId } }"
                                                                                     target="_blank" data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.open_document')">
                                                                                     <ArrowTopRightOnSquareIcon
@@ -204,7 +208,7 @@ function removeReference(id: number): void {
                                                                             </div>
                                                                             <div class="flex">
                                                                                 <button role="button"
-                                                                                    @click="removeReference(ref.id)"
+                                                                                    @click="removeReference(ref.id!)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="$t('components.documents.document_managers.remove_reference')">
                                                                                     <DocumentMinusIcon
@@ -360,21 +364,20 @@ function removeReference(id: number): void {
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
                                                                 <template v-if="documents">
-                                                                    <tr v-for="doc in documents.slice(0, 8)"
-                                                                        :key="doc.id">
+                                                                    <tr v-for="doc in documents.slice(0, 8)" :key="doc.id">
                                                                         <td
                                                                             class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8">
                                                                             {{ doc.title }}</td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            {{ doc.getCreator()?.firstname }} {{
-                                                                                doc.getCreator()?.lastname }}
+                                                                            {{ doc.creator?.firstname }} {{
+                                                                                doc.creator?.lastname }}
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                             {{ doc.state }}
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                             {{ $t('common.created') }} <time
-                                                                                :datetime="$d(doc.createdAt?.timestamp?.toDate()!, 'short')">
+                                                                                :datetime="$d(toDate(doc.createdAt)!, 'short')">
                                                                                 {{
                                                                                     useLocaleTimeAgo(toDate(doc.createdAt)!).value
                                                                                 }}

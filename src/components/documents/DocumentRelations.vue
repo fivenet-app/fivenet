@@ -5,21 +5,13 @@ import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
-const props = defineProps({
-    documentId: {
-        required: true,
-        type: Number,
-    },
-    showDocument: {
-        required: false,
-        type: Boolean,
-        default: true,
-    },
-    showSource: {
-        required: false,
-        type: Boolean,
-        default: true,
-    },
+const props = withDefaults(defineProps<{
+    documentId: number,
+    showDocument?: boolean,
+    showSource?: boolean,
+}>(), {
+    showDocument: true,
+    showSource: true,
 });
 
 const { data: relations, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-relations`, () => getDocumentRelations());
@@ -57,9 +49,10 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                 <span class="flex flex-col text-sm truncate">
                                     <span v-if="showDocument">
                                         <NuxtLink :to="{ name: 'documents-id', params: { id: relation.documentId } }">
-                                            {{ relation.document?.title }}<span v-if="relation.document?.category"></span>
+                                            {{ relation.document?.title }}<span v-if="relation.document?.category">
                                                 (Category: {{
-                                                    relation.document?.category?.name }})</span>
+                                                    relation.document?.category?.name }})
+                                            </span>
                                         </NuxtLink>
                                     </span>
                                     <span>
@@ -79,7 +72,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         relation.sourceUser?.lastname }}
                                     </span>
                                     <time datetime="">
-                                        {{ $d(relation.createdAt?.timestamp?.toDate()!, 'short') }}
+                                        {{ $d(toDate(relation.createdAt)!, 'short') }}
                                     </time>
                                 </span>
                             </span>
@@ -153,7 +146,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                         <time datetime="">
-                                            {{ $d(relation.createdAt?.timestamp?.toDate()!, 'short') }}
+                                            {{ $d(toDate(relation.createdAt)!, 'short') }}
                                         </time>
                                     </td>
                                 </tr>

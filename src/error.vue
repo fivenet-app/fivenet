@@ -11,9 +11,9 @@ useHead({
 const { $loading } = useNuxtApp();
 const clipboard = useClipboard();
 
-const props = defineProps({
+const props = defineProps<{
     error: Object,
-});
+}>();
 
 const buttonDisabled = ref(true);
 

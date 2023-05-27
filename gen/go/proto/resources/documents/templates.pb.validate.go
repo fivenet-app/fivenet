@@ -185,19 +185,6 @@ func (m *Template) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for CreatorId
-
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
-		err := TemplateValidationError{
-			field:  "Job",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	for idx, item := range m.GetJobAccess() {
 		_, _ = idx, item
 
@@ -327,6 +314,10 @@ func (m *Template) validate(all bool) error {
 
 	}
 
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
+	}
+
 	if m.Creator != nil {
 
 		if all {
@@ -356,6 +347,21 @@ func (m *Template) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.Job != nil {
+
+		if utf8.RuneCountInString(m.GetJob()) > 50 {
+			err := TemplateValidationError{
+				field:  "Job",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}
@@ -543,8 +549,6 @@ func (m *TemplateShort) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for CreatorId
-
 	if utf8.RuneCountInString(m.GetJob()) > 50 {
 		err := TemplateShortValidationError{
 			field:  "Job",
@@ -620,6 +624,10 @@ func (m *TemplateShort) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
 	}
 
 	if m.Creator != nil {
@@ -1474,32 +1482,10 @@ func (m *TemplateJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
-		err := TemplateJobAccessValidationError{
-			field:  "JobLabel",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if m.GetMinimumGrade() <= 0 {
 		err := TemplateJobAccessValidationError{
 			field:  "MinimumGrade",
 			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
-		err := TemplateJobAccessValidationError{
-			field:  "JobGradeLabel",
-			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -1517,8 +1503,6 @@ func (m *TemplateJobAccess) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
-
-	// no validation rules for CreatorId
 
 	if m.CreatedAt != nil {
 
@@ -1584,6 +1568,40 @@ func (m *TemplateJobAccess) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := TemplateJobAccessValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.JobGradeLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
+			err := TemplateJobAccessValidationError{
+				field:  "JobGradeLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
 	}
 
 	if m.Creator != nil {

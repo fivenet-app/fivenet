@@ -6,16 +6,10 @@ import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
-const props = defineProps({
-    providers: {
-        type: Array<OAuth2Provider>,
-        required: true,
-    },
-    connections: {
-        type: Array<OAuth2Account>,
-        required: true,
-    },
-});
+const props = defineProps<{
+    providers: OAuth2Provider[],
+    connections: OAuth2Account[],
+}>();
 
 const emit = defineEmits<{
     (e: 'disconnected', provider: string): void,

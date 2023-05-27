@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { Template } from '~~/gen/ts/resources/documents/templates';
-import { GetTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -11,18 +11,12 @@ const clipboardStore = useClipboardStore();
 
 const { activeChar } = storeToRefs(authStore);
 
-const props = defineProps({
-    id: {
-        type: Number,
-        required: true,
-    },
-    open: {
-        required: true,
-        type: Boolean,
-    },
-});
+const props = defineProps<{
+    id: number,
+    open: boolean,
+}>();
 
-const emit = defineEmits<{
+defineEmits<{
     (e: 'close'): void,
 }>();
 
@@ -31,20 +25,21 @@ const { data: template, pending, refresh, error } = useLazyAsyncData(`documents-
 async function getTemplate(): Promise<Template> {
     return new Promise(async (res, rej) => {
         try {
-            const req = new GetTemplateRequest();
-            req.setTemplateId(props.id);
-            req.setRender(true);
-
             const data = clipboardStore.getTemplateData();
-            data.setActivechar(activeChar.value!);
-            req.setData(JSON.stringify(data.toObject()));
+            data.activeChar = activeChar.value!;
 
-            const resp = await $grpc.getDocStoreClient().
-                getTemplate(req);
+            const call = $grpc.getDocStoreClient().
+                getTemplate({
+                    templateId: props.id,
+                    data: JSON.stringify(data),
+                    render: true,
+                });
+            const { response } = await call;
 
-            return res(resp.getTemplate()!);
+            return res(response.template!);
         } catch (e) {
-            return rej();
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
         }
     });
 }
@@ -78,7 +73,8 @@ async function getTemplate(): Promise<Template> {
                                                 <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
                                                     {{ $t('common.title') }}
                                                 </label>
-                                                <h1 class="p-2 mt-4 rounded-lg text-2xl font-bold text-neutral bg-base-800 break-words">
+                                                <h1
+                                                    class="p-2 mt-4 rounded-lg text-2xl font-bold text-neutral bg-base-800 break-words">
                                                     {{ template?.title }}
                                                 </h1>
 
@@ -86,7 +82,7 @@ async function getTemplate(): Promise<Template> {
                                                     {{ $t('common.content') }}
                                                 </label>
                                                 <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
-                                                    <p v-html="template?.getContent()"></p>
+                                                    <p v-html="template?.content"></p>
                                                 </div>
                                             </div>
                                         </div>

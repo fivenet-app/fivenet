@@ -301,15 +301,19 @@ func (m *GetTemplateRequest) validate(all bool) error {
 
 	// no validation rules for TemplateId
 
-	if len(m.GetData()) > 10240 {
-		err := GetTemplateRequestValidationError{
-			field:  "Data",
-			reason: "value length must be at most 10240 bytes",
+	if m.Data != nil {
+
+		if len(m.GetData()) > 10240 {
+			err := GetTemplateRequestValidationError{
+				field:  "Data",
+				reason: "value length must be at most 10240 bytes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
+
 	}
 
 	if m.Render != nil {
@@ -4580,8 +4584,6 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
-	// no validation rules for CategoryId
-
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
 		err := UpdateDocumentRequestValidationError{
 			field:  "Title",
@@ -4637,8 +4639,6 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Data
-
 	if utf8.RuneCountInString(m.GetState()) > 24 {
 		err := UpdateDocumentRequestValidationError{
 			field:  "State",
@@ -4653,6 +4653,14 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 	// no validation rules for Closed
 
 	// no validation rules for Public
+
+	if m.CategoryId != nil {
+		// no validation rules for CategoryId
+	}
+
+	if m.Data != nil {
+		// no validation rules for Data
+	}
 
 	if m.Access != nil {
 

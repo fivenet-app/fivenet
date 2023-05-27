@@ -4,7 +4,6 @@ import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/20/solid';
 import { watchDebounced } from '@vueuse/shared';
-import { SetJobRequest } from '~~/gen/ts/services/auth/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { RpcError } from 'grpc-web';
 
@@ -41,7 +40,7 @@ async function findJobs(): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e);
+            return rej(e as RpcError);
         }
     });
 }

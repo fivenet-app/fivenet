@@ -1,22 +1,21 @@
 <script lang="ts" setup>
 import { defineRule } from 'vee-validate';
-import { CreateTemplateRequest, GetTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
-import { Template, ObjectSpecs, TemplateRequirements, TemplateSchema, TemplateJobAccess } from '~~/gen/ts/resources/documents/templates';
+import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
+import { ObjectSpecs, TemplateRequirements, TemplateJobAccess } from '~~/gen/ts/resources/documents/templates';
 import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
 import { TemplateSchemaEditorValue, ObjectSpecsValue } from './TemplateSchemaEditor.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
-import { CompleteDocumentCategoriesRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
 import { watchDebounced } from '@vueuse/core';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { CheckIcon, PlusIcon } from '@heroicons/vue/20/solid';
 import { useAuthStore } from '~/store/auth';
-import { DocumentAccess, DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/documents/documents';
-import { ACCESS_LEVEL_Util } from '~~/gen/ts/resources/documents/access.pb_enums';
+import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
 import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { max, min, numeric, required } from '@vee-validate/rules';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const { t } = useI18n();
@@ -24,12 +23,9 @@ const authStore = useAuthStore();
 
 const notifications = useNotificationsStore();
 
-const props = defineProps({
-    templateId: {
-        type: Number,
-        required: false,
-    }
-});
+const props = defineProps<{
+    templateId?: number,
+}>();
 
 const { activeChar } = storeToRefs(authStore);
 
@@ -147,7 +143,7 @@ function updateAccessEntryRank(event: {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
-    accessEntry.values.minimumrank = event.rank.getGrade();
+    accessEntry.values.minimumrank = event.rank.grade;
     access.value.set(event.id, accessEntry);
 }
 
@@ -225,7 +221,7 @@ function updateContentAccessEntryRank(event: {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
-    accessEntry.values.minimumrank = event.rank.getGrade();
+    accessEntry.values.minimumrank = event.rank.grade;
     contentAccess.value.set(event.id, accessEntry);
 }
 
@@ -245,38 +241,26 @@ const filteredRank = ref<JobGrade[]>([]);
 const queryRank = ref('');
 
 function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
-    const o = new ObjectSpecs();
-    o.setRequired(v.req ?? false);
+    const o: ObjectSpecs = {
+        required: v.req,
+    };
     if (v.min > 0) {
-        o.setMin(v.min);
+        o.min = v.min;
     }
     if (v.max > 0) {
-        o.setMax(v.max);
+        o.max = v.max;
     }
+
     return o;
 }
 
 async function createTemplate(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new CreateTemplateRequest();
-        const tpl = new Template();
-        tpl.setWeight(values.weight);
-        tpl.setTitle(values.title);
-        tpl.setDescription(values.description);
-        tpl.setContentTitle(values.contentTitle);
-        tpl.setContent(values.content);
-        if (selectedCategory.value) {
-            tpl.setCategory(selectedCategory.value);
-        }
-
-        const tRequirements = new TemplateRequirements();
-        tRequirements.setUsers(createObjectSpec(schema.value.users));
-        tRequirements.setDocuments(createObjectSpec(schema.value.documents));
-        tRequirements.setVehicles(createObjectSpec(schema.value.vehicles));
-
-        const tSchema = new TemplateSchema();
-        tSchema.setRequirements(tRequirements);
-        tpl.setSchema(tSchema);
+        const tRequirements: TemplateRequirements = {
+            users: createObjectSpec(schema.value.users),
+            documents: createObjectSpec(schema.value.documents),
+            vehicles: createObjectSpec(schema.value.vehicles),
+        };
 
         const jobAccesses = new Array<TemplateJobAccess>();
         access.value.forEach(entry => {
@@ -285,45 +269,68 @@ async function createTemplate(values: FormData): Promise<void> {
             if (entry.type === 1) {
                 if (!entry.values.job) return;
 
-                const job = new TemplateJobAccess();
-                job.setJob(entry.values.job);
-                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-
-                jobAccesses.push(job);
+                jobAccesses.push({
+                    id: 0,
+                    templateId: props.templateId!,
+                    access: entry.values.accessrole,
+                    job: entry.values.job,
+                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
+                });
             }
         });
-        tpl.setJobAccessList(jobAccesses);
 
-        const reqAccess = new DocumentAccess();
+        const reqAccess: DocumentAccess = {
+            jobs: [],
+            users: [],
+        };
         contentAccess.value.forEach(entry => {
             if (entry.values.accessrole === undefined) return;
 
             if (entry.type === 0) {
                 if (!entry.values.char) return;
 
-                const user = new DocumentUserAccess();
-                user.setUserId(entry.values.char);
-                user.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-
-                reqAccess.addUsers(user);
+                reqAccess.users.push({
+                    id: 0,
+                    documentId: 0,
+                    userId: entry.values.char,
+                    access: entry.values.accessrole,
+                });
             } else if (entry.type === 1) {
                 if (!entry.values.job) return;
 
-                const job = new DocumentJobAccess();
-                job.setJob(entry.values.job);
-                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-
-                reqAccess.addJobs(job);
+                reqAccess.jobs.push({
+                    id: 0,
+                    documentId: 0,
+                    job: entry.values.job!,
+                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
+                    access: entry.values.accessrole,
+                });
             }
         });
-        tpl.setContentAccess(reqAccess);
 
-        req.setTemplate(tpl);
+        const req: CreateTemplateRequest = {
+            template: {
+                id: props.templateId!,
+                weight: values.weight,
+                title: values.title,
+                description: values.description,
+                contentTitle: values.contentTitle,
+                content: values.content,
+                schema: {
+                    requirements: tRequirements,
+                },
+                contentAccess: reqAccess,
+                jobAccess: jobAccesses,
+            },
+        };
+        if (selectedCategory.value) {
+            req.template!.category = selectedCategory.value;
+        }
+
         try {
-            const resp = await $grpc.getDocStoreClient().
+            const call = $grpc.getDocStoreClient().
                 createTemplate(req);
+            const { response } = await call;
 
             notifications.dispatchNotification({
                 title: 'Template: Created',
@@ -331,10 +338,11 @@ async function createTemplate(values: FormData): Promise<void> {
                 type: 'success',
             });
 
-            await navigateTo({ name: 'documents-templates-id', params: { id: resp.id } });
+            await navigateTo({ name: 'documents-templates-id', params: { id: response.id } });
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -342,26 +350,11 @@ async function createTemplate(values: FormData): Promise<void> {
 
 async function updateTemplate(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new UpdateTemplateRequest();
-        const tpl = new Template();
-        tpl.setId(props.templateId!);
-        tpl.setWeight(values.weight);
-        tpl.setTitle(values.title);
-        tpl.setDescription(values.description);
-        tpl.setContentTitle(values.contentTitle);
-        tpl.setContent(values.content);
-        if (selectedCategory.value) {
-            tpl.setCategory(selectedCategory.value);
-        }
-
-        const tRequirements = new TemplateRequirements();
-        tRequirements.setUsers(createObjectSpec(schema.value.users));
-        tRequirements.setDocuments(createObjectSpec(schema.value.documents));
-        tRequirements.setVehicles(createObjectSpec(schema.value.vehicles));
-
-        const tSchema = new TemplateSchema();
-        tSchema.setRequirements(tRequirements);
-        tpl.setSchema(tSchema);
+        const tRequirements: TemplateRequirements = {
+            users: createObjectSpec(schema.value.users),
+            documents: createObjectSpec(schema.value.documents),
+            vehicles: createObjectSpec(schema.value.vehicles),
+        };
 
         const jobAccesses = new Array<TemplateJobAccess>();
         access.value.forEach(entry => {
@@ -370,45 +363,68 @@ async function updateTemplate(values: FormData): Promise<void> {
             if (entry.type === 1) {
                 if (!entry.values.job) return;
 
-                const job = new TemplateJobAccess();
-                job.setJob(entry.values.job);
-                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-
-                jobAccesses.push(job);
+                jobAccesses.push({
+                    id: 0,
+                    templateId: props.templateId!,
+                    access: entry.values.accessrole,
+                    job: entry.values.job,
+                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
+                });
             }
         });
-        tpl.setJobAccessList(jobAccesses);
 
-        const reqAccess = new DocumentAccess();
+        const reqAccess: DocumentAccess = {
+            jobs: [],
+            users: [],
+        };
         contentAccess.value.forEach(entry => {
             if (entry.values.accessrole === undefined) return;
 
             if (entry.type === 0) {
                 if (!entry.values.char) return;
 
-                const user = new DocumentUserAccess();
-                user.setUserId(entry.values.char);
-                user.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-
-                reqAccess.addUsers(user);
+                reqAccess.users.push({
+                    id: 0,
+                    documentId: 0,
+                    userId: entry.values.char,
+                    access: entry.values.accessrole,
+                });
             } else if (entry.type === 1) {
                 if (!entry.values.job) return;
 
-                const job = new DocumentJobAccess();
-                job.setJob(entry.values.job);
-                job.setMinimumgrade(entry.values.minimumrank ? entry.values.minimumrank : 0);
-                job.setAccess(ACCESS_LEVEL_Util.fromInt(entry.values.accessrole));
-
-                reqAccess.addJobs(job);
+                reqAccess.jobs.push({
+                    id: 0,
+                    documentId: 0,
+                    job: entry.values.job!,
+                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
+                    access: entry.values.accessrole,
+                });
             }
         });
-        tpl.setContentAccess(reqAccess);
 
-        req.setTemplate(tpl);
+        const req: UpdateTemplateRequest = {
+            template: {
+                id: props.templateId!,
+                weight: values.weight,
+                title: values.title,
+                description: values.description,
+                contentTitle: values.contentTitle,
+                content: values.content,
+                schema: {
+                    requirements: tRequirements,
+                },
+                contentAccess: reqAccess,
+                jobAccess: jobAccesses,
+            },
+        };
+        if (selectedCategory.value) {
+            req.template!.category = selectedCategory.value;
+        }
+
         try {
-            const resp = await $grpc.getDocStoreClient().
+            const call = $grpc.getDocStoreClient().
                 updateTemplate(req);
+            const { response } = await call;
 
             notifications.dispatchNotification({
                 title: 'Template: Updated',
@@ -416,10 +432,11 @@ async function updateTemplate(values: FormData): Promise<void> {
                 type: 'success',
             });
 
-            await navigateTo({ name: 'documents-templates-id', params: { id: resp.id } });
+            await navigateTo({ name: 'documents-templates-id', params: { id: response.id } });
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -434,14 +451,15 @@ watchDebounced(queryCategory, () => findCategories(), { debounce: 600, maxWait: 
 async function findCategories(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const req = new CompleteDocumentCategoriesRequest();
-            req.setSearch(queryCategory.value);
-
-            const resp = await $grpc.getCompletorClient().completeDocumentCategories(req)
-            entriesCategory = resp.getCategoriesList();
+            const call = $grpc.getCompletorClient().completeDocumentCategories({
+                search: queryCategory.value,
+            });
+            const { response } = await call;
+            entriesCategory = response.categories;
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -451,78 +469,79 @@ onMounted(async () => {
     await findCategories();
 
     if (props.templateId) {
-        const req = new GetTemplateRequest();
-        req.setTemplateId(props.templateId);
-        req.setRender(false);
-
         try {
-            const resp = (await $grpc.getDocStoreClient().getTemplate(req));
-            if (!resp) return;
+            const call = $grpc.getDocStoreClient().getTemplate({
+                templateId: props.templateId,
+                render: false,
+            });
+            const { response } = await call;
 
-            const tpl = resp.getTemplate();
+            const tpl = response.template;
             if (!tpl) return;
 
             setValues({
-                weight: tpl.getWeight(),
+                weight: tpl.weight,
                 title: tpl.title,
-                description: tpl.getDescription(),
-                contentTitle: tpl.getContentTitle(),
-                content: tpl.getContent(),
+                description: tpl.description,
+                contentTitle: tpl.contentTitle,
+                content: tpl.content,
             });
-            if (tpl.hasCategory()) {
+            if (tpl.category) {
                 selectedCategory.value = tpl.category;
             }
 
-            const tplAccess = tpl.getJobAccessList();
+            const tplAccess = tpl.jobAccess;
             if (tplAccess) {
                 let accessId = 0;
 
                 tplAccess.forEach(job => {
-                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.access, minimumrank: job.minimumGrade } });
                     accessId++;
                 });
             }
 
-            const ctAccess = tpl.getContentAccess();
+            const ctAccess = tpl.contentAccess;
             if (ctAccess) {
                 let accessId = 0;
 
-                ctAccess.getUsersList().forEach(user => {
-                    contentAccess.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.getAccess() } });
+                ctAccess.users.forEach(user => {
+                    contentAccess.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.access } });
                     accessId++;
                 });
 
-                ctAccess.getJobsList().forEach(job => {
-                    contentAccess.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.getAccess(), minimumrank: job.getMinimumgrade() } });
+                ctAccess.jobs.forEach(job => {
+                    contentAccess.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.access, minimumrank: job.minimumGrade } });
                     accessId++;
                 });
             }
 
-            schema.value.users.req = tpl.getSchema()?.getRequirements()?.getUsers()?.getRequired() ?? false;
-            schema.value.users.min = tpl.getSchema()?.getRequirements()?.getUsers()?.getMin() ?? 0;
-            schema.value.users.max = tpl.getSchema()?.getRequirements()?.getUsers()?.getMax() ?? 0;
+            schema.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
+            schema.value.users.min = tpl.schema?.requirements?.users?.min ?? 0;
+            schema.value.users.max = tpl.schema?.requirements?.users?.max ?? 0;
 
-            schema.value.documents.req = tpl.getSchema()?.getRequirements()?.getDocuments()?.getRequired() ?? false;
-            schema.value.documents.min = tpl.getSchema()?.getRequirements()?.getDocuments()?.getMin() ?? 0;
-            schema.value.documents.max = tpl.getSchema()?.getRequirements()?.getDocuments()?.getMax() ?? 0;
+            schema.value.documents.req = tpl.schema?.requirements?.documents?.required ?? false;
+            schema.value.documents.min = tpl.schema?.requirements?.documents?.min ?? 0;
+            schema.value.documents.max = tpl.schema?.requirements?.documents?.max ?? 0;
 
-            schema.value.vehicles.req = tpl.getSchema()?.getRequirements()?.getVehicles()?.getRequired() ?? false;
-            schema.value.vehicles.min = tpl.getSchema()?.getRequirements()?.getVehicles()?.getMin() ?? 0;
-            schema.value.vehicles.max = tpl.getSchema()?.getRequirements()?.getVehicles()?.getMax() ?? 0;
+            schema.value.vehicles.req = tpl.schema?.requirements?.vehicles?.required ?? false;
+            schema.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? 0;
+            schema.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0;
         } catch (e) {
+            $grpc.handleError(e as RpcError);
         }
     } else {
         access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.job, minimumrank: 1, accessrole: ACCESS_LEVEL.VIEW } });
     }
 
-    const req = new CompleteJobsRequest();
-    req.setExactMatch(true);
-    req.setCurrentJob(true);
-
     try {
-        const resp = await $grpc.getCompletorClient().completeJobs(req);
-        entriesRank.value = resp.getJobsList()[0].getGradesList();
+        const call = $grpc.getCompletorClient().completeJobs({
+            exactMatch: true,
+            currentJob: true,
+        });
+        const { response } = await call;
+        entriesRank.value = response.jobs[0].grades;
     } catch (e) {
+        $grpc.handleError(e as RpcError);
     }
 });
 

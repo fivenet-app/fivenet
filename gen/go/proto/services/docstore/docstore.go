@@ -64,6 +64,7 @@ func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud au
 func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (*ListDocumentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	tDocs := tDocs.AS("documentshort")
 	condition := jet.Bool(true)
 	if req.Search != "" {
 		condition = jet.BoolExp(
@@ -92,7 +93,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		)
 	}
 
-	countStmt := s.getDocumentsQuery(
+	countStmt := s.listDocumentsQuery(
 		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocs.ID)).AS("datacount.totalcount")},
 		-1, userInfo)
 
@@ -109,7 +110,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		return resp, nil
 	}
 
-	stmt := s.getDocumentsQuery(condition, nil,
+	stmt := s.listDocumentsQuery(condition, nil,
 		DocShortContentLength, userInfo).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(tDocs.ID).

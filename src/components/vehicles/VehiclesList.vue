@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
-import { OrderBy, PaginationRequest, PaginationResponse } from '~~/gen/ts/resources/common/database/database';
+import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { watchDebounced } from '@vueuse/core'
 import { ListVehiclesRequest } from '~~/gen/ts/services/dmv/vehicles';
 import TablePagination from '~/components/partials/TablePagination.vue';
@@ -15,27 +15,16 @@ import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
-const props = defineProps({
-    userId: {
-        type: Number,
-        required: false,
-        default: 0,
-    },
-    hideOwner: {
-        type: Boolean,
-        required: false,
-        default: false,
-    },
-    hideCitizenLink: {
-        type: Boolean,
-        required: false,
-        default: false,
-    },
-    hideCopy: {
-        type: Boolean,
-        required: false,
-        default: false,
-    },
+const props = withDefaults(defineProps<{
+    userId?: number,
+    hideOwner?: boolean,
+    hideCitizenLink?: boolean,
+    hideCopy?: boolean,
+}>(), {
+    userId: 0,
+    hideOwner: false,
+    hideCitizenLink: false,
+    hideCopy: false,
 });
 
 const entriesChars = ref<UserShort[]>([]);

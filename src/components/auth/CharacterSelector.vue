@@ -19,7 +19,7 @@ async function fetchCharacters(): Promise<Array<User>> {
             return res(response.chars);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e);
+            return rej(e as RpcError);
         }
     });
 }

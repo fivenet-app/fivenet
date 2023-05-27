@@ -1,25 +1,12 @@
 <script lang="ts" setup>
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 
-defineProps({
-    title: {
-        type: String,
-        required: false,
-    },
-    message: {
-        type: String,
-        required: false,
-    },
-    retry: {
-        type: Function,
-        required: false,
-    },
-    retryMessage: {
-        type: String,
-        required: false,
-    },
-
-});
+defineProps<{
+    title?: string,
+    message?: string,
+    retry?: Function,
+    retryMessage?: string,
+}>();
 </script>
 
 <template>

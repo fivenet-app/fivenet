@@ -1,17 +1,12 @@
 <script lang="ts" setup>
-const props = defineProps({
-    throttle: {
-        type: Number,
-        default: 150,
-    },
-    duration: {
-        type: Number,
-        default: 2250,
-    },
-    height: {
-        type: Number,
-        default: 3,
-    },
+const props = withDefaults(defineProps<{
+    throttle: number,
+    duration: number,
+    height: number,
+}>(), {
+    throttle: 150,
+    duration: 2250,
+    height: 3,
 });
 
 // Options & Data
@@ -86,8 +81,11 @@ const delayedFinish = () => {
 // Hooks
 const nuxt = useNuxtApp();
 
+//@ts-ignore TODO we are currently unable to add custom event types to the typings
 nuxt.hook('data:loading:start', start);
+//@ts-ignore TODO we are currently unable to add custom event types to the typings
 nuxt.hook('data:loading:finish', delayedFinish);
+//@ts-ignore TODO we are currently unable to add custom event types to the typings
 nuxt.hook('data:loading:finish_error', () => {
     data.canSucceed = false;
     delayedFinish();
@@ -125,10 +123,10 @@ onBeforeUnmount(() => clear);
 
 <template>
     <div :class="['nuxt-progress', !data.canSucceed ? 'nuxt-progress-failed' : '']" :style="{
-            width: data.percent + '%',
-            left: data.left,
-            height: props.height + 'px',
-            opacity: data.show ? 1 : 0,
-            backgroundSize: (100 / data.percent) * 100 + '% auto',
-        }" />
+        width: data.percent + '%',
+        left: data.left,
+        height: props.height + 'px',
+        opacity: data.show ? 1 : 0,
+        backgroundSize: (100 / data.percent) * 100 + '% auto',
+    }" />
 </template>

@@ -1,39 +1,38 @@
 <script lang="ts" setup>
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
-import { DeleteTemplateRequest, GetTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
 import TemplateRequirementsList from './TemplateRequirementsList.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import TemplatePreviewModal from './TemplatePreviewModal.vue';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
 
-const props = defineProps({
-    templateId: {
-        type: Number,
-        required: true,
-    }
-});
+const props = defineProps<{
+    templateId: number,
+}>();
 
 const { data: template, pending, refresh, error } = useLazyAsyncData(`documents-template-${props.templateId}`, () => getTemplate());
 const reqs = ref<undefined | TemplateRequirements>();
 
 async function getTemplate(): Promise<Template | undefined> {
     return new Promise(async (res, rej) => {
-        const req = new GetTemplateRequest();
-        req.setTemplateId(props.templateId);
-
         try {
-            const resp = await $grpc.getDocStoreClient().
-                getTemplate(req);
+            const call = $grpc.getDocStoreClient().
+                getTemplate({
+                    templateId: props.templateId,
+                    render: false,
+                });
+            const { response } = await call;
 
-            if (resp.getTemplate()?.hasSchema()) {
-                reqs.value = resp.getTemplate()?.getSchema()?.getRequirements();
+            if (response.template?.schema) {
+                reqs.value = response.template?.schema?.requirements;
             }
 
-            return res(resp.getTemplate()!);
+            return res(response.template!);
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -41,12 +40,11 @@ async function getTemplate(): Promise<Template | undefined> {
 
 async function deleteTemplate(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new DeleteTemplateRequest();
-        req.setId(props.templateId);
-
         try {
             await $grpc.getDocStoreClient().
-                deleteTemplate(req);
+                deleteTemplate({
+                    id: props.templateId,
+                });
 
             notifications.dispatchNotification({
                 title: 'Template: Deleted',
@@ -58,6 +56,7 @@ async function deleteTemplate(): Promise<void> {
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -94,7 +93,7 @@ const openPreview = ref(false);
                     <div class="mt-2">
                         <input type="text"
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                            disabled :value="template.getWeight()" />
+                            disabled :value="template.weight" />
                     </div>
                     <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                         {{ $t('common.content') }} {{ $t('common.title') }}
@@ -102,7 +101,7 @@ const openPreview = ref(false);
                     <div class="mt-2">
                         <textarea rows="4" name="content"
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                            disabled :value="template.getContentTitle()" />
+                            disabled :value="template.contentTitle" />
                     </div>
                     <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                         {{ $t('common.content') }}
@@ -110,16 +109,16 @@ const openPreview = ref(false);
                     <div class="mt-2">
                         <textarea rows="4" name="content"
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                            disabled :value="template.getContent()" />
+                            disabled :value="template.content" />
                     </div>
-                    <div v-if="template.hasCategory()">
+                    <div v-if="template.category">
                         <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                             {{ $t('common.category') }}
                         </label>
                         <div class="mt-2">
                             <p class="text-sm font-medium leading-6 text-gray-100">
                                 {{ template.category?.name }} ({{ $t('common.description') }}: {{
-                                    template.category?.getDescription() }})
+                                    template.category?.description }})
                             </p>
                         </div>
                     </div>
@@ -130,14 +129,14 @@ const openPreview = ref(false);
                         <div class="mt-2">
                             <ul
                                 class="text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300">
-                                <li v-if="reqs.hasUsers()">
-                                    <TemplateRequirementsList name="User" :specs="reqs.getUsers()!" />
+                                <li v-if="reqs.users">
+                                    <TemplateRequirementsList name="User" :specs="reqs.users!" />
                                 </li>
-                                <li v-if="reqs.hasVehicles()">
-                                    <TemplateRequirementsList name="Vehicle" :specs="reqs.getVehicles()!" />
+                                <li v-if="reqs.vehicles">
+                                    <TemplateRequirementsList name="Vehicle" :specs="reqs.vehicles!" />
                                 </li>
-                                <li v-if="reqs.hasDocuments()">
-                                    <TemplateRequirementsList name="User" :specs="reqs.getDocuments()!" />
+                                <li v-if="reqs.documents">
+                                    <TemplateRequirementsList name="User" :specs="reqs.documents!" />
                                 </li>
                             </ul>
                         </div>

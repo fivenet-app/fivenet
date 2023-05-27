@@ -1,28 +1,22 @@
 <script setup lang="ts">
-import { PaginationRequest, PaginationResponse } from '~~/gen/ts/resources/common/database/database';
+import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { DocumentComment } from '~~/gen/ts/resources/documents/documents';
-import { GetDocumentCommentsRequest, PostDocumentCommentRequest } from '~~/gen/ts/services/docstore/docstore';
-import { computed, ref } from 'vue';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/20/solid';
 import TablePagination from '~/components/partials/TablePagination.vue';
+import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 
 const { activeChar } = storeToRefs(authStore);
 
-const props = defineProps({
-    documentId: {
-        required: true,
-        type: Number,
-    },
-    closed: {
-        required: false,
-        type: Boolean,
-        default: false,
-    },
+const props = withDefaults(defineProps<{
+    documentId: number,
+    closed?: boolean,
+}>(), {
+    closed: false,
 });
 
 const emit = defineEmits<{
@@ -36,21 +30,25 @@ const { data: comments, pending, refresh, error } = useLazyAsyncData(`document-$
 
 async function getDocumentComments(): Promise<Array<DocumentComment>> {
     return new Promise(async (res, rej) => {
-        const creq = new GetDocumentCommentsRequest();
-        creq.setPagination((new PaginationRequest()).setOffset(0).setPageSize(5));
-        creq.setDocumentId(props.documentId);
-
         try {
-            const resp = await $grpc.getDocStoreClient().
-                getDocumentComments(creq);
+            const call = $grpc.getDocStoreClient().
+                getDocumentComments({
+                    pagination: {
+                        offset: offset.value,
+                        pageSize: 5,
+                    },
+                    documentId: props.documentId,
+                });
+            const { response } = await call;
 
-            pagination.value = resp.getPagination();
+            pagination.value = response.pagination;
             if (pagination.value) {
-                emit('counted', pagination.value?.getTotalCount());
+                emit('counted', pagination.value?.totalCount);
             }
 
-            return res(resp.getCommentsList());
+            return res(response.comments);
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -64,24 +62,27 @@ async function addComment(): Promise<void> {
             return res();
         }
 
-        const req = new PostDocumentCommentRequest();
-        const com = new DocumentComment();
-        com.setDocumentId(props.documentId);
-        com.setComment(message.value);
-        req.setComment(com);
+        const comment: DocumentComment = {
+            id: 0,
+            documentId: props.documentId,
+            comment: message.value,
+        };
 
         try {
-            const resp = await $grpc.getDocStoreClient().
-                postDocumentComment(req);
+            const call = $grpc.getDocStoreClient().
+                postDocumentComment({
+                    comment: comment,
+                });
+            const { response } = await call;
 
-            com.setId(resp.id);
-            com.setCreatorId(activeChar.value!.userId);
-            com.setCreator(activeChar.value!);
+            comment.id = response.id;
+            comment.creator = activeChar.value!;
 
-            comments.value.unshift(com);
+            comments.value.unshift(comment);
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });

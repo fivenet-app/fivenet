@@ -2,18 +2,10 @@
 import { CardElement } from '~/utils/types';
 import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
 
-defineProps({
-    items: {
-        type: Array<CardElement>,
-        default: [],
-        required: true,
-    },
-    showIcon: {
-        type: Boolean,
-        default: true,
-        required: false,
-    },
-});
+defineProps<{
+    items: CardElement[],
+    showIcon: boolean,
+}>();
 
 defineEmits<{
     (e: 'selected', idx: number): void,

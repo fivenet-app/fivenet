@@ -14,12 +14,9 @@ import ClipboardModalVehicles from './ClipboardModalVehicles.vue';
 
 const clipboardStore = useClipboardStore();
 
-defineProps({
-    open: {
-        required: true,
-        type: Boolean,
-    },
-});
+defineProps<{
+    open: boolean,
+}>();
 
 defineEmits<{
     (e: 'close'): void,

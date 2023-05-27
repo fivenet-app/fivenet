@@ -20,7 +20,6 @@ import {
     RpcInterceptor,
     UnaryCall,
     ServerStreamingCall,
-    RpcStatus,
 } from '@protobuf-ts/runtime-rpc/build/types';
 
 export default defineNuxtPlugin(() => {
