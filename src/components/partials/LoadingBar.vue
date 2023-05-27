@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 const props = withDefaults(defineProps<{
-    throttle: number,
-    duration: number,
-    height: number,
+    throttle?: number,
+    duration?: number,
+    height?: number,
 }>(), {
     throttle: 150,
     duration: 2250,

@@ -21,6 +21,7 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { ArrayElement } from '~/utils/types';
 import { RpcError } from 'grpc-web';
+import { listEnumValues } from '@protobuf-ts/runtime';
 
 const { $grpc } = useNuxtApp();
 
@@ -56,15 +57,16 @@ const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
 let entriesAccessRoles = new Array<{ id: ACCESS_LEVEL; label: string; value: string }>();
 if (!props.accessRoles || props.accessRoles.length === 0) {
-    entriesAccessRoles = Object.keys(ACCESS_LEVEL).map((e, v) => {
+    const enumVals = listEnumValues(ACCESS_LEVEL);
+    entriesAccessRoles = enumVals.map((e, k) => {
         return {
-            id: v,
-            label: t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[parseInt(e)]}`),
-            value: e,
+            id: k,
+            label: t(`enums.docstore.ACCESS_LEVEL.${e.name}`),
+            value: e.name,
         };
     });
 } else {
-    props.accessRoles.forEach((e) => {
+    props.accessRoles.forEach(e => {
         entriesAccessRoles.push({
             id: e,
             label: t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[e]}`),
