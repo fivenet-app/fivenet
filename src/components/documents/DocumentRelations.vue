@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
 
@@ -64,7 +64,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                     </span>
                                     <span class="font-medium">
                                         {{
-                                            $t(`enums.docstore.DOC_RELATION.${relation.relation}`)
+                                            $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`)
                                         }}
                                     </span>
                                     <span v-if="showSource" class="truncate">{{ relation.sourceUser?.firstname +
@@ -131,7 +131,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                         <span class="font-medium">
                                             {{
-                                                $t(`enums.docstore.DOC_RELATION.${relation.relation}`)
+                                                $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`)
                                             }}
                                         </span>
                                     </td>

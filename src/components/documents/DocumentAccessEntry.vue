@@ -59,7 +59,7 @@ if (!props.accessRoles || props.accessRoles.length === 0) {
     entriesAccessRoles = Object.keys(ACCESS_LEVEL).map((e, v) => {
         return {
             id: v,
-            label: t(`enums.docstore.ACCESS_LEVEL.${e}`),
+            label: t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[parseInt(e)]}`),
             value: e,
         };
     });
@@ -67,7 +67,7 @@ if (!props.accessRoles || props.accessRoles.length === 0) {
     props.accessRoles.forEach((e) => {
         entriesAccessRoles.push({
             id: e,
-            label: t(`enums.docstore.ACCESS_LEVEL.${e}`),
+            label: t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[e]}`),
             value: ACCESS_LEVEL[e],
         });
     });

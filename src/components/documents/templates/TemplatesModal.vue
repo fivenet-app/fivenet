@@ -13,7 +13,7 @@ const clipboardStore = useClipboardStore();
 
 const props = withDefaults(defineProps<{
     open: boolean,
-    autoFill: boolean,
+    autoFill?: boolean,
 }>(), {
     autoFill: false,
 });

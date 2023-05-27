@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DocumentReference } from '~~/gen/ts/resources/documents/documents';
+import { DOC_REFERENCE, DocumentReference } from '~~/gen/ts/resources/documents/documents';
 import { ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
 
@@ -54,7 +54,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
     }})</span>
                                     </span>
                                     <span class="font-medium">
-                                        {{ reference.reference }}
+                                        {{ DOC_REFERENCE[reference.reference] }}
                                     </span>
                                     <span v-if="showSource" class="truncate">
                                         {{ reference.sourceDocument?.title }}<span
@@ -122,7 +122,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                         <span class="font-medium">
                                             {{
-                                                $t(`enums.docstore.DOC_REFERENCE.${reference.reference}`)
+                                                $t(`enums.docstore.DOC_REFERENCE.${DOC_REFERENCE[reference.reference]}`)
                                             }}
                                         </span>
                                     </td>

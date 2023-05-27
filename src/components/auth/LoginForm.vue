@@ -34,6 +34,7 @@ async function login(values: FormData): Promise<void> {
         } catch (e) {
             loginStop((e as RpcError).message);
             setAccessToken(null, null);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });

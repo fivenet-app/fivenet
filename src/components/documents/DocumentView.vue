@@ -29,6 +29,7 @@ import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import AddToClipboardButton from '../clipboard/AddToClipboardButton.vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import { RpcError } from 'grpc-web';
+import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -196,7 +197,7 @@ function addToClipboard(): void {
                                 <span class="text-sm font-medium text-info-800">{{ entry.jobLabel }}<span
                                         :title="entry.jobGradeLabel" v-if="entry.minimumGrade > 0"> ({{
                                             $t('common.rank') }}: {{ entry.minimumGrade }})</span> - {{
-        $t(`enums.docstore.ACCESS_LEVEL.${entry.access}`) }}
+        $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[entry.access]}`) }}
                                 </span>
                             </div>
                             <div v-for="entry in access?.users" :key="entry.id"
@@ -205,7 +206,7 @@ function addToClipboard(): void {
                                 <span class="text-sm font-medium text-secondary-700">
                                     {{ entry.user?.firstname }}
                                     {{ entry.user?.lastname }} - {{
-                                        $t(`enums.docstore.ACCESS_LEVEL.${entry.access}`) }}
+                                        $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[entry.access]}`) }}
                                 </span>
                             </div>
                         </div>

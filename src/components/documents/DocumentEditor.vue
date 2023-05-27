@@ -387,6 +387,7 @@ async function submitForm(): Promise<void> {
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -490,6 +491,7 @@ async function editForm(): Promise<void> {
             await navigateTo({ name: 'documents-id', params: { id: response.documentId } });
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { DocumentTextIcon, ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
@@ -96,7 +96,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         </span>
                                         <span class="font-medium">
                                             {{
-                                                $t(`enums.docstore.DOC_RELATION.${relation.relation}`)
+                                                $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`)
                                             }}
                                         </span>
                                         <span class="truncate">
@@ -183,7 +183,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                             <span class="font-medium">
                                                 {{
-                                                    $t(`enums.docstore.DOC_RELATION.${relation.relation}`)
+                                                    $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`)
                                                 }}
                                             </span>
                                         </td>

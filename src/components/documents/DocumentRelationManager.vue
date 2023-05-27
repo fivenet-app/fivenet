@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { User } from '~~/gen/ts/resources/users/users';
 import {
     Dialog,
@@ -188,7 +188,7 @@ function removeRelation(id: number): void {
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
-                                                                            $t(`enums.docstore.DOC_RELATION.${rel.relation}`)
+                                                                            $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[rel.relation]}`)
                                                                         }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">

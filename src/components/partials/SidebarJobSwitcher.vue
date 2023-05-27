@@ -82,6 +82,7 @@ async function setJob(): Promise<void> {
             return res();
         } catch (e) {
             queryJob.value = '';
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });

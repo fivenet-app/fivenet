@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { watchDebounced } from '@vueuse/shared';
 import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
-import { Document } from '~~/gen/ts/resources/documents/documents';
+import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
@@ -25,7 +25,7 @@ const queryCategories = ref<string>('');
 
 const { data: documents, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
 
-async function listDocuments(): Promise<Array<Document>> {
+async function listDocuments(): Promise<Array<DocumentShort>> {
     return new Promise(async (res, rej) => {
         const req: ListDocumentsRequest = {
             pagination: {
@@ -64,6 +64,7 @@ async function findCategories(): Promise<void> {
 
             return res();
         } catch (e) {
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
