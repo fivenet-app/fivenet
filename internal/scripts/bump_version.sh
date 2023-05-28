@@ -17,16 +17,6 @@ cd ../../ || { echo "Failed to cd to root of repo."; exit 1; }
 
 echo "v${VERSION}" > VERSION
 
-# package.json
-sed \
-    --in-place \
-    --regexp-extended \
-    --expression 's~"version": "[0-9\.]+"~"version": "'"${VERSION}"'"~' \
-        ./package.json \
-        ./gen/js/package.json
-
-make yarn-upgrade-gen-js
-
 # Helm Chart
 sed \
     --in-place \
