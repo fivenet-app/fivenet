@@ -8,6 +8,10 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 )
 
+const (
+	NotAvailablePlaceholder = "N/A"
+)
+
 type Enricher struct {
 	c *Cache
 }
@@ -59,10 +63,11 @@ func (e *Enricher) EnrichDocumentCategory(doc common.IDocumentCategory) {
 
 	dc, ok := e.c.docCategories.Get(cId)
 	if !ok {
+		job := NotAvailablePlaceholder
 		doc.SetCategory(&documents.DocumentCategory{
 			Id:   0,
 			Name: "N/A",
-			Job:  "N/A",
+			Job:  &job,
 		})
 	} else {
 		doc.SetCategory(dc)

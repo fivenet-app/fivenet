@@ -183,7 +183,7 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 	if err != nil {
 		return nil, err
 	}
-	if comment.CreatorId != userInfo.UserId {
+	if *comment.CreatorId != userInfo.UserId {
 		return nil, status.Error(codes.PermissionDenied, "You can't edit others document comments!")
 	}
 
@@ -258,7 +258,7 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 		return nil, err
 	}
 	// If the requestor is not the creator nor a superuser
-	if comment.CreatorId != userInfo.UserId && !userInfo.SuperUser {
+	if *comment.CreatorId != userInfo.UserId && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You can't delete others document comments!")
 	}
 

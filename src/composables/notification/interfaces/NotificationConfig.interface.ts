@@ -1,11 +1,11 @@
 import type { NotificationType } from './Notification.interface';
 
 export interface NotificationConfig {
-	title?: string;
+    title?: string;
     titleI18n?: boolean;
-	content: string;
+    content: string;
     contentI18n?: boolean;
-	duration?: number;
-	autoClose?: boolean;
-	type?: NotificationType;
+    duration?: number;
+    autoClose?: boolean;
+    type?: NotificationType;
 }

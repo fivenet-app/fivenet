@@ -225,7 +225,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to add references from/to this document!")
 	}
 
-	req.Reference.CreatorId = userInfo.UserId
+	req.Reference.CreatorId = &userInfo.UserId
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)

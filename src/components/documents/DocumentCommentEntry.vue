@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/store/auth';
-import { DocumentComment } from '@fivenet/gen/resources/documents/documents_pb';
-import { DeleteDocumentCommentRequest, EditDocumentCommentRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { PencilIcon, TrashIcon } from '@heroicons/vue/20/solid';
 import { RpcError } from 'grpc-web';
+import { useAuthStore } from '~/store/auth';
+import { DocumentComment } from '~~/gen/ts/resources/documents/documents';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -11,39 +10,35 @@ const authStore = useAuthStore();
 const { activeChar, permissions } = storeToRefs(authStore);
 
 const emit = defineEmits<{
-    (e: 'removed', comment: DocumentComment): void,
+    (e: 'removed', comment: DocumentComment): void;
 }>();
 
-const props = defineProps({
-    comment: {
-        required: true,
-        type: DocumentComment,
-    },
-});
+const props = defineProps<{
+    comment: DocumentComment;
+}>();
 
 const editing = ref(false);
-const message = ref(props.comment.getComment());
+const message = ref(props.comment.comment);
 
 async function editComment(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new EditDocumentCommentRequest();
-        const c = new DocumentComment();
-        c.setId(props.comment.getId());
-        c.setDocumentId(props.comment.getDocumentId());
-        c.setComment(message.value);
-        req.setComment(c);
+        const comment: DocumentComment = {
+            id: props.comment.id,
+            documentId: props.comment.documentId,
+            comment: message.value,
+        };
 
         try {
-            await $grpc.getDocStoreClient().
-                editDocumentComment(req, null);
+            await $grpc.getDocStoreClient().editDocumentComment({
+                comment: comment,
+            });
 
             editing.value = false;
-            props.comment.setComment(message.value);
+            props.comment.comment = message.value;
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
-
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -51,18 +46,16 @@ async function editComment(): Promise<void> {
 
 async function deleteComment(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new DeleteDocumentCommentRequest();
-        req.setCommentId(props.comment.getId());
-
         try {
-            await $grpc.getDocStoreClient().
-                deleteDocumentComment(req, null);
+            await $grpc.getDocStoreClient().deleteDocumentComment({
+                commentId: props.comment.id,
+            });
 
             emit('removed', props.comment);
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -74,12 +67,14 @@ async function deleteComment(): Promise<void> {
         <div v-if="!editing" class="flex space-x-3">
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <NuxtLink :to="{ name: 'citizens-id', params: { id: comment.getCreatorId() } }"
-                        class="text-sm font-medium text-primary-400 hover:text-primary-300">
-                        {{ comment.getCreator()?.getFirstname() }} {{ comment.getCreator()?.getLastname() }}
+                    <NuxtLink
+                        :to="{ name: 'citizens-id', params: { id: comment.creatorId! } }"
+                        class="text-sm font-medium text-primary-400 hover:text-primary-300"
+                    >
+                        {{ comment.creator?.firstname }}
+                        {{ comment.creator?.lastname }}
                     </NuxtLink>
-                    <div
-                        v-if="comment.getCreatorId() === activeChar?.getUserId() || permissions.includes('superuser')">
+                    <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <button v-can="'DocStoreService.PostDocumentComment'" @click="editing = true">
                             <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
@@ -89,7 +84,7 @@ async function deleteComment(): Promise<void> {
                     </div>
                 </div>
                 <p class="text-sm break-words">
-                    {{ comment.getComment() }}
+                    {{ comment.comment }}
                 </p>
             </div>
         </div>
@@ -97,14 +92,18 @@ async function deleteComment(): Promise<void> {
             <div class="min-w-0 flex-1">
                 <form @submit.prevent="editComment" class="relative">
                     <div
-                        class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
+                        class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600"
+                    >
                         <label for="comment" class="sr-only">
                             {{ $t('components.documents.document_comment_entry.edit_comment') }}
                         </label>
-                        <textarea rows="3" name="comment"
+                        <textarea
+                            rows="3"
+                            name="comment"
                             class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
                             v-model="message"
-                            :placeholder="$t('components.documents.document_comment_entry.edit_comment')" />
+                            :placeholder="$t('components.documents.document_comment_entry.edit_comment')"
+                        />
 
                         <!-- Spacer element to match the height of the toolbar -->
                         <div class="py-2" aria-hidden="true">
@@ -118,8 +117,10 @@ async function deleteComment(): Promise<void> {
                     <div class="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
                         <div class="flex items-center space-x-5"></div>
                         <div class="flex-shrink-0">
-                            <button type="submit"
-                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            <button
+                                type="submit"
+                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            >
                                 {{ $t('common.edit') }}
                             </button>
                         </div>

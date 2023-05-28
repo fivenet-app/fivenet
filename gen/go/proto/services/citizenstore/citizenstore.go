@@ -88,13 +88,13 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		switch field {
 		case "PhoneNumber":
 			selectors = append(selectors, tUser.PhoneNumber)
-			if req.PhoneNumber != "" {
-				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(req.PhoneNumber, "%", ""), " ", "") + "%"
+			if req.PhoneNumber != nil && *req.PhoneNumber != "" {
+				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(*req.PhoneNumber, "%", ""), " ", "") + "%"
 				condition = condition.AND(tUser.PhoneNumber.LIKE(jet.String(phoneNumber)))
 			}
 		case "UserProps.Wanted":
 			selectors = append(selectors, tUserProps.Wanted)
-			if req.Wanted {
+			if req.Wanted != nil && *req.Wanted {
 				condition = condition.AND(tUserProps.Wanted.IS_TRUE())
 			}
 		case "UserProps.Job":

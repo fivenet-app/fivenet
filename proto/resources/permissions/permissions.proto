@@ -19,9 +19,9 @@ message Role {
   uint64 id = 1; // @gotags: alias:"id"
   optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
   string job = 3 [(validate.rules).string.max_len = 255]; // @gotags: alias:"job"
-  string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
+  optional string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 grade = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"grade"
-  string job_grade_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
+  optional string job_grade_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
   repeated Permission permissions = 7;
   repeated RoleAttribute attributes = 8;
 }

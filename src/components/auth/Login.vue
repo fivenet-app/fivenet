@@ -1,23 +1,27 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/store/auth';
 import { NavigationFailure } from 'vue-router';
-import LoginForm from './LoginForm.vue';
-import CreateAccountForm from './CreateAccountForm.vue';
+import { useAuthStore } from '~/store/auth';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
+import CreateAccountForm from './CreateAccountForm.vue';
 import ForgotPasswordForm from './ForgotPasswordForm.vue';
+import LoginForm from './LoginForm.vue';
 
 const authStore = useAuthStore();
 const route = useRoute();
 
 const { accessToken } = storeToRefs(authStore);
 
-const forms = ref<{ create: boolean; forgot: boolean; }>({
-    create: false, forgot: false
+const forms = ref<{ create: boolean; forgot: boolean }>({
+    create: false,
+    forgot: false,
 });
 
 watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'auth-character-selector'> | void | undefined> => {
     if (accessToken) {
-        return await navigateTo({ name: 'auth-character-selector', query: route.query });
+        return await navigateTo({
+            name: 'auth-character-selector',
+            query: route.query,
+        });
     }
 });
 </script>
@@ -36,14 +40,20 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
             <div v-else>
                 <LoginForm />
                 <div class="mt-6">
-                    <button type="button" @click="forms.create = true"
-                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+                    <button
+                        type="button"
+                        @click="forms.create = true"
+                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                    >
                         {{ $t('components.auth.login.register_account') }}
                     </button>
                 </div>
                 <div class="mt-6">
-                    <button type="button" @click="forms.forgot = true"
-                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+                    <button
+                        type="button"
+                        @click="forms.forgot = true"
+                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                    >
                         {{ $t('components.auth.login.forgot_password') }}
                     </button>
                 </div>

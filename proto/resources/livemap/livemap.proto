@@ -13,7 +13,7 @@ message DispatchMarker {
   resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   int32 id = 4 [(validate.rules).int32.gt = 0];
   string job = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
-  string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
+  optional string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   string name = 7;
   string icon = 8;
   string icon_color = 9; // @gotags: alias:"icon_color"

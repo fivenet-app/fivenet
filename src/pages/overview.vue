@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import { BriefcaseIcon, DocumentTextIcon, UsersIcon, MapIcon, TruckIcon } from '@heroicons/vue/24/outline';
+import { BriefcaseIcon, DocumentTextIcon, MapIcon, TruckIcon, UsersIcon } from '@heroicons/vue/24/outline';
 import Cards from '~/components/partials/Cards.vue';
+import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { CardElements } from '~/utils/types';
 
 useHead({

@@ -1,4 +1,5 @@
-import * as resources_timestamp_timestamp_pb from '@fivenet/gen/resources/timestamp/timestamp_pb';
+import * as google_protobuf_timestamp from '~~/gen/ts/google/protobuf/timestamp';
+import * as resources_timestamp_timestamp from '~~/gen/ts/resources/timestamp/timestamp';
 
 const seconds_per_minute = 60;
 const seconds_per_hour = seconds_per_minute * 60;
@@ -42,25 +43,22 @@ export function fromSecondsToFormattedDuration(seconds: number): string {
     return parts.join(', ');
 }
 
-export function toDate(ts: resources_timestamp_timestamp_pb.Timestamp | undefined): undefined | Date {
-    if (typeof ts === undefined) {
+export function toDate(ts: resources_timestamp_timestamp.Timestamp | undefined): undefined | Date {
+    if (ts === undefined || ts?.timestamp === undefined) {
         return new Date();
     }
-    return ts?.getTimestamp()?.toDate();
+    return google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!);
 }
 
-export function toDateLocaleString(
-    ts: resources_timestamp_timestamp_pb.Timestamp | undefined,
-    d?: Function
-): undefined | string {
+export function toDateLocaleString(ts: resources_timestamp_timestamp.Timestamp | undefined, d?: Function): undefined | string {
     if (typeof ts === undefined) {
         return '-';
     }
 
     if (d) {
-        return d(ts?.getTimestamp()?.toDate()!, 'short');
+        return d(google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!), 'short');
     }
-    return ts?.getTimestamp()?.toDate().toLocaleDateString();
+    return google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!).toLocaleDateString();
 }
 
 export function fromString(time: string): undefined | Date {

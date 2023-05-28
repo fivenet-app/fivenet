@@ -142,11 +142,17 @@ func (m *ListVehiclesRequest) validate(all bool) error {
 
 	}
 
-	// no validation rules for Search
+	if m.Search != nil {
+		// no validation rules for Search
+	}
 
-	// no validation rules for Model
+	if m.Model != nil {
+		// no validation rules for Model
+	}
 
-	// no validation rules for UserId
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
 
 	if len(errors) > 0 {
 		return ListVehiclesRequestMultiError(errors)

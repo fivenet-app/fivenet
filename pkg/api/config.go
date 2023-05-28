@@ -1,9 +1,8 @@
 package api
 
 type ClientConfig struct {
-	SentryDSN   string      `json:"sentryDSN"`
-	APIProtoURL string      `json:"apiProtoURL"`
-	Login       LoginConfig `json:"login"`
+	SentryDSN string      `json:"sentryDSN"`
+	Login     LoginConfig `json:"login"`
 }
 
 type LoginConfig struct {

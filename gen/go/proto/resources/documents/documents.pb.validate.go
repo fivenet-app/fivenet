@@ -83,8 +83,6 @@ func (m *DocumentComment) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for CreatorId
-
 	if m.CreatedAt != nil {
 
 		if all {
@@ -149,6 +147,10 @@ func (m *DocumentComment) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
 	}
 
 	if m.Creator != nil {
@@ -344,37 +346,6 @@ func (m *Document) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for CategoryId
-
-	if all {
-		switch v := interface{}(m.GetCategory()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentValidationError{
-					field:  "Category",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentValidationError{
-					field:  "Category",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentValidationError{
-				field:  "Category",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
 		err := DocumentValidationError{
 			field:  "Title",
@@ -432,8 +403,6 @@ func (m *Document) validate(all bool) error {
 
 	// no validation rules for Data
 
-	// no validation rules for CreatorId
-
 	if all {
 		switch v := interface{}(m.GetCreator()).(type) {
 		case interface{ ValidateAll() error }:
@@ -477,6 +446,47 @@ func (m *Document) validate(all bool) error {
 	// no validation rules for Closed
 
 	// no validation rules for Public
+
+	if m.CategoryId != nil {
+		// no validation rules for CategoryId
+	}
+
+	if m.Category != nil {
+
+		if all {
+			switch v := interface{}(m.GetCategory()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentValidationError{
+						field:  "Category",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentValidationError{
+						field:  "Category",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentValidationError{
+					field:  "Category",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
+	}
 
 	if len(errors) > 0 {
 		return DocumentMultiError(errors)
@@ -637,37 +647,6 @@ func (m *DocumentShort) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for CategoryId
-
-	if all {
-		switch v := interface{}(m.GetCategory()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentShortValidationError{
-					field:  "Category",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentShortValidationError{
-					field:  "Category",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentShortValidationError{
-				field:  "Category",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
 		err := DocumentShortValidationError{
 			field:  "Title",
@@ -678,8 +657,6 @@ func (m *DocumentShort) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
-
-	// no validation rules for CreatorId
 
 	if all {
 		switch v := interface{}(m.GetCreator()).(type) {
@@ -722,6 +699,47 @@ func (m *DocumentShort) validate(all bool) error {
 	}
 
 	// no validation rules for Closed
+
+	if m.CategoryId != nil {
+		// no validation rules for CategoryId
+	}
+
+	if m.Category != nil {
+
+		if all {
+			switch v := interface{}(m.GetCategory()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentShortValidationError{
+						field:  "Category",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentShortValidationError{
+						field:  "Category",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentShortValidationError{
+					field:  "Category",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
+	}
 
 	if len(errors) > 0 {
 		return DocumentShortMultiError(errors)
@@ -1006,32 +1024,10 @@ func (m *DocumentJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
-		err := DocumentJobAccessValidationError{
-			field:  "JobLabel",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if m.GetMinimumGrade() <= 0 {
 		err := DocumentJobAccessValidationError{
 			field:  "MinimumGrade",
 			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
-		err := DocumentJobAccessValidationError{
-			field:  "JobGradeLabel",
-			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -1049,8 +1045,6 @@ func (m *DocumentJobAccess) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
-
-	// no validation rules for CreatorId
 
 	if m.CreatedAt != nil {
 
@@ -1116,6 +1110,40 @@ func (m *DocumentJobAccess) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := DocumentJobAccessValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.JobGradeLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
+			err := DocumentJobAccessValidationError{
+				field:  "JobGradeLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
 	}
 
 	if m.Creator != nil {
@@ -1279,8 +1307,6 @@ func (m *DocumentUserAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for CreatorId
-
 	if m.CreatedAt != nil {
 
 		if all {
@@ -1378,6 +1404,10 @@ func (m *DocumentUserAccess) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
 	}
 
 	if m.Creator != nil {
@@ -1530,37 +1560,6 @@ func (m *DocumentReference) validate(all bool) error {
 
 	// no validation rules for TargetDocumentId
 
-	if all {
-		switch v := interface{}(m.GetTargetDocument()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DocumentReferenceValidationError{
-					field:  "TargetDocument",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DocumentReferenceValidationError{
-					field:  "TargetDocument",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetTargetDocument()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DocumentReferenceValidationError{
-				field:  "TargetDocument",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	// no validation rules for CreatorId
-
 	if m.Id != nil {
 		// no validation rules for Id
 	}
@@ -1629,6 +1628,43 @@ func (m *DocumentReference) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.TargetDocument != nil {
+
+		if all {
+			switch v := interface{}(m.GetTargetDocument()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentReferenceValidationError{
+						field:  "TargetDocument",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentReferenceValidationError{
+						field:  "TargetDocument",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetTargetDocument()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentReferenceValidationError{
+					field:  "TargetDocument",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
 	}
 
 	if m.Creator != nil {

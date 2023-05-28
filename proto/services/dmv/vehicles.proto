@@ -11,9 +11,9 @@ message ListVehiclesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
   // Search params
-  string search = 3;
-  string model = 4;
-  int32 user_id = 5;
+  optional string search = 3;
+  optional string model = 4;
+  optional int32 user_id = 5;
 }
 
 message ListVehiclesResponse {

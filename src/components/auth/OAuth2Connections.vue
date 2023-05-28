@@ -1,45 +1,36 @@
 <script lang="ts" setup>
-import { OAuth2Account, OAuth2Provider } from '@fivenet/gen/resources/accounts/oauth2_pb';
-import OAuth2ConnectButton from './OAuth2ConnectButton.vue';
 import { XCircleIcon } from '@heroicons/vue/24/solid';
-import { DeleteOAuth2ConnectionRequest } from '@fivenet/gen/services/auth/auth_pb';
 import { RpcError } from 'grpc-web';
+import { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
+import OAuth2ConnectButton from './OAuth2ConnectButton.vue';
 
 const { $grpc } = useNuxtApp();
 
-const props = defineProps({
-    providers: {
-        type: Array<OAuth2Provider>,
-        required: true,
-    },
-    connections: {
-        type: Array<OAuth2Account>,
-        required: true,
-    },
-});
+const props = defineProps<{
+    providers: OAuth2Provider[];
+    connections: OAuth2Account[];
+}>();
 
 const emit = defineEmits<{
-    (e: 'disconnected', provider: string): void,
+    (e: 'disconnected', provider: string): void;
 }>();
 
 function getProviderConnection(provider: string): undefined | OAuth2Account {
-    return props.connections.find((v) => v.getProviderName() === provider);
+    return props.connections.find((v) => v.providerName === provider);
 }
 
 async function disconnect(provider: OAuth2Provider): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req = new DeleteOAuth2ConnectionRequest();
-        req.setProvider(provider.getName());
-
         try {
-            await $grpc.getAuthClient().
-                deleteOAuth2Connection(req, null);
+            await $grpc.getAuthClient().deleteOAuth2Connection({
+                provider: provider.name,
+            });
 
-            emit('disconnected', provider.getName());
+            emit('disconnected', provider.name);
 
             return res();
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -60,18 +51,19 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
             <dl class="sm:divide-y sm:divide-base-400">
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5" v-for="prov in providers">
                     <dt class="text-sm font-medium">
-                        <NuxtLink :external="true" :to="prov.getHomepage()" target="_blank">
-                            {{ prov.getLabel() }}
+                        <NuxtLink :external="true" :to="prov.homepage" target="_blank">
+                            {{ prov.label }}
                         </NuxtLink>
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        <div v-if="getProviderConnection(prov.getName()) !== undefined"
-                            class="flex items-center justify-between">
-                            <img :src="getProviderConnection(prov.getName())!.getAvatar()" alt="Avatar"
-                                class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100" />
-                            <span class="text-left"
-                                :title="`ID: ${getProviderConnection(prov.getName())?.getExternalId()}`">
-                                {{ getProviderConnection(prov.getName())?.getUsername() }}
+                        <div v-if="getProviderConnection(prov.name) !== undefined" class="flex items-center justify-between">
+                            <img
+                                :src="getProviderConnection(prov.name)!.avatar"
+                                alt="Avatar"
+                                class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100"
+                            />
+                            <span class="text-left" :title="`ID: ${getProviderConnection(prov.name)?.externalId}`">
+                                {{ getProviderConnection(prov.name)?.username }}
                             </span>
 
                             <button @click="disconnect(prov)">

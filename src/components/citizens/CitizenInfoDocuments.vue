@@ -1,41 +1,42 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { DocumentRelation } from '@fivenet/gen/resources/documents/documents_pb';
-import { ListUserDocumentsRequest } from '@fivenet/gen/services/docstore/docstore_pb';
-import { PaginationRequest } from '@fivenet/gen/resources/common/database/database_pb';
-import { RpcError } from 'grpc-web';
-import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
-import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
-import { DOC_RELATION_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
-import { DocumentTextIcon, ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/vue/20/solid';
+import { ArrowsRightLeftIcon, ChevronRightIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
+import { RpcError } from 'grpc-web';
+import { ref } from 'vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 
 const { $grpc } = useNuxtApp();
 
-const props = defineProps({
-    userId: {
-        required: true,
-        type: Number,
-    },
-});
+const props = defineProps<{
+    userId: number;
+}>();
 
 const offset = ref(0);
 
-const { data: relations, pending, refresh, error } = useLazyAsyncData(`user-${props.userId}-documents-${offset.value}`, () => getDocumentRelations());
+const {
+    data: relations,
+    pending,
+    refresh,
+    error,
+} = useLazyAsyncData(`user-${props.userId}-documents-${offset.value}`, () => getDocumentRelations());
 
 async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
     return new Promise(async (res, rej) => {
-        const req = new ListUserDocumentsRequest();
-        req.setPagination((new PaginationRequest()).setOffset(offset.value))
-        req.setUserId(props.userId);
-
         try {
-            const resp = await $grpc.getDocStoreClient().
-                listUserDocuments(req, null);
+            const call = $grpc.getDocStoreClient().listUserDocuments({
+                pagination: {
+                    offset: offset.value,
+                },
+                userId: props.userId,
+                relations: [],
+            });
+            const { response } = await call;
 
-            return res(resp.getRelationsList());
+            return res(response.relations);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -44,14 +45,21 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
 
 <template>
     <div class="mt-2">
-        <DataPendingBlock v-if="pending"
-            :message="$t('common.loading', [`${$t('common.user', 1)} ${$t('common.document', 2)}`])" />
-        <DataErrorBlock v-else-if="error"
+        <DataPendingBlock
+            v-if="pending"
+            :message="$t('common.loading', [`${$t('common.user', 1)} ${$t('common.document', 2)}`])"
+        />
+        <DataErrorBlock
+            v-else-if="error"
             :title="$t('common.unable_to_load', [`${$t('common.user', 1)} ${$t('common.document', 2)}`])"
-            :retry="refresh" />
-        <button v-else-if="relations && relations.length === 0" type="button"
+            :retry="refresh"
+        />
+        <button
+            v-else-if="relations && relations.length === 0"
+            type="button"
             class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-            disabled>
+            disabled
+        >
             <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold text-gray-300">
                 {{ $t('common.not_found', [`${$t('common.document', 1)} ${$t('common.relation', 2)}`]) }}
@@ -61,7 +69,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
             <!-- Relations list (smallest breakpoint only) -->
             <div v-if="relations.length > 0" class="sm:hidden text-neutral">
                 <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
-                    <li v-for="relation in relations" :key="relation.getId()">
+                    <li v-for="relation in relations" :key="relation.id">
                         <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
@@ -69,22 +77,34 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                     <span class="flex flex-col text-sm truncate">
                                         <span>
                                             <NuxtLink
-                                                :to="{ name: 'documents-id', params: { id: relation.getDocumentId() } }">
-                                                {{ relation.getDocument()?.getTitle() }}<span
-                                                    v-if="relation.getDocument()?.getCategory()"> (Category: {{
-                                                        relation.getDocument()?.getCategory()?.getName() }})</span>
+                                                :to="{
+                                                    name: 'documents-id',
+                                                    params: {
+                                                        id: relation.documentId,
+                                                    },
+                                                }"
+                                            >
+                                                {{ relation.document?.title
+                                                }}<span v-if="relation.document?.category">
+                                                    (Category:
+                                                    {{ relation.document?.category?.name }})</span
+                                                >
                                             </NuxtLink>
                                         </span>
                                         <span>
-                                            <div v-if="relation.getDocument()?.getClosed()"
-                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
+                                            <div
+                                                v-if="relation.document?.closed"
+                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
+                                            >
                                                 <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-error-700">
                                                     {{ $t('common.close', 2) }}
                                                 </span>
                                             </div>
-                                            <div v-else
-                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
+                                            <div
+                                                v-else
+                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
+                                            >
                                                 <LockOpenIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-green-700">
                                                     {{ $t('common.open') }}
@@ -93,23 +113,26 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         </span>
                                         <span>
                                             <NuxtLink
-                                                :to="{ name: 'citizens-id', params: { id: relation.getTargetUserId() } }"
-                                                class="inline-flex space-x-2 text-sm truncate group">
-                                                {{ relation.getTargetUser()?.getFirstname() + ", " +
-                                                    relation.getTargetUser()?.getLastname() }}
+                                                :to="{
+                                                    name: 'citizens-id',
+                                                    params: {
+                                                        id: relation.targetUserId,
+                                                    },
+                                                }"
+                                                class="inline-flex space-x-2 text-sm truncate group"
+                                            >
+                                                {{ relation.targetUser?.firstname + ', ' + relation.targetUser?.lastname }}
                                             </NuxtLink>
                                         </span>
                                         <span class="font-medium">
-                                            {{
-                                                $t(`enums.docstore.DOC_RELATION.${DOC_RELATION_Util.toEnumKey(relation.getRelation())!}`)
-                                            }}
+                                            {{ $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`) }}
                                         </span>
                                         <span class="truncate">
-                                            {{ relation.getSourceUser()?.getFirstname() }},
-                                            {{ relation.getSourceUser()?.getLastname() }}
+                                            {{ relation.sourceUser?.firstname }},
+                                            {{ relation.sourceUser?.lastname }}
                                         </span>
-                                        <time :datetime="toDateLocaleString(relation.getCreatedAt(), $d)">
-                                            {{ useLocaleTimeAgo(toDate(relation.getCreatedAt())!).value }}
+                                        <time :datetime="toDateLocaleString(relation.createdAt, $d)">
+                                            {{ useLocaleTimeAgo(toDate(relation.createdAt)!).value }}
                                         </time>
                                     </span>
                                 </span>
@@ -128,48 +151,57 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                             <table class="min-w-full bg-base-700 text-neutral">
                                 <thead>
                                     <tr>
-                                        <th class="px-6 py-3 text-sm font-semibold text-left " scope="col">
+                                        <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
                                             {{ $t('common.document', 1) }}
                                         </th>
-                                        <th class="px-6 py-3 text-sm font-semibold text-left " scope="col">
+                                        <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
                                             {{ $t('common.close', 2) }}
                                         </th>
-                                        <th class="px-6 py-3 text-sm font-semibold text-left " scope="col">
+                                        <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
                                             {{ $t('common.target') }}
                                         </th>
-                                        <th class="px-6 py-3 text-sm font-semibold text-right " scope="col">
+                                        <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
                                             {{ $t('common.relation', 1) }}
                                         </th>
                                         <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
                                             {{ $t('common.creator') }}
                                         </th>
-                                        <th class="px-6 py-3 text-sm font-semibold text-right " scope="col">
+                                        <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
                                             {{ $t('common.date') }}
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-600 bg-base-800 text-neutral">
-                                    <tr v-for="relation in relations" :key="relation.getId()">
+                                    <tr v-for="relation in relations" :key="relation.id">
                                         <td class="px-6 py-4 text-sm">
                                             <NuxtLink
-                                                :to="{ name: 'documents-id', params: { id: relation.getDocumentId() } }">
-                                                {{ relation.getDocument()?.getTitle() }}<span
-                                                    v-if="relation.getDocument()?.getCategory()"> ({{ $t('common.category',
-                                                        1)
-                                                    }}: {{ relation.getDocument()?.getCategory()?.getName() }})
+                                                :to="{
+                                                    name: 'documents-id',
+                                                    params: {
+                                                        id: relation.documentId,
+                                                    },
+                                                }"
+                                            >
+                                                {{ relation.document?.title
+                                                }}<span v-if="relation.document?.category">
+                                                    ({{ $t('common.category', 1) }}: {{ relation.document?.category?.name }})
                                                 </span>
                                             </NuxtLink>
                                         </td>
                                         <td class="px-6 py-4 text-sm">
-                                            <div v-if="relation.getDocument()?.getClosed()"
-                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
+                                            <div
+                                                v-if="relation.document?.closed"
+                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
+                                            >
                                                 <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-error-700">
                                                     {{ $t('common.close', 2) }}
                                                 </span>
                                             </div>
-                                            <div v-else
-                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
+                                            <div
+                                                v-else
+                                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
+                                            >
                                                 <LockOpenIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-green-700">
                                                     {{ $t('common.open') }}
@@ -179,34 +211,41 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         <td class="px-6 py-4 text-sm">
                                             <div class="flex">
                                                 <NuxtLink
-                                                    :to="{ name: 'citizens-id', params: { id: relation.getTargetUserId() } }"
-                                                    class="inline-flex space-x-2 text-sm truncate group">
-                                                    {{ relation.getTargetUser()?.getFirstname() + ", " +
-                                                        relation.getTargetUser()?.getLastname() }}
+                                                    :to="{
+                                                        name: 'citizens-id',
+                                                        params: {
+                                                            id: relation.targetUserId,
+                                                        },
+                                                    }"
+                                                    class="inline-flex space-x-2 text-sm truncate group"
+                                                >
+                                                    {{ relation.targetUser?.firstname + ', ' + relation.targetUser?.lastname }}
                                                 </NuxtLink>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                             <span class="font-medium">
-                                                {{
-                                                    $t(`enums.docstore.DOC_RELATION.${DOC_RELATION_Util.toEnumKey(relation.getRelation())!}`)
-                                                }}
+                                                {{ $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`) }}
                                             </span>
                                         </td>
                                         <td class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
                                             <div class="flex">
                                                 <NuxtLink
-                                                    :to="{ name: 'citizens-id', params: { id: relation.getSourceUserId() } }"
-                                                    class="inline-flex space-x-2 text-sm truncate group">
-                                                    {{ relation.getSourceUser()?.getFirstname() + ", " +
-                                                        relation.getSourceUser()?.getLastname() }}
+                                                    :to="{
+                                                        name: 'citizens-id',
+                                                        params: {
+                                                            id: relation.sourceUserId,
+                                                        },
+                                                    }"
+                                                    class="inline-flex space-x-2 text-sm truncate group"
+                                                >
+                                                    {{ relation.sourceUser?.firstname + ', ' + relation.sourceUser?.lastname }}
                                                 </NuxtLink>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                            <time
-                                                :datetime="$d(relation.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')">
-                                                {{ $d(toDate(relation.getCreatedAt())!) }}
+                                            <time :datetime="$d(toDate(relation.createdAt)!, 'short')">
+                                                {{ $d(toDate(relation.createdAt)!) }}
                                             </time>
                                         </td>
                                     </tr>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
-import DocumentEditor from '~/components/documents/DocumentEditor.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
+import DocumentEditor from '~/components/documents/DocumentEditor.vue';
+import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'pages.documents.create.title',

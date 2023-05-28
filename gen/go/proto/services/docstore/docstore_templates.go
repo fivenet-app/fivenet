@@ -3,7 +3,6 @@ package docstore
 import (
 	"bytes"
 	context "context"
-	"encoding/json"
 	"errors"
 	"html/template"
 
@@ -15,6 +14,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -23,6 +23,8 @@ var (
 	tDTemplates          = table.FivenetDocumentsTemplates.AS("templateshort")
 	tDTemplatesJobAccess = table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
 	TemplateNoPermsErr = status.Error(codes.PermissionDenied, "You don't have permission to view/update/delete this template!")
@@ -126,11 +128,10 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		if err != nil {
 			return nil, FailedQueryErr
 		}
-	} else if req.Render != nil && *req.Render {
+	} else if req.Render != nil && *req.Render && req.Data != nil {
 		// Parse data as json for the templating process
 		var data map[string]interface{}
-		err := json.Unmarshal([]byte(req.Data), &data)
-		if err != nil {
+		if err := json.UnmarshalFromString(*req.Data, &data); err != nil {
 			return nil, err
 		}
 
@@ -200,7 +201,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	req.Template.Job = userInfo.Job
+	req.Template.Job = &userInfo.Job
 
 	categoryId := jet.NULL
 	if req.Template.Category != nil {

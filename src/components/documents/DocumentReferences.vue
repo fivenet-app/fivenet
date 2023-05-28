@@ -1,38 +1,38 @@
 <script lang="ts" setup>
-import { DOC_REFERENCE_Util } from '@fivenet/gen/resources/documents/documents.pb_enums';
-import { DocumentReference } from '@fivenet/gen/resources/documents/documents_pb';
-import { GetDocumentReferencesRequest } from '@fivenet/gen/services/docstore/docstore_pb';
 import { ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from 'grpc-web';
+import { DOC_REFERENCE, DocumentReference } from '~~/gen/ts/resources/documents/documents';
 
 const { $grpc } = useNuxtApp();
 
-const props = defineProps({
-    documentId: {
-        required: true,
-        type: Number,
-    },
-    showSource: {
-        required: false,
-        type: Boolean,
-        default: true,
-    },
-});
+const props = withDefaults(
+    defineProps<{
+        documentId: number;
+        showSource?: boolean;
+    }>(),
+    {
+        showSource: true,
+    }
+);
 
-const { data: references, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-references`, () => getDocumentReferences());
+const {
+    data: references,
+    pending,
+    refresh,
+    error,
+} = useLazyAsyncData(`document-${props.documentId}-references`, () => getDocumentReferences());
 
 async function getDocumentReferences(): Promise<Array<DocumentReference>> {
     return new Promise(async (res, rej) => {
-        const req = new GetDocumentReferencesRequest();
-        req.setDocumentId(props.documentId);
-
         try {
-            const resp = await $grpc.getDocStoreClient().
-                getDocumentReferences(req, null);
+            const call = $grpc.getDocStoreClient().getDocumentReferences({
+                documentId: props.documentId,
+            });
+            const { response } = await call;
 
-            return res(resp.getReferencesList());
+            return res(response.references);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });
@@ -41,42 +41,51 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
 
 <template>
     <div>
-        <span v-if="references && references.length === 0" class="text-neutral">{{ $t('common.not_found',
-            [`${$t('common.document', 1)}
-                    ${$t('common.reference', 2)}`]) }}</span>
+        <span v-if="references && references.length === 0" class="text-neutral">{{
+            $t('common.not_found', [
+                `${$t('common.document', 1)}
+                    ${$t('common.reference', 2)}`,
+            ])
+        }}</span>
         <!-- Relations list (smallest breakpoint only) -->
         <div v-if="references && references.length > 0" class="sm:hidden text-neutral">
             <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
-                <li v-for="reference in references" :key="reference.getId()">
-                    <NuxtLink :to="{ name: 'documents-id', params: { id: reference.getTargetDocumentId() } }"
-                        class="block px-4 py-4 bg-base-800 hover:bg-base-700">
+                <li v-for="reference in references" :key="reference.id">
+                    <NuxtLink
+                        :to="{
+                            name: 'documents-id',
+                            params: { id: reference.targetDocumentId },
+                        }"
+                        class="block px-4 py-4 bg-base-800 hover:bg-base-700"
+                    >
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
                                 <ArrowsRightLeftIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
                                 <span class="flex flex-col text-sm truncate">
                                     <span>
-                                        {{ reference.getTargetDocument()?.getTitle() }}<span
-                                            v-if="reference.getTargetDocument()?.getCategory()">&nbsp;({{
-                                                $t('common.category', 1) }}: {{
-        reference.getTargetDocument()?.getCategory()?.getName() }})</span>
+                                        {{ reference.targetDocument?.title
+                                        }}<span v-if="reference.targetDocument?.category"
+                                            >&nbsp;({{ $t('common.category', 1) }}:
+                                            {{ reference.targetDocument?.category?.name }})</span
+                                        >
                                     </span>
                                     <span class="font-medium">
-                                        {{ DOC_REFERENCE_Util.toEnumKey(reference.getReference()) }}
+                                        {{ DOC_REFERENCE[reference.reference] }}
                                     </span>
                                     <span v-if="showSource" class="truncate">
-                                        {{ reference.getSourceDocument()?.getTitle() }}<span
-                                            v-if="reference.getSourceDocument()?.getCategory()"> ({{ $t('common.category',
-                                                1) }}: {{
-        reference.getSourceDocument()?.getCategory()?.getName() }})</span>
+                                        {{ reference.sourceDocument?.title
+                                        }}<span v-if="reference.sourceDocument?.category">
+                                            ({{ $t('common.category', 1) }}:
+                                            {{ reference.sourceDocument?.category?.name }})</span
+                                        >
                                     </span>
                                     <span>
-                                        <NuxtLink :to="{ name: 'citizens-id', params: { id: reference.getCreatorId() } }">
-                                            {{ reference.getCreator()?.getFirstname() }}, {{
-                                                reference.getCreator()?.getLastname() }}
+                                        <NuxtLink :to="{ name: 'citizens-id', params: { id: reference.creatorId! } }">
+                                            {{ reference.creator?.firstname }},
+                                            {{ reference.creator?.lastname }}
                                         </NuxtLink>
                                     </span>
-                                    <time datetime="">{{ $d(reference.getCreatedAt()?.getTimestamp()?.toDate()!, 'short')
-                                    }}</time>
+                                    <time datetime="">{{ $d(toDate(reference.createdAt)!, 'short') }}</time>
                                 </span>
                             </span>
                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
@@ -100,8 +109,11 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                     <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
                                         {{ $t('common.relation', 1) }}
                                     </th>
-                                    <th v-if="showSource" class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
-                                        scope="col">
+                                    <th
+                                        v-if="showSource"
+                                        class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
+                                        scope="col"
+                                    >
                                         {{ $t('common.source') }}
                                     </th>
                                     <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
@@ -113,50 +125,60 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-base-600 bg-base-800 text-neutral">
-                                <tr v-for="reference in references" :key="reference.getId()">
+                                <tr v-for="reference in references" :key="reference.id">
                                     <td class="px-6 py-4 text-sm">
                                         <div class="flex">
                                             <NuxtLink
-                                                :to="{ name: 'documents-id', params: { id: reference.getTargetDocumentId() } }"
-                                                class="inline-flex space-x-2 text-sm truncate group">
-                                                {{ reference.getTargetDocument()?.getTitle() }}<span
-                                                    v-if="reference.getTargetDocument()?.getCategory()">&nbsp;({{
-                                                        $t('common.category', 1) }}: {{
-        reference.getTargetDocument()?.getCategory()?.getName() }})</span>
+                                                :to="{
+                                                    name: 'documents-id',
+                                                    params: {
+                                                        id: reference.targetDocumentId,
+                                                    },
+                                                }"
+                                                class="inline-flex space-x-2 text-sm truncate group"
+                                            >
+                                                {{ reference.targetDocument?.title
+                                                }}<span v-if="reference.targetDocument?.category"
+                                                    >&nbsp;({{ $t('common.category', 1) }}:
+                                                    {{ reference.targetDocument?.category?.name }})</span
+                                                >
                                             </NuxtLink>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                         <span class="font-medium">
-                                            {{
-                                                $t(`enums.docstore.DOC_REFERENCE.${DOC_REFERENCE_Util.toEnumKey(reference.getReference())!}`)
-                                            }}
+                                            {{ $t(`enums.docstore.DOC_REFERENCE.${DOC_REFERENCE[reference.reference]}`) }}
                                         </span>
                                     </td>
                                     <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
                                         <div class="flex">
                                             <NuxtLink
-                                                :to="{ name: 'documents-id', params: { id: reference.getSourceDocumentId() } }"
-                                                class="inline-flex space-x-1 text-sm truncate group">
-                                                {{ reference.getSourceDocument()?.getTitle() }}<span
-                                                    v-if="reference.getSourceDocument()?.getCategory()">&nbsp;({{
-                                                        $t('common.category', 1) }}: {{
-        reference.getSourceDocument()?.getCategory()?.getName() }})</span>
+                                                :to="{
+                                                    name: 'documents-id',
+                                                    params: {
+                                                        id: reference.sourceDocumentId,
+                                                    },
+                                                }"
+                                                class="inline-flex space-x-1 text-sm truncate group"
+                                            >
+                                                {{ reference.sourceDocument?.title
+                                                }}<span v-if="reference.sourceDocument?.category"
+                                                    >&nbsp;({{ $t('common.category', 1) }}:
+                                                    {{ reference.sourceDocument?.category?.name }})</span
+                                                >
                                             </NuxtLink>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                         <div class="flex">
-                                            <NuxtLink
-                                                :to="{ name: 'citizens-id', params: { id: reference.getCreatorId() } }">
-                                                {{ reference.getCreator()?.getFirstname() }}, {{
-                                                    reference.getCreator()?.getLastname() }}
+                                            <NuxtLink :to="{ name: 'citizens-id', params: { id: reference.creatorId! } }">
+                                                {{ reference.creator?.firstname }},
+                                                {{ reference.creator?.lastname }}
                                             </NuxtLink>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                        <time datetime="">{{ $d(reference.getCreatedAt()?.getTimestamp()?.toDate()!,
-                                            'short') }}</time>
+                                        <time datetime="">{{ $d(toDate(reference.createdAt)!, 'short') }}</time>
                                     </td>
                                 </tr>
                             </tbody>

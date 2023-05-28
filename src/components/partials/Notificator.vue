@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import { ClientReadableStream, RpcError } from 'grpc-web';
-import { StreamRequest, StreamResponse } from '@fivenet/gen/services/notificator/notificator_pb';
-import { useNotificatorStore } from '~/store/notificator';
-import { useAuthStore } from '~/store/auth';
+import { RpcError, StatusCode } from 'grpc-web';
 import { NotificationType } from '~/composables/notification/interfaces/Notification.interface';
+import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 
 const { $grpc } = useNuxtApp();
 const store = useNotificatorStore();
@@ -14,87 +13,95 @@ const notifications = useNotificationsStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
 const { setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
 
-const stream = ref<ClientReadableStream<StreamResponse> | undefined>(undefined);
+const abort = ref<AbortController | undefined>();
 
 // In seconds
 const initialBackoffTime = 2;
 let restartBackoffTime = 0;
 
 async function streamNotifications(): Promise<void> {
-    if (stream.value !== undefined) return;
+    if (abort.value !== undefined) return;
 
-    const request = new StreamRequest();
-    request.setLastId(store.getLastId);
+    console.debug('Notificator: Stream starting');
+    try {
+        abort.value = new AbortController();
 
-    stream.value = $grpc.getNotificatorClient().
-        stream(request).
-        on('error', async (err: RpcError) => {
-            console.debug('Notificator: Stream errored', err);
-            restartStream();
-        }).
-        on('data', async (resp) => {
-            if (resp.getLastId() > store.getLastId)
-                store.setLastId(resp.getLastId());
+        const call = $grpc.getNotificatorClient().stream(
+            {
+                lastId: store.getLastId,
+            },
+            {
+                abort: abort.value.signal,
+            }
+        );
 
-            resp.getNotificationsList().forEach(v => {
-                let nType: NotificationType = v.getType() as NotificationType ?? 'info';
+        for await (let resp of call.responses) {
+            if (resp.lastId > store.getLastId) store.setLastId(resp.lastId);
+
+            resp.notifications.forEach((v) => {
+                let nType: NotificationType = (v.type as NotificationType) ?? 'info';
                 notifications.dispatchNotification({
-                    title: v.getTitle(),
-                    content: v.getContent(),
-                    type: nType
+                    title: v.title,
+                    content: v.content,
+                    type: nType,
                 });
             });
 
             // If the response contains an (updated) token
-            if (resp.hasToken()) {
-                const tokenUpdate = resp.getToken()!;
+            if (resp.token) {
+                const tokenUpdate = resp.token!;
 
                 // Update active char when updated user info is received
-                if (tokenUpdate.hasUserInfo()) {
-                    setActiveChar(tokenUpdate.getUserInfo()!);
-                    setPermissions(tokenUpdate.getPermissionsList());
-                    if (tokenUpdate.hasJobProps()) {
-                        setJobProps(tokenUpdate.getJobProps()!);
+                if (tokenUpdate.userInfo) {
+                    setActiveChar(tokenUpdate.userInfo);
+                    setPermissions(tokenUpdate.permissions);
+                    if (tokenUpdate.jobProps) {
+                        setJobProps(tokenUpdate.jobProps!);
                     } else {
                         setJobProps(null);
                     }
                 }
 
-                if (tokenUpdate.hasNewToken() && tokenUpdate.hasExpires()) {
-                    setAccessToken(tokenUpdate.getNewToken(), toDate(tokenUpdate.getExpires()) as null | Date);
+                if (tokenUpdate.newToken && tokenUpdate.expires) {
+                    setAccessToken(tokenUpdate.newToken, toDate(tokenUpdate.expires) as null | Date);
 
                     notifications.dispatchNotification({
                         title: 'notifications.renewed_token.title',
                         titleI18n: true,
                         content: 'notifications.renewed_token.content',
                         contentI18n: true,
-                        type: 'info'
+                        type: 'info',
                     });
                 }
             }
 
-            if (resp.getRestartStream()) {
+            if (resp.restartStream) {
                 console.debug('Notificator: Server requested stream to be restarted');
                 restartBackoffTime = 0;
                 restartStream();
             }
-        }).
-        on('end', async () => {
-            console.debug('Notificator: Stream ended');
-            restartStream();
-        });
+        }
 
-    console.debug('Notificator: Stream started');
+        console.debug('Notificator: Stream ended');
+    } catch (e) {
+        const err = e as RpcError;
+        if (err.code == StatusCode.CANCELLED) {
+            return;
+        }
+
+        console.debug('Notificator: Stream errored', err);
+        restartStream();
+    }
 }
 
 async function cancelStream(): Promise<void> {
-    if (stream.value === undefined) {
+    if (abort.value === undefined) {
         return;
     }
-    console.debug("Notificator: Stream cancelled");
+    console.debug('Notificator: Stream cancelled');
 
-    stream.value?.cancel();
-    stream.value = undefined;
+    abort.value?.abort();
+    abort.value = undefined;
 }
 
 async function restartStream(): Promise<void> {
@@ -106,7 +113,7 @@ async function restartStream(): Promise<void> {
     }
 
     await cancelStream();
-    console.debug('Notificator: Restart back off time in', restartBackoffTime, "seconds");
+    console.debug('Notificator: Restart back off time in', restartBackoffTime, 'seconds');
     setTimeout(async () => {
         toggleStream();
     }, restartBackoffTime * 1000);

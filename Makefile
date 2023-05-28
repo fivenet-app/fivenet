@@ -56,13 +56,10 @@ protoc-gen-validate:
 protoc-gen-customizer:
 	go build -o ./cmd/protoc-gen-customizer ./cmd/protoc-gen-customizer
 
-protoc-gen-customizerweb:
-	go build -o ./cmd/protoc-gen-customizerweb ./cmd/protoc-gen-customizerweb
-
 .PHONY: gen-proto
-gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-customizerweb
+gen-proto: protoc-gen-validate protoc-gen-customizer
 	PATH="$$PATH:cmd/protoc-gen-customizer/" \
-	protoc \
+	npx protoc \
 		--proto_path=./validate \
 		--proto_path=./proto \
 		--go_out=./gen/go/proto \
@@ -80,24 +77,17 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-customizerweb
 		-exec protoc-go-inject-tag \
 			-input={} \;
 
-	PATH="$$PATH:cmd/protoc-gen-customizerweb/:node_modules/protoc-gen-js/bin/" \
-	protoc \
+	npx protoc \
 		--proto_path=./validate \
 		--proto_path=./proto \
-		--js_out=import_style=commonjs,binary:./gen/js \
-		--grpc-web_out=import_style=typescript,mode=grpcwebtext:./gen/js \
-		--customizerweb_opt=paths=source_relative \
-		--customizerweb_out=./gen/js \
+		--ts_out=./gen/ts \
+		--ts_opt=optimize_code_size,long_type_number \
 		$(shell find proto/ -iname "*.proto")
+
+	node ./internal/scripts/proto-patch.js
 
 	# Remove validate_pb imports from JS files
 	find ./gen -type f \( -iname '*.js' -o -iname '*.ts' \) -exec sed -i '/validate_pb/d' {} +
-
-	$(MAKE) yarn-upgrade-gen-js
-
-yarn-upgrade-gen-js:
-	# Update local yarn package
-	yarn upgrade '@fivenet/gen@file:./gen/js'
 
 gdal2tiles-leaflet:
 	if test ! -d gdal2tiles-leaflet/; then \

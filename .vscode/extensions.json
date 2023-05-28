@@ -5,7 +5,9 @@
         "editorconfig.editorconfig",
         "zxh404.vscode-proto3",
         "moalamri.inline-fold",
-        "yoavbls.pretty-ts-errors"
+        "yoavbls.pretty-ts-errors",
+        "lokalise.i18n-ally",
+        "esbenp.prettier-vscode"
     ],
     "unwantedRecommendations": [
         "vscode.typescript-language-features"

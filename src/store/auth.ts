@@ -1,7 +1,6 @@
-import { JobProps } from '@fivenet/gen/resources/jobs/jobs_pb';
-import { User } from '@fivenet/gen/resources/users/users_pb';
-import { StoreDefinition } from 'pinia';
-import { defineStore } from 'pinia';
+import { StoreDefinition, defineStore } from 'pinia';
+import { JobProps } from '~~/gen/ts/resources/jobs/jobs';
+import { User } from '~~/gen/ts/resources/users/users';
 
 export type JobPropsState = {
     quickButtons: Array<String>;
@@ -51,7 +50,7 @@ export const useAuthStore = defineStore('auth', {
         },
         setActiveChar(char: null | User): void {
             this.activeChar = char;
-            this.lastCharID = char ? char.getUserId() : this.lastCharID;
+            this.lastCharID = char ? char.userId : this.lastCharID;
         },
         setPermissions(permissions: string[]): void {
             this.permissions = permissions.sort();
@@ -61,10 +60,7 @@ export const useAuthStore = defineStore('auth', {
                 this.jobProps = null;
             } else {
                 this.jobProps = {
-                    quickButtons: jp
-                        .getQuickButtons()
-                        .split(';')
-                        .filter((v) => v !== ''),
+                    quickButtons: jp.quickButtons.split(';').filter((v) => v !== ''),
                 };
             }
         },

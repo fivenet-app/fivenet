@@ -1,6 +1,5 @@
 type ArpanetConfig = {
     sentryDSN: string;
-    apiProtoURL: string;
     login: LoginConfig;
 };
 
@@ -15,7 +14,6 @@ type ProviderConfig = {
 
 const config: ArpanetConfig = {
     sentryDSN: '',
-    apiProtoURL: '/grpc',
     login: {
         providers: [],
     },
@@ -41,7 +39,6 @@ export async function loadConfig(): Promise<void> {
             }
             const data = (await resp.json()) as ArpanetConfig;
             config.sentryDSN = data.sentryDSN;
-            config.apiProtoURL = data.apiProtoURL;
             config.login = data.login;
 
             return res();

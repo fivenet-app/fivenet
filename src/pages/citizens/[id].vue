@@ -1,13 +1,12 @@
 <script lang="ts" setup>
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
-import CitizenInfo from '~/components/citizens/CitizenInfo.vue';
-import { GetUserRequest } from '@fivenet/gen/services/citizenstore/citizenstore_pb';
 import { RpcError } from 'grpc-web';
+import CitizenInfo from '~/components/citizens/CitizenInfo.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
-import { User } from '@fivenet/gen/resources/users/users_pb';
-import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
-import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
+import { User } from '~~/gen/ts/resources/users/users';
 
 useHead({
     title: 'pages.citizens.id.title',
@@ -30,16 +29,15 @@ const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${rout
 
 async function getUser(): Promise<User> {
     return new Promise(async (res, rej) => {
-        const req = new GetUserRequest();
-        req.setUserId(parseInt(route.params.id));
-
         try {
-            const resp = await $grpc.getCitizenStoreClient().
-                getUser(req, null);
+            const call = $grpc.getCitizenStoreClient().getUser({
+                userId: parseInt(route.params.id),
+            });
+            const { response } = await call;
 
-            return res(resp.getUser()!);
+            return res(response.user!);
         } catch (e) {
-            $grpc.handleRPCError(e as RpcError);
+            $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
     });

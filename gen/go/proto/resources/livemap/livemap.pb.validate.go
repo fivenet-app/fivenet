@@ -112,17 +112,6 @@ func (m *DispatchMarker) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
-		err := DispatchMarkerValidationError{
-			field:  "JobLabel",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	// no validation rules for Name
 
 	// no validation rules for Icon
@@ -132,6 +121,21 @@ func (m *DispatchMarker) validate(all bool) error {
 	// no validation rules for Popup
 
 	// no validation rules for Active
+
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := DispatchMarkerValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return DispatchMarkerMultiError(errors)

@@ -1,10 +1,10 @@
 export type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 export interface Notification {
-	id: string;
-	title?: string;
+    id: string;
+    title?: string;
     titleI18n?: boolean;
-	content: string;
+    content: string;
     contentI18n?: boolean;
-	type?: NotificationType;
+    type?: NotificationType;
 }

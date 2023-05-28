@@ -10,11 +10,11 @@ func (x *Role) GetJobGrade() int32 {
 }
 
 func (x *Role) SetJobLabel(label string) {
-	x.JobLabel = label
+	x.JobLabel = &label
 }
 
 func (x *Role) SetJobGradeLabel(label string) {
-	x.JobGradeLabel = label
+	x.JobGradeLabel = &label
 }
 
 func ConvertFromRole(p *model.FivenetRoles) *Role {

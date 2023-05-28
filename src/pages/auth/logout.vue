@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/store/auth';
-import { useNotificationsStore } from '~/store/notifications';
-import { LogoutRequest } from '@fivenet/gen/services/auth/auth_pb';
-import { RpcError } from 'grpc-web';
-import HeroFull from '~/components/partials/HeroFull.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import Footer from '~/components/partials/Footer.vue';
+import HeroFull from '~/components/partials/HeroFull.vue';
+import { useAuthStore } from '~/store/auth';
+import { useNotificationsStore } from '~/store/notifications';
 
 useHead({
     title: 'common.logout',
@@ -43,16 +41,17 @@ onBeforeMount(async () => {
     }
 
     try {
-        await $grpc.getAuthClient()
-            .logout(new LogoutRequest(), null);
-    } catch (e) {
-        $grpc.handleRPCError(e as RpcError);
+        const call = $grpc.getAuthClient().logout({});
+        const { status } = await call;
 
-        const err = e as RpcError;
+        if (await $grpc.handleError(status)) {
+            throw new Error(status.detail);
+        }
+    } catch (e) {
         notifications.dispatchNotification({
             title: t('notifications.auth.error_logout.title'),
-            content: t('notifications.auth.error_logout.content', [err.message]),
-            type: 'error'
+            content: t('notifications.auth.error_logout.content', [e]),
+            type: 'error',
         });
     }
 

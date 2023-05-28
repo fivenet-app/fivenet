@@ -91,32 +91,10 @@ func (m *UserShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
-		err := UserShortValidationError{
-			field:  "JobLabel",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if m.GetJobGrade() <= -1 {
 		err := UserShortValidationError{
 			field:  "JobGrade",
 			reason: "value must be greater than -1",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
-		err := UserShortValidationError{
-			field:  "JobGradeLabel",
-			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -144,6 +122,36 @@ func (m *UserShort) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := UserShortValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.JobGradeLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
+			err := UserShortValidationError{
+				field:  "JobGradeLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -278,32 +286,10 @@ func (m *User) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
-		err := UserValidationError{
-			field:  "JobLabel",
-			reason: "value length must be at most 50 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if m.GetJobGrade() <= -1 {
 		err := UserValidationError{
 			field:  "JobGrade",
 			reason: "value must be greater than -1",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
-		err := UserValidationError{
-			field:  "JobGradeLabel",
-			reason: "value length must be at most 50 runes",
 		}
 		if !all {
 			return err
@@ -343,30 +329,6 @@ func (m *User) validate(all bool) error {
 		}
 		errors = append(errors, err)
 
-	}
-
-	if l := utf8.RuneCountInString(m.GetSex()); l < 1 || l > 2 {
-		err := UserValidationError{
-			field:  "Sex",
-			reason: "value length must be between 1 and 2 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for Height
-
-	if utf8.RuneCountInString(m.GetPhoneNumber()) > 20 {
-		err := UserValidationError{
-			field:  "PhoneNumber",
-			reason: "value length must be at most 20 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
 	}
 
 	if all {
@@ -428,6 +390,70 @@ func (m *User) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := UserValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.JobGradeLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
+			err := UserValidationError{
+				field:  "JobGradeLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Sex != nil {
+
+		if l := utf8.RuneCountInString(m.GetSex()); l < 1 || l > 2 {
+			err := UserValidationError{
+				field:  "Sex",
+				reason: "value length must be between 1 and 2 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Height != nil {
+		// no validation rules for Height
+	}
+
+	if m.PhoneNumber != nil {
+
+		if utf8.RuneCountInString(m.GetPhoneNumber()) > 20 {
+			err := UserValidationError{
+				field:  "PhoneNumber",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}

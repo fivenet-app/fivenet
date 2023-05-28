@@ -108,17 +108,23 @@ func (m *ListCitizensRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Wanted
+	if m.Wanted != nil {
+		// no validation rules for Wanted
+	}
 
-	if utf8.RuneCountInString(m.GetPhoneNumber()) > 20 {
-		err := ListCitizensRequestValidationError{
-			field:  "PhoneNumber",
-			reason: "value length must be at most 20 runes",
+	if m.PhoneNumber != nil {
+
+		if utf8.RuneCountInString(m.GetPhoneNumber()) > 20 {
+			err := ListCitizensRequestValidationError{
+				field:  "PhoneNumber",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {

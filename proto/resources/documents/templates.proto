@@ -22,9 +22,9 @@ message Template {
   string content_title = 8 [(validate.rules).string = {min_len: 3, max_bytes: 21845}]; // @gotags: alias:"content_title"
   string content = 9 [(validate.rules).string = {min_len: 0, max_bytes: 1500000}]; // @gotags: alias:"content"
   resources.documents.TemplateSchema schema = 10; // @gotags: alias:"schema"
-  int32 creator_id = 11; // @gotags: alias:"creator_id"
+  optional int32 creator_id = 11; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 12;
-  string job = 13 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
+  optional string job = 13 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
   repeated TemplateJobAccess job_access = 14;
   resources.documents.DocumentAccess content_access = 15; // @gotags: alias:"access"
 }
@@ -38,7 +38,7 @@ message TemplateShort {
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   string description = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
   resources.documents.TemplateSchema schema = 8; // @gotags: alias:"schema"
-  int32 creator_id = 9; // @gotags: alias:"creator_id"
+  optional int32 creator_id = 9; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 10;
   string job = 11 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
 }
@@ -72,10 +72,10 @@ message TemplateJobAccess {
   optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
   uint64 template_id = 4; // @gotags: alias:"template_id"
   string job = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
-  string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
+  optional string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 minimumGrade = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
-  string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
+  optional string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
   resources.documents.ACCESS_LEVEL access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
-  int32 creator_id = 10; // @gotags: alias:"creator_id"
+  optional int32 creator_id = 10; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
 }

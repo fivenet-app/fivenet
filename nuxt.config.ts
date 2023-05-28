@@ -1,7 +1,7 @@
-import { defineNuxtConfig } from 'nuxt/config';
-import mkcert from 'vite-plugin-mkcert';
 import fs from 'fs';
+import { defineNuxtConfig } from 'nuxt/config';
 import path from 'path';
+import mkcert from 'vite-plugin-mkcert';
 import { STRATEGIES } from 'vue-i18n-routing';
 
 type PackageJson = {
@@ -92,12 +92,12 @@ const config = defineNuxtConfig({
         autoImports: true,
         // Use different names for components
         componentNames: {
-          Form: 'VeeForm',
-          Field: 'VeeField',
-          FieldArray: 'VeeFieldArray',
-          ErrorMessage: 'VeeErrorMessage',
+            Form: 'VeeForm',
+            Field: 'VeeField',
+            FieldArray: 'VeeFieldArray',
+            ErrorMessage: 'VeeErrorMessage',
         },
-      },
+    },
     vite: {
         define: {
             __APP_VERSION__: '"' + version + '"',

@@ -84,15 +84,20 @@ func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*C
 	resp := &CompleteJobsResponse{}
 
 	var search string
-	if req.Search == nil || req.CurrentJob {
+	if req.Search != nil {
+		search = *req.Search
+	}
+	if req.CurrentJob != nil && *req.CurrentJob {
 		userInfo := auth.MustGetUserInfoFromContext(ctx)
 		search = userInfo.Job
-	} else {
-		search = *req.Search
+	}
+	exactMatch := false
+	if req.ExactMatch != nil {
+		exactMatch = *req.ExactMatch
 	}
 
 	var err error
-	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, req.ExactMatch)
+	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, exactMatch)
 	if err != nil {
 		return nil, FailedSearchErr
 	}

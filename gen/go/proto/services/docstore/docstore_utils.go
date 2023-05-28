@@ -10,6 +10,104 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, contentLength int, userInfo *userinfo.UserInfo) jet.SelectStatement {
+	tDocs := tDocs.AS("documentshort")
+	wheres := []jet.BoolExpression{
+		jet.AND(
+			tDocs.DeletedAt.IS_NULL(),
+			jet.OR(
+				jet.OR(
+					tDocs.Public.IS_TRUE(),
+					tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				),
+				jet.OR(
+					jet.AND(
+						tDUserAccess.Access.IS_NOT_NULL(),
+						tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+					),
+					jet.AND(
+						tDUserAccess.Access.IS_NULL(),
+						tDJobAccess.Access.IS_NOT_NULL(),
+						tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+					),
+				),
+			),
+		),
+	}
+
+	if where != nil {
+		wheres = append(wheres, where)
+	}
+
+	var q jet.SelectStatement
+	if onlyColumns != nil {
+		q = tDocs.
+			SELECT(
+				onlyColumns,
+			)
+	} else {
+		columns := jet.ProjectionList{
+			tDocs.ID,
+			tDocs.CreatedAt,
+			tDocs.UpdatedAt,
+			tDocs.DeletedAt,
+			tDocs.CategoryID,
+			tDCategory.ID,
+			tDCategory.Name,
+			tDCategory.Description,
+			tDCategory.Job,
+			tDocs.Title,
+			tDocs.ContentType,
+			tDocs.Data,
+			tDocs.CreatorID,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tDocs.CreatorJob,
+			tDocs.State,
+			tDocs.Closed,
+			tDocs.Public,
+		}
+		if contentLength > 0 {
+			columns = append(columns, jet.LEFT(tDocs.Content, jet.Int(int64(contentLength))).AS("document.content"))
+		} else {
+			columns = append(columns, tDocs.Content)
+		}
+		q = tDocs.SELECT(columns[0], columns[1:])
+	}
+
+	return q.
+		FROM(
+			tDocs.
+				LEFT_JOIN(tDUserAccess,
+					tDUserAccess.DocumentID.EQ(tDocs.ID).
+						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
+				LEFT_JOIN(tDJobAccess,
+					tDJobAccess.DocumentID.EQ(tDocs.ID).
+						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				).
+				LEFT_JOIN(tDCategory,
+					tDocs.CategoryID.EQ(tDCategory.ID),
+				).
+				LEFT_JOIN(tCreator,
+					tDocs.CreatorID.EQ(tCreator.ID),
+				),
+		).
+		WHERE(
+			jet.AND(
+				wheres...,
+			),
+		).
+		ORDER_BY(
+			tDocs.CreatedAt.DESC(),
+			tDocs.UpdatedAt.DESC(),
+		)
+}
+
 func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, contentLength int, userInfo *userinfo.UserInfo) jet.SelectStatement {
 	wheres := []jet.BoolExpression{
 		jet.AND(

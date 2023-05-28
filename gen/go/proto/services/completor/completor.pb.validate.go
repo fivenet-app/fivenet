@@ -306,10 +306,6 @@ func (m *CompleteJobsRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ExactMatch
-
-	// no validation rules for CurrentJob
-
 	if m.Search != nil {
 
 		if utf8.RuneCountInString(m.GetSearch()) > 50 {
@@ -323,6 +319,14 @@ func (m *CompleteJobsRequest) validate(all bool) error {
 			errors = append(errors, err)
 		}
 
+	}
+
+	if m.ExactMatch != nil {
+		// no validation rules for ExactMatch
+	}
+
+	if m.CurrentJob != nil {
+		// no validation rules for CurrentJob
 	}
 
 	if len(errors) > 0 {

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
-import Sidebar from '~/components/partials/Sidebar.vue';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
 import Notificator from '~/components/partials/Notificator.vue';
+import Sidebar from '~/components/partials/Sidebar.vue';
+import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 </script>
 
 <template>
