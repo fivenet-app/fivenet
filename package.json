@@ -4,11 +4,12 @@
     "version": "0.4.4",
     "type": "module",
     "scripts": {
-        "build": "nuxt build",
-        "dev": "nuxt dev",
-        "generate": "nuxt generate",
-        "preview": "nuxt preview",
-        "postinstall": "nuxt prepare"
+        "build": "yarn nuxt build",
+        "dev": "yarn nuxt dev",
+        "generate": "yarn nuxt generate",
+        "preview": "yarn nuxt preview",
+        "postinstall": "yarn nuxt prepare",
+        "pretty": "yarn prettier --write ./src/"
     },
     "dependencies": {
         "@fontsource/inter": "^5.0.1",
@@ -27,6 +28,7 @@
         "@vue-leaflet/vue-leaflet": "0.9.0",
         "@vueup/vue-quill": "^1.2.0",
         "@vueuse/core": "^10.1.2",
+        "cssnano": "^6.0.1",
         "google-protobuf": "^3.21.2",
         "grpc-web": "^1.4.2",
         "leaflet": "^1.9.3",
