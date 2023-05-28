@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/store/auth';
-import HeroFull from '~/components/partials/HeroFull.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
+import HeroFull from '~/components/partials/HeroFull.vue';
+import { useAuthStore } from '~/store/auth';
 
 useHead({
     title: 'pages.notfound.title',
@@ -28,12 +28,18 @@ const { accessToken } = storeToRefs(authStore);
                 {{ $t('pages.notfound.fun_error') }}
             </p>
 
-            <NuxtLink v-if="accessToken" :to="{ name: 'overview' }"
-                class="rounded-md w-60 bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
+            <NuxtLink
+                v-if="accessToken"
+                :to="{ name: 'overview' }"
+                class="rounded-md w-60 bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+            >
                 {{ $t('common.overview') }}
             </NuxtLink>
-            <NuxtLink v-else :to="{ name: 'auth-login' }"
-                class="rounded-md w-60 bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
+            <NuxtLink
+                v-else
+                :to="{ name: 'auth-login' }"
+                class="rounded-md w-60 bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+            >
                 {{ $t('common.login') }}
             </NuxtLink>
         </ContentCenterWrapper>

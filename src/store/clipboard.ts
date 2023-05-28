@@ -1,11 +1,11 @@
 import { StoreDefinition, defineStore } from 'pinia';
-import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
-import { User, UserShort } from '~~/gen/ts/resources/users/users';
-import { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import { fromString } from '~/utils/time';
-import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import * as google_protobuf_timestamp from '~~/gen/ts/google/protobuf/timestamp';
+import { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
+import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
+import { User, UserShort } from '~~/gen/ts/resources/users/users';
+import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 
 export interface ClipboardData {
     documents: ClipboardDocument[];

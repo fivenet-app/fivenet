@@ -2,10 +2,10 @@
 import { XCircleIcon } from '@heroicons/vue/20/solid';
 
 defineProps<{
-    title?: string,
-    message?: string,
-    retry?: Function,
-    retryMessage?: string,
+    title?: string;
+    message?: string;
+    retry?: Function;
+    retryMessage?: string;
 }>();
 </script>
 
@@ -26,9 +26,11 @@ defineProps<{
                 </div>
                 <div v-if="retry" class="mt-4">
                     <div class="-mx-2 -my-1.5 flex">
-                        <button type="button"
+                        <button
+                            type="button"
                             class="rounded-md bg-red-50 px-2 py-1.5 text-sm font-medium text-error-800 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-50"
-                            @click="retry!()">
+                            @click="retry!()"
+                        >
                             {{ retryMessage ?? $t('common.retry') }}
                         </button>
                     </div>

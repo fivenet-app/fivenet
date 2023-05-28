@@ -2,7 +2,7 @@
 import { PenaltiesSummary } from '~/utils/penalty';
 
 defineProps<{
-    summary: PenaltiesSummary,
+    summary: PenaltiesSummary;
 }>();
 </script>
 
@@ -15,7 +15,7 @@ defineProps<{
                 </p>
                 <p class="mt-2 flex items-baseline gap-x-2">
                     <span class="text-4xl font-semibold tracking-tight text-white">
-                        {{ summary.fine.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }}
+                        {{ summary.fine.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') }}
                     </span>
                     <span class="text-sm text-gray-400">$</span>
                 </p>

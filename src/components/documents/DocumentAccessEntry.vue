@@ -1,47 +1,62 @@
 <script lang="ts" setup>
 import {
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
     Combobox,
     ComboboxButton,
     ComboboxInput,
     ComboboxOption,
-    ComboboxOptions
+    ComboboxOptions,
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
 } from '@headlessui/vue';
-import {
-    CheckIcon,
-    ChevronDownIcon,
-    XMarkIcon,
-} from '@heroicons/vue/20/solid';
+import { CheckIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/vue/20/solid';
+import { listEnumValues } from '@protobuf-ts/runtime';
 import { watchDebounced } from '@vueuse/core';
+import { RpcError } from 'grpc-web';
+import { ArrayElement } from '~/utils/types';
+import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
-import { ArrayElement } from '~/utils/types';
-import { RpcError } from 'grpc-web';
-import { listEnumValues } from '@protobuf-ts/runtime';
 
 const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
 const props = defineProps<{
-    init: { id: number, type: number, values: { job?: string, char?: number, accessrole?: ACCESS_LEVEL, minimumrank?: number } },
-    accessTypes: { id: number, name: string }[],
-    accessRoles?: ACCESS_LEVEL[],
+    init: {
+        id: number;
+        type: number;
+        values: {
+            job?: string;
+            char?: number;
+            accessrole?: ACCESS_LEVEL;
+            minimumrank?: number;
+        };
+    };
+    accessTypes: { id: number; name: string }[];
+    accessRoles?: ACCESS_LEVEL[];
 }>();
 
 const emit = defineEmits<{
-    (e: 'typeChange', payload: { id: number, type: number }): void,
-    (e: 'nameChange', payload: { id: number, job: Job | undefined, char: UserShort | undefined }): void,
-    (e: 'rankChange', payload: { id: number, rank: JobGrade }): void,
-    (e: 'accessChange', payload: { id: number, access: ACCESS_LEVEL }): void,
-    (e: 'deleteRequest', payload: { id: number }): void,
+    (e: 'typeChange', payload: { id: number; type: number }): void;
+    (
+        e: 'nameChange',
+        payload: {
+            id: number;
+            job: Job | undefined;
+            char: UserShort | undefined;
+        }
+    ): void;
+    (e: 'rankChange', payload: { id: number; rank: JobGrade }): void;
+    (e: 'accessChange', payload: { id: number; access: ACCESS_LEVEL }): void;
+    (e: 'deleteRequest', payload: { id: number }): void;
 }>();
 
-const selectedAccessType = ref<{ id: number, name: string }>({ id: -1, name: '' });
+const selectedAccessType = ref<{ id: number; name: string }>({
+    id: -1,
+    name: '',
+});
 
 let entriesChars = [] as UserShort[];
 const queryChar = ref('');
@@ -55,7 +70,11 @@ let entriesMinimumRank = [] as JobGrade[];
 const queryMinimumRank = ref('');
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
-let entriesAccessRoles = new Array<{ id: ACCESS_LEVEL; label: string; value: string }>();
+let entriesAccessRoles = new Array<{
+    id: ACCESS_LEVEL;
+    label: string;
+    value: string;
+}>();
 if (!props.accessRoles || props.accessRoles.length === 0) {
     const enumVals = listEnumValues(ACCESS_LEVEL);
     entriesAccessRoles = enumVals.map((e, k) => {
@@ -66,7 +85,7 @@ if (!props.accessRoles || props.accessRoles.length === 0) {
         };
     });
 } else {
-    props.accessRoles.forEach(e => {
+    props.accessRoles.forEach((e) => {
         entriesAccessRoles.push({
             id: e,
             label: t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[e]}`),
@@ -80,10 +99,9 @@ const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRoles>>();
 async function findJobs(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getCompletorClient().
-                completeJobs({
-                    search: queryJob.value,
-                });
+            const call = $grpc.getCompletorClient().completeJobs({
+                search: queryJob.value,
+            });
             const { response } = await call;
 
             entriesJobs = response.jobs;
@@ -99,10 +117,9 @@ async function findJobs(): Promise<void> {
 async function findChars(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getCompletorClient().
-                completeCitizens({
-                    search: queryChar.value,
-                });
+            const call = $grpc.getCompletorClient().completeCitizens({
+                search: queryChar.value,
+            });
             const { response } = await call;
 
             entriesChars = response.users;
@@ -116,27 +133,41 @@ async function findChars(): Promise<void> {
 }
 
 onMounted(async () => {
-    const passedType = props.accessTypes.find(e => e.id === props.init.type);
+    const passedType = props.accessTypes.find((e) => e.id === props.init.type);
     if (passedType) selectedAccessType.value = passedType;
 
     if (props.init.type === 0 && props.init.values.char !== undefined && props.init.values.accessrole !== undefined) {
         await findChars();
-        selectedChar.value = entriesChars.find(char => char.userId === props.init.values.char);
-        selectedAccessRole.value = entriesAccessRoles.find(type => type.id === props.init.values.accessrole);
-    } else if (props.init.type === 1 && props.init.values.job !== undefined && props.init.values.minimumrank !== undefined && props.init.values.accessrole !== undefined) {
+        selectedChar.value = entriesChars.find((char) => char.userId === props.init.values.char);
+        selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessrole);
+    } else if (
+        props.init.type === 1 &&
+        props.init.values.job !== undefined &&
+        props.init.values.minimumrank !== undefined &&
+        props.init.values.accessrole !== undefined
+    ) {
         await findJobs();
-        selectedJob.value = entriesJobs.find(job => job.name === props.init.values.job);
+        selectedJob.value = entriesJobs.find((job) => job.name === props.init.values.job);
         if (selectedJob.value) entriesMinimumRank = selectedJob.value.grades;
-        selectedMinimumRank.value = entriesMinimumRank.find(rank => rank.grade === props.init.values.minimumrank);
-        selectedAccessRole.value = entriesAccessRoles.find(type => type.id === props.init.values.accessrole);
+        selectedMinimumRank.value = entriesMinimumRank.find((rank) => rank.grade === props.init.values.minimumrank);
+        selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessrole);
     }
 });
 
-watchDebounced(queryJob, async () => await findJobs(), { debounce: 600, maxWait: 1750 });
-watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWait: 1750 });
+watchDebounced(queryJob, async () => await findJobs(), {
+    debounce: 600,
+    maxWait: 1750,
+});
+watchDebounced(queryChar, async () => await findChars(), {
+    debounce: 600,
+    maxWait: 1750,
+});
 
 watch(selectedAccessType, () => {
-    emit('typeChange', { id: props.init.id, type: selectedAccessType.value.id });
+    emit('typeChange', {
+        id: props.init.id,
+        type: selectedAccessType.value.id,
+    });
 
     selectedChar.value = undefined;
     selectedJob.value = undefined;
@@ -154,14 +185,22 @@ watch(selectedAccessType, () => {
 
 watch(selectedJob, () => {
     if (!selectedJob.value) return;
-    emit('nameChange', { id: props.init.id, job: selectedJob.value, char: undefined });
+    emit('nameChange', {
+        id: props.init.id,
+        job: selectedJob.value,
+        char: undefined,
+    });
 
     entriesMinimumRank = selectedJob.value.grades;
 });
 
 watch(selectedChar, () => {
     if (!selectedChar.value) return;
-    emit('nameChange', { id: props.init.id, job: undefined, char: selectedChar.value });
+    emit('nameChange', {
+        id: props.init.id,
+        job: undefined,
+        char: selectedChar.value,
+    });
 });
 
 watch(selectedMinimumRank, () => {
@@ -171,39 +210,66 @@ watch(selectedMinimumRank, () => {
 
 watch(selectedAccessRole, () => {
     if (!selectedAccessRole.value) return;
-    emit('accessChange', { id: props.init.id, access: selectedAccessRole.value.id });
+    emit('accessChange', {
+        id: props.init.id,
+        access: selectedAccessRole.value.id,
+    });
 });
 </script>
 
 <template>
     <div class="flex flex-row items-center my-2">
         <div class="flex-initial mr-2 w-60">
-            <input v-if="accessTypes.length === 1" type="text" disabled :value="accessTypes[0].name"
-                class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+            <input
+                v-if="accessTypes.length === 1"
+                type="text"
+                disabled
+                :value="accessTypes[0].name"
+                class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+            />
             <Listbox v-else as="div" v-model="selectedAccessType">
                 <div class="relative">
                     <ListboxButton
-                        class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
+                        class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    >
                         <span class="block truncate">{{ selectedAccessType?.name }}</span>
                         <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                             <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
                         </span>
                     </ListboxButton>
 
-                    <transition leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100"
-                        leave-to-class="opacity-0">
+                    <transition
+                        leave-active-class="transition duration-100 ease-in"
+                        leave-from-class="opacity-100"
+                        leave-to-class="opacity-0"
+                    >
                         <ListboxOptions
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ListboxOption as="template" v-for="accessType in accessTypes" :key="accessType.id"
-                                :value="accessType" v-slot="{ active, selected }">
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                        >
+                            <ListboxOption
+                                as="template"
+                                v-for="accessType in accessTypes"
+                                :key="accessType.id"
+                                :value="accessType"
+                                v-slot="{ active, selected }"
+                            >
                                 <li
-                                    :class="[active ? 'bg-primary-500' : '', 'text-neutral relative cursor-default select-none py-2 pl-8 pr-4']">
+                                    :class="[
+                                        active ? 'bg-primary-500' : '',
+                                        'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                    ]"
+                                >
                                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
                                         accessType.name
                                     }}</span>
 
-                                    <span v-if="selected"
-                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                    <span
+                                        v-if="selected"
+                                        :class="[
+                                            active ? 'text-neutral' : 'text-primary-500',
+                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                        ]"
+                                    >
                                         <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -221,21 +287,38 @@ watch(selectedAccessRole, () => {
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryChar = $event.target.value"
-                                :display-value="(char: any) => `${char?.firstname} ${char?.lastname}`" />
+                                :display-value="(char: any) => `${char?.firstname} ${char?.lastname}`"
+                            />
                         </ComboboxButton>
 
-                        <ComboboxOptions v-if="entriesChars.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ComboboxOption v-for="char in entriesChars" :key="char.identifier" :value="char" as="char"
-                                v-slot="{ active, selected }">
+                        <ComboboxOptions
+                            v-if="entriesChars.length > 0"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                        >
+                            <ComboboxOption
+                                v-for="char in entriesChars"
+                                :key="char.identifier"
+                                :value="char"
+                                as="char"
+                                v-slot="{ active, selected }"
+                            >
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                    :class="[
+                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                        active ? 'bg-primary-500' : '',
+                                    ]"
+                                >
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ char.firstname }} {{ char.lastname }}
                                     </span>
 
-                                    <span v-if="selected"
-                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                    <span
+                                        v-if="selected"
+                                        :class="[
+                                            active ? 'text-neutral' : 'text-primary-500',
+                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                        ]"
+                                    >
                                         <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -252,21 +335,39 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                @change="queryJob = $event.target.value" :display-value="(job: any) => job?.label" />
+                                @change="queryJob = $event.target.value"
+                                :display-value="(job: any) => job?.label"
+                            />
                         </ComboboxButton>
 
-                        <ComboboxOptions v-if="entriesJobs.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ComboboxOption v-for="job in entriesJobs" :key="job.name" :value="job" as="job"
-                                v-slot="{ active, selected }">
+                        <ComboboxOptions
+                            v-if="entriesJobs.length > 0"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                        >
+                            <ComboboxOption
+                                v-for="job in entriesJobs"
+                                :key="job.name"
+                                :value="job"
+                                as="job"
+                                v-slot="{ active, selected }"
+                            >
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                    :class="[
+                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                        active ? 'bg-primary-500' : '',
+                                    ]"
+                                >
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ job.label }}
                                     </span>
 
-                                    <span v-if="selected"
-                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                    <span
+                                        v-if="selected"
+                                        :class="[
+                                            active ? 'text-neutral' : 'text-primary-500',
+                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                        ]"
+                                    >
                                         <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -282,21 +383,38 @@ watch(selectedAccessRole, () => {
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryMinimumRank = $event.target.value"
-                                :display-value="(rank: any) => rank?.label" />
+                                :display-value="(rank: any) => rank?.label"
+                            />
                         </ComboboxButton>
 
-                        <ComboboxOptions v-if="entriesMinimumRank.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ComboboxOption v-for="rank in entriesMinimumRank" :key="rank.grade" :value="rank"
-                                as="minimumrank" v-slot="{ active, selected }">
+                        <ComboboxOptions
+                            v-if="entriesMinimumRank.length > 0"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                        >
+                            <ComboboxOption
+                                v-for="rank in entriesMinimumRank"
+                                :key="rank.grade"
+                                :value="rank"
+                                as="minimumrank"
+                                v-slot="{ active, selected }"
+                            >
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                    :class="[
+                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                        active ? 'bg-primary-500' : '',
+                                    ]"
+                                >
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ rank.label }}
                                     </span>
 
-                                    <span v-if="selected"
-                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                    <span
+                                        v-if="selected"
+                                        :class="[
+                                            active ? 'text-neutral' : 'text-primary-500',
+                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                        ]"
+                                    >
                                         <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -312,21 +430,39 @@ watch(selectedAccessRole, () => {
                     <ComboboxButton as="div">
                         <ComboboxInput
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                            @change="queryAccessRole = $event.target.value" :display-value="(role: any) => role.label" />
+                            @change="queryAccessRole = $event.target.value"
+                            :display-value="(role: any) => role.label"
+                        />
                     </ComboboxButton>
 
-                    <ComboboxOptions v-if="entriesAccessRoles.length > 0"
-                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                        <ComboboxOption v-for="role in entriesAccessRoles" :key="role.id" :value="role" as="accessrole"
-                            v-slot="{ active, selected }">
+                    <ComboboxOptions
+                        v-if="entriesAccessRoles.length > 0"
+                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                    >
+                        <ComboboxOption
+                            v-for="role in entriesAccessRoles"
+                            :key="role.id"
+                            :value="role"
+                            as="accessrole"
+                            v-slot="{ active, selected }"
+                        >
                             <li
-                                :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                :class="[
+                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                    active ? 'bg-primary-500' : '',
+                                ]"
+                            >
                                 <span :class="['block truncate', selected && 'font-semibold']">
                                     {{ role.label }}
                                 </span>
 
-                                <span v-if="selected"
-                                    :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                <span
+                                    v-if="selected"
+                                    :class="[
+                                        active ? 'text-neutral' : 'text-primary-500',
+                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                    ]"
+                                >
                                     <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                 </span>
                             </li>
@@ -336,8 +472,10 @@ watch(selectedAccessRole, () => {
             </Combobox>
         </div>
         <div class="flex-initial">
-            <button type="button"
-                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            <button
+                type="button"
+                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
                 <XMarkIcon class="w-6 h-6" @click="$emit('deleteRequest', { id: props.init.id })" aria-hidden="true" />
             </button>
         </div>

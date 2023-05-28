@@ -6,9 +6,9 @@ export interface NotificatorState {
 
 export const useNotificatorStore = defineStore('notificator', {
     state: () =>
-    ({
-        lastId: 0,
-    } as NotificatorState),
+        ({
+            lastId: 0,
+        } as NotificatorState),
     persist: true,
     actions: {
         setLastId(lastId: number): void {
@@ -17,7 +17,7 @@ export const useNotificatorStore = defineStore('notificator', {
     },
     getters: {
         getLastId: (state): number => state.lastId,
-    }
+    },
 });
 
 if (import.meta.hot) {

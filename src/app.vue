@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { loadConfig } from '~/config';
-import { useUserSettingsStore } from './store/usersettings';
+import { localize, setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
+import de from '@vee-validate/i18n/dist/locale/de.json';
+import en from '@vee-validate/i18n/dist/locale/en.json';
 import { NuxtError } from 'nuxt/app';
 import { configure } from 'vee-validate';
-import { localize, setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
-import en from '@vee-validate/i18n/dist/locale/en.json';
-import de from '@vee-validate/i18n/dist/locale/de.json';
+import { loadConfig } from '~/config';
+import { useUserSettingsStore } from './store/usersettings';
 
 const { t, setLocale } = useI18n();
 
@@ -40,10 +40,10 @@ const userSettings = useUserSettingsStore();
 setLocale(userSettings.locale);
 
 configure({
-  generateMessage: localize({
-    en,
-    de,
-  }),
+    generateMessage: localize({
+        en,
+        de,
+    }),
 });
 
 veeValidateSetLocale(userSettings.locale);
@@ -51,9 +51,11 @@ veeValidateSetLocale(userSettings.locale);
 
 <template>
     <NuxtLayout>
-        <NuxtPage :transition="{
-            name: 'page',
-            mode: 'out-in'
-        }" />
+        <NuxtPage
+            :transition="{
+                name: 'page',
+                mode: 'out-in',
+            }"
+        />
     </NuxtLayout>
 </template>

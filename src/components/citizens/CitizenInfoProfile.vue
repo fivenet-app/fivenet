@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { User } from '~~/gen/ts/resources/users/users';
-import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import { KeyIcon } from '@heroicons/vue/20/solid';
 import { useClipboard } from '@vueuse/core';
+import { RpcError } from 'grpc-web';
+import { ref } from 'vue';
+import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
+import CitizenInfoJobModal from '~/components/citizens/CitizenInfoJobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
-import CitizenInfoJobModal from '~/components/citizens/CitizenInfoJobModal.vue'
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
+import { User } from '~~/gen/ts/resources/users/users';
 import CitizenInfoReasonModal from './CitizenInfoReasonModal.vue';
-import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -21,7 +21,7 @@ const w = window;
 const clipboard = useClipboard();
 
 const props = defineProps<{
-    user: User,
+    user: User;
 }>();
 
 const wantedState = ref(props.user.props ? props.user.props?.wanted : false);
@@ -48,16 +48,15 @@ async function toggleWantedStatus(): Promise<void> {
         userProps.wanted = wantedState.value;
 
         try {
-            await $grpc.getCitizenStoreClient().
-                setUserProps({
-                    props: userProps,
-                    reason: reason.value,
-                });
+            await $grpc.getCitizenStoreClient().setUserProps({
+                props: userProps,
+                reason: reason.value,
+            });
 
             notifications.dispatchNotification({
                 title: t('notifications.action_successfull.title'),
                 content: t('notifications.action_successfull.content'),
-                type: 'success'
+                type: 'success',
             });
 
             reason.value = '';
@@ -82,8 +81,15 @@ function openTemplates(): void {
 
 <template>
     <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" :auto-fill="true" />
-    <CitizenInfoReasonModal :open="reasonOpen" @close="reasonOpen = false" @submit="toggleWantedStatus(); jobModal = false"
-        v-model:reason="reason" />
+    <CitizenInfoReasonModal
+        :open="reasonOpen"
+        @close="reasonOpen = false"
+        @submit="
+            toggleWantedStatus();
+            jobModal = false;
+        "
+        v-model:reason="reason"
+    />
     <CitizenInfoJobModal :open="jobModal" @close="jobModal = false" :user="user" @submit="jobModal = false" />
     <div class="w-full mx-auto max-w-7xl grow lg:flex xl:px-2">
         <div class="flex-1 xl:flex">
@@ -93,14 +99,16 @@ function openTemplates(): void {
                         <dl class="space-y-8 sm:space-y-0 sm:divide-y sm:divide-base-200">
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    {{ $t('common.date_of_birth') }}</dt>
+                                    {{ $t('common.date_of_birth') }}
+                                </dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                                     {{ user?.dateofbirth }}
                                 </dd>
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    {{ $t('common.sex') }}</dt>
+                                    {{ $t('common.sex') }}
+                                </dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                                     {{ user?.sex!.toUpperCase() }}
                                     {{ ' ' }}
@@ -109,37 +117,45 @@ function openTemplates(): void {
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    {{ $t('common.height') }}</dt>
-                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
-                                    user?.height }}cm</dd>
+                                    {{ $t('common.height') }}
+                                </dt>
+                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{ user?.height }}cm</dd>
                             </div>
                             <div v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    {{ $t('common.phone') }} {{ $t('common.number') }}</dt>
-                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{
-                                    user?.phoneNumber }}</dd>
+                                    {{ $t('common.phone') }}
+                                    {{ $t('common.number') }}
+                                </dt>
+                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                    {{ user?.phoneNumber }}
+                                </dd>
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    {{ $t('common.visum') }}</dt>
+                                    {{ $t('common.visum') }}
+                                </dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                    {{ user?.visum }}</dd>
+                                    {{ user?.visum }}
+                                </dd>
                             </div>
                             <div v-can="'CitizenStoreService.ListCitizens.Fields.Licenses'" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    {{ $t('common.license', 2) }}</dt>
+                                    {{ $t('common.license', 2) }}
+                                </dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
                                     <span v-if="user?.licenses.length === 0">
                                         {{ $t('common.no_licenses') }}
                                     </span>
-                                    <ul v-else role="list"
-                                        class="border divide-y rounded-md divide-base-200 border-base-200">
-                                        <li v-for="license in user?.licenses"
-                                            class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                                    <ul v-else role="list" class="border divide-y rounded-md divide-base-200 border-base-200">
+                                        <li
+                                            v-for="license in user?.licenses"
+                                            class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
+                                        >
                                             <div class="flex items-center flex-1">
                                                 <KeyIcon class="flex-shrink-0 w-5 h-5 text-base-400" aria-hidden="true" />
-                                                <span class="flex-1 ml-2 truncate">{{
-                                                    license.label }} ({{ license.type.toUpperCase() }})</span>
+                                                <span class="flex-1 ml-2 truncate"
+                                                    >{{ license.label }} ({{ license.type.toUpperCase() }})</span
+                                                >
                                             </div>
                                         </li>
                                     </ul>
@@ -153,31 +169,45 @@ function openTemplates(): void {
 
         <div class="flex flex-col gap-2 px-2 py-4 pr-2 shrink-0 lg:w-96">
             <div class="flex-initial">
-                <button v-can="'CitizenStoreService.SetUserProps.Fields.Job'" type="button"
+                <button
+                    v-can="'CitizenStoreService.SetUserProps.Fields.Job'"
+                    type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
-                    @click="jobModal = true">
+                    @click="jobModal = true"
+                >
                     {{ $t('components.citizens.citizen_info_profile.set_job') }}
                 </button>
             </div>
             <div class="flex-initial" v-can="'CitizenStoreService.SetUserProps.Fields.Wanted'">
-                <button type="button"
+                <button
+                    type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
-                    @click="reasonOpen = true">{{ wantedState ?
-                        $t('components.citizens.citizen_info_profile.revoke_wanted') :
-                        $t('components.citizens.citizen_info_profile.set_wanted') }}
+                    @click="reasonOpen = true"
+                >
+                    {{
+                        wantedState
+                            ? $t('components.citizens.citizen_info_profile.revoke_wanted')
+                            : $t('components.citizens.citizen_info_profile.set_wanted')
+                    }}
                 </button>
             </div>
             <div class="flex-initial">
-                <button v-can="'DocStoreService.CreateDocument'" type="button"
+                <button
+                    v-can="'DocStoreService.CreateDocument'"
+                    type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
-                    @click="openTemplates()">
+                    @click="openTemplates()"
+                >
                     {{ $t('components.citizens.citizen_info_profile.create_new_document') }}
                 </button>
             </div>
             <div class="flex-initial">
-                <button v-can="'CitizenStoreService.SetUserProps.Fields.Wanted'" type="button"
+                <button
+                    v-can="'CitizenStoreService.SetUserProps.Fields.Wanted'"
+                    type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
-                    @click="clipboard.copy(w.location.href)">
+                    @click="clipboard.copy(w.location.href)"
+                >
                     {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
                 </button>
             </div>

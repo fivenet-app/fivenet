@@ -7,7 +7,7 @@ import ComponentModal from './ComponentModal.vue';
 export type ButtonComponents = 'PenaltyCalculator';
 
 const props = defineProps<{
-    comp: ButtonComponents,
+    comp: ButtonComponents;
 }>();
 
 const open = ref(false);
@@ -23,8 +23,11 @@ switch (props.comp) {
 </script>
 
 <template>
-    <button type="button" @click="open = true"
-        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-10 right-24 bg-primary-500 shadow-float text-neutral hover:bg-primary-400">
+    <button
+        type="button"
+        @click="open = true"
+        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-10 right-24 bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
+    >
         <component :is="icon" class="w-10 h-auto" />
     </button>
     <ComponentModal :open="open" @close="open = false">

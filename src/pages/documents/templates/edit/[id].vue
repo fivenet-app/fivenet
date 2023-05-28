@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import TemplateEditor from '~/components/documents/templates/TemplateEditor.vue';
+import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({

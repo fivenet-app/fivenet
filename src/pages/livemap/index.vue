@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
-import Sidebar from '~/components/partials/Sidebar.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
 import Notificator from '~/components/partials/Notificator.vue';
+import Sidebar from '~/components/partials/Sidebar.vue';
+import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 
 useHead({
     title: 'common.livemap',

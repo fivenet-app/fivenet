@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { AuditEntry } from '~~/gen/ts/resources/rector/audit';
 import { ClipboardDocumentIcon } from '@heroicons/vue/24/solid';
+import { AuditEntry } from '~~/gen/ts/resources/rector/audit';
 
 const { d } = useI18n();
 
 const props = defineProps<{
-    log: AuditEntry,
+    log: AuditEntry;
 }>();
 
 async function addToClipboard(): Promise<void> {
@@ -33,7 +33,7 @@ ${props.log.data}
             {{ $d(toDate(log.createdAt)!, 'short') }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ log.user ? (log.user?.firstname + ' ' + log.user?.lastname) : 'N/A' }}
+            {{ log.user ? log.user?.firstname + ' ' + log.user?.lastname : 'N/A' }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             {{ log.service }}: {{ log.method }}
@@ -45,8 +45,10 @@ ${props.log.data}
             {{ log.data ? log.data : 'N/A' }}
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-            <button class="flex-initial text-primary-500 hover:text-primary-400"
-                :title="$t('components.clipboard.clipboard_button.add')">
+            <button
+                class="flex-initial text-primary-500 hover:text-primary-400"
+                :title="$t('components.clipboard.clipboard_button.add')"
+            >
                 <ClipboardDocumentIcon class="w-6 h-auto ml-auto mr-2.5" @click="addToClipboard" />
             </button>
         </td>

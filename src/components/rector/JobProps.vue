@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { JobProps } from '~~/gen/ts/resources/jobs/jobs';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import { AdjustmentsVerticalIcon } from '@heroicons/vue/24/outline';
-import { useNotificationsStore } from '~/store/notifications';
 import { RpcError } from 'grpc-web';
+import { useNotificationsStore } from '~/store/notifications';
+import { JobProps } from '~~/gen/ts/resources/jobs/jobs';
+import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataPendingBlock from '../partials/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -16,27 +16,26 @@ const properties = ref<{
     theme: string;
     livemapMarkerColor: string;
     quickButtons: {
-        'PenaltyCalculator': boolean,
+        PenaltyCalculator: boolean;
     };
 }>({
     theme: 'default',
     livemapMarkerColor: '#5C7AFF',
     quickButtons: {
-        PenaltyCalculator: false
+        PenaltyCalculator: false,
     },
 });
 
 async function getJobProps(): Promise<JobProps> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getRectorClient().
-                getJobProps({});
+            const call = $grpc.getRectorClient().getJobProps({});
             const { response } = await call;
 
             if (response.jobProps) {
                 properties.value.livemapMarkerColor = '#' + response.jobProps?.livemapMarkerColor;
 
-                const components = response.jobProps!.quickButtons.split(';').filter(v => v !== '');
+                const components = response.jobProps!.quickButtons.split(';').filter((v) => v !== '');
                 components.forEach((v) => {
                     switch (v) {
                         case 'PenaltyCalculator':
@@ -77,15 +76,14 @@ async function saveJobProps(): Promise<void> {
         jProps.quickButtons = quickButtons.replace(/;$/, '');
 
         try {
-            await $grpc.getRectorClient().
-                setJobProps({
-                    jobProps: jProps,
-                });
+            await $grpc.getRectorClient().setJobProps({
+                jobProps: jProps,
+            });
 
             notifications.dispatchNotification({
                 title: t('notifications.rector.job_props.title'),
                 content: t('notifications.rector.job_props.content'),
-                type: 'success'
+                type: 'success',
             });
 
             return res();
@@ -100,14 +98,18 @@ async function saveJobProps(): Promise<void> {
 <template>
     <div class="py-2 mt-5 max-w-5xl mx-auto">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.job', 1)} ${$t('common.prop')}`])" />
-        <DataErrorBlock v-else-if="error"
-            :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])" :retry="refresh" />
-        <button v-else-if="!jobProps" type="button"
-            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])"
+            :retry="refresh"
+        />
+        <button
+            v-else-if="!jobProps"
+            type="button"
+            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+        >
             <AdjustmentsVerticalIcon class="w-12 h-12 mx-auto text-neutral" />
-            <span class="block mt-2 text-sm font-semibold">
-
-            </span>
+            <span class="block mt-2 text-sm font-semibold"> </span>
         </button>
         <div v-else>
             <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
@@ -146,9 +148,13 @@ async function saveJobProps(): Promise<void> {
                                     <div class="space-y-5">
                                         <div class="relative flex items-start">
                                             <div class="flex h-6 items-center">
-                                                <input aria-describedby="comments-description" name="comments"
-                                                    type="checkbox" v-model="properties.quickButtons.PenaltyCalculator"
-                                                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600" />
+                                                <input
+                                                    aria-describedby="comments-description"
+                                                    name="comments"
+                                                    type="checkbox"
+                                                    v-model="properties.quickButtons.PenaltyCalculator"
+                                                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                                />
                                             </div>
                                             <div class="ml-3 text-sm leading-6">
                                                 <label for="comments" class="font-medium text-white">
@@ -160,12 +166,14 @@ async function saveJobProps(): Promise<void> {
                                 </fieldset>
                             </dd>
                         </div>
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5"
-                            v-can="'RectorService.SetJobProps'">
+                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5" v-can="'RectorService.SetJobProps'">
                             <dt class="text-sm font-medium"></dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                <button type="button" @click="saveJobProps()"
-                                    class="rounded-md bg-green-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-green-400">
+                                <button
+                                    type="button"
+                                    @click="saveJobProps()"
+                                    class="rounded-md bg-green-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-green-400"
+                                >
                                     {{ $t('common.save', 1) }}
                                 </button>
                             </dd>

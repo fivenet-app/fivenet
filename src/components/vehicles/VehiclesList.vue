@@ -1,31 +1,34 @@
 <script lang="ts" setup>
-import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { watchDebounced } from '@vueuse/core'
-import { ListVehiclesRequest } from '~~/gen/ts/services/dmv/vehicles';
-import TablePagination from '~/components/partials/TablePagination.vue';
-import VehiclesListEntry from './VehiclesListEntry.vue';
-import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { UserShort } from '~~/gen/ts/resources/users/users';
 import { CheckIcon } from '@heroicons/vue/20/solid';
+import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
+import { watchDebounced } from '@vueuse/core';
+import { RpcError } from 'grpc-web';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
-import { RpcError } from 'grpc-web';
+import TablePagination from '~/components/partials/TablePagination.vue';
+import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
+import { UserShort } from '~~/gen/ts/resources/users/users';
+import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
+import { ListVehiclesRequest } from '~~/gen/ts/services/dmv/vehicles';
+import VehiclesListEntry from './VehiclesListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const props = withDefaults(defineProps<{
-    userId?: number,
-    hideOwner?: boolean,
-    hideCitizenLink?: boolean,
-    hideCopy?: boolean,
-}>(), {
-    userId: 0,
-    hideOwner: false,
-    hideCitizenLink: false,
-    hideCopy: false,
-});
+const props = withDefaults(
+    defineProps<{
+        userId?: number;
+        hideOwner?: boolean;
+        hideCitizenLink?: boolean;
+        hideCopy?: boolean;
+    }>(),
+    {
+        userId: 0,
+        hideOwner: false,
+        hideCitizenLink: false,
+        hideCopy: false,
+    }
+);
 
 const entriesChars = ref<UserShort[]>([]);
 const queryChar = ref('');
@@ -38,10 +41,9 @@ async function findChars(): Promise<void> {
         }
 
         try {
-            const call = $grpc.getCompletorClient().
-                completeCitizens({
-                    search: queryChar.value,
-                });
+            const call = $grpc.getCompletorClient().completeCitizens({
+                search: queryChar.value,
+            });
             const { response } = await call;
 
             entriesChars.value = response.users;
@@ -52,7 +54,11 @@ async function findChars(): Promise<void> {
     });
 }
 
-const search = ref<{ plate: string, model: string, user_id: number }>({ plate: '', model: '', user_id: 0 });
+const search = ref<{ plate: string; model: string; user_id: number }>({
+    plate: '',
+    model: '',
+    user_id: 0,
+});
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
@@ -71,8 +77,7 @@ async function listVehicles(): Promise<Array<Vehicle>> {
         };
 
         try {
-            const call = $grpc.getDMVClient().
-                listVehicles(req);
+            const call = $grpc.getDMVClient().listVehicles(req);
             const { response } = await call;
 
             pagination.value = response.pagination;
@@ -93,8 +98,14 @@ function focusSearch(): void {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
-watchDebounced(queryChar, async () => await findChars(), { debounce: 600, maxWait: 1250 });
+watchDebounced(search.value, async () => refresh(), {
+    debounce: 600,
+    maxWait: 1400,
+});
+watchDebounced(queryChar, async () => await findChars(), {
+    debounce: 600,
+    maxWait: 1250,
+});
 watch(selectedChar, () => {
     if (selectedChar && selectedChar.value?.userId) {
         search.value.user_id = selectedChar.value?.userId;
@@ -116,9 +127,13 @@ watch(selectedChar, () => {
                                     {{ $t('common.license_plate') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="search.plate" ref="searchInput" type="text"
+                                    <input
+                                        v-model="search.plate"
+                                        ref="searchInput"
+                                        type="text"
                                         :placeholder="$t('common.license_plate')"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    />
                                 </div>
                             </div>
                             <div class="flex-1 form-control">
@@ -126,8 +141,13 @@ watch(selectedChar, () => {
                                     {{ $t('common.model') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <input v-model="search.model" type="text" name="model" :placeholder="$t('common.model')"
-                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                    <input
+                                        v-model="search.model"
+                                        type="text"
+                                        name="model"
+                                        :placeholder="$t('common.model')"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    />
                                 </div>
                             </div>
                             <div class="flex-1 form-control" v-if="!userId">
@@ -142,21 +162,39 @@ watch(selectedChar, () => {
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     @change="queryChar = $event.target.value"
                                                     :display-value="(char: any) => char ? `${char?.firstname} ${char?.lastname}` : ''"
-                                                    :placeholder="$t('common.owner')" />
+                                                    :placeholder="$t('common.owner')"
+                                                />
                                             </ComboboxButton>
 
-                                            <ComboboxOptions v-if="entriesChars.length > 0"
-                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                                <ComboboxOption v-for="char in entriesChars" :key="char?.identifier"
-                                                    :value="char" as="char" v-slot="{ active, selected }">
+                                            <ComboboxOptions
+                                                v-if="entriesChars.length > 0"
+                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                                            >
+                                                <ComboboxOption
+                                                    v-for="char in entriesChars"
+                                                    :key="char?.identifier"
+                                                    :value="char"
+                                                    as="char"
+                                                    v-slot="{ active, selected }"
+                                                >
                                                     <li
-                                                        :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                                        :class="[
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                            active ? 'bg-primary-500' : '',
+                                                        ]"
+                                                    >
                                                         <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ char?.firstname }} {{ char?.lastname }}
+                                                            {{ char?.firstname }}
+                                                            {{ char?.lastname }}
                                                         </span>
 
-                                                        <span v-if="selected"
-                                                            :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                                        <span
+                                                            v-if="selected"
+                                                            :class="[
+                                                                active ? 'text-neutral' : 'text-primary-500',
+                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                            ]"
+                                                        >
                                                             <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
@@ -174,10 +212,17 @@ watch(selectedChar, () => {
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.vehicle', 2)])" />
-                        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.vehicle', 2)])"
-                            :retry="refresh" />
-                        <button v-else-if="vehicles && vehicles.length === 0" type="button" @click="focusSearch()"
-                            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2">
+                        <DataErrorBlock
+                            v-else-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.vehicle', 2)])"
+                            :retry="refresh"
+                        />
+                        <button
+                            v-else-if="vehicles && vehicles.length === 0"
+                            type="button"
+                            @click="focusSearch()"
+                            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+                        >
                             <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
                                 {{ $t('common.not_found', [$t('common.vehicle', 2)]) }}
@@ -187,8 +232,10 @@ watch(selectedChar, () => {
                             <table class="min-w-full divide-y divide-base-600">
                                 <thead>
                                     <tr>
-                                        <th scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                                        <th
+                                            scope="col"
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
+                                        >
                                             {{ $t('common.plate') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
@@ -197,25 +244,38 @@ watch(selectedChar, () => {
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.type') }}
                                         </th>
-                                        <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            v-if="!hideOwner"
+                                            scope="col"
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                        >
                                             {{ $t('common.owner') }}
                                         </th>
-                                        <th v-if="!hideCitizenLink && !hideCopy" scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
+                                        <th
+                                            v-if="!hideCitizenLink && !hideCopy"
+                                            scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                        >
                                             {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <VehiclesListEntry v-for="vehicle in vehicles" :key="vehicle.plate" :vehicle="vehicle"
-                                        :hide-citizen-link="hideCitizenLink" :hide-copy="hideCopy"
-                                        class="transition-colors hover:bg-neutral/5" />
+                                    <VehiclesListEntry
+                                        v-for="vehicle in vehicles"
+                                        :key="vehicle.plate"
+                                        :vehicle="vehicle"
+                                        :hide-citizen-link="hideCitizenLink"
+                                        :hide-copy="hideCopy"
+                                        class="transition-colors hover:bg-neutral/5"
+                                    />
                                 </tbody>
                                 <thead>
                                     <tr>
-                                        <th scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
+                                        <th
+                                            scope="col"
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
+                                        >
                                             {{ $t('common.plate') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
@@ -224,12 +284,18 @@ watch(selectedChar, () => {
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.type') }}
                                         </th>
-                                        <th v-if="!hideOwner" scope="col"
-                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            v-if="!hideOwner"
+                                            scope="col"
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                        >
                                             {{ $t('common.owner') }}
                                         </th>
-                                        <th v-if="!hideCitizenLink && !hideCopy" scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral">
+                                        <th
+                                            v-if="!hideCitizenLink && !hideCopy"
+                                            scope="col"
+                                            class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
+                                        >
                                             {{ $t('common.action', 2) }}
                                         </th>
                                     </tr>

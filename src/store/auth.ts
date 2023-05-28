@@ -1,7 +1,6 @@
+import { StoreDefinition, defineStore } from 'pinia';
 import { JobProps } from '~~/gen/ts/resources/jobs/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
-import { StoreDefinition } from 'pinia';
-import { defineStore } from 'pinia';
 
 export type JobPropsState = {
     quickButtons: Array<String>;
@@ -61,10 +60,7 @@ export const useAuthStore = defineStore('auth', {
                 this.jobProps = null;
             } else {
                 this.jobProps = {
-                    quickButtons: jp
-                        .quickButtons
-                        .split(';')
-                        .filter((v) => v !== ''),
+                    quickButtons: jp.quickButtons.split(';').filter((v) => v !== ''),
                 };
             }
         },

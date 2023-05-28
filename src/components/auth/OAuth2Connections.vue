@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
-import OAuth2ConnectButton from './OAuth2ConnectButton.vue';
 import { XCircleIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from 'grpc-web';
+import { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
+import OAuth2ConnectButton from './OAuth2ConnectButton.vue';
 
 const { $grpc } = useNuxtApp();
 
 const props = defineProps<{
-    providers: OAuth2Provider[],
-    connections: OAuth2Account[],
+    providers: OAuth2Provider[];
+    connections: OAuth2Account[];
 }>();
 
 const emit = defineEmits<{
-    (e: 'disconnected', provider: string): void,
+    (e: 'disconnected', provider: string): void;
 }>();
 
 function getProviderConnection(provider: string): undefined | OAuth2Account {
@@ -22,10 +22,9 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
 async function disconnect(provider: OAuth2Provider): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            await $grpc.getAuthClient().
-                deleteOAuth2Connection({
-                    provider: provider.name,
-                });
+            await $grpc.getAuthClient().deleteOAuth2Connection({
+                provider: provider.name,
+            });
 
             emit('disconnected', provider.name);
 
@@ -57,10 +56,12 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
                         </NuxtLink>
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        <div v-if="getProviderConnection(prov.name) !== undefined"
-                            class="flex items-center justify-between">
-                            <img :src="getProviderConnection(prov.name)!.avatar" alt="Avatar"
-                                class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100" />
+                        <div v-if="getProviderConnection(prov.name) !== undefined" class="flex items-center justify-between">
+                            <img
+                                :src="getProviderConnection(prov.name)!.avatar"
+                                alt="Avatar"
+                                class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100"
+                            />
                             <span class="text-left" :title="`ID: ${getProviderConnection(prov.name)?.externalId}`">
                                 {{ getProviderConnection(prov.name)?.username }}
                             </span>

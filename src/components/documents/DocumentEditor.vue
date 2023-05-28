@@ -1,38 +1,40 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/store/auth';
-import { useDocumentEditorStore } from '~/store/documenteditor';
-import { useClipboardStore, getUser } from '~/store/clipboard';
-import { Quill, QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
-import { DocumentAccess, DocumentReference, DocumentRelation, DOC_CONTENT_TYPE, DOC_RELATION } from '~~/gen/ts/resources/documents/documents';
-import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import {
-    PlusIcon,
-    ChevronDownIcon,
-    CheckIcon,
-} from '@heroicons/vue/20/solid';
-import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
-import { UserShort } from '~~/gen/ts/resources/users/users';
-import {
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
     Combobox,
     ComboboxButton,
     ComboboxInput,
     ComboboxOption,
-    ComboboxOptions
+    ComboboxOptions,
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
 } from '@headlessui/vue';
-import { watchDebounced } from '@vueuse/core';
-import DocumentReferenceManager from './DocumentReferenceManager.vue';
-import DocumentRelationManager from './DocumentRelationManager.vue';
-import DocumentAccessEntry from './DocumentAccessEntry.vue';
+import { CheckIcon, ChevronDownIcon, PlusIcon } from '@heroicons/vue/20/solid';
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
+import { Quill, QuillEditor } from '@vueup/vue-quill';
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { watchDebounced } from '@vueuse/core';
+import { RpcError } from 'grpc-web';
+import { useAuthStore } from '~/store/auth';
+import { getUser, useClipboardStore } from '~/store/clipboard';
+import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificationsStore } from '~/store/notifications';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
-import { RpcError } from 'grpc-web';
+import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
+import {
+    DOC_CONTENT_TYPE,
+    DOC_RELATION,
+    DocumentAccess,
+    DocumentReference,
+    DocumentRelation,
+} from '~~/gen/ts/resources/documents/documents';
+import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { UserShort } from '~~/gen/ts/resources/users/users';
+import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
+import DocumentAccessEntry from './DocumentAccessEntry.vue';
+import DocumentReferenceManager from './DocumentReferenceManager.vue';
+import DocumentRelationManager from './DocumentRelationManager.vue';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -45,7 +47,7 @@ const { t } = useI18n();
 const route = useRoute();
 
 const props = defineProps<{
-    id?: number,
+    id?: number;
 }>();
 
 const { activeChar } = storeToRefs(authStore);
@@ -59,24 +61,43 @@ const openclose = [
     { id: 1, label: t('common.close', 2), closed: true },
 ];
 
-const doc = ref<{ title: string, content: string, closed: { id: number, label: string, closed: boolean }, state: string }>({
+const doc = ref<{
+    title: string;
+    content: string;
+    closed: { id: number; label: string; closed: boolean };
+    state: string;
+}>({
     title: '',
     content: '',
     closed: openclose[0],
     state: '',
 });
 const isPublic = ref(false);
-const access = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: ACCESS_LEVEL, minimumrank?: number } }>>(new Map());
+const access = ref<
+    Map<
+        number,
+        {
+            id: number;
+            type: number;
+            values: {
+                job?: string;
+                char?: number;
+                accessrole?: ACCESS_LEVEL;
+                minimumrank?: number;
+            };
+        }
+    >
+>(new Map());
 
 const relationManagerShow = ref<boolean>(false);
 const relationManagerData = ref<Map<number, DocumentRelation>>(new Map());
 const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
-watch(currentRelations, () => currentRelations.value.forEach(e => relationManagerData.value.set(e.id!, e)))
+watch(currentRelations, () => currentRelations.value.forEach((e) => relationManagerData.value.set(e.id!, e)));
 
 const referenceManagerShow = ref<boolean>(false);
 const referenceManagerData = ref<Map<number, DocumentReference>>(new Map());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
-watch(currentReferences, () => currentReferences.value.forEach(e => referenceManagerData.value.set(e.id!, e)))
+watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 
 let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
@@ -92,29 +113,40 @@ onMounted(async () => {
         data.activeChar = activeChar.value!;
 
         try {
-            const call = $grpc.getDocStoreClient().
-                getTemplate({
-                    templateId: parseInt(route.query.templateId as string),
-                    data: JSON.stringify(data),
-                    render: true,
-                });
+            const call = $grpc.getDocStoreClient().getTemplate({
+                templateId: parseInt(route.query.templateId as string),
+                data: JSON.stringify(data),
+                render: true,
+            });
             const { response } = await call;
 
             const template = response.template;
             doc.value.title = template?.contentTitle!;
             doc.value.content = template?.content!;
-            selectedCategory.value = entriesCategory.find(e => e.id === template?.category?.id);
+            selectedCategory.value = entriesCategory.find((e) => e.id === template?.category?.id);
 
             if (template?.contentAccess) {
                 const docAccess = template?.contentAccess!;
                 let accessId = 0;
-                docAccess.users.forEach(user => {
-                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.access } });
+                docAccess.users.forEach((user) => {
+                    access.value.set(accessId, {
+                        id: accessId,
+                        type: 0,
+                        values: { char: user.userId, accessrole: user.access },
+                    });
                     accessId++;
                 });
 
-                docAccess.jobs.forEach(job => {
-                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.access, minimumrank: job.minimumGrade } });
+                docAccess.jobs.forEach((job) => {
+                    access.value.set(accessId, {
+                        id: accessId,
+                        type: 1,
+                        values: {
+                            job: job.job,
+                            accessrole: job.access,
+                            minimumrank: job.minimumGrade,
+                        },
+                    });
                     accessId++;
                 });
             }
@@ -132,31 +164,46 @@ onMounted(async () => {
             if (document) {
                 doc.value.title = document.title;
                 doc.value.content = document.content;
-                doc.value.closed = openclose.find(e => e.closed === document.closed) as { id: number; label: string; closed: boolean; };
+                doc.value.closed = openclose.find((e) => e.closed === document.closed) as {
+                    id: number;
+                    label: string;
+                    closed: boolean;
+                };
                 doc.value.state = document.state;
-                selectedCategory.value = entriesCategory.find(e => e.id === document.category?.id);
+                selectedCategory.value = entriesCategory.find((e) => e.id === document.category?.id);
                 isPublic.value = document.public;
 
                 const refs = await $grpc.getDocStoreClient().getDocumentReferences(req);
                 currentReferences.value = refs.response.references;
                 const rels = await $grpc.getDocStoreClient().getDocumentRelations(req);
                 currentRelations.value = rels.response.relations;
-            };
+            }
 
             if (docAccess) {
                 let accessId = 0;
 
-                docAccess.users.forEach(user => {
-                    access.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.access } });
+                docAccess.users.forEach((user) => {
+                    access.value.set(accessId, {
+                        id: accessId,
+                        type: 0,
+                        values: { char: user.userId, accessrole: user.access },
+                    });
                     accessId++;
                 });
 
-                docAccess.jobs.forEach(job => {
-                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.access, minimumrank: job.minimumGrade } });
+                docAccess.jobs.forEach((job) => {
+                    access.value.set(accessId, {
+                        id: accessId,
+                        type: 1,
+                        values: {
+                            job: job.job,
+                            accessrole: job.access,
+                            minimumrank: job.minimumGrade,
+                        },
+                    });
                     accessId++;
                 });
             }
-
         } catch (e) {
             $grpc.handleError(e as RpcError);
         }
@@ -170,7 +217,15 @@ onMounted(async () => {
             }
         }
 
-        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.job, minimumrank: 1, accessrole: ACCESS_LEVEL.EDIT } });
+        access.value.set(0, {
+            id: 0,
+            type: 1,
+            values: {
+                job: activeChar.value?.job,
+                minimumrank: 1,
+                accessrole: ACCESS_LEVEL.EDIT,
+            },
+        });
     }
 
     clipboardStore.users.forEach((user, i) => {
@@ -183,7 +238,7 @@ onMounted(async () => {
             sourceUser: activeChar.value!,
             relation: DOC_RELATION.CAUSED,
         });
-    })
+    });
 
     canEdit.value = true;
 });
@@ -202,9 +257,15 @@ function saveToStore(): void {
     }, 850);
 }
 
-watchDebounced(doc.value, () => saveToStore(), { debounce: 1250, maxWait: 3500 });
+watchDebounced(doc.value, () => saveToStore(), {
+    debounce: 1250,
+    maxWait: 3500,
+});
 
-watchDebounced(queryCategory, () => findCategories(), { debounce: 600, maxWait: 1400 });
+watchDebounced(queryCategory, () => findCategories(), {
+    debounce: 600,
+    maxWait: 1400,
+});
 
 async function findCategories(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -234,29 +295,24 @@ function addAccessEntry(): void {
         notifications.dispatchNotification({
             title: t('notifications.max_access_entry.title'),
             content: t('notifications.max_access_entry.content', [maxAccessEntries]),
-            type: 'error'
+            type: 'error',
         });
         return;
     }
 
-    let id = access.value.size > 0 ? [...access.value.keys()].pop() as number + 1 : 0;
+    let id = access.value.size > 0 ? ([...access.value.keys()].pop() as number) + 1 : 0;
     access.value.set(id, {
         id,
         type: 1,
-        values: {}
-    })
+        values: {},
+    });
 }
 
-function removeAccessEntry(event: {
-    id: number
-}): void {
+function removeAccessEntry(event: { id: number }): void {
     access.value.delete(event.id);
 }
 
-function updateAccessEntryType(event: {
-    id: number,
-    type: number
-}): void {
+function updateAccessEntryType(event: { id: number; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -264,11 +320,7 @@ function updateAccessEntryType(event: {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryName(event: {
-    id: number,
-    job?: Job,
-    char?: UserShort
-}): void {
+function updateAccessEntryName(event: { id: number; job?: Job; char?: UserShort }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -283,10 +335,7 @@ function updateAccessEntryName(event: {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryRank(event: {
-    id: number,
-    rank: JobGrade
-}): void {
+function updateAccessEntryRank(event: { id: number; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -294,10 +343,7 @@ function updateAccessEntryRank(event: {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryAccess(event: {
-    id: number,
-    access: ACCESS_LEVEL
-}): void {
+function updateAccessEntryAccess(event: { id: number; access: ACCESS_LEVEL }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -316,14 +362,13 @@ async function submitForm(): Promise<void> {
             state: doc.value.state,
             public: isPublic.value,
         };
-        if (selectedCategory.value != undefined)
-            req.categoryId = selectedCategory.value.id;
+        if (selectedCategory.value != undefined) req.categoryId = selectedCategory.value.id;
 
         const reqAccess: DocumentAccess = {
             jobs: [],
             users: [],
         };
-        access.value.forEach(entry => {
+        access.value.forEach((entry) => {
             if (entry.values.accessrole === undefined) return;
 
             if (entry.type === 0) {
@@ -351,8 +396,7 @@ async function submitForm(): Promise<void> {
 
         // Try to submit to server
         try {
-            const call = $grpc.getDocStoreClient().
-                createDocument(req);
+            const call = $grpc.getDocStoreClient().createDocument(req);
             const { response } = await call;
 
             const promises = new Array<Promise<any>>();
@@ -383,7 +427,10 @@ async function submitForm(): Promise<void> {
             clipboardStore.clearActiveStack();
             documentStore.clear();
 
-            await navigateTo({ name: 'documents-id', params: { id: response.documentId } });
+            await navigateTo({
+                name: 'documents-id',
+                params: { id: response.documentId },
+            });
 
             return res();
         } catch (e) {
@@ -404,14 +451,13 @@ async function editForm(): Promise<void> {
             state: doc.value.state,
             public: isPublic.value,
         };
-        if (selectedCategory.value != undefined)
-            req.categoryId = selectedCategory.value.id;
+        if (selectedCategory.value != undefined) req.categoryId = selectedCategory.value.id;
 
         const reqAccess: DocumentAccess = {
             jobs: [],
             users: [],
         };
-        access.value.forEach(entry => {
+        access.value.forEach((entry) => {
             if (entry.values.accessrole === undefined) return;
 
             if (entry.type === 0) {
@@ -438,8 +484,7 @@ async function editForm(): Promise<void> {
         req.access = reqAccess;
 
         try {
-            const call = $grpc.getDocStoreClient().
-                updateDocument(req);
+            const call = $grpc.getDocStoreClient().updateDocument(req);
             const { response } = await call;
 
             const referencesToRemove: number[] = [];
@@ -463,7 +508,7 @@ async function editForm(): Promise<void> {
             });
 
             referenceManagerData.value.forEach((ref) => {
-                if (currentReferences.value.find(r => r.id === ref.id!)) return;
+                if (currentReferences.value.find((r) => r.id === ref.id!)) return;
                 ref.sourceDocumentId = response.documentId;
 
                 $grpc.getDocStoreClient().addDocumentReference({
@@ -472,7 +517,7 @@ async function editForm(): Promise<void> {
             });
 
             relationManagerData.value.forEach((rel) => {
-                if (currentRelations.value.find(r => r.id === rel.id!)) return;
+                if (currentRelations.value.find((r) => r.id === rel.id!)) return;
                 rel.documentId = response.documentId;
 
                 $grpc.getDocStoreClient().addDocumentRelation({
@@ -483,12 +528,15 @@ async function editForm(): Promise<void> {
             notifications.dispatchNotification({
                 title: t('notifications.document_updated.title'),
                 content: t('notifications.document_updated.content'),
-                type: 'success'
+                type: 'success',
             });
             clipboardStore.clearActiveStack();
             documentStore.clear();
 
-            await navigateTo({ name: 'documents-id', params: { id: response.documentId } });
+            await navigateTo({
+                name: 'documents-id',
+                params: { id: response.documentId },
+            });
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
@@ -505,18 +553,31 @@ async function editForm(): Promise<void> {
 </style>
 
 <template>
-    <DocumentRelationManager v-model="relationManagerData" :open="relationManagerShow" :document="$props.id"
-        @close="relationManagerShow = false" />
-    <DocumentReferenceManager v-model="referenceManagerData" :open="referenceManagerShow" :document="$props.id"
-        @close="referenceManagerShow = false" />
+    <DocumentRelationManager
+        v-model="relationManagerData"
+        :open="relationManagerShow"
+        :document="$props.id"
+        @close="relationManagerShow = false"
+    />
+    <DocumentReferenceManager
+        v-model="referenceManagerData"
+        :open="referenceManagerShow"
+        :document="$props.id"
+        @close="referenceManagerShow = false"
+    />
     <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
         <div>
             <label for="name" class="block font-medium text-base">
                 {{ $t('common.title') }}
             </label>
-            <input v-model="doc.title" type="text" name="name"
+            <input
+                v-model="doc.title"
+                type="text"
+                name="name"
                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
-                :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`" :disabled="!canEdit" />
+                :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
+                :disabled="!canEdit"
+            />
         </div>
         <div class="flex flex-row gap-2">
             <div class="flex-1">
@@ -529,21 +590,38 @@ async function editForm(): Promise<void> {
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryCategory = $event.target.value"
-                                :display-value="(category: any) => category?.name" />
+                                :display-value="(category: any) => category?.name"
+                            />
                         </ComboboxButton>
 
-                        <ComboboxOptions v-if="entriesCategory.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ComboboxOption v-for="category in entriesCategory" :key="category.id" :value="category"
-                                as="category" v-slot="{ active, selected }">
+                        <ComboboxOptions
+                            v-if="entriesCategory.length > 0"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                        >
+                            <ComboboxOption
+                                v-for="category in entriesCategory"
+                                :key="category.id"
+                                :value="category"
+                                as="category"
+                                v-slot="{ active, selected }"
+                            >
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                    :class="[
+                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                        active ? 'bg-primary-500' : '',
+                                    ]"
+                                >
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ category.name }}
                                     </span>
 
-                                    <span v-if="selected"
-                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                    <span
+                                        v-if="selected"
+                                        :class="[
+                                            active ? 'text-neutral' : 'text-primary-500',
+                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                        ]"
+                                    >
                                         <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -556,39 +634,63 @@ async function editForm(): Promise<void> {
                 <label for="name" class="block font-medium text-sm">
                     {{ $t('common.state') }}
                 </label>
-                <input v-model="doc.state" type="text" name="state"
+                <input
+                    v-model="doc.state"
+                    type="text"
+                    name="state"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`" :disabled="!canEdit" />
+                    :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
+                    :disabled="!canEdit"
+                />
             </div>
             <div class="flex-1">
-                <label for="closed" class="block font-medium text-sm">
-                    {{ $t('common.close', 2) }}?
-                </label>
+                <label for="closed" class="block font-medium text-sm"> {{ $t('common.close', 2) }}? </label>
                 <Listbox as="div" v-model="doc.closed">
                     <div class="relative">
-                        <ListboxButton :disabled="!canEdit"
-                            class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
-                            <span class="block truncate">{{ openclose.find(e => e.closed === doc.closed.closed)?.label
+                        <ListboxButton
+                            :disabled="!canEdit"
+                            class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        >
+                            <span class="block truncate">{{
+                                openclose.find((e) => e.closed === doc.closed.closed)?.label
                             }}</span>
                             <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                 <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
                             </span>
                         </ListboxButton>
 
-                        <transition leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100"
-                            leave-to-class="opacity-0">
+                        <transition
+                            leave-active-class="transition duration-100 ease-in"
+                            leave-from-class="opacity-100"
+                            leave-to-class="opacity-0"
+                        >
                             <ListboxOptions
-                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                <ListboxOption as="template" v-for="type in openclose" :key="type.id" :value="type"
-                                    v-slot="{ active, selected }">
+                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                            >
+                                <ListboxOption
+                                    as="template"
+                                    v-for="type in openclose"
+                                    :key="type.id"
+                                    :value="type"
+                                    v-slot="{ active, selected }"
+                                >
                                     <li
-                                        :class="[active ? 'bg-primary-500' : '', 'text-neutral relative cursor-default select-none py-2 pl-8 pr-4']">
+                                        :class="[
+                                            active ? 'bg-primary-500' : '',
+                                            'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                        ]"
+                                    >
                                         <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
                                             type.label
                                         }}</span>
 
-                                        <span v-if="selected"
-                                            :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                        <span
+                                            v-if="selected"
+                                            :class="[
+                                                active ? 'text-neutral' : 'text-primary-500',
+                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                            ]"
+                                        >
                                             <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                         </span>
                                     </li>
@@ -605,16 +707,22 @@ async function editForm(): Promise<void> {
     </div>
     <div class="flex flex-row">
         <div class="flex-1">
-            <button type="button" :disabled="!canEdit"
+            <button
+                type="button"
+                :disabled="!canEdit"
                 class="rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="referenceManagerShow = true">
+                @click="referenceManagerShow = true"
+            >
                 {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
             </button>
         </div>
         <div class="flex-1">
-            <button type="button" :disabled="!canEdit"
+            <button
+                type="button"
+                :disabled="!canEdit"
                 class="rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="relationManagerShow = true">
+                @click="relationManagerShow = true"
+            >
                 {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
             </button>
         </div>
@@ -623,24 +731,43 @@ async function editForm(): Promise<void> {
         <h2 class="text-neutral">
             {{ $t('common.access') }}
         </h2>
-        <DocumentAccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry" :access-types="accessTypes"
-            @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
-            @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
-            @deleteRequest="removeAccessEntry($event)" />
-        <button type="button" :disabled="!canEdit"
+        <DocumentAccessEntry
+            v-for="entry in access.values()"
+            :key="entry.id"
+            :init="entry"
+            :access-types="accessTypes"
+            @typeChange="updateAccessEntryType($event)"
+            @nameChange="updateAccessEntryName($event)"
+            @rankChange="updateAccessEntryRank($event)"
+            @accessChange="updateAccessEntryAccess($event)"
+            @deleteRequest="removeAccessEntry($event)"
+        />
+        <button
+            type="button"
+            :disabled="!canEdit"
             class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-            data-te-toggle="tooltip" :title="$t('components.documents.document_editor.add_permission')"
-            @click="addAccessEntry()">
+            data-te-toggle="tooltip"
+            :title="$t('components.documents.document_editor.add_permission')"
+            @click="addAccessEntry()"
+        >
             <PlusIcon class="w-5 h-5" aria-hidden="true" />
         </button>
     </div>
     <div class="sm:flex sm:flex-row-reverse">
-        <button v-if="!props.id" @click="submitForm()" :disabled="!canEdit"
-            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">
+        <button
+            v-if="!props.id"
+            @click="submitForm()"
+            :disabled="!canEdit"
+            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+        >
             {{ t('common.submit') }}
         </button>
-        <button v-if="props.id" @click="editForm()" :disabled="!canEdit"
-            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400">
+        <button
+            v-if="props.id"
+            @click="editForm()"
+            :disabled="!canEdit"
+            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+        >
             {{ $t('common.edit') }}
         </button>
         <div v-if="saving" class="text-gray-400 mr-4 flex flex-items">

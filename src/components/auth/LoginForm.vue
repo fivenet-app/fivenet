@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/store/auth';
+import { alpha_dash, max, min, required } from '@vee-validate/rules';
+import { RpcError } from 'grpc-web';
 import { defineRule } from 'vee-validate';
 import Alert from '~/components/partials/Alert.vue';
 import config from '~/config';
-import { required, min, max, alpha_dash } from '@vee-validate/rules';
-import { RpcError } from 'grpc-web';
+import { useAuthStore } from '~/store/auth';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -20,11 +20,10 @@ async function login(values: FormData): Promise<void> {
         setPermissions([]);
 
         try {
-            const call = $grpc.getUnAuthClient()
-                .login({
-                    username: values.username,
-                    password: values.password,
-                });
+            const call = $grpc.getUnAuthClient().login({
+                username: values.username,
+                password: values.password,
+            });
             const { response } = await call;
 
             loginStop(null);
@@ -74,9 +73,14 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
                 {{ $t('common.username') }}
             </label>
             <div>
-                <VeeField name="username" type="text" autocomplete="username" :placeholder="$t('common.username')"
+                <VeeField
+                    name="username"
+                    type="text"
+                    autocomplete="username"
+                    :placeholder="$t('common.username')"
                     :label="$t('common.username')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                />
                 <VeeErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
@@ -85,16 +89,23 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
                 {{ $t('common.password') }}
             </label>
             <div>
-                <VeeField name="password" type="password" autocomplete="current-password"
-                    :placeholder="$t('common.password')" :label="$t('common.password')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                <VeeField
+                    name="password"
+                    type="password"
+                    autocomplete="current-password"
+                    :placeholder="$t('common.password')"
+                    :label="$t('common.password')"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                />
                 <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
 
         <div>
-            <button type="submit"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+            <button
+                type="submit"
+                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+            >
                 {{ $t('common.login') }}
             </button>
         </div>
@@ -102,8 +113,11 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
 
     <div class="my-4 space-y-2">
         <div v-for="prov in providers" class="">
-            <NuxtLink :external="true" :to="`/api/oauth2/login/${prov.name}`"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+            <NuxtLink
+                :external="true"
+                :to="`/api/oauth2/login/${prov.name}`"
+                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+            >
                 {{ prov.label }} {{ $t('common.login') }}
             </NuxtLink>
         </div>

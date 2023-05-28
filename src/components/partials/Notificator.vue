@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { ClientReadableStream, RpcError } from 'grpc-web';
-import { StreamResponse } from '~~/gen/ts/services/notificator/notificator';
-import { useNotificatorStore } from '~/store/notificator';
-import { useAuthStore } from '~/store/auth';
+import { RpcError, StatusCode } from 'grpc-web';
 import { NotificationType } from '~/composables/notification/interfaces/Notification.interface';
+import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
-import { StatusCode } from 'grpc-web';
+import { useNotificatorStore } from '~/store/notificator';
 
 const { $grpc } = useNuxtApp();
 const store = useNotificatorStore();
@@ -28,24 +26,24 @@ async function streamNotifications(): Promise<void> {
     try {
         abort.value = new AbortController();
 
-        const call = $grpc.getNotificatorClient().
-            stream({
+        const call = $grpc.getNotificatorClient().stream(
+            {
                 lastId: store.getLastId,
             },
-                {
-                    abort: abort.value.signal,
-                });
+            {
+                abort: abort.value.signal,
+            }
+        );
 
         for await (let resp of call.responses) {
-            if (resp.lastId > store.getLastId)
-                store.setLastId(resp.lastId);
+            if (resp.lastId > store.getLastId) store.setLastId(resp.lastId);
 
-            resp.notifications.forEach(v => {
-                let nType: NotificationType = v.type as NotificationType ?? 'info';
+            resp.notifications.forEach((v) => {
+                let nType: NotificationType = (v.type as NotificationType) ?? 'info';
                 notifications.dispatchNotification({
                     title: v.title,
                     content: v.content,
-                    type: nType
+                    type: nType,
                 });
             });
 
@@ -72,7 +70,7 @@ async function streamNotifications(): Promise<void> {
                         titleI18n: true,
                         content: 'notifications.renewed_token.content',
                         contentI18n: true,
-                        type: 'info'
+                        type: 'info',
                     });
                 }
             }
@@ -94,14 +92,13 @@ async function streamNotifications(): Promise<void> {
         console.debug('Notificator: Stream errored', err);
         restartStream();
     }
-
 }
 
 async function cancelStream(): Promise<void> {
     if (abort.value === undefined) {
         return;
     }
-    console.debug("Notificator: Stream cancelled");
+    console.debug('Notificator: Stream cancelled');
 
     abort.value?.abort();
     abort.value = undefined;
@@ -116,7 +113,7 @@ async function restartStream(): Promise<void> {
     }
 
     await cancelStream();
-    console.debug('Notificator: Restart back off time in', restartBackoffTime, "seconds");
+    console.debug('Notificator: Restart back off time in', restartBackoffTime, 'seconds');
     setTimeout(async () => {
         toggleStream();
     }, restartBackoffTime * 1000);

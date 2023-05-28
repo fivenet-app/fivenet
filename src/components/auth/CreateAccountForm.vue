@@ -1,16 +1,16 @@
 <script lang="ts" setup>
+import { alpha_dash, digits, max, min, required } from '@vee-validate/rules';
+import { RpcError } from 'grpc-web';
+import { defineRule } from 'vee-validate';
 import Alert from '~/components/partials/Alert.vue';
 import { useNotificationsStore } from '~/store/notifications';
-import { alpha_dash, digits, max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
-import { RpcError } from 'grpc-web';
 
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
 
 defineEmits<{
-    (e: 'back'): void,
+    (e: 'back'): void;
 }>();
 
 const { t } = useI18n();
@@ -21,17 +21,16 @@ const curPassword = ref('');
 async function createAccount(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            await $grpc.getUnAuthClient().
-                createAccount({
-                    regToken: values.registrationToken.toString(),
-                    username: values.username,
-                    password: values.password,
-                });
+            await $grpc.getUnAuthClient().createAccount({
+                regToken: values.registrationToken.toString(),
+                username: values.username,
+                password: values.password,
+            });
 
             notifications.dispatchNotification({
                 title: t('notifications.auth.account_created.title'),
                 content: t('notifications.auth.account_created.content'),
-                type: 'success'
+                type: 'success',
             });
 
             return res();
@@ -81,10 +80,17 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
                 {{ $t('components.auth.create_account.registration_token') }}
             </label>
             <div>
-                <VeeField name="registrationToken" type="text" inputmode="numeric" aria-describedby="hint" pattern="[0-9]*"
-                    autocomplete="registrationToken" :placeholder="$t('components.auth.create_account.registration_token')"
+                <VeeField
+                    name="registrationToken"
+                    type="text"
+                    inputmode="numeric"
+                    aria-describedby="hint"
+                    pattern="[0-9]*"
+                    autocomplete="registrationToken"
+                    :placeholder="$t('components.auth.create_account.registration_token')"
                     :label="$t('components.auth.create_account.registration_token')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6" />
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
+                />
                 <VeeErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
@@ -93,9 +99,14 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
                 {{ $t('common.username') }}
             </label>
             <div>
-                <VeeField name="username" type="text" autocomplete="username" :placeholder="$t('common.username')"
+                <VeeField
+                    name="username"
+                    type="text"
+                    autocomplete="username"
+                    :placeholder="$t('common.username')"
                     :label="$t('common.username')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                />
                 <VeeErrorMessage name="Username" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
@@ -104,25 +115,36 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
                 {{ $t('common.password') }}
             </label>
             <div>
-                <VeeField name="password" type="password" autocomplete="current-password"
-                    :placeholder="$t('common.password')" :label="$t('common.password')" v-model:model-value="curPassword"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                <VeeField
+                    name="password"
+                    type="password"
+                    autocomplete="current-password"
+                    :placeholder="$t('common.password')"
+                    :label="$t('common.password')"
+                    v-model:model-value="curPassword"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                />
                 <PartialsPasswordStrengthMeter :input="curPassword" class="mt-2" />
                 <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>
 
         <div>
-            <button type="submit"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+            <button
+                type="submit"
+                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+            >
                 {{ $t('components.auth.create_account.submit_button') }}
             </button>
         </div>
     </form>
 
     <div class="mt-6">
-        <button type="button" @click="$emit('back')"
-            class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300">
+        <button
+            type="button"
+            @click="$emit('back')"
+            class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+        >
             {{ $t('components.auth.create_account.back_to_login_button') }}
         </button>
     </div>

@@ -1,18 +1,26 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
-import { AttributeValues, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
-import { ChevronDownIcon, CheckIcon } from '@heroicons/vue/24/solid';
+import {
+    Disclosure,
+    DisclosureButton,
+    DisclosurePanel,
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+} from '@headlessui/vue';
+import { CheckIcon, ChevronDownIcon } from '@heroicons/vue/24/solid';
 import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { AttributeValues, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 
 const props = defineProps<{
-    attribute: RoleAttribute,
-    states: Map<number, AttributeValues | undefined>,
-    jobs: Job[],
-    disabled?: boolean,
+    attribute: RoleAttribute;
+    states: Map<number, AttributeValues | undefined>;
+    jobs: Job[];
+    disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:states', payload: Map<number, AttributeValues | undefined>): void,
+    (e: 'update:states', payload: Map<number, AttributeValues | undefined>): void;
 }>();
 
 const states = ref<typeof props.states>(props.states);
@@ -132,7 +140,7 @@ async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
 
 onMounted(() => {
     if (state.validValues.oneofKind === 'jobGradeList') {
-        props.jobs.forEach(job => {
+        props.jobs.forEach((job) => {
             if (state.validValues.oneofKind !== 'jobGradeList') {
                 return;
             }
@@ -150,77 +158,152 @@ onMounted(() => {
 
 <template>
     <div v-if="$props.attribute">
-        <Disclosure as="div"
-            :class="[$props.disabled ? 'border-neutral/10 text-base-300' : 'hover:border-neutral/70 border-neutral/20 text-neutral']"
-            v-slot="{ open }">
-            <DisclosureButton :disabled="$props.disabled"
-                :class="[open ? 'rounded-t-lg border-b-0' : 'rounded-lg', $props.disabled ? 'cursor-not-allowed' : '', ' flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors']">
+        <Disclosure
+            as="div"
+            :class="[
+                $props.disabled ? 'border-neutral/10 text-base-300' : 'hover:border-neutral/70 border-neutral/20 text-neutral',
+            ]"
+            v-slot="{ open }"
+        >
+            <DisclosureButton
+                :disabled="$props.disabled"
+                :class="[
+                    open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
+                    $props.disabled ? 'cursor-not-allowed' : '',
+                    ' flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                ]"
+            >
                 <span class="text-base leading-7 transition-colors">
                     {{ $t(`attrs.${attribute.category}.${attribute.name}.${attribute.key}`) }}
                 </span>
                 <span class="ml-6 flex h-7 items-center">
-                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
-                        aria-hidden="true" />
+                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']" aria-hidden="true" />
                 </span>
             </DisclosureButton>
             <DisclosurePanel class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2">
                 <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
-                    <div v-if="state.validValues.oneofKind === 'stringList' && validValues?.validValues && validValues?.validValues.oneofKind === 'stringList'"
-                        class="flex flex-row gap-4 flex-wrap">
-                        <div v-for="value in validValues.validValues.stringList.strings"
-                            :key="value" class="flex flex-row flex-initial flex-nowrap">
-                            <input :id="value" :name="value" type="checkbox"
-                                :checked="!!state.validValues.stringList.strings.find(v => v === value)"
+                    <div
+                        v-if="
+                            state.validValues.oneofKind === 'stringList' &&
+                            validValues?.validValues &&
+                            validValues?.validValues.oneofKind === 'stringList'
+                        "
+                        class="flex flex-row gap-4 flex-wrap"
+                    >
+                        <div
+                            v-for="value in validValues.validValues.stringList.strings"
+                            :key="value"
+                            class="flex flex-row flex-initial flex-nowrap"
+                        >
+                            <input
+                                :id="value"
+                                :name="value"
+                                type="checkbox"
+                                :checked="!!state.validValues.stringList.strings.find((v) => v === value)"
                                 @click="toggleStringListValue(value)"
-                                class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500" />
+                                class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                            />
                             <span class="ml-1">{{ value }}</span>
                         </div>
                     </div>
-                    <div v-else-if="state.validValues.oneofKind === 'jobList' && validValues?.validValues && validValues?.validValues.oneofKind === 'jobList'" class="flex flex-row gap-4 flex-wrap">
-                        <div v-for="job in props.jobs.filter(j => validValues?.validValues.oneofKind === 'jobList' && (!validValues?.validValues.jobList?.strings.length || validValues.validValues?.jobList?.strings.includes(j.name)))"
-                            :key="job.name" class="flex flex-row flex-initial flex-nowrap">
-                            <input :id="job.name" :name="job.name" type="checkbox"
-                                :checked="!!state.validValues.jobList?.strings.find(v => v === job.name)"
+                    <div
+                        v-else-if="
+                            state.validValues.oneofKind === 'jobList' &&
+                            validValues?.validValues &&
+                            validValues?.validValues.oneofKind === 'jobList'
+                        "
+                        class="flex flex-row gap-4 flex-wrap"
+                    >
+                        <div
+                            v-for="job in props.jobs.filter(
+                                (j) =>
+                                    validValues?.validValues.oneofKind === 'jobList' &&
+                                    (!validValues?.validValues.jobList?.strings.length ||
+                                        validValues.validValues?.jobList?.strings.includes(j.name))
+                            )"
+                            :key="job.name"
+                            class="flex flex-row flex-initial flex-nowrap"
+                        >
+                            <input
+                                :id="job.name"
+                                :name="job.name"
+                                type="checkbox"
+                                :checked="!!state.validValues.jobList?.strings.find((v) => v === job.name)"
                                 @click="toggleJobListValue(job.name)"
-                                class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500" />
+                                class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                            />
                             <span class="ml-1">{{ job.label }}</span>
                         </div>
                     </div>
-                    <div v-else-if="state.validValues.oneofKind === 'jobGradeList' && validValues?.validValues && validValues.validValues.oneofKind === 'jobGradeList'" class="flex flex-col gap-2">
-                        <div v-for="job in  props.jobs " :key="job.name"
-                            class="flex flex-row flex-initial flex-nowrap gap-2">
-                            <input :id="job.name" :name="job.name" type="checkbox"
+                    <div
+                        v-else-if="
+                            state.validValues.oneofKind === 'jobGradeList' &&
+                            validValues?.validValues &&
+                            validValues.validValues.oneofKind === 'jobGradeList'
+                        "
+                        class="flex flex-col gap-2"
+                    >
+                        <div v-for="job in props.jobs" :key="job.name" class="flex flex-row flex-initial flex-nowrap gap-2">
+                            <input
+                                :id="job.name"
+                                :name="job.name"
+                                type="checkbox"
                                 :checked="!!state.validValues?.jobGradeList.jobs[job.name]"
                                 @change="toggleJobGradeValue(job, ($event.target as any).checked)"
-                                class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500" />
+                                class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                            />
                             <span class="flex-1 my-auto">{{ job.label }}</span>
-                            <Listbox as="div" class="flex-1" :model-value="jobGrades.get(job.name)"
+                            <Listbox
+                                as="div"
+                                class="flex-1"
+                                :model-value="jobGrades.get(job.name)"
                                 @update:model-value="updateJobGradeValue(job, $event)"
-                                :disabled="!state.validValues.jobGradeList?.jobs[job.name]">
+                                :disabled="!state.validValues.jobGradeList?.jobs[job.name]"
+                            >
                                 <div class="relative">
                                     <ListboxButton
-                                        class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 disabled:bg-base-800 disabled:text-neutral/50 disabled:cursor-not-allowed focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6">
+                                        class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 disabled:bg-base-800 disabled:text-neutral/50 disabled:cursor-not-allowed focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    >
                                         <span class="block truncate">{{ jobGrades.get(job.name)?.label }}</span>
                                         <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                             <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
                                         </span>
                                     </ListboxButton>
 
-                                    <transition leave-active-class="transition duration-100 ease-in"
-                                        leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                    <transition
+                                        leave-active-class="transition duration-100 ease-in"
+                                        leave-from-class="opacity-100"
+                                        leave-to-class="opacity-0"
+                                    >
                                         <ListboxOptions
-                                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                            <ListboxOption as="template" v-for=" grade  in  job.grades "
-                                                :key="grade.grade" :value="grade" v-slot="{ active, selected }">
+                                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                                        >
+                                            <ListboxOption
+                                                as="template"
+                                                v-for="grade in job.grades"
+                                                :key="grade.grade"
+                                                :value="grade"
+                                                v-slot="{ active, selected }"
+                                            >
                                                 <li
-                                                    :class="[active ? 'bg-primary-500' : '', 'text-neutral relative cursor-default select-none py-2 pl-8 pr-4']">
+                                                    :class="[
+                                                        active ? 'bg-primary-500' : '',
+                                                        'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                                    ]"
+                                                >
                                                     <span
-                                                        :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
+                                                        :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']"
+                                                    >
                                                         {{ grade.label }}
                                                     </span>
 
-                                                    <span v-if="selected"
-                                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                                    <span
+                                                        v-if="selected"
+                                                        :class="[
+                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                        ]"
+                                                    >
                                                         <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                     </span>
                                                 </li>

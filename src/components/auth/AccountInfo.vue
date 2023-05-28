@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
+import { UserIcon } from '@heroicons/vue/24/outline';
+import { RpcError } from 'grpc-web';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
-import { UserIcon } from '@heroicons/vue/24/outline';
+import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 import ChangePasswordModal from './ChangePasswordModal.vue';
-import OAuth2Connections from './OAuth2Connections.vue';
 import DebugInfo from './DebugInfo.vue';
-import { RpcError } from 'grpc-web';
+import OAuth2Connections from './OAuth2Connections.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -15,8 +15,7 @@ const { data: account, pending, refresh, error } = useLazyAsyncData(`accountinfo
 async function getAccountInfo(): Promise<GetAccountInfoResponse | undefined> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getAuthClient().
-                getAccountInfo({});
+            const call = $grpc.getAuthClient().getAccountInfo({});
 
             return res(await call.response);
         } catch (e) {
@@ -41,12 +40,17 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
 <template>
     <div class="py-2 mt-5 max-w-5xl mx-auto">
         <ChangePasswordModal :open="changePasswordModal" @close="changePasswordModal = false" />
-        <DataPendingBlock v-if="pending"
-            :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])" />
-        <DataErrorBlock v-else-if="error"
-            :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])" :retry="refresh" />
-        <button v-else-if="!account" type="button"
-            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])"
+            :retry="refresh"
+        />
+        <button
+            v-else-if="!account"
+            type="button"
+            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
             <UserIcon class="w-12 h-12 mx-auto text-neutral" />
             <span class="block mt-2 text-sm font-semibold text-gray-300">
                 {{ $t('common.not_found', [`${$t('common.account')} ${$t('common.data')}`]) }}
@@ -85,8 +89,11 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                                 {{ $t('components.auth.account_info.change_password') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                <button type="button" @click="changePasswordModal = true"
-                                    class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
+                                <button
+                                    type="button"
+                                    @click="changePasswordModal = true"
+                                    class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                >
                                     {{ $t('components.auth.account_info.change_password_button') }}
                                 </button>
                             </dd>
@@ -95,8 +102,12 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                 </div>
             </div>
 
-            <OAuth2Connections v-if="account" @click="removeOAuth2Connection($event)" :providers="account.oauth2Providers"
-                :connections="account.oauth2Connections" />
+            <OAuth2Connections
+                v-if="account"
+                @click="removeOAuth2Connection($event)"
+                :providers="account.oauth2Providers"
+                :connections="account.oauth2Connections"
+            />
 
             <DebugInfo />
         </div>

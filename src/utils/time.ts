@@ -1,5 +1,5 @@
-import * as resources_timestamp_timestamp from '~~/gen/ts/resources/timestamp/timestamp';
 import * as google_protobuf_timestamp from '~~/gen/ts/google/protobuf/timestamp';
+import * as resources_timestamp_timestamp from '~~/gen/ts/resources/timestamp/timestamp';
 
 const seconds_per_minute = 60;
 const seconds_per_hour = seconds_per_minute * 60;
@@ -50,10 +50,7 @@ export function toDate(ts: resources_timestamp_timestamp.Timestamp | undefined):
     return google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!);
 }
 
-export function toDateLocaleString(
-    ts: resources_timestamp_timestamp.Timestamp | undefined,
-    d?: Function
-): undefined | string {
+export function toDateLocaleString(ts: resources_timestamp_timestamp.Timestamp | undefined, d?: Function): undefined | string {
     if (typeof ts === undefined) {
         return '-';
     }

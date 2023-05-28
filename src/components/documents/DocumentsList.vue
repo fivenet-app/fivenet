@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { watchDebounced } from '@vueuse/shared';
-import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
-import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import TablePagination from '~/components/partials/TablePagination.vue';
-import { CalendarIcon, BriefcaseIcon, UserIcon, DocumentMagnifyingGlassIcon } from '@heroicons/vue/20/solid';
-import TemplatesModal from './templates/TemplatesModal.vue';
-import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
-import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
+import { BriefcaseIcon, CalendarIcon, DocumentMagnifyingGlassIcon, UserIcon } from '@heroicons/vue/20/solid';
 import { CheckIcon } from '@heroicons/vue/24/solid';
+import { watchDebounced } from '@vueuse/shared';
 import { RpcError } from 'grpc-web';
+import { ref } from 'vue';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import TablePagination from '~/components/partials/TablePagination.vue';
+import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
+import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
+import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
+import TemplatesModal from './templates/TemplatesModal.vue';
 
 const { $grpc } = useNuxtApp();
 
-const search = ref<{ title: string, category?: DocumentCategory }>({ title: '' });
+const search = ref<{ title: string; category?: DocumentCategory }>({ title: '' });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0);
 
@@ -39,8 +39,7 @@ async function listDocuments(): Promise<Array<DocumentShort>> {
         if (search.value.category) req.categoryIds.push(search.value.category.id);
 
         try {
-            const call = $grpc.getDocStoreClient().
-                listDocuments(req);
+            const call = $grpc.getDocStoreClient().listDocuments(req);
             const { response } = await call;
 
             pagination.value = response.pagination;
@@ -81,7 +80,10 @@ const templatesOpen = ref(false);
 
 watch(offset, async () => refresh());
 watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
-watchDebounced(queryCategories, async () => findCategories(), { debounce: 600, maxWait: 1400 });
+watchDebounced(queryCategories, async () => findCategories(), {
+    debounce: 600,
+    maxWait: 1400,
+});
 
 onMounted(async () => {
     findCategories();
@@ -100,9 +102,14 @@ onMounted(async () => {
                         </label>
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1 form-control">
-                                <input v-model="search.title" ref="searchInput" type="text" name="search"
+                                <input
+                                    v-model="search.title"
+                                    ref="searchInput"
+                                    type="text"
+                                    name="search"
                                     :placeholder="$t('common.title')"
-                                    class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                                    class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                />
                             </div>
                             <div class="flex-1 form-control">
                                 <Combobox as="div" v-model="search.category" nullable>
@@ -112,21 +119,38 @@ onMounted(async () => {
                                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @change="queryCategories = $event.target.value"
                                                 :display-value="(category: any) => category?.name"
-                                                placeholder="Category" />
+                                                placeholder="Category"
+                                            />
                                         </ComboboxButton>
 
-                                        <ComboboxOptions v-if="entriesCategories.length > 0"
-                                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                                            <ComboboxOption v-for="category in entriesCategories" :key="category.id"
-                                                :value="category" as="category" v-slot="{ active, selected }">
+                                        <ComboboxOptions
+                                            v-if="entriesCategories.length > 0"
+                                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                                        >
+                                            <ComboboxOption
+                                                v-for="category in entriesCategories"
+                                                :key="category.id"
+                                                :value="category"
+                                                as="category"
+                                                v-slot="{ active, selected }"
+                                            >
                                                 <li
-                                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                                    :class="[
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                        active ? 'bg-primary-500' : '',
+                                                    ]"
+                                                >
                                                     <span :class="['block truncate', selected && 'font-semibold']">
                                                         {{ category.name }}
                                                     </span>
 
-                                                    <span v-if="selected"
-                                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                                    <span
+                                                        v-if="selected"
+                                                        :class="[
+                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                        ]"
+                                                    >
                                                         <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                     </span>
                                                 </li>
@@ -136,20 +160,26 @@ onMounted(async () => {
                                 </Combobox>
                             </div>
                             <div class="flex-initial form-control" v-can="'DocStoreService.CreateDocument'">
-                                <button @click="templatesOpen = true"
-                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
+                                <button
+                                    @click="templatesOpen = true"
+                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                >
                                     {{ $t('common.create') }}
                                 </button>
                             </div>
                             <div class="flex-initial" v-can="'CompletorService.CompleteDocumentCategories'">
-                                <NuxtLink :to="{ name: 'documents-categories' }"
-                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
+                                <NuxtLink
+                                    :to="{ name: 'documents-categories' }"
+                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                >
                                     {{ $t('common.category', 2) }}
                                 </NuxtLink>
                             </div>
                             <div class="flex-initial" v-can="'DocStoreService.ListTemplates'">
-                                <NuxtLink :to="{ name: 'documents-templates' }"
-                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500">
+                                <NuxtLink
+                                    :to="{ name: 'documents-templates' }"
+                                    class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                >
                                     {{ $t('common.template', 2) }}
                                 </NuxtLink>
                             </div>
@@ -161,10 +191,17 @@ onMounted(async () => {
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
-                        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])"
-                            :retry="refresh" />
-                        <button v-else-if="documents && documents.length === 0" type="button" @click="focusSearch()"
-                            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        <DataErrorBlock
+                            v-else-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.document', 2)])"
+                            :retry="refresh"
+                        />
+                        <button
+                            v-else-if="documents && documents.length === 0"
+                            type="button"
+                            @click="focusSearch()"
+                            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        >
                             <DocumentMagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
                             <span class="block mt-2 text-sm font-semibold text-gray-300">
                                 {{ $t('common.not_found', [$t('common.document', 2)]) }}
@@ -173,40 +210,52 @@ onMounted(async () => {
                         </button>
                         <div v-else>
                             <ul class="flex flex-col">
-                                <li v-for="doc in documents" :key="doc.id"
-                                    class="flex-initial my-1 rounded-lg hover:bg-base-800 bg-base-850">
-                                    <NuxtLink :to="{ name: 'documents-id', params: { id: doc.id } }">
+                                <li
+                                    v-for="doc in documents"
+                                    :key="doc.id"
+                                    class="flex-initial my-1 rounded-lg hover:bg-base-800 bg-base-850"
+                                >
+                                    <NuxtLink
+                                        :to="{
+                                            name: 'documents-id',
+                                            params: { id: doc.id },
+                                        }"
+                                    >
                                         <div class="mx-2 mt-1 mb-4">
                                             <div class="flex flex-row">
                                                 <p class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
                                                     {{ doc.title }}
                                                 </p>
-                                                <p class="px-2 py-2 ml-auto text-sm text-neutral">
                                                 <p
-                                                    class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700">
+                                                    class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700"
+                                                >
                                                     {{ doc.state }}
-                                                </p>
                                                 </p>
                                             </div>
                                             <div class="flex flex-row gap-2 text-base-200">
                                                 <div class="flex flex-row items-center justify-start flex-1">
-                                                    <UserIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                                                        aria-hidden="true" />
-                                                    {{ doc.creator?.firstname }}, {{
-                                                        doc.creator?.lastname
-                                                    }}
+                                                    <UserIcon
+                                                        class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
+                                                        aria-hidden="true"
+                                                    />
+                                                    {{ doc.creator?.firstname }},
+                                                    {{ doc.creator?.lastname }}
                                                 </div>
                                                 <div class="flex flex-row items-center justify-center flex-1">
-                                                    <BriefcaseIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                                                        aria-hidden="true" />
+                                                    <BriefcaseIcon
+                                                        class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
+                                                        aria-hidden="true"
+                                                    />
                                                     {{ doc.creator?.jobLabel }}
                                                 </div>
                                                 <div class="flex flex-row items-center justify-end flex-1">
-                                                    <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                                                        aria-hidden="true" />
+                                                    <CalendarIcon
+                                                        class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
+                                                        aria-hidden="true"
+                                                    />
                                                     <p>
-                                                        {{ $t('common.created') }} <time
-                                                            :datetime="$d(toDate(doc.createdAt)!, 'short')">
+                                                        {{ $t('common.created') }}
+                                                        <time :datetime="$d(toDate(doc.createdAt)!, 'short')">
                                                             {{ useLocaleTimeAgo(toDate(doc.createdAt)!).value }}
                                                         </time>
                                                     </p>

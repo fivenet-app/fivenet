@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/store/auth';
-import { useNotificationsStore } from '~/store/notifications';
-import HeroFull from '~/components/partials/HeroFull.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import Footer from '~/components/partials/Footer.vue';
+import HeroFull from '~/components/partials/HeroFull.vue';
+import { useAuthStore } from '~/store/auth';
+import { useNotificationsStore } from '~/store/notifications';
 
 useHead({
     title: 'common.logout',
@@ -41,8 +41,7 @@ onBeforeMount(async () => {
     }
 
     try {
-        const call = $grpc.getAuthClient()
-            .logout({});
+        const call = $grpc.getAuthClient().logout({});
         const { status } = await call;
 
         if (await $grpc.handleError(status)) {
@@ -52,7 +51,7 @@ onBeforeMount(async () => {
         notifications.dispatchNotification({
             title: t('notifications.auth.error_logout.title'),
             content: t('notifications.auth.error_logout.content', [e]),
-            type: 'error'
+            type: 'error',
         });
     }
 

@@ -1,4 +1,17 @@
+import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
+import { RpcTransport } from '@protobuf-ts/runtime-rpc';
+import {
+    MethodInfo,
+    NextServerStreamingFn,
+    NextUnaryFn,
+    RpcInterceptor,
+    RpcOptions,
+    ServerStreamingCall,
+    UnaryCall,
+} from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError, StatusCode } from 'grpc-web';
 import { useAuthStore } from '~/store/auth';
+import { useNotificationsStore } from '~/store/notifications';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
 import { CitizenStoreServiceClient } from '~~/gen/ts/services/citizenstore/citizenstore.client';
 import { CompletorServiceClient } from '~~/gen/ts/services/completor/completor.client';
@@ -6,21 +19,8 @@ import { DMVServiceClient } from '~~/gen/ts/services/dmv/vehicles.client';
 import { DocStoreServiceClient } from '~~/gen/ts/services/docstore/docstore.client';
 import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
-import { RpcError, StatusCode } from 'grpc-web';
-import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
-import { useNotificationsStore } from '~/store/notifications';
-import { RpcTransport } from '@protobuf-ts/runtime-rpc';
-import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
-import {
-    NextServerStreamingFn,
-    NextUnaryFn,
-    MethodInfo,
-    RpcOptions,
-    RpcInterceptor,
-    UnaryCall,
-    ServerStreamingCall,
-} from '@protobuf-ts/runtime-rpc/build/types';
+import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
 
 export default defineNuxtPlugin(() => {
     return {
@@ -83,7 +83,12 @@ export class GRPCClients {
                 // Only update the redirect query param if it isn't already set
                 const route = useRoute();
                 const redirect = route.query.redirect ?? route.fullPath;
-                await navigateTo({ name: 'auth-login', query: { redirect: redirect }, replace: true, force: true });
+                await navigateTo({
+                    name: 'auth-login',
+                    query: { redirect: redirect },
+                    replace: true,
+                    force: true,
+                });
                 break;
 
             case StatusCode.PERMISSION_DENIED:

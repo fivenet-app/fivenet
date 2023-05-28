@@ -1,13 +1,16 @@
 <script lang="ts" setup>
-const props = withDefaults(defineProps<{
-    throttle?: number,
-    duration?: number,
-    height?: number,
-}>(), {
-    throttle: 150,
-    duration: 2250,
-    height: 3,
-});
+const props = withDefaults(
+    defineProps<{
+        throttle?: number;
+        duration?: number;
+        height?: number;
+    }>(),
+    {
+        throttle: 150,
+        duration: 2250,
+        height: 3,
+    }
+);
 
 // Options & Data
 const data = reactive({
@@ -76,7 +79,7 @@ const delayedFinish = () => {
     setTimeout(() => {
         finish();
     }, 500);
-}
+};
 
 // Hooks
 const nuxt = useNuxtApp();
@@ -106,27 +109,24 @@ onBeforeUnmount(() => clear);
     width: 0%;
     opacity: 1;
     transition: width 0.1s, height 0.4s, opacity 0.4s;
-    background: repeating-linear-gradient(to right,
-            #55dde0 0%,
-            #34cdfe 50%,
-            #7161ef 100%);
+    background: repeating-linear-gradient(to right, #55dde0 0%, #34cdfe 50%, #7161ef 100%);
     z-index: 999999;
 }
 
 .nuxt-progress-failed {
-    background: repeating-linear-gradient(to right,
-            #d72638 0%,
-            #ac1e2d 50%,
-            #d72638 100%);
+    background: repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%);
 }
 </style>
 
 <template>
-    <div :class="['nuxt-progress', !data.canSucceed ? 'nuxt-progress-failed' : '']" :style="{
-        width: data.percent + '%',
-        left: data.left,
-        height: props.height + 'px',
-        opacity: data.show ? 1 : 0,
-        backgroundSize: (100 / data.percent) * 100 + '% auto',
-    }" />
+    <div
+        :class="['nuxt-progress', !data.canSucceed ? 'nuxt-progress-failed' : '']"
+        :style="{
+            width: data.percent + '%',
+            left: data.left,
+            height: props.height + 'px',
+            opacity: data.show ? 1 : 0,
+            backgroundSize: (100 / data.percent) * 100 + '% auto',
+        }"
+    />
 </template>

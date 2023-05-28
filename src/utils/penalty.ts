@@ -8,7 +8,11 @@ export type Penalty = {
     show?: boolean;
 };
 
-export type PenaltyCategory = { name: string; penalties: Array<Penalty>, show?: boolean };
+export type PenaltyCategory = {
+    name: string;
+    penalties: Array<Penalty>;
+    show?: boolean;
+};
 
 export type Penalties = Array<PenaltyCategory>;
 

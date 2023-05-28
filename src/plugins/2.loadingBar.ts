@@ -1,4 +1,4 @@
-import { NextUnaryFn, MethodInfo, RpcOptions, RpcInterceptor, UnaryCall } from '@protobuf-ts/runtime-rpc/build/types';
+import { MethodInfo, NextUnaryFn, RpcInterceptor, RpcOptions, UnaryCall } from '@protobuf-ts/runtime-rpc/build/types';
 
 export default defineNuxtPlugin((nuxtApp) => {
     const lm = new LoadingManager();

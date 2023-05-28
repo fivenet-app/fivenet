@@ -52,8 +52,8 @@ async function resetLocalStorage(): Promise<void> {
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                         <time :datetime="getAccessTokenExpiration.toDateString()">
-                            {{ useLocaleTimeAgo(getAccessTokenExpiration).value }} ({{ $d(getAccessTokenExpiration, 'long')
-                            }})
+                            {{ useLocaleTimeAgo(getAccessTokenExpiration).value }}
+                            ({{ $d(getAccessTokenExpiration, 'long') }})
                         </time>
                     </dd>
                 </div>
@@ -63,19 +63,28 @@ async function resetLocalStorage(): Promise<void> {
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                         <span class="isolate inline-flex rounded-md shadow-sm">
-                        <button type="button" @click="clipboardStore.clear()"
-                            class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400">
-                            {{ $t('components.debug_info.reset_clipboard') }}
-                        </button>
-                        <button type="button" @click="resetLocalStorage()"
-                            class="rounded-md bg-base-500 py-2.5 px-3.5 ml-2 text-sm font-semibold text-neutral hover:bg-base-400">
-                            {{ $t('components.debug_info.reset_local_storage') }}
-                        </button>
-                        <NuxtLink :external="true" to="/api/clear-site-data"
-                            class="rounded-md bg-red-800 text-center py-2.5 px-3.5 ml-2 text-sm font-semibold text-neutral hover:bg-red-600">
-                            {{ $t('components.debug_info.factory_reset') }}
-                        </NuxtLink>
-                    </span>
+                            <button
+                                type="button"
+                                @click="clipboardStore.clear()"
+                                class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                            >
+                                {{ $t('components.debug_info.reset_clipboard') }}
+                            </button>
+                            <button
+                                type="button"
+                                @click="resetLocalStorage()"
+                                class="rounded-md bg-base-500 py-2.5 px-3.5 ml-2 text-sm font-semibold text-neutral hover:bg-base-400"
+                            >
+                                {{ $t('components.debug_info.reset_local_storage') }}
+                            </button>
+                            <NuxtLink
+                                :external="true"
+                                to="/api/clear-site-data"
+                                class="rounded-md bg-red-800 text-center py-2.5 px-3.5 ml-2 text-sm font-semibold text-neutral hover:bg-red-600"
+                            >
+                                {{ $t('components.debug_info.factory_reset') }}
+                            </NuxtLink>
+                        </span>
                     </dd>
                 </div>
                 <div v-if="permissions.length > 0" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
@@ -84,8 +93,10 @@ async function resetLocalStorage(): Promise<void> {
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                         <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
-                            <li v-for="perm in permissions"
-                                class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
+                            <li
+                                v-for="perm in permissions"
+                                class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
+                            >
                                 <KeyIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                                 <div class="ml-4 flex min-w-0 flex-1 gap-2">
                                     <span class="truncate font-medium">

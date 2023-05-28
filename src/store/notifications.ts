@@ -1,7 +1,7 @@
 import { StoreDefinition, defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
-import { NotificationConfig } from '~/composables/notification/interfaces/NotificationConfig.interface';
 import { Notification } from '~/composables/notification/interfaces/Notification.interface';
+import { NotificationConfig } from '~/composables/notification/interfaces/NotificationConfig.interface';
 
 export interface NotificationsState {
     notifications: Notification[];

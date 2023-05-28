@@ -1,21 +1,20 @@
 <script lang="ts" setup>
-import { defineRule } from 'vee-validate';
-import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
-import { ObjectSpecs, TemplateRequirements, TemplateJobAccess } from '~~/gen/ts/resources/documents/templates';
-import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
-import { TemplateSchemaEditorValue, ObjectSpecsValue } from './TemplateSchemaEditor.vue';
-import { useNotificationsStore } from '~/store/notifications';
-import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
-import { watchDebounced } from '@vueuse/core';
-import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
-import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
-import { CheckIcon, PlusIcon } from '@heroicons/vue/20/solid';
-import { useAuthStore } from '~/store/auth';
-import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
-import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { CheckIcon, PlusIcon } from '@heroicons/vue/20/solid';
 import { max, min, numeric, required } from '@vee-validate/rules';
+import { watchDebounced } from '@vueuse/core';
 import { RpcError } from 'grpc-web';
+import { defineRule } from 'vee-validate';
+import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
+import { useAuthStore } from '~/store/auth';
+import { useNotificationsStore } from '~/store/notifications';
+import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
+import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
+import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
+import { ObjectSpecs, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
+import TemplateSchemaEditor, { ObjectSpecsValue, TemplateSchemaEditorValue } from './TemplateSchemaEditor.vue';
 
 const { $grpc } = useNuxtApp();
 const { t } = useI18n();
@@ -24,7 +23,7 @@ const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
 const props = defineProps<{
-    templateId?: number,
+    templateId?: number;
 }>();
 
 const { activeChar } = storeToRefs(authStore);
@@ -81,40 +80,46 @@ const schema = ref<TemplateSchemaEditorValue>({
         max: 0,
     },
 });
-const access = ref<Map<number, { id: number, type: number, values: { job?: string, accessrole?: ACCESS_LEVEL, minimumrank?: number } }>>(new Map());
+const access = ref<
+    Map<
+        number,
+        {
+            id: number;
+            type: number;
+            values: {
+                job?: string;
+                accessrole?: ACCESS_LEVEL;
+                minimumrank?: number;
+            };
+        }
+    >
+>(new Map());
 
-const accessTypes = [
-    { id: 1, name: t('common.job', 2) },
-];
+const accessTypes = [{ id: 1, name: t('common.job', 2) }];
 
 function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
             title: t('notifications.max_access_entry.title'),
             content: t('notifications.max_access_entry.content', [maxAccessEntries]),
-            type: 'error'
+            type: 'error',
         });
         return;
     }
 
-    let id = access.value.size > 0 ? [...access.value.keys()].pop() as number + 1 : 0;
+    let id = access.value.size > 0 ? ([...access.value.keys()].pop() as number) + 1 : 0;
     access.value.set(id, {
         id,
         type: 1,
-        values: {}
-    })
+        values: {},
+    });
 }
 
-function removeAccessEntry(event: {
-    id: number
-}): void {
+function removeAccessEntry(event: { id: number }): void {
     access.value.delete(event.id);
 }
 
-function updateAccessEntryType(event: {
-    id: number,
-    type: number
-}): void {
+function updateAccessEntryType(event: { id: number; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -122,10 +127,7 @@ function updateAccessEntryType(event: {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryName(event: {
-    id: number,
-    job?: Job,
-}): void {
+function updateAccessEntryName(event: { id: number; job?: Job }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -136,10 +138,7 @@ function updateAccessEntryName(event: {
     }
 }
 
-function updateAccessEntryRank(event: {
-    id: number,
-    rank: JobGrade
-}): void {
+function updateAccessEntryRank(event: { id: number; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -147,10 +146,7 @@ function updateAccessEntryRank(event: {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryAccess(event: {
-    id: number,
-    access: ACCESS_LEVEL
-}): void {
+function updateAccessEntryAccess(event: { id: number; access: ACCESS_LEVEL }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -158,7 +154,21 @@ function updateAccessEntryAccess(event: {
     access.value.set(event.id, accessEntry);
 }
 
-const contentAccess = ref<Map<number, { id: number, type: number, values: { job?: string, char?: number, accessrole?: ACCESS_LEVEL, minimumrank?: number } }>>(new Map());
+const contentAccess = ref<
+    Map<
+        number,
+        {
+            id: number;
+            type: number;
+            values: {
+                job?: string;
+                char?: number;
+                accessrole?: ACCESS_LEVEL;
+                minimumrank?: number;
+            };
+        }
+    >
+>(new Map());
 
 const contentAccessTypes = [
     { id: 0, name: t('common.citizen', 2) },
@@ -170,29 +180,24 @@ function addContentAccessEntry(): void {
         notifications.dispatchNotification({
             title: t('notifications.max_access_entry.title'),
             content: t('notifications.max_access_entry.content', [maxAccessEntries]),
-            type: 'error'
+            type: 'error',
         });
         return;
     }
 
-    let id = contentAccess.value.size > 0 ? [...contentAccess.value.keys()].pop() as number + 1 : 0;
+    let id = contentAccess.value.size > 0 ? ([...contentAccess.value.keys()].pop() as number) + 1 : 0;
     contentAccess.value.set(id, {
         id,
         type: 1,
-        values: {}
-    })
+        values: {},
+    });
 }
 
-function removeContentAccessEntry(event: {
-    id: number
-}): void {
+function removeContentAccessEntry(event: { id: number }): void {
     contentAccess.value.delete(event.id);
 }
 
-function updateContentAccessEntryType(event: {
-    id: number,
-    type: number
-}): void {
+function updateContentAccessEntryType(event: { id: number; type: number }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
@@ -200,10 +205,7 @@ function updateContentAccessEntryType(event: {
     contentAccess.value.set(event.id, accessEntry);
 }
 
-function updateContentAccessEntryName(event: {
-    id: number,
-    job?: Job,
-}): void {
+function updateContentAccessEntryName(event: { id: number; job?: Job }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
@@ -214,10 +216,7 @@ function updateContentAccessEntryName(event: {
     }
 }
 
-function updateContentAccessEntryRank(event: {
-    id: number,
-    rank: JobGrade
-}): void {
+function updateContentAccessEntryRank(event: { id: number; rank: JobGrade }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
@@ -225,10 +224,7 @@ function updateContentAccessEntryRank(event: {
     contentAccess.value.set(event.id, accessEntry);
 }
 
-function updateContentAccessEntryAccess(event: {
-    id: number,
-    access: ACCESS_LEVEL
-}): void {
+function updateContentAccessEntryAccess(event: { id: number; access: ACCESS_LEVEL }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
@@ -263,7 +259,7 @@ async function createTemplate(values: FormData): Promise<void> {
         };
 
         const jobAccesses = new Array<TemplateJobAccess>();
-        access.value.forEach(entry => {
+        access.value.forEach((entry) => {
             if (entry.values.accessrole === undefined) return;
 
             if (entry.type === 1) {
@@ -283,7 +279,7 @@ async function createTemplate(values: FormData): Promise<void> {
             jobs: [],
             users: [],
         };
-        contentAccess.value.forEach(entry => {
+        contentAccess.value.forEach((entry) => {
             if (entry.values.accessrole === undefined) return;
 
             if (entry.type === 0) {
@@ -328,8 +324,7 @@ async function createTemplate(values: FormData): Promise<void> {
         }
 
         try {
-            const call = $grpc.getDocStoreClient().
-                createTemplate(req);
+            const call = $grpc.getDocStoreClient().createTemplate(req);
             const { response } = await call;
 
             notifications.dispatchNotification({
@@ -338,7 +333,10 @@ async function createTemplate(values: FormData): Promise<void> {
                 type: 'success',
             });
 
-            await navigateTo({ name: 'documents-templates-id', params: { id: response.id } });
+            await navigateTo({
+                name: 'documents-templates-id',
+                params: { id: response.id },
+            });
 
             return res();
         } catch (e) {
@@ -357,7 +355,7 @@ async function updateTemplate(values: FormData): Promise<void> {
         };
 
         const jobAccesses = new Array<TemplateJobAccess>();
-        access.value.forEach(entry => {
+        access.value.forEach((entry) => {
             if (entry.values.accessrole === undefined) return;
 
             if (entry.type === 1) {
@@ -377,7 +375,7 @@ async function updateTemplate(values: FormData): Promise<void> {
             jobs: [],
             users: [],
         };
-        contentAccess.value.forEach(entry => {
+        contentAccess.value.forEach((entry) => {
             if (entry.values.accessrole === undefined) return;
 
             if (entry.type === 0) {
@@ -422,8 +420,7 @@ async function updateTemplate(values: FormData): Promise<void> {
         }
 
         try {
-            const call = $grpc.getDocStoreClient().
-                updateTemplate(req);
+            const call = $grpc.getDocStoreClient().updateTemplate(req);
             const { response } = await call;
 
             notifications.dispatchNotification({
@@ -432,7 +429,10 @@ async function updateTemplate(values: FormData): Promise<void> {
                 type: 'success',
             });
 
-            await navigateTo({ name: 'documents-templates-id', params: { id: response.id } });
+            await navigateTo({
+                name: 'documents-templates-id',
+                params: { id: response.id },
+            });
 
             return res();
         } catch (e) {
@@ -446,7 +446,10 @@ let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
 const selectedCategory = ref<DocumentCategory | undefined>(undefined);
 
-watchDebounced(queryCategory, () => findCategories(), { debounce: 600, maxWait: 1400 });
+watchDebounced(queryCategory, () => findCategories(), {
+    debounce: 600,
+    maxWait: 1400,
+});
 
 async function findCategories(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -494,8 +497,16 @@ onMounted(async () => {
             if (tplAccess) {
                 let accessId = 0;
 
-                tplAccess.forEach(job => {
-                    access.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.access, minimumrank: job.minimumGrade } });
+                tplAccess.forEach((job) => {
+                    access.value.set(accessId, {
+                        id: accessId,
+                        type: 1,
+                        values: {
+                            job: job.job,
+                            accessrole: job.access,
+                            minimumrank: job.minimumGrade,
+                        },
+                    });
                     accessId++;
                 });
             }
@@ -504,13 +515,25 @@ onMounted(async () => {
             if (ctAccess) {
                 let accessId = 0;
 
-                ctAccess.users.forEach(user => {
-                    contentAccess.value.set(accessId, { id: accessId, type: 0, values: { char: user.userId, accessrole: user.access } });
+                ctAccess.users.forEach((user) => {
+                    contentAccess.value.set(accessId, {
+                        id: accessId,
+                        type: 0,
+                        values: { char: user.userId, accessrole: user.access },
+                    });
                     accessId++;
                 });
 
-                ctAccess.jobs.forEach(job => {
-                    contentAccess.value.set(accessId, { id: accessId, type: 1, values: { job: job.job, accessrole: job.access, minimumrank: job.minimumGrade } });
+                ctAccess.jobs.forEach((job) => {
+                    contentAccess.value.set(accessId, {
+                        id: accessId,
+                        type: 1,
+                        values: {
+                            job: job.job,
+                            accessrole: job.access,
+                            minimumrank: job.minimumGrade,
+                        },
+                    });
                     accessId++;
                 });
             }
@@ -530,7 +553,15 @@ onMounted(async () => {
             $grpc.handleError(e as RpcError);
         }
     } else {
-        access.value.set(0, { id: 0, type: 1, values: { job: activeChar.value?.job, minimumrank: 1, accessrole: ACCESS_LEVEL.VIEW } });
+        access.value.set(0, {
+            id: 0,
+            type: 1,
+            values: {
+                job: activeChar.value?.job,
+                minimumrank: 1,
+                accessrole: ACCESS_LEVEL.VIEW,
+            },
+        });
     }
 
     try {
@@ -545,7 +576,11 @@ onMounted(async () => {
     }
 });
 
-watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.filter(r => r.label.startsWith(queryRank.value)), { debounce: 600, maxWait: 1750 });
+watchDebounced(
+    queryRank,
+    async () => (filteredRank.value = entriesRank.value.filter((r) => r.label.startsWith(queryRank.value))),
+    { debounce: 600, maxWait: 1750 }
+);
 </script>
 
 <template>
@@ -555,38 +590,62 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.template', 2) }} {{ $t('common.weight') }}
             </label>
             <div class="mt-2">
-                <VeeField type="number" name="weight" min="0" max="4294967295" :label="t('common.weight')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                <VeeField
+                    type="number"
+                    name="weight"
+                    min="0"
+                    max="4294967295"
+                    :label="t('common.weight')"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                />
             </div>
             <label for="title" class="block font-medium text-sm mt-2">
                 {{ $t('common.template') }} {{ $t('common.title') }}
             </label>
             <div>
-                <VeeField as="textarea" rows="1" name="title" :label="t('common.title')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                <VeeField
+                    as="textarea"
+                    rows="1"
+                    name="title"
+                    :label="t('common.title')"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                />
                 <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <label for="description" class="block font-medium text-sm mt-2">
                 {{ $t('common.template') }} {{ $t('common.description') }}
             </label>
             <div>
-                <VeeField as="textarea" rows="4" name="description" :label="t('common.description')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                <VeeField
+                    as="textarea"
+                    rows="4"
+                    name="description"
+                    :label="t('common.description')"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                />
                 <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
             </div>
             <div class="my-3">
-                <h2 class="text-neutral">
-                    {{ $t('common.template') }} {{ $t('common.access') }}
-                </h2>
-                <DocumentAccessEntry v-for="entry in access.values()" :key="entry.id" :init="entry"
-                    :access-types="accessTypes" :access-roles="[ACCESS_LEVEL.VIEW, ACCESS_LEVEL.EDIT]"
-                    @typeChange="updateAccessEntryType($event)" @nameChange="updateAccessEntryName($event)"
-                    @rankChange="updateAccessEntryRank($event)" @accessChange="updateAccessEntryAccess($event)"
-                    @deleteRequest="removeAccessEntry($event)" />
-                <button type="button"
+                <h2 class="text-neutral">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
+                <DocumentAccessEntry
+                    v-for="entry in access.values()"
+                    :key="entry.id"
+                    :init="entry"
+                    :access-types="accessTypes"
+                    :access-roles="[ACCESS_LEVEL.VIEW, ACCESS_LEVEL.EDIT]"
+                    @typeChange="updateAccessEntryType($event)"
+                    @nameChange="updateAccessEntryName($event)"
+                    @rankChange="updateAccessEntryRank($event)"
+                    @accessChange="updateAccessEntryAccess($event)"
+                    @deleteRequest="removeAccessEntry($event)"
+                />
+                <button
+                    type="button"
                     class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                    data-te-toggle="tooltip" :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addAccessEntry()">
+                    data-te-toggle="tooltip"
+                    :title="$t('components.documents.document_editor.add_permission')"
+                    @click="addAccessEntry()"
+                >
                     <PlusIcon class="w-5 h-5" aria-hidden="true" />
                 </button>
             </div>
@@ -594,8 +653,13 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.content') }} {{ $t('common.title') }}
             </label>
             <div>
-                <VeeField as="textarea" rows="2" name="contentTitle" :label="t('common.title')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                <VeeField
+                    as="textarea"
+                    rows="2"
+                    name="contentTitle"
+                    :label="t('common.title')"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                />
                 <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
                 <p class="text-neutral">
                     <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
@@ -613,21 +677,38 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 @change="queryCategory = $event.target.value"
-                                :display-value="(category: any) => category?.name" />
+                                :display-value="(category: any) => category?.name"
+                            />
                         </ComboboxButton>
 
-                        <ComboboxOptions v-if="entriesCategory.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm">
-                            <ComboboxOption v-for="category in entriesCategory" :key="category.id" :value="category"
-                                as="category" v-slot="{ active, selected }">
+                        <ComboboxOptions
+                            v-if="entriesCategory.length > 0"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                        >
+                            <ComboboxOption
+                                v-for="category in entriesCategory"
+                                :key="category.id"
+                                :value="category"
+                                as="category"
+                                v-slot="{ active, selected }"
+                            >
                                 <li
-                                    :class="['relative cursor-default select-none py-2 pl-8 pr-4 text-neutral', active ? 'bg-primary-500' : '']">
+                                    :class="[
+                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                        active ? 'bg-primary-500' : '',
+                                    ]"
+                                >
                                     <span :class="['block truncate', selected && 'font-semibold']">
                                         {{ category.name }}
                                     </span>
 
-                                    <span v-if="selected"
-                                        :class="[active ? 'text-neutral' : 'text-primary-500', 'absolute inset-y-0 left-0 flex items-center pl-1.5']">
+                                    <span
+                                        v-if="selected"
+                                        :class="[
+                                            active ? 'text-neutral' : 'text-primary-500',
+                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                        ]"
+                                    >
                                         <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                     </span>
                                 </li>
@@ -640,8 +721,13 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 {{ $t('common.content') }} {{ $t('common.template') }}
             </label>
             <div>
-                <VeeField as="textarea" rows="6" name="content" :label="t('common.template')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6" />
+                <VeeField
+                    as="textarea"
+                    rows="6"
+                    name="content"
+                    :label="t('common.template')"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                />
                 <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
                 <p class="text-neutral">
                     <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
@@ -653,23 +739,32 @@ watchDebounced(queryRank, async () => filteredRank.value = entriesRank.value.fil
                 <TemplateSchemaEditor v-model="schema" class="mt-2" />
             </div>
             <div class="my-3">
-                <h2 class="text-neutral">
-                    {{ $t('common.content') }} {{ $t('common.access') }}
-                </h2>
-                <DocumentAccessEntry v-for="entry in contentAccess.values()" :key="entry.id" :init="entry"
-                    :access-types="contentAccessTypes" @typeChange="updateContentAccessEntryType($event)"
-                    @nameChange="updateContentAccessEntryName($event)" @rankChange="updateContentAccessEntryRank($event)"
+                <h2 class="text-neutral">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
+                <DocumentAccessEntry
+                    v-for="entry in contentAccess.values()"
+                    :key="entry.id"
+                    :init="entry"
+                    :access-types="contentAccessTypes"
+                    @typeChange="updateContentAccessEntryType($event)"
+                    @nameChange="updateContentAccessEntryName($event)"
+                    @rankChange="updateContentAccessEntryRank($event)"
                     @accessChange="updateContentAccessEntryAccess($event)"
-                    @deleteRequest="removeContentAccessEntry($event)" />
-                <button type="button"
+                    @deleteRequest="removeContentAccessEntry($event)"
+                />
+                <button
+                    type="button"
                     class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                    data-te-toggle="tooltip" :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addContentAccessEntry()">
+                    data-te-toggle="tooltip"
+                    :title="$t('components.documents.document_editor.add_permission')"
+                    @click="addContentAccessEntry()"
+                >
                     <PlusIcon class="w-5 h-5" aria-hidden="true" />
                 </button>
             </div>
-            <button type="submit"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 mt-4">
+            <button
+                type="submit"
+                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 mt-4"
+            >
                 {{ templateId ? $t('common.save') : $t('common.create') }}
             </button>
         </form>
