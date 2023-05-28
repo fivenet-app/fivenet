@@ -10,7 +10,7 @@ import {
     PencilIcon,
     TrashIcon,
     UserIcon,
-    FingerPrintIcon
+    FingerPrintIcon,
 } from '@heroicons/vue/20/solid';
 import { QuillEditor } from '@vueup/vue-quill';
 import { RpcError } from 'grpc-web';

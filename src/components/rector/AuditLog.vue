@@ -108,9 +108,8 @@ watchDebounced(queryChar, async () => await findChars(), {
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral"
-                                    >{{ $t('common.time_range') }}:
-                                    {{ $t('common.from') }}
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.time_range') }}: {{ $t('common.from') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input

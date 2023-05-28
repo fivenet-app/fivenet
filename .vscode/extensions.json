@@ -6,7 +6,8 @@
         "zxh404.vscode-proto3",
         "moalamri.inline-fold",
         "yoavbls.pretty-ts-errors",
-        "lokalise.i18n-ally"
+        "lokalise.i18n-ally",
+        "esbenp.prettier-vscode"
     ],
     "unwantedRecommendations": [
         "vscode.typescript-language-features"
