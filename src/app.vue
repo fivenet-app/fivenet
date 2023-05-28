@@ -5,6 +5,9 @@ import en from '@vee-validate/i18n/dist/locale/en.json';
 import { NuxtError } from 'nuxt/app';
 import { configure } from 'vee-validate';
 import { loadConfig } from '~/config';
+import { useClipboardStore } from './store/clipboard';
+import { useDocumentEditorStore } from './store/documenteditor';
+import { useNotificatorStore } from './store/notificator';
 import { useUserSettingsStore } from './store/usersettings';
 
 const { t, setLocale } = useI18n();
@@ -35,6 +38,11 @@ try {
 }
 
 const userSettings = useUserSettingsStore();
+if (__APP_VERSION__ != userSettings.version) {
+    useClipboardStore().$reset();
+    useDocumentEditorStore().$reset();
+    useNotificatorStore().$reset();
+}
 
 // Set user setting locale on load of app
 setLocale(userSettings.locale);

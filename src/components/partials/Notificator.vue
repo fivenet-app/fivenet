@@ -6,7 +6,7 @@ import { useNotificationsStore } from '~/store/notifications';
 import { useNotificatorStore } from '~/store/notificator';
 
 const { $grpc } = useNuxtApp();
-const store = useNotificatorStore();
+const notificator = useNotificatorStore();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
@@ -28,7 +28,7 @@ async function streamNotifications(): Promise<void> {
 
         const call = $grpc.getNotificatorClient().stream(
             {
-                lastId: store.getLastId,
+                lastId: notificator.getLastId,
             },
             {
                 abort: abort.value.signal,
@@ -36,7 +36,7 @@ async function streamNotifications(): Promise<void> {
         );
 
         for await (let resp of call.responses) {
-            if (resp.lastId > store.getLastId) store.setLastId(resp.lastId);
+            if (resp.lastId > notificator.getLastId) notificator.setLastId(resp.lastId);
 
             resp.notifications.forEach((v) => {
                 let nType: NotificationType = (v.type as NotificationType) ?? 'info';
@@ -125,6 +125,7 @@ async function toggleStream(): Promise<void> {
         streamNotifications();
     } else {
         cancelStream();
+        notificator.$reset();
     }
 }
 

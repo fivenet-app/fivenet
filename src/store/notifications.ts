@@ -14,7 +14,7 @@ export const useNotificationsStore = defineStore('notifications', {
         } as NotificationsState),
     persist: false,
     actions: {
-        removeNotification(id: string) {
+        removeNotification(id: string): void {
             this.notifications = this.notifications.filter((notification) => notification.id !== id);
         },
         dispatchNotification({

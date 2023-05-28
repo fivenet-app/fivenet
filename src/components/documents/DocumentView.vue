@@ -4,13 +4,13 @@ import {
     CalendarIcon,
     ChatBubbleLeftEllipsisIcon,
     DocumentMagnifyingGlassIcon,
+    FingerPrintIcon,
     LockClosedIcon,
     LockOpenIcon,
     MagnifyingGlassIcon,
     PencilIcon,
     TrashIcon,
     UserIcon,
-    FingerPrintIcon,
 } from '@heroicons/vue/20/solid';
 import { QuillEditor } from '@vueup/vue-quill';
 import { RpcError } from 'grpc-web';
@@ -154,7 +154,7 @@ function addToClipboard(): void {
                                     }"
                                     type="button"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    v-can="'DocStoreService.CreateDocument'"
+                                    v-can="'DocStoreService.UpdateDocument'"
                                 >
                                     <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.edit') }}
@@ -171,6 +171,18 @@ function addToClipboard(): void {
                             </div>
                         </div>
                         <div class="flex flex-row gap-2">
+                            <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full text-base-100 bg-base-500">
+                                <FingerPrintIcon class="w-5 h-auto" aria-hidden="true" />
+                                <span class="text-sm font-medium text-base-100">DOC-{{ documentId }}</span>
+                            </div>
+                            <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
+                                <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
+                                <span class="text-sm font-medium text-base-700"
+                                    ><time :datetime="$d(toDate(document?.createdAt)!, 'short')">
+                                        {{ $d(toDate(document?.createdAt)!, 'short') }}
+                                    </time>
+                                </span>
+                            </div>
                             <div
                                 v-if="document?.closed"
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
@@ -193,20 +205,6 @@ function addToClipboard(): void {
                                 <span class="text-sm font-medium text-primary-700">
                                     {{ commentCount >= 0 ? commentCount : '?' }}
                                     {{ $t('common.comment', 2) }}
-                                </span>
-                            </div>
-                            <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
-                                <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
-                                <span class="text-sm font-medium text-base-700"
-                                    ><time :datetime="$d(toDate(document?.createdAt)!, 'short')">
-                                        {{ $d(toDate(document?.createdAt)!, 'short') }}
-                                    </time>
-                                </span>
-                            </div>
-                            <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full text-base-100 bg-base-500">
-                                <FingerPrintIcon class="w-5 h-auto" aria-hidden="true" />
-                                <span class="text-sm font-medium text-base-100">
-                                    {{ documentId }}
                                 </span>
                             </div>
                         </div>

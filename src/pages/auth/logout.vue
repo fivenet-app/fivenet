@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { RpcError } from 'grpc-web';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import Footer from '~/components/partials/Footer.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
@@ -41,16 +42,14 @@ onBeforeMount(async () => {
     }
 
     try {
-        const call = $grpc.getAuthClient().logout({});
-        const { status } = await call;
-
-        if (await $grpc.handleError(status)) {
-            throw new Error(status.detail);
-        }
+        await $grpc.getAuthClient().logout({});
     } catch (e) {
+        const err = e as RpcError;
+        $grpc.handleError(err);
+
         notifications.dispatchNotification({
             title: t('notifications.auth.error_logout.title'),
-            content: t('notifications.auth.error_logout.content', [e]),
+            content: t('notifications.auth.error_logout.content', [err.message]),
             type: 'error',
         });
     }
