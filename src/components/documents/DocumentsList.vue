@@ -227,7 +227,8 @@ onMounted(async () => {
                                                     {{ doc.title }}
                                                 </p>
                                                 <p
-                                                    class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700"
+                                                    class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700 my-auto"
+                                                    v-if="doc.state"
                                                 >
                                                     {{ doc.state }}
                                                 </p>
