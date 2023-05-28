@@ -13,6 +13,7 @@ import {
     UserIcon,
 } from '@heroicons/vue/20/solid';
 import { QuillEditor } from '@vueup/vue-quill';
+import { useClipboard } from '@vueuse/core';
 import { RpcError } from 'grpc-web';
 import { ref } from 'vue';
 import { useClipboardStore } from '~/store/clipboard';
@@ -29,6 +30,7 @@ import DocumentRelations from './DocumentRelations.vue';
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
+const clipboard = useClipboard();
 
 const { t } = useI18n();
 
@@ -94,6 +96,16 @@ function addToClipboard(): void {
     notifications.dispatchNotification({
         title: t('notifications.clipboard.document_added.title'),
         content: t('notifications.clipboard.document_added.content'),
+        duration: 3500,
+        type: 'info',
+    });
+}
+
+function copyDocumentIDToClipboard(): void {
+    clipboard.copy('DOC-' + props.documentId);
+    notifications.dispatchNotification({
+        title: t('notifications.document_view.copy_document_id.title'),
+        content: t('notifications.document_view.copy_document_id.content'),
         duration: 3500,
         type: 'info',
     });
@@ -171,7 +183,10 @@ function addToClipboard(): void {
                             </div>
                         </div>
                         <div class="flex flex-row gap-2">
-                            <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full text-base-100 bg-base-500">
+                            <div
+                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full text-base-100 bg-base-500"
+                                @click="copyDocumentIDToClipboard"
+                            >
                                 <FingerPrintIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-100">DOC-{{ documentId }}</span>
                             </div>

@@ -558,6 +558,12 @@
             "title": "Dokument gelöscht!",
             "content": "Dokument wurde gelöscht."
         },
+        "document_view": {
+            "copy_document_id": {
+                "title": "Dokument ID",
+                "content":"Dokument ID in die Zwischenablage kopiert."
+            }
+        },
         "renewed_token": {
             "title": "Zugangstokens erneuert",
             "content": "Dein Zugangstokens wurde automatisch erneuert."

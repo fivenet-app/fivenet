@@ -558,6 +558,12 @@
             "title": "Document deleted!",
             "content": "Document has been deleted."
         },
+        "document_view": {
+            "copy_document_id": {
+                "title": "Document ID",
+                "content":"Document ID copied to clipboard."
+            }
+        },
         "renewed_token": {
             "title": "Access Token renewed",
             "content": "Your access token has been automatically renewed."
