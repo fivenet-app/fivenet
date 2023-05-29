@@ -44,7 +44,7 @@ startButtonTimer();
 </script>
 
 <template>
-    <div class="h-screen">
+    <div class="h-dscreen">
         <LoadingBar />
         <HeroFull>
             <ContentCenterWrapper class="max-w-3xl mx-auto text-center">

@@ -210,12 +210,6 @@ watch(router.currentRoute, () => {
 const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? '-dev' : '-prod') : '';
 </script>
 
-<style scoped>
-.h-dscreen {
-    height: 100dvh;
-}
-</style>
-
 <template>
     <div class="flex h-dscreen">
         <!-- Sidebar -->
