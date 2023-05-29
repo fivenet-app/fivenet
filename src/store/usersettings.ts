@@ -31,7 +31,7 @@ export const useUserSettingsStore = defineStore('userSettings', {
         },
     },
     getters: {
-        version: (state) => state.version,
+        getVersion: (state) => state.version,
     },
 });
 

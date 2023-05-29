@@ -38,7 +38,7 @@ try {
 }
 
 const userSettings = useUserSettingsStore();
-if (__APP_VERSION__ != userSettings.version) {
+if (__APP_VERSION__ != userSettings.getVersion) {
     useClipboardStore().$reset();
     useDocumentEditorStore().$reset();
     useNotificatorStore().$reset();
