@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { User } from '~~/gen/ts/resources/users/users';

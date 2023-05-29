@@ -1,6 +1,6 @@
 <script lang="ts" setup>
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { alpha_dash, digits, max, min, required } from '@vee-validate/rules';
-import { RpcError } from 'grpc-web';
 import { defineRule } from 'vee-validate';
 import Alert from '~/components/partials/Alert.vue';
 import { useNotificationsStore } from '~/store/notifications';

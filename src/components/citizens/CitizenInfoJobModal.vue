@@ -11,8 +11,8 @@ import {
     TransitionRoot,
 } from '@headlessui/vue';
 import { CheckIcon } from '@heroicons/vue/24/solid';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
-import { RpcError } from 'grpc-web';
 import { useNotificationsStore } from '~/store/notifications';
 import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';

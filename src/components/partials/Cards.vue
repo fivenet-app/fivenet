@@ -4,7 +4,7 @@ import { CardElement } from '~/utils/types';
 
 defineProps<{
     items: CardElement[];
-    showIcon: boolean;
+    showIcon?: boolean;
 }>();
 
 defineEmits<{

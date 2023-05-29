@@ -12,9 +12,9 @@ import {
     TrashIcon,
     UserIcon,
 } from '@heroicons/vue/20/solid';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { QuillEditor } from '@vueup/vue-quill';
 import { useClipboard } from '@vueuse/core';
-import { RpcError } from 'grpc-web';
 import { ref } from 'vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';

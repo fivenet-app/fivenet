@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { XCircleIcon } from '@heroicons/vue/24/solid';
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import OAuth2ConnectButton from './OAuth2ConnectButton.vue';
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useNotificationsStore } from '~/store/notifications';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import TemplatePreviewModal from './TemplatePreviewModal.vue';

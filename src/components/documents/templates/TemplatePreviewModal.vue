@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { Template } from '~~/gen/ts/resources/documents/templates';

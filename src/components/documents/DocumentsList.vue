@@ -2,8 +2,8 @@
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { BriefcaseIcon, CalendarIcon, DocumentMagnifyingGlassIcon, UserIcon } from '@heroicons/vue/20/solid';
 import { CheckIcon } from '@heroicons/vue/24/solid';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/shared';
-import { RpcError } from 'grpc-web';
 import { ref } from 'vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';

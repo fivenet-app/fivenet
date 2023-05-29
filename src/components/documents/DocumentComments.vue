@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/20/solid';
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import { useAuthStore } from '~/store/auth';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';

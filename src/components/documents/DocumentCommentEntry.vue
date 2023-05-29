@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/20/solid';
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useAuthStore } from '~/store/auth';
 import { DocumentComment } from '~~/gen/ts/resources/documents/documents';
 

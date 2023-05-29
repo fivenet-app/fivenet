@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { KeyIcon } from '@heroicons/vue/20/solid';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useClipboard } from '@vueuse/core';
-import { RpcError } from 'grpc-web';
 import { ref } from 'vue';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import CitizenInfoJobModal from '~/components/citizens/CitizenInfoJobModal.vue';

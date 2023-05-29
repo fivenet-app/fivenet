@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { CheckIcon, PlusIcon } from '@heroicons/vue/20/solid';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, numeric, required } from '@vee-validate/rules';
 import { watchDebounced } from '@vueuse/core';
-import { RpcError } from 'grpc-web';
 import { defineRule } from 'vee-validate';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import { useAuthStore } from '~/store/auth';

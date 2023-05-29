@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/vue/20/solid';
 import { ArrowsRightLeftIcon, ChevronRightIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { ref } from 'vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';

@@ -4,12 +4,13 @@ import {
     MethodInfo,
     NextServerStreamingFn,
     NextUnaryFn,
+    RpcError,
     RpcInterceptor,
     RpcOptions,
     ServerStreamingCall,
     UnaryCall,
 } from '@protobuf-ts/runtime-rpc/build/types';
-import { RpcError, StatusCode } from 'grpc-web';
+import { NotificationType } from '~/composables/notification/interfaces/Notification.interface';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
@@ -68,17 +69,28 @@ export class GRPCClients {
 
         const { $loading } = useNuxtApp();
 
+        const notification = {
+            type: 'error' as NotificationType,
+            title: 'notifications.grpc_errors.internal.title',
+            content: err.message,
+            contentI18n: true,
+        };
+
         switch (err.code) {
-            case StatusCode.UNAUTHENTICATED:
+            case 'internal':
+                break;
+
+            case 'unavailable':
+                notification.title = 'notifications.grpc_errors.unavailable.title';
+                notification.content = 'notifications.grpc_errors.unavailable.content';
+                break;
+
+            case 'unauthenticated':
                 await useAuthStore().clearAuthInfo();
 
-                notifications.dispatchNotification({
-                    title: 'notifications.grpc_errors.unauthenticated.title',
-                    titleI18n: true,
-                    content: 'notifications.grpc_errors.unauthenticated.content',
-                    contentI18n: true,
-                    type: 'warning',
-                });
+                notification.type = 'warning';
+                notification.title = 'notifications.grpc_errors.unauthenticated.title';
+                notification.content = 'notifications.grpc_errors.unauthenticated.content';
 
                 // Only update the redirect query param if it isn't already set
                 const route = useRoute();
@@ -91,67 +103,40 @@ export class GRPCClients {
                 });
                 break;
 
-            case StatusCode.PERMISSION_DENIED:
-                notifications.dispatchNotification({
-                    title: 'notifications.grpc_errors.permission_denied.title',
-                    titleI18n: true,
-                    content: err.message,
-                    type: 'error',
-                });
+            case 'permission_denied':
+                notification.title = 'notifications.grpc_errors.permission_denied.title';
+                notification.contentI18n = false;
+                notification.content = err.message;
                 break;
 
-            case StatusCode.INTERNAL:
-                let title = 'notifications.grpc_errors.internal.title';
-                let content = err.message;
-                let contentI18n = false;
-                if (err.message.startsWith('errors.')) {
-                    contentI18n = true;
-
-                    const errSplits = err.message.split(';');
-                    if (errSplits.length > 1) {
-                        title = errSplits[1];
-                        content = errSplits[0];
-                    }
-                }
-
-                notifications.dispatchNotification({
-                    title: title,
-                    titleI18n: true,
-                    content: content,
-                    contentI18n: contentI18n,
-                    type: 'error',
-                });
-                break;
-
-            case StatusCode.UNAVAILABLE:
-                notifications.dispatchNotification({
-                    title: 'notifications.grpc_errors.unavailable.title',
-                    titleI18n: true,
-                    content: 'notifications.grpc_errors.unavailable.content',
-                    contentI18n: true,
-                    type: 'error',
-                });
-                break;
-
-            case StatusCode.NOT_FOUND:
-                notifications.dispatchNotification({
-                    title: 'notifications.grpc_errors.unavailable.title',
-                    titleI18n: true,
-                    content: err.message,
-                    type: 'error',
-                });
-
+            case 'not_found':
+                notification.title = 'notifications.grpc_errors.unavailable.title';
                 break;
 
             default:
-                notifications.dispatchNotification({
-                    title: 'notifications.grpc_errors.default.title',
-                    titleI18n: true,
-                    content: err.message,
-                    type: 'error',
-                });
+                notification.title = 'notifications.grpc_errors.default.title';
+                notification.content = err.message + '(Code: ' + err.code.valueOf() + ')';
+                notification.contentI18n = false;
                 break;
         }
+
+        if (notification.content.startsWith('errors.')) {
+            notification.contentI18n = true;
+
+            const errSplits = notification.content.split(';');
+            if (errSplits.length > 1) {
+                notification.title = errSplits[1];
+                notification.content = errSplits[0];
+            }
+        }
+
+        notifications.dispatchNotification({
+            type: notification.type,
+            title: notification.title,
+            titleI18n: true,
+            content: notification.content,
+            contentI18n: notification.contentI18n,
+        });
 
         $loading.errored();
         return true;

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import Footer from '~/components/partials/Footer.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';

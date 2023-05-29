@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { AdjustmentsVerticalIcon } from '@heroicons/vue/24/outline';
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useNotificationsStore } from '~/store/notifications';
 import { JobProps } from '~~/gen/ts/resources/jobs/jobs';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';

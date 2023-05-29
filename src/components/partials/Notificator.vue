@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RpcError, StatusCode } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { NotificationType } from '~/composables/notification/interfaces/Notification.interface';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
@@ -85,7 +85,7 @@ async function streamNotifications(): Promise<void> {
         console.debug('Notificator: Stream ended');
     } catch (e) {
         const err = e as RpcError;
-        if (err.code == StatusCode.CANCELLED) {
+        if (err.code == 'CANCELLED') {
             return;
         }
 

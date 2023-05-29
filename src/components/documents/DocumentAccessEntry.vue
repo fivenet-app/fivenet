@@ -12,8 +12,8 @@ import {
 } from '@headlessui/vue';
 import { CheckIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/vue/20/solid';
 import { listEnumValues } from '@protobuf-ts/runtime';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
-import { RpcError } from 'grpc-web';
 import { ArrayElement } from '~/utils/types';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';

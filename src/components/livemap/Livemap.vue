@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LControl, LControlLayers, LLayerGroup, LMap, LMarker, LPopup, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { watchDebounced } from '@vueuse/core';
-import { RpcError } from 'grpc-web';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';

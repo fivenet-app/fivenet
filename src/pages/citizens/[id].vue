@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import CitizenInfo from '~/components/citizens/CitizenInfo.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';

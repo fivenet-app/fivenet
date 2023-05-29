@@ -2,7 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { TrashIcon } from '@heroicons/vue/20/solid';
 import { CheckIcon, ChevronDownIcon, MinusIcon, XMarkIcon } from '@heroicons/vue/24/solid';
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import Divider from '~/components/partials/Divider.vue';
 import RoleViewAttr from '~/components/rector/RoleViewAttr.vue';
 import { useNotificationsStore } from '~/store/notifications';

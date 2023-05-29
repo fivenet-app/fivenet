@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 
 const { $grpc } = useNuxtApp();

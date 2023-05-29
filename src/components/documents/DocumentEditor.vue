@@ -12,10 +12,10 @@ import {
 } from '@headlessui/vue';
 import { CheckIcon, ChevronDownIcon, PlusIcon } from '@heroicons/vue/20/solid';
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { watchDebounced } from '@vueuse/core';
-import { RpcError } from 'grpc-web';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';

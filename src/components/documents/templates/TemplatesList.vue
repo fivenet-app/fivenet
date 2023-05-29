@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import Cards from '~/components/partials/Cards.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';

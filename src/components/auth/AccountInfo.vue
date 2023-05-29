@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { UserIcon } from '@heroicons/vue/24/outline';
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';

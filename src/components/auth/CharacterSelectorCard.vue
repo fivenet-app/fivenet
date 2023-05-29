@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RpcError } from 'grpc-web';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { parseQuery } from 'vue-router';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import { useAuthStore } from '~/store/auth';

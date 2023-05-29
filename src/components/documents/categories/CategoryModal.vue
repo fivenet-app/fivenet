@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { TagIcon } from '@heroicons/vue/24/solid';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
-import { RpcError } from 'grpc-web';
 import { defineRule } from 'vee-validate';
 import { useNotificationsStore } from '~/store/notifications';
 import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
