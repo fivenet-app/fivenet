@@ -55,7 +55,9 @@ src/public/images/livemap/tiles/*/
 # Proto
 *.proto
 
-# Go code
+# Go and others code
 *.go
 *.json
+*.yaml
+*.yml
 go.*
