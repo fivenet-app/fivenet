@@ -11,8 +11,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_audit_log` (
   `method` varchar(255) NOT NULL,
   `state` smallint(2) NOT NULL,
   `data` longtext DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_fivenet_audit_log_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 COMMIT;

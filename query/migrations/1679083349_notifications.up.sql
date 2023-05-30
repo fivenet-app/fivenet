@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_notifications` (
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_notifications_user_id` (`user_id`),
   KEY `idx_fivenet_notifications_type` (`type`),
-  CONSTRAINT `fk_fivenet_notifications_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `fk_fivenet_notifications_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 COMMIT;

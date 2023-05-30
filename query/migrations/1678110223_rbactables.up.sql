@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_attrs` (
   `valid_values` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_attrs_permission_id_key_unque` (`permission_id`,`key`),
-  CONSTRAINT `fk_fivenet_attrs_permissions_permission` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_permissions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_attrs_permissions_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_permissions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: fivenet_roles
@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_roles` (
   `job` varchar(50) NOT NULL,
   `grade` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_fivenet_roles_job_grade_unique` (`job`,`grade`)
+  UNIQUE KEY `idx_fivenet_roles_job_grade_unique` (`job`,`grade`),
+  CONSTRAINT `fk_fivenet_roles_job` FOREIGN KEY (`job`) REFERENCES `jobs` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: fivenet_role_attrs
