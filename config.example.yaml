@@ -27,6 +27,8 @@ database:
   maxIdleConns: 5
   connMaxIdleTime: 15m
   connMaxLifetime: 60m
+nats:
+  url: "nats://localhost:4222"
 jwt:
   secret: "your_generated_jwt_secret"
 oauth2:
