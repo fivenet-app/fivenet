@@ -40,6 +40,7 @@ type Config struct {
 	HTTP     HTTP     `yaml:"http"`
 	GRPC     GRPC     `yaml:"grpc"`
 	Database Database `yaml:"database"`
+	NATS     NATS     `yaml:"nats"`
 	JWT      JWT      `yaml:"jwt"`
 	OAuth2   OAuth2   `yaml:"oauth2"`
 
@@ -62,13 +63,13 @@ type HTTP struct {
 	Sessions Sessions `yaml:"sessions"`
 }
 
-type GRPC struct {
-	Listen string `default:":9090" yaml:"listen"`
-}
-
 type Sessions struct {
 	CookieSecret string `yaml:"cookieSecret"`
 	Domain       string `default:"localhost" yaml:"domain"`
+}
+
+type GRPC struct {
+	Listen string `default:":9090" yaml:"listen"`
 }
 
 type Database struct {
@@ -80,6 +81,10 @@ type Database struct {
 	MaxIdleConns    int           `default:"5" yaml:"maxIdleConns"`
 	ConnMaxIdleTime time.Duration `default:"15m" yaml:"connMaxIdleTime"`
 	ConnMaxLifetime time.Duration `default:"60m" yaml:"connMaxLifetime"`
+}
+
+type NATS struct {
+	URL string `default:"nats://localhost:4222" yaml:"url"`
 }
 
 type JWT struct {
