@@ -35,7 +35,7 @@ message Document {
   string content = 8 [(validate.rules).string = {min_len: 20, max_bytes: 1000000}]; // @gotags: alias:"content"
   string data = 9; // @gotags: alias:"data"
   optional int32 creator_id = 10; // @gotags: alias:"creator_id"
-  resources.users.UserShort creator = 11; // @gotags: alias:"creator"
+  optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
   string state = 12 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 13; // @gotags: alias:"closed"
   bool public = 14; // @gotags: alias:"public"
@@ -49,7 +49,7 @@ message DocumentShort {
   optional resources.documents.DocumentCategory category = 5; // @gotags: alias:"category"
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   optional int32 creator_id = 7; // @gotags: alias:"creator_id"
-  resources.users.UserShort creator = 8; // @gotags: alias:"creator"
+  optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"
   string state = 9 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 10; // @gotags: alias:"closed"
 }
@@ -69,8 +69,6 @@ message DocumentJobAccess {
   int32 minimumGrade = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
   optional string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
   resources.documents.ACCESS_LEVEL access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
-  optional int32 creator_id = 10; // @gotags: alias:"creator_id"
-  optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
 }
 
 message DocumentUserAccess {
@@ -81,8 +79,6 @@ message DocumentUserAccess {
   int32 user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
   optional resources.users.UserShort user = 6;
   resources.documents.ACCESS_LEVEL access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
-  optional int32 creator_id = 8; // @gotags: alias:"creator_id"
-  optional resources.users.UserShort creator = 9; // @gotags: alias:"creator"
 }
 
 enum DOC_REFERENCE {

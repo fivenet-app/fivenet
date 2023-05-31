@@ -750,6 +750,43 @@ func (m *UserProps) validate(all bool) error {
 
 	}
 
+	if m.JobGradeNumber != nil {
+		// no validation rules for JobGradeNumber
+	}
+
+	if m.JobGrade != nil {
+
+		if all {
+			switch v := interface{}(m.GetJobGrade()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserPropsValidationError{
+						field:  "JobGrade",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserPropsValidationError{
+						field:  "JobGrade",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJobGrade()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserPropsValidationError{
+					field:  "JobGrade",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UserPropsMultiError(errors)
 	}

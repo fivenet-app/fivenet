@@ -84,7 +84,7 @@ export interface Document {
      */
     creatorId?: number; // @gotags: alias:"creator_id"
     /**
-     * @generated from protobuf field: resources.users.UserShort creator = 11;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
@@ -133,7 +133,7 @@ export interface DocumentShort {
      */
     creatorId?: number; // @gotags: alias:"creator_id"
     /**
-     * @generated from protobuf field: resources.users.UserShort creator = 8;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 8;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
@@ -198,14 +198,6 @@ export interface DocumentJobAccess {
      * @generated from protobuf field: resources.documents.ACCESS_LEVEL access = 9;
      */
     access: ACCESS_LEVEL; // @gotags: alias:"access"
-    /**
-     * @generated from protobuf field: optional int32 creator_id = 10;
-     */
-    creatorId?: number; // @gotags: alias:"creator_id"
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
-     */
-    creator?: UserShort; // @gotags: alias:"creator"
 }
 /**
  * @generated from protobuf message resources.documents.DocumentUserAccess
@@ -239,14 +231,6 @@ export interface DocumentUserAccess {
      * @generated from protobuf field: resources.documents.ACCESS_LEVEL access = 7;
      */
     access: ACCESS_LEVEL; // @gotags: alias:"access"
-    /**
-     * @generated from protobuf field: optional int32 creator_id = 8;
-     */
-    creatorId?: number; // @gotags: alias:"creator_id"
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 9;
-     */
-    creator?: UserShort; // @gotags: alias:"creator"
 }
 /**
  * @generated from protobuf message resources.documents.DocumentReference
@@ -470,9 +454,7 @@ class DocumentJobAccess$Type extends MessageType<DocumentJobAccess> {
             { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "minimumGrade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 11, name: "creator", kind: "message", T: () => UserShort }
+            { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }
@@ -490,9 +472,7 @@ class DocumentUserAccess$Type extends MessageType<DocumentUserAccess> {
             { no: 4, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 9, name: "creator", kind: "message", T: () => UserShort }
+            { no: 7, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }

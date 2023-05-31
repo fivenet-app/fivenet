@@ -34,11 +34,9 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 
 	for i := 0; i < len(access.Jobs); i++ {
 		s.c.EnrichJobInfo(access.Jobs[i])
-		s.c.EnrichJobInfo(access.Jobs[i].Creator)
 	}
 
 	for i := 0; i < len(access.Users); i++ {
-		s.c.EnrichJobInfo(access.Users[i].Creator)
 		s.c.EnrichJobInfo(access.Users[i].User)
 	}
 

@@ -8,8 +8,8 @@
 package model
 
 type FivenetUserProps struct {
-	UserID int32   `json:"user_id"`
-	Wanted *bool   `json:"wanted"`
-	Job    *string `json:"job"`
-	Grade  *int32  `json:"grade"`
+	UserID   int32   `json:"user_id"`
+	Wanted   *bool   `json:"wanted"`
+	Job      *string `json:"job"`
+	JobGrade *int32  `json:"job_grade"`
 }

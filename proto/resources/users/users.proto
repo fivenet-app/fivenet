@@ -48,6 +48,8 @@ message UserProps {
   optional bool wanted = 2; // @gotags: alias:"wanted"
   optional string job_name = 3; // @gotags: alias:"job"
   optional resources.jobs.Job job = 4;
+  optional int32 job_grade_number = 5; // @gotags: alias:"job_grade"
+  optional resources.jobs.JobGrade job_grade = 6;
 }
 
 enum USER_ACTIVITY_TYPE {

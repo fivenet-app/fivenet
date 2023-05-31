@@ -228,14 +228,6 @@ export interface TemplateJobAccess {
      * @generated from protobuf field: resources.documents.ACCESS_LEVEL access = 9;
      */
     access: ACCESS_LEVEL; // @gotags: alias:"access"
-    /**
-     * @generated from protobuf field: optional int32 creator_id = 10;
-     */
-    creatorId?: number; // @gotags: alias:"creator_id"
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
-     */
-    creator?: UserShort; // @gotags: alias:"creator"
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Template$Type extends MessageType<Template> {
@@ -352,9 +344,7 @@ class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
             { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "minimumGrade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 11, name: "creator", kind: "message", T: () => UserShort }
+            { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }

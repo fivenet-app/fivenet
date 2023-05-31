@@ -3,6 +3,7 @@
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp.js";
+import { JobGrade } from "../jobs/jobs.js";
 import { Job } from "../jobs/jobs.js";
 /**
  * @generated from protobuf message resources.users.UserShort
@@ -143,6 +144,14 @@ export interface UserProps {
      * @generated from protobuf field: optional resources.jobs.Job job = 4;
      */
     job?: Job;
+    /**
+     * @generated from protobuf field: optional int32 job_grade_number = 5;
+     */
+    jobGradeNumber?: number; // @gotags: alias:"job_grade"
+    /**
+     * @generated from protobuf field: optional resources.jobs.JobGrade job_grade = 6;
+     */
+    jobGrade?: JobGrade;
 }
 /**
  * @generated from protobuf message resources.users.UserActivity
@@ -268,7 +277,9 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 2, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "job_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "job", kind: "message", T: () => Job }
+            { no: 4, name: "job", kind: "message", T: () => Job },
+            { no: 5, name: "job_grade_number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "job_grade", kind: "message", T: () => JobGrade }
         ]);
     }
 }
