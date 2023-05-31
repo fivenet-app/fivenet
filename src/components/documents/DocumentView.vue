@@ -35,14 +35,14 @@ const clipboard = useClipboard();
 const { t } = useI18n();
 
 const access = ref<undefined | DocumentAccess>(undefined);
-const commentCount = ref(-1);
+const commentCount = ref(BigInt(-1));
 const tabs = ref<{ name: string; icon: typeof LockOpenIcon }[]>([
     { name: t('common.relation', 2), icon: UserIcon },
     { name: t('common.reference', 2), icon: DocumentMagnifyingGlassIcon },
 ]);
 
 const props = defineProps<{
-    documentId: number;
+    documentId: bigint;
 }>();
 
 const { data: document, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}`, () => getDocument());
@@ -162,7 +162,7 @@ function copyDocumentIDToClipboard(): void {
                                 <NuxtLink
                                     :to="{
                                         name: 'documents-edit-id',
-                                        params: { id: document?.id ?? 0 },
+                                        params: { id: document?.id.toString() ?? 0 },
                                     }"
                                     type="button"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
@@ -226,7 +226,7 @@ function copyDocumentIDToClipboard(): void {
                         <div class="flex flex-row gap-2 pb-3 mt-2 overflow-x-auto snap-x sm:pb-0">
                             <div
                                 v-for="entry in access?.jobs"
-                                :key="entry.id"
+                                :key="entry.id?.toString()"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-info-100 whitespace-nowrap snap-start"
                             >
                                 <span class="w-2 h-2 rounded-full bg-info-500" aria-hidden="true" />
@@ -241,7 +241,7 @@ function copyDocumentIDToClipboard(): void {
                             </div>
                             <div
                                 v-for="entry in access?.users"
-                                :key="entry.id"
+                                :key="entry.id?.toString()"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap snap-start"
                             >
                                 <span class="w-2 h-2 rounded-full bg-secondary-400" aria-hidden="true" />

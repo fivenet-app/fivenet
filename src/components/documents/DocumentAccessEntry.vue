@@ -25,7 +25,7 @@ const { t } = useI18n();
 
 const props = defineProps<{
     init: {
-        id: number;
+        id: bigint;
         type: number;
         values: {
             job?: string;
@@ -39,18 +39,18 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'typeChange', payload: { id: number; type: number }): void;
+    (e: 'typeChange', payload: { id: bigint; type: number }): void;
     (
         e: 'nameChange',
         payload: {
-            id: number;
+            id: bigint;
             job: Job | undefined;
             char: UserShort | undefined;
         }
     ): void;
-    (e: 'rankChange', payload: { id: number; rank: JobGrade }): void;
-    (e: 'accessChange', payload: { id: number; access: ACCESS_LEVEL }): void;
-    (e: 'deleteRequest', payload: { id: number }): void;
+    (e: 'rankChange', payload: { id: bigint; rank: JobGrade }): void;
+    (e: 'accessChange', payload: { id: bigint; access: ACCESS_LEVEL }): void;
+    (e: 'deleteRequest', payload: { id: bigint }): void;
 }>();
 
 const selectedAccessType = ref<{ id: number; name: string }>({
@@ -249,7 +249,7 @@ watch(selectedAccessRole, () => {
                             <ListboxOption
                                 as="template"
                                 v-for="accessType in accessTypes"
-                                :key="accessType.id"
+                                :key="accessType.id?.toString()"
                                 :value="accessType"
                                 v-slot="{ active, selected }"
                             >
@@ -441,7 +441,7 @@ watch(selectedAccessRole, () => {
                     >
                         <ComboboxOption
                             v-for="role in entriesAccessRoles"
-                            :key="role.id"
+                            :key="role.id?.toString()"
                             :value="role"
                             as="accessrole"
                             v-slot="{ active, selected }"

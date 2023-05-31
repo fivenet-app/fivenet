@@ -22,6 +22,6 @@ const route = useRoute('documents-templates-edit-id');
 
 <template>
     <ContentWrapper>
-        <TemplateEditor :templateId="parseInt(route.params.id)" />
+        <TemplateEditor :templateId="BigInt(route.params.id)" />
     </ContentWrapper>
 </template>

@@ -23,7 +23,7 @@ const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
 const props = defineProps<{
-    templateId?: number;
+    templateId?: bigint;
 }>();
 
 const { activeChar } = storeToRefs(authStore);
@@ -84,7 +84,7 @@ const access = ref<
     Map<
         number,
         {
-            id: number;
+            id: bigint;
             type: number;
             values: {
                 job?: string;
@@ -629,7 +629,7 @@ watchDebounced(
                 <h2 class="text-neutral">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
                 <DocumentAccessEntry
                     v-for="entry in access.values()"
-                    :key="entry.id"
+                    :key="entry.id?.toString()"
                     :init="entry"
                     :access-types="accessTypes"
                     :access-roles="[ACCESS_LEVEL.VIEW, ACCESS_LEVEL.EDIT]"
@@ -687,7 +687,7 @@ watchDebounced(
                         >
                             <ComboboxOption
                                 v-for="category in entriesCategory"
-                                :key="category.id"
+                                :key="category.id?.toString()"
                                 :value="category"
                                 as="category"
                                 v-slot="{ active, selected }"
@@ -742,7 +742,7 @@ watchDebounced(
                 <h2 class="text-neutral">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
                 <DocumentAccessEntry
                     v-for="entry in contentAccess.values()"
-                    :key="entry.id"
+                    :key="entry.id?.toString()"
                     :init="entry"
                     :access-types="contentAccessTypes"
                     @typeChange="updateContentAccessEntryType($event)"

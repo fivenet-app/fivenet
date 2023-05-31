@@ -18,7 +18,7 @@ const { $grpc } = useNuxtApp();
 
 const search = ref<{ title: string; category?: DocumentCategory }>({ title: '' });
 const pagination = ref<PaginationResponse>();
-const offset = ref(0);
+const offset = ref(BigInt(0));
 
 const entriesCategories = ref<DocumentCategory[]>([]);
 const queryCategories = ref<string>('');
@@ -129,7 +129,7 @@ onMounted(async () => {
                                         >
                                             <ComboboxOption
                                                 v-for="category in entriesCategories"
-                                                :key="category.id"
+                                                :key="category.id?.toString()"
                                                 :value="category"
                                                 as="category"
                                                 v-slot="{ active, selected }"
@@ -212,13 +212,13 @@ onMounted(async () => {
                             <ul class="flex flex-col">
                                 <li
                                     v-for="doc in documents"
-                                    :key="doc.id"
+                                    :key="doc.id?.toString()"
                                     class="flex-initial my-1 rounded-lg hover:bg-base-800 bg-base-850"
                                 >
                                     <NuxtLink
                                         :to="{
                                             name: 'documents-id',
-                                            params: { id: doc.id },
+                                            params: { id: doc.id.toString() },
                                         }"
                                     >
                                         <div class="mx-2 mt-1 mb-4">

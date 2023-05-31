@@ -75,9 +75,11 @@ async function createRole(): Promise<void> {
             });
             const { response } = await call;
 
-            if (response.role) {
-                roles.value?.unshift(response.role!);
+            if (!response.role) {
+                return res();
             }
+
+            roles.value?.unshift(response.role!);
 
             notifications.dispatchNotification({
                 title: t('notifications.rector.role_created.title'),
@@ -87,7 +89,9 @@ async function createRole(): Promise<void> {
 
             await navigateTo({
                 name: 'rector-roles-id',
-                params: { id: response.role?.id! },
+                params: {
+                    id: response.role?.id?.toString(),
+                },
             });
 
             return res();

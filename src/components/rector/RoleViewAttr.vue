@@ -14,17 +14,17 @@ import { AttributeValues, RoleAttribute } from '~~/gen/ts/resources/permissions/
 
 const props = defineProps<{
     attribute: RoleAttribute;
-    states: Map<number, AttributeValues | undefined>;
+    states: Map<bigint, AttributeValues | undefined>;
     jobs: Job[];
     disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:states', payload: Map<number, AttributeValues | undefined>): void;
+    (e: 'update:states', payload: Map<bigint, AttributeValues | undefined>): void;
 }>();
 
 const states = ref<typeof props.states>(props.states);
-const id = ref<number>(props.attribute.attrId);
+const id = ref<bigint>(props.attribute.attrId);
 
 const jobGrades = ref<Map<string, JobGrade>>(new Map());
 

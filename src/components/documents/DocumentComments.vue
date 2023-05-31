@@ -14,7 +14,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const props = withDefaults(
     defineProps<{
-        documentId: number;
+        documentId: bigint;
         closed?: boolean;
     }>(),
     {
@@ -23,11 +23,11 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    (e: 'counted', count: number): void;
+    (e: 'counted', count: bigint): void;
 }>();
 
 const pagination = ref<PaginationResponse>();
-const offset = ref(0);
+const offset = ref(BigInt(0));
 
 const {
     data: comments,
@@ -42,7 +42,7 @@ async function getDocumentComments(): Promise<Array<DocumentComment>> {
             const call = $grpc.getDocStoreClient().getDocumentComments({
                 pagination: {
                     offset: offset.value,
-                    pageSize: 5,
+                    pageSize: BigInt(5),
                 },
                 documentId: props.documentId,
             });
@@ -70,7 +70,7 @@ async function addComment(): Promise<void> {
         }
 
         const comment: DocumentComment = {
-            id: 0,
+            id: BigInt(0),
             documentId: props.documentId,
             comment: message.value,
         };
@@ -183,7 +183,7 @@ watch(offset, async () => refresh());
             <ul role="list" class="divide-y divide-gray-200">
                 <DocumentCommentEntry
                     v-for="com in comments"
-                    :key="com.id"
+                    :key="com.id?.toString()"
                     :comment="com"
                     @removed="(c: DocumentComment) => removeComment(c)"
                 />

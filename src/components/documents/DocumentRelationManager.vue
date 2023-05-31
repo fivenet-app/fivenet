@@ -41,13 +41,13 @@ const { t } = useI18n();
 
 const props = defineProps<{
     open: boolean;
-    document?: number;
-    modelValue: Map<number, DocumentRelation>;
+    document?: bigint;
+    modelValue: Map<bigint, DocumentRelation>;
 }>();
 
 const emit = defineEmits<{
     (e: 'close'): void;
-    (e: 'update:modelValue', payload: Map<number, DocumentRelation>): void;
+    (e: 'update:modelValue', payload: Map<bigint, DocumentRelation>): void;
 }>();
 
 const tabs = ref<{ name: string; icon: FunctionalComponent }[]>([
@@ -81,7 +81,7 @@ async function listCitizens(): Promise<Array<User>> {
         try {
             const call = $grpc.getCitizenStoreClient().listCitizens({
                 pagination: {
-                    offset: 0,
+                    offset: BigInt(0),
                 },
                 searchName: queryChar.value,
             });
@@ -101,7 +101,7 @@ async function listCitizens(): Promise<Array<User>> {
 
 function addRelation(user: User, relation: number): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? 1 : keys[keys.length - 1] + 1;
+    const key = !keys.length ? BigInt(1) : keys[keys.length - 1] + BigInt(1);
 
     props.modelValue.set(key, {
         id: key,
@@ -115,7 +115,7 @@ function addRelation(user: User, relation: number): void {
     refresh();
 }
 
-function removeRelation(id: number): void {
+function removeRelation(id: bigint): void {
     props.modelValue.delete(id);
     refresh();
 }
@@ -224,7 +224,10 @@ function removeRelation(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="[key, rel] in $props.modelValue" :key="key">
+                                                                <tr
+                                                                    v-for="[key, rel] in $props.modelValue"
+                                                                    :key="key.toString()"
+                                                                >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
@@ -341,7 +344,10 @@ function removeRelation(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="user in clipboard.$state.users" :key="user.id">
+                                                                <tr
+                                                                    v-for="user in clipboard.$state.users"
+                                                                    :key="user.id?.toString()"
+                                                                >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >

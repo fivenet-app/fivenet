@@ -7,7 +7,7 @@ const { $grpc } = useNuxtApp();
 
 const props = withDefaults(
     defineProps<{
-        documentId: number;
+        documentId: bigint;
         showSource?: boolean;
     }>(),
     {
@@ -50,11 +50,11 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
         <!-- Relations list (smallest breakpoint only) -->
         <div v-if="references && references.length > 0" class="sm:hidden text-neutral">
             <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
-                <li v-for="reference in references" :key="reference.id">
+                <li v-for="reference in references" :key="reference.id?.toString()">
                     <NuxtLink
                         :to="{
                             name: 'documents-id',
-                            params: { id: reference.targetDocumentId },
+                            params: { id: reference.targetDocumentId.toString() },
                         }"
                         class="block px-4 py-4 bg-base-800 hover:bg-base-700"
                     >
@@ -125,14 +125,14 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-base-600 bg-base-800 text-neutral">
-                                <tr v-for="reference in references" :key="reference.id">
+                                <tr v-for="reference in references" :key="reference.id?.toString()">
                                     <td class="px-6 py-4 text-sm">
                                         <div class="flex">
                                             <NuxtLink
                                                 :to="{
                                                     name: 'documents-id',
                                                     params: {
-                                                        id: reference.targetDocumentId,
+                                                        id: reference.targetDocumentId.toString(),
                                                     },
                                                 }"
                                                 class="inline-flex space-x-2 text-sm truncate group"
@@ -156,7 +156,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                                 :to="{
                                                     name: 'documents-id',
                                                     params: {
-                                                        id: reference.sourceDocumentId,
+                                                        id: reference.sourceDocumentId.toString(),
                                                     },
                                                 }"
                                                 class="inline-flex space-x-1 text-sm truncate group"

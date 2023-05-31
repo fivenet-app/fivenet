@@ -59,7 +59,7 @@ async function listUserActivity(): Promise<Array<UserActivity>> {
             </span>
         </button>
         <ul v-else role="list" class="divide-y divide-gray-200">
-            <li v-for="activity in activities" :key="activity.id" class="py-4">
+            <li v-for="activity in activities" :key="activity.id?.toString()" class="py-4">
                 <CitizenInfoActivityFeedEntry :activity="activity" />
             </li>
         </ul>

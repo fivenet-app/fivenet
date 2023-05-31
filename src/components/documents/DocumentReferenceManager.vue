@@ -31,19 +31,17 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const clipboard = useClipboardStore();
 
-const { activeChar } = storeToRefs(authStore);
-
 const { t } = useI18n();
 
 const props = defineProps<{
     open: boolean;
-    document?: number;
-    modelValue: Map<number, DocumentReference>;
+    document?: bigint;
+    modelValue: Map<bigint, DocumentReference>;
 }>();
 
 const emit = defineEmits<{
     (e: 'close'): void;
-    (e: 'update:modelValue', payload: Map<number, DocumentReference>): void;
+    (e: 'update:modelValue', payload: Map<bigint, DocumentReference>): void;
 }>();
 
 const tabs = ref<{ name: string; icon: FunctionalComponent }[]>([
@@ -77,8 +75,8 @@ async function listDocuments(): Promise<Array<DocumentShort>> {
         try {
             const call = $grpc.getDocStoreClient().listDocuments({
                 pagination: {
-                    offset: 0,
-                    pageSize: 8,
+                    offset: BigInt(0),
+                    pageSize: BigInt(8),
                 },
                 orderBy: [],
                 search: queryDoc.value,
@@ -104,11 +102,11 @@ async function listDocuments(): Promise<Array<DocumentShort>> {
 
 function addReference(doc: DocumentShort, reference: number): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? 1 : keys[keys.length - 1] + 1;
+    const key = !keys.length ? BigInt(1) : keys[keys.length - 1] + BigInt(1);
 
     const ref: DocumentReference = {
         id: key,
-        sourceDocumentId: 0,
+        sourceDocumentId: BigInt(0),
         reference: reference,
         targetDocumentId: doc.id,
     };
@@ -121,7 +119,7 @@ function addReferenceClipboard(doc: ClipboardDocument, reference: number): void 
     addReference(getDocument(doc), reference);
 }
 
-function removeReference(id: number): void {
+function removeReference(id: bigint): void {
     props.modelValue.delete(id);
     listDocuments();
 }
@@ -232,7 +230,10 @@ function removeReference(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="[key, ref] in $props.modelValue" :key="key">
+                                                                <tr
+                                                                    v-for="[key, ref] in $props.modelValue"
+                                                                    :key="key.toString()"
+                                                                >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
@@ -252,7 +253,7 @@ function removeReference(id: number): void {
                                                                                     :to="{
                                                                                         name: 'documents-id',
                                                                                         params: {
-                                                                                            id: ref.targetDocumentId,
+                                                                                            id: ref.targetDocumentId.toString(),
                                                                                         },
                                                                                     }"
                                                                                     target="_blank"
@@ -354,7 +355,10 @@ function removeReference(id: number): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <tr v-for="doc in clipboard.$state.documents" :key="doc.id">
+                                                                <tr
+                                                                    v-for="doc in clipboard.$state.documents"
+                                                                    :key="doc.id?.toString()"
+                                                                >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
@@ -496,7 +500,10 @@ function removeReference(id: number): void {
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
                                                                 <template v-if="documents">
-                                                                    <tr v-for="doc in documents.slice(0, 8)" :key="doc.id">
+                                                                    <tr
+                                                                        v-for="doc in documents.slice(0, 8)"
+                                                                        :key="doc.id?.toString()"
+                                                                    >
                                                                         <td
                                                                             class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                         >

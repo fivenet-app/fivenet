@@ -14,7 +14,7 @@ const store = useNotificationsStore();
         >
             <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
                 <NotificationItem
-                    :key="notification.id"
+                    :key="notification.id?.toString()"
                     :notification="notification"
                     :class="idx > 0 ? 'mt-4' : ''"
                     v-for="(notification, idx) in store.getNotifications"

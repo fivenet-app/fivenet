@@ -41,10 +41,11 @@ async function select(item: ClipboardDocument): Promise<void> {
         selected.value.push(item);
     }
 
+    const selectedLength = BigInt(selected.value.length);
     if (props.specs) {
-        if (props.specs.min && selected.value.length >= props.specs.min) {
+        if (props.specs.min && selectedLength >= props.specs.min) {
             emit('statisfied', true);
-        } else if (props.specs.max && selected.value.length === props.specs.max) {
+        } else if (props.specs.max && selectedLength === props.specs.max) {
             emit('statisfied', true);
         } else {
             emit('statisfied', false);
@@ -131,9 +132,9 @@ watch(props, async (newVal) => {
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-800">
-            <tr v-for="item in documents" :key="item.id">
+            <tr v-for="item in documents" :key="item.id?.toString()">
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0" v-if="showSelect">
-                    <div v-if="specs && specs.max === 1">
+                    <div v-if="specs && specs.max === BigInt(1)">
                         <button
                             @click="select(item)"
                             class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
@@ -149,7 +150,7 @@ watch(props, async (newVal) => {
                     <div v-else>
                         <input
                             name="selected"
-                            :key="item.id"
+                            :key="item.id?.toString()"
                             :checked="selected.includes(item)"
                             :value="item"
                             v-model="selected"

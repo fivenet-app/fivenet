@@ -47,7 +47,7 @@ const { t } = useI18n();
 const route = useRoute();
 
 const props = defineProps<{
-    id?: number;
+    id?: bigint;
 }>();
 
 const { activeChar } = storeToRefs(authStore);
@@ -75,9 +75,9 @@ const doc = ref<{
 const isPublic = ref(false);
 const access = ref<
     Map<
-        number,
+        bigint,
         {
-            id: number;
+            id: bigint;
             type: number;
             values: {
                 job?: string;
@@ -90,12 +90,12 @@ const access = ref<
 >(new Map());
 
 const relationManagerShow = ref<boolean>(false);
-const relationManagerData = ref<Map<number, DocumentRelation>>(new Map());
+const relationManagerData = ref<Map<bigint, DocumentRelation>>(new Map());
 const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
 watch(currentRelations, () => currentRelations.value.forEach((e) => relationManagerData.value.set(e.id!, e)));
 
 const referenceManagerShow = ref<boolean>(false);
-const referenceManagerData = ref<Map<number, DocumentReference>>(new Map());
+const referenceManagerData = ref<Map<bigint, DocumentReference>>(new Map());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
 watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 
@@ -114,7 +114,7 @@ onMounted(async () => {
 
         try {
             const call = $grpc.getDocStoreClient().getTemplate({
-                templateId: parseInt(route.query.templateId as string),
+                templateId: BigInt(route.query.templateId as string),
                 data: JSON.stringify(data),
                 render: true,
             });
@@ -127,7 +127,7 @@ onMounted(async () => {
 
             if (template?.contentAccess) {
                 const docAccess = template?.contentAccess!;
-                let accessId = 0;
+                let accessId = BigInt(0);
                 docAccess.users.forEach((user) => {
                     access.value.set(accessId, {
                         id: accessId,
@@ -180,7 +180,7 @@ onMounted(async () => {
             }
 
             if (docAccess) {
-                let accessId = 0;
+                let accessId = BigInt(0);
 
                 docAccess.users.forEach((user) => {
                     access.value.set(accessId, {
@@ -217,8 +217,9 @@ onMounted(async () => {
             }
         }
 
-        access.value.set(0, {
-            id: 0,
+        let accessId = BigInt(0);
+        access.value.set(accessId, {
+            id: accessId,
             type: 1,
             values: {
                 job: activeChar.value?.job,
@@ -229,8 +230,9 @@ onMounted(async () => {
     }
 
     clipboardStore.users.forEach((user, i) => {
-        relationManagerData.value.set(i, {
-            id: i,
+        const id = BigInt(i);
+        relationManagerData.value.set(id, {
+            id: id,
             documentId: props.id!,
             targetUserId: user.id!,
             targetUser: getUser(user),
@@ -300,7 +302,7 @@ function addAccessEntry(): void {
         return;
     }
 
-    let id = access.value.size > 0 ? ([...access.value.keys()].pop() as number) + 1 : 0;
+    const id = BigInt(access.value.size > 0 ? ([...access.value.keys()].pop() as bigint) + BigInt(1) : 0);
     access.value.set(id, {
         id,
         type: 1,
@@ -308,11 +310,11 @@ function addAccessEntry(): void {
     });
 }
 
-function removeAccessEntry(event: { id: number }): void {
+function removeAccessEntry(event: { id: bigint }): void {
     access.value.delete(event.id);
 }
 
-function updateAccessEntryType(event: { id: number; type: number }): void {
+function updateAccessEntryType(event: { id: bigint; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -320,7 +322,7 @@ function updateAccessEntryType(event: { id: number; type: number }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryName(event: { id: number; job?: Job; char?: UserShort }): void {
+function updateAccessEntryName(event: { id: bigint; job?: Job; char?: UserShort }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -335,7 +337,7 @@ function updateAccessEntryName(event: { id: number; job?: Job; char?: UserShort 
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryRank(event: { id: number; rank: JobGrade }): void {
+function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -343,7 +345,7 @@ function updateAccessEntryRank(event: { id: number; rank: JobGrade }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryAccess(event: { id: number; access: ACCESS_LEVEL }): void {
+function updateAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVEL }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -375,8 +377,8 @@ async function submitForm(): Promise<void> {
                 if (!entry.values.char) return;
 
                 reqAccess.users.push({
-                    id: 0,
-                    documentId: 0,
+                    id: BigInt(0),
+                    documentId: BigInt(0),
                     userId: entry.values.char,
                     access: entry.values.accessrole,
                 });
@@ -384,8 +386,8 @@ async function submitForm(): Promise<void> {
                 if (!entry.values.job) return;
 
                 reqAccess.jobs.push({
-                    id: 0,
-                    documentId: 0,
+                    id: BigInt(0),
+                    documentId: BigInt(0),
                     job: entry.values.job,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
                     access: entry.values.accessrole,
@@ -429,7 +431,7 @@ async function submitForm(): Promise<void> {
 
             await navigateTo({
                 name: 'documents-id',
-                params: { id: response.documentId },
+                params: { id: response.documentId.toString() },
             });
 
             return res();
@@ -464,8 +466,8 @@ async function editForm(): Promise<void> {
                 if (!entry.values.char) return;
 
                 reqAccess.users.push({
-                    id: 0,
-                    documentId: 0,
+                    id: BigInt(0),
+                    documentId: BigInt(0),
                     access: entry.values.accessrole,
                     userId: entry.values.char,
                 });
@@ -473,8 +475,8 @@ async function editForm(): Promise<void> {
                 if (!entry.values.job) return;
 
                 reqAccess.jobs.push({
-                    id: 0,
-                    documentId: 0,
+                    id: BigInt(0),
+                    documentId: BigInt(0),
                     access: entry.values.accessrole,
                     job: entry.values.job,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
@@ -487,7 +489,7 @@ async function editForm(): Promise<void> {
             const call = $grpc.getDocStoreClient().updateDocument(req);
             const { response } = await call;
 
-            const referencesToRemove: number[] = [];
+            const referencesToRemove: bigint[] = [];
             currentReferences.value.forEach((ref) => {
                 if (!referenceManagerData.value.has(ref.id!)) referencesToRemove.push(ref.id!);
             });
@@ -497,7 +499,7 @@ async function editForm(): Promise<void> {
                 });
             });
 
-            const relationsToRemove: number[] = [];
+            const relationsToRemove: bigint[] = [];
             currentRelations.value.forEach((rel) => {
                 if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
             });
@@ -535,7 +537,7 @@ async function editForm(): Promise<void> {
 
             await navigateTo({
                 name: 'documents-id',
-                params: { id: response.documentId },
+                params: { id: response.documentId.toString() },
             });
             return res();
         } catch (e) {
@@ -600,7 +602,7 @@ async function editForm(): Promise<void> {
                         >
                             <ComboboxOption
                                 v-for="category in entriesCategory"
-                                :key="category.id"
+                                :key="category.id?.toString()"
                                 :value="category"
                                 as="category"
                                 v-slot="{ active, selected }"
@@ -670,7 +672,7 @@ async function editForm(): Promise<void> {
                                 <ListboxOption
                                     as="template"
                                     v-for="type in openclose"
-                                    :key="type.id"
+                                    :key="type.id?.toString()"
                                     :value="type"
                                     v-slot="{ active, selected }"
                                 >
@@ -733,7 +735,7 @@ async function editForm(): Promise<void> {
         </h2>
         <DocumentAccessEntry
             v-for="entry in access.values()"
-            :key="entry.id"
+            :key="entry.id?.toString()"
             :init="entry"
             :access-types="accessTypes"
             @typeChange="updateAccessEntryType($event)"
@@ -755,7 +757,7 @@ async function editForm(): Promise<void> {
     </div>
     <div class="sm:flex sm:flex-row-reverse">
         <button
-            v-if="!props.id"
+            v-if="!props.id?.toString()"
             @click="submitForm()"
             :disabled="!canEdit"
             class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
@@ -763,7 +765,7 @@ async function editForm(): Promise<void> {
             {{ t('common.submit') }}
         </button>
         <button
-            v-if="props.id"
+            v-if="props.id?.toString()"
             @click="editForm()"
             :disabled="!canEdit"
             class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"

@@ -43,9 +43,9 @@ export const useAuthStore = defineStore('auth', {
             this.loggingIn = false;
             this.loginError = errorMessage;
         },
-        setAccessToken(accessToken: null | string, expiration: null | number | Date): void {
+        setAccessToken(accessToken: null | string, expiration: null | bigint | Date): void {
             this.accessToken = accessToken;
-            if (typeof expiration === 'number') expiration = new Date(expiration);
+            if (typeof expiration === 'bigint') expiration = new Date(expiration.toString());
             this.accessTokenExpiration = expiration;
         },
         setActiveChar(char: null | User): void {

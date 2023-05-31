@@ -18,7 +18,7 @@ const query = ref<{ name: string; phoneNumber?: string; wanted?: boolean }>({
     name: '',
 });
 const pagination = ref<PaginationResponse>();
-const offset = ref(0);
+const offset = ref(BigInt(0));
 
 const {
     data: users,

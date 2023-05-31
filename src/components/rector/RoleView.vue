@@ -17,17 +17,17 @@ const notifications = useNotificationsStore();
 const { t } = useI18n();
 
 const props = defineProps<{
-    roleId: number;
+    roleId: bigint;
 }>();
 
 const role = ref<Role>();
 
 const permList = ref<Permission[]>([]);
 const permCategories = ref<Set<string>>(new Set());
-const permStates = ref<Map<number, boolean | undefined>>(new Map());
+const permStates = ref<Map<bigint, boolean | undefined>>(new Map());
 
 const attrList = ref<RoleAttribute[]>([]);
-const attrStates = ref<Map<number, AttributeValues | undefined>>(new Map());
+const attrStates = ref<Map<bigint, AttributeValues | undefined>>(new Map());
 
 const jobs = ref<Job[]>([]);
 
@@ -127,7 +127,7 @@ async function propogatePermissionStates(): Promise<void> {
     });
 }
 
-async function updatePermissionState(perm: number, state: boolean | undefined): Promise<void> {
+async function updatePermissionState(perm: bigint, state: boolean | undefined): Promise<void> {
     permStates.value.set(perm, state);
 }
 
@@ -168,7 +168,7 @@ async function updatePermissions(): Promise<void> {
                 category: '',
                 key: '',
                 name: '',
-                permissionId: 0,
+                permissionId: BigInt(0),
                 type: '',
             });
         } else if (state === undefined) {
@@ -178,7 +178,7 @@ async function updatePermissions(): Promise<void> {
                 category: '',
                 key: '',
                 name: '',
-                permissionId: 0,
+                permissionId: BigInt(0),
                 type: '',
             });
         }
@@ -270,7 +270,7 @@ onMounted(async () => {
                             <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
                                 <div
                                     v-for="(perm, idx) in permList.filter((p) => p.category === category)"
-                                    :key="perm.id"
+                                    :key="perm.id?.toString()"
                                     class="flex flex-col gap-2"
                                 >
                                     <div class="flex flex-row gap-4">

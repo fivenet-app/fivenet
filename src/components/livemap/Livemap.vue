@@ -516,7 +516,7 @@ watchDebounced(postalQuery, () => findPostal(), {
             >
                 <LMarker
                     v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
-                    :key="marker.id"
+                    :key="marker.id?.toString()"
                     :latLng="[marker.y, marker.x]"
                     :name="marker.name"
                     :icon="getIcon('player', marker) as L.Icon"
@@ -544,7 +544,7 @@ watchDebounced(postalQuery, () => findPostal(), {
             >
                 <LMarker
                     v-for="marker in dispatchMarkersFiltered.filter((m) => m.job === job.name)"
-                    :key="marker.id"
+                    :key="marker.id?.toString()"
                     :latLng="[marker.y, marker.x]"
                     :name="marker.name"
                     :icon="getIcon('dispatch', marker) as L.Icon"

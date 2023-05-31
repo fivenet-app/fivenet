@@ -12,7 +12,7 @@ const clipboardStore = useClipboardStore();
 const { activeChar } = storeToRefs(authStore);
 
 const props = defineProps<{
-    id: number;
+    id: bigint;
     open: boolean;
 }>();
 

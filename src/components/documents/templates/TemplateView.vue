@@ -10,7 +10,7 @@ const { $grpc } = useNuxtApp();
 const notifications = useNotificationsStore();
 
 const props = defineProps<{
-    templateId: number;
+    templateId: bigint;
 }>();
 
 const {

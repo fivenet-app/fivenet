@@ -24,7 +24,7 @@ const { t } = useI18n();
 
 const query = route.query;
 if (query.t && query.t !== '' && query.exp) {
-    setAccessToken(query.t as string, parseInt(query.exp as string));
+    setAccessToken(query.t as string, BigInt(query.exp as string));
 
     notifications.dispatchNotification({
         title: t('notifications.auth.oauth2_login.success.title'),

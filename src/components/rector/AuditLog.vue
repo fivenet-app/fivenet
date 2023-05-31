@@ -18,7 +18,7 @@ const { $grpc } = useNuxtApp();
 
 const query = ref<{ from: string; to: string }>({ from: '', to: '' });
 const pagination = ref<PaginationResponse>();
-const offset = ref(0);
+const offset = ref(BigInt(0));
 
 async function getAuditLog(): Promise<Array<AuditEntry>> {
     return new Promise(async (res, rej) => {
@@ -252,7 +252,7 @@ watchDebounced(queryChar, async () => await findChars(), {
                                 <tbody class="divide-y divide-base-800">
                                     <AuditLogEntry
                                         v-for="log in logs"
-                                        :key="log.id"
+                                        :key="log.id?.toString()"
                                         :log="log"
                                         class="transition-colors hover:bg-neutral/5"
                                     />

@@ -66,16 +66,18 @@ export const useClipboardStore = defineStore('clipboard', {
         },
         // Documents
         addDocument(document: Document): void {
+            const docId = document.id.toString();
             const idx = this.documents.findIndex((o: ClipboardDocument) => {
-                return o.id === document.id;
+                return o.id === docId;
             });
             if (idx === -1) {
                 this.documents.unshift(new ClipboardDocument(document));
             }
         },
-        removeDocument(id: number): void {
+        removeDocument(id: bigint): void {
+            const docId = id.toString();
             const idx = this.documents.findIndex((o: ClipboardDocument) => {
-                return o.id === id;
+                return o.id === docId;
             });
             if (idx > -1) {
                 this.documents.splice(idx, 1);
@@ -215,7 +217,7 @@ export function getUser(obj: ClipboardUser): User {
 }
 
 export class ClipboardDocument {
-    public id: number;
+    public id: string;
     public createdAt: string;
     public title: string;
     public state: string;
@@ -223,7 +225,7 @@ export class ClipboardDocument {
     public closed: boolean;
 
     constructor(d: Document) {
-        this.id = d.id;
+        this.id = d.id.toString();
         this.createdAt = google_protobuf_timestamp.Timestamp.toDate(d.createdAt?.timestamp!).toLocaleDateString();
         this.title = d.title;
         this.state = d.state;
@@ -240,7 +242,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
     const user = getUser(obj.creator);
 
     return {
-        id: obj.id,
+        id: BigInt(obj.id),
         createdAt: {
             timestamp: {
                 nanos: ts.timestamp?.nanos!,
@@ -252,7 +254,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         creator: user,
         creatorId: user.userId,
         closed: obj.closed,
-        categoryId: 0,
+        categoryId: BigInt(0),
     };
 }
 

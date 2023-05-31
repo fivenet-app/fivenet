@@ -6,13 +6,13 @@ const props = defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'offsetChange', offset: number): void;
+    (e: 'offsetChange', offset: bigint): void;
 }>();
 
-const offset = computed(() => props.pagination?.offset ?? 0);
-const total = computed(() => props.pagination?.totalCount ?? 0);
-const pageSize = computed(() => props.pagination?.pageSize ?? 0);
-const end = computed(() => props.pagination?.end ?? 0);
+const offset = computed(() => (props.pagination?.offset ?? 0) as bigint);
+const total = computed(() => (props.pagination?.totalCount ?? 0) as bigint);
+const pageSize = computed(() => (props.pagination?.pageSize ?? 0) as bigint);
+const end = computed(() => (props.pagination?.end ?? 0) as bigint);
 </script>
 
 <template>
@@ -21,7 +21,11 @@ const end = computed(() => props.pagination?.end ?? 0);
             <p
                 class="text-sm text-gray-300"
                 v-html="
-                    $t('components.partials.table_pagination.showing_results', [total === 0 ? offset : offset + 1, end, total])
+                    $t('components.partials.table_pagination.showing_results', [
+                        total === BigInt(0) ? offset : offset + BigInt(1),
+                        end,
+                        total,
+                    ])
                 "
             />
         </div>

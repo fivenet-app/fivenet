@@ -81,7 +81,7 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 		--proto_path=./validate \
 		--proto_path=./proto \
 		--ts_out=./gen/ts \
-		--ts_opt=optimize_code_size,long_type_number \
+		--ts_opt=optimize_code_size,long_type_bigint \
 		$(shell find proto/ -iname "*.proto")
 
 	node ./internal/scripts/proto-patch.js
