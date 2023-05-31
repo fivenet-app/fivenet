@@ -9,6 +9,13 @@ Golang templating is used. In addition to base [Golang html/template functions](
 * The whole template needs to be wrapped in `<p>` and `</p>`.
 * Use `<br>` for new lines.
 
+## Available Variables
+
+* `.documents` - Documents that are in the user's clipboard.
+* `.users` - Citizens/ Users that are in the user's clipboard.
+* `.vehicles` - Vehicles that are in the user's clipboard.
+* `.activeChar` - Submitting user's info.
+
 ## Snippets
 
 ### Access Creator Info
@@ -20,7 +27,7 @@ Golang templating is used. In addition to base [Golang html/template functions](
 ### Get first Citizen
 
 ```gotemplate
-{{- $citizen := first .usersList -}}
+{{- $citizen := first .users -}}
 ```
 
 Example access citizen info:
