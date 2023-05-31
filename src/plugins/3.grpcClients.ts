@@ -76,7 +76,7 @@ export class GRPCClients {
             contentI18n: true,
         };
 
-        switch (err.code) {
+        switch (err.code.toLowerCase()) {
             case 'internal':
                 break;
 
