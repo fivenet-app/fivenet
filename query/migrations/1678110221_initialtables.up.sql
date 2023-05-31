@@ -26,8 +26,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_categories` (
   `description` longtext DEFAULT NULL,
   `job` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_fivenet_documents_categories_job` (`job`),
-  CONSTRAINT `fk_fivenet_documents_categories_job` FOREIGN KEY (`job`) REFERENCES `jobs` (`name`)
+  KEY `idx_fivenet_documents_categories_job` (`job`)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -52,8 +51,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates` (
   KEY `idx_fivenet_documents_templates_weight` (`weight`),
   KEY `idx_fivenet_documents_templates_category_id` (`category_id`),
   CONSTRAINT `fk_fivenet_documents_templates_categories` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_fivenet_documents_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_fivenet_documents_templates_creator_job` FOREIGN KEY (`creator_job`) REFERENCES `jobs` (`name`)
+  CONSTRAINT `fk_fivenet_documents_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: fivenet_documents
@@ -79,8 +77,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents` (
   FULLTEXT KEY `idx_fivenet_documents_title` (`title`),
   FULLTEXT KEY `idx_fivenet_documents_content` (`content`),
   CONSTRAINT `fk_fivenet_documents_categories` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_fivenet_documents_categories_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_documents_categories_creator_job` FOREIGN KEY (`creator_job`) REFERENCES `jobs` (`name`)
+  CONSTRAINT `fk_fivenet_documents_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table:fivenet_documents_comments
@@ -113,8 +110,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_job_access` (
   UNIQUE KEY `idx_fivenet_documents_job_access` (`document_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_documents_job_access_deleted_at` (`deleted_at`),
   KEY `idx_fivenet_documents_job_access_document_id` (`document_id`),
-  CONSTRAINT `fk_fivenet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_documents_job_access_job` FOREIGN KEY (`job`) REFERENCES `jobs` (`name`)
+  CONSTRAINT `fk_fivenet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: fivenet_documents_references
@@ -213,8 +209,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
   `job` varchar(20) DEFAULT NULL,
   UNIQUE KEY `idx_fivenet_user_props_unique` (`user_id`),
   KEY `idx_fivenet_user_props_wanted` (`wanted`),
-  CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_user_props_job` FOREIGN KEY (`job`) REFERENCES `jobs` (`name`)
+  CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 COMMIT;

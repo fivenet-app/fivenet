@@ -14,8 +14,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates_job_access` (
   UNIQUE KEY `idx_fivenet_documents_templates_job_access` (`template_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_documents_templates_job_access_deleted_at` (`deleted_at`),
   KEY `idx_fivenet_documents_templates_job_access_template_id` (`template_id`),
-  CONSTRAINT `fk_fivenet_documents_templates_job_access_template_id` FOREIGN KEY (`template_id`) REFERENCES `fivenet_documents_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_documents_templates_job_access_job` FOREIGN KEY (`job`) REFERENCES `jobs` (`name`)
+  CONSTRAINT `fk_fivenet_documents_templates_job_access_template_id` FOREIGN KEY (`template_id`) REFERENCES `fivenet_documents_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 COMMIT;

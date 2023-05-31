@@ -33,8 +33,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_roles` (
   `job` varchar(50) NOT NULL,
   `grade` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_fivenet_roles_job_grade_unique` (`job`,`grade`),
-  CONSTRAINT `fk_fivenet_roles_job` FOREIGN KEY (`job`) REFERENCES `jobs` (`name`)
+  UNIQUE KEY `idx_fivenet_roles_job_grade_unique` (`job`,`grade`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: fivenet_role_attrs
