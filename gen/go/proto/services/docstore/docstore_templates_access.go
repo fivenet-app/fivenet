@@ -45,18 +45,9 @@ func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([
 	jobStmt := tDTemplatesJobAccess.
 		SELECT(
 			tDTemplatesJobAccess.AllColumns,
-			tCreator.ID,
-			tCreator.Identifier,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
 		).
 		FROM(
-			tDTemplatesJobAccess.
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tDTemplatesJobAccess.CreatorID),
-				),
+			tDTemplatesJobAccess,
 		).
 		WHERE(
 			tDTemplatesJobAccess.TemplateID.EQ(jet.Uint64(templateId)),
@@ -154,14 +145,12 @@ func (s *Server) createTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 				tDTemplatesJobAccess.Job,
 				tDTemplatesJobAccess.MinimumGrade,
 				tDTemplatesJobAccess.Access,
-				tDTemplatesJobAccess.CreatorID,
 			).
 			VALUES(
 				templateId,
 				access[k].Job,
 				access[k].MinimumGrade,
 				access[k].Access,
-				userId,
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -186,14 +175,12 @@ func (s *Server) updateTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 				tDTemplatesJobAccess.Job,
 				tDTemplatesJobAccess.MinimumGrade,
 				tDTemplatesJobAccess.Access,
-				tDTemplatesJobAccess.CreatorID,
 			).
 			SET(
 				templateId,
 				access[k].Job,
 				access[k].MinimumGrade,
 				access[k].Access,
-				userId,
 			).
 			WHERE(
 				tDTemplatesJobAccess.ID.EQ(jet.Uint64(access[k].Id)),

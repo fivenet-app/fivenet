@@ -25,7 +25,6 @@ type fivenetDocumentsTemplatesJobAccessTable struct {
 	Job          mysql.ColumnString
 	MinimumGrade mysql.ColumnInteger
 	Access       mysql.ColumnInteger
-	CreatorID    mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -74,9 +73,8 @@ func newFivenetDocumentsTemplatesJobAccessTableImpl(schemaName, tableName, alias
 		JobColumn          = mysql.StringColumn("job")
 		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
 		AccessColumn       = mysql.IntegerColumn("access")
-		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TemplateIDColumn, JobColumn, MinimumGradeColumn, AccessColumn, CreatorIDColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TemplateIDColumn, JobColumn, MinimumGradeColumn, AccessColumn, CreatorIDColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TemplateIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TemplateIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
 	)
 
 	return fivenetDocumentsTemplatesJobAccessTable{
@@ -91,7 +89,6 @@ func newFivenetDocumentsTemplatesJobAccessTableImpl(schemaName, tableName, alias
 		Job:          JobColumn,
 		MinimumGrade: MinimumGradeColumn,
 		Access:       AccessColumn,
-		CreatorID:    CreatorIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

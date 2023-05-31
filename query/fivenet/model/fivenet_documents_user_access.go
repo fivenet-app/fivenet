@@ -18,5 +18,4 @@ type FivenetDocumentsUserAccess struct {
 	DocumentID *uint64    `json:"document_id"`
 	UserID     int32      `json:"user_id"`
 	Access     int16      `json:"access"`
-	CreatorID  int32      `json:"creator_id"`
 }

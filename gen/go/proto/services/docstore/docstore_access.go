@@ -242,18 +242,9 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 	jobStmt := dJobAccess.
 		SELECT(
 			dJobAccess.AllColumns,
-			tCreator.ID,
-			tCreator.Identifier,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
 		).
 		FROM(
-			dJobAccess.
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(dJobAccess.CreatorID),
-				),
+			dJobAccess,
 		).
 		WHERE(
 			dJobAccess.DocumentID.EQ(jet.Uint64(documentId)),
@@ -280,20 +271,11 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 			user.JobGrade,
 			user.Firstname,
 			user.Lastname,
-			tCreator.ID,
-			tCreator.Identifier,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
 		).
 		FROM(
 			dUserAccess.
 				LEFT_JOIN(user,
 					user.ID.EQ(dUserAccess.UserID),
-				).
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(dUserAccess.CreatorID),
 				),
 		).
 		WHERE(
@@ -331,14 +313,12 @@ func (s *Server) createDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 					dJobAccess.Job,
 					dJobAccess.MinimumGrade,
 					dJobAccess.Access,
-					dJobAccess.CreatorID,
 				).
 				VALUES(
 					documentId,
 					access.Jobs[k].Job,
 					access.Jobs[k].MinimumGrade,
 					access.Jobs[k].Access,
-					userId,
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -356,13 +336,11 @@ func (s *Server) createDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 					dUserAccess.DocumentID,
 					dUserAccess.UserID,
 					dUserAccess.Access,
-					dUserAccess.CreatorID,
 				).
 				VALUES(
 					documentId,
 					access.Users[k].UserId,
 					access.Users[k].Access,
-					userId,
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -389,14 +367,12 @@ func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 					dJobAccess.Job,
 					dJobAccess.MinimumGrade,
 					dJobAccess.Access,
-					dJobAccess.CreatorID,
 				).
 				SET(
 					documentId,
 					access.Jobs[k].Job,
 					access.Jobs[k].MinimumGrade,
 					access.Jobs[k].Access,
-					userId,
 				).
 				WHERE(
 					dJobAccess.ID.EQ(jet.Uint64(access.Jobs[k].Id)),
@@ -417,13 +393,11 @@ func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 					dUserAccess.DocumentID,
 					dUserAccess.UserID,
 					dUserAccess.Access,
-					dUserAccess.CreatorID,
 				).
 				SET(
 					documentId,
 					access.Users[k].UserId,
 					access.Users[k].Access,
-					userId,
 				).
 				WHERE(
 					dUserAccess.ID.EQ(jet.Uint64(access.Users[k].Id)),

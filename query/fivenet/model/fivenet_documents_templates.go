@@ -24,6 +24,6 @@ type FivenetDocumentsTemplates struct {
 	Content      string     `json:"content"`
 	Access       *string    `json:"access"`
 	Schema       *string    `json:"schema"`
-	CreatorID    int32      `json:"creator_id"`
+	CreatorID    *int32     `json:"creator_id"`
 	CreatorJob   string     `json:"creator_job"`
 }

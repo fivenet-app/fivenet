@@ -20,6 +20,7 @@ type fivenetUserPropsTable struct {
 	UserID mysql.ColumnInteger
 	Wanted mysql.ColumnBool
 	Job    mysql.ColumnString
+	Grade  mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -63,8 +64,9 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		UserIDColumn   = mysql.IntegerColumn("user_id")
 		WantedColumn   = mysql.BoolColumn("wanted")
 		JobColumn      = mysql.StringColumn("job")
-		allColumns     = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn}
-		mutableColumns = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn}
+		GradeColumn    = mysql.IntegerColumn("grade")
+		allColumns     = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, GradeColumn}
+		mutableColumns = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, GradeColumn}
 	)
 
 	return fivenetUserPropsTable{
@@ -74,6 +76,7 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		UserID: UserIDColumn,
 		Wanted: WantedColumn,
 		Job:    JobColumn,
+		Grade:  GradeColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

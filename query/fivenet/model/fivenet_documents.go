@@ -21,7 +21,7 @@ type FivenetDocuments struct {
 	ContentType int16      `json:"content_type"`
 	Content     string     `json:"content"`
 	Data        *string    `json:"data"`
-	CreatorID   int32      `json:"creator_id"`
+	CreatorID   *int32     `json:"creator_id"`
 	CreatorJob  string     `json:"creator_job"`
 	State       string     `json:"state"`
 	Closed      *bool      `json:"closed"`

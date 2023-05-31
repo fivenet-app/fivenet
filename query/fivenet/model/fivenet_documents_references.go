@@ -18,5 +18,5 @@ type FivenetDocumentsReferences struct {
 	SourceDocumentID uint64     `json:"source_document_id"`
 	Reference        int16      `json:"reference"`
 	TargetDocumentID uint64     `json:"target_document_id"`
-	CreatorID        int32      `json:"creator_id"`
+	CreatorID        *int32     `json:"creator_id"`
 }

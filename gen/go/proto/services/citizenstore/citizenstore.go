@@ -555,7 +555,7 @@ func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, 
 			tUserActivity.Reason,
 		).
 		MODEL(&model.FivenetUserActivity{
-			SourceUserID: userId,
+			SourceUserID: &userId,
 			TargetUserID: targetUserId,
 			Type:         int16(activityType),
 			Key:          key,

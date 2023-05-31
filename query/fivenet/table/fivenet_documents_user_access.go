@@ -23,7 +23,6 @@ type fivenetDocumentsUserAccessTable struct {
 	DocumentID mysql.ColumnInteger
 	UserID     mysql.ColumnInteger
 	Access     mysql.ColumnInteger
-	CreatorID  mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -70,9 +69,8 @@ func newFivenetDocumentsUserAccessTableImpl(schemaName, tableName, alias string)
 		DocumentIDColumn = mysql.IntegerColumn("document_id")
 		UserIDColumn     = mysql.IntegerColumn("user_id")
 		AccessColumn     = mysql.IntegerColumn("access")
-		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn, CreatorIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn, CreatorIDColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn}
 	)
 
 	return fivenetDocumentsUserAccessTable{
@@ -85,7 +83,6 @@ func newFivenetDocumentsUserAccessTableImpl(schemaName, tableName, alias string)
 		DocumentID: DocumentIDColumn,
 		UserID:     UserIDColumn,
 		Access:     AccessColumn,
-		CreatorID:  CreatorIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
