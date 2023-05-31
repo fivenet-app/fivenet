@@ -18,6 +18,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { watchDebounced } from '@vueuse/core';
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
+import ImageCompress from 'quill-image-compress';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
@@ -113,6 +114,20 @@ const modules = [
     {
         name: 'imageActions',
         module: ImageActions,
+    },
+    {
+        name: 'imageCompress',
+        module: ImageCompress,
+        options: {
+            quality: 0.92,
+            maxWidth: 2250,
+            maxHeight: 1500,
+            imageType: 'image/jpeg',
+            keepImageTypes: ['image/jpeg', 'image/png'],
+            debug: false,
+            suppressErrorLogging: false,
+            insertIntoEditor: undefined,
+        },
     },
 ] as Quill.Module[];
 
