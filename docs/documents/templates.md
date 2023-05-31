@@ -11,6 +11,12 @@ Golang templating is used. In addition to base [Golang html/template functions](
 
 ## Snippets
 
+### Access Creator Info
+
+```gotemplate
+{{ .activeChar.firstname }}, {{ .activeChar.lastname }}
+```
+
 ### Get first Citizen
 
 ```gotemplate

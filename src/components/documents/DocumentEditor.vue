@@ -16,6 +16,8 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { watchDebounced } from '@vueuse/core';
+import { ImageActions } from '@xeger/quill-image-actions';
+import { ImageFormats } from '@xeger/quill-image-formats';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
@@ -103,7 +105,45 @@ let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
 const selectedCategory = ref<DocumentCategory | undefined>(undefined);
 
-const modules = [] as Quill.Module[];
+const modules = [
+    {
+        name: 'imageFormats',
+        module: ImageFormats,
+    },
+    {
+        name: 'imageActions',
+        module: ImageActions,
+    },
+] as Quill.Module[];
+
+// keep what you want but you need the formats option!
+const formats = [
+    'align',
+    'background',
+    'blockquote',
+    'bold',
+    'code-block',
+    'color',
+    'float',
+    'font',
+    'header',
+    'height',
+    'image',
+    'italic',
+    'link',
+    'script',
+    'strike',
+    'size',
+    'underline',
+    'width',
+    'video',
+];
+const options = {
+    readOnly: false,
+    contentType: 'html',
+    theme: 'snow',
+    formats: formats,
+};
 
 onMounted(async () => {
     await findCategories();
@@ -552,6 +592,17 @@ async function editForm(): Promise<void> {
 .ql-container {
     border: none !important;
 }
+
+.ql-editor img,
+.ql-editor svg,
+.ql-editor video,
+.ql-editor canvas,
+.ql-editor audio,
+.ql-editor iframe,
+.ql-editor embed,
+.ql-editor object {
+    display: inline !important;
+}
 </style>
 
 <template>
@@ -705,7 +756,7 @@ async function editForm(): Promise<void> {
         </div>
     </div>
     <div class="bg-neutral min-h-[32rem]">
-        <QuillEditor v-model:content="doc.content" content-type="html" toolbar="full" theme="snow" :modules="modules" />
+        <QuillEditor v-model:content="doc.content" content-type="html" toolbar="full" :modules="modules" :options="options" />
     </div>
     <div class="flex flex-row">
         <div class="flex-1">

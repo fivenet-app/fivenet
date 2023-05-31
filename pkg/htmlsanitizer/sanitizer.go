@@ -12,6 +12,11 @@ var (
 	policyStripTags *bluemonday.Policy
 )
 
+var (
+	classRegex = regexp.MustCompile(`(?m)^(ql-.*[ ]*)$`)
+	colorRegex = regexp.MustCompile(`(?m)(?i)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
+)
+
 func init() {
 	p = bluemonday.UGCPolicy()
 
@@ -27,9 +32,10 @@ func init() {
 	p.AllowDataURIImages()
 
 	// Style
+	p.AllowAttrs("class").Matching(classRegex).Globally()
 	p.AllowAttrs("style").OnElements("span", "p")
 	// Allow the 'color' property with valid RGB(A) hex values only (on any element allowed a 'style' attribute)
-	p.AllowStyles("color").Matching(regexp.MustCompile(`(?m)(?i)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)).Globally()
+	p.AllowStyles("color").Matching(colorRegex).Globally()
 	// Allow the 'text-decoration' property to be set to 'underline', 'line-through' or 'none'
 	// on 'span' elements only
 	p.AllowStyles("text-decoration").MatchingEnum("underline", "line-through", "none").OnElements("span", "p")
