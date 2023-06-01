@@ -78,12 +78,29 @@ async function markRead(ids: bigint[]): Promise<void> {
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
-                        <label for="search" class="block mb-2 text-sm font-medium leading-6 text-neutral">
-                            {{ $t('common.search') }}
-                        </label>
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1 form-control">
-                                <!-- TODO Include read notification toggle -->
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral"
+                                    >{{ $t('pages.notifications.include_read') }}
+                                </label>
+                                <div class="relative flex items-center mt-3">
+                                    <Switch
+                                        v-model="includeRead"
+                                        :class="[
+                                            includeRead ? 'bg-error-500' : 'bg-base-700',
+                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
+                                        ]"
+                                    >
+                                        <span class="sr-only">Wanted</span>
+                                        <span
+                                            aria-hidden="true"
+                                            :class="[
+                                                includeRead ? 'translate-x-5' : 'translate-x-0',
+                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                            ]"
+                                        />
+                                    </Switch>
+                                </div>
                             </div>
                             <div class="flex-initial">
                                 <button
@@ -163,6 +180,7 @@ async function markRead(ids: bigint[]): Promise<void> {
                                             class="h-5 w-5 flex-none text-gray-400"
                                             aria-hidden="true"
                                         />
+                                        <span class="h-5 w-5" v-else></span>
                                     </div>
                                 </li>
                             </ul>

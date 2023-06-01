@@ -138,7 +138,8 @@
         "notifications": {
             "title": "Notifications",
             "mark_read": "Mark as read",
-            "mark_all_read": "Mark all as read"
+            "mark_all_read": "Mark all as read",
+            "include_read": "Read Notifications"
         }
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",

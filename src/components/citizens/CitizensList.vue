@@ -110,8 +110,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 class="flex-initial form-control"
                                 v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.Wanted'"
                             >
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral"
-                                    >{{ $t('components.citizens.citizens_list.only_wanted') }}
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('components.citizens.citizens_list.only_wanted') }}
                                 </label>
                                 <div class="relative flex items-center mt-3">
                                     <Switch
@@ -121,7 +121,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
                                         ]"
                                     >
-                                        <span class="sr-only">Wanted</span>
+                                        <span class="sr-only">
+                                            {{ $t('components.citizens.citizens_list.only_wanted') }}
+                                        </span>
                                         <span
                                             aria-hidden="true"
                                             :class="[
