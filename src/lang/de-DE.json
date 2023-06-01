@@ -529,13 +529,13 @@
                 "title": "Server ist nicht erreichbar",
                 "content": "FiveNet-Server kann nicht erreicht werden, bitte überprüfen Sie ihre Internetverbindung."
             },
-            "not_found": {
-                "title": "Nicht gefunden",
-                "content": "Inhalt nicht gefunden."
-            },
             "default": {
                 "title": "Unbekannter Fehler ist aufgetreten",
                 "content": "{0} (Code: {1})"
+            },
+            "not_found": {
+                "title": "Nicht gefunden",
+                "content": "Inhalt nicht gefunden."
             }
         },
         "job_switcher": {
@@ -566,12 +566,6 @@
             "title": "Dokument gelöscht!",
             "content": "Dokument wurde gelöscht."
         },
-        "document_view": {
-            "copy_document_id": {
-                "title": "Dokument ID",
-                "content":"Dokument ID in die Zwischenablage kopiert."
-            }
-        },
         "renewed_token": {
             "title": "Zugangstokens erneuert",
             "content": "Dein Zugangstokens wurde automatisch erneuert."
@@ -598,6 +592,10 @@
                     "title": "Anmeldung fehlgeschlagen",
                     "content": "Third-Party Anmeldung fehlgeschlagen ({0}), bitte erneut versuchen."
                 }
+            },
+            "no_permission": {
+                "title": "Du hast keine Berechtigung dazu!",
+                "content": "Keine Berechtigung um zu {0} gehen."
             }
         },
         "language_switched": {
@@ -608,10 +606,30 @@
             "title": "Strafenrechner: Kopiert",
             "content": "Zusammenfassung in die Zwischenablage kopiert."
         },
+        "document_view": {
+            "copy_document_id": {
+                "title": "Dokument ID",
+                "content": "Dokument ID in die Zwischenablage kopiert."
+            }
+        },
         "notifi": {
             "document_relation_mentioned": {
                 "title": "Dokument: Sie wurden erwähnt",
                 "content": "Sie wurden in Dokument \"{0}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
+            }
+        },
+        "templates": {
+            "created": {
+                "title": "Vorlage: Erstellt",
+                "content": "Vorlage erfolgreich erstellt."
+            },
+            "updated": {
+                "title": "Vorlage: Aktualisiert",
+                "content": "Vorlage erfoglreich aktualisiert."
+            },
+            "deleted": {
+                "title": "Vorlage: Gelöscht",
+                "content": "Vorlage erfolgreich gelöscht."
             }
         }
     },
@@ -646,7 +664,7 @@
             },
             "ChooseCharacter": {
                 "key": "Character Auswählen",
-                "description": ""
+                "description": "Berechtigung zum Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
             }
         },
         "CitizenStoreService": {
@@ -698,31 +716,31 @@
             },
             "AddDocumentRelation": {
                 "key": "Dokumenten-Bürger-Beziehungen hinzufügen",
-                "description": ""
+                "description": "Bürgerbeziehung hinzufügen/entfernen"
             },
             "CreateDocument": {
                 "key": "Dokument Erstellen",
-                "description": ""
+                "description": "Ein neues Dokument erstellen"
             },
             "DeleteDocumentComment": {
                 "key": "Dokumenten Kommentare löschen",
-                "description": ""
+                "description": "Eigenen Dokumentenkommentar löschen"
             },
             "ListDocuments": {
                 "key": "Dokumenten Suchen und Auflisten",
-                "description": ""
+                "description": "Dokumente auflisten/suchen"
             },
             "GetDocument": {
                 "key": "Dokumente Anzeigen können",
-                "description": ""
+                "description": "Ein Dokument anzeigen"
             },
             "GetDocumentComments": {
                 "key": "Dokumenten Kommentare Sehen",
-                "description": ""
+                "description": "Dokumentkommentare anzeigen"
             },
             "ListUserDocuments": {
                 "key": "Bürger-Dokumente Sehen",
-                "description": ""
+                "description": "Die mit einem Bürger verknüpften Dokumente anzeigen"
             },
             "ListTemplates": {
                 "key": "Vorlagen auflisten",
@@ -754,11 +772,11 @@
             },
             "DeleteTemplate": {
                 "key": "Vorlage löschen",
-                "description": ""
+                "description": "Dokumentenvorlagen löschen"
             },
             "DeleteDocument": {
                 "key": "Dokumenten Löschung",
-                "description": ""
+                "description": "Ein Dokument löschen"
             }
         },
         "LivemapperService": {
@@ -772,7 +790,7 @@
             "category": "Kontrollzentrum",
             "GetJobProps": {
                 "key": "Job Eigenschaften ansehen",
-                "description": ""
+                "description": "Die Eigenschaften deines Jobs anzeigen"
             },
             "SetJobProps": {
                 "key": "Job Eigenschaften ändern",
@@ -780,15 +798,15 @@
             },
             "GetRoles": {
                 "key": "Rolen ansehen",
-                "description": ""
+                "description": "FiveNet-Jobrollen abrufen/auflisten"
             },
             "CreateRole": {
                 "key": "Rollen erstellen",
-                "description": ""
+                "description": "FiveNet-Jobrollen erstellen"
             },
             "DeleteRole": {
                 "key": "Rollen löschen",
-                "description": ""
+                "description": "FiveNet-Jobrollen löschen"
             },
             "GetPermissions": {
                 "key": "Berechtigungen ansehen können",
