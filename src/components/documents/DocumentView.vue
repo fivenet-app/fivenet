@@ -73,8 +73,8 @@ async function deleteDocument(): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: t('notifications.document_deleted.title'),
-                content: t('notifications.document_deleted.content'),
+                title: { key: 'notifications.document_deleted.title', parameters: [] },
+                content: { key: 'notifications.document_deleted.content', parameters: [] },
                 type: 'success',
             });
 
@@ -94,8 +94,8 @@ function addToClipboard(): void {
     }
 
     notifications.dispatchNotification({
-        title: t('notifications.clipboard.document_added.title'),
-        content: t('notifications.clipboard.document_added.content'),
+        title: { key: 'notifications.clipboard.document_added.title', parameters: [] },
+        content: { key: 'notifications.clipboard.document_added.content', parameters: [] },
         duration: 3500,
         type: 'info',
     });
@@ -104,8 +104,8 @@ function addToClipboard(): void {
 function copyDocumentIDToClipboard(): void {
     clipboard.copy('DOC-' + props.documentId);
     notifications.dispatchNotification({
-        title: t('notifications.document_view.copy_document_id.title'),
-        content: t('notifications.document_view.copy_document_id.content'),
+        title: { key: 'notifications.document_view.copy_document_id.title', parameters: [] },
+        content: { key: 'notifications.document_view.copy_document_id.content', parameters: [] },
         duration: 3500,
         type: 'info',
     });

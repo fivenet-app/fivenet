@@ -134,7 +134,8 @@
             "subtitle": "A fatal error occured, please try again in a few seconds.",
             "error_message": "Error message:",
             "copy_error": "Copy Error message"
-        }
+        },
+        "notifications": "Notifications"
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
     "components": {
@@ -215,7 +216,8 @@
             },
             "sidebar_language_switcher": {
                 "open_switcher": "Open language menu"
-            }
+            },
+            "sidebar_notifications": "Go to Notifications"
         },
         "clipboard": {
             "clipboard_button": {
@@ -442,7 +444,8 @@
         "reason": "Reason | Reasons",
         "preview": "Preview",
         "option": "Option | Options",
-        "weight": "Weight"
+        "weight": "Weight",
+        "notification": "Notification | Notifications"
     },
     "notifications": {
         "clipboard": {
@@ -526,8 +529,13 @@
                 "title": "Unable to reach server",
                 "content": "Unable to reach FiveNet server, please check your internet connection."
             },
+            "not_found": {
+                "title": "Not found",
+                "content": "Content not found."
+            },
             "default": {
-                "title": "Unknown error occured"
+                "title": "Unknown error occured",
+                "content": "{0} (Code: {1})"
             }
         },
         "job_switcher": {
@@ -590,6 +598,10 @@
                     "title": "Failed to login using provider",
                     "content": "Error during social login ({0}), please try again."
                 }
+            },
+            "no_permission": {
+                "title": "You don't have permission!",
+                "content": "No permission to go to {0}."
             }
         },
         "language_switched": {
@@ -599,6 +611,26 @@
         "penaltycalculator": {
             "title": "Penalty Calculator: Copied to clipboard",
             "content": "Summary copied to clipboard."
+        },
+        "notifi": {
+            "document_relation_mentioned": {
+                "title": "Document: You have been mentioned",
+                "content": "You have been mentioned in \"{0}\" document. Click here to go to the document."
+            }
+        },
+        "templates": {
+            "created": {
+                "title": "Template: Created",
+                "content": "Template created successfully."
+            },
+            "updated": {
+                "title": "Template: Updated",
+                "content": "Template updated successfully."
+            },
+            "deleted": {
+                "title": "Template: Deleted",
+                "content": "Template deleted successfully."
+            }
         }
     },
     "enums": {

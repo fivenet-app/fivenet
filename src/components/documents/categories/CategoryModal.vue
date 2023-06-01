@@ -30,8 +30,8 @@ async function deleteCategory(): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: t('notifications.category_deleted.title'),
-                content: t('notifications.category_deleted.content'),
+                title: { key: 'notifications.category_deleted.title', parameters: [] },
+                content: { key: 'notifications.category_deleted.content', parameters: [] },
                 type: 'success',
             });
             emit('close');
@@ -56,8 +56,8 @@ async function updateCategory(values: FormData): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: t('notifications.category_updated.title'),
-                content: t('notifications.category_updated.content'),
+                title: { key: 'notifications.category_updated.title', parameters: [] },
+                content: { key: 'notifications.category_updated.content', parameters: [] },
                 type: 'success',
             });
             emit('close');

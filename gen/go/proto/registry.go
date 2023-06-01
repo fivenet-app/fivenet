@@ -8,6 +8,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/interceptors/auth"
@@ -51,7 +52,7 @@ var (
 
 type RegisterFunc func() error
 
-func NewGRPCServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, tm *auth.TokenMgr, p perms.Permissions, aud audit.IAuditer) (*grpc.Server, net.Listener) {
+func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *tracesdk.TracerProvider, tm *auth.TokenMgr, p perms.Permissions, aud audit.IAuditer, eventus *events.Eventus, notif notifi.INotifi) (*grpc.Server, net.Listener) {
 	// Create GRPC Server
 	lis, err := net.Listen("tcp", config.C.GRPC.Listen)
 	if err != nil {
@@ -145,14 +146,11 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerP
 	// Data enricher helper
 	enricher := mstlystcdata.NewEnricher(cache)
 
-	// Notifier
-	notif := notifi.New(db)
-
 	// Attach our GRPC services
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher, aud, ui))
 	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud))
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
-	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, notif))
+	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, ui, notif))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher)
 	go livemapper.Start()

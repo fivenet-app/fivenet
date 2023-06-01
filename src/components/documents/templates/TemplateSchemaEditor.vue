@@ -9,8 +9,8 @@ export interface TemplateSchemaEditorValue {
 
 export interface ObjectSpecsValue {
     req: boolean;
-    min: number;
-    max: number;
+    min: bigint;
+    max: bigint;
 }
 
 defineProps<{

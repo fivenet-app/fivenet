@@ -16,7 +16,9 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto"
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/oauth2"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/routes"
@@ -79,11 +81,22 @@ var serverCmd = &cobra.Command{
 			}
 		}(ctx)
 
-		// Create JWT Token TokenMgr
-		tm := auth.NewTokenMgr(config.C.JWT.Secret)
+		// Setup Event bus
+		eventus, err := events.NewEventus(logger.Named("eventus"))
+		if err != nil {
+			logger.Fatal("failed to setup event bus", zap.Error(err))
+		}
+		defer eventus.Stop()
 
 		// Setup permissions system
-		p := perms.New(ctx, tp, db)
+		p, err := perms.New(ctx, logger.Named("perms"), db, tp, eventus)
+		if err != nil {
+			logger.Fatal("failed to setup permission system", zap.Error(err))
+		}
+		defer p.Stop()
+
+		// Create JWT Token TokenMgr
+		tm := auth.NewTokenMgr(config.C.JWT.Secret)
 
 		cfgDefaultPerms := config.C.Game.DefaultPermissions
 		defaultPerms := make([]string, len(config.C.Game.DefaultPermissions))
@@ -99,13 +112,18 @@ var serverCmd = &cobra.Command{
 		aud := audit.New(logger.Named("audit"), tp, db)
 		aud.Start()
 
+		// Notifier
+		notif := notifi.New(logger.Named("notifi"), db, ctx, eventus)
+
 		// Wrap the server parts to try to isolate the actual "run servers" logic
 		server := &server{
-			tp:    tp,
-			db:    db,
-			tm:    tm,
-			p:     p,
-			audit: aud,
+			tp:     tp,
+			db:     db,
+			events: eventus,
+			p:      p,
+			tm:     tm,
+			audit:  aud,
+			notif:  notif,
 		}
 
 		logger.Info("server start preparations took", zap.Duration("duration", time.Since(start)))
@@ -124,15 +142,17 @@ func init() {
 }
 
 type server struct {
-	tp    *tracesdk.TracerProvider
-	db    *sql.DB
-	tm    *auth.TokenMgr
-	p     perms.Permissions
-	audit *audit.AuditStorer
+	tp     *tracesdk.TracerProvider
+	db     *sql.DB
+	events *events.Eventus
+	p      perms.Permissions
+	tm     *auth.TokenMgr
+	audit  *audit.AuditStorer
+	notif  notifi.INotifi
 }
 
 func (s *server) runServers(bctx context.Context) error {
-	grpcServer, grpcLis := proto.NewGRPCServer(bctx, logger.Named("grpc/server"), s.tp, s.db, s.tm, s.p, s.audit)
+	grpcServer, grpcLis := proto.NewGRPCServer(bctx, logger.Named("grpc/server"), s.db, s.tp, s.tm, s.p, s.audit, s.events, s.notif)
 
 	go func() {
 		if err := grpcServer.Serve(grpcLis); err != nil {

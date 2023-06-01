@@ -1,10 +1,9 @@
 package events
 
 import (
-	"fmt"
-
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/nats-io/nats.go"
+	"go.uber.org/zap"
 )
 
 type IEvent interface {
@@ -12,16 +11,16 @@ type IEvent interface {
 }
 
 type Eventus struct {
-	nc  *nats.Conn
-	js  nats.JetStreamContext
-	cfg *nats.StreamConfig
+	logger *zap.Logger
 
-	subs []*nats.Subscription
+	NC *nats.Conn
+	JS nats.JetStreamContext
 }
 
-func NewEventus() (*Eventus, error) {
+func NewEventus(logger *zap.Logger) (*Eventus, error) {
 	// Connect to NATS
-	nc, err := nats.Connect(config.C.NATS.URL, nats.Name("FiveNet"))
+	nc, err := nats.Connect(config.C.NATS.URL, nats.Name("FiveNet"),
+		nats.NoEcho())
 	if err != nil {
 		return nil, err
 	}
@@ -31,47 +30,13 @@ func NewEventus() (*Eventus, error) {
 		return nil, err
 	}
 
-	cfg := &nats.StreamConfig{
-		Name:      "EVENTS",
-		Retention: nats.WorkQueuePolicy,
-		Subjects:  []string{"events.>"},
-	}
-
-	if _, err := js.AddStream(cfg); err != nil {
-		return nil, err
-	}
-
 	return &Eventus{
-		nc:   nc,
-		js:   js,
-		cfg:  cfg,
-		subs: make([]*nats.Subscription, config.C.NATS.WorkerCount),
+		logger: logger,
+		NC:     nc,
+		JS:     js,
 	}, nil
 }
 
-func (e *Eventus) Start() error {
-	e.js.AddConsumer(e.cfg.Name, &nats.ConsumerConfig{
-		Durable:        "event-processor",
-		DeliverSubject: "my-subject",
-		DeliverGroup:   "event-processor",
-		AckPolicy:      nats.AckExplicitPolicy,
-	})
-	defer e.js.DeleteConsumer(e.cfg.Name, "event-processor")
-
-	for i := 0; i < len(e.subs); i++ {
-		sub, err := e.nc.QueueSubscribe("my-subject", "event-processor", func(msg *nats.Msg) {
-			fmt.Printf("sub1: received message %q\n", msg.Subject)
-			msg.Ack()
-		})
-		if err != nil {
-			return err
-		}
-		e.subs[i] = sub
-	}
-
-	return nil
-}
-
 func (e *Eventus) Stop() error {
-	return e.nc.Drain()
+	return e.NC.Drain()
 }

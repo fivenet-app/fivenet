@@ -17,8 +17,8 @@ function addToClipboard(): void {
     store.addUser(props.user);
 
     notifications.dispatchNotification({
-        title: t('notifications.clipboard.citizen_add.title'),
-        content: t('notifications.clipboard.citizen_add.content'),
+        title: { key: 'notifications.clipboard.citizen_add.title', parameters: [] },
+        content: { key: 'notifications.clipboard.citizen_add.content', parameters: [] },
         duration: 3500,
         type: 'info',
     });

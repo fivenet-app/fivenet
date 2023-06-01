@@ -14,6 +14,7 @@ import (
 
 type UserInfoRetriever interface {
 	GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*UserInfo, error)
+	GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*UserInfo, error)
 	SetUserInfo(ctx context.Context, accountId uint64, job string, jobGrade int32) error
 }
 
@@ -86,6 +87,37 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 	}
 
 	ui.userCache.Set(userId, dest, cache.WithExpiration(ui.userCacheTTL))
+
+	return dest, nil
+}
+
+func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*UserInfo, error) {
+	dest := &UserInfo{}
+
+	stmt := tUsers.
+		SELECT(
+			tUsers.ID.AS("userinfo.userid"),
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Group,
+		).
+		FROM(
+			tUsers,
+			tFivenetAccounts,
+		).
+		WHERE(jet.AND(
+			tUsers.ID.EQ(jet.Int32(userId)),
+		)).
+		LIMIT(1)
+
+	if err := stmt.QueryContext(ctx, ui.db, dest); err != nil {
+		return nil, err
+	}
+
+	// Check if user is superuser
+	if utils.InStringSlice(config.C.Game.SuperuserGroups, dest.Group) {
+		dest.SuperUser = true
+	}
 
 	return dest, nil
 }

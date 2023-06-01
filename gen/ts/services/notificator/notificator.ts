@@ -18,9 +18,9 @@ export interface GetNotificationsRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: bool include_read = 2;
+     * @generated from protobuf field: optional bool include_read = 2;
      */
-    includeRead: boolean;
+    includeRead?: boolean;
 }
 /**
  * @generated from protobuf message services.notificator.GetNotificationsResponse
@@ -109,7 +109,7 @@ class GetNotificationsRequest$Type extends MessageType<GetNotificationsRequest> 
     constructor() {
         super("services.notificator.GetNotificationsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "include_read", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "include_read", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

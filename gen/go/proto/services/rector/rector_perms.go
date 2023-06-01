@@ -365,7 +365,7 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetR
 	}
 
 	if len(attrUpdates.ToUpdate) > 0 {
-		if err := s.p.AddOrUpdateAttributesToRole(ctx, attrUpdates.ToUpdate...); err != nil {
+		if err := s.p.AddOrUpdateAttributesToRole(ctx, role.ID, attrUpdates.ToUpdate...); err != nil {
 			return err
 		}
 	}

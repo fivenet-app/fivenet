@@ -4,6 +4,7 @@ import { NotificationType } from '~/composables/notification/interfaces/Notifica
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { useNotificatorStore } from '~/store/notificator';
+import { NOTIFICATION_CATEGORY } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 const notificator = useNotificatorStore();
@@ -14,6 +15,8 @@ const { accessToken, activeChar } = storeToRefs(authStore);
 const { setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
 
 const abort = ref<AbortController | undefined>();
+
+const { t } = useI18n();
 
 // In seconds
 const initialBackoffTime = 2;
@@ -38,13 +41,31 @@ async function streamNotifications(): Promise<void> {
         for await (let resp of call.responses) {
             if (resp.lastId > notificator.getLastId) notificator.setLastId(resp.lastId);
 
-            resp.notifications.forEach((v) => {
-                let nType: NotificationType = (v.type as NotificationType) ?? 'info';
-                notifications.dispatchNotification({
-                    title: v.title,
-                    content: v.content,
-                    type: nType,
-                });
+            console.debug('Notifications:', resp.notifications);
+            resp.notifications.forEach((n) => {
+                let nType: NotificationType = (n.type as NotificationType) ?? 'info';
+
+                switch (n.category) {
+                    case NOTIFICATION_CATEGORY.GENERAL:
+                        notifications.dispatchNotification({
+                            title: n.title!,
+                            content: n.content!,
+                            type: nType,
+                            category: n.category,
+                            data: n.data,
+                        });
+                        break;
+
+                    default:
+                        notifications.dispatchNotification({
+                            title: n.title!,
+                            content: n.content!,
+                            type: nType,
+                            category: n.category,
+                            data: n.data,
+                        });
+                        break;
+                }
             });
 
             // If the response contains an (updated) token
@@ -66,10 +87,8 @@ async function streamNotifications(): Promise<void> {
                     setAccessToken(tokenUpdate.newToken, toDate(tokenUpdate.expires) as null | Date);
 
                     notifications.dispatchNotification({
-                        title: 'notifications.renewed_token.title',
-                        titleI18n: true,
-                        content: 'notifications.renewed_token.content',
-                        contentI18n: true,
+                        title: { key: 'notifications.renewed_token.title', parameters: [] },
+                        content: { key: 'notifications.renewed_token.content', parameters: [] },
                         type: 'info',
                     });
                 }

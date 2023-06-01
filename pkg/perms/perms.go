@@ -9,13 +9,17 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/nats-io/nats.go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/zap"
 )
 
 type Permissions interface {
@@ -47,11 +51,12 @@ type Permissions interface {
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
 	FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	GetAllAttributes(ctx context.Context, job string) ([]*permissions.RoleAttribute, error)
-	AddOrUpdateAttributesToRole(ctx context.Context, attrs ...*permissions.RoleAttribute) error
-	UpdateRoleAttributes(ctx context.Context, attrs ...*permissions.RoleAttribute) error
+	AddOrUpdateAttributesToRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
+
+	Stop()
 }
 
 type userCacheKey struct {
@@ -60,31 +65,35 @@ type userCacheKey struct {
 }
 
 type Perms struct {
-	db *sql.DB
+	logger *zap.Logger
+	db     *sql.DB
 
 	tracer trace.Tracer
 	ctx    context.Context
+
+	events   *events.Eventus
+	eventSub *nats.Subscription
 
 	permsMap syncx.Map[uint64, *cachePerm]
 	// Guard name to permission ID
 	permsGuardToIDMap syncx.Map[string, uint64]
 	// Job name to map of grade numbers to role ID
-	permsJobsRoleMap syncx.Map[string, syncx.Map[int32, uint64]]
+	permsJobsRoleMap syncx.Map[string, *syncx.Map[int32, uint64]]
 	// Role ID to map of permissions ID and result
-	permsRoleMap syncx.Map[uint64, syncx.Map[uint64, bool]]
+	permsRoleMap syncx.Map[uint64, *syncx.Map[uint64, bool]]
 
 	// Attribute map (key: ID of attribute)
 	attrsMap syncx.Map[uint64, *cacheAttr]
 	// Role ID to map of role attributes
-	attrsRoleMap syncx.Map[uint64, syncx.Map[uint64, *cacheRoleAttr]]
+	attrsRoleMap syncx.Map[uint64, *syncx.Map[uint64, *cacheRoleAttr]]
 	// Perm ID to map Key -> cached attribute
-	attrsPermsMap syncx.Map[uint64, syncx.Map[Key, uint64]]
+	attrsPermsMap syncx.Map[uint64, *syncx.Map[Key, uint64]]
 
 	userCanCacheTTL time.Duration
 	userCanCache    *cache.Cache[userCacheKey, bool]
 }
 
-func New(ctx context.Context, tp *tracesdk.TracerProvider, db *sql.DB) *Perms {
+func New(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *tracesdk.TracerProvider, e *events.Eventus) (*Perms, error) {
 	userCanCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[userCacheKey, bool](lru.WithCapacity(128)),
@@ -92,27 +101,36 @@ func New(ctx context.Context, tp *tracesdk.TracerProvider, db *sql.DB) *Perms {
 	)
 
 	p := &Perms{
-		db: db,
+		logger: logger,
+		db:     db,
 
 		tracer: tp.Tracer("perms"),
 		ctx:    ctx,
 
+		events: e,
+
 		permsMap:          syncx.Map[uint64, *cachePerm]{},
 		permsGuardToIDMap: syncx.Map[string, uint64]{},
-		permsJobsRoleMap:  syncx.Map[string, syncx.Map[int32, uint64]]{},
-		permsRoleMap:      syncx.Map[uint64, syncx.Map[uint64, bool]]{},
+		permsJobsRoleMap:  syncx.Map[string, *syncx.Map[int32, uint64]]{},
+		permsRoleMap:      syncx.Map[uint64, *syncx.Map[uint64, bool]]{},
 
 		attrsMap:      syncx.Map[uint64, *cacheAttr]{},
-		attrsRoleMap:  syncx.Map[uint64, syncx.Map[uint64, *cacheRoleAttr]]{},
-		attrsPermsMap: syncx.Map[uint64, syncx.Map[Key, uint64]]{},
+		attrsRoleMap:  syncx.Map[uint64, *syncx.Map[uint64, *cacheRoleAttr]]{},
+		attrsPermsMap: syncx.Map[uint64, *syncx.Map[Key, uint64]]{},
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
 	}
 
-	p.load()
+	if err := p.load(); err != nil {
+		return nil, err
+	}
 
-	return p
+	if err := p.registerEvents(); err != nil {
+		return nil, err
+	}
+
+	return p, nil
 }
 
 type cachePerm struct {
@@ -147,11 +165,11 @@ func (p *Perms) load() error {
 		return err
 	}
 
-	if err := p.loadRolePermissions(ctx); err != nil {
+	if err := p.loadRolePermissions(ctx, 0); err != nil {
 		return err
 	}
 
-	if err := p.loadRoleAttributes(ctx); err != nil {
+	if err := p.loadRoleAttributes(ctx, 0); err != nil {
 		return err
 	}
 
@@ -177,16 +195,14 @@ func (p *Perms) loadRoleIDs(ctx context.Context) error {
 	}
 
 	for _, role := range dest {
-		grades, _ := p.permsJobsRoleMap.LoadOrStore(role.Job, syncx.Map[int32, uint64]{})
+		grades, _ := p.permsJobsRoleMap.LoadOrStore(role.Job, &syncx.Map[int32, uint64]{})
 		grades.Store(role.Grade, role.ID)
-
-		p.permsJobsRoleMap.Store(role.Job, grades)
 	}
 
 	return nil
 }
 
-func (p *Perms) loadRolePermissions(ctx context.Context) error {
+func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 	stmt := tRolePerms.
 		SELECT(
 			tRolePerms.RoleID.AS("role_id"),
@@ -202,6 +218,12 @@ func (p *Perms) loadRolePermissions(ctx context.Context) error {
 			tRoles.Grade.DESC(),
 		)
 
+	if roleId != 0 {
+		stmt = stmt.WHERE(
+			tRoles.ID.EQ(jet.Uint64(roleId)),
+		)
+	}
+
 	var dest []struct {
 		RoleID uint64
 		ID     uint64
@@ -212,16 +234,14 @@ func (p *Perms) loadRolePermissions(ctx context.Context) error {
 	}
 
 	for _, rPerms := range dest {
-		perms, _ := p.permsRoleMap.LoadOrStore(rPerms.RoleID, syncx.Map[uint64, bool]{})
+		perms, _ := p.permsRoleMap.LoadOrStore(rPerms.RoleID, &syncx.Map[uint64, bool]{})
 		perms.Store(rPerms.ID, rPerms.Val)
-
-		p.permsRoleMap.Store(rPerms.RoleID, perms)
 	}
 
 	return nil
 }
 
-func (p *Perms) loadRoleAttributes(ctx context.Context) error {
+func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 	stmt := tRoleAttrs.
 		SELECT(
 			tRoleAttrs.AttrID.AS("attr_id"),
@@ -238,6 +258,12 @@ func (p *Perms) loadRoleAttributes(ctx context.Context) error {
 					tAttrs.ID.EQ(tRoleAttrs.AttrID),
 				),
 		)
+
+	if roleId != 0 {
+		stmt = stmt.WHERE(
+			tRoleAttrs.RoleID.EQ(jet.Uint64(roleId)),
+		)
+	}
 
 	var dest []struct {
 		AttrID       uint64
@@ -281,16 +307,13 @@ func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, permId uint64, attr
 }
 
 func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType AttributeTypes, value *permissions.AttributeValues) {
-	attrMap, _ := p.attrsRoleMap.LoadOrStore(roleId, syncx.Map[uint64, *cacheRoleAttr]{})
-
+	attrMap, _ := p.attrsRoleMap.LoadOrStore(roleId, &syncx.Map[uint64, *cacheRoleAttr]{})
 	attrMap.Store(attrId, &cacheRoleAttr{
 		AttrID: attrId,
 		Key:    key,
 		Type:   aType,
 		Value:  value,
 	})
-
-	p.attrsRoleMap.Store(roleId, attrMap)
 }
 
 func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
@@ -300,5 +323,8 @@ func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
 	}
 
 	attrMap.Delete(attrId)
-	p.attrsRoleMap.Store(roleId, attrMap)
+}
+
+func (p *Perms) Stop() {
+	p.eventSub.Unsubscribe()
 }

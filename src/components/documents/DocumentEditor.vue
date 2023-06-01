@@ -23,6 +23,7 @@ import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificationsStore } from '~/store/notifications';
+import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import {
@@ -350,8 +351,11 @@ const accessTypes = [
 function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
-            title: t('notifications.max_access_entry.title'),
-            content: t('notifications.max_access_entry.content', [maxAccessEntries]),
+            title: { key: 'notifications.max_access_entry.title', parameters: [] },
+            content: {
+                key: 'notifications.max_access_entry.content',
+                parameters: [maxAccessEntries.toString()],
+            } as TranslateItem,
             type: 'error',
         });
         return;
@@ -477,8 +481,8 @@ async function submitForm(): Promise<void> {
             await Promise.all(promises);
 
             notifications.dispatchNotification({
-                title: t('notifications.document_created.title'),
-                content: t('notifications.document_created.content'),
+                title: { key: 'notifications.document_created.title', parameters: [] },
+                content: { key: 'notifications.document_created.content', parameters: [] },
                 type: 'success',
             });
             clipboardStore.clearActiveStack();
@@ -583,8 +587,8 @@ async function editForm(): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: t('notifications.document_updated.title'),
-                content: t('notifications.document_updated.content'),
+                title: { key: 'notifications.document_updated.title', parameters: [] },
+                content: { key: 'notifications.document_updated.content', parameters: [] },
                 type: 'success',
             });
             clipboardStore.clearActiveStack();

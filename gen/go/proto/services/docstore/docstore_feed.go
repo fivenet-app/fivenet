@@ -3,12 +3,16 @@ package docstore
 import (
 	context "context"
 	"errors"
+	"fmt"
 	"strconv"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -399,7 +403,9 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
-	s.notifyUser(ctx, uint64(lastId), req.Relation.TargetUserId)
+	if req.Relation.Relation == documents.DOC_RELATION_MENTIONED {
+		s.notifyUser(ctx, uint64(lastId), userInfo.UserId, req.Relation.TargetUserId)
+	}
 
 	return &AddDocumentRelationResponse{
 		Id: uint64(lastId),
@@ -591,14 +597,38 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([
 	return dest, nil
 }
 
-func (s *Server) notifyUser(ctx context.Context, documentId uint64, targetUserId int32) {
-	// check, err := s.checkIfUserHasAccessToDoc(ctx, documentId, targetUserId, job, jobGrade, false, documents.ACCESS_LEVEL_VIEW)
-	// if err != nil {
-	// 	return
-	// }
-	// if !check {
-	// 	return
-	// }
+func (s *Server) notifyUser(ctx context.Context, documentId uint64, sourceUserId int32, targetUserId int32) {
+	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, targetUserId)
+	if err != nil {
+		return
+	}
 
-	// s.n.Add(targetUserId, "TITLE", "CONTENT", "info")
+	doc, err := s.getDocument(ctx, tDocs.ID.EQ(jet.Uint64(documentId)), userInfo)
+	if err != nil {
+		return
+	}
+	if doc == nil {
+		return
+	}
+
+	// TODO add `CausedBy` to Notification Data
+	nType := string(notifi.InfoType)
+	not := &notifications.Notification{
+		UserId: targetUserId,
+		Title: &common.TranslateItem{
+			Key: "notifications.notifi.document_relation_mentioned.title",
+		},
+		Content: &common.TranslateItem{
+			Key:        "notifications.notifi.document_relation_mentioned.content",
+			Parameters: []string{doc.Title},
+		},
+		Type:     &nType,
+		Category: notifications.NOTIFICATION_CATEGORY_DOCUMENT,
+		Data: &notifications.Data{
+			Link: &notifications.Link{
+				To: fmt.Sprintf("/documents/%d", documentId),
+			},
+		},
+	}
+	s.n.Add(not)
 }

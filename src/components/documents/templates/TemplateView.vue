@@ -50,8 +50,8 @@ async function deleteTemplate(): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: 'Template: Deleted',
-                content: 'Template deleted successfully.',
+                title: { key: 'notifications.templates.deleted.title', parameters: [] },
+                content: { key: 'notifications.templates.deleted.content', parameters: [] },
                 type: 'success',
             });
 
@@ -68,7 +68,7 @@ async function deleteTemplate(): Promise<void> {
 async function editTemplate(): Promise<void> {
     await navigateTo({
         name: 'documents-templates-edit-id',
-        params: { id: props.templateId },
+        params: { id: props.templateId.toString() },
     });
 }
 

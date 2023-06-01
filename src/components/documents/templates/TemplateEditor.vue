@@ -64,25 +64,25 @@ const onSubmit = handleSubmit(async (values): Promise<void> => {
 const schema = ref<TemplateSchemaEditorValue>({
     users: {
         req: false,
-        min: 0,
-        max: 0,
+        min: BigInt(0),
+        max: BigInt(0),
     },
 
     documents: {
         req: false,
-        min: 0,
-        max: 0,
+        min: BigInt(0),
+        max: BigInt(0),
     },
 
     vehicles: {
         req: false,
-        min: 0,
-        max: 0,
+        min: BigInt(0),
+        max: BigInt(0),
     },
 });
 const access = ref<
     Map<
-        number,
+        bigint,
         {
             id: bigint;
             type: number;
@@ -100,14 +100,14 @@ const accessTypes = [{ id: 1, name: t('common.job', 2) }];
 function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
-            title: t('notifications.max_access_entry.title'),
-            content: t('notifications.max_access_entry.content', [maxAccessEntries]),
+            title: { key: 'notifications.max_access_entry.title', parameters: [] },
+            content: { key: 'notifications.max_access_entry.content', parameters: [maxAccessEntries.toString()] },
             type: 'error',
         });
         return;
     }
 
-    let id = access.value.size > 0 ? ([...access.value.keys()].pop() as number) + 1 : 0;
+    const id = BigInt(access.value.size > 0 ? ([...access.value.keys()].pop() as bigint) + BigInt(1) : 0);
     access.value.set(id, {
         id,
         type: 1,
@@ -115,11 +115,11 @@ function addAccessEntry(): void {
     });
 }
 
-function removeAccessEntry(event: { id: number }): void {
+function removeAccessEntry(event: { id: bigint }): void {
     access.value.delete(event.id);
 }
 
-function updateAccessEntryType(event: { id: number; type: number }): void {
+function updateAccessEntryType(event: { id: bigint; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -127,7 +127,7 @@ function updateAccessEntryType(event: { id: number; type: number }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryName(event: { id: number; job?: Job }): void {
+function updateAccessEntryName(event: { id: bigint; job?: Job }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -138,7 +138,7 @@ function updateAccessEntryName(event: { id: number; job?: Job }): void {
     }
 }
 
-function updateAccessEntryRank(event: { id: number; rank: JobGrade }): void {
+function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -146,7 +146,7 @@ function updateAccessEntryRank(event: { id: number; rank: JobGrade }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryAccess(event: { id: number; access: ACCESS_LEVEL }): void {
+function updateAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVEL }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -156,9 +156,9 @@ function updateAccessEntryAccess(event: { id: number; access: ACCESS_LEVEL }): v
 
 const contentAccess = ref<
     Map<
-        number,
+        bigint,
         {
-            id: number;
+            id: bigint;
             type: number;
             values: {
                 job?: string;
@@ -178,14 +178,14 @@ const contentAccessTypes = [
 function addContentAccessEntry(): void {
     if (contentAccess.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
-            title: t('notifications.max_access_entry.title'),
-            content: t('notifications.max_access_entry.content', [maxAccessEntries]),
+            title: { key: 'notifications.max_access_entry.title', parameters: [] },
+            content: { key: 'notifications.max_access_entry.content', parameters: [maxAccessEntries.toString()] },
             type: 'error',
         });
         return;
     }
 
-    let id = contentAccess.value.size > 0 ? ([...contentAccess.value.keys()].pop() as number) + 1 : 0;
+    const id = BigInt(contentAccess.value.size > 0 ? ([...contentAccess.value.keys()].pop() as bigint) + BigInt(1) : 0);
     contentAccess.value.set(id, {
         id,
         type: 1,
@@ -193,11 +193,11 @@ function addContentAccessEntry(): void {
     });
 }
 
-function removeContentAccessEntry(event: { id: number }): void {
+function removeContentAccessEntry(event: { id: bigint }): void {
     contentAccess.value.delete(event.id);
 }
 
-function updateContentAccessEntryType(event: { id: number; type: number }): void {
+function updateContentAccessEntryType(event: { id: bigint; type: number }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
@@ -205,7 +205,7 @@ function updateContentAccessEntryType(event: { id: number; type: number }): void
     contentAccess.value.set(event.id, accessEntry);
 }
 
-function updateContentAccessEntryName(event: { id: number; job?: Job }): void {
+function updateContentAccessEntryName(event: { id: bigint; job?: Job }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
@@ -216,7 +216,7 @@ function updateContentAccessEntryName(event: { id: number; job?: Job }): void {
     }
 }
 
-function updateContentAccessEntryRank(event: { id: number; rank: JobGrade }): void {
+function updateContentAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
@@ -224,7 +224,7 @@ function updateContentAccessEntryRank(event: { id: number; rank: JobGrade }): vo
     contentAccess.value.set(event.id, accessEntry);
 }
 
-function updateContentAccessEntryAccess(event: { id: number; access: ACCESS_LEVEL }): void {
+function updateContentAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVEL }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
@@ -266,7 +266,7 @@ async function createTemplate(values: FormData): Promise<void> {
                 if (!entry.values.job) return;
 
                 jobAccesses.push({
-                    id: 0,
+                    id: BigInt(0),
                     templateId: props.templateId!,
                     access: entry.values.accessrole,
                     job: entry.values.job,
@@ -286,8 +286,8 @@ async function createTemplate(values: FormData): Promise<void> {
                 if (!entry.values.char) return;
 
                 reqAccess.users.push({
-                    id: 0,
-                    documentId: 0,
+                    id: BigInt(0),
+                    documentId: BigInt(0),
                     userId: entry.values.char,
                     access: entry.values.accessrole,
                 });
@@ -295,8 +295,8 @@ async function createTemplate(values: FormData): Promise<void> {
                 if (!entry.values.job) return;
 
                 reqAccess.jobs.push({
-                    id: 0,
-                    documentId: 0,
+                    id: BigInt(0),
+                    documentId: BigInt(0),
                     job: entry.values.job!,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
                     access: entry.values.accessrole,
@@ -328,14 +328,14 @@ async function createTemplate(values: FormData): Promise<void> {
             const { response } = await call;
 
             notifications.dispatchNotification({
-                title: 'Template: Created',
-                content: 'Template created successfully.',
+                title: { key: 'notifications.templates.created.title', parameters: [] },
+                content: { key: 'notifications.templates.created.title', parameters: [] },
                 type: 'success',
             });
 
             await navigateTo({
                 name: 'documents-templates-id',
-                params: { id: response.id },
+                params: { id: response.id.toString() },
             });
 
             return res();
@@ -362,7 +362,7 @@ async function updateTemplate(values: FormData): Promise<void> {
                 if (!entry.values.job) return;
 
                 jobAccesses.push({
-                    id: 0,
+                    id: BigInt(0),
                     templateId: props.templateId!,
                     access: entry.values.accessrole,
                     job: entry.values.job,
@@ -382,8 +382,8 @@ async function updateTemplate(values: FormData): Promise<void> {
                 if (!entry.values.char) return;
 
                 reqAccess.users.push({
-                    id: 0,
-                    documentId: 0,
+                    id: BigInt(0),
+                    documentId: BigInt(0),
                     userId: entry.values.char,
                     access: entry.values.accessrole,
                 });
@@ -391,8 +391,8 @@ async function updateTemplate(values: FormData): Promise<void> {
                 if (!entry.values.job) return;
 
                 reqAccess.jobs.push({
-                    id: 0,
-                    documentId: 0,
+                    id: BigInt(0),
+                    documentId: BigInt(0),
                     job: entry.values.job!,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
                     access: entry.values.accessrole,
@@ -424,14 +424,14 @@ async function updateTemplate(values: FormData): Promise<void> {
             const { response } = await call;
 
             notifications.dispatchNotification({
-                title: 'Template: Updated',
-                content: 'Template updated successfully.',
+                title: { key: 'notifications.templates.updated.title', parameters: [] },
+                content: { key: 'notifications.templates.updated.content', parameters: [] },
                 type: 'success',
             });
 
             await navigateTo({
                 name: 'documents-templates-id',
-                params: { id: response.id },
+                params: { id: response.id.toString() },
             });
 
             return res();
@@ -495,7 +495,7 @@ onMounted(async () => {
 
             const tplAccess = tpl.jobAccess;
             if (tplAccess) {
-                let accessId = 0;
+                let accessId = BigInt(0);
 
                 tplAccess.forEach((job) => {
                     access.value.set(accessId, {
@@ -513,7 +513,7 @@ onMounted(async () => {
 
             const ctAccess = tpl.contentAccess;
             if (ctAccess) {
-                let accessId = 0;
+                let accessId = BigInt(0);
 
                 ctAccess.users.forEach((user) => {
                     contentAccess.value.set(accessId, {
@@ -539,22 +539,22 @@ onMounted(async () => {
             }
 
             schema.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
-            schema.value.users.min = tpl.schema?.requirements?.users?.min ?? 0;
-            schema.value.users.max = tpl.schema?.requirements?.users?.max ?? 0;
+            schema.value.users.min = tpl.schema?.requirements?.users?.min ?? BigInt(0);
+            schema.value.users.max = tpl.schema?.requirements?.users?.max ?? BigInt(0);
 
             schema.value.documents.req = tpl.schema?.requirements?.documents?.required ?? false;
-            schema.value.documents.min = tpl.schema?.requirements?.documents?.min ?? 0;
-            schema.value.documents.max = tpl.schema?.requirements?.documents?.max ?? 0;
+            schema.value.documents.min = tpl.schema?.requirements?.documents?.min ?? BigInt(0);
+            schema.value.documents.max = tpl.schema?.requirements?.documents?.max ?? BigInt(0);
 
             schema.value.vehicles.req = tpl.schema?.requirements?.vehicles?.required ?? false;
-            schema.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? 0;
-            schema.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0;
+            schema.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? BigInt(0);
+            schema.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? BigInt(0);
         } catch (e) {
             $grpc.handleError(e as RpcError);
         }
     } else {
-        access.value.set(0, {
-            id: 0,
+        access.value.set(BigInt(0), {
+            id: BigInt(0),
             type: 1,
             values: {
                 job: activeChar.value?.job,

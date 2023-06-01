@@ -27,8 +27,8 @@ if (query.t && query.t !== '' && query.exp) {
     setAccessToken(query.t as string, BigInt(query.exp as string));
 
     notifications.dispatchNotification({
-        title: t('notifications.auth.oauth2_login.success.title'),
-        content: t('notifications.auth.oauth2_login.success.content'),
+        title: { key: 'notifications.auth.oauth2_login.success.title', parameters: [] },
+        content: { key: 'notifications.auth.oauth2_login.success.content', parameters: [] },
         type: 'info',
     });
 
@@ -37,8 +37,8 @@ if (query.t && query.t !== '' && query.exp) {
     const reason = query.reason ?? 'N/A';
 
     notifications.dispatchNotification({
-        title: t('notifications.auth.oauth2_login.failed.title'),
-        content: t('notifications.auth.oauth2_login.failed.content', [reason]),
+        title: { key: 'notifications.auth.oauth2_login.failed.title', parameters: [] },
+        content: { key: 'notifications.auth.oauth2_login.failed.content', parameters: [reason.toString()] },
         type: 'error',
     });
 }

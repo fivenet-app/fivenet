@@ -134,7 +134,8 @@
             "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuchen sie es erneut.",
             "error_message": "Fehlermeldung:",
             "copy_error": "Fehlerbericht kopieren"
-        }
+        },
+        "notifications": "Benachrichtigungen"
     },
     "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten.",
     "components": {
@@ -215,7 +216,8 @@
             },
             "sidebar_language_switcher": {
                 "open_switcher": "Öffne das Sprachmenü"
-            }
+            },
+            "sidebar_notifications": "Zu Benachrichtigungen gehen"
         },
         "clipboard": {
             "clipboard_button": {
@@ -442,7 +444,8 @@
         "reason": "Grund | Gründe",
         "preview": "Vorschau",
         "option": "Option | Optionen",
-        "weight": "Gewichtung"
+        "weight": "Gewichtung",
+        "notification": "Benachrichtigung | Benachrichtigungen"
     },
     "notifications": {
         "clipboard": {
@@ -526,8 +529,13 @@
                 "title": "Server ist nicht erreichbar",
                 "content": "FiveNet-Server kann nicht erreicht werden, bitte überprüfen Sie ihre Internetverbindung."
             },
+            "not_found": {
+                "title": "Nicht gefunden",
+                "content": "Inhalt nicht gefunden."
+            },
             "default": {
-                "title": "Unbekannter Fehler ist aufgetreten"
+                "title": "Unbekannter Fehler ist aufgetreten",
+                "content": "{0} (Code: {1})"
             }
         },
         "job_switcher": {
@@ -599,6 +607,12 @@
         "penaltycalculator": {
             "title": "Strafenrechner: Kopiert",
             "content": "Zusammenfassung in die Zwischenablage kopiert."
+        },
+        "notifi": {
+            "document_relation_mentioned": {
+                "title": "Dokument: Sie wurden erwähnt",
+                "content": "Sie wurden in Dokument \"{0}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
+            }
         }
     },
     "enums": {

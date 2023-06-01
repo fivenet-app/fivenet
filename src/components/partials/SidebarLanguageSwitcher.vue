@@ -29,8 +29,8 @@ async function switchLanguage(lang: { name: string; iso: string }): Promise<void
     veeValidateSetLocale(lang.iso);
 
     notifications.dispatchNotification({
-        title: t('notifications.language_switched.title'),
-        content: t('notifications.language_switched.content', [lang.name]),
+        title: { key: 'notifications.language_switched.title', parameters: [] },
+        content: { key: 'notifications.language_switched.content', parameters: [lang.name] },
         type: 'success',
     });
 }

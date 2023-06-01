@@ -24,6 +24,7 @@ type fivenetNotificationsTable struct {
 	Title     mysql.ColumnString
 	Type      mysql.ColumnString
 	Content   mysql.ColumnString
+	Category  mysql.ColumnInteger
 	Data      mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
@@ -72,9 +73,10 @@ func newFivenetNotificationsTableImpl(schemaName, tableName, alias string) fiven
 		TitleColumn     = mysql.StringColumn("title")
 		TypeColumn      = mysql.StringColumn("type")
 		ContentColumn   = mysql.StringColumn("content")
+		CategoryColumn  = mysql.IntegerColumn("category")
 		DataColumn      = mysql.StringColumn("data")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, TypeColumn, ContentColumn, DataColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, TypeColumn, ContentColumn, DataColumn}
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, DataColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, ReadAtColumn, UserIDColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, DataColumn}
 	)
 
 	return fivenetNotificationsTable{
@@ -88,6 +90,7 @@ func newFivenetNotificationsTableImpl(schemaName, tableName, alias string) fiven
 		Title:     TitleColumn,
 		Type:      TypeColumn,
 		Content:   ContentColumn,
+		Category:  CategoryColumn,
 		Data:      DataColumn,
 
 		AllColumns:     allColumns,

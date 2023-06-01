@@ -204,11 +204,8 @@ func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aTyp
 
 	p.attrsMap.Store(attrId, attr)
 
-	pAttrMap, _ := p.attrsPermsMap.LoadOrStore(permId, syncx.Map[Key, uint64]{})
-
+	pAttrMap, _ := p.attrsPermsMap.LoadOrStore(permId, &syncx.Map[Key, uint64]{})
 	pAttrMap.Store(key, attrId)
-
-	p.attrsPermsMap.Store(permId, pAttrMap)
 
 	return nil
 }
@@ -541,7 +538,7 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	return as, nil
 }
 
-func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, attrs ...*permissions.RoleAttribute) error {
+func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error {
 	for i := 0; i < len(attrs); i++ {
 		validV := jet.String("")
 		if attrs[i].Value != nil {
@@ -602,7 +599,7 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, attrs ...*permi
 				tRoleAttrs.Value,
 			).
 			VALUES(
-				attrs[i].RoleId,
+				roleId,
 				attrs[i].AttrId,
 				validV,
 			).
@@ -622,37 +619,13 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, attrs ...*permi
 		}
 
 		p.updateRoleAttributeInMap(attrs[i].RoleId, attr.PermissionID, attr.ID, attr.Key, attr.Type, attrs[i].Value)
+
 	}
 
-	return nil
-}
-
-func (p *Perms) UpdateRoleAttributes(ctx context.Context, attrs ...*permissions.RoleAttribute) error {
-	for i := 0; i < len(attrs); i++ {
-		stmt := tRoleAttrs.
-			UPDATE(
-				tRoleAttrs.Value,
-			).
-			SET(
-				tRoleAttrs.Value,
-			).
-			WHERE(jet.AND(
-				tRoleAttrs.RoleID.EQ(jet.Uint64(attrs[i].RoleId)),
-				tRoleAttrs.AttrID.EQ(jet.Uint64(attrs[i].AttrId)),
-			))
-
-		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
-			if err != nil && !dbutils.IsDuplicateError(err) {
-				return err
-			}
-		}
-
-		attr, ok := p.lookupAttributeByID(attrs[i].AttrId)
-		if !ok {
-			return fmt.Errorf("no attribute by id found")
-		}
-
-		p.updateRoleAttributeInMap(attrs[i].RoleId, attr.PermissionID, attr.ID, attr.Key, attr.Type, attrs[i].Value)
+	if err := p.publishMessage(RoleAttrUpdateSubject, RoleAttrUpdateEvent{
+		RoleID: roleId,
+	}); err != nil {
+		return err
 	}
 
 	return nil
@@ -677,6 +650,12 @@ func (p *Perms) RemoveAttributesFromRole(ctx context.Context, roleId uint64, att
 
 	for i := 0; i < len(attrs); i++ {
 		p.removeRoleAttributeFromMap(roleId, attrs[i].AttrId)
+
+		if err := p.publishMessage(RoleAttrUpdateSubject, RoleAttrUpdateEvent{
+			RoleID: roleId,
+		}); err != nil {
+			return err
+		}
 	}
 
 	return nil

@@ -9,10 +9,10 @@ defineEmits<{
     (e: 'offsetChange', offset: bigint): void;
 }>();
 
-const offset = computed(() => (props.pagination?.offset ?? 0) as bigint);
-const total = computed(() => (props.pagination?.totalCount ?? 0) as bigint);
-const pageSize = computed(() => (props.pagination?.pageSize ?? 0) as bigint);
-const end = computed(() => (props.pagination?.end ?? 0) as bigint);
+const offset = computed(() => props.pagination?.offset ?? BigInt(0));
+const total = computed(() => props.pagination?.totalCount ?? BigInt(0));
+const pageSize = computed(() => props.pagination?.pageSize ?? BigInt(0));
+const end = computed(() => props.pagination?.end ?? BigInt(0));
 </script>
 
 <template>
@@ -31,8 +31,8 @@ const end = computed(() => (props.pagination?.end ?? 0) as bigint);
         </div>
         <div class="flex justify-between flex-1 sm:justify-end">
             <button
-                :class="[offset <= 0 ? 'disabled' : '']"
-                :disabled="offset <= 0"
+                :class="[offset <= BigInt(0) ? 'disabled' : '']"
+                :disabled="offset <= BigInt(0)"
                 v-on:click="$emit('offsetChange', offset - pageSize)"
                 type="button"
                 class="relative inline-flex items-center px-3 py-2 text-sm font-semibold rounded-md cursor-pointer bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"

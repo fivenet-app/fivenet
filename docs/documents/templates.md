@@ -12,9 +12,37 @@ Golang templating is used. In addition to base [Golang html/template functions](
 ## Available Variables
 
 * `.documents` - Documents that are in the user's clipboard.
-* `.users` - Citizens/ Users that are in the user's clipboard.
+    * `id`
+    * `createdAt`
+    * `title`
+    * `state`
+    * `creatorId`
+    * `creator` - See [User Info Structure](#user-info-structure).
+    * `closed` - Boolean.
+    * `categoryId`
+    * `category`
+        *
+* `.users` - List of citizens/ users that are in the user's clipboard.
+    * See [User Info Structure](#user-info-structure).
 * `.vehicles` - Vehicles that are in the user's clipboard.
+    * `plate`
+    * `model`
+    * `type`
+    * `owner` - See [User Info Structure](#user-info-structure).
 * `.activeChar` - Submitting user's info.
+    * See [User Info Structure](#user-info-structure).
+
+### User Info Structure
+
+* `userId`
+* `identifier`
+* `job` - Preferrably use `jobLabel`.
+* `jobLabel`
+* `jobGrade` - Preferrably use `jobGradeLabel`.
+* `jobGradeLabel`
+* `firstname`
+* `lastname`
+* `dateofbirth` - In `DD.MM.YYYY` format.
 
 ## Snippets
 
@@ -25,6 +53,8 @@ Golang templating is used. In addition to base [Golang html/template functions](
 ```
 
 ### Get first Citizen
+
+Get the first user in the list (first in the user's clipboard):
 
 ```gotemplate
 {{- $citizen := first .users -}}
@@ -41,3 +71,5 @@ Example access citizen info:
 ```gotemplate
 {{ now | date "02.01.2006 15:04" }}
 ```
+
+To learn more about different date and time formats, check out [the Golang `time` package documentation here](https://pkg.go.dev/time#pkg-constants).
