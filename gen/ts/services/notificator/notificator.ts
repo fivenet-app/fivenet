@@ -43,6 +43,10 @@ export interface ReadNotificationsRequest {
      * @generated from protobuf field: repeated uint64 ids = 1;
      */
     ids: bigint[];
+    /**
+     * @generated from protobuf field: optional bool all = 2;
+     */
+    all?: boolean;
 }
 /**
  * @generated from protobuf message services.notificator.ReadNotificationsResponse
@@ -134,7 +138,8 @@ export const GetNotificationsResponse = new GetNotificationsResponse$Type();
 class ReadNotificationsRequest$Type extends MessageType<ReadNotificationsRequest> {
     constructor() {
         super("services.notificator.ReadNotificationsRequest", [
-            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20" } } } }
+            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20" } } } },
+            { no: 2, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

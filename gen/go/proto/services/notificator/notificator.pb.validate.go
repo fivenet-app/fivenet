@@ -379,6 +379,10 @@ func (m *ReadNotificationsRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.All != nil {
+		// no validation rules for All
+	}
+
 	if len(errors) > 0 {
 		return ReadNotificationsRequestMultiError(errors)
 	}

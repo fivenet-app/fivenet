@@ -124,9 +124,22 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRequest) (*ReadNotificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	ids := make([]jet.Expression, len(req.Ids))
-	for i := 0; i < len(req.Ids); i++ {
-		ids[i] = jet.Uint64(req.Ids[i])
+	condition := tNotifications.UserID.EQ(jet.Int32(userInfo.UserId)).AND(
+		tNotifications.ReadAt.IS_NULL(),
+	)
+	// If not all
+	if req.All == nil || !*req.All {
+		if len(req.Ids) <= 0 {
+			return &ReadNotificationsResponse{}, nil
+		}
+
+		ids := make([]jet.Expression, len(req.Ids))
+		for i := 0; i < len(req.Ids); i++ {
+			ids[i] = jet.Uint64(req.Ids[i])
+		}
+		condition = condition.AND(tNotifications.ID.IN(ids...))
+	} else {
+		return &ReadNotificationsResponse{}, nil
 	}
 
 	stmt := tNotifications.
@@ -136,12 +149,7 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 		SET(
 			tNotifications.ReadAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
-		WHERE(
-			jet.AND(
-				tNotifications.UserID.EQ(jet.Int32(userInfo.UserId)),
-				tNotifications.ID.IN(ids...),
-			),
-		)
+		WHERE(condition)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err

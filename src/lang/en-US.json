@@ -135,7 +135,11 @@
             "error_message": "Error message:",
             "copy_error": "Copy Error message"
         },
-        "notifications": "Notifications"
+        "notifications": {
+            "title": "Notifications",
+            "mark_read": "Mark as read",
+            "mark_all_read": "Mark all as read"
+        }
     },
     "copyright": "Copyright © 2023 Galexrt All rights reserved.",
     "components": {

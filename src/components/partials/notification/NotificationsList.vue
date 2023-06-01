@@ -43,6 +43,33 @@ async function getNotifications(): Promise<Array<Notification>> {
         }
     });
 }
+
+async function markAllRead(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            await $grpc.getNotificatorClient().readNotifications({
+                ids: [],
+                all: true,
+            });
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+async function markRead(ids: bigint[]): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            await $grpc.getNotificatorClient().readNotifications({
+                ids: ids,
+            });
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
 </script>
 
 <template>
@@ -56,14 +83,15 @@ async function getNotifications(): Promise<Array<Notification>> {
                         </label>
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1 form-control">
-                                <!-- TODO Include read notification-->
+                                <!-- TODO Include read notification toggle -->
                             </div>
                             <div class="flex-initial">
                                 <button
-                                    disabled
+                                    :disabled="!notifications || notifications.length <= 0"
+                                    @click="markAllRead"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                 >
-                                    Read all {{ $t('common.notification', 2) }}
+                                    {{ $t('pages.notifications.mark_all_read') }}
                                 </button>
                             </div>
                         </div>

@@ -135,7 +135,11 @@
             "error_message": "Fehlermeldung:",
             "copy_error": "Fehlerbericht kopieren"
         },
-        "notifications": "Benachrichtigungen"
+        "notifications": {
+            "title": "Benachrichtigungen",
+            "mark_read": "Als gelesen markieren",
+            "mark_all_read": "Alle als gelesen markieren"
+        }
     },
     "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten.",
     "components": {
