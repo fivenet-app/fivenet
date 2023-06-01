@@ -10,9 +10,10 @@ import {
     ServerStreamingCall,
     UnaryCall,
 } from '@protobuf-ts/runtime-rpc/build/types';
-import { NotificationType } from '~/composables/notification/interfaces/Notification.interface';
+import { Notification } from '~/composables/notification/interfaces/Notification.interface';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
+import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
 import { CitizenStoreServiceClient } from '~~/gen/ts/services/citizenstore/citizenstore.client';
 import { CompletorServiceClient } from '~~/gen/ts/services/completor/completor.client';
@@ -70,27 +71,27 @@ export class GRPCClients {
         const { $loading } = useNuxtApp();
 
         const notification = {
-            type: 'error' as NotificationType,
-            title: 'notifications.grpc_errors.internal.title',
-            content: err.message,
-            contentI18n: true,
-        };
+            id: '',
+            type: 'error',
+            title: { key: 'notifications.grpc_errors.internal.title', parameters: [] },
+            content: { key: err.message, parameters: [] },
+        } as Notification;
 
         switch (err.code.toLowerCase()) {
             case 'internal':
                 break;
 
             case 'unavailable':
-                notification.title = 'notifications.grpc_errors.unavailable.title';
-                notification.content = 'notifications.grpc_errors.unavailable.content';
+                notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: [] };
+                notification.content = { key: 'notifications.grpc_errors.unavailable.content', parameters: [] };
                 break;
 
             case 'unauthenticated':
                 await useAuthStore().clearAuthInfo();
 
                 notification.type = 'warning';
-                notification.title = 'notifications.grpc_errors.unauthenticated.title';
-                notification.content = 'notifications.grpc_errors.unauthenticated.content';
+                notification.title = { key: 'notifications.grpc_errors.unauthenticated.title', parameters: [] };
+                notification.content = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: [] };
 
                 // Only update the redirect query param if it isn't already set
                 const route = useRoute();
@@ -104,38 +105,34 @@ export class GRPCClients {
                 break;
 
             case 'permission_denied':
-                notification.title = 'notifications.grpc_errors.permission_denied.title';
-                notification.contentI18n = false;
-                notification.content = err.message;
+                notification.title = { key: 'notifications.grpc_errors.permission_denied.title', parameters: [] };
                 break;
 
             case 'not_found':
-                notification.title = 'notifications.grpc_errors.unavailable.title';
+                notification.title = { key: 'notifications.grpc_errors.not_found.title', parameters: [] };
                 break;
 
             default:
-                notification.title = 'notifications.grpc_errors.default.title';
-                notification.content = err.message + '(Code: ' + err.code.valueOf() + ')';
-                notification.contentI18n = false;
+                notification.title = { key: 'notifications.grpc_errors.default.title', parameters: [] };
+                notification.content = {
+                    key: 'notifications.grpc_errors.default.content',
+                    parameters: [err.message, err.code.valueOf()],
+                };
                 break;
         }
 
-        if (notification.content.startsWith('errors.')) {
-            notification.contentI18n = true;
-
-            const errSplits = notification.content.split(';');
+        if (err.message.startsWith('errors.')) {
+            const errSplits = err.message.split(';');
             if (errSplits.length > 1) {
-                notification.title = errSplits[1];
-                notification.content = errSplits[0];
+                notification.title = { key: errSplits[1] } as TranslateItem;
+                notification.content = { key: errSplits[0] } as TranslateItem;
             }
         }
 
         notifications.dispatchNotification({
             type: notification.type,
             title: notification.title,
-            titleI18n: true,
             content: notification.content,
-            contentI18n: notification.contentI18n,
         });
 
         $loading.errored();

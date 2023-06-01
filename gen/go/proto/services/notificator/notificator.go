@@ -57,6 +57,11 @@ func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions, tm *auth.Tok
 	}
 }
 
+func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+	// Skip permission check for the notificator services
+	return ctx, nil
+}
+
 func (s *Server) PermissionStreamFuncOverride(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
 	// Skip permission check for the notificator services
 	return ctx, nil
@@ -65,11 +70,12 @@ func (s *Server) PermissionStreamFuncOverride(ctx context.Context, srv interface
 func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequest) (*GetNotificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	tNotifications := tNotifications.AS("notification")
 	condition := tNotifications.UserID.EQ(jet.Int32(userInfo.UserId))
-	if req.IncludeRead {
+	if req.IncludeRead != nil && !*req.IncludeRead {
 		condition = jet.AND(
 			condition,
-			tNotifications.ReadAt.IS_NOT_NULL(),
+			tNotifications.ReadAt.IS_NULL(),
 		)
 	}
 
@@ -104,7 +110,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
 
-	if err := stmt.QueryContext(ctx, s.db, resp.Notifications); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Notifications); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}

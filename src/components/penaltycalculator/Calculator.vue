@@ -878,8 +878,8 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
     }
 
     notifications.dispatchNotification({
-        title: t('notifications.penaltycalculator.title'),
-        content: t('notifications.penaltycalculator.content'),
+        title: { key: 'notifications.penaltycalculator.title', parameters: [] },
+        content: { key: 'notifications.penaltycalculator.content', parameters: [] },
         type: 'info',
     });
 

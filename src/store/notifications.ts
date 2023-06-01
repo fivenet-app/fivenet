@@ -2,6 +2,7 @@ import { StoreDefinition, defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { Notification } from '~/composables/notification/interfaces/Notification.interface';
 import { NotificationConfig } from '~/composables/notification/interfaces/NotificationConfig.interface';
+import { NOTIFICATION_CATEGORY } from '~~/gen/ts/resources/notifications/notifications';
 
 export interface NotificationsState {
     notifications: Notification[];
@@ -23,17 +24,17 @@ export const useNotificationsStore = defineStore('notifications', {
             type,
             autoClose = true,
             duration = 6000,
-            titleI18n = false,
-            contentI18n = false,
+            category = NOTIFICATION_CATEGORY.GENERAL,
+            data = undefined,
         }: NotificationConfig) {
             const id = uuidv4();
             this.notifications.unshift({
                 id,
                 title,
-                titleI18n,
                 content,
-                contentI18n,
                 type,
+                category,
+                data,
             });
 
             if (autoClose) {

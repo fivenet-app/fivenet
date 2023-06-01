@@ -21,8 +21,8 @@ function addToClipboard(): void {
     store.addVehicle(props.vehicle);
 
     notifications.dispatchNotification({
-        title: t('notifications.clipboard.vehicle_added.title'),
-        content: t('notifications.clipboard.vehicle_added.content'),
+        title: { key: 'notifications.clipboard.vehicle_added.title', parameters: [] },
+        content: { key: 'notifications.clipboard.vehicle_added.content', parameters: [] },
         duration: 3500,
         type: 'info',
     });

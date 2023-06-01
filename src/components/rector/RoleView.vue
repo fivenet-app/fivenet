@@ -78,8 +78,8 @@ async function deleteRole(): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: t('notifications.rector.role_deleted.title'),
-                content: t('notifications.rector.role_deleted.content'),
+                title: { key: 'notifications.rector.role_deleted.title', parameters: [] },
+                content: { key: 'notifications.rector.role_deleted.content', parameters: [] },
                 type: 'success',
             });
 
@@ -200,8 +200,8 @@ async function updatePermissions(): Promise<void> {
         });
 
         notifications.dispatchNotification({
-            title: t('notifications.rector.role_updated.title'),
-            content: t('notifications.rector.role_updated.content'),
+            title: { key: 'notifications.rector.role_updated.title', parameters: [] },
+            content: { key: 'notifications.rector.role_updated.content', parameters: [] },
             type: 'success',
         });
 

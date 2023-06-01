@@ -97,7 +97,9 @@ func (m *GetNotificationsRequest) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for IncludeRead
+	if m.IncludeRead != nil {
+		// no validation rules for IncludeRead
+	}
 
 	if len(errors) > 0 {
 		return GetNotificationsRequestMultiError(errors)

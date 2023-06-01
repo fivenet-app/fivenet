@@ -3,7 +3,6 @@ package perms
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
@@ -180,7 +179,7 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 		}
 	}
 
-	p.permsRoleMap.Store(role.ID, syncx.Map[uint64, bool]{})
+	p.permsRoleMap.Store(role.ID, &syncx.Map[uint64, bool]{})
 
 	return role, nil
 }
@@ -301,6 +300,12 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 		roleCache.LoadOrStore(v.PermissionID, v.Val)
 	}
 
+	if err := p.publishMessage(RolePermUpdateSubject, RolePermUpdateEvent{
+		RoleID: roleId,
+	}); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -328,8 +333,13 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 	}
 
 	for _, permId := range perms {
-		fmt.Println(permId)
 		roleCache.Delete(permId)
+	}
+
+	if err := p.publishMessage(RolePermUpdateSubject, RolePermUpdateEvent{
+		RoleID: roleId,
+	}); err != nil {
+		return err
 	}
 
 	return nil

@@ -54,8 +54,8 @@ async function toggleWantedStatus(): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: t('notifications.action_successfull.title'),
-                content: t('notifications.action_successfull.content'),
+                title: { key: 'notifications.action_successfull.title', parameters: [] },
+                content: { key: 'notifications.action_successfull.content', parameters: [] },
                 type: 'success',
             });
 

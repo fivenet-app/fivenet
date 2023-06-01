@@ -68,8 +68,11 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                     return true;
                 } else {
                     useNotificationsStore().dispatchNotification({
-                        title: "You don't have permission!",
-                        content: 'No permission to go to ' + (to.name ? to.name?.toString() : to.path) + '.',
+                        title: { key: 'notifications.auth.no_permission.title', parameters: [] },
+                        content: {
+                            key: 'notifications.auth.no_permission.content',
+                            parameters: [to.name ? to.name?.toString() : to.path],
+                        },
                         type: 'warning',
                     });
 

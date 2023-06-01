@@ -2,6 +2,8 @@
 // @generated from protobuf file "resources/notifications/notifications.proto" (package "resources.notifications", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
+import { UserShort } from "../users/users.js";
+import { TranslateItem } from "../common/i18n.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
  * @generated from protobuf message resources.notifications.Notification
@@ -24,21 +26,68 @@ export interface Notification {
      */
     userId: number; // @gotags: alias:"user_id"
     /**
-     * @generated from protobuf field: string title = 5;
+     * @generated from protobuf field: resources.common.TranslateItem title = 5;
      */
-    title: string; // @gotags: alias:"title"
+    title?: TranslateItem; // @gotags: alias:"title"
     /**
      * @generated from protobuf field: optional string type = 6;
      */
     type?: string; // @gotags: alias:"type"
     /**
-     * @generated from protobuf field: string content = 7;
+     * @generated from protobuf field: resources.common.TranslateItem content = 7;
      */
-    content: string; // @gotags: alias:"content"
+    content?: TranslateItem; // @gotags: alias:"content"
     /**
-     * @generated from protobuf field: optional string data = 8;
+     * @generated from protobuf field: resources.notifications.NOTIFICATION_CATEGORY category = 8;
      */
-    data?: string; // @gotags: alias:"data"
+    category: NOTIFICATION_CATEGORY; // @gotags: alias:"category"
+    /**
+     * @generated from protobuf field: optional resources.notifications.Data data = 9;
+     */
+    data?: Data; // @gotags: alias:"data"
+}
+/**
+ * @generated from protobuf message resources.notifications.Data
+ */
+export interface Data {
+    /**
+     * @generated from protobuf field: optional resources.notifications.Link link = 1;
+     */
+    link?: Link;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort caused_by = 2;
+     */
+    causedBy?: UserShort;
+}
+/**
+ * @generated from protobuf message resources.notifications.Link
+ */
+export interface Link {
+    /**
+     * @generated from protobuf field: string to = 1;
+     */
+    to: string;
+    /**
+     * @generated from protobuf field: optional string title = 2;
+     */
+    title?: string;
+    /**
+     * @generated from protobuf field: optional bool external = 3;
+     */
+    external?: boolean;
+}
+/**
+ * @generated from protobuf enum resources.notifications.NOTIFICATION_CATEGORY
+ */
+export enum NOTIFICATION_CATEGORY {
+    /**
+     * @generated from protobuf enum value: GENERAL = 0;
+     */
+    GENERAL = 0,
+    /**
+     * @generated from protobuf enum value: DOCUMENT = 1;
+     */
+    DOCUMENT = 1
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Notification$Type extends MessageType<Notification> {
@@ -48,10 +97,11 @@ class Notification$Type extends MessageType<Notification> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "read_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 5, name: "title", kind: "message", T: () => TranslateItem },
             { no: 6, name: "type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
-            { no: 7, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "256" } } } },
-            { no: 8, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "256" } } } }
+            { no: 7, name: "content", kind: "message", T: () => TranslateItem },
+            { no: 8, name: "category", kind: "enum", T: () => ["resources.notifications.NOTIFICATION_CATEGORY", NOTIFICATION_CATEGORY] },
+            { no: 9, name: "data", kind: "message", T: () => Data }
         ]);
     }
 }
@@ -59,3 +109,30 @@ class Notification$Type extends MessageType<Notification> {
  * @generated MessageType for protobuf message resources.notifications.Notification
  */
 export const Notification = new Notification$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Data$Type extends MessageType<Data> {
+    constructor() {
+        super("resources.notifications.Data", [
+            { no: 1, name: "link", kind: "message", T: () => Link },
+            { no: 2, name: "caused_by", kind: "message", T: () => UserShort }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.notifications.Data
+ */
+export const Data = new Data$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Link$Type extends MessageType<Link> {
+    constructor() {
+        super("resources.notifications.Link", [
+            { no: 1, name: "to", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "title", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "external", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.notifications.Link
+ */
+export const Link = new Link$Type();

@@ -48,15 +48,17 @@ type Server struct {
 	p  perms.Permissions
 	c  *mstlystcdata.Enricher
 	a  audit.IAuditer
+	ui userinfo.UserInfoRetriever
 	n  notifi.INotifi
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, n notifi.INotifi) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever, n notifi.INotifi) *Server {
 	return &Server{
 		db: db,
 		p:  p,
 		c:  c,
 		a:  aud,
+		ui: ui,
 		n:  n,
 	}
 }

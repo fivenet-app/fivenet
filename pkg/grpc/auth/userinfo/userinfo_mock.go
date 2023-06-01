@@ -23,6 +23,14 @@ func (ui *MockUserInfoRetriever) GetUserInfo(ctx context.Context, userId int32, 
 	return nil, fmt.Errorf("no user info found")
 }
 
+func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*UserInfo, error) {
+	if userInfo, ok := ui.userInfo[userId]; ok {
+		return userInfo, nil
+	}
+
+	return nil, fmt.Errorf("no user info found")
+}
+
 func (ui *MockUserInfoRetriever) SetUserInfo(ctx context.Context, accountId uint64, job string, jobGrade int32) error {
 	return nil
 }

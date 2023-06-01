@@ -84,7 +84,8 @@ type Database struct {
 }
 
 type NATS struct {
-	URL string `default:"nats://localhost:4222" yaml:"url"`
+	URL         string `default:"nats://localhost:4222" yaml:"url"`
+	WorkerCount int    `default:"5" yaml:"workerCount"`
 }
 
 type JWT struct {

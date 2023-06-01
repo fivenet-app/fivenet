@@ -82,8 +82,8 @@ async function createRole(): Promise<void> {
             roles.value?.unshift(response.role!);
 
             notifications.dispatchNotification({
-                title: t('notifications.rector.role_created.title'),
-                content: t('notifications.rector.role_created.content'),
+                title: { key: 'notifications.rector.role_created.title', parameters: [] },
+                content: { key: 'notifications.rector.role_created.content', parameters: [] },
                 type: 'success',
             });
 

@@ -37,8 +37,8 @@ async function changePassword(values: FormData): Promise<void> {
             setAccessToken(response.token, toDate(response.expires) as null | Date);
 
             notifications.dispatchNotification({
-                title: t('notifications.auth.changed_password.title'),
-                content: t('notifications.auth.changed_password.content'),
+                title: { key: 'notifications.auth.changed_password.title', parameters: [] },
+                content: { key: 'notifications.auth.changed_password.content', parameters: [] },
                 type: 'success',
             });
             await navigateTo({ name: 'overview' });

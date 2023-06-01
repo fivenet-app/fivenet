@@ -21,6 +21,7 @@ import { useAuthStore } from '~/store/auth';
 import { toTitleCase } from '~/utils/strings';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import QuickButtons from './QuickButtons.vue';
+import SidebarNotifications from './SidebarNotifications.vue';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
@@ -459,6 +460,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             <div v-if="activeChar" class="text-sm font-medium text-base-400">
                                 {{ activeChar.firstname }}, {{ activeChar.lastname }} ({{ activeChar.jobLabel }})
                             </div>
+                            <SidebarNotifications />
                             <SidebarLanguageSwitcher />
                             <!-- Profile dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">

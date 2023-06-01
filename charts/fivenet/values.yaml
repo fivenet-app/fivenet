@@ -132,6 +132,10 @@ fivenet:
       maxIdleConns: 5
       connMaxIdleTime: 15m
       connMaxLifetime: 60m
+    nats:
+      # If you change the NATS username or password, below `nats:` config section
+      url: "nats://fivenet:fivenet@localhost:4222"
+      workerCount: 5
     jwt:
       secret: "YOUR_JWT_SECRET"
     oauth2:
@@ -284,3 +288,20 @@ envoy:
                       socket_address:
                         address: '{{ include "fivenet.fullname" . }}'
                         port_value: 9090
+
+# -- NATS server config values: https://artifacthub.io/packages/helm/nats/nats#values
+nats:
+  enabled: true
+  config:
+    cluster:
+      enabled: true
+      replicas: 1
+    jetstream:
+      enabled: true
+  merge:
+    accounts:
+      fivenet:
+        users:
+          # You should change the username and password
+          - user: "fivenet"
+            password: "fivenet"

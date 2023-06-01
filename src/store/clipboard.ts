@@ -1,6 +1,7 @@
 import { StoreDefinition, defineStore } from 'pinia';
 import { fromString } from '~/utils/time';
 import * as google_protobuf_timestamp from '~~/gen/ts/google/protobuf/timestamp';
+import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
 import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -137,9 +138,10 @@ export const useClipboardStore = defineStore('clipboard', {
         checkRequirements(reqs: ObjectSpecs, listType: ListType): boolean {
             const list = this.$state[listType];
 
-            if (reqs.required && list.length <= 0) {
+            const length = BigInt(list.length);
+            if (reqs.required && length <= 0) {
                 return false;
-            } else if (reqs.min && reqs.max && list.length > reqs.max && list.length < reqs.min) {
+            } else if (reqs.min && reqs.max && length > reqs.max && length < reqs.min) {
                 return false;
             }
 
@@ -175,9 +177,9 @@ export class ClipboardUser {
     public jobLabel: string | undefined;
     public jobGrade: number | undefined;
     public jobGradeLabel: string | undefined;
-    public dateofbirth: string | undefined;
     public firstname: string | undefined;
     public lastname: string | undefined;
+    public dateofbirth: string | undefined;
 
     constructor(u: UserShort | User) {
         this.id = u.userId;
@@ -223,6 +225,7 @@ export class ClipboardDocument {
     public state: string;
     public creator: ClipboardUser;
     public closed: boolean;
+    public category: DocumentCategory | undefined;
 
     constructor(d: Document) {
         this.id = d.id.toString();
@@ -231,6 +234,7 @@ export class ClipboardDocument {
         this.state = d.state;
         this.creator = new ClipboardUser(d.creator!);
         this.closed = d.closed;
+        this.category = d.category;
     }
 }
 
@@ -251,10 +255,11 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         },
         title: obj.title,
         state: obj.state,
-        creator: user,
         creatorId: user.userId,
+        creator: user,
         closed: obj.closed,
-        categoryId: BigInt(0),
+        categoryId: obj.category && obj.category.id ? obj.category.id : BigInt(0),
+        category: obj.category,
     };
 }
 

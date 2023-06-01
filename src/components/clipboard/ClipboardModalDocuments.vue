@@ -59,11 +59,11 @@ async function remove(item: ClipboardDocument, notify: boolean): Promise<void> {
         selected.value.splice(idx, 1);
     }
 
-    clipboardStore.removeDocument(item.id);
+    clipboardStore.removeDocument(BigInt(item.id));
     if (notify) {
         notifications.dispatchNotification({
-            title: t('notifications.clipboard.document_removed.title'),
-            content: t('notifications.clipboard.document_removed.content'),
+            title: { key: 'notifications.clipboard.document_removed.title', parameters: [] },
+            content: { key: 'notifications.clipboard.document_removed.content', parameters: [] },
             duration: 3500,
             type: 'info',
         });
@@ -79,8 +79,8 @@ async function removeAll(): Promise<void> {
 
     emit('statisfied', false);
     notifications.dispatchNotification({
-        title: t('notifications.clipboard.documents_removed.title'),
-        content: t('notifications.clipboard.documents_removed.content'),
+        title: { key: 'notifications.clipboard.documents_removed.title', parameters: [] },
+        content: { key: 'notifications.clipboard.documents_removed.content', parameters: [] },
         duration: 3500,
         type: 'info',
     });

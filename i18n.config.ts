@@ -1,7 +1,7 @@
-import type { I18nOptions } from 'vue-i18n';
 import type { NuxtApp } from 'nuxt/dist/app/index';
+import type { I18nOptions } from 'vue-i18n';
 
-export default function (nuxt: NuxtApp) {
+export default function (_: NuxtApp) {
     return {
         legacy: false,
         locale: 'de',

@@ -5,6 +5,7 @@ import Footer from '~/components/partials/Footer.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
+import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
 
 useHead({
     title: 'common.logout',
@@ -48,8 +49,8 @@ onBeforeMount(async () => {
         $grpc.handleError(err);
 
         notifications.dispatchNotification({
-            title: t('notifications.auth.error_logout.title'),
-            content: t('notifications.auth.error_logout.content', [err.message]),
+            title: { key: 'notifications.auth.error_logout.title', parameters: [] },
+            content: { key: 'notifications.auth.error_logout.content', parameters: [err.message] } as TranslateItem,
             type: 'error',
         });
     }

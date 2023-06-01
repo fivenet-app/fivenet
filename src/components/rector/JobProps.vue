@@ -81,8 +81,8 @@ async function saveJobProps(): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: t('notifications.rector.job_props.title'),
-                content: t('notifications.rector.job_props.content'),
+                title: { key: 'notifications.rector.job_props.title', parameters: [] },
+                content: { key: 'notifications.rector.job_props.content', parameters: [] },
                 type: 'success',
             });
 

@@ -241,3 +241,6 @@ func (p *PermsMock) Can(userInfo *userinfo.UserInfo, category perms.Category, na
 	_, ok := p.UserPerms[userInfo.UserId][guard]
 	return ok
 }
+
+func (p *PermsMock) Stop() {
+}

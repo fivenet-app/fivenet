@@ -12,7 +12,7 @@ import "validate/validate.proto";
 
 message GetNotificationsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  bool include_read = 2;
+  optional bool include_read = 2;
 }
 
 message GetNotificationsResponse {

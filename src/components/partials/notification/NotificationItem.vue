@@ -15,9 +15,9 @@ defineProps<{
     notification: Notification;
 }>();
 
-const closeNotification = (id: string) => {
+async function closeNotification(id: string): Promise<void> {
     notifications.removeNotification(id);
-};
+}
 </script>
 
 <template>
@@ -51,11 +51,11 @@ const closeNotification = (id: string) => {
                         />
                     </div>
                     <div class="ml-3 w-0 flex-1 pt-0.5">
-                        <p class="text-sm font-semibold" v-if="notification.title">
-                            {{ notification.titleI18n ? $t(notification.title) : notification.title }}
+                        <p class="text-sm font-semibold">
+                            {{ $t(notification.title.key, notification.title.parameters) }}
                         </p>
-                        <p :class="`${notification.title ? 'mt-1' : ''} text-sm leading-5`">
-                            {{ notification.contentI18n ? $t(notification.content) : notification.content }}
+                        <p class="mt-1 text-sm leading-5`">
+                            {{ $t(notification.content.key, notification.content.parameters) }}
                         </p>
                     </div>
                     <div class="flex flex-shrink-0 ml-4">
