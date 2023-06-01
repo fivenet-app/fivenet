@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { Switch } from '@headlessui/vue';
 import { BellSlashIcon, ChevronRightIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
