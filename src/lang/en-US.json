@@ -529,13 +529,13 @@
                 "title": "Unable to reach server",
                 "content": "Unable to reach FiveNet server, please check your internet connection."
             },
-            "not_found": {
-                "title": "Not found",
-                "content": "Content not found."
-            },
             "default": {
                 "title": "Unknown error occured",
                 "content": "{0} (Code: {1})"
+            },
+            "not_found": {
+                "title": "Not found",
+                "content": "Content not found."
             }
         },
         "job_switcher": {
@@ -565,12 +565,6 @@
         "document_deleted": {
             "title": "Document deleted!",
             "content": "Document has been deleted."
-        },
-        "document_view": {
-            "copy_document_id": {
-                "title": "Document ID",
-                "content":"Document ID copied to clipboard."
-            }
         },
         "renewed_token": {
             "title": "Access Token renewed",
@@ -611,6 +605,12 @@
         "penaltycalculator": {
             "title": "Penalty Calculator: Copied to clipboard",
             "content": "Summary copied to clipboard."
+        },
+        "document_view": {
+            "copy_document_id": {
+                "title": "Document ID",
+                "content": "Document ID copied to clipboard."
+            }
         },
         "notifi": {
             "document_relation_mentioned": {
