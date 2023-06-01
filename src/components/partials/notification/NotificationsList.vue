@@ -2,6 +2,7 @@
 import { Switch } from '@headlessui/vue';
 import { BellSlashIcon, ChevronRightIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { watchDebounced } from '@vueuse/core';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { Notification } from '~~/gen/ts/resources/notifications/notifications';
 import DataErrorBlock from '../DataErrorBlock.vue';
@@ -71,6 +72,8 @@ async function markRead(ids: bigint[]): Promise<void> {
         }
     });
 }
+
+watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 1500 });
 </script>
 
 <template>
@@ -92,7 +95,7 @@ async function markRead(ids: bigint[]): Promise<void> {
                                             'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
                                         ]"
                                     >
-                                        <span class="sr-only">Wanted</span>
+                                        <span class="sr-only">>{{ $t('pages.notifications.include_read') }}</span>
                                         <span
                                             aria-hidden="true"
                                             :class="[
@@ -156,7 +159,7 @@ async function markRead(ids: bigint[]): Promise<void> {
                                                     {{ $t(not.title!.key, not.title?.parameters ?? []) }}
                                                 </span>
                                             </p>
-                                            <p class="mt-1 flex text-xs leading-5 text-gray-500">
+                                            <p class="mt-1 flex text-xs leading-5 text-gray-200">
                                                 {{ $t(not.content!.key, not.content?.parameters ?? []) }}
                                             </p>
                                         </div>
@@ -164,16 +167,18 @@ async function markRead(ids: bigint[]): Promise<void> {
                                     <div class="flex items-center gap-x-4">
                                         <div class="hidden sm:flex sm:flex-col sm:items-end">
                                             <p class="mt-1 text-xs leading-5 text-gray-500">
-                                                Received at
+                                                {{ $t('common.received') }}
                                                 <time :datetime="toDate(not.createdAt)?.toLocaleDateString()">
                                                     {{ useLocaleTimeAgo(toDate(not.createdAt)!).value }}
                                                 </time>
                                             </p>
                                             <div v-if="!not.readAt" class="mt-1 flex items-center gap-x-1.5">
-                                                <div class="flex-none rounded-full bg-emerald-500/20 p-1">
-                                                    <div class="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                                                <div class="flex-none rounded-full bg-green-500/20 p-1">
+                                                    <div class="h-1.5 w-1.5 rounded-full bg-green-500" />
                                                 </div>
-                                                <p class="text-xs leading-5 text-gray-500">Unread</p>
+                                                <p class="text-xs leading-5 text-gray-500">
+                                                    {{ $t('pages.notifications.unread') }}
+                                                </p>
                                             </div>
                                         </div>
                                         <ChevronRightIcon

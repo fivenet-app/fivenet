@@ -7,6 +7,7 @@ import "resources/common/database/database.proto";
 import "resources/documents/category.proto";
 import "resources/documents/documents.proto";
 import "resources/documents/templates.proto";
+import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 // Templates ==================================================================
@@ -54,9 +55,11 @@ message ListDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
   // Search param
-  string search = 3;
+  optional string search = 3;
   repeated uint64 category_ids = 4;
   repeated int32 creator_ids = 5;
+  optional resources.timestamp.Timestamp from = 6;
+  optional resources.timestamp.Timestamp to = 7;
 }
 
 message ListDocumentsResponse {

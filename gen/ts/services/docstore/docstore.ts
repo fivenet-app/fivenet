@@ -13,6 +13,7 @@ import { DocumentAccess } from "../../resources/documents/documents.js";
 import { Document } from "../../resources/documents/documents.js";
 import { DocumentShort } from "../../resources/documents/documents.js";
 import { PaginationResponse } from "../../resources/common/database/database.js";
+import { Timestamp } from "../../resources/timestamp/timestamp.js";
 import { OrderBy } from "../../resources/common/database/database.js";
 import { PaginationRequest } from "../../resources/common/database/database.js";
 import { Template } from "../../resources/documents/templates.js";
@@ -130,9 +131,9 @@ export interface ListDocumentsRequest {
     /**
      * Search param
      *
-     * @generated from protobuf field: string search = 3;
+     * @generated from protobuf field: optional string search = 3;
      */
-    search: string;
+    search?: string;
     /**
      * @generated from protobuf field: repeated uint64 category_ids = 4;
      */
@@ -141,6 +142,14 @@ export interface ListDocumentsRequest {
      * @generated from protobuf field: repeated int32 creator_ids = 5;
      */
     creatorIds: number[];
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 6;
+     */
+    from?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 7;
+     */
+    to?: Timestamp;
 }
 /**
  * @generated from protobuf message services.docstore.ListDocumentsResponse
@@ -745,9 +754,11 @@ class ListDocumentsRequest$Type extends MessageType<ListDocumentsRequest> {
         super("services.docstore.ListDocumentsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "orderBy", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => OrderBy, options: { "validate.rules": { repeated: { maxItems: "3" } } } },
-            { no: 3, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "category_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "creator_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 5, name: "creator_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "from", kind: "message", T: () => Timestamp },
+            { no: 7, name: "to", kind: "message", T: () => Timestamp }
         ]);
     }
 }

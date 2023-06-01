@@ -68,10 +68,10 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 
 	tDocs := tDocs.AS("documentshort")
 	condition := jet.Bool(true)
-	if req.Search != "" {
+	if req.Search != nil && *req.Search != "" {
 		condition = jet.BoolExp(
 			jet.Raw("MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
-				jet.RawArgs{"$search": req.Search}),
+				jet.RawArgs{"$search": *req.Search}),
 		)
 	}
 	if len(req.CategoryIds) > 0 {
@@ -93,6 +93,16 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		condition = condition.AND(
 			tDocs.CreatorID.IN(ids...),
 		)
+	}
+	if req.From != nil {
+		condition = condition.AND(tDocs.CreatedAt.GT_EQ(
+			jet.TimestampT(req.From.AsTime()),
+		))
+	}
+	if req.To != nil {
+		condition = condition.AND(tDocs.CreatedAt.LT_EQ(
+			jet.TimestampT(req.To.AsTime()),
+		))
 	}
 
 	countStmt := s.listDocumentsQuery(

@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents` (
   `closed` tinyint(1) DEFAULT 0,
   `public` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
+  KEY `idx_fivenet_documents_created_at` (`created_at`),
   KEY `idx_fivenet_documents_deleted_at` (`deleted_at`),
   KEY `idx_fivenet_documents_category_id` (`category_id`),
   KEY `idx_fivenet_documents_creator_id` (`creator_id`),

@@ -139,7 +139,8 @@
             "title": "Benachrichtigungen",
             "mark_read": "Als gelesen markieren",
             "mark_all_read": "Alle als gelesen markieren",
-            "include_read": "Gelesene Benachrichtigungen"
+            "include_read": "Gelesene Benachrichtigungen",
+            "unread": "Ungelesen"
         }
     },
     "copyright": "Copyright © 2023 Galexrt Alle Rechte vorbehalten.",
@@ -450,7 +451,8 @@
         "preview": "Vorschau",
         "option": "Option | Optionen",
         "weight": "Gewichtung",
-        "notification": "Benachrichtigung | Benachrichtigungen"
+        "notification": "Benachrichtigung | Benachrichtigungen",
+        "received": "Erhalten"
     },
     "notifications": {
         "clipboard": {
