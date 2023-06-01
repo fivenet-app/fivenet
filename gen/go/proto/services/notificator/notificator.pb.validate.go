@@ -368,15 +368,19 @@ func (m *ReadNotificationsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := len(m.GetIds()); l < 1 || l > 20 {
-		err := ReadNotificationsRequestValidationError{
-			field:  "Ids",
-			reason: "value must contain between 1 and 20 items, inclusive",
+	if len(m.GetIds()) > 0 {
+
+		if l := len(m.GetIds()); l < 1 || l > 20 {
+			err := ReadNotificationsRequestValidationError{
+				field:  "Ids",
+				reason: "value must contain between 1 and 20 items, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
+
 	}
 
 	if m.All != nil {

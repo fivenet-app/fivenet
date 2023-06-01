@@ -138,7 +138,7 @@ export const GetNotificationsResponse = new GetNotificationsResponse$Type();
 class ReadNotificationsRequest$Type extends MessageType<ReadNotificationsRequest> {
     constructor() {
         super("services.notificator.ReadNotificationsRequest", [
-            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20" } } } },
+            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20", ignoreEmpty: true } } } },
             { no: 2, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
