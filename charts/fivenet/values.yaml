@@ -295,13 +295,23 @@ nats:
   config:
     cluster:
       enabled: true
-      replicas: 1
+      replicas: 3
     jetstream:
       enabled: true
-  merge:
-    accounts:
-      fivenet:
-        users:
-          # You should change the username and password
-          - user: "fivenet"
-            password: "fivenet"
+      fileStore:
+        enabled: true
+        pvc:
+          enabled: true
+          size: 5Gi
+          #storageClassName: default
+      memoryStore:
+        enabled: true
+        # ensure that container has a sufficient memory limit greater than maxSize
+        maxSize: 64Mi
+    merge:
+      accounts:
+        fivenet:
+          users:
+            # You should change the username and password
+            - user: "fivenet"
+              password: "fivenet"
