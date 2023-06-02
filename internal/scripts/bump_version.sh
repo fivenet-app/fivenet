@@ -17,6 +17,13 @@ cd ../../ || { echo "Failed to cd to root of repo."; exit 1; }
 
 echo "v${VERSION}" > VERSION
 
+# package.json
+sed \
+    --in-place \
+    --regexp-extended \
+    --expression 's~"version": "[0-9\.]+"~"version": "'"${VERSION}"'"~' \
+        ./package.json
+
 # Helm Chart
 sed \
     --in-place \
@@ -27,7 +34,7 @@ sed \
 HELM_CHART_VERSION=$(grep \
     --only-matching \
     --perl-regexp \
-    'version: ([0-9\.]+)' \
+    '^version: ([0-9\.]+)' \
         ./charts/fivenet/Chart.yaml)
 
 version_rest=$(echo "${HELM_CHART_VERSION}" | cut -d':' -f 2 | cut -d'.' -f 1-2)
@@ -38,7 +45,7 @@ version_patch_new=$(( version_patch + 1 ))
 sed \
     --in-place \
     --regexp-extended \
-    --expression 's~version: [0-9\.]+~version: '"${version_rest}.${version_patch_new}"'~' \
+    --expression 's~^version: [0-9\.]+~version: '"${version_rest}.${version_patch_new}"'~' \
         ./charts/fivenet/Chart.yaml
 
 git add --all
