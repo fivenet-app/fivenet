@@ -239,14 +239,9 @@ const queryRank = ref('');
 function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
     const o: ObjectSpecs = {
         required: v.req,
+        min: v.min,
+        max: v.max,
     };
-    if (v.min > 0) {
-        o.min = v.min;
-    }
-    if (v.max > 0) {
-        o.max = v.max;
-    }
-
     return o;
 }
 
@@ -267,7 +262,7 @@ async function createTemplate(values: FormData): Promise<void> {
 
                 jobAccesses.push({
                     id: BigInt(0),
-                    templateId: props.templateId!,
+                    templateId: BigInt(0),
                     access: entry.values.accessrole,
                     job: entry.values.job,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
@@ -304,10 +299,11 @@ async function createTemplate(values: FormData): Promise<void> {
             }
         });
 
+        if (typeof values.weight === 'string') values.weight = parseInt(values.weight as string);
         const req: CreateTemplateRequest = {
             template: {
-                id: props.templateId!,
-                weight: values.weight,
+                id: BigInt(0),
+                weight: values.weight as number,
                 title: values.title,
                 description: values.description,
                 contentTitle: values.contentTitle,
@@ -340,6 +336,7 @@ async function createTemplate(values: FormData): Promise<void> {
 
             return res();
         } catch (e) {
+            console.log(e);
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
@@ -553,6 +550,10 @@ onMounted(async () => {
             $grpc.handleError(e as RpcError);
         }
     } else {
+        setValues({
+            weight: 0,
+        });
+
         access.value.set(BigInt(0), {
             id: BigInt(0),
             type: 1,
