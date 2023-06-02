@@ -48,7 +48,6 @@ sed \
     --expression 's~^version: [0-9\.]+~version: '"${version_rest}.${version_patch_new}"'~' \
         ./charts/fivenet/Chart.yaml
 
-exit 0
 git add --all
 
 git commit \
