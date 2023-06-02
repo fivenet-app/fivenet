@@ -560,8 +560,8 @@ watchDebounced(postalQuery, () => findPostal(), {
             </LLayerGroup>
 
             <LControl position="bottomleft" class="leaflet-control-attribution mouseposition">
-                <b>{{ $t('common.latitude') }}</b
-                >: {{ mouseLat }} | <b>{{ $t('common.longitude') }}</b
+                <b>{{ $t('common.longitude') }}</b
+                >: {{ mouseLat }} | <b>{{ $t('common.latitude') }}</b
                 >: {{ mouseLong }}
             </LControl>
             <LControl position="topleft">
