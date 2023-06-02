@@ -28,7 +28,7 @@ sed \
 sed \
     --in-place \
     --regexp-extended \
-    --expression 's~appVersion: "v[0-9\.]+"~appVersion: "v'"${VERSION}"'"~' \
+    --expression 's~appVersion: v[0-9\.]+~appVersion: v'"${VERSION}"'~' \
         ./charts/fivenet/Chart.yaml
 
 HELM_CHART_VERSION=$(grep \
@@ -48,6 +48,7 @@ sed \
     --expression 's~^version: [0-9\.]+~version: '"${version_rest}.${version_patch_new}"'~' \
         ./charts/fivenet/Chart.yaml
 
+exit 0
 git add --all
 
 git commit \
