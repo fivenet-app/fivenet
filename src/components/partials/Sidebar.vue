@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, Menu, MenuButton, MenuItem, MenuItems, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { ChevronRightIcon, HomeIcon as HomeIconSolid } from '@heroicons/vue/20/solid';
+import {
+    ArrowRightOnRectangleIcon,
+    ChevronRightIcon,
+    ChevronUpDownIcon,
+    HomeIcon as HomeIconSolid,
+} from '@heroicons/vue/20/solid';
 import {
     Bars3BottomLeftIcon,
     BriefcaseIcon,
@@ -29,14 +34,18 @@ const { accessToken, activeChar } = storeToRefs(authStore);
 const router = useRouter();
 const route = useRoute();
 
-const sidebarNavigation: {
-    name: string;
-    href: RoutesNamedLocations;
-    permission: string;
-    icon: FunctionalComponent;
-    position: 'top' | 'bottom';
-    current: boolean;
-}[] = [
+const sidebarNavigation = ref<
+    {
+        name: string;
+        href: RoutesNamedLocations;
+        permission: string;
+        icon: FunctionalComponent;
+        position: 'top' | 'bottom';
+        current: boolean;
+        loggedIn?: boolean;
+        charSelected?: boolean;
+    }[]
+>([
     {
         name: t('common.overview'),
         href: { name: 'overview' },
@@ -101,7 +110,7 @@ const sidebarNavigation: {
         position: 'bottom',
         current: false,
     },
-];
+]);
 const userNavigation = ref<{ name: string; href: RoutesNamedLocations; permission?: string }[]>([
     { name: t('common.login'), href: { name: 'auth-login' } },
 ]);
@@ -139,7 +148,7 @@ function updateUserNav(): void {
 function updateActiveItem(): void {
     const route = router.currentRoute.value;
     if (route.name) {
-        sidebarNavigation.forEach((e) => {
+        sidebarNavigation.value.forEach((e) => {
             if (route.name.toLowerCase().includes(e.href.name.toLowerCase())) {
                 e.current = true;
             } else {
@@ -147,7 +156,7 @@ function updateActiveItem(): void {
             }
         });
     } else {
-        sidebarNavigation.forEach((e) => (e.current = false));
+        sidebarNavigation.value.forEach((e) => (e.current = false));
     }
 }
 
@@ -222,17 +231,50 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                     </NuxtLink>
                 </div>
                 <div class="flex-grow w-full px-2 mt-6 space-y-1 text-center">
-                    <NuxtLink
-                        :to="{ name: 'index' }"
-                        v-if="!accessToken || !activeChar"
-                        active-class="bg-accent-100/20 text-neutral font-bold"
-                        class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
-                        exact-active-class="text-neutral"
-                        aria-current-value="page"
-                    >
-                        <HomeIcon class="h-6 w-6" aria-hidden="true" />
-                        <span class="mt-2">{{ $t('common.home') }}</span>
-                    </NuxtLink>
+                    <span v-if="!accessToken && !activeChar">
+                        <NuxtLink
+                            :to="{ name: 'index' }"
+                            active-class="bg-accent-100/20 text-neutral font-bold"
+                            class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
+                            exact-active-class="text-neutral"
+                            aria-current-value="page"
+                        >
+                            <HomeIcon class="h-6 w-6" aria-hidden="true" />
+                            <span class="mt-2">{{ $t('common.home') }}</span>
+                        </NuxtLink>
+                        <NuxtLink
+                            :to="{ name: 'auth-login' }"
+                            active-class="bg-accent-100/20 text-neutral font-bold"
+                            class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
+                            exact-active-class="text-neutral"
+                            aria-current-value="page"
+                        >
+                            <ArrowRightOnRectangleIcon class="h-6 w-6" aria-hidden="true" />
+                            <span class="mt-2">{{ $t('common.login') }}</span>
+                        </NuxtLink>
+                    </span>
+                    <span v-if="accessToken && !activeChar">
+                        <NuxtLink
+                            :to="{ name: 'index' }"
+                            active-class="bg-accent-100/20 text-neutral font-bold"
+                            class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
+                            exact-active-class="text-neutral"
+                            aria-current-value="page"
+                        >
+                            <HomeIcon class="h-6 w-6" aria-hidden="true" />
+                            <span class="mt-2">{{ $t('common.home') }}</span>
+                        </NuxtLink>
+                        <NuxtLink
+                            :to="{ name: 'auth-character-selector' }"
+                            active-class="bg-accent-100/20 text-neutral font-bold"
+                            class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
+                            exact-active-class="text-neutral"
+                            aria-current-value="page"
+                        >
+                            <ChevronUpDownIcon class="h-6 w-6" aria-hidden="true" />
+                            <span class="mt-2">{{ $t('pages.auth.character_selector.title') }}</span>
+                        </NuxtLink>
+                    </span>
                     <NuxtLink
                         v-for="item in sidebarNavigation.filter((e) => e.position === 'top')"
                         v-else-if="accessToken && activeChar"
