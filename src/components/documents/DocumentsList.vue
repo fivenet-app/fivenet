@@ -21,17 +21,22 @@ import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timesta
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
 import TemplatesModal from './templates/TemplatesModal.vue';
 
 const { $grpc } = useNuxtApp();
 
-const search = ref<{ title: string; category?: DocumentCategory; from?: string; to?: string }>({ title: '' });
+const search = ref<{ title: string; category?: DocumentCategory; character?: UserShort; from?: string; to?: string }>({
+    title: '',
+});
 const pagination = ref<PaginationResponse>();
 const offset = ref(BigInt(0));
 
 const entriesCategories = ref<DocumentCategory[]>([]);
 const queryCategories = ref<string>('');
+const entriesChars = ref<UserShort[]>([]);
+const queryChars = ref<string>('');
 
 const { data: documents, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
 
@@ -47,6 +52,7 @@ async function listDocuments(): Promise<Array<DocumentShort>> {
             creatorIds: [],
         };
         if (search.value.category) req.categoryIds.push(search.value.category.id);
+        if (search.value.character) req.creatorIds.push(search.value.character.userId);
         if (search.value.from) {
             req.from = {
                 timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(search.value.from)!),
@@ -89,6 +95,24 @@ async function findCategories(): Promise<void> {
     });
 }
 
+async function findChars(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getCompletorClient().completeCitizens({
+                search: queryChars.value,
+            });
+            const { response } = await call;
+
+            entriesChars.value = response.users;
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
 const searchInput = ref<HTMLInputElement | null>(null);
 function focusSearch(): void {
     if (searchInput.value) {
@@ -104,9 +128,14 @@ watchDebounced(queryCategories, async () => findCategories(), {
     debounce: 600,
     maxWait: 1400,
 });
+watchDebounced(queryChars, async () => findChars(), {
+    debounce: 600,
+    maxWait: 1400,
+});
 
 onMounted(async () => {
     findCategories();
+    findChars();
 });
 </script>
 
@@ -200,6 +229,57 @@ onMounted(async () => {
                                                         >
                                                             <span :class="['block truncate', selected && 'font-semibold']">
                                                                 {{ category.name }}
+                                                            </span>
+
+                                                            <span
+                                                                v-if="selected"
+                                                                :class="[
+                                                                    active ? 'text-neutral' : 'text-primary-500',
+                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                ]"
+                                                            >
+                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            </span>
+                                                        </li>
+                                                    </ComboboxOption>
+                                                </ComboboxOptions>
+                                            </div>
+                                        </Combobox>
+                                    </div>
+                                    <div class="flex-1 form-control">
+                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.citizen', 1) }}
+                                        </label>
+                                        <Combobox as="div" v-model="search.character" class="mt-2">
+                                            <div class="relative">
+                                                <ComboboxButton as="div">
+                                                    <ComboboxInput
+                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        @change="queryChars = $event.target.value"
+                                                        :display-value="(char: any) => `${char?.firstname} ${char?.lastname}`"
+                                                        :placerholder="$t('common.citizen', 1)"
+                                                    />
+                                                </ComboboxButton>
+
+                                                <ComboboxOptions
+                                                    v-if="entriesChars.length > 0"
+                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                                                >
+                                                    <ComboboxOption
+                                                        v-for="char in entriesChars"
+                                                        :key="char.identifier"
+                                                        :value="char"
+                                                        as="char"
+                                                        v-slot="{ active, selected }"
+                                                    >
+                                                        <li
+                                                            :class="[
+                                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                active ? 'bg-primary-500' : '',
+                                                            ]"
+                                                        >
+                                                            <span :class="['block truncate', selected && 'font-semibold']">
+                                                                {{ char.firstname }} {{ char.lastname }}
                                                             </span>
 
                                                             <span
