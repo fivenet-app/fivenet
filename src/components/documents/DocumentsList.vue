@@ -248,16 +248,16 @@ onMounted(async () => {
                                     </div>
                                     <div class="flex-1 form-control">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.citizen', 1) }}
+                                            {{ $t('common.creator') }}
                                         </label>
-                                        <Combobox as="div" v-model="search.character" class="mt-2">
+                                        <Combobox as="div" v-model="search.character" class="mt-2" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         @change="queryChars = $event.target.value"
                                                         :display-value="(char: any) => `${char?.firstname} ${char?.lastname}`"
-                                                        :placerholder="$t('common.citizen', 1)"
+                                                        :placeholder="$t('common.creator')"
                                                     />
                                                 </ComboboxButton>
 
