@@ -13,12 +13,13 @@ import {
 import { CheckIcon, ChevronDownIcon, PlusIcon } from '@heroicons/vue/20/solid';
 import { ArrowPathIcon } from '@heroicons/vue/24/solid';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { Quill, QuillEditor } from '@vueup/vue-quill';
+import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { watchDebounced } from '@vueuse/core';
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
 import ImageCompress from 'quill-image-compress';
+import MagicUrl from 'quill-magic-url';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
@@ -130,7 +131,16 @@ const modules = [
             insertIntoEditor: undefined,
         },
     },
-] as Quill.Module[];
+    {
+        name: 'magicUrl',
+        module: MagicUrl,
+        options: {
+            normalizeUrlOptions: {
+                stripHash: true,
+            },
+        },
+    },
+];
 
 // keep what you want but you need the formats option!
 const formats = [

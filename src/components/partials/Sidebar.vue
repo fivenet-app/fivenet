@@ -47,7 +47,7 @@ const sidebarNavigation = ref<
     }[]
 >([
     {
-        name: t('common.overview'),
+        name: 'common.overview',
         href: { name: 'overview' },
         permission: '',
         icon: HomeIcon,
@@ -55,7 +55,7 @@ const sidebarNavigation = ref<
         current: false,
     },
     {
-        name: t('common.citizen', 2),
+        name: 'common.citizen',
         href: { name: 'citizens' },
         permission: 'CitizenStoreService.ListCitizens',
         icon: UsersIcon,
@@ -63,7 +63,7 @@ const sidebarNavigation = ref<
         current: false,
     },
     {
-        name: t('common.vehicle', 2),
+        name: 'common.vehicle',
         href: { name: 'vehicles' },
         permission: 'DMVService.ListVehicles',
         icon: TruckIcon,
@@ -71,7 +71,7 @@ const sidebarNavigation = ref<
         current: false,
     },
     {
-        name: t('common.document', 2),
+        name: 'common.document',
         href: { name: 'documents' },
         permission: 'DocStoreService.ListDocuments',
         icon: DocumentTextIcon,
@@ -79,7 +79,7 @@ const sidebarNavigation = ref<
         current: false,
     },
     {
-        name: t('common.job', 2),
+        name: 'common.job',
         href: { name: 'jobs' },
         permission: 'Jobs.View',
         icon: BriefcaseIcon,
@@ -87,7 +87,7 @@ const sidebarNavigation = ref<
         current: false,
     },
     {
-        name: t('common.livemap'),
+        name: 'common.livemap',
         href: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
         icon: MapIcon,
@@ -95,7 +95,7 @@ const sidebarNavigation = ref<
         current: false,
     },
     {
-        name: t('common.control_panel'),
+        name: 'common.control_panel',
         href: { name: 'rector' },
         permission: 'RectorService.GetRoles',
         icon: Cog8ToothIcon,
@@ -103,7 +103,7 @@ const sidebarNavigation = ref<
         current: false,
     },
     {
-        name: t('common.about'),
+        name: 'common.about',
         href: { name: 'about' },
         permission: '',
         icon: QuestionMarkCircleIcon,
@@ -112,7 +112,7 @@ const sidebarNavigation = ref<
     },
 ]);
 const userNavigation = ref<{ name: string; href: RoutesNamedLocations; permission?: string }[]>([
-    { name: t('common.login'), href: { name: 'auth-login' } },
+    { name: 'common.login', href: { name: 'auth-login' } },
 ]);
 const breadcrumbs = ref<{ name: string; href: string; current: boolean }[]>([]);
 const mobileMenuOpen = ref(false);
@@ -127,21 +127,21 @@ function updateUserNav(): void {
     userNavigation.value.length = 0;
     if (activeChar.value) {
         userNavigation.value.push({
-            name: t('components.partials.sidebar.change_character'),
+            name: 'components.partials.sidebar.change_character',
             href: { name: 'auth-character-selector' },
         });
     }
     if (accessToken.value) {
         userNavigation.value.push(
             {
-                name: t('components.partials.sidebar.account_info'),
+                name: 'components.partials.sidebar.account_info',
                 href: { name: 'auth-account-info' },
             },
-            { name: t('common.sign_out'), href: { name: 'auth-logout' } }
+            { name: 'common.sign_out', href: { name: 'auth-logout' } }
         );
     }
     if (userNavigation.value.length === 0) {
-        userNavigation.value = [{ name: t('common.login'), href: { name: 'auth-login' } }];
+        userNavigation.value = [{ name: 'common.login', href: { name: 'auth-login' } }];
     }
 }
 
@@ -294,7 +294,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true"
                         />
-                        <span class="mt-2">{{ item.name }}</span>
+                        <span class="mt-2">{{ $t(item.name) }}</span>
                     </NuxtLink>
                 </div>
                 <div class="flex-initial w-full px-2 space-y-1 text-center">
@@ -316,7 +316,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true"
                         />
-                        <span class="mt-2">{{ item.name }}</span>
+                        <span class="mt-2">{{ $t(item.name) }}</span>
                     </NuxtLink>
                 </div>
             </div>
@@ -407,7 +407,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                                 ]"
                                                 aria-hidden="true"
                                             />
-                                            <span>{{ item.name }}</span>
+                                            <span>{{ $t(item.name, 2) }}</span>
                                         </NuxtLink>
                                     </div>
                                 </nav>
@@ -436,7 +436,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                                 ]"
                                                 aria-hidden="true"
                                             />
-                                            <span>{{ item.name }}</span>
+                                            <span>{{ $t(item.name, 2) }}</span>
                                         </NuxtLink>
                                     </div>
                                 </nav>
@@ -542,7 +542,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                                     'block px-4 py-2 text-sm text-neutral hover:transition-colors',
                                                 ]"
                                             >
-                                                {{ item.name }}
+                                                {{ $t(item.name) }}
                                             </NuxtLink>
                                         </MenuItem>
                                     </MenuItems>
