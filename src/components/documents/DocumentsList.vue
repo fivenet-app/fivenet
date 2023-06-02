@@ -1,13 +1,23 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { BriefcaseIcon, CalendarIcon, DocumentMagnifyingGlassIcon, UserIcon } from '@heroicons/vue/20/solid';
-import { CheckIcon } from '@heroicons/vue/24/solid';
+import {
+    Combobox,
+    ComboboxButton,
+    ComboboxInput,
+    ComboboxOption,
+    ComboboxOptions,
+    Disclosure,
+    DisclosureButton,
+    DisclosurePanel,
+} from '@headlessui/vue';
+import { BriefcaseIcon, CalendarIcon, CheckIcon, DocumentMagnifyingGlassIcon, UserIcon } from '@heroicons/vue/20/solid';
+import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/vue/24/outline';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/shared';
 import { ref } from 'vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/TablePagination.vue';
+import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
@@ -16,7 +26,7 @@ import TemplatesModal from './templates/TemplatesModal.vue';
 
 const { $grpc } = useNuxtApp();
 
-const search = ref<{ title: string; category?: DocumentCategory }>({ title: '' });
+const search = ref<{ title: string; category?: DocumentCategory; from?: string; to?: string }>({ title: '' });
 const pagination = ref<PaginationResponse>();
 const offset = ref(BigInt(0));
 
@@ -37,6 +47,16 @@ async function listDocuments(): Promise<Array<DocumentShort>> {
             creatorIds: [],
         };
         if (search.value.category) req.categoryIds.push(search.value.category.id);
+        if (search.value.from) {
+            req.from = {
+                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(search.value.from)!),
+            };
+        }
+        if (search.value.to) {
+            req.to = {
+                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(search.value.to)!),
+            };
+        }
 
         try {
             const call = $grpc.getDocStoreClient().listDocuments(req);
@@ -111,54 +131,6 @@ onMounted(async () => {
                                     class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 />
                             </div>
-                            <div class="flex-1 form-control">
-                                <Combobox as="div" v-model="search.category" nullable>
-                                    <div class="relative">
-                                        <ComboboxButton as="div">
-                                            <ComboboxInput
-                                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                @change="queryCategories = $event.target.value"
-                                                :display-value="(category: any) => category?.name"
-                                                placeholder="Category"
-                                            />
-                                        </ComboboxButton>
-
-                                        <ComboboxOptions
-                                            v-if="entriesCategories.length > 0"
-                                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
-                                        >
-                                            <ComboboxOption
-                                                v-for="category in entriesCategories"
-                                                :key="category.id?.toString()"
-                                                :value="category"
-                                                as="category"
-                                                v-slot="{ active, selected }"
-                                            >
-                                                <li
-                                                    :class="[
-                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                        active ? 'bg-primary-500' : '',
-                                                    ]"
-                                                >
-                                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                                        {{ category.name }}
-                                                    </span>
-
-                                                    <span
-                                                        v-if="selected"
-                                                        :class="[
-                                                            active ? 'text-neutral' : 'text-primary-500',
-                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                        ]"
-                                                    >
-                                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
-                                                    </span>
-                                                </li>
-                                            </ComboboxOption>
-                                        </ComboboxOptions>
-                                    </div>
-                                </Combobox>
-                            </div>
                             <div class="flex-initial form-control" v-can="'DocStoreService.CreateDocument'">
                                 <button
                                     @click="templatesOpen = true"
@@ -184,6 +156,101 @@ onMounted(async () => {
                                 </NuxtLink>
                             </div>
                         </div>
+                        <Disclosure as="div" class="pt-2" v-slot="{ open }">
+                            <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
+                                <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
+                                <span class="ml-6 flex h-7 items-center">
+                                    <PlusSmallIcon v-if="!open" class="h-6 w-6" aria-hidden="true" />
+                                    <MinusSmallIcon v-else class="h-6 w-6" aria-hidden="true" />
+                                </span>
+                            </DisclosureButton>
+                            <DisclosurePanel class="mt-2 pr-12">
+                                <div class="flex flex-row gap-2">
+                                    <div class="flex-1 form-control">
+                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.category', 1) }}
+                                        </label>
+                                        <Combobox as="div" v-model="search.category" class="mt-2" nullable>
+                                            <div class="relative">
+                                                <ComboboxButton as="div">
+                                                    <ComboboxInput
+                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        @change="queryCategories = $event.target.value"
+                                                        :display-value="(category: any) => category?.name"
+                                                        :placeholder="$t('common.category', 1)"
+                                                    />
+                                                </ComboboxButton>
+
+                                                <ComboboxOptions
+                                                    v-if="entriesCategories.length > 0"
+                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                                                >
+                                                    <ComboboxOption
+                                                        v-for="category in entriesCategories"
+                                                        :key="category.id?.toString()"
+                                                        :value="category"
+                                                        as="category"
+                                                        v-slot="{ active, selected }"
+                                                    >
+                                                        <li
+                                                            :class="[
+                                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                active ? 'bg-primary-500' : '',
+                                                            ]"
+                                                        >
+                                                            <span :class="['block truncate', selected && 'font-semibold']">
+                                                                {{ category.name }}
+                                                            </span>
+
+                                                            <span
+                                                                v-if="selected"
+                                                                :class="[
+                                                                    active ? 'text-neutral' : 'text-primary-500',
+                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                ]"
+                                                            >
+                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            </span>
+                                                        </li>
+                                                    </ComboboxOption>
+                                                </ComboboxOptions>
+                                            </div>
+                                        </Combobox>
+                                    </div>
+                                    <div class="flex-1 form-control">
+                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.time_range') }}: {{ $t('common.from') }}
+                                        </label>
+                                        <div class="relative flex items-center mt-2">
+                                            <input
+                                                v-model="search.from"
+                                                ref="searchInput"
+                                                type="datetime-local"
+                                                name="search"
+                                                :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
+                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 form-control">
+                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral"
+                                            >{{ $t('common.time_range') }}:
+                                            {{ $t('common.to') }}
+                                        </label>
+                                        <div class="relative flex items-center mt-2">
+                                            <input
+                                                v-model="search.from"
+                                                ref="searchInput"
+                                                type="datetime-local"
+                                                name="search"
+                                                :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
+                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </DisclosurePanel>
+                        </Disclosure>
                     </form>
                 </div>
             </div>

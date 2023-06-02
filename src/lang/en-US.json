@@ -452,7 +452,8 @@
         "option": "Option | Options",
         "weight": "Weight",
         "notification": "Notification | Notifications",
-        "received": "Received"
+        "received": "Received",
+        "advanced_search": "Advanced Search"
     },
     "notifications": {
         "clipboard": {
