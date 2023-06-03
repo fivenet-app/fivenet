@@ -54,7 +54,7 @@ func init() {
 	// For linking elements we will add rel="nofollow" if it does not already exist
 	// This applies to "a" "area" "link"
 	p.RequireNoFollowOnLinks(true)
-	// Custom end
+	// CUSTOM END
 
 	p.AllowAttrs("cite").OnElements("blockquote", "q")
 	p.AllowAttrs("href").OnElements("a", "area")

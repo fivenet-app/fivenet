@@ -19,7 +19,11 @@ func TestGRPCAuthFunc(t *testing.T) {
 	assert.NotNil(t, tm)
 	token, err := tm.NewWithClaims(basicCitizenInfoClaim)
 	assert.NoError(t, err)
-	ui := userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{})
+	ui := userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{
+		basicCitizenInfoClaim.CharID: {
+			AccId: basicCitizenInfoClaim.AccID,
+		},
+	})
 	grpcAuth := NewGRPCAuth(ui, tm)
 
 	for _, run := range []struct {

@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
 	"github.com/stretchr/testify/assert"
@@ -30,9 +29,9 @@ var (
 	overrideAuthToken = "override_token"
 )
 
-func buildDummyAuthFunction(expectedScheme string, expectedToken string) func(ctx context.Context) (context.Context, error) {
-	return func(ctx context.Context) (context.Context, error) {
-		token, err := auth.AuthFromMD(ctx, expectedScheme)
+func buildDummyAuthFunction(expectedScheme string, expectedToken string) func(ctx context.Context, fullMethod string) (context.Context, error) {
+	return func(ctx context.Context, fullMethod string) (context.Context, error) {
+		token, err := AuthFromMD(ctx, expectedScheme)
 		if err != nil {
 			return nil, err
 		}
@@ -73,8 +72,8 @@ func TestAuthTestSuite(t *testing.T) {
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &assertingPingService{&testpb.TestPingService{}, t},
 			ServerOpts: []grpc.ServerOption{
-				grpc.StreamInterceptor(auth.StreamServerInterceptor(authFunc)),
-				grpc.UnaryInterceptor(auth.UnaryServerInterceptor(authFunc)),
+				grpc.StreamInterceptor(StreamServerInterceptor(authFunc)),
+				grpc.UnaryInterceptor(UnaryServerInterceptor(authFunc)),
 			},
 		},
 	}
@@ -150,7 +149,7 @@ type authOverrideTestService struct {
 
 func (s *authOverrideTestService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	assert.NotEmpty(s.T, fullMethodName, "method name of caller is passed around")
-	return buildDummyAuthFunction("bearer", overrideAuthToken)(ctx)
+	return buildDummyAuthFunction("bearer", overrideAuthToken)(ctx, fullMethodName)
 }
 
 func TestAuthOverrideTestSuite(t *testing.T) {
@@ -159,8 +158,8 @@ func TestAuthOverrideTestSuite(t *testing.T) {
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &authOverrideTestService{&assertingPingService{&testpb.TestPingService{}, t}, t},
 			ServerOpts: []grpc.ServerOption{
-				grpc.StreamInterceptor(auth.StreamServerInterceptor(authFunc)),
-				grpc.UnaryInterceptor(auth.UnaryServerInterceptor(authFunc)),
+				grpc.StreamInterceptor(StreamServerInterceptor(authFunc)),
+				grpc.UnaryInterceptor(UnaryServerInterceptor(authFunc)),
 			},
 		},
 	}
