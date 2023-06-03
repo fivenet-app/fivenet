@@ -36,13 +36,15 @@ Golang templating is used. In addition to base [Golang html/template functions](
 
 * `userId`
 * `identifier`
-* `job` - Preferrably use `jobLabel`.
-* `jobLabel`
-* `jobGrade` - Preferrably use `jobGradeLabel`.
-* `jobGradeLabel`
+* `job`* - Preferrably use `jobLabel`.
+* `jobLabel`*
+* `jobGrade`* - Preferrably use `jobGradeLabel`.
+* `jobGradeLabel`*
 * `firstname`
 * `lastname`
 * `dateofbirth` - In `DD.MM.YYYY` format.
+
+(\*these fields are only available on the `.activeChar` variable)
 
 ## Snippets
 
