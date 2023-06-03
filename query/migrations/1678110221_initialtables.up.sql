@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_relations` (
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` datetime(3) DEFAULT NULL,
   `document_id` bigint(20) unsigned NOT NULL,
-  `source_user_id` int(11) NOT NULL,
+  `source_user_id` int(11) DEFAULT NULL,
   `relation` smallint(2) NOT NULL,
   `target_user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_user_access` (
 CREATE TABLE IF NOT EXISTS `fivenet_user_activity` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
-  `source_user_id` int(11) NOT NULL,
+  `source_user_id` int(11) DEFAULT NULL,
   `target_user_id` int(11) NOT NULL,
   `type` smallint(2) NOT NULL,
   `key` varchar(64) NOT NULL,
