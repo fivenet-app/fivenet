@@ -36,6 +36,16 @@ BEGIN;
 --   KEY `IDX_OWNED_VEHICLES_OWNERTYPE` (`owner`,`type`),
 --   KEY `IDX_OWNED_VEHICLES_OWNERRMODELTYPE` (`owner`,`model`,`type`)
 -- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Add indexes for better sorting performance
+set @x := (select count(*) from information_schema.statistics where table_name = 'owned_vehicles' and index_name = 'idx_owned_vehicles_model' and table_schema = database());
+set @sql := if( @x > 0, 'select ''Vehicles model index exists.''', 'ALTER TABLE owned_vehicles ADD KEY `idx_owned_vehicles_model` (`model`);');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+
+set @x := (select count(*) from information_schema.statistics where table_name = 'owned_vehicles' and index_name = 'idx_owned_vehicles_type' and table_schema = database());
+set @sql := if( @x > 0, 'select ''Vehicles type index exists.''', 'ALTER TABLE owned_vehicles ADD KEY `idx_owned_vehicles_type` (`type`);');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
 
 -- Table: user_licenses - Should already exist
 -- CREATE TABLE IF NOT EXISTS `user_licenses` (
@@ -48,7 +58,7 @@ BEGIN;
 -- Table: users - Should already exist
 -- Add firstname + lastname fulltext index
 set @x := (select count(*) from information_schema.statistics where table_name = 'users' and index_name = 'users_firstname_IDX' and table_schema = database());
-set @sql := if( @x > 0, 'select ''Index exists.''', 'ALTER TABLE users ADD FULLTEXT KEY `users_firstname_IDX` (`firstname`,`lastname`);');
+set @sql := if( @x > 0, 'select ''users fulltext index exists.''', 'ALTER TABLE users ADD FULLTEXT KEY `users_firstname_IDX` (`firstname`,`lastname`);');
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 
