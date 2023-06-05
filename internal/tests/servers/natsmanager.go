@@ -73,7 +73,7 @@ func (m *natsServer) Setup() {
 }
 
 func (m *natsServer) GetURL() string {
-	return fmt.Sprintf("nats://fivenet:changeme@localhost:%s", m.resource.GetPort("3306/tcp"))
+	return fmt.Sprintf("nats://fivenet:changeme@localhost:%s", m.resource.GetPort("4222/tcp"))
 }
 
 func (m *natsServer) Stop() {
