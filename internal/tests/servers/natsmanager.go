@@ -3,6 +3,7 @@ package servers
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/nats-io/nats.go"
 	"github.com/ory/dockertest/v3"
@@ -29,6 +30,7 @@ func (m *natsServer) Setup() {
 	if err != nil {
 		log.Fatalf("Could not construct pool: %q", err)
 	}
+	m.pool.MaxWait = 3 * time.Minute
 
 	// uses pool to try to connect to Docker
 	err = m.pool.Client.Ping()
@@ -59,14 +61,14 @@ func (m *natsServer) Setup() {
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	if err := m.pool.Retry(func() error {
-		_, err := nats.Connect(m.GetURL(), nats.Name("FiveNet"),
+		_, err := nats.Connect(m.GetURL(), nats.Name("FiveNet natsmanager"),
 			nats.NoEcho())
 		if err != nil {
 			return err
 		}
 		return nil
 	}); err != nil {
-		log.Fatalf("Could not connect to database: %q", err)
+		log.Fatalf("Could not connect to nats: %q", err)
 	}
 }
 
