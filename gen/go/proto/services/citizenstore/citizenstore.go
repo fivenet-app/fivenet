@@ -11,7 +11,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/audit"
-	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -45,14 +44,21 @@ type Server struct {
 	p  perms.Permissions
 	c  *mstlystcdata.Enricher
 	a  audit.IAuditer
+
+	publicJobs         []string
+	unemployedJob      string
+	unemployedJobGrade int32
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, publicJobs []string, unemployedJob string, unemployedJobGrade int32) *Server {
 	return &Server{
-		db: db,
-		p:  p,
-		c:  c,
-		a:  aud,
+		db:                 db,
+		p:                  p,
+		c:                  c,
+		a:                  aud,
+		publicJobs:         publicJobs,
+		unemployedJob:      unemployedJob,
+		unemployedJobGrade: unemployedJobGrade,
 	}
 }
 
@@ -173,15 +179,15 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	}
 
 	for i := 0; i < len(resp.Users); i++ {
-		if utils.InStringSlice(config.C.Game.PublicJobs, resp.Users[i].Job) {
+		if utils.InStringSlice(s.publicJobs, resp.Users[i].Job) {
 			// Make sure user has permission to see that grade, otherwise "hide" the user's job
 			grade, ok := jobGrades[resp.Users[i].Job]
 			if !ok || grade > resp.Users[i].JobGrade {
 				resp.Users[i].JobGrade = 0
 			}
 		} else {
-			resp.Users[i].Job = config.C.Game.UnemployedJob.Name
-			resp.Users[i].JobGrade = config.C.Game.UnemployedJob.Grade
+			resp.Users[i].Job = s.unemployedJob
+			resp.Users[i].JobGrade = s.unemployedJobGrade
 		}
 
 		if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
@@ -267,7 +273,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		return nil, JobGradeNoPermissionErr
 	}
 
-	if utils.InStringSlice(config.C.Game.PublicJobs, resp.User.Job) {
+	if utils.InStringSlice(s.publicJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
 		jobGradesAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceGetUserPerm, CitizenStoreServiceGetUserJobsPermField)
 		if err != nil {
@@ -291,8 +297,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			}
 		}
 	} else {
-		resp.User.Job = config.C.Game.UnemployedJob.Name
-		resp.User.JobGrade = config.C.Game.UnemployedJob.Grade
+		resp.User.Job = s.unemployedJob
+		resp.User.JobGrade = s.unemployedJobGrade
 	}
 
 	if resp.User.Props != nil && resp.User.Props.Job != nil {
@@ -421,7 +427,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		props.Wanted = &wanted
 	}
 	if props.JobName == nil {
-		props.JobName = &config.C.Game.UnemployedJob.Name
+		props.JobName = &s.unemployedJob
 	}
 
 	updateSets := []jet.ColumnAssigment{}
@@ -453,7 +459,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user job!")
 		}
 
-		if utils.InStringSlice(config.C.Game.PublicJobs, *req.Props.JobName) {
+		if utils.InStringSlice(s.publicJobs, *req.Props.JobName) {
 			return nil, status.Error(codes.InvalidArgument, "You can't set a state job!")
 		}
 

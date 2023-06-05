@@ -12,7 +12,6 @@ import (
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -55,18 +54,20 @@ type Server struct {
 	usersCache      *cache.Cache[string, []*livemap.UserMarker]
 
 	broker *utils.Broker[interface{}]
+
+	visibleJobs []string
 }
 
-func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher) *Server {
+func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, usersCacheSize int, visibleJobs []string) *Server {
 	dispatchesCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[string, []*livemap.DispatchMarker](lru.WithCapacity(DispatchMarkerLimit)),
-		cache.WithJanitorInterval[string, []*livemap.DispatchMarker](120*time.Second),
+		cache.AsLRU[string, []*livemap.DispatchMarker](lru.WithCapacity(len(visibleJobs))),
+		cache.WithJanitorInterval[string, []*livemap.DispatchMarker](90*time.Second),
 	)
 	usersCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[string, []*livemap.UserMarker](lru.WithCapacity(config.C.Game.Livemap.UsersCacheSize)),
-		cache.WithJanitorInterval[string, []*livemap.UserMarker](120*time.Second),
+		cache.AsLRU[string, []*livemap.UserMarker](lru.WithCapacity(usersCacheSize)),
+		cache.WithJanitorInterval[string, []*livemap.UserMarker](90*time.Second),
 	)
 
 	broker := utils.NewBroker[interface{}](ctx)
@@ -280,7 +281,7 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 }
 
 func (s *Server) refreshDispatches(ctx context.Context) error {
-	if len(config.C.Game.Livemap.Jobs) == 0 {
+	if len(s.visibleJobs) == 0 {
 		s.logger.Warn("empty livemap jobs in config, no dispatches can be found because of that")
 		return nil
 	}
@@ -303,7 +304,7 @@ func (s *Server) refreshDispatches(ctx context.Context) error {
 		).
 		WHERE(
 			jet.AND(
-				d.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(config.C.Game.Livemap.Jobs, "|")+")\"\\]")),
+				d.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.visibleJobs, "|")+")\"\\]")),
 				d.Time.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE))),
 			),
 		).

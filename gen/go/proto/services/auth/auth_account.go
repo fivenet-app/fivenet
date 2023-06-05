@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	accounts "github.com/galexrt/fivenet/gen/go/proto/resources/accounts"
-	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -39,9 +38,9 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 		return nil, GenericAccountErr
 	}
 
-	oauth2Providers := make([]*accounts.OAuth2Provider, len(config.C.OAuth2.Providers))
+	oauth2Providers := make([]*accounts.OAuth2Provider, len(s.oauth2Providers))
 	for i := 0; i < len(oauth2Providers); i++ {
-		p := config.C.OAuth2.Providers[i]
+		p := s.oauth2Providers[i]
 		oauth2Providers[i] = &accounts.OAuth2Provider{
 			Name:     p.Name,
 			Label:    p.Label,

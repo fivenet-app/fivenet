@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/internal/tests/proto"
 	"github.com/galexrt/fivenet/internal/tests/servers"
 	"github.com/galexrt/fivenet/pkg/audit"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -54,7 +55,7 @@ func TestFullAuthFlow(t *testing.T) {
 	c, err := mstlystcdata.NewCache(ctx, logger, tp, db)
 	assert.NoError(t, err)
 	enricher := mstlystcdata.NewEnricher(c)
-	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud, ui)
+	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud, ui, []string{}, []*config.OAuth2Provider{})
 
 	client, _, cancel := NewTestAuthServiceClient(srv)
 	defer cancel()

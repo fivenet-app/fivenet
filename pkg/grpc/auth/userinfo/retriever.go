@@ -7,7 +7,6 @@ import (
 
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
-	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -24,9 +23,11 @@ type UIRetriever struct {
 
 	userCache    *cache.Cache[int32, *UserInfo]
 	userCacheTTL time.Duration
+
+	superuserGroups []string
 }
 
-func NewUIRetriever(ctx context.Context, db *sql.DB) *UIRetriever {
+func NewUIRetriever(ctx context.Context, db *sql.DB, superUserGroups []string) *UIRetriever {
 	userCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[int32, *UserInfo](lru.WithCapacity(300)),
@@ -39,6 +40,8 @@ func NewUIRetriever(ctx context.Context, db *sql.DB) *UIRetriever {
 
 		userCache:    userCache,
 		userCacheTTL: 30 * time.Second,
+
+		superuserGroups: superUserGroups,
 	}
 }
 
@@ -78,7 +81,7 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 	}
 
 	// Check if user is superuser
-	if utils.InStringSlice(config.C.Game.SuperuserGroups, dest.Group) {
+	if utils.InStringSlice(ui.superuserGroups, dest.Group) {
 		dest.SuperUser = true
 		if dest.OrigJob != "" {
 			dest.Job = dest.OrigJob
@@ -115,7 +118,7 @@ func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId i
 	}
 
 	// Check if user is superuser
-	if utils.InStringSlice(config.C.Game.SuperuserGroups, dest.Group) {
+	if utils.InStringSlice(ui.superuserGroups, dest.Group) {
 		dest.SuperUser = true
 	}
 

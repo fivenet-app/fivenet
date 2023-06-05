@@ -100,7 +100,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 		return GenericInternalServerError
 	}
 
-	ui := userinfo.NewUIRetriever(ctx, db)
+	ui := userinfo.NewUIRetriever(ctx, db, config.C.Game.SuperuserGroups)
 	grpcAuth := auth.NewGRPCAuth(ui, tm)
 	grpcPerm := auth.NewGRPCPerms(p)
 
@@ -147,12 +147,15 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 	enricher := mstlystcdata.NewEnricher(cache)
 
 	// Attach our GRPC services
-	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher, aud, ui))
-	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud))
+	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher, aud, ui,
+		config.C.Game.SuperuserGroups, config.C.OAuth2.Providers))
+	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud,
+		config.C.Game.PublicJobs, config.C.Game.UnemployedJob.Name, config.C.Game.UnemployedJob.Grade))
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, ui, notif))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
-	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher)
+	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher,
+		config.C.Game.Livemap.UsersCacheSize, config.C.Game.Livemap.Jobs)
 	go livemapper.Start()
 
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)

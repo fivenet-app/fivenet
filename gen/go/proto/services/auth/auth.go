@@ -58,17 +58,22 @@ type Server struct {
 	c    *mstlystcdata.Enricher
 	a    audit.IAuditer
 	ui   userinfo.UserInfoRetriever
+
+	superuserGroups []string
+	oauth2Providers []*config.OAuth2Provider
 }
 
-func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever) *Server {
+func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever, superuserGroups []string, oauth2Providers []*config.OAuth2Provider) *Server {
 	return &Server{
-		db:   db,
-		auth: auth,
-		tm:   tm,
-		p:    p,
-		c:    c,
-		a:    aud,
-		ui:   ui,
+		db:              db,
+		auth:            auth,
+		tm:              tm,
+		p:               p,
+		c:               c,
+		a:               aud,
+		ui:              ui,
+		superuserGroups: superuserGroups,
+		oauth2Providers: oauth2Providers,
 	}
 }
 
@@ -491,7 +496,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 	ps := userPs.GuardNames()
 
-	if utils.InStringSlice(config.C.Game.SuperuserGroups, userGroup) {
+	if utils.InStringSlice(s.superuserGroups, userGroup) {
 		ps = append(ps, common.SuperuserPermission)
 	}
 
