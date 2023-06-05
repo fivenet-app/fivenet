@@ -20,12 +20,11 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 	}
 
 	ps := p.getRolePermissionsFromCache(roleIds)
-	perms := make(collections.Permissions, len(ps))
-
 	if len(ps) == 0 {
-		return perms, nil
+		return collections.Permissions{}, nil
 	}
 
+	perms := make(collections.Permissions, len(ps))
 	for i := 0; i < len(ps); i++ {
 		perms[i] = &model.FivenetPermissions{
 			ID:        ps[i].ID,
@@ -41,12 +40,12 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 func (p *Perms) getRolePermissionsFromCache(roleIds []uint64) []*cachePerm {
 	perms := map[uint64]interface{}{}
 	for i := len(roleIds) - 1; i >= 0; i-- {
-		permsMap, ok := p.permsRoleMap.Load(roleIds[i])
+		permsRoleMap, ok := p.permsRoleMap.Load(roleIds[i])
 		if !ok {
 			continue
 		}
 
-		permsMap.Range(func(key uint64, value bool) bool {
+		permsRoleMap.Range(func(key uint64, value bool) bool {
 			if !value {
 				return true
 			}

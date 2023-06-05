@@ -83,8 +83,7 @@ func (p *Perms) Register(defaultRolePerms []string) error {
 				attr.ValidValues = config.C.Game.Livemap.Jobs
 			}
 
-			_, err := p.createOrUpdateAttribute(ctx, permId, attr.Key, attr.Type, attr.ValidValues)
-			if err != nil {
+			if _, err := p.createOrUpdateAttribute(ctx, permId, attr.Key, attr.Type, attr.ValidValues); err != nil {
 				return err
 			}
 		}
@@ -149,7 +148,7 @@ func (p *Perms) createOrUpdateAttribute(ctx context.Context, permId uint64, key 
 		}
 	}
 
-	if attr != nil {
+	if attr != nil && attr.ID > 0 {
 		var validVal interface{}
 		if validValues != nil {
 			validVal, err = json.MarshalToString(validValues)
@@ -158,19 +157,28 @@ func (p *Perms) createOrUpdateAttribute(ctx context.Context, permId uint64, key 
 			}
 		}
 
+		if err := p.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validValues); err != nil {
+			return 0, err
+		}
+
 		if attr.Type != string(aType) ||
 			((attr.ValidValues == nil && validVal != nil) || (validVal != nil && attr.ValidValues != nil && validVal != *attr.ValidValues)) {
 			return attr.ID, p.UpdateAttribute(ctx, attr.ID, permId, key, aType, validValues)
 		}
 
-		if err := p.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validValues); err != nil {
-			return 0, err
-		}
-
 		return attr.ID, nil
 	}
 
-	return p.CreateAttribute(ctx, permId, key, aType, validValues)
+	attrId, err := p.CreateAttribute(ctx, permId, key, aType, validValues)
+	if err != nil {
+		return 0, err
+	}
+
+	if err := p.addOrUpdateAttributeInMap(permId, attrId, key, aType, validValues); err != nil {
+		return 0, err
+	}
+
+	return attrId, err
 }
 
 func (p *Perms) cleanupRoles(ctx context.Context) error {

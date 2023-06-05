@@ -113,6 +113,8 @@ fivenet:
       clientDSN: ""
       serverDSN: ""
     tracing:
+      enabled: false
+      # Jaeger Tracing endpoint (should have the right API path in the URL `/api/traces`)
       url: ""
       environment: "dev"
     http:

@@ -297,7 +297,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 	}
 
 	for _, v := range rolePerms {
-		roleCache.LoadOrStore(v.PermissionID, v.Val)
+		roleCache.Store(v.PermissionID, v.Val)
 	}
 
 	if err := p.publishMessage(RolePermUpdateSubject, RolePermUpdateEvent{

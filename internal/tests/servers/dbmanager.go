@@ -1,4 +1,4 @@
-package dbmanager
+package servers
 
 import (
 	"database/sql"
@@ -16,9 +16,9 @@ import (
 	"go.uber.org/zap"
 )
 
-var TestDBManager *DBManager
+var TestDBServer *dbServer
 
-type DBManager struct {
+type dbServer struct {
 	db       *sql.DB
 	pool     *dockertest.Pool
 	resource *dockertest.Resource
@@ -27,10 +27,10 @@ type DBManager struct {
 }
 
 func init() {
-	TestDBManager = &DBManager{}
+	TestDBServer = &dbServer{}
 }
 
-func (m *DBManager) Setup() {
+func (m *dbServer) Setup() {
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
 	var err error
 	m.pool, err = dockertest.NewPool("")
@@ -90,7 +90,7 @@ func (m *DBManager) Setup() {
 	m.LoadBaseData()
 }
 
-func (m *DBManager) DB() *sql.DB {
+func (m *dbServer) DB() *sql.DB {
 	if m.db == nil {
 		log.Fatal("Test DB connection has not been established! You are accessing DB() method too early.")
 	}
@@ -98,11 +98,11 @@ func (m *DBManager) DB() *sql.DB {
 	return m.db
 }
 
-func (m *DBManager) getDSN() string {
+func (m *dbServer) getDSN() string {
 	return fmt.Sprintf("fivenet:changeme@(localhost:%s)/fivenettest?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local", m.resource.GetPort("3306/tcp"))
 }
 
-func (m *DBManager) prepareDBForFirstUse() {
+func (m *dbServer) prepareDBForFirstUse() {
 	// Load and apply premigrate.sql file
 	m.loadSQLFile(filepath.Join(tests.TestDataSQLPath, "initial_esx.sql"))
 
@@ -112,7 +112,7 @@ func (m *DBManager) prepareDBForFirstUse() {
 	}
 }
 
-func (m *DBManager) getMultiStatementDB() *sql.DB {
+func (m *dbServer) getMultiStatementDB() *sql.DB {
 	// Open db connection with multiStatements param so we can apply sql files
 	initDB, err := sql.Open("mysql", m.getDSN()+"&multiStatements=true")
 	if err != nil {
@@ -121,7 +121,7 @@ func (m *DBManager) getMultiStatementDB() *sql.DB {
 	return initDB
 }
 
-func (m *DBManager) loadSQLFile(file string) {
+func (m *dbServer) loadSQLFile(file string) {
 	initDB := m.getMultiStatementDB()
 
 	c, ioErr := os.ReadFile(file)
@@ -134,7 +134,7 @@ func (m *DBManager) loadSQLFile(file string) {
 	}
 }
 
-func (m *DBManager) LoadBaseData() {
+func (m *dbServer) LoadBaseData() {
 	path := filepath.Join(tests.TestDataSQLPath, "base_*.sql")
 	files, err := filepath.Glob(path)
 	if err != nil {
@@ -149,7 +149,7 @@ func (m *DBManager) LoadBaseData() {
 	}
 }
 
-func (m *DBManager) Stop() {
+func (m *dbServer) Stop() {
 	if m.stopped {
 		return
 	}
@@ -162,7 +162,7 @@ func (m *DBManager) Stop() {
 }
 
 // Reset truncates all `fivenet_*` tables and loads the base test data
-func (m *DBManager) Reset() {
+func (m *dbServer) Reset() {
 	initDB := m.getMultiStatementDB()
 
 	rows, err := initDB.Query("SHOW TABLES LIKE 'fivenet_%';")

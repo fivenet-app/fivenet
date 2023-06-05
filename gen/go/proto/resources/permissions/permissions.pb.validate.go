@@ -457,22 +457,22 @@ var _ interface {
 	ErrorName() string
 } = RoleValidationError{}
 
-// Validate checks the field values on RawAttribute with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *RawAttribute) Validate() error {
+// Validate checks the field values on RawRoleAttribute with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *RawRoleAttribute) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RawAttribute with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in RawAttributeMultiError, or
-// nil if none found.
-func (m *RawAttribute) ValidateAll() error {
+// ValidateAll checks the field values on RawRoleAttribute with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RawRoleAttributeMultiError, or nil if none found.
+func (m *RawRoleAttribute) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RawAttribute) validate(all bool) error {
+func (m *RawRoleAttribute) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -486,7 +486,7 @@ func (m *RawAttribute) validate(all bool) error {
 	// no validation rules for PermissionId
 
 	if utf8.RuneCountInString(m.GetCategory()) > 128 {
-		err := RawAttributeValidationError{
+		err := RawRoleAttributeValidationError{
 			field:  "Category",
 			reason: "value length must be at most 128 runes",
 		}
@@ -497,7 +497,7 @@ func (m *RawAttribute) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetName()) > 255 {
-		err := RawAttributeValidationError{
+		err := RawRoleAttributeValidationError{
 			field:  "Name",
 			reason: "value length must be at most 255 runes",
 		}
@@ -508,7 +508,7 @@ func (m *RawAttribute) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetKey()) > 255 {
-		err := RawAttributeValidationError{
+		err := RawRoleAttributeValidationError{
 			field:  "Key",
 			reason: "value length must be at most 255 runes",
 		}
@@ -519,7 +519,7 @@ func (m *RawAttribute) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetType()) > 255 {
-		err := RawAttributeValidationError{
+		err := RawRoleAttributeValidationError{
 			field:  "Type",
 			reason: "value length must be at most 255 runes",
 		}
@@ -539,7 +539,7 @@ func (m *RawAttribute) validate(all bool) error {
 			switch v := interface{}(m.GetCreatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RawAttributeValidationError{
+					errors = append(errors, RawRoleAttributeValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -547,7 +547,7 @@ func (m *RawAttribute) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, RawAttributeValidationError{
+					errors = append(errors, RawRoleAttributeValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -556,7 +556,7 @@ func (m *RawAttribute) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return RawAttributeValidationError{
+				return RawRoleAttributeValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -567,18 +567,19 @@ func (m *RawAttribute) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return RawAttributeMultiError(errors)
+		return RawRoleAttributeMultiError(errors)
 	}
 
 	return nil
 }
 
-// RawAttributeMultiError is an error wrapping multiple validation errors
-// returned by RawAttribute.ValidateAll() if the designated constraints aren't met.
-type RawAttributeMultiError []error
+// RawRoleAttributeMultiError is an error wrapping multiple validation errors
+// returned by RawRoleAttribute.ValidateAll() if the designated constraints
+// aren't met.
+type RawRoleAttributeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RawAttributeMultiError) Error() string {
+func (m RawRoleAttributeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -587,11 +588,11 @@ func (m RawAttributeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RawAttributeMultiError) AllErrors() []error { return m }
+func (m RawRoleAttributeMultiError) AllErrors() []error { return m }
 
-// RawAttributeValidationError is the validation error returned by
-// RawAttribute.Validate if the designated constraints aren't met.
-type RawAttributeValidationError struct {
+// RawRoleAttributeValidationError is the validation error returned by
+// RawRoleAttribute.Validate if the designated constraints aren't met.
+type RawRoleAttributeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -599,22 +600,22 @@ type RawAttributeValidationError struct {
 }
 
 // Field function returns field value.
-func (e RawAttributeValidationError) Field() string { return e.field }
+func (e RawRoleAttributeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RawAttributeValidationError) Reason() string { return e.reason }
+func (e RawRoleAttributeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RawAttributeValidationError) Cause() error { return e.cause }
+func (e RawRoleAttributeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RawAttributeValidationError) Key() bool { return e.key }
+func (e RawRoleAttributeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RawAttributeValidationError) ErrorName() string { return "RawAttributeValidationError" }
+func (e RawRoleAttributeValidationError) ErrorName() string { return "RawRoleAttributeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e RawAttributeValidationError) Error() string {
+func (e RawRoleAttributeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -626,14 +627,14 @@ func (e RawAttributeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRawAttribute.%s: %s%s",
+		"invalid %sRawRoleAttribute.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RawAttributeValidationError{}
+var _ error = RawRoleAttributeValidationError{}
 
 var _ interface {
 	Field() string
@@ -641,7 +642,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RawAttributeValidationError{}
+} = RawRoleAttributeValidationError{}
 
 // Validate checks the field values on RoleAttribute with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

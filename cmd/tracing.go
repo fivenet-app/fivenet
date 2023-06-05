@@ -15,31 +15,34 @@ import (
 // TracerProvider will also use a Resource configured with all the information
 // about the application.
 func tracerProvider() (*tracesdk.TracerProvider, error) {
+	if !config.C.Tracing.Enabled {
+		return tracesdk.NewTracerProvider(), nil
+	}
+
+	var exporter tracesdk.SpanExporter
+	var err error
+	// If URL is set, setup jaeger trace exporter
 	if config.C.Tracing.URL != "" {
 		// Create the Jaeger exporter
-		exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(config.C.Tracing.URL)))
+		exporter, err = jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(config.C.Tracing.URL)))
 		if err != nil {
 			return nil, err
 		}
-		tp := tracesdk.NewTracerProvider(
-			// Always be sure to batch in production.
-			tracesdk.WithBatcher(exp),
-			// Record information about this application in a Resource.
-			tracesdk.WithResource(resource.NewWithAttributes(
-				semconv.SchemaURL,
-				semconv.ServiceName("fivenet"),
-				attribute.String("environment", config.C.Tracing.Environment),
-			)),
-		)
-		return tp, nil
+	} else {
+		exporter, err = stdouttrace.New(stdouttrace.WithPrettyPrint())
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	exporter, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
-	if err != nil {
-		return nil, err
-	}
-	tp := tracesdk.NewTracerProvider(
+	return tracesdk.NewTracerProvider(
+		// Always be sure to batch in production.
 		tracesdk.WithBatcher(exporter),
-	)
-	return tp, nil
+		// Record information about this application in a Resource.
+		tracesdk.WithResource(resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceName("fivenet"),
+			attribute.String("environment", config.C.Tracing.Environment),
+		)),
+	), nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
@@ -169,9 +170,19 @@ func (p *Perms) CreateAttribute(ctx context.Context, permId uint64, key Key, aTy
 }
 
 func (p *Perms) addOrUpdateAttributeInMap(permId uint64, attrId uint64, key Key, aType AttributeTypes, validValues any) error {
-	out, err := json.MarshalToString(validValues)
-	if err != nil {
-		return err
+	var out string
+	var err error
+	vType := reflect.TypeOf(validValues).String()
+	// if the valid values is a nil or a string, don't do anything extra just set to an empty string
+	if validValues != nil && vType != "string" {
+		out, err = json.MarshalToString(validValues)
+		if err != nil {
+			return err
+		}
+	} else {
+		if validValues != "" && vType == "string" {
+			out = validValues.(string)
+		}
 	}
 
 	validVals := &permissions.AttributeValues{}
@@ -344,7 +355,7 @@ func (p *Perms) convertAttributeValue(val string, aType AttributeTypes) (any, er
 	return nil, fmt.Errorf("invalid permission attribute type: %q", aType)
 }
 
-func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawAttribute) ([]*permissions.RoleAttribute, error) {
+func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute) ([]*permissions.RoleAttribute, error) {
 	res := make([]*permissions.RoleAttribute, len(in))
 	for i := 0; i < len(in); i++ {
 		res[i] = &permissions.RoleAttribute{
@@ -430,7 +441,7 @@ func (p *Perms) GetAllAttributes(ctx context.Context, job string) ([]*permission
 			),
 		)
 
-	var dest []*permissions.RawAttribute
+	var dest []*permissions.RawRoleAttribute
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err

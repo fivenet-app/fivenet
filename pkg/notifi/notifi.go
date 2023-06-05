@@ -5,7 +5,6 @@ import (
 	"database/sql"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
-	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go"
@@ -39,7 +38,7 @@ type Notifi struct {
 	subs      []*nats.Subscription
 }
 
-func New(logger *zap.Logger, db *sql.DB, ctx context.Context, events *events.Eventus) *Notifi {
+func New(logger *zap.Logger, db *sql.DB, ctx context.Context, events *events.Eventus, workerCount int) *Notifi {
 	return &Notifi{
 		logger: logger,
 		db:     db,
@@ -49,7 +48,7 @@ func New(logger *zap.Logger, db *sql.DB, ctx context.Context, events *events.Eve
 			Name:     "NOTIFI",
 			Subjects: []string{"notifi.>"},
 		},
-		subs: make([]*nats.Subscription, config.C.NATS.WorkerCount),
+		subs: make([]*nats.Subscription, workerCount),
 	}
 }
 

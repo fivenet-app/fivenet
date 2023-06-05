@@ -82,7 +82,7 @@ var serverCmd = &cobra.Command{
 		}(ctx)
 
 		// Setup Event bus
-		eventus, err := events.NewEventus(logger.Named("eventus"))
+		eventus, err := events.NewEventus(logger.Named("eventus"), config.C.NATS.URL)
 		if err != nil {
 			logger.Fatal("failed to setup event bus", zap.Error(err))
 		}
@@ -113,7 +113,7 @@ var serverCmd = &cobra.Command{
 		aud.Start()
 
 		// Notifier
-		notif := notifi.New(logger.Named("notifi"), db, ctx, eventus)
+		notif := notifi.New(logger.Named("notifi"), db, ctx, eventus, config.C.NATS.WorkerCount)
 
 		// Wrap the server parts to try to isolate the actual "run servers" logic
 		server := &server{

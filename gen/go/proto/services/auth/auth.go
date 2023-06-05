@@ -458,7 +458,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	// Make sure the user isn't sending us a different char ID than their own
-	if !strings.Contains(char.Identifier, claims.Subject) {
+	if !strings.HasSuffix(char.Identifier, ":"+claims.Subject) {
 		return nil, UnableToChooseCharErr
 	}
 
@@ -487,7 +487,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		JobGrade: char.JobGrade,
 	})
 	if err != nil {
-		return nil, err
+		return nil, UnableToChooseCharErr
 	}
 	ps := userPs.GuardNames()
 
@@ -502,6 +502,8 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	ps = append(ps, attrs...)
 
 	if len(ps) == 0 {
+		return nil, UnableToChooseCharErr
+	} else if !utils.InStringSlice(ps, "authservice-choosecharacter") {
 		return nil, UnableToChooseCharErr
 	}
 

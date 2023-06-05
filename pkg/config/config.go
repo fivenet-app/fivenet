@@ -54,6 +54,7 @@ type Sentry struct {
 }
 
 type Tracing struct {
+	Enabled     bool   `default:"false" yaml:"enabled"`
 	URL         string `yaml:"url"`
 	Environment string `default:"dev" yaml:"environment"`
 }

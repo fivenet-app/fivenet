@@ -70,9 +70,9 @@ export interface Role {
     attributes: RoleAttribute[];
 }
 /**
- * @generated from protobuf message resources.permissions.RawAttribute
+ * @generated from protobuf message resources.permissions.RawRoleAttribute
  */
-export interface RawAttribute {
+export interface RawRoleAttribute {
     /**
      * @generated from protobuf field: uint64 role_id = 1;
      */
@@ -245,9 +245,9 @@ class Role$Type extends MessageType<Role> {
  */
 export const Role = new Role$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class RawAttribute$Type extends MessageType<RawAttribute> {
+class RawRoleAttribute$Type extends MessageType<RawRoleAttribute> {
     constructor() {
-        super("resources.permissions.RawAttribute", [
+        super("resources.permissions.RawRoleAttribute", [
             { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "attr_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
@@ -262,9 +262,9 @@ class RawAttribute$Type extends MessageType<RawAttribute> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.permissions.RawAttribute
+ * @generated MessageType for protobuf message resources.permissions.RawRoleAttribute
  */
-export const RawAttribute = new RawAttribute$Type();
+export const RawRoleAttribute = new RawRoleAttribute$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RoleAttribute$Type extends MessageType<RoleAttribute> {
     constructor() {

@@ -161,6 +161,14 @@ func (p *Perms) load() error {
 	ctx, span := p.tracer.Start(p.ctx, "perms-load")
 	defer span.End()
 
+	if err := p.loadPermissions(ctx); err != nil {
+		return err
+	}
+
+	if err := p.loadAttributes(ctx); err != nil {
+		return err
+	}
+
 	if err := p.loadRoleIDs(ctx); err != nil {
 		return err
 	}
@@ -171,6 +179,66 @@ func (p *Perms) load() error {
 
 	if err := p.loadRoleAttributes(ctx, 0); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (p *Perms) loadPermissions(ctx context.Context) error {
+	tPerms := tPerms.AS("cachePerm")
+	stmt := tPerms.
+		SELECT(
+			tPerms.ID,
+			tPerms.Category,
+			tPerms.Name,
+			tPerms.GuardName,
+		).
+		FROM(tPerms)
+
+	var dest []*cachePerm
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+		return err
+	}
+
+	for _, perm := range dest {
+		p.permsMap.Store(perm.ID, &cachePerm{
+			ID:        perm.ID,
+			Category:  perm.Category,
+			Name:      perm.Name,
+			GuardName: BuildGuard(perm.Category, perm.Name),
+		})
+		p.permsGuardToIDMap.Store(BuildGuard(perm.Category, perm.Name), perm.ID)
+	}
+
+	return nil
+}
+
+func (p *Perms) loadAttributes(ctx context.Context) error {
+	stmt := tAttrs.
+		SELECT(
+			tAttrs.ID.AS("id"),
+			tAttrs.PermissionID.AS("permission_id"),
+			tAttrs.Key.AS("key"),
+			tAttrs.Type.AS("type"),
+			tAttrs.ValidValues.AS("validvalues"),
+		).
+		FROM(tAttrs)
+
+	var dest []struct {
+		ID           uint64
+		PermissionID uint64
+		Key          Key
+		Type         AttributeTypes
+		ValidValues  string
+	}
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+		return err
+	}
+
+	for _, attr := range dest {
+		if err := p.addOrUpdateAttributeInMap(attr.ID, attr.ID, attr.Key, attr.Type, attr.ValidValues); err != nil {
+			return err
+		}
 	}
 
 	return nil

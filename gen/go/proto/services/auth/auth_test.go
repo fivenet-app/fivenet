@@ -5,13 +5,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/galexrt/fivenet/internal/tests/dbmanager"
 	"github.com/galexrt/fivenet/internal/tests/proto"
+	"github.com/galexrt/fivenet/internal/tests/servers"
 	"github.com/galexrt/fivenet/pkg/audit"
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
-	"github.com/galexrt/fivenet/pkg/perms/mock"
+	"github.com/galexrt/fivenet/pkg/perms"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -20,27 +21,37 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	dbmanager.TestDBManager.Setup()
+	servers.TestDBServer.Setup()
+	servers.TestNATSServer.Setup()
 
 	code := m.Run()
 
-	dbmanager.TestDBManager.Stop()
+	servers.TestDBServer.Stop()
+	servers.TestNATSServer.Stop()
 
 	os.Exit(code)
 }
 
 func TestFullAuthFlow(t *testing.T) {
-	defer dbmanager.TestDBManager.Reset()
+	defer servers.TestDBServer.Reset()
 
-	db := dbmanager.TestDBManager.DB()
+	db := servers.TestDBServer.DB()
 
 	ctx := context.Background()
+	logger := zap.NewNop()
+	tp := tracesdk.NewTracerProvider()
 	ui := userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{})
 	tm := auth.NewTokenMgr("")
-	p := mock.NewMock()
+
+	eventus, err := events.NewEventus(logger, servers.TestNATSServer.GetURL())
+	assert.NoError(t, err)
+
+	p, err := perms.New(ctx, logger, db, tp, eventus)
+	assert.NoError(t, err)
+	defer p.Stop()
+
 	aud := &audit.Noop{}
-	tp := tracesdk.NewTracerProvider()
-	c, err := mstlystcdata.NewCache(ctx, zap.NewNop(), tp, db)
+	c, err := mstlystcdata.NewCache(ctx, logger, tp, db)
 	assert.NoError(t, err)
 	enricher := mstlystcdata.NewEnricher(c)
 	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud, ui)
@@ -113,24 +124,39 @@ func TestFullAuthFlow(t *testing.T) {
 
 	// user-1: Choose an invalid character
 	chooseCharReq := &ChooseCharacterRequest{}
-	chooseCharReq.CharId = 1 // Char id 1 is not `user-1`'s char
+	chooseCharReq.CharId = 2 // Char id 2 is `user-2`'s char
 	chooseCharRes, err := client.ChooseCharacter(ctx, chooseCharReq)
 	assert.Error(t, err)
 	assert.Nil(t, chooseCharRes)
 	proto.CompareGRPCError(t, UnableToChooseCharErr, err)
 
-	// user-1: Choose valid character but we don't have permissions
-	chooseCharReq.CharId = 2
+	// user-1: Choose valid character but we don't have permissions on the role
+	err = p.UpdateRolePermissions(ctx, 1, perms.AddPerm{
+		Id:  1,
+		Val: false,
+	})
+	assert.NoError(t, err)
+	// Remove perm from ambulance rank 1 role as `user-1` is a medic
+	err = p.UpdateRolePermissions(ctx, 2, perms.AddPerm{
+		Id:  1,
+		Val: false,
+	})
+	assert.NoError(t, err)
+	chooseCharReq.CharId = 1
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
 	assert.Error(t, err)
 	assert.Nil(t, chooseCharRes)
 	proto.CompareGRPCError(t, UnableToChooseCharErr, err)
 
 	// user-1: Choose valid character, now we add a permssion
-	p.AddUserPerm(1, "test123-perm")
-	chooseCharReq.CharId = 2
+	// Perm ID 1 is `AuthService.ChooseCharacter`
+	err = p.UpdateRolePermissions(ctx, 2, perms.AddPerm{
+		Id:  1,
+		Val: true,
+	})
+	assert.NoError(t, err)
+	chooseCharReq.CharId = 1
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
-	assert.Error(t, err)
-	assert.Nil(t, chooseCharRes)
-	proto.CompareGRPCError(t, UnableToChooseCharErr, err)
+	assert.NoError(t, err)
+	assert.NotNil(t, chooseCharRes)
 }
