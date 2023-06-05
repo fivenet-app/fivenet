@@ -568,6 +568,10 @@
             "job_props": {
                 "title": "Updated Job Props",
                 "content": "Your job properties have been updated."
+            },
+            "audit_log": {
+                "title": "Audit Log: Copied to clipboard",
+                "content": "Entry copied to clipboard."
             }
         },
         "document_deleted": {

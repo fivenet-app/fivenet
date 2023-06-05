@@ -178,7 +178,7 @@ func (p *Perms) createOrUpdateAttribute(ctx context.Context, permId uint64, key 
 		return 0, err
 	}
 
-	return attrId, err
+	return attrId, nil
 }
 
 func (p *Perms) cleanupRoles(ctx context.Context) error {
@@ -204,7 +204,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	}
 	jobName := DefaultRoleJob
 	jobGrade := DefaultRoleJobGrade
-	// Add default job to avoid deletion
+	// Add default job to avoid it being deleted
 	dest = append(dest, &jobs.Job{
 		Name: DefaultRoleJob,
 		Grades: []*jobs.JobGrade{

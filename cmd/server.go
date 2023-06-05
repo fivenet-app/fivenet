@@ -81,6 +81,9 @@ var serverCmd = &cobra.Command{
 			}
 		}(ctx)
 
+		// Create JWT Token TokenMgr
+		tm := auth.NewTokenMgr(config.C.JWT.Secret)
+
 		// Setup Event bus
 		eventus, err := events.NewEventus(logger.Named("eventus"), config.C.NATS.URL)
 		if err != nil {
@@ -94,9 +97,6 @@ var serverCmd = &cobra.Command{
 			logger.Fatal("failed to setup permission system", zap.Error(err))
 		}
 		defer p.Stop()
-
-		// Create JWT Token TokenMgr
-		tm := auth.NewTokenMgr(config.C.JWT.Secret)
 
 		cfgDefaultPerms := config.C.Game.DefaultPermissions
 		defaultPerms := make([]string, len(config.C.Game.DefaultPermissions))

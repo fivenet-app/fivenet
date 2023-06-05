@@ -1,6 +1,12 @@
 <script lang="ts" setup>
 import { ClipboardDocumentIcon } from '@heroicons/vue/24/solid';
-import { AuditEntry } from '~~/gen/ts/resources/rector/audit';
+import { useClipboard } from '@vueuse/core';
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
+import { useNotificationsStore } from '~/store/notifications';
+import { AuditEntry, EVENT_TYPE } from '~~/gen/ts/resources/rector/audit';
+
+const clipboard = useClipboard();
 
 const { d } = useI18n();
 
@@ -8,19 +14,38 @@ const props = defineProps<{
     log: AuditEntry;
 }>();
 
+const notifications = useNotificationsStore();
+
 async function addToClipboard(): Promise<void> {
     const user = props.log.user;
-    const text = `**Audit Log Entry ${props.log.id} - ${d(toDate(props.log.createdAt)!, 'short')}**
-User: ${user?.firstname}, ${user?.lastname} (${user?.userId}; ${user?.identifier})
-Action: ${props.log.method}/${props.log.service}
-Event: ${props.log.state}
-Data:
-\`\`\`
-${props.log.data}
+    let text = `**Audit Log Entry ${props.log.id} - ${d(toDate(props.log.createdAt)!, 'short')}**
+
+`;
+    if (user) {
+        text += `User: ${user?.firstname}, ${user?.lastname} (${user?.userId}; ${user?.identifier})
+`;
+    }
+    text += `Action: \`${props.log.method}/${props.log.service}\`
+Event: \`${EVENT_TYPE[props.log.state]}\`
+`;
+    if (props.log.data) {
+        text += `Data:
+\`\`\`json
+${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
 \`\`\`
 `;
+    } else {
+        text += `Data: N/A
+`;
+    }
 
-    return navigator.clipboard.writeText(text);
+    notifications.dispatchNotification({
+        title: { key: 'notifications.rector.audit_log.title', parameters: [] },
+        content: { key: 'notifications.rector.audit_log.content', parameters: [] },
+        type: 'info',
+    });
+
+    return clipboard.copy(text);
 }
 </script>
 
@@ -30,19 +55,28 @@ ${props.log.data}
             {{ log.id }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ $d(toDate(log.createdAt)!, 'short') }}
+            {{ $d(toDate(log.createdAt)!, 'long') }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             {{ log.user ? log.user?.firstname + ' ' + log.user?.lastname : 'N/A' }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ log.service }}: {{ log.method }}
+            {{ log.service }} - {{ log.method }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ log.state }}
+            {{ EVENT_TYPE[log.state] }}
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ log.data ? log.data : 'N/A' }}
+            <span v-if="!log.data">N/A</span>
+            <span v-else>
+                <VueJsonPretty
+                    :data="(JSON.parse(props.log.data!) as any)"
+                    :showIcon="true"
+                    :showLength="true"
+                    :virtual="true"
+                    :height="150"
+                />
+            </span>
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <button

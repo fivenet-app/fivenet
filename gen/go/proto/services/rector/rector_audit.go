@@ -4,7 +4,9 @@ import (
 	"context"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
+	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -18,6 +20,16 @@ var (
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	if req.Pagination.Offset <= 0 {
+		defer s.a.AddEntryWithData(&model.FivenetAuditLog{
+			Service: RectorService_ServiceDesc.ServiceName,
+			Method:  "ViewAuditLog",
+			UserID:  userInfo.UserId,
+			UserJob: userInfo.Job,
+			State:   int16(rector.EVENT_TYPE_VIEWED),
+		}, req)
+	}
 
 	condition := jet.Bool(true)
 	if !userInfo.SuperUser {

@@ -120,7 +120,7 @@ func (p *Perms) CreateAttribute(ctx context.Context, permId uint64, key Key, aTy
 			return 0, err
 		}
 
-		if out != "null" {
+		if out != "" && out != "null" {
 			validV = jet.String(out)
 		}
 	}
@@ -172,16 +172,18 @@ func (p *Perms) CreateAttribute(ctx context.Context, permId uint64, key Key, aTy
 func (p *Perms) addOrUpdateAttributeInMap(permId uint64, attrId uint64, key Key, aType AttributeTypes, validValues any) error {
 	var out string
 	var err error
-	vType := reflect.TypeOf(validValues).String()
 	// if the valid values is a nil or a string, don't do anything extra just set to an empty string
-	if validValues != nil && vType != "string" {
-		out, err = json.MarshalToString(validValues)
-		if err != nil {
-			return err
-		}
-	} else {
-		if validValues != "" && vType == "string" {
-			out = validValues.(string)
+	if validValues != nil {
+		vType := reflect.TypeOf(validValues).String()
+		if vType == "string" {
+			if validValues != "" {
+				out = validValues.(string)
+			}
+		} else {
+			out, err = json.MarshalToString(validValues)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
