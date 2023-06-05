@@ -84,7 +84,10 @@ func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvi
 
 		dispatchesCache: dispatchesCache,
 		usersCache:      usersCache,
-		broker:          broker,
+
+		broker: broker,
+
+		visibleJobs: visibleJobs,
 	}
 }
 

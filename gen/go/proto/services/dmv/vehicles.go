@@ -134,7 +134,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		SELECT(
 			tVehicles.Plate,
 			tVehicles.Model,
-			tVehicles.Type,
+			jet.REPLACE(tVehicles.Type, jet.String("_"), jet.String(" ")).AS("vehicle.type"),
 			tUsers.ID,
 			tUsers.Identifier,
 			tUsers.Firstname,
