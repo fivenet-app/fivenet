@@ -11,25 +11,28 @@ export default defineNuxtPlugin((nuxtApp) => {
 
         const permissions = useAuthStore().permissions;
         if (permissions.includes('superuser')) {
-            return (vnode.el.hidden = false);
-        }
-
-        const input = new Array<String>();
-        if (typeof binding.value === 'string') {
-            input.push(binding.value);
+            return;
         } else {
-            const vals = binding.value as Array<String>;
-            input.push(...vals);
-        }
+            const input = new Array<String>();
+            if (typeof binding.value === 'string') {
+                input.push(binding.value);
+            } else {
+                const vals = binding.value as Array<String>;
+                input.push(...vals);
+            }
 
-        // Iterate over permissions and check in "OR" condition manner
-        for (let index = 0; index < input.length; index++) {
-            const val = slug(input[index] as string);
-            if (permissions && (permissions.includes(val) || val === '')) {
-                return (vnode.el.hidden = false);
+            // Iterate over permissions and check in "OR" condition manner
+            for (let index = 0; index < input.length; index++) {
+                const val = slug(input[index] as string);
+                if (permissions && (permissions.includes(val) || val === '')) {
+                    return;
+                }
             }
         }
 
-        return (vnode.el.hidden = true);
+        if (vnode && vnode.el) {
+            vnode.el.hidden = true;
+        }
+        return;
     });
 });
