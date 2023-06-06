@@ -149,6 +149,7 @@ export const useClipboardStore = defineStore('clipboard', {
         },
 
         promoteToActiveStack(listType: ListType): void {
+            this.clearActiveStack();
             const list = this.$state[listType];
 
             switch (listType) {
