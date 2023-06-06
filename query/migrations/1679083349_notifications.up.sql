@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_notifications` (
   `category` smallint(2) NOT NULL,
   `data` longtext DEFAULT NULL,
   PRIMARY KEY (`id`),
+  KEY `idx_fivenet_notifications_read_at` (`read_at`),
   KEY `idx_fivenet_notifications_user_id` (`user_id`),
   KEY `idx_fivenet_notifications_type` (`type`),
   CONSTRAINT `fk_fivenet_notifications_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
