@@ -890,31 +890,31 @@
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!"
         },
         "AuthService": {
-            "ErrGenericAccount": "",
-            "ErrAccountCreateFailed": "",
+            "ErrGenericAccount": "Fehler beim anzeigen/aktualisieren ihres Accounts.",
+            "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
             "ErrInvalidLogin": "Falscher Username oder Passwort!",
-            "ErrNoAccount": "",
+            "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
             "ErrNoCharFound": "Keine(n) Character für deinen Account gefunden.",
             "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
-            "ErrUnableToChooseChar": "",
-            "ErrUpdateAccount": "",
-            "ErrChangePassword": "",
-            "ErrForgotPassword": ""
+            "ErrUnableToChooseChar": "Sie haben nicht genug Berechtigungen um den Character auszuwählen!",
+            "ErrUpdateAccount": "Fehler beim aktualisieren ihres Benutzers!",
+            "ErrChangePassword": "Fehler beim ändern ihres Passworts!",
+            "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!"
         },
         "CitizenStoreService": {
-            "ErrFailedQuery": "",
-            "ErrJobGradeNoPermission": ""
+            "ErrFailedQuery": "Fehler beim laden von Bürger Daten!",
+            "ErrJobGradeNoPermission": "Keine Berechtigung auf diesen Bürger zuzugreifen (basierend auf dem Job des Bürgers)"
         },
         "CompletorService": {
-            "ErrFailedSearch": ""
+            "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
         },
         "DMVService": {
-            "ErrFailedQuery": ""
+            "ErrFailedQuery": "Fehler beim laden von Fahrzeug Daten!"
         },
         "DocStoreService": {
-            "ErrFailedQuery": "",
-            "ErrNotFoundOrNoPerms": "",
-            "ErrTemplateNoPerms": ""
+            "ErrFailedQuery": "Fehlen beim anzeigen/erstellen/aktualisieren von Dokumenten!",
+            "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen auf das Dokument zuzugreifen!",
+            "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/aktualisieren/zu löschen!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!"
