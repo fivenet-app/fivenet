@@ -82,10 +82,14 @@ fivenet:
     httpGet:
       path: /readiness
       port: http
+    initialDelaySeconds: 15
+    periodSeconds: 10
   readinessProbe:
     httpGet:
       path: /readiness
       port: http
+    initialDelaySeconds: 10
+    periodSeconds: 7
   additionalEnv: []
   serviceMonitor:
     # -- Specifies whether a prometheus-operator ServiceMonitor should be created

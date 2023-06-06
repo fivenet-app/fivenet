@@ -37,7 +37,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `envoy.config` | Envoy config | `{"admin":{"access_log_path":"/tmp/admin_access.log","address":{"socket_address":{"address":"0.0.0.0","port_value":9901}}},"layered_runtime":{"layers":[{"name":"static_layer_0","static_layer":{"envoy":{"resource_limits":{"listener":{"example_listener_name":{"connection_limit":10000}}}},"overload":{"global_downstream_max_connections":50000}}}]},"static_resources":{"clusters":[{"connect_timeout":"0.25s","http2_protocol_options":{},"lb_policy":"round_robin","load_assignment":{"cluster_name":"cluster_0","endpoints":[{"lb_endpoints":[{"endpoint":{"address":{"socket_address":{"address":"{{ include \"fivenet.fullname\" . }}","port_value":9090}}}}]}]},"name":"fivenet_service","type":"logical_dns"}],"listeners":[{"address":{"socket_address":{"address":"0.0.0.0","ipv4_compat":true,"port_value":8181}},"filter_chains":[{"filters":[{"name":"envoy.filters.network.http_connection_manager","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager","codec_type":"auto","common_http_protocol_options":{"headers_with_underscores_action":"REJECT_REQUEST","idle_timeout":"3600s"},"http2_protocol_options":{"initial_connection_window_size":1048576,"initial_stream_window_size":65536,"max_concurrent_streams":200},"http_filters":[{"name":"envoy.filters.http.grpc_web","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb"}},{"name":"envoy.filters.http.cors","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"}},{"name":"envoy.filters.http.router","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"}}],"request_timeout":"0s","route_config":{"name":"local_route","virtual_hosts":[{"cors":{"allow_headers":"keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout,authorization","allow_methods":"GET, PUT, DELETE, POST, OPTIONS","allow_origin_string_match":[{"safe_regex":{"google_re2":{},"regex":"\\*"}}],"expose_headers":"grpc-status,grpc-message","max_age":"1728000"},"domains":["*"],"name":"local_service","routes":[{"match":{"prefix":"/grpc/"},"route":{"cluster":"fivenet_service","idle_timeout":"0s","max_stream_duration":{"grpc_timeout_header_max":"35s"},"prefix_rewrite":"/","timeout":"0s"}}]}]},"stat_prefix":"ingress_http","stream_idle_timeout":"0s","use_remote_address":true}}]}],"name":"listener_0"}]}}` |
 | `envoy.image.pullPolicy` |  | `"IfNotPresent"` |
 | `envoy.image.repository` |  | `"docker.io/envoyproxy/envoy"` |
-| `envoy.image.tag` |  | `"v1.26.1"` |
+| `envoy.image.tag` |  | `"v1.26.2"` |
 | `envoy.livenessProbe.httpGet.path` |  | `"/ready"` |
 | `envoy.livenessProbe.httpGet.port` |  | `"admin"` |
 | `envoy.readinessProbe.httpGet.path` |  | `"/ready"` |
@@ -45,14 +45,18 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `envoy.replicaCount` |  | `1` |
 | `envoy.resources` |  | `{}` |
 | `fivenet.additionalEnv` |  | `[]` |
-| `fivenet.config` | FiveNet config | `{"database":{"connMaxIdleTime":"15m","connMaxLifetime":"60m","dbName":"fivem","dsn":"YOUR_USERNAME:YOUR_PASSWORD@tcp(localhost:3306)/fivem?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local","maxIdleConns":5,"maxOpenConns":32},"game":{"defaultPermissions":[{"category":"AuthService","name":"ChooseCharacter"},{"category":"CompletorService","name":"CompleteJobs"},{"category":"DocStoreService","name":"ListDocuments"},{"category":"DocStoreService","name":"GetDocument"},{"category":"DocStoreService","name":"GetDocumentComments"},{"category":"DocStoreService","name":"PostDocumentComment"}],"livemap":{"jobs":["ambulance","doj","fib","police"],"usersCacheSize":256},"publicJobs":["ambulance","doj","fib","police"],"superuserGroups":["projektleiter","teamleitung"],"unemployedJob":{"grade":1,"name":"unemployed"}},"grpc":{"clientURL":"/grpc","listen":":9090"},"http":{"listen":":8080","sessions":{"cookieSecret":"YOUR_COOKIE_SECRET","domain":"chart-example.local"}},"jwt":{"secret":"YOUR_JWT_SECRET"},"logLevel":"DEBUG","mode":"release","oauth2":{"providers":[]},"sentry":{"clientDSN":"","environment":"live","serverDSN":""},"tracing":{"environment":"dev","url":""}}` |
+| `fivenet.config` | FiveNet config | `{"database":{"connMaxIdleTime":"15m","connMaxLifetime":"60m","dbName":"fivem","dsn":"YOUR_USERNAME:YOUR_PASSWORD@tcp(localhost:3306)/fivem?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local","maxIdleConns":5,"maxOpenConns":32},"game":{"defaultPermissions":[{"category":"AuthService","name":"ChooseCharacter"},{"category":"CompletorService","name":"CompleteJobs"},{"category":"DocStoreService","name":"ListDocuments"},{"category":"DocStoreService","name":"GetDocument"},{"category":"DocStoreService","name":"GetDocumentComments"},{"category":"DocStoreService","name":"PostDocumentComment"}],"livemap":{"jobs":["ambulance","doj","fib","police"],"usersCacheSize":256},"publicJobs":["ambulance","doj","fib","police"],"superuserGroups":["projektleiter","teamleitung"],"unemployedJob":{"grade":1,"name":"unemployed"}},"grpc":{"clientURL":"/grpc","listen":":9090"},"http":{"listen":":8080","sessions":{"cookieSecret":"YOUR_COOKIE_SECRET","domain":"chart-example.local"}},"jwt":{"secret":"YOUR_JWT_SECRET"},"logLevel":"DEBUG","mode":"release","nats":{"url":"nats://fivenet:fivenet@localhost:4222","workerCount":5},"oauth2":{"providers":[]},"sentry":{"clientDSN":"","environment":"live","serverDSN":""},"tracing":{"enabled":false,"environment":"dev","url":""}}` |
 | `fivenet.image.pullPolicy` |  | `"IfNotPresent"` |
 | `fivenet.image.repository` |  | `"docker.io/galexrt/fivenet"` |
 | `fivenet.image.tag` |  | `""` |
 | `fivenet.livenessProbe.httpGet.path` |  | `"/readiness"` |
 | `fivenet.livenessProbe.httpGet.port` |  | `"http"` |
+| `fivenet.livenessProbe.initialDelaySeconds` |  | `15` |
+| `fivenet.livenessProbe.periodSeconds` |  | `10` |
 | `fivenet.readinessProbe.httpGet.path` |  | `"/readiness"` |
 | `fivenet.readinessProbe.httpGet.port` |  | `"http"` |
+| `fivenet.readinessProbe.initialDelaySeconds` |  | `10` |
+| `fivenet.readinessProbe.periodSeconds` |  | `7` |
 | `fivenet.replicaCount` |  | `1` |
 | `fivenet.resources` |  | `{}` |
 | `fivenet.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
@@ -73,6 +77,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `ingress.hosts[0].paths[1].pathType` |  | `"Prefix"` |
 | `ingress.tls` |  | `[]` |
 | `nameOverride` |  | `""` |
+| `nats` | NATS server config values: https://artifacthub.io/packages/helm/nats/nats#values | `{"config":{"cluster":{"enabled":true,"replicas":3},"jetstream":{"enabled":true,"fileStore":{"enabled":true,"pvc":{"enabled":true,"size":"5Gi"}},"memoryStore":{"enabled":true,"maxSize":"64Mi"}},"merge":{"accounts":{"fivenet":{"users":[{"password":"fivenet","user":"fivenet"}]}}}},"enabled":true}` |
 | `nodeSelector` |  | `{}` |
 | `podAnnotations` |  | `{}` |
 | `podSecurityContext` |  | `{}` |
