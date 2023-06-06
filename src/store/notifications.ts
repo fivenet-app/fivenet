@@ -1,8 +1,23 @@
-import { StoreDefinition, defineStore } from 'pinia';
+import { StateTree, StoreDefinition, defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { Notification } from '~/composables/notification/interfaces/Notification.interface';
 import { NotificationConfig } from '~/composables/notification/interfaces/NotificationConfig.interface';
 import { NOTIFICATION_CATEGORY } from '~~/gen/ts/resources/notifications/notifications';
+
+class Serializer {
+    serialize(value: StateTree): string {
+        return JSON.stringify(value, (_, v) => (typeof v === 'bigint' ? v.toString() + 'n' : v));
+    }
+
+    deserialize(value: string): StateTree {
+        return JSON.parse(value, (_, v) => {
+            if (typeof v === 'string' && /^\d+n$/.test(v)) {
+                return BigInt(v.substring(0, v.length - 1));
+            }
+            return value;
+        }) as StateTree;
+    }
+}
 
 export interface NotificationsState {
     lastId: bigint;
@@ -17,6 +32,7 @@ export const useNotificationsStore = defineStore('notifications', {
         } as NotificationsState),
     persist: {
         paths: ['lastId'],
+        serializer: new Serializer(),
     },
     actions: {
         setLastId(lastId: bigint): void {
