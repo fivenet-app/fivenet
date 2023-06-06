@@ -31,7 +31,7 @@ const search = ref<{ title: string; category?: DocumentCategory; character?: Use
     title: '',
 });
 const pagination = ref<PaginationResponse>();
-const offset = ref(BigInt(0));
+const offset = ref(0n);
 
 const entriesCategories = ref<DocumentCategory[]>([]);
 const queryCategories = ref<string>('');

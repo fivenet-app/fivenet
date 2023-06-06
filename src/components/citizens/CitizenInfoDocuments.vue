@@ -13,7 +13,7 @@ const props = defineProps<{
     userId: number;
 }>();
 
-const offset = ref(BigInt(0));
+const offset = ref(0n);
 
 const {
     data: relations,

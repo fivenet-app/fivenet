@@ -258,7 +258,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         creatorId: user.userId,
         creator: user,
         closed: obj.closed,
-        categoryId: obj.category && obj.category.id ? obj.category.id : BigInt(0),
+        categoryId: obj.category && obj.category.id ? obj.category.id : 0n,
         category: obj.category,
     };
 }

@@ -12,7 +12,7 @@ import TablePagination from '../TablePagination.vue';
 const { $grpc } = useNuxtApp();
 
 const pagination = ref<PaginationResponse>();
-const offset = ref(BigInt(0));
+const offset = ref(0n);
 
 const includeRead = ref(false);
 

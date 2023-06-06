@@ -168,7 +168,7 @@ async function updatePermissions(): Promise<void> {
                 category: '',
                 key: '',
                 name: '',
-                permissionId: BigInt(0),
+                permissionId: 0n,
                 type: '',
             });
         } else if (state === undefined) {
@@ -178,7 +178,7 @@ async function updatePermissions(): Promise<void> {
                 category: '',
                 key: '',
                 name: '',
-                permissionId: BigInt(0),
+                permissionId: 0n,
                 type: '',
             });
         }

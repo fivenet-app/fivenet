@@ -81,7 +81,7 @@ async function listCitizens(): Promise<Array<User>> {
         try {
             const call = $grpc.getCitizenStoreClient().listCitizens({
                 pagination: {
-                    offset: BigInt(0),
+                    offset: 0n,
                 },
                 searchName: queryChar.value,
             });
@@ -101,7 +101,7 @@ async function listCitizens(): Promise<Array<User>> {
 
 function addRelation(user: User, relation: number): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? BigInt(1) : keys[keys.length - 1] + BigInt(1);
+    const key = !keys.length ? 1n : keys[keys.length - 1] + 1n;
 
     props.modelValue.set(key, {
         id: key,

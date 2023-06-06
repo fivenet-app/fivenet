@@ -13,7 +13,6 @@ import {
 import { Notification } from '~/composables/notification/interfaces/Notification.interface';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
-import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
 import { CitizenStoreServiceClient } from '~~/gen/ts/services/citizenstore/citizenstore.client';
 import { CompletorServiceClient } from '~~/gen/ts/services/completor/completor.client';
@@ -79,6 +78,13 @@ export class GRPCClients {
 
         switch (err.code.toLowerCase()) {
             case 'internal':
+                if (err.message.startsWith('errors.')) {
+                    const errSplits = err.message.split(';');
+                    if (errSplits.length > 1) {
+                        notification.title = { key: errSplits[1], parameters: [] };
+                        notification.content = { key: errSplits[0], parameters: [] };
+                    }
+                }
                 break;
 
             case 'unavailable':
@@ -119,14 +125,6 @@ export class GRPCClients {
                     parameters: [err.message, err.code.valueOf()],
                 };
                 break;
-        }
-
-        if (err.message.startsWith('errors.')) {
-            const errSplits = err.message.split(';');
-            if (errSplits.length > 1) {
-                notification.title = { key: errSplits[1] } as TranslateItem;
-                notification.content = { key: errSplits[0] } as TranslateItem;
-            }
         }
 
         notifications.dispatchNotification({

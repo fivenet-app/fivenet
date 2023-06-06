@@ -3,15 +3,14 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { NotificationType } from '~/composables/notification/interfaces/Notification.interface';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
-import { useNotificatorStore } from '~/store/notificator';
 import { NOTIFICATION_CATEGORY } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
-const notificator = useNotificatorStore();
-const { lastId } = storeToRefs(notificator);
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
+const { lastId } = storeToRefs(notifications);
+const { setLastId } = notifications;
 const { accessToken, activeChar } = storeToRefs(authStore);
 const { setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
 
@@ -30,7 +29,7 @@ async function streamNotifications(): Promise<void> {
 
         const call = $grpc.getNotificatorClient().stream(
             {
-                lastId: BigInt(lastId.value),
+                lastId: lastId.value,
             },
             {
                 abort: abort.value.signal,
@@ -38,7 +37,7 @@ async function streamNotifications(): Promise<void> {
         );
 
         for await (let resp of call.responses) {
-            if (resp.lastId > BigInt(lastId.value)) notificator.setLastId(resp.lastId);
+            if (resp.lastId > lastId.value) setLastId(resp.lastId);
 
             console.debug('Notifications:', resp.notifications);
             resp.notifications.forEach((n) => {
@@ -143,7 +142,7 @@ async function toggleStream(): Promise<void> {
         streamNotifications();
     } else {
         cancelStream();
-        notificator.$reset();
+        notifications.$reset();
     }
 }
 

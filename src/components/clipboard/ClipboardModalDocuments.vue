@@ -134,7 +134,7 @@ watch(props, async (newVal) => {
         <tbody class="divide-y divide-gray-800">
             <tr v-for="item in documents" :key="item.id?.toString()">
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0" v-if="showSelect">
-                    <div v-if="specs && specs.max === BigInt(1)">
+                    <div v-if="specs && specs.max === 1n">
                         <button
                             @click="select(item)"
                             class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"

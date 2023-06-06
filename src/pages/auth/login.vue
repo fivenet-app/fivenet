@@ -20,8 +20,6 @@ const route = useRoute();
 
 const { setAccessToken } = authStore;
 
-const { t } = useI18n();
-
 const query = route.query;
 if (query.t && query.t !== '' && query.exp) {
     setAccessToken(query.t as string, BigInt(query.exp as string));

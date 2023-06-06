@@ -27,7 +27,7 @@ const emit = defineEmits<{
 }>();
 
 const pagination = ref<PaginationResponse>();
-const offset = ref(BigInt(0));
+const offset = ref(0n);
 
 const {
     data: comments,
@@ -42,7 +42,7 @@ async function getDocumentComments(): Promise<Array<DocumentComment>> {
             const call = $grpc.getDocStoreClient().getDocumentComments({
                 pagination: {
                     offset: offset.value,
-                    pageSize: BigInt(5),
+                    pageSize: 5n,
                 },
                 documentId: props.documentId,
             });
@@ -70,7 +70,7 @@ async function addComment(): Promise<void> {
         }
 
         const comment: DocumentComment = {
-            id: BigInt(0),
+            id: 0n,
             documentId: props.documentId,
             comment: message.value,
         };

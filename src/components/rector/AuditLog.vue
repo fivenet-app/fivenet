@@ -18,7 +18,7 @@ const { $grpc } = useNuxtApp();
 
 const query = ref<{ from: string; to: string }>({ from: '', to: '' });
 const pagination = ref<PaginationResponse>();
-const offset = ref(BigInt(0));
+const offset = ref(0n);
 
 async function getAuditLog(): Promise<Array<AuditEntry>> {
     return new Promise(async (res, rej) => {

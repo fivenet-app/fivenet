@@ -60,7 +60,7 @@ const search = ref<{ plate: string; model: string; user_id: number }>({
     user_id: 0,
 });
 const pagination = ref<PaginationResponse>();
-const offset = ref(BigInt(0));
+const offset = ref(0n);
 
 const { data: vehicles, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.value}`, () => listVehicles());
 

@@ -64,20 +64,20 @@ const onSubmit = handleSubmit(async (values): Promise<void> => {
 const schema = ref<TemplateSchemaEditorValue>({
     users: {
         req: false,
-        min: BigInt(0),
-        max: BigInt(0),
+        min: 0n,
+        max: 0n,
     },
 
     documents: {
         req: false,
-        min: BigInt(0),
-        max: BigInt(0),
+        min: 0n,
+        max: 0n,
     },
 
     vehicles: {
         req: false,
-        min: BigInt(0),
-        max: BigInt(0),
+        min: 0n,
+        max: 0n,
     },
 });
 const access = ref<
@@ -107,7 +107,7 @@ function addAccessEntry(): void {
         return;
     }
 
-    const id = BigInt(access.value.size > 0 ? ([...access.value.keys()].pop() as bigint) + BigInt(1) : 0);
+    const id = access.value.size > 0 ? ([...access.value.keys()].pop() as bigint) + 1n : 0n;
     access.value.set(id, {
         id,
         type: 1,
@@ -185,7 +185,7 @@ function addContentAccessEntry(): void {
         return;
     }
 
-    const id = BigInt(contentAccess.value.size > 0 ? ([...contentAccess.value.keys()].pop() as bigint) + BigInt(1) : 0);
+    const id = contentAccess.value.size > 0 ? ([...contentAccess.value.keys()].pop() as bigint) + 1n : 0n;
     contentAccess.value.set(id, {
         id,
         type: 1,
@@ -261,8 +261,8 @@ async function createTemplate(values: FormData): Promise<void> {
                 if (!entry.values.job) return;
 
                 jobAccesses.push({
-                    id: BigInt(0),
-                    templateId: BigInt(0),
+                    id: 0n,
+                    templateId: 0n,
                     access: entry.values.accessrole,
                     job: entry.values.job,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
@@ -281,8 +281,8 @@ async function createTemplate(values: FormData): Promise<void> {
                 if (!entry.values.char) return;
 
                 reqAccess.users.push({
-                    id: BigInt(0),
-                    documentId: BigInt(0),
+                    id: 0n,
+                    documentId: 0n,
                     userId: entry.values.char,
                     access: entry.values.accessrole,
                 });
@@ -290,8 +290,8 @@ async function createTemplate(values: FormData): Promise<void> {
                 if (!entry.values.job) return;
 
                 reqAccess.jobs.push({
-                    id: BigInt(0),
-                    documentId: BigInt(0),
+                    id: 0n,
+                    documentId: 0n,
                     job: entry.values.job!,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
                     access: entry.values.accessrole,
@@ -302,7 +302,7 @@ async function createTemplate(values: FormData): Promise<void> {
         if (typeof values.weight === 'string') values.weight = parseInt(values.weight as string);
         const req: CreateTemplateRequest = {
             template: {
-                id: BigInt(0),
+                id: 0n,
                 weight: values.weight as number,
                 title: values.title,
                 description: values.description,
@@ -359,7 +359,7 @@ async function updateTemplate(values: FormData): Promise<void> {
                 if (!entry.values.job) return;
 
                 jobAccesses.push({
-                    id: BigInt(0),
+                    id: 0n,
                     templateId: props.templateId!,
                     access: entry.values.accessrole,
                     job: entry.values.job,
@@ -379,8 +379,8 @@ async function updateTemplate(values: FormData): Promise<void> {
                 if (!entry.values.char) return;
 
                 reqAccess.users.push({
-                    id: BigInt(0),
-                    documentId: BigInt(0),
+                    id: 0n,
+                    documentId: 0n,
                     userId: entry.values.char,
                     access: entry.values.accessrole,
                 });
@@ -388,8 +388,8 @@ async function updateTemplate(values: FormData): Promise<void> {
                 if (!entry.values.job) return;
 
                 reqAccess.jobs.push({
-                    id: BigInt(0),
-                    documentId: BigInt(0),
+                    id: 0n,
+                    documentId: 0n,
                     job: entry.values.job!,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
                     access: entry.values.accessrole,
@@ -492,7 +492,7 @@ onMounted(async () => {
 
             const tplAccess = tpl.jobAccess;
             if (tplAccess) {
-                let accessId = BigInt(0);
+                let accessId = 0n;
 
                 tplAccess.forEach((job) => {
                     access.value.set(accessId, {
@@ -510,7 +510,7 @@ onMounted(async () => {
 
             const ctAccess = tpl.contentAccess;
             if (ctAccess) {
-                let accessId = BigInt(0);
+                let accessId = 0n;
 
                 ctAccess.users.forEach((user) => {
                     contentAccess.value.set(accessId, {
@@ -536,16 +536,16 @@ onMounted(async () => {
             }
 
             schema.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
-            schema.value.users.min = tpl.schema?.requirements?.users?.min ?? BigInt(0);
-            schema.value.users.max = tpl.schema?.requirements?.users?.max ?? BigInt(0);
+            schema.value.users.min = tpl.schema?.requirements?.users?.min ?? 0n;
+            schema.value.users.max = tpl.schema?.requirements?.users?.max ?? 0n;
 
             schema.value.documents.req = tpl.schema?.requirements?.documents?.required ?? false;
-            schema.value.documents.min = tpl.schema?.requirements?.documents?.min ?? BigInt(0);
-            schema.value.documents.max = tpl.schema?.requirements?.documents?.max ?? BigInt(0);
+            schema.value.documents.min = tpl.schema?.requirements?.documents?.min ?? 0n;
+            schema.value.documents.max = tpl.schema?.requirements?.documents?.max ?? 0n;
 
             schema.value.vehicles.req = tpl.schema?.requirements?.vehicles?.required ?? false;
-            schema.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? BigInt(0);
-            schema.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? BigInt(0);
+            schema.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? 0n;
+            schema.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0n;
         } catch (e) {
             $grpc.handleError(e as RpcError);
         }
@@ -554,8 +554,8 @@ onMounted(async () => {
             weight: 0,
         });
 
-        access.value.set(BigInt(0), {
-            id: BigInt(0),
+        access.value.set(0n, {
+            id: 0n,
             type: 1,
             values: {
                 job: activeChar.value?.job,

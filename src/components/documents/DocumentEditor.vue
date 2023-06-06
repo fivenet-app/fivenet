@@ -193,7 +193,7 @@ onMounted(async () => {
 
             if (template?.contentAccess) {
                 const docAccess = template?.contentAccess!;
-                let accessId = BigInt(0);
+                let accessId = 0n;
                 docAccess.users.forEach((user) => {
                     access.value.set(accessId, {
                         id: accessId,
@@ -246,7 +246,7 @@ onMounted(async () => {
             }
 
             if (docAccess) {
-                let accessId = BigInt(0);
+                let accessId = 0n;
 
                 docAccess.users.forEach((user) => {
                     access.value.set(accessId, {
@@ -283,7 +283,7 @@ onMounted(async () => {
             }
         }
 
-        let accessId = BigInt(0);
+        let accessId = 0n;
         access.value.set(accessId, {
             id: accessId,
             type: 1,
@@ -371,7 +371,7 @@ function addAccessEntry(): void {
         return;
     }
 
-    const id = BigInt(access.value.size > 0 ? ([...access.value.keys()].pop() as bigint) + BigInt(1) : 0);
+    const id = access.value.size > 0 ? ([...access.value.keys()].pop() as bigint) + 1n : 0n;
     access.value.set(id, {
         id,
         type: 1,
@@ -446,8 +446,8 @@ async function submitForm(): Promise<void> {
                 if (!entry.values.char) return;
 
                 reqAccess.users.push({
-                    id: BigInt(0),
-                    documentId: BigInt(0),
+                    id: 0n,
+                    documentId: 0n,
                     userId: entry.values.char,
                     access: entry.values.accessrole,
                 });
@@ -455,8 +455,8 @@ async function submitForm(): Promise<void> {
                 if (!entry.values.job) return;
 
                 reqAccess.jobs.push({
-                    id: BigInt(0),
-                    documentId: BigInt(0),
+                    id: 0n,
+                    documentId: 0n,
                     job: entry.values.job,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
                     access: entry.values.accessrole,
@@ -535,8 +535,8 @@ async function editForm(): Promise<void> {
                 if (!entry.values.char) return;
 
                 reqAccess.users.push({
-                    id: BigInt(0),
-                    documentId: BigInt(0),
+                    id: 0n,
+                    documentId: 0n,
                     access: entry.values.accessrole,
                     userId: entry.values.char,
                 });
@@ -544,8 +544,8 @@ async function editForm(): Promise<void> {
                 if (!entry.values.job) return;
 
                 reqAccess.jobs.push({
-                    id: BigInt(0),
-                    documentId: BigInt(0),
+                    id: 0n,
+                    documentId: 0n,
                     access: entry.values.accessrole,
                     job: entry.values.job,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,

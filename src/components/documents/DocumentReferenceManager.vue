@@ -75,8 +75,8 @@ async function listDocuments(): Promise<Array<DocumentShort>> {
         try {
             const call = $grpc.getDocStoreClient().listDocuments({
                 pagination: {
-                    offset: BigInt(0),
-                    pageSize: BigInt(8),
+                    offset: 0n,
+                    pageSize: 8n,
                 },
                 orderBy: [],
                 search: queryDoc.value,
@@ -102,11 +102,11 @@ async function listDocuments(): Promise<Array<DocumentShort>> {
 
 function addReference(doc: DocumentShort, reference: number): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? BigInt(1) : keys[keys.length - 1] + BigInt(1);
+    const key = !keys.length ? 1n : keys[keys.length - 1] + 1n;
 
     const ref: DocumentReference = {
         id: key,
-        sourceDocumentId: BigInt(0),
+        sourceDocumentId: 0n,
         reference: reference,
         targetDocumentId: doc.id,
     };

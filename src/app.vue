@@ -7,7 +7,7 @@ import { configure } from 'vee-validate';
 import { loadConfig } from '~/config';
 import { useClipboardStore } from './store/clipboard';
 import { useDocumentEditorStore } from './store/documenteditor';
-import { useNotificatorStore } from './store/notificator';
+import { useNotificationsStore } from './store/notifications';
 import { useUserSettingsStore } from './store/usersettings';
 
 const { t, setLocale } = useI18n();
@@ -41,7 +41,7 @@ const userSettings = useUserSettingsStore();
 if (__APP_VERSION__ != userSettings.getVersion) {
     useClipboardStore().$reset();
     useDocumentEditorStore().$reset();
-    useNotificatorStore().$reset();
+    useNotificationsStore().$reset();
 }
 
 // Set user setting locale on load of app

@@ -35,7 +35,7 @@ const clipboard = useClipboard();
 const { t } = useI18n();
 
 const access = ref<undefined | DocumentAccess>(undefined);
-const commentCount = ref(BigInt(-1));
+const commentCount = ref(-1n);
 const tabs = ref<{ name: string; icon: typeof LockOpenIcon }[]>([
     { name: t('common.relation', 2), icon: UserIcon },
     { name: t('common.reference', 2), icon: DocumentMagnifyingGlassIcon },

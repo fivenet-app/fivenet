@@ -5,16 +5,23 @@ import { NotificationConfig } from '~/composables/notification/interfaces/Notifi
 import { NOTIFICATION_CATEGORY } from '~~/gen/ts/resources/notifications/notifications';
 
 export interface NotificationsState {
+    lastId: bigint;
     notifications: Notification[];
 }
 
 export const useNotificationsStore = defineStore('notifications', {
     state: () =>
         ({
+            lastId: 0n,
             notifications: [],
         } as NotificationsState),
-    persist: false,
+    persist: {
+        paths: ['lastId'],
+    },
     actions: {
+        setLastId(lastId: bigint): void {
+            this.lastId = lastId;
+        },
         removeNotification(id: string): void {
             this.notifications = this.notifications.filter((notification) => notification.id !== id);
         },
@@ -45,6 +52,9 @@ export const useNotificationsStore = defineStore('notifications', {
         },
     },
     getters: {
+        getLastId(): bigint {
+            return this.lastId;
+        },
         getNotifications(): Notification[] {
             return [...this.notifications].slice(0, 4);
         },
