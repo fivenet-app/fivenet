@@ -47,7 +47,7 @@ import (
 )
 
 var (
-	GenericInternalServerError = status.Error(codes.Internal, "Internal server error")
+	ErrInternalServer = status.Error(codes.Internal, "errors.general.internal_error")
 )
 
 type RegisterFunc func() error
@@ -97,7 +97,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 			sentry.CaptureException(e)
 		}
 
-		return GenericInternalServerError
+		return ErrInternalServer
 	}
 
 	ui := userinfo.NewUIRetriever(ctx, db, config.C.Game.SuperuserGroups)

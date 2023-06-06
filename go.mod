@@ -45,6 +45,7 @@ require (
 	google.golang.org/grpc v1.55.0
 	google.golang.org/protobuf v1.30.0
 	gotest.tools v2.2.0+incompatible
+	gotest.tools/v3 v3.3.0
 )
 
 require (

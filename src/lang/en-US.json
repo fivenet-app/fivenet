@@ -878,8 +878,57 @@
         }
     },
     "errors": {
+        "general": {
+            "internal_error": "Internal server error"
+        },
+        "pkg-auth": {
+            "ErrNoToken": "Authorization string must not be empty",
+            "ErrInvalidToken": "Token invalid/ expired!",
+            "ErrCheckToken": "Token check failed!",
+            "ErrUserNoPerms": "No permissions associated with your user!",
+            "ErrNoUserInfo": "Something went wrong, please logout and login again!",
+            "ErrPermissionDenied": "You don't have permission to do that!"
+        },
+        "AuthService": {
+            "ErrGenericAccount": "Failed to get/update your account, please try again.",
+            "ErrAccountCreateFailed": "Please check the token you have typed in!",
+            "ErrInvalidLogin": "Wrong username or password.",
+            "ErrNoAccount": "You need to use your registration token to create an account first.",
+            "ErrNoCharFound": "No character(s) found for your account.",
+            "ErrGenericLogin": "Failed to login you in, please try again.",
+            "ErrUnableToChooseChar": "You don't have permission to select this character!",
+            "ErrUpdateAccount": "Failed to update your account!",
+            "ErrChangePassword": "Failed to change your password!",
+            "ErrForgotPassword": "Failed to reset password!"
+        },
+        "CitizenStoreService": {
+            "ErrFailedQuery": "Failed to list/get citizen(s) data!",
+            "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)"
+        },
+        "CompletorService": {
+            "ErrFailedSearch": "Failed to search the data!"
+        },
+        "DMVService": {
+            "ErrFailedQuery": "Failed to search vehicles data!"
+        },
+        "DocStoreService": {
+            "ErrFailedQuery": "Failed to get/create/update documents!",
+            "ErrNotFoundOrNoPerms": "No document found or no permissions to access document!",
+            "ErrTemplateNoPerms": "You don't have permission to view/update/delete this template!"
+        },
+        "LivemapperService": {
+            "ErrStreamFailed": "Failed to stream livemap data!"
+        },
         "NotificatorService": {
-            "InvalidRequestErr": "Invalid notificator stream request!"
+            "ErrFailedRequest": "Failed to load notifications data!",
+            "ErrFailedStream": "Failed to stream notifications!"
+        },
+        "RectorService": {
+            "ErrFailedQuery": "Failed to get/update control panel data!",
+            "ErrInvalidRequest": "Invalid role action requested!",
+            "ErrNoPermission": "No permission to create/change/delete role!",
+            "ErrRoleAlreadyExists": "Role already exists!",
+            "ErrOwnRoleDeletion": "Can't delete your own role!"
         }
     }
 }

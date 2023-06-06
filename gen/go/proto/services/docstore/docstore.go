@@ -37,8 +37,8 @@ var (
 )
 
 var (
-	FailedQueryErr     = status.Error(codes.Internal, "Failed to get/create/update documents!")
-	NoDocOrPermsDocErr = status.Error(codes.NotFound, "No document found or no permissions to access document!")
+	ErrFailedQuery       = status.Error(codes.Internal, "errors.DocStoreService.ErrFailedQuery")
+	ErrNotFoundOrNoPerms = status.Error(codes.NotFound, "errors.DocStoreService.ErrNotFoundOrNoPerms")
 )
 
 type Server struct {
@@ -111,7 +111,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(DocsDefaultPageLimit)
@@ -129,7 +129,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	for i := 0; i < len(resp.Documents); i++ {
@@ -155,7 +155,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	if !check {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document!")
@@ -165,11 +165,11 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	resp.Document, err = s.getDocument(ctx,
 		tDocs.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	if resp.Document == nil || resp.Document.Id <= 0 {
-		return nil, NoDocOrPermsDocErr
+		return nil, ErrNotFoundOrNoPerms
 	}
 
 	docAccess, err := s.GetDocumentAccess(ctx, &GetDocumentAccessRequest{
@@ -177,11 +177,11 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	})
 	if err != nil {
 		if st, ok := status.FromError(err); !ok {
-			return nil, FailedQueryErr
+			return nil, ErrFailedQuery
 		} else {
 			// Ignore permission denied as we are simply getting the document
 			if st.Code() != codes.PermissionDenied {
-				return nil, err
+				return nil, ErrFailedQuery
 			}
 		}
 	}
@@ -202,7 +202,7 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, FailedQueryErr
+			return nil, ErrFailedQuery
 		}
 	}
 
@@ -228,7 +228,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -262,21 +262,21 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, ACCESS_LEVEL_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
@@ -300,7 +300,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	if !check {
 		if !userInfo.SuperUser {
@@ -312,7 +312,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
 		userInfo)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	// Either the document is closed and the update request isn't re-opening the document
@@ -323,7 +323,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	stmt := tDocs.
@@ -346,16 +346,16 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
@@ -379,7 +379,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
@@ -397,7 +397,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)

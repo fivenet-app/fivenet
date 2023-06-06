@@ -24,7 +24,7 @@ var (
 )
 
 var (
-	FailedQueryErr = status.Error(codes.Internal, "Failed to retrieve vehicles data!")
+	ErrFailedQuery = status.Error(codes.Internal, "errors.DMVService.ErrFailedQuery")
 )
 
 type Server struct {
@@ -92,7 +92,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	pag, limit := req.Pagination.GetResponse()
@@ -152,7 +152,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Vehicles); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Vehicles))

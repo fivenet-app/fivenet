@@ -8,6 +8,7 @@ import { NOTIFICATION_CATEGORY } from '~~/gen/ts/resources/notifications/notific
 
 const { $grpc } = useNuxtApp();
 const notificator = useNotificatorStore();
+const { lastId } = storeToRefs(notificator);
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
@@ -16,8 +17,6 @@ const { setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore
 
 const abort = ref<AbortController | undefined>();
 
-const { t } = useI18n();
-
 // In seconds
 const initialBackoffTime = 2;
 let restartBackoffTime = 0;
@@ -25,13 +24,13 @@ let restartBackoffTime = 0;
 async function streamNotifications(): Promise<void> {
     if (abort.value !== undefined) return;
 
-    console.debug('Notificator: Stream starting');
+    console.debug('Notificator: Stream starting, last ID:', lastId.value);
     try {
         abort.value = new AbortController();
 
         const call = $grpc.getNotificatorClient().stream(
             {
-                lastId: notificator.getLastId,
+                lastId: BigInt(lastId.value),
             },
             {
                 abort: abort.value.signal,
@@ -39,7 +38,7 @@ async function streamNotifications(): Promise<void> {
         );
 
         for await (let resp of call.responses) {
-            if (resp.lastId > notificator.getLastId) notificator.setLastId(resp.lastId);
+            if (resp.lastId > BigInt(lastId.value)) notificator.setLastId(resp.lastId);
 
             console.debug('Notifications:', resp.notifications);
             resp.notifications.forEach((n) => {

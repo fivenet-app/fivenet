@@ -234,7 +234,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -266,7 +266,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
@@ -360,7 +360,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -393,12 +393,12 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	if err := s.addUserActivity(ctx, tx,
 		userInfo.UserId, req.Relation.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "",
 		strconv.Itoa(int(lastId)), req.Relation.Relation.String()); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
@@ -452,7 +452,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -469,23 +469,23 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	rel, err := s.getDocumentRelation(ctx, req.Id)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	if err := s.addUserActivity(ctx, tx,
 		userInfo.UserId, rel.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation",
 		strconv.Itoa(int(docID.ID)), "", rel.Relation.String()); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)

@@ -22,7 +22,7 @@ var (
 )
 
 var (
-	FailedSearchErr = status.Error(codes.Internal, "Failed to complete/ search the data!")
+	ErrFailedSearch = status.Error(codes.Internal, "errors.CompletorService.ErrFailedSearch")
 )
 
 type Server struct {
@@ -73,7 +73,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 	resp := &CompleteCitizensRespoonse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, FailedSearchErr
+			return nil, ErrFailedSearch
 		}
 	}
 
@@ -99,7 +99,7 @@ func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*C
 	var err error
 	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, exactMatch)
 	if err != nil {
-		return nil, FailedSearchErr
+		return nil, ErrFailedSearch
 	}
 
 	return resp, nil
@@ -110,7 +110,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 
 	jobsAttr, err := s.p.Attr(userInfo, CompletorServicePerm, CompletorServiceCompleteDocumentCategoriesPerm, CompletorServiceCompleteDocumentCategoriesJobsPermField)
 	if err != nil {
-		return nil, FailedSearchErr
+		return nil, ErrFailedSearch
 	}
 	var jobs perms.StringList
 	if jobsAttr != nil {
@@ -156,7 +156,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 	resp := &CompleteDocumentCategoriesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, FailedSearchErr
+			return nil, ErrFailedSearch
 		}
 	}
 

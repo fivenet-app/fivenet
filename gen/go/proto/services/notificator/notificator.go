@@ -32,7 +32,8 @@ var (
 )
 
 var (
-	InvalidRequestErr = status.Error(codes.InvalidArgument, "errors.NotificatorService.InvalidRequestErr")
+	ErrFailedRequest = status.Error(codes.InvalidArgument, "errors.NotificatorService.ErrFailedRequest")
+	ErrFailedStream  = status.Error(codes.InvalidArgument, "errors.NotificatorService.ErrFailedStream")
 )
 
 const StartWaitTicks = 3
@@ -88,7 +89,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
+		return nil, ErrFailedRequest
 	}
 
 	pag, limit := req.Pagination.GetResponse()
@@ -112,7 +113,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Notifications); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
+			return nil, ErrFailedRequest
 		}
 	}
 
@@ -152,7 +153,7 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 		WHERE(condition)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, ErrFailedRequest
 	}
 
 	return &ReadNotificationsResponse{}, nil
@@ -174,7 +175,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 
 	userInfo, ok := auth.GetUserInfoFromContext(srv.Context())
 	if !ok {
-		return InvalidRequestErr
+		return ErrFailedStream
 	}
 
 	// Track changes to user info, so we can send an updated user info to the user
@@ -205,7 +206,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			)
 
 		if err := q.QueryContext(srv.Context(), s.db, &resp.Notifications); err != nil {
-			return err
+			return ErrFailedStream
 		}
 
 		// Update last notification id of user
@@ -216,7 +217,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 
 		claims, restart, err := s.checkAndUpdateToken(srv.Context(), resp.Token)
 		if err != nil {
-			return err
+			return ErrFailedStream
 		}
 		if restart {
 			resp.RestartStream = true
@@ -225,14 +226,14 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		if waitTicks <= 0 {
 			if claims.CharID > 0 {
 				if err := s.checkAndUpdateUserInfo(srv.Context(), resp.Token, &currentUserInfo); err != nil {
-					return err
+					return ErrFailedStream
 				}
 			}
 			waitTicks = StartWaitTicks
 		}
 
 		if err := srv.Send(resp); err != nil {
-			return err
+			return ErrFailedStream
 		}
 
 		resp.Notifications = nil
@@ -249,17 +250,17 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) (*auth.CitizenInfoClaims, bool, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, true, auth.InvalidTokenErr
+		return nil, true, auth.ErrInvalidToken
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, true, auth.InvalidTokenErr
+		return nil, true, auth.ErrInvalidToken
 	}
 
 	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
 		if claims.RenewedCount >= auth.TokenMaxRenews {
-			return nil, true, auth.InvalidTokenErr
+			return nil, true, auth.ErrInvalidToken
 		}
 
 		// Increase re-newed count
@@ -268,7 +269,7 @@ func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) (*aut
 		auth.SetTokenClaimsTimes(claims)
 		newToken, err := s.tm.NewWithClaims(claims)
 		if err != nil {
-			return nil, true, auth.CheckTokenErr
+			return nil, true, auth.ErrCheckToken
 		}
 
 		tu.NewToken = &newToken
@@ -307,7 +308,7 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, cu
 			JobGrade: userInfo.JobGrade,
 		})
 		if err != nil {
-			return auth.NoPermsErr
+			return auth.ErrUserNoPerms
 		}
 		tu.Permissions = ps.GuardNames()
 
@@ -317,7 +318,7 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, cu
 
 		attrs, err := s.p.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
 		if err != nil {
-			return auth.NoPermsErr
+			return auth.ErrUserNoPerms
 		}
 		tu.Permissions = append(tu.Permissions, attrs...)
 	}

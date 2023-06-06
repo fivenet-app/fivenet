@@ -14,28 +14,27 @@ import (
 )
 
 var (
-	GenericAccountErr = status.Error(codes.Internal, "Failed to get/update your account, please try again.")
-	InvalidTokenErr   = status.Error(codes.Unauthenticated, "")
+	ErrGenericAccount = status.Error(codes.Internal, "errors.AuthService.ErrGenericAccount")
 )
 
 func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, auth.InvalidTokenErr
+		return nil, auth.ErrInvalidToken
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, GenericAccountErr
+		return nil, ErrGenericAccount
 	}
 
 	// Load account
 	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil {
-		return nil, GenericAccountErr
+		return nil, ErrGenericAccount
 	}
 	if acc.ID == 0 {
-		return nil, GenericAccountErr
+		return nil, ErrGenericAccount
 	}
 
 	oauth2Providers := make([]*accounts.OAuth2Provider, len(s.oauth2Providers))
@@ -69,7 +68,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 	oauth2Conns := []*accounts.OAuth2Account{}
 	if err := stmt.QueryContext(ctx, s.db, &oauth2Conns); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, GenericAccountErr
+			return nil, ErrGenericAccount
 		}
 	}
 

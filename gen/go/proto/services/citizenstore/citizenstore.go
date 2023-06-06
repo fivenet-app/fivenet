@@ -33,8 +33,8 @@ var (
 )
 
 var (
-	FailedQueryErr          = status.Error(codes.Internal, "Failed to list/get citizen(s) data!")
-	JobGradeNoPermissionErr = status.Error(codes.NotFound, "No permission to access this citizen (based on the citizen's job)")
+	ErrFailedQuery          = status.Error(codes.Internal, "errors.CitizenStoreService.ErrFailedQuery")
+	ErrJobGradeNoPermission = status.Error(codes.NotFound, "errors.CitizenStoreService.ErrJobGradeNoPermission")
 )
 
 type Server struct {
@@ -83,7 +83,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -134,7 +134,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	pag, limit := req.Pagination.GetResponse()
@@ -164,14 +164,14 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Users))
 
 	jobGradesAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceGetUserPerm, CitizenStoreServiceGetUserJobsPermField)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	var jobGrades perms.JobGradeList
 	if jobGradesAttr != nil {
@@ -231,7 +231,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -266,18 +266,18 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.User); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	if resp.User.UserId <= 0 {
-		return nil, JobGradeNoPermissionErr
+		return nil, ErrJobGradeNoPermission
 	}
 
 	if utils.InStringSlice(s.publicJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
 		jobGradesAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceGetUserPerm, CitizenStoreServiceGetUserJobsPermField)
 		if err != nil {
-			return nil, FailedQueryErr
+			return nil, ErrFailedQuery
 		}
 		var jobGrades perms.JobGradeList
 		if jobGradesAttr != nil {
@@ -285,7 +285,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 
 		if len(jobGrades) == 0 && !userInfo.SuperUser {
-			return nil, JobGradeNoPermissionErr
+			return nil, ErrJobGradeNoPermission
 		}
 
 		// Make sure user has permission to see that grade, otherwise "hide" the user's job
@@ -293,7 +293,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		if !ok || resp.User.JobGrade > grade {
 			// Skip for superuser
 			if !userInfo.SuperUser {
-				return nil, JobGradeNoPermissionErr
+				return nil, ErrJobGradeNoPermission
 			}
 		}
 	} else {
@@ -328,7 +328,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
 			if !errors.Is(qrm.ErrNoRows, err) {
-				return nil, FailedQueryErr
+				return nil, ErrFailedQuery
 			}
 		}
 	}
@@ -384,7 +384,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, FailedQueryErr
+			return nil, ErrFailedQuery
 		}
 	}
 
@@ -420,7 +420,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Get current user props to be able to compare
 	props, err := s.getUserProps(ctx, req.Props.UserId)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	if props.Wanted == nil {
 		wanted := false
@@ -434,7 +434,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceSetUserPropsPerm, CitizenStoreServiceSetUserPropsFieldsPermField)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	var fields perms.StringList
 	if fieldsAttr != nil {
@@ -476,7 +476,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -497,26 +497,26 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	// Create user activity
 	if *req.Props.Wanted != *props.Wanted {
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted", strconv.FormatBool(*props.Wanted), strconv.FormatBool(*req.Props.Wanted), req.Reason); err != nil {
-			return nil, FailedQueryErr
+			return nil, ErrFailedQuery
 		}
 	}
 	if *req.Props.JobName != *props.JobName {
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job", *props.JobName, *req.Props.JobName, req.Reason); err != nil {
-			return nil, FailedQueryErr
+			return nil, ErrFailedQuery
 		}
 	}
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)

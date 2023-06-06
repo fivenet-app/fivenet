@@ -22,14 +22,15 @@ const (
 	AuthSubCtxTag                = "auth.sub"
 )
 
+var UserInfoKey struct{}
+
 var (
-	UserInfoKey         struct{}
-	NoTokenErr          = status.Errorf(codes.Unauthenticated, "authorization string must not be empty")
-	InvalidTokenErr     = status.Error(codes.Unauthenticated, "Token invalid/ expired!")
-	CheckTokenErr       = status.Error(codes.Unauthenticated, "Token check failed!")
-	NoPermsErr          = status.Error(codes.PermissionDenied, "No permissions associated with your user!")
-	NoUserInfoErr       = status.Error(codes.Unauthenticated, "Something went wrong, please logout and login again!")
-	PermissionDeniedErr = status.Errorf(codes.PermissionDenied, "You don't have permission to do that!")
+	ErrNoToken          = status.Errorf(codes.Unauthenticated, "errors.pkg-auth.ErrNoToken")
+	ErrInvalidToken     = status.Error(codes.Unauthenticated, "errors.pkg-auth.ErrInvalidToken")
+	ErrCheckToken       = status.Error(codes.Unauthenticated, "errors.pkg-auth.ErrCheckToken")
+	ErrUserNoPerms      = status.Error(codes.PermissionDenied, "errors.pkg-auth.ErrUserNoPerms")
+	ErrNoUserInfo       = status.Error(codes.Unauthenticated, "errors.pkg-auth.ErrNoUserInfo")
+	ErrPermissionDenied = status.Errorf(codes.PermissionDenied, "errors.pkg-auth.ErrPermissionDenied")
 )
 
 type GRPCAuth struct {
@@ -51,13 +52,13 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 	}
 
 	if t == "" {
-		return nil, NoTokenErr
+		return nil, ErrNoToken
 	}
 
 	// Parse token only returns the token info when the token is still valid
 	tInfo, err := g.tm.ParseWithClaims(t)
 	if err != nil {
-		return nil, InvalidTokenErr
+		return nil, ErrInvalidToken
 	}
 
 	userInfo, err := g.ui.GetUserInfo(ctx, tInfo.CharID, tInfo.AccID)
@@ -80,13 +81,13 @@ func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(ctx context.Context, fullMethod s
 	}
 
 	if t == "" {
-		return nil, NoTokenErr
+		return nil, ErrNoToken
 	}
 
 	// Parse token only returns the token info when the token is still valid
 	tInfo, err := g.tm.ParseWithClaims(t)
 	if err != nil {
-		return nil, InvalidTokenErr
+		return nil, ErrInvalidToken
 	}
 
 	ctx = logging.InjectFields(ctx, logging.Fields{
@@ -123,7 +124,7 @@ func GetUserInfoFromContext(ctx context.Context) (*userinfo.UserInfo, bool) {
 func MustGetUserInfoFromContext(ctx context.Context) *userinfo.UserInfo {
 	userInfo, ok := FromContext(ctx)
 	if !ok {
-		panic(NoUserInfoErr)
+		panic(ErrNoUserInfo)
 	}
 	return userInfo
 }
@@ -153,7 +154,7 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 		}
 	}
 
-	return nil, PermissionDeniedErr
+	return nil, ErrPermissionDenied
 }
 
 func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
@@ -181,5 +182,5 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}
 		}
 	}
 
-	return nil, PermissionDeniedErr
+	return nil, ErrPermissionDenied
 }

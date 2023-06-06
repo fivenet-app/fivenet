@@ -27,7 +27,7 @@ var (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
-	TemplateNoPermsErr = status.Error(codes.PermissionDenied, "You don't have permission to view/update/delete this template!")
+	ErrTemplateNoPerms = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrTemplateNoPerms")
 )
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
@@ -81,10 +81,10 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.TemplateId, userInfo, false, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	if !check {
-		return nil, TemplateNoPermsErr
+		return nil, ErrTemplateNoPerms
 	}
 
 	tDTemplates := tDTemplates.AS("template")
@@ -120,13 +120,13 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 
 	resp := &GetTemplateResponse{}
 	if err := stmt.QueryContext(ctx, s.db, resp); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	if req.Render == nil || !*req.Render {
 		resp.Template.JobAccess, err = s.getTemplateJobAccess(ctx, req.TemplateId)
 		if err != nil {
-			return nil, FailedQueryErr
+			return nil, ErrFailedQuery
 		}
 	} else if req.Render != nil && *req.Render && req.Data != nil {
 		// Parse data as json for the templating process
@@ -196,7 +196,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -252,12 +252,12 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	}
 
 	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(lastId), req.Template.JobAccess); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
@@ -281,10 +281,10 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	if !check {
-		return nil, TemplateNoPermsErr
+		return nil, ErrTemplateNoPerms
 	}
 
 	categoryId := jet.NULL
@@ -301,7 +301,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -333,16 +333,16 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(req.Template.Id), req.Template.JobAccess); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	// Commit the transaction
 	if err = tx.Commit(); err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
@@ -366,10 +366,10 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, FailedQueryErr
+		return nil, ErrFailedQuery
 	}
 	if !check {
-		return nil, TemplateNoPermsErr
+		return nil, ErrTemplateNoPerms
 	}
 
 	tDTemplates := table.FivenetDocumentsTemplates

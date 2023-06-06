@@ -15,12 +15,12 @@ var (
 func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *DeleteOAuth2ConnectionRequest) (*DeleteOAuth2ConnectionResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, auth.InvalidTokenErr
+		return nil, auth.ErrInvalidToken
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, GenericAccountErr
+		return nil, ErrGenericAccount
 	}
 
 	stmt := tOAuth2Accs.
@@ -32,7 +32,7 @@ func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *DeleteOAuth2Co
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, GenericAccountErr
+		return nil, ErrGenericAccount
 	}
 
 	return &DeleteOAuth2ConnectionResponse{

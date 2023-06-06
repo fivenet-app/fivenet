@@ -67,7 +67,7 @@ func TestFullAuthFlow(t *testing.T) {
 	res, err := client.Login(ctx, loginReq)
 	assert.Error(t, err)
 	assert.Nil(t, res)
-	proto.CompareGRPCError(t, InvalidLoginErr, err)
+	proto.CompareGRPCError(t, ErrInvalidLogin, err)
 
 	// Login with invalid credentials
 	loginReq.Username = "non-existant-username"
@@ -75,7 +75,7 @@ func TestFullAuthFlow(t *testing.T) {
 	res, err = client.Login(ctx, loginReq)
 	assert.Error(t, err)
 	assert.Nil(t, res)
-	proto.CompareGRPCError(t, InvalidLoginErr, err)
+	proto.CompareGRPCError(t, ErrInvalidLogin, err)
 
 	// user-3: Login with valid account that has one char
 	loginReq.Username = "user-3"
@@ -129,7 +129,7 @@ func TestFullAuthFlow(t *testing.T) {
 	chooseCharRes, err := client.ChooseCharacter(ctx, chooseCharReq)
 	assert.Error(t, err)
 	assert.Nil(t, chooseCharRes)
-	proto.CompareGRPCError(t, UnableToChooseCharErr, err)
+	proto.CompareGRPCError(t, ErrUnableToChooseChar, err)
 
 	// user-1: Choose valid character but we don't have permissions on the role
 	err = p.UpdateRolePermissions(ctx, 1, perms.AddPerm{
@@ -147,7 +147,7 @@ func TestFullAuthFlow(t *testing.T) {
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
 	assert.Error(t, err)
 	assert.Nil(t, chooseCharRes)
-	proto.CompareGRPCError(t, UnableToChooseCharErr, err)
+	proto.CompareGRPCError(t, ErrUnableToChooseChar, err)
 
 	// user-1: Choose valid character, now we add a permssion
 	// Perm ID 1 is `AuthService.ChooseCharacter`

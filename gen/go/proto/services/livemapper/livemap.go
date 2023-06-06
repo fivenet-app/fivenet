@@ -37,7 +37,7 @@ var (
 )
 
 var (
-	FailedErr = status.Error(codes.Internal, "Failed to stream livemap data!")
+	ErrStreamFailed = status.Error(codes.Internal, "errors.LivemapperService.ErrStreamFailed")
 )
 
 type Server struct {
@@ -122,7 +122,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	dispatchesAttr, err := s.p.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
 	if err != nil {
-		return FailedErr
+		return ErrStreamFailed
 	}
 	var dispatchesJobs []string
 	if dispatchesAttr != nil {
@@ -131,7 +131,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	playersAttr, err := s.p.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
 	if err != nil {
-		return FailedErr
+		return ErrStreamFailed
 	}
 	var playersJobs []string
 	if playersAttr != nil {
@@ -170,13 +170,13 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	for {
 		dispatchMarkers, err := s.getUserDispatches(dispatchesJobs)
 		if err != nil {
-			return FailedErr
+			return ErrStreamFailed
 		}
 		resp.Dispatches = dispatchMarkers
 
 		userMarkers, err := s.getUserLocations(playersJobs, userInfo.UserId, userInfo.Job)
 		if err != nil {
-			return FailedErr
+			return ErrStreamFailed
 		}
 		resp.Users = userMarkers
 

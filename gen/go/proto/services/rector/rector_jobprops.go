@@ -39,7 +39,7 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 	}
 	if err := stmt.QueryContext(ctx, s.db, resp.JobProps); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
+			return nil, ErrInvalidRequest
 		}
 	}
 
@@ -88,7 +88,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)

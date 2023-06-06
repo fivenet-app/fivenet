@@ -17,10 +17,11 @@ import (
 )
 
 var (
-	InvalidRequestErr    = status.Error(codes.InvalidArgument, "Invalid role action requested!")
-	NoPermissionErr      = status.Error(codes.PermissionDenied, "No permission to create/change/delete role!")
-	RoleAlreadyExistsErr = status.Error(codes.InvalidArgument, "Role already exists!")
-	OwnRoleDeletionErr   = status.Error(codes.InvalidArgument, "Can't delete your own role!")
+	ErrFailedQuery       = status.Error(codes.Internal, "errors.RectorService.ErrFailedQuery")
+	ErrInvalidRequest    = status.Error(codes.InvalidArgument, "errors.RectorService.ErrInvalidRequest")
+	ErrNoPermission      = status.Error(codes.PermissionDenied, "errors.RectorService.ErrNoPermission")
+	ErrRoleAlreadyExists = status.Error(codes.InvalidArgument, "errors.RectorService.ErrRoleAlreadyExists")
+	ErrOwnRoleDeletion   = status.Error(codes.InvalidArgument, "errors.RectorService.ErrOwnRoleDeletion")
 )
 
 var (
@@ -39,11 +40,11 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 
 	// Make sure the user is from the job
 	if role.Job != userInfo.Job {
-		return nil, false, InvalidRequestErr
+		return nil, false, ErrInvalidRequest
 	}
 
 	if role.Grade > userInfo.JobGrade {
-		return nil, false, InvalidRequestErr
+		return nil, false, ErrInvalidRequest
 	}
 
 	return role, true, nil
@@ -136,7 +137,7 @@ func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesR
 
 	roles, err := s.p.GetJobRolesUpTo(ctx, userInfo.Job, userInfo.JobGrade)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	resp := &GetRolesResponse{}
@@ -160,15 +161,15 @@ func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesR
 func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResponse, error) {
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 	if !check {
-		return nil, NoPermissionErr
+		return nil, ErrNoPermission
 	}
 
 	perms, err := s.p.GetRolePermissions(ctx, role.ID)
 	if err != nil {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 
 	resp := &GetRoleResponse{}
@@ -183,7 +184,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 
 	fPerms, err := s.filterPermissions(ctx, perms)
 	if err != nil {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 
 	resp.Role.Permissions = make([]*permissions.Permission, len(fPerms))
@@ -191,7 +192,7 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 
 	resp.Role.Attributes, err = s.p.GetRoleAttributes(role.Job, role.Grade)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	return resp, nil
@@ -212,20 +213,20 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 	role, err := s.p.GetRoleByJobAndGrade(ctx, userInfo.Job, req.Grade)
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
+			return nil, ErrFailedQuery
 		}
 	}
 	if role != nil {
-		return nil, RoleAlreadyExistsErr
+		return nil, ErrRoleAlreadyExists
 	}
 
 	cr, err := s.p.CreateRole(ctx, userInfo.Job, req.Grade)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	if cr == nil {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
@@ -248,29 +249,29 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 	if !check {
-		return nil, NoPermissionErr
+		return nil, ErrNoPermission
 	}
 
 	roleCount, err := s.p.CountRolesForJob(ctx, userInfo.Job)
 	if err != nil {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 
 	// Don't allow deleting the "last" role, one role should always remain
 	if roleCount <= 1 {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 
 	// Don't allow deleting the own or higher role
 	if role.Grade >= userInfo.JobGrade {
-		return nil, OwnRoleDeletionErr
+		return nil, ErrOwnRoleDeletion
 	}
 
 	if err := s.p.DeleteRole(ctx, role.ID); err != nil {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
@@ -292,20 +293,20 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsReques
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 	if !check {
-		return nil, NoPermissionErr
+		return nil, ErrNoPermission
 	}
 
 	if req.Perms != nil {
 		if err := s.handlPermissionsUpdate(ctx, role, req.Perms); err != nil {
-			return nil, err
+			return nil, ErrFailedQuery
 		}
 	}
 	if req.Attrs != nil {
 		if err := s.handleAttributeUpdate(ctx, role, req.Attrs); err != nil {
-			return nil, err
+			return nil, ErrFailedQuery
 		}
 	}
 
@@ -321,12 +322,12 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 	}
 	toUpdate, err := s.filterPermissionIDs(ctx, updatePermIds)
 	if err != nil {
-		return InvalidRequestErr
+		return err
 	}
 
 	toDelete, err := s.filterPermissionIDs(ctx, permsUpdate.ToRemove)
 	if err != nil {
-		return InvalidRequestErr
+		return err
 	}
 
 	if len(toUpdate) > 0 {
@@ -383,12 +384,12 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 
 	perms, err := s.p.GetAllPermissions(ctx)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	filtered, err := s.filterPermissions(ctx, perms)
 	if err != nil {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 
 	resp := &GetPermissionsResponse{}
@@ -396,7 +397,7 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 
 	attrs, err := s.p.GetAllAttributes(ctx, userInfo.Job)
 	if err != nil {
-		return nil, InvalidRequestErr
+		return nil, ErrInvalidRequest
 	}
 	resp.Attributes = attrs
 
