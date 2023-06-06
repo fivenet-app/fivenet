@@ -568,6 +568,10 @@
             "job_props": {
                 "title": "Job Eigenschaften aktualisiert",
                 "content": "Die Job Eigenschaften wurden gespeichert."
+            },
+            "audit_log": {
+                "title": "Audit Protokoll: Eintrag kopiert",
+                "content": "Eintrag in die Zwischenablage kopiert."
             }
         },
         "document_deleted": {
@@ -874,8 +878,57 @@
         }
     },
     "errors": {
+        "general": {
+            "internal_error": "Interner Server Fehler"
+        },
+        "pkg-auth": {
+            "ErrNoToken": "\"Authorization\" Header darf nicht leer sein",
+            "ErrInvalidToken": "Token ungültig/ ausgelaufen!",
+            "ErrCheckToken": "Token Überprüfung fehlgeschlagen!",
+            "ErrUserNoPerms": "Ihr Nutzeraccount hat keine Berechtigungen!",
+            "ErrNoUserInfo": "Ein Fehler ist aufgetrete, bitte ausloggen und erneut einloggen!",
+            "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!"
+        },
+        "AuthService": {
+            "ErrGenericAccount": "",
+            "ErrAccountCreateFailed": "",
+            "ErrInvalidLogin": "Falscher Username oder Passwort!",
+            "ErrNoAccount": "",
+            "ErrNoCharFound": "Keine(n) Character für deinen Account gefunden.",
+            "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
+            "ErrUnableToChooseChar": "",
+            "ErrUpdateAccount": "",
+            "ErrChangePassword": "",
+            "ErrForgotPassword": ""
+        },
+        "CitizenStoreService": {
+            "ErrFailedQuery": "",
+            "ErrJobGradeNoPermission": ""
+        },
+        "CompletorService": {
+            "ErrFailedSearch": ""
+        },
+        "DMVService": {
+            "ErrFailedQuery": ""
+        },
+        "DocStoreService": {
+            "ErrFailedQuery": "",
+            "ErrNotFoundOrNoPerms": "",
+            "ErrTemplateNoPerms": ""
+        },
+        "LivemapperService": {
+            "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!"
+        },
         "NotificatorService": {
-            "InvalidRequestErr": "Fehlerhafte Anfrage für Benachrichtigungs-Datenstrom!"
+            "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
+            "ErrFailedStream": "Fehler beim Benachrichtigungs-Datenstrom!"
+        },
+        "RectorService": {
+            "ErrFailedQuery": "Fehler beim Zugriff auf das Kontrollzentrum!",
+            "ErrInvalidRequest": "Ungültige Rollen Anfrage!",
+            "ErrNoPermission": "Keine Berechtigung um Rollen zu erstellen/ändern/löschen!",
+            "ErrRoleAlreadyExists": "Rolle existiert bereits!",
+            "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!"
         }
     }
 }
