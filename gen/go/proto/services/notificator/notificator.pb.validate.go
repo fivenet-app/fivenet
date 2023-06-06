@@ -489,6 +489,8 @@ func (m *ReadNotificationsResponse) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Updated
+
 	if len(errors) > 0 {
 		return ReadNotificationsResponseMultiError(errors)
 	}

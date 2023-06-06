@@ -125,21 +125,18 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRequest) (*ReadNotificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := tNotifications.UserID.EQ(jet.Int32(userInfo.UserId)).AND(
+	condition := tNotifications.UserID.EQ(
+		jet.Int32(userInfo.UserId)).AND(
 		tNotifications.ReadAt.IS_NULL(),
 	)
 	// If not all
-	if req.All == nil || !*req.All {
-		if len(req.Ids) <= 0 {
-			return &ReadNotificationsResponse{}, nil
-		}
-
+	if len(req.Ids) > 0 {
 		ids := make([]jet.Expression, len(req.Ids))
 		for i := 0; i < len(req.Ids); i++ {
 			ids[i] = jet.Uint64(req.Ids[i])
 		}
 		condition = condition.AND(tNotifications.ID.IN(ids...))
-	} else {
+	} else if req.All == nil || !*req.All {
 		return &ReadNotificationsResponse{}, nil
 	}
 
@@ -152,11 +149,19 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 		).
 		WHERE(condition)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
 		return nil, ErrFailedRequest
 	}
 
-	return &ReadNotificationsResponse{}, nil
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return nil, ErrFailedRequest
+	}
+
+	return &ReadNotificationsResponse{
+		Updated: uint64(rows),
+	}, nil
 }
 
 func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer) error {

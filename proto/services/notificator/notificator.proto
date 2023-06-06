@@ -25,7 +25,9 @@ message ReadNotificationsRequest {
   optional bool all = 2;
 }
 
-message ReadNotificationsResponse {}
+message ReadNotificationsResponse {
+  uint64 updated = 1;
+}
 
 message StreamRequest {
   uint64 last_id = 1;

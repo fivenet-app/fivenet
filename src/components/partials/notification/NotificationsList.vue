@@ -48,11 +48,18 @@ async function getNotifications(): Promise<Array<Notification>> {
 
 async function markAllRead(): Promise<void> {
     return new Promise(async (res, rej) => {
+        const now = {
+            timestamp: undefined,
+        };
         try {
             await $grpc.getNotificatorClient().readNotifications({
                 ids: [],
                 all: true,
             });
+
+            notifications.value?.forEach((v) => (v.readAt = now));
+
+            return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -66,6 +73,8 @@ async function markRead(ids: bigint[]): Promise<void> {
             await $grpc.getNotificatorClient().readNotifications({
                 ids: ids,
             });
+
+            return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -108,6 +117,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                             </div>
                             <div class="flex-initial">
                                 <button
+                                    type="button"
                                     :disabled="!notifications || notifications.length <= 0"
                                     @click="markAllRead"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"

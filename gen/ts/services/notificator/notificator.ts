@@ -52,6 +52,10 @@ export interface ReadNotificationsRequest {
  * @generated from protobuf message services.notificator.ReadNotificationsResponse
  */
 export interface ReadNotificationsResponse {
+    /**
+     * @generated from protobuf field: uint64 updated = 1;
+     */
+    updated: bigint;
 }
 /**
  * @generated from protobuf message services.notificator.StreamRequest
@@ -150,7 +154,9 @@ export const ReadNotificationsRequest = new ReadNotificationsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ReadNotificationsResponse$Type extends MessageType<ReadNotificationsResponse> {
     constructor() {
-        super("services.notificator.ReadNotificationsResponse", []);
+        super("services.notificator.ReadNotificationsResponse", [
+            { no: 1, name: "updated", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
     }
 }
 /**
