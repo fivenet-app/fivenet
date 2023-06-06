@@ -459,7 +459,7 @@
         "clipboard": {
             "document_added": {
                 "title": "Zwischenablage: Dokument hinzugefügt",
-                "content": "Dokument wurde zur Zwischenablage hinzugefügt"
+                "content": "Dokument zur Zwischenablage hinzugefügt"
             },
             "document_removed": {
                 "title": "Zwischenablage: Dokument entfernt",
