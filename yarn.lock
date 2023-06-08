@@ -694,7 +694,7 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.2.tgz#5749f04df13bda4c863338d8dabaf370f45ef7c7"
   integrity sha512-GBzP8zOc7CGWyFQS6dv1lQz8VVpz5C2yRszbXufwG/9zhStTIH50EtD87NmWbTMwXDvZLNg8GIpb1UFdH93JCA==
 
-"@nuxt/kit@3.5.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.2", "@nuxt/kit@^3.2.3", "@nuxt/kit@^3.3.3", "@nuxt/kit@^3.4.3", "@nuxt/kit@^3.5.0":
+"@nuxt/kit@3.5.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.2", "@nuxt/kit@^3.2.3", "@nuxt/kit@^3.3.3", "@nuxt/kit@^3.4.3", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.5.1":
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.5.3.tgz#879d556142febcc8250aff857e75bb8d87daedbb"
   integrity sha512-QzoOGqa1zjKQfg7Y50TrrFAL9DhtIpYYs10gihcM1ISPrn9ROht+VEjqsaMvT+L8JuQbNf8wDYl8qzsdWGU29Q==
@@ -2733,9 +2733,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.411:
-  version "1.4.421"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.421.tgz#2b8c0ef98ba00d4aef4c664933d570922da52161"
-  integrity sha512-wZOyn3s/aQOtLGAwXMZfteQPN68kgls2wDAnYOA8kCjBvKVrW5RwmWVspxJYTqrcN7Y263XJVsC66VCIGzDO3g==
+  version "1.4.425"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.425.tgz#399df13091b836d28283a545c25c8e4d9da86da8"
+  integrity sha512-wv1NufHxu11zfDbY4fglYQApMswleE9FL/DSeyOyauVXDZ+Kco96JK/tPfBUaDqfRarYp2WH2hJ/5UnVywp9Jg==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -4854,7 +4854,12 @@ node-domexception@^1.0.0:
   resolved "https://registry.yarnpkg.com/node-domexception/-/node-domexception-1.0.0.tgz#6888db46a1f71c0b76b3f7555016b63fe64766e5"
   integrity sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==
 
-node-fetch-native@^1.0.2, node-fetch-native@^1.1.1:
+node-fetch-native@^1.0.2:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/node-fetch-native/-/node-fetch-native-1.2.0.tgz#13ec6df98f33168958dbfb6945f10aedf42e7ea8"
+  integrity sha512-5IAMBTl9p6PaAjYCnMv5FmqIF6GcZnawAVnzaCG0rX2aYZJ4CxEkZNtVPuTRug7fL7wyM5BQYTlAzcyMPi6oTQ==
+
+node-fetch-native@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/node-fetch-native/-/node-fetch-native-1.1.1.tgz#b8977dd7fe6c5599e417301ed3987bca787d3d6f"
   integrity sha512-9VvspTSUp2Sxbl+9vbZTlFGq9lHwE8GDVVekxx6YsNd1YH59sb3Ba8v3Y3cD8PkLNcileGGcA21PFjVl0jzDaw==
@@ -4960,11 +4965,11 @@ nuxi@3.5.3, nuxi@^3.5.3:
     fsevents "~2.3.2"
 
 nuxt-typed-router@^3.2.2:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.2.2.tgz#98d1e78f9e4f5bec9f7e0c6c0dc85cf2067fe84e"
-  integrity sha512-DjPG/9gI68jWyTPBOWXUzMFcxcK7oBFp06NKjL8A7ExiWlgSzUQMV2TI/opupMwADZQ/hVbYxY+wzAelJksQbQ==
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.2.3.tgz#5520ab5a4a277c513e9d3372bb49a680c92c0b54"
+  integrity sha512-6NAo+eOXcYokUNJdQxOjGF9E/FAL016IU0T5OtMR9hehF8Y5/OQoH18RecUU4boxqyt705x2G1kVucQnKBnZCw==
   dependencies:
-    "@nuxt/kit" "^3.4.3"
+    "@nuxt/kit" "^3.5.1"
     chalk "^5.2.0"
     defu "^6.1.2"
     lodash-es "^4.17.21"
