@@ -17,7 +17,7 @@ services:
 
   mysql:
     container_name: mysql
-    image: docker.io/library/mariadb:10.11.3-jammy
+    image: docker.io/library/mariadb:10.11.4-jammy
     command:
       - "mariadbd"
       - "--innodb-ft-min-token-size=2"
