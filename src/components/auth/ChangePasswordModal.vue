@@ -21,8 +21,6 @@ defineEmits<{
     (e: 'close'): void;
 }>();
 
-const { t } = useI18n();
-
 const newPassword = ref('');
 
 async function changePassword(values: FormData): Promise<void> {

@@ -33,7 +33,7 @@ import { User } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
-const clipboard = useClipboardStore();
+const clipboardStore = useClipboardStore();
 
 const { activeChar } = storeToRefs(authStore);
 
@@ -302,7 +302,7 @@ function removeRelation(id: bigint): void {
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
                                                         <button
-                                                            v-if="clipboard.$state.users.length === 0"
+                                                            v-if="clipboardStore.$state.users.length === 0"
                                                             type="button"
                                                             class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
                                                             disabled
@@ -345,8 +345,8 @@ function removeRelation(id: bigint): void {
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr
-                                                                    v-for="user in clipboard.$state.users"
-                                                                    :key="user.id?.toString()"
+                                                                    v-for="user in clipboardStore.$state.users"
+                                                                    :key="user.userId?.toString()"
                                                                 >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"

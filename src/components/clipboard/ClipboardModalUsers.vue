@@ -10,8 +10,6 @@ const notifications = useNotificationsStore();
 
 const { users } = storeToRefs(clipboardStore);
 
-const { t } = useI18n();
-
 const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void;
 }>();
@@ -59,7 +57,7 @@ async function remove(item: ClipboardUser, notify: boolean): Promise<void> {
         selected.value.splice(idx, 1);
     }
 
-    clipboardStore.removeUser(item.id!);
+    clipboardStore.removeUser(item.userId!);
     if (notify) {
         notifications.dispatchNotification({
             title: { key: 'notifications.clipboard.citizen_removed.title', parameters: [] },
@@ -132,7 +130,7 @@ watch(props, async (newVal) => {
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-800">
-            <tr v-for="item in users" :key="item.id?.toString()">
+            <tr v-for="item in users" :key="item.userId?.toString()">
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0" v-if="select">
                     <div v-if="specs && specs.max === 1n">
                         <button
@@ -150,7 +148,7 @@ watch(props, async (newVal) => {
                     <div v-else>
                         <input
                             name="selected"
-                            :key="item.id?.toString()"
+                            :key="item.userId?.toString()"
                             :checked="selected.includes(item)"
                             :value="item"
                             v-model="selected"

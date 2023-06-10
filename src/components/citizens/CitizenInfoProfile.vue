@@ -15,8 +15,6 @@ const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
-const { t } = useI18n();
-
 const w = window;
 const clipboard = useClipboard();
 

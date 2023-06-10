@@ -10,8 +10,6 @@ const notifications = useNotificationsStore();
 
 const { documents } = storeToRefs(clipboardStore);
 
-const { t } = useI18n();
-
 const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void;
 }>();

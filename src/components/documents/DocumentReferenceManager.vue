@@ -23,13 +23,11 @@ import { ChevronDoubleUpIcon, DocumentCheckIcon, DocumentTextIcon, LockClosedIco
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import { FunctionalComponent } from 'vue';
-import { useAuthStore } from '~/store/auth';
 import { ClipboardDocument, getDocument, useClipboardStore } from '~/store/clipboard';
 import { DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 
 const { $grpc } = useNuxtApp();
-const authStore = useAuthStore();
-const clipboard = useClipboardStore();
+const clipboardStore = useClipboardStore();
 
 const { t } = useI18n();
 
@@ -301,7 +299,7 @@ function removeReference(id: bigint): void {
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
                                                         <button
-                                                            v-if="clipboard.$state.documents.length === 0"
+                                                            v-if="clipboardStore.$state.documents.length === 0"
                                                             type="button"
                                                             class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
                                                             disabled
@@ -356,7 +354,7 @@ function removeReference(id: bigint): void {
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr
-                                                                    v-for="doc in clipboard.$state.documents"
+                                                                    v-for="doc in clipboardStore.$state.documents"
                                                                     :key="doc.id?.toString()"
                                                                 >
                                                                     <td

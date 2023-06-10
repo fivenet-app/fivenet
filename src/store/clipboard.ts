@@ -41,23 +41,32 @@ export const useClipboardStore = defineStore('clipboard', {
                 vehicles: [],
             };
 
-            if (this.activeStack.documents) {
-                this.activeStack.documents.forEach((v: ClipboardDocument) => {
-                    data.documents.push(getDocument(v));
-                });
-            }
-            if (this.activeStack.users) {
-                this.activeStack.users.forEach((v: ClipboardUser) => {
-                    data.users.push(getUser(v));
-                });
-            }
-            if (this.activeStack.vehicles) {
-                this.activeStack.vehicles.forEach((v: ClipboardVehicle) => {
-                    data.vehicles.push(v.getVehicle());
-                });
-            }
+            this.activeStack.documents.forEach((v: ClipboardDocument) => {
+                data.documents.push(getDocument(v));
+            });
+            console.log('TPL DATA ACTIVE STACK', this.users, this.activeStack.users);
+            this.activeStack.users.forEach((v: ClipboardUser) => {
+                data.users.push(getUser(v));
+            });
+            this.activeStack.vehicles.forEach((v: ClipboardVehicle) => {
+                data.vehicles.push(v.getVehicle());
+            });
 
             return data;
+        },
+
+        promoteToActiveStack(listType: ListType): void {
+            switch (listType) {
+                case 'documents':
+                    this.activeStack.documents = this.documents as ClipboardDocument[];
+                    break;
+                case 'users':
+                    this.activeStack.users = this.users as ClipboardUser[];
+                    break;
+                case 'vehicles':
+                    this.activeStack.vehicles = this.vehicles as ClipboardVehicle[];
+                    break;
+            }
         },
 
         clearActiveStack(): void {
@@ -67,18 +76,16 @@ export const useClipboardStore = defineStore('clipboard', {
         },
         // Documents
         addDocument(document: Document): void {
-            const docId = document.id.toString();
             const idx = this.documents.findIndex((o: ClipboardDocument) => {
-                return o.id === docId;
+                return o.id === document.id;
             });
             if (idx === -1) {
                 this.documents.unshift(new ClipboardDocument(document));
             }
         },
         removeDocument(id: bigint): void {
-            const docId = id.toString();
             const idx = this.documents.findIndex((o: ClipboardDocument) => {
-                return o.id === docId;
+                return o.id === id;
             });
             if (idx > -1) {
                 this.documents.splice(idx, 1);
@@ -90,7 +97,7 @@ export const useClipboardStore = defineStore('clipboard', {
         // Users
         addUser(user: User): void {
             const idx = this.users.findIndex((o: ClipboardUser) => {
-                return o.id === user.userId;
+                return o.userId === user.userId;
             });
             if (idx === -1) {
                 this.users.unshift(new ClipboardUser(user!));
@@ -98,7 +105,7 @@ export const useClipboardStore = defineStore('clipboard', {
         },
         removeUser(id: number): void {
             const idx = this.users.findIndex((o: ClipboardUser) => {
-                return o.id === id;
+                return o.userId === id;
             });
             if (idx > -1) {
                 this.users.splice(idx, 1);
@@ -136,33 +143,16 @@ export const useClipboardStore = defineStore('clipboard', {
         },
 
         checkRequirements(reqs: ObjectSpecs, listType: ListType): boolean {
-            const list = this.$state[listType];
-
-            const length = BigInt(list.length);
-            if (reqs.required && length <= 0) {
+            const length = BigInt(this[listType].length);
+            if (reqs.required && length <= 0n) {
+                console.log('CHECK FAILED 1', length);
                 return false;
-            } else if (reqs.min && reqs.max && length > reqs.max && length < reqs.min) {
+            } else if (reqs.min && length < reqs.min && reqs.max && length > reqs.max) {
+                console.log('CHECK FAILED 2', length);
                 return false;
             }
 
             return true;
-        },
-
-        promoteToActiveStack(listType: ListType): void {
-            this.clearActiveStack();
-            const list = this.$state[listType];
-
-            switch (listType) {
-                case 'documents':
-                    this.$state.activeStack.documents = list as ClipboardDocument[];
-                    break;
-                case 'users':
-                    this.$state.activeStack.users = list as ClipboardUser[];
-                    break;
-                case 'vehicles':
-                    this.$state.activeStack.vehicles = list as ClipboardVehicle[];
-                    break;
-            }
         },
     },
 });
@@ -172,7 +162,7 @@ if (import.meta.hot) {
 }
 
 export class ClipboardUser {
-    public id: number | undefined;
+    public userId: number | undefined;
     public identifier: string | undefined;
     public job: string | undefined;
     public jobLabel: string | undefined;
@@ -183,7 +173,7 @@ export class ClipboardUser {
     public dateofbirth: string | undefined;
 
     constructor(u: UserShort | User) {
-        this.id = u.userId;
+        this.userId = u.userId;
         this.identifier = u.identifier;
         this.job = u.job;
         this.jobLabel = u.jobLabel;
@@ -201,7 +191,7 @@ export class ClipboardUser {
 
 export function getUser(obj: ClipboardUser): User {
     const u: User = {
-        userId: obj.id!,
+        userId: obj.userId!,
         identifier: obj.identifier!,
         job: obj.job!,
         jobLabel: obj.jobLabel!,
@@ -220,7 +210,7 @@ export function getUser(obj: ClipboardUser): User {
 }
 
 export class ClipboardDocument {
-    public id: string;
+    public id: bigint;
     public createdAt: string;
     public title: string;
     public state: string;
@@ -229,7 +219,7 @@ export class ClipboardDocument {
     public category: DocumentCategory | undefined;
 
     constructor(d: Document) {
-        this.id = d.id.toString();
+        this.id = d.id;
         this.createdAt = google_protobuf_timestamp.Timestamp.toDate(d.createdAt?.timestamp!).toLocaleDateString();
         this.title = d.title;
         this.state = d.state;

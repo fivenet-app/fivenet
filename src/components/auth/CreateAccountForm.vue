@@ -13,8 +13,6 @@ defineEmits<{
     (e: 'back'): void;
 }>();
 
-const { t } = useI18n();
-
 const accountError = ref('');
 const curPassword = ref('');
 

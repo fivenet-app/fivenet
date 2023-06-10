@@ -5,10 +5,8 @@ import { useNotificationsStore } from '~/store/notifications';
 import { toTitleCase } from '~/utils/strings';
 import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 
-const store = useClipboardStore();
+const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
-
-const { t } = useI18n();
 
 const props = defineProps<{
     vehicle: Vehicle;
@@ -18,7 +16,7 @@ const props = defineProps<{
 }>();
 
 function addToClipboard(): void {
-    store.addVehicle(props.vehicle);
+    clipboardStore.addVehicle(props.vehicle);
 
     notifications.dispatchNotification({
         title: { key: 'notifications.clipboard.vehicle_added.title', parameters: [] },

@@ -10,7 +10,7 @@ import CitizenInfoActivityFeed from './CitizenInfoActivityFeed.vue';
 import CitizenInfoDocuments from './CitizenInfoDocuments.vue';
 import CitizenInfoProfile from './CitizenInfoProfile.vue';
 
-const clipboard = useClipboardStore();
+const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
 const { t } = useI18n();
@@ -43,7 +43,7 @@ const props = defineProps<{
 }>();
 
 function addToClipboard(): void {
-    clipboard.addUser(props.user);
+    clipboardStore.addUser(props.user);
 
     notifications.dispatchNotification({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: [] },

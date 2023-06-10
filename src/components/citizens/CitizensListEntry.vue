@@ -4,17 +4,15 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { User } from '~~/gen/ts/resources/users/users';
 
-const store = useClipboardStore();
+const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
-
-const { t } = useI18n();
 
 const props = defineProps<{
     user: User;
 }>();
 
 function addToClipboard(): void {
-    store.addUser(props.user);
+    clipboardStore.addUser(props.user);
 
     notifications.dispatchNotification({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: [] },

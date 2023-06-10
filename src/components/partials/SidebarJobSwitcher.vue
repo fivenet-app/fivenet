@@ -8,7 +8,6 @@ import { useNotificationsStore } from '~/store/notifications';
 import { Job } from '~~/gen/ts/resources/jobs/jobs';
 
 const { $grpc } = useNuxtApp();
-const { t } = useI18n();
 
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();

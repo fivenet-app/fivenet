@@ -6,11 +6,13 @@ export default defineNuxtPlugin((nuxtApp) => {
     nuxtApp.vueApp.directive('can', (el, binding, vnode) => {
         // Ignore undefined/ empty permissions
         if (!binding.value || binding.value === '') {
+            vnode.el.hidden = false;
             return;
         }
 
         const permissions = useAuthStore().permissions;
         if (permissions.includes('superuser')) {
+            vnode.el.hidden = false;
             return;
         } else {
             const input = new Array<String>();
@@ -25,14 +27,13 @@ export default defineNuxtPlugin((nuxtApp) => {
             for (let index = 0; index < input.length; index++) {
                 const val = slug(input[index] as string);
                 if (permissions && (permissions.includes(val) || val === '')) {
+                    vnode.el.hidden = false;
                     return;
                 }
             }
         }
 
-        if (vnode && vnode.el) {
-            vnode.el.hidden = true;
-        }
+        vnode.el.hidden = true;
         return;
     });
 });

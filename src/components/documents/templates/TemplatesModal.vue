@@ -68,20 +68,24 @@ async function templateSelected(t: TemplateShort): Promise<void> {
             let reqVehicles = false;
 
             if (reqs.value) {
+                clipboardStore.clearActiveStack();
+
                 if (reqs.value.documents) {
-                    reqDocuments = clipboardStore.checkRequirements(reqs.value.documents!, 'documents');
+                    reqDocuments = clipboardStore.checkRequirements(reqs.value.documents, 'documents');
                     if (reqDocuments) {
                         clipboardStore.promoteToActiveStack('documents');
                     }
                 }
                 if (reqs.value.users) {
-                    reqUsers = clipboardStore.checkRequirements(reqs.value.users!, 'users');
+                    reqUsers = clipboardStore.checkRequirements(reqs.value.users, 'users');
                     if (reqUsers) {
+                        console.log('promote users to active stack 1', clipboardStore.users);
                         clipboardStore.promoteToActiveStack('users');
+                        console.log('promoted users to active stack 2', clipboardStore.users);
                     }
                 }
                 if (reqs.value.vehicles) {
-                    reqVehicles = clipboardStore.checkRequirements(reqs.value.vehicles!, 'vehicles');
+                    reqVehicles = clipboardStore.checkRequirements(reqs.value.vehicles, 'vehicles');
                     if (reqVehicles) {
                         clipboardStore.promoteToActiveStack('vehicles');
                     }
@@ -97,7 +101,7 @@ async function templateSelected(t: TemplateShort): Promise<void> {
         } else {
             await navigateTo({
                 name: 'documents-create',
-                query: { templateId: template.value?.id },
+                query: { templateId: template.value?.id.toString() },
             });
         }
     } else {
@@ -119,9 +123,10 @@ const submit = ref(false);
 
 async function clipboardDialog(): Promise<void> {
     submit.value = true;
+    console.log('CREATE DOCUMENT', clipboardStore.$state);
     await navigateTo({
         name: 'documents-create',
-        query: { templateId: template.value?.id },
+        query: { templateId: template.value?.id.toString() },
     });
 }
 </script>

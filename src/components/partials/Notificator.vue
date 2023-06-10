@@ -23,7 +23,7 @@ let restartBackoffTime = 0;
 async function streamNotifications(): Promise<void> {
     if (abort.value !== undefined) return;
 
-    console.debug('Notificator: Stream starting, last ID:', lastId.value);
+    console.debug('Notificator: Stream starting, starting at ID:', lastId.value);
     try {
         abort.value = new AbortController();
 
