@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_audit_log` (
   KEY `idx_fivenet_audit_log_user_job` (`user_job`),
   KEY `idx_fivenet_audit_log_created_at` (`created_at`),
   KEY `idx_fivenet_audit_log_service` (`service`),
-  FULLTEXT KEY `idx_fivenet_audit_log_data` (`data`),
+  FULLTEXT KEY `idx_fivenet_audit_log_data` (`data`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 COMMIT;
