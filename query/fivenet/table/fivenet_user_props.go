@@ -17,10 +17,11 @@ type fivenetUserPropsTable struct {
 	mysql.Table
 
 	// Columns
-	UserID   mysql.ColumnInteger
-	Wanted   mysql.ColumnBool
-	Job      mysql.ColumnString
-	JobGrade mysql.ColumnInteger
+	UserID                  mysql.ColumnInteger
+	Wanted                  mysql.ColumnBool
+	Job                     mysql.ColumnString
+	JobGrade                mysql.ColumnInteger
+	TrafficInfractionPoints mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -61,22 +62,24 @@ func newFivenetUserPropsTable(schemaName, tableName, alias string) *FivenetUserP
 
 func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUserPropsTable {
 	var (
-		UserIDColumn   = mysql.IntegerColumn("user_id")
-		WantedColumn   = mysql.BoolColumn("wanted")
-		JobColumn      = mysql.StringColumn("job")
-		JobGradeColumn = mysql.IntegerColumn("job_grade")
-		allColumns     = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn}
-		mutableColumns = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn}
+		UserIDColumn                  = mysql.IntegerColumn("user_id")
+		WantedColumn                  = mysql.BoolColumn("wanted")
+		JobColumn                     = mysql.StringColumn("job")
+		JobGradeColumn                = mysql.IntegerColumn("job_grade")
+		TrafficInfractionPointsColumn = mysql.IntegerColumn("traffic_infraction_points")
+		allColumns                    = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn}
+		mutableColumns                = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn}
 	)
 
 	return fivenetUserPropsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		UserID:   UserIDColumn,
-		Wanted:   WantedColumn,
-		Job:      JobColumn,
-		JobGrade: JobGradeColumn,
+		UserID:                  UserIDColumn,
+		Wanted:                  WantedColumn,
+		Job:                     JobColumn,
+		JobGrade:                JobGradeColumn,
+		TrafficInfractionPoints: TrafficInfractionPointsColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

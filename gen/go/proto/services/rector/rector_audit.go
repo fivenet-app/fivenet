@@ -53,6 +53,12 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 			jet.TimestampT(req.To.AsTime()),
 		))
 	}
+	if req.Search != nil && *req.Search != "" {
+		condition = jet.BoolExp(
+			jet.Raw("MATCH(`data`) AGAINST ($search IN BOOLEAN MODE)",
+				jet.RawArgs{"$search": *req.Search}),
+		)
+	}
 
 	countStmt := auditLog.
 		SELECT(

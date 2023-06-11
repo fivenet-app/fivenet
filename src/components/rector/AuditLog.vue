@@ -16,7 +16,7 @@ import AuditLogEntry from './AuditLogEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ from: string; to: string }>({ from: '', to: '' });
+const query = ref<{ from: string; to: string; search: string }>({ from: '', to: '', search: '' });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
@@ -32,12 +32,16 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
         selectedChars.value?.forEach((v) => users.push(v.userId));
         req.userIds = users;
 
-        if (query.value.from != '') {
+        if (query.value.search !== '') {
+            req.search = query.value.search;
+        }
+
+        if (query.value.from !== '') {
             req.from = {
                 timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
             };
         }
-        if (query.value.from != '') {
+        if (query.value.from !== '') {
             req.to = {
                 timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
             };
@@ -129,7 +133,7 @@ watchDebounced(queryChar, async () => await findChars(), {
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
-                                        v-model="query.from"
+                                        v-model="query.to"
                                         ref="searchInput"
                                         type="datetime-local"
                                         name="search"
@@ -197,7 +201,7 @@ watchDebounced(queryChar, async () => await findChars(), {
                 </div>
             </div>
             <div class="flow-root mt-2">
-                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="-mx-4 -my-2 overflow-x-scroll sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.audit_log', 2)])" />
                         <DataErrorBlock

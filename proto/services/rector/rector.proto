@@ -86,6 +86,7 @@ message ViewAuditLogRequest {
   repeated int32 user_ids = 2;
   optional resources.timestamp.Timestamp from = 3;
   optional resources.timestamp.Timestamp to = 4;
+  optional string search = 5;
 }
 
 message ViewAuditLogResponse {

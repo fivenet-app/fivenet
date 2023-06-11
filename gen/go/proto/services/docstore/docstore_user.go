@@ -21,18 +21,6 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	resp := &ListUserDocumentsResponse{}
-	// An user can never see their own activity on their own "profile"
-	if userInfo.UserId == req.UserId {
-		return resp, nil
-	}
-
-	condition := jet.AND(
-		tDocRel.DeletedAt.IS_NULL(),
-		jet.OR(
-			tDocRel.SourceUserID.EQ(jet.Int32(req.UserId)),
-			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
-		),
-	)
 
 	var docIds []uint64
 	idStmt := tDocRel.
@@ -40,10 +28,42 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			tDocRel.DocumentID,
 		).
 		FROM(
-			tDocRel,
+			tDocRel.
+				INNER_JOIN(tDocs,
+					tDocs.ID.EQ(tDocRel.DocumentID),
+				).
+				LEFT_JOIN(tDUserAccess,
+					tDUserAccess.DocumentID.EQ(tDocs.ID).
+						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
+				LEFT_JOIN(tDJobAccess,
+					tDJobAccess.DocumentID.EQ(tDocs.ID).
+						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				),
 		).
 		WHERE(jet.AND(
-			condition,
+			tDocRel.DeletedAt.IS_NULL(),
+			jet.OR(
+				tDocRel.SourceUserID.EQ(jet.Int32(req.UserId)),
+				tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
+			),
+			jet.OR(
+				jet.OR(
+					tDocs.Public.IS_TRUE(),
+					tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				),
+				jet.OR(
+					jet.AND(
+						tDUserAccess.Access.IS_NOT_NULL(),
+						tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+					),
+					jet.AND(
+						tDUserAccess.Access.IS_NULL(),
+						tDJobAccess.Access.IS_NOT_NULL(),
+						tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+					),
+				),
+			),
 		))
 
 	if err := idStmt.QueryContext(ctx, s.db, &docIds); err != nil {
@@ -133,9 +153,8 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		).
 		WHERE(
 			jet.AND(
-				tDocRel.DocumentID.IN(dIds...),
-				condition,
 				tDocs.DeletedAt.IS_NULL(),
+				tDocRel.DocumentID.IN(dIds...),
 			),
 		).
 		ORDER_BY(

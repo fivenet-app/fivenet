@@ -787,6 +787,10 @@ func (m *UserProps) validate(all bool) error {
 
 	}
 
+	if m.TrafficInfractionPoints != nil {
+		// no validation rules for TrafficInfractionPoints
+	}
+
 	if len(errors) > 0 {
 		return UserPropsMultiError(errors)
 	}

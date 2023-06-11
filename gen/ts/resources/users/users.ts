@@ -152,6 +152,10 @@ export interface UserProps {
      * @generated from protobuf field: optional resources.jobs.JobGrade job_grade = 6;
      */
     jobGrade?: JobGrade;
+    /**
+     * @generated from protobuf field: optional uint64 traffic_infraction_points = 7;
+     */
+    trafficInfractionPoints?: bigint; // @gotags: alias:"traffic_infraction_points"
 }
 /**
  * @generated from protobuf message resources.users.UserActivity
@@ -279,7 +283,8 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 3, name: "job_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "job", kind: "message", T: () => Job },
             { no: 5, name: "job_grade_number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "job_grade", kind: "message", T: () => JobGrade }
+            { no: 6, name: "job_grade", kind: "message", T: () => JobGrade },
+            { no: 7, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }

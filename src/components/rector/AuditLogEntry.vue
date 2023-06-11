@@ -55,18 +55,22 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
             {{ log.id }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ $d(toDate(log.createdAt)!, 'long') }}
+            <time :datetime="$d(toDate(log.createdAt)!, 'long')">
+                {{ $d(toDate(log.createdAt)!, 'long') }}
+            </time>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ log.user ? log.user?.firstname + ' ' + log.user?.lastname : 'N/A' }}
+            <NuxtLink :to="{ name: 'citizens-id', params: { id: log.userId.toString() } }">
+                {{ log.user ? log.user?.firstname + ' ' + log.user?.lastname : 'N/A' }}
+            </NuxtLink>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ log.service }} - {{ log.method }}
+            {{ log.service }}/{{ log.method }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             {{ EVENT_TYPE[log.state] }}
         </td>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0 max-w-3xl">
             <span v-if="!log.data">N/A</span>
             <span v-else>
                 <VueJsonPretty
@@ -74,7 +78,7 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
                     :showIcon="true"
                     :showLength="true"
                     :virtual="true"
-                    :height="150"
+                    :height="160"
                 />
             </span>
         </td>

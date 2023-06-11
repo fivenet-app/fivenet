@@ -90,7 +90,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                     <span v-if="showSource" class="truncate"
                                         >{{ relation.sourceUser?.firstname + ', ' + relation.sourceUser?.lastname }}
                                     </span>
-                                    <time datetime="">
+                                    <time :datetime="$d(toDate(relation.createdAt)!, 'short')">
                                         {{ $d(toDate(relation.createdAt)!, 'short') }}
                                     </time>
                                 </span>
@@ -184,7 +184,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                        <time datetime="">
+                                        <time :datetime="$d(toDate(relation.createdAt)!, 'short')">
                                             {{ $d(toDate(relation.createdAt)!, 'short') }}
                                         </time>
                                     </td>

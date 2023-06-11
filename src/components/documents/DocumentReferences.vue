@@ -85,7 +85,9 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                             {{ reference.creator?.lastname }}
                                         </NuxtLink>
                                     </span>
-                                    <time datetime="">{{ $d(toDate(reference.createdAt)!, 'short') }}</time>
+                                    <time :datetime="$d(toDate(reference.createdAt)!, 'short')">
+                                        {{ $d(toDate(reference.createdAt)!, 'short') }}
+                                    </time>
                                 </span>
                             </span>
                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
@@ -178,7 +180,9 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                        <time datetime="">{{ $d(toDate(reference.createdAt)!, 'short') }}</time>
+                                        <time :datetime="$d(toDate(reference.createdAt)!, 'short')">
+                                            {{ $d(toDate(reference.createdAt)!, 'short') }}
+                                        </time>
                                     </td>
                                 </tr>
                             </tbody>

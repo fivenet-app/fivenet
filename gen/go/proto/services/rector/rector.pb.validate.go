@@ -2502,6 +2502,10 @@ func (m *ViewAuditLogRequest) validate(all bool) error {
 
 	}
 
+	if m.Search != nil {
+		// no validation rules for Search
+	}
+
 	if len(errors) > 0 {
 		return ViewAuditLogRequestMultiError(errors)
 	}
