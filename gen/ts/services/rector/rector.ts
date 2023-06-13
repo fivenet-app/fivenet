@@ -207,7 +207,15 @@ export interface ViewAuditLogRequest {
      */
     to?: Timestamp;
     /**
-     * @generated from protobuf field: optional string search = 5;
+     * @generated from protobuf field: optional string service = 5;
+     */
+    service?: string;
+    /**
+     * @generated from protobuf field: optional string method = 6;
+     */
+    method?: string;
+    /**
+     * @generated from protobuf field: optional string search = 7;
      */
     search?: string;
 }
@@ -455,7 +463,9 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
             { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "from", kind: "message", T: () => Timestamp },
             { no: 4, name: "to", kind: "message", T: () => Timestamp },
-            { no: 5, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 5, name: "service", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "method", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }

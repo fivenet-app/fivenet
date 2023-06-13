@@ -2502,6 +2502,14 @@ func (m *ViewAuditLogRequest) validate(all bool) error {
 
 	}
 
+	if m.Service != nil {
+		// no validation rules for Service
+	}
+
+	if m.Method != nil {
+		// no validation rules for Method
+	}
+
 	if m.Search != nil {
 		// no validation rules for Search
 	}

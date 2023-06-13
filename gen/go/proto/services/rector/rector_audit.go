@@ -2,6 +2,7 @@ package rector
 
 import (
 	"context"
+	"strings"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
@@ -14,8 +15,8 @@ import (
 const AuditLogPageSize = 30
 
 var (
-	auditLog = table.FivenetAuditLog.AS("auditentry")
-	user     = table.Users.AS("usershort")
+	tAuditLog = table.FivenetAuditLog.AS("auditentry")
+	tUser     = table.Users.AS("usershort")
 )
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
@@ -33,7 +34,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 
 	condition := jet.Bool(true)
 	if !userInfo.SuperUser {
-		condition = auditLog.UserJob.EQ(jet.String(userInfo.Job))
+		condition = tAuditLog.UserJob.EQ(jet.String(userInfo.Job))
 	}
 
 	if len(req.UserIds) > 0 {
@@ -41,17 +42,25 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		for i := 0; i < len(req.UserIds); i++ {
 			ids[i] = jet.Int32(req.UserIds[i])
 		}
-		condition = condition.AND(auditLog.UserID.IN(ids...))
+		condition = condition.AND(tAuditLog.UserID.IN(ids...))
 	}
 	if req.From != nil {
-		condition = condition.AND(auditLog.CreatedAt.GT_EQ(
+		condition = condition.AND(tAuditLog.CreatedAt.GT_EQ(
 			jet.TimestampT(req.From.AsTime()),
 		))
 	}
 	if req.To != nil {
-		condition = condition.AND(auditLog.CreatedAt.LT_EQ(
+		condition = condition.AND(tAuditLog.CreatedAt.LT_EQ(
 			jet.TimestampT(req.To.AsTime()),
 		))
+	}
+	if req.Service != nil && *req.Service != "" {
+		service := strings.ReplaceAll(*req.Service, "%", "")
+		condition = condition.AND(tAuditLog.Service.LIKE(jet.String(service + "%")))
+	}
+	if req.Method != nil && *req.Method != "" {
+		method := strings.ReplaceAll(*req.Method, "%", "")
+		condition = condition.AND(tAuditLog.Method.LIKE(jet.String(method + "%")))
 	}
 	if req.Search != nil && *req.Search != "" {
 		condition = jet.BoolExp(
@@ -60,13 +69,11 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		)
 	}
 
-	countStmt := auditLog.
+	countStmt := tAuditLog.
 		SELECT(
-			jet.COUNT(auditLog.ID).AS("datacount.totalcount"),
+			jet.COUNT(tAuditLog.ID).AS("datacount.totalcount"),
 		).
-		FROM(
-			auditLog,
-		).
+		FROM(tAuditLog).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -86,25 +93,25 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		return resp, nil
 	}
 
-	stmt := auditLog.
+	stmt := tAuditLog.
 		SELECT(
-			auditLog.AllColumns,
-			user.ID,
-			user.Identifier,
-			user.Job,
-			user.JobGrade,
-			user.Firstname,
-			user.Lastname,
+			tAuditLog.AllColumns,
+			tUser.ID,
+			tUser.Identifier,
+			tUser.Job,
+			tUser.JobGrade,
+			tUser.Firstname,
+			tUser.Lastname,
 		).
 		FROM(
-			auditLog.
-				LEFT_JOIN(user,
-					user.ID.EQ(auditLog.UserID),
+			tAuditLog.
+				LEFT_JOIN(tUser,
+					tUser.ID.EQ(tAuditLog.UserID),
 				),
 		).
 		WHERE(condition).
 		ORDER_BY(
-			auditLog.CreatedAt.DESC(),
+			tAuditLog.CreatedAt.DESC(),
 		).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
