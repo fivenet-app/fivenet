@@ -408,6 +408,7 @@
         "id": "ID",
         "time": "Time",
         "service": "Service",
+        "method": "Method",
         "copy": "Copy",
         "prop": "Prop",
         "theme": "Theme",

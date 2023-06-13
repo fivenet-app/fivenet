@@ -408,6 +408,7 @@
         "id": "ID",
         "time": "Zeit",
         "service": "Service",
+        "method": "Methode",
         "copy": "Kopieren",
         "prop": "Eigenschaft",
         "theme": "Design",

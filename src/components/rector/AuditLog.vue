@@ -16,7 +16,19 @@ import AuditLogEntry from './AuditLogEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ from: string; to: string; search: string }>({ from: '', to: '', search: '' });
+const query = ref<{
+    from: string;
+    to: string;
+    method: string;
+    service: string;
+    search: string;
+}>({
+    from: '',
+    to: '',
+    method: '',
+    service: '',
+    search: '',
+});
 const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
@@ -32,10 +44,6 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
         selectedChars.value?.forEach((v) => users.push(v.userId));
         req.userIds = users;
 
-        if (query.value.search !== '') {
-            req.search = query.value.search;
-        }
-
         if (query.value.from !== '') {
             req.from = {
                 timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
@@ -45,6 +53,17 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
             req.to = {
                 timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
             };
+        }
+
+        if (query.value.method !== '') {
+            req.method = query.value.method;
+        }
+        if (query.value.service !== '') {
+            req.service = query.value.service;
+        }
+
+        if (query.value.search !== '') {
+            req.search = query.value.search;
         }
 
         try {
@@ -112,31 +131,28 @@ watchDebounced(queryChar, async () => await findChars(), {
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                <label for="from" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.time_range') }}: {{ $t('common.from') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
                                         v-model="query.from"
-                                        ref="searchInput"
                                         type="datetime-local"
-                                        name="search"
+                                        name="from"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     />
                                 </div>
                             </div>
                             <div class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral"
-                                    >{{ $t('common.time_range') }}:
-                                    {{ $t('common.to') }}
+                                <label for="to" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.time_range') }}: {{ $t('common.to') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
                                         v-model="query.to"
-                                        ref="searchInput"
                                         type="datetime-local"
-                                        name="search"
+                                        name="to"
                                         :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     />
@@ -194,6 +210,48 @@ watchDebounced(queryChar, async () => await findChars(), {
                                             </ComboboxOptions>
                                         </div>
                                     </Combobox>
+                                </div>
+                            </div>
+                            <div class="flex-1 form-control">
+                                <label for="service" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.service') }}
+                                </label>
+                                <div class="relative flex items-center mt-2">
+                                    <input
+                                        v-model="query.service"
+                                        type="text"
+                                        name="service"
+                                        :placeholder="$t('common.service')"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+                            <div class="flex-1 form-control">
+                                <label for="method" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.method') }}
+                                </label>
+                                <div class="relative flex items-center mt-2">
+                                    <input
+                                        v-model="query.method"
+                                        type="text"
+                                        name="method"
+                                        :placeholder="$t('common.method')"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+                            <div class="flex-1 form-control">
+                                <label for="data" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.data') }}
+                                </label>
+                                <div class="relative flex items-center mt-2">
+                                    <input
+                                        v-model="query.search"
+                                        type="text"
+                                        name="data"
+                                        :placeholder="$t('common.search')"
+                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    />
                                 </div>
                             </div>
                         </div>
