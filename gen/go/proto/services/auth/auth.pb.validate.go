@@ -508,6 +508,8 @@ func (m *LoginResponse) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for AccountId
+
 	if len(errors) > 0 {
 		return LoginResponseMultiError(errors)
 	}

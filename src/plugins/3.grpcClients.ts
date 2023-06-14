@@ -102,7 +102,7 @@ export class GRPCClients {
                 // Only update the redirect query param if it isn't already set
                 const route = useRoute();
                 const redirect = route.query.redirect ?? route.fullPath;
-                await navigateTo({
+                navigateTo({
                     name: 'auth-login',
                     query: { redirect: redirect },
                     replace: true,

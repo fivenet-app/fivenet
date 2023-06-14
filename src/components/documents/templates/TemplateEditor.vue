@@ -336,7 +336,6 @@ async function createTemplate(values: FormData): Promise<void> {
 
             return res();
         } catch (e) {
-            console.log(e);
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }

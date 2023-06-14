@@ -2,12 +2,16 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import { useAuthStore } from '~/store/auth';
 import { User } from '~~/gen/ts/resources/users/users';
 import CharacterSelectorCard from './CharacterSelectorCard.vue';
 
 const { $grpc } = useNuxtApp();
 
-const { data: chars, pending, refresh, error } = useLazyAsyncData('chars', () => fetchCharacters());
+const authStore = useAuthStore();
+const { accountID } = storeToRefs(authStore);
+
+const { data: chars, pending, refresh, error } = useLazyAsyncData(`chars-${accountID}`, () => fetchCharacters());
 
 async function fetchCharacters(): Promise<Array<User>> {
     return new Promise(async (res, rej) => {

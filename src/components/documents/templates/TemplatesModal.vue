@@ -79,9 +79,7 @@ async function templateSelected(t: TemplateShort): Promise<void> {
                 if (reqs.value.users) {
                     reqUsers = clipboardStore.checkRequirements(reqs.value.users, 'users');
                     if (reqUsers) {
-                        console.log('promote users to active stack 1', clipboardStore.users);
                         clipboardStore.promoteToActiveStack('users');
-                        console.log('promoted users to active stack 2', clipboardStore.users);
                     }
                 }
                 if (reqs.value.vehicles) {
@@ -123,7 +121,6 @@ const submit = ref(false);
 
 async function clipboardDialog(): Promise<void> {
     submit.value = true;
-    console.log('CREATE DOCUMENT', clipboardStore.$state);
     await navigateTo({
         name: 'documents-create',
         query: { templateId: template.value?.id.toString() },

@@ -156,8 +156,9 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 	}
 
 	return &LoginResponse{
-		Token:   token,
-		Expires: timestamp.New(claims.ExpiresAt.Time),
+		Token:     token,
+		Expires:   timestamp.New(claims.ExpiresAt.Time),
+		AccountId: account.ID,
 	}, nil
 }
 

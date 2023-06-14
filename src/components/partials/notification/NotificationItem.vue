@@ -10,13 +10,14 @@ import { Notification } from '~/composables/notification/interfaces/Notification
 import { useNotificationsStore } from '~/store/notifications';
 
 const notifications = useNotificationsStore();
+const { removeNotification } = notifications;
 
 defineProps<{
     notification: Notification;
 }>();
 
 async function closeNotification(id: string): Promise<void> {
-    notifications.removeNotification(id);
+    removeNotification(id);
 }
 </script>
 

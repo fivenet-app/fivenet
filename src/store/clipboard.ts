@@ -44,7 +44,6 @@ export const useClipboardStore = defineStore('clipboard', {
             this.activeStack.documents.forEach((v: ClipboardDocument) => {
                 data.documents.push(getDocument(v));
             });
-            console.log('TPL DATA ACTIVE STACK', this.users, this.activeStack.users);
             this.activeStack.users.forEach((v: ClipboardUser) => {
                 data.users.push(getUser(v));
             });
@@ -145,10 +144,8 @@ export const useClipboardStore = defineStore('clipboard', {
         checkRequirements(reqs: ObjectSpecs, listType: ListType): boolean {
             const length = BigInt(this[listType].length);
             if (reqs.required && length <= 0n) {
-                console.log('CHECK FAILED 1', length);
                 return false;
             } else if (reqs.min && length < reqs.min && reqs.max && length > reqs.max) {
-                console.log('CHECK FAILED 2', length);
                 return false;
             }
 

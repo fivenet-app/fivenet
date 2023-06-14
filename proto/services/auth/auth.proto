@@ -37,6 +37,7 @@ message LoginRequest {
 message LoginResponse {
   string token = 1;
   resources.timestamp.Timestamp expires = 2;
+  uint64 account_id = 3;
 }
 
 message ChangePasswordRequest {

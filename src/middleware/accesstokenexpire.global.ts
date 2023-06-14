@@ -7,6 +7,7 @@ export default defineNuxtRouteMiddleware(
         const { getAccessTokenExpiration, setAccessToken } = authStore;
 
         const expiration = getAccessTokenExpiration;
+
         // Check if we have an expiration time, make sure the token isn't expired (yet)
         if (expiration !== null) {
             const now = new Date();

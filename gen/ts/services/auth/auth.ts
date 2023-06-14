@@ -56,6 +56,10 @@ export interface LoginResponse {
      * @generated from protobuf field: resources.timestamp.Timestamp expires = 2;
      */
     expires?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 account_id = 3;
+     */
+    accountId: bigint;
 }
 /**
  * @generated from protobuf message services.auth.ChangePasswordRequest
@@ -283,7 +287,8 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
     constructor() {
         super("services.auth.LoginResponse", [
             { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "expires", kind: "message", T: () => Timestamp }
+            { no: 2, name: "expires", kind: "message", T: () => Timestamp },
+            { no: 3, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }

@@ -174,7 +174,6 @@ const options = {
 onMounted(async () => {
     await findCategories();
 
-    console.log('STATE', clipboardStore.$state);
     if (route.query.templateId) {
         const data = clipboardStore.getTemplateData();
         data.activeChar = activeChar.value!;
